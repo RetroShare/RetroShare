@@ -1114,27 +1114,31 @@ void MessagesDialog::insertMessages()
 
                         text.clear();
 
-                        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); pit++)
+                        for( MessageInfo::addr_iterator pit = msgInfo.beginTo(); pit != msgInfo.endTo(); pit++)
                         {
-                            if (!text.isEmpty())
-                                text += ", ";
+                            MsgAddress addr = *pit;
+                            std::string peerName;
 
-                            std::string peerName = rsPeers->getPeerName(*pit);
+                            switch( addr.type() ){
+                            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                                peerName = rsPeers->getPeerName( addr.toRsPeerId() );
                             if (peerName.empty())
-                                text += PeerDefs::rsid("", *pit);
-                             else
-                                text += QString::fromUtf8(peerName.c_str());
+                                    peerName = PeerDefs::rsid("", addr.toRsPeerId() ).toStdString();
+                                break;
+                            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                                peerName = "GXS_id(" + addr.toGxsId().toStdString() + ")";
+                                if (peerName.empty())
+                                    peerName = PeerDefs::rsid( "", addr.toGxsId() ).toStdString();
+                                break;
+                            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+                                // TODO:
+                                break;
+                            default:
+                                break;
                         }
-            for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); pit++)
-                        {
+
                             if (!text.isEmpty())
                                 text += ", ";
-
-                // We should improve this by showing the real names of each GXS id.
-                            std::string peerName = "GXS_id("+(*pit).toStdString() + ")" ;
-                            if (peerName.empty())
-                                text += PeerDefs::rsid("", *pit);
-                             else
                                 text += QString::fromUtf8(peerName.c_str());
                         }
                     } else {
@@ -1218,7 +1222,15 @@ void MessagesDialog::insertMessages()
                 if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
                     gotInfo = true;
                     QTextDocument doc;
-                    doc.setHtml(QString::fromUtf8(msgInfo.msg.c_str()));
+                    mimetic::MimeEntityList meList = msgInfo.body().parts();
+                    std::string body;
+                    for( mimetic::MimeEntityList::const_iterator it = meList.begin(); it != meList.end(); it++ ){
+                        mimetic::MimeEntity * part = *it;
+                        if( part->header().contentType().type() == "text" ){
+                            body = part->body().data();
+                        }
+                    }
+                    doc.setHtml( QString::fromUtf8( body.c_str() ) );
                     item[COLUMN_CONTENT]->setText(doc.toPlainText().replace(QString("\n"), QString(" ")));
                 } else {
                     std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;

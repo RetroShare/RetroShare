@@ -69,7 +69,7 @@ linux-* {
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
+        LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring -lmimetic
 	LIBS *= -lcrypto -ldl -lX11 -lz
 
 	gxs {

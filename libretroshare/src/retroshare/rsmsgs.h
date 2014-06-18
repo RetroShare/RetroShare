@@ -36,6 +36,9 @@
 #include "rstypes.h"
 #include "rsgxsifacetypes.h"
 
+#include <mimetic/mimetic.h>
+
+
 /********************** For Messages and Channels *****************/
 
 #define RS_MSG_BOXMASK   0x000f   /* Mask for determining Box */
@@ -116,8 +119,8 @@ class MsgAddress
 		explicit MsgAddress(const std::string& email, MsgAddress::AddressMode mmode)
 			: _type(MSG_ADDRESS_TYPE_EMAIL), _mode(mmode), _addr_string(email){}
 
-		MsgAddress::AddressType type() { return _type ;}
-		MsgAddress::AddressMode mode() { return _mode ;}
+        MsgAddress::AddressType type() const { return _type ;}
+        MsgAddress::AddressMode mode() const { return _mode ;}
 
 		RsGxsId toGxsId()     const { assert(_type==MSG_ADDRESS_TYPE_RSGXSID );return RsGxsId (_addr_string);}
 		RsPeerId toRsPeerId() const { assert(_type==MSG_ADDRESS_TYPE_RSPEERID);return RsPeerId(_addr_string);}
@@ -129,38 +132,44 @@ class MsgAddress
 		std::string _addr_string ;
 };
 
-class MessageInfo_v2
-{
-	public:
-		//MessageInfo_v2() {}
 
-		unsigned int msgflags;
+/**
+ * @brief The MessageInfo class encapsulates the message data in Internet Message Format
+ */
 
-		//RsMessageId msgId;
-		MsgAddress from ;
-
-		std::list<MsgAddress> rcpt ;
-
-		// Headers
-		//
-		std::string subject;
-		std::string msg;
-		time_t time_stamp ;
-
-		//std::list<MessageHeader> headers ;
-
-		std::string attach_title;
-		std::string attach_comment;
-		std::list<FileInfo> files;
-
-		int size;  /* total of files */
-		int count; /* file count     */
-};
-
-class MessageInfo
+class MessageInfo : public mimetic::MimeEntity
 {
 public:
     MessageInfo() {}
+    MessageInfo( const std::string & msg ){ setMessage( msg ); }
+
+    class addr_iterator {
+    public:
+        addr_iterator( mimetic::AddressList::const_iterator & it, MsgAddress::AddressMode mode ) :
+            m_addrItr( it ),
+            m_mode( mode )
+        {}
+        addr_iterator operator ++( int );
+        bool operator != ( const addr_iterator & addr );
+        bool operator == ( const addr_iterator & addr );
+        MsgAddress operator * ();
+        void operator = ( const addr_iterator & addr );
+    private:
+        mimetic::AddressList::const_iterator m_addrItr;
+        MsgAddress::AddressMode m_mode;
+    };
+
+    addr_iterator beginTo() const { mimetic::AddressList::const_iterator it = header().to().begin(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_TO ); }
+    addr_iterator endTo() const { mimetic::AddressList::const_iterator it = header().to().end(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_TO ); }
+
+    addr_iterator beginCC() const { mimetic::AddressList::const_iterator it = header().cc().begin(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_CC ); }
+    addr_iterator endCC() const { mimetic::AddressList::const_iterator it = header().cc().end(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_CC ); }
+
+    void setMessage( const std::string & msg );
+    const std::string toString() const;
+    void addAddr( const MsgAddress & addr );
+
+
     std::string msgId;
 
     RsPeerId rspeerid_srcId;
@@ -170,18 +179,9 @@ public:
 
 	 // friend destinations
 	 //
-    std::list<RsPeerId> rspeerid_msgto;		// RsPeerId is used here for various purposes:
-    std::list<RsPeerId> rspeerid_msgcc;		//    - real peer ids which are actual friend locations
     std::list<RsPeerId> rspeerid_msgbcc;		//    -
-
-	 // distant peers
-	 //
-    std::list<RsGxsId> rsgxsid_msgto;		// RsPeerId is used here for various purposes:
-    std::list<RsGxsId> rsgxsid_msgcc;		//    - real peer ids which are actual friend locations
     std::list<RsGxsId> rsgxsid_msgbcc;		//    -
 
-    std::string title;
-    std::string msg;
 
     std::string attach_title;
     std::string attach_comment;

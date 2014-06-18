@@ -896,8 +896,9 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         // needed to send system flags with reply
         msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
-        msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()));
-        msgComposer->setMsgText(QString::fromUtf8(msgInfo.msg.c_str()));
+        msgComposer->setTitleText(QString::fromUtf8(msgInfo.header().subject().c_str()));
+        std::string body = msgInfo.body().data();
+        msgComposer->setMsgText(QString::fromUtf8( body.c_str()));
         msgComposer->setFileList(msgInfo.files);
 
         // get existing groups
@@ -922,11 +923,39 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
     //            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
     //        }
 
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); it++ )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
+        for( MessageInfo::addr_iterator ait = msgInfo.beginTo(); ait != msgInfo.endTo(); ait++ ){
+            MsgAddress addr = *ait;
+            switch( addr.type() ){
+            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                msgComposer->addRecipient(MessageComposer::TO, addr.toRsPeerId() );
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                msgComposer->addRecipient(MessageComposer::TO, addr.toGxsId() );
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+                break;
+            default:
+                break;
+            }
+        }
+
+        for( MessageInfo::addr_iterator ait = msgInfo.beginCC(); ait != msgInfo.endCC(); ait++ ){
+            MsgAddress addr = *ait;
+            switch( addr.type() ){
+            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                msgComposer->addRecipient(MessageComposer::CC, addr.toRsPeerId() );
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                msgComposer->addRecipient(MessageComposer::CC, addr.toGxsId() );
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+                break;
+            default:
+                break;
+            }
+        }
+
         for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgto.begin();   it != msgInfo.rsgxsid_msgto.end(); it++ )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin();   it != msgInfo.rsgxsid_msgcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
         for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
 
         MsgTagInfo tagInfo;
@@ -949,40 +978,52 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
     QString from = link.toHtml();
 
     QString to;
-    for ( std::list<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); it++)
-        if (link.createMessage(*it, ""))
-        {
+    for( MessageInfo::addr_iterator ait = msgInfo.beginTo(); ait != msgInfo.endTo(); ait++ ){
+        MsgAddress addr = *ait;
+        switch( addr.type() ){
+        case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+            if (link.createMessage( addr.toRsPeerId(), "")){
             if (!to.isEmpty())
                 to += ", ";
-
             to += link.toHtml();
         }
-    for ( std::list<RsGxsId>::const_iterator  it = msgInfo.rsgxsid_msgto.begin(); it != msgInfo.rsgxsid_msgto.end(); it++)
-        if (link.createMessage(*it, ""))
-        {
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+            if (link.createMessage( addr.toGxsId(), "")){
             if (!to.isEmpty())
                 to += ", ";
-
             to += link.toHtml();
         }
-
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+        default:
+            break;
+        }
+    }
 
     QString cc;
-    for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); it++)
-        if (link.createMessage(*it, "")) {
-            if (!cc.isEmpty()) {
+    for( MessageInfo::addr_iterator ait = msgInfo.beginCC(); ait != msgInfo.endCC(); ait++ ){
+        MsgAddress addr = *ait;
+        switch( addr.type() ){
+        case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+            if (link.createMessage( addr.toRsPeerId(), "")){
+                if (!cc.isEmpty())
                 cc += ", ";
-            }
             cc += link.toHtml();
         }
-    for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); it++)
-        if (link.createMessage(*it, "")) {
-            if (!cc.isEmpty()) {
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+            if (link.createMessage( addr.toGxsId(), "")){
+                if (!cc.isEmpty())
                 cc += ", ";
-            }
             cc += link.toHtml();
         }
-
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+        default:
+            break;
+        }
+    }
 
     QString header = QString("<span>-----%1-----").arg(tr("Original Message"));
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("From"), from);
@@ -993,7 +1034,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
     }
 
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), DateTime::formatLongDateTime(msgInfo.ts));
-    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromUtf8(msgInfo.title.c_str()));
+    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromUtf8(msgInfo.header().subject().c_str()));
     header += "<br>";
 
     header += tr("On %1, %2 wrote:").arg(DateTime::formatDateTime(msgInfo.ts), from);
@@ -1052,8 +1093,9 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 
     /* fill it in */
 
-    msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()), REPLY);
-    msgComposer->setQuotedMsg(QString::fromUtf8(msgInfo.msg.c_str()), buildReplyHeader(msgInfo));
+    msgComposer->setTitleText(QString::fromUtf8(msgInfo.header().subject().c_str()), REPLY);
+    std::string body = msgInfo.body().data();
+    msgComposer->setQuotedMsg(QString::fromUtf8( body.c_str()), buildReplyHeader(msgInfo));
 
     if(!msgInfo.rspeerid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rspeerid_srcId);
     if(!msgInfo.rsgxsid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rsgxsid_srcId);
@@ -1062,21 +1104,33 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     {
         RsPeerId ownId = rsPeers->getOwnId();
 
-        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgto.begin(); tli != msgInfo.rspeerid_msgto.end(); tli++)
-            if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
+        for( MessageInfo::addr_iterator ait = msgInfo.beginTo(); ait != msgInfo.endTo(); ait++ ){
+            MsgAddress addr = *ait;
+            switch( addr.type() ){
+            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                if (ownId != addr.toRsPeerId() )
+                    msgComposer->addRecipient( MessageComposer::TO, addr.toRsPeerId() ) ;
+            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                msgComposer->addRecipient(MessageComposer::TO, addr.toGxsId() );
+            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+            default:
+                break;
+            }
+        }
 
-        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgcc.begin(); tli != msgInfo.rspeerid_msgcc.end(); tli++)
-            if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
-
-        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgto.begin(); tli != msgInfo.rsgxsid_msgto.end(); tli++)
-            //if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
-
-        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgcc.begin(); tli != msgInfo.rsgxsid_msgcc.end(); tli++)
-            //if (ownId != *tli)
-                msgComposer->addRecipient(MessageComposer::TO, *tli) ;
+        for( MessageInfo::addr_iterator ait = msgInfo.beginCC(); ait != msgInfo.endCC(); ait++ ){
+            MsgAddress addr = *ait;
+            switch( addr.type() ){
+            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                if (ownId != addr.toRsPeerId() )
+                    msgComposer->addRecipient( MessageComposer::CC, addr.toRsPeerId() ) ;
+            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                msgComposer->addRecipient(MessageComposer::CC, addr.toGxsId() );
+            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+            default:
+                break;
+            }
+        }
     }
 
     // needed to send system flags with reply
@@ -1102,8 +1156,9 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
 
     /* fill it in */
 
-    msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()), FORWARD);
-    msgComposer->setQuotedMsg(QString::fromUtf8(msgInfo.msg.c_str()), buildReplyHeader(msgInfo));
+    msgComposer->setTitleText(QString::fromUtf8(msgInfo.header().subject().c_str()), FORWARD);
+    std::string body = msgInfo.body().data();
+    msgComposer->setQuotedMsg(QString::fromUtf8( body.c_str()), buildReplyHeader(msgInfo) );
 
     std::list<FileInfo>& files_info = msgInfo.files;
 
@@ -1183,16 +1238,16 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
 	 std::cerr << "MessageSend: setting 'from' field to GXS id = " << mi.rsgxsid_srcId << std::endl;
 
-    mi.title = misc::removeNewLine(ui.titleEdit->text()).toUtf8().constData();
+    mi.header().subject( misc::removeNewLine(ui.titleEdit->text()).toUtf8().constData() );
     // needed to send system flags with reply
     mi.msgflags = msgFlags;
 
     QString text;
     RsHtml::optimizeHtml(ui.msgText, text);
-    mi.msg = text.toUtf8().constData();
+    mi.body().assign( text.toUtf8().constData() );
 
     /* check for existing title */
-    if (bDraftbox == false && mi.title.empty()) {
+    if (bDraftbox == false && mi.header().subject().empty()) {
         if (QMessageBox::warning(this, tr("RetroShare"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
             ui.titleEdit->setFocus();
             return false; // Don't send with an empty subject
@@ -1256,9 +1311,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
                     switch (type)
                     {
-                    case TO: addUnique(mi.rspeerid_msgto,*sslIt);
+                    case TO: mi.addAddr( MsgAddress( *sslIt, MsgAddress::MSG_ADDRESS_MODE_TO ) );
                         break;
-                    case CC: addUnique(mi.rspeerid_msgcc,*sslIt);
+                    case CC: mi.addAddr( MsgAddress( *sslIt, MsgAddress::MSG_ADDRESS_MODE_CC ) );
                         break;
                     case BCC:addUnique(mi.rspeerid_msgbcc,*sslIt);
                         break;
@@ -1273,9 +1328,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
             switch (type)
             {
-            case TO: addUnique(mi.rspeerid_msgto,pid);
+            case TO: mi.addAddr( MsgAddress( pid, MsgAddress::MSG_ADDRESS_MODE_TO ) );
             break ;
-            case CC: addUnique(mi.rspeerid_msgcc,pid);
+            case CC: mi.addAddr( MsgAddress( pid, MsgAddress::MSG_ADDRESS_MODE_CC ) );
             break ;
             case BCC:addUnique(mi.rspeerid_msgbcc,pid);
             break ;
@@ -1288,9 +1343,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
             switch (type)
             {
-            case TO: addUnique(mi.rsgxsid_msgto,gid) ;
+            case TO: mi.addAddr( MsgAddress( gid, MsgAddress::MSG_ADDRESS_MODE_TO ) );
             break ;
-            case CC: addUnique(mi.rsgxsid_msgcc,gid) ;
+            case CC: mi.addAddr( MsgAddress( gid, MsgAddress::MSG_ADDRESS_MODE_CC ) );
             break ;
             case BCC:addUnique(mi.rsgxsid_msgbcc,gid) ;
             break ;
@@ -1327,8 +1382,8 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     else
     {
         /* check for the recipient */
-        if (mi.rspeerid_msgto.empty() && mi.rspeerid_msgcc.empty() && mi.rspeerid_msgbcc.empty()
-                        && mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty())
+        if( mi.beginTo() == mi.endTo() && mi.beginCC() == mi.endCC()
+                && mi.rspeerid_msgbcc.empty() && mi.rsgxsid_msgbcc.empty())
         {
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient

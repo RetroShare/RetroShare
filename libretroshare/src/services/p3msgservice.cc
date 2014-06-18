@@ -174,10 +174,12 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 			p3Notify *notify = RsServer::notify();
 			if (notify)
 			{
-				if(mi->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
-                    notify->AddPopupMessage(RS_POPUP_ENCRYPTED_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
-				else
-                    notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
+                if(mi->msgFlags & RS_MSG_FLAGS_ENCRYPTED){
+// MIME FIXME:                    notify->AddPopupMessage(RS_POPUP_ENCRYPTED_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
+                }
+                else{
+// MIME FIXME:                    notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
+                }
 
 				std::string out;
 				rs_sprintf(out, "%lu", mi->msgId);
@@ -216,7 +218,7 @@ bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
 #endif
 		// Yes, there is. Append the item to ci.
 
-		ci->message = it->second->message + ci->message ;
+// MIME FIXME:		ci->message = it->second->message + ci->message ;
 		ci->msgFlags |= it->second->msgFlags ;
 
 		delete it->second ;
@@ -297,16 +299,16 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 
 	static const uint32_t MAX_STRING_SIZE = 15000 ;
 
-	std::cerr << "Msg is size " << msg->message.size() << std::endl;
+    std::cerr << "Msg is size " << msg->mimeMessage.size() << std::endl;
 
-	while(msg->message.size() > MAX_STRING_SIZE)
+    while(msg->mimeMessage.size() > MAX_STRING_SIZE)
 	{
 		// chop off the first 15000 wchars
 
 		RsMsgItem *item = new RsMsgItem(*msg) ;
 
-		item->message = item->message.substr(0,MAX_STRING_SIZE) ;
-		msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
+// MIME FIXME:		item->message = item->message.substr(0,MAX_STRING_SIZE) ;
+// MIME FIXME:		msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
 
 #ifdef DEBUG_DISTANT_MSG
 		std::cerr << "  Chopped off msg of size " << item->message.size() << std::endl;
@@ -672,6 +674,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 void p3MsgService::loadWelcomeMsg()
 {
 	/* Load Welcome Message */
+    MessageInfo mi;
 	RsMsgItem *msg = new RsMsgItem();
 
 	//msg -> PeerId(mServiceCtrl->getOwnId());
@@ -680,17 +683,19 @@ void p3MsgService::loadWelcomeMsg()
 	msg -> recvTime = time(NULL);
 	msg -> msgFlags = RS_MSG_FLAGS_NEW;
 
-	msg -> subject = "Welcome to Retroshare";
+    mi.header().subject( "Welcome to Retroshare" );
 
-	msg -> message  = "Send and receive messages with your friends...\n";
-	msg -> message += "These can hold recommendations from your local shared files.\n\n";
-	msg -> message += "Add recommendations through the Local Files Dialog.\n\n";
-	msg -> message += "Enjoy.";
+    const char * body  = "Send and receive messages with your friends...\n"
+                         "These can hold recommendations from your local shared files.\n\n"
+                         "Add recommendations through the Local Files Dialog.\n\n"
+                         "Enjoy.";
+    mi.body().set( body );
 
 	msg -> msgId = getNewUniqueMsgId();
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
+    msg->mimeMessage = mi.toString();
 	imsg[msg->msgId] = msg;
 
 	IndicateConfigChanged();
@@ -1034,12 +1039,40 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 
 bool 	p3MsgService::MessageSend(MessageInfo &info)
 {
-	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgto.begin();  pit != info.rspeerid_msgto.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
-	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgcc.begin();  pit != info.rspeerid_msgcc.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
-	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); pit++) sendMessage(initMIRsMsg(info, *pit));
+    for( MessageInfo::addr_iterator ait = info.beginTo(); ait != info.endTo(); ait++ ){
+        MsgAddress addr = *ait;
+        switch( addr.type() ){
+        case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+            sendMessage( initMIRsMsg( info, addr.toRsPeerId() ) );
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+            sendMessage( initMIRsMsg( info, addr.toGxsId() ) );
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+            // we need to send to the gateway only once because the Fido plugin takes care of the rest
+            break;
+        default:
+            break;
+        }
+    }
+    for( MessageInfo::addr_iterator ait = info.beginCC(); ait != info.endCC(); ait++ ){
+        MsgAddress addr = *ait;
+        switch( addr.type() ){
+        case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+            sendMessage( initMIRsMsg( info, addr.toRsPeerId() ) );
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+            sendMessage( initMIRsMsg( info, addr.toGxsId() ) );
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+            // we need to send to the gateway only once because the Fido plugin takes care of the rest
+            break;
+        default:
+            break;
+        }
+    }
 
-	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgto.begin();  pit != info.rsgxsid_msgto.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
-	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgcc.begin();  pit != info.rsgxsid_msgcc.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
+    for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); pit++) sendMessage(initMIRsMsg(info, *pit));
 	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgbcc.begin(); pit != info.rsgxsid_msgbcc.end(); pit++) sendMessage(initMIRsMsg(info, *pit));
 
 	/* send to ourselves as well */
@@ -1069,11 +1102,12 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 		return false;
 	}
 
-    const RsPeerId& ownId = mServiceCtrl->getOwnId();
+    const MsgAddress ownId( mServiceCtrl->getOwnId(), MsgAddress::MSG_ADDRESS_MODE_TO );
 
+    MessageInfo mi;
 	RsMsgItem *msg = new RsMsgItem();
 
-	msg->PeerId(ownId);
+    msg->PeerId( mServiceCtrl->getOwnId() );
 
 	msg->msgFlags = 0;
 
@@ -1088,10 +1122,11 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 	msg->sendTime = time(NULL);
 	msg->recvTime = 0;
 
-	msg->subject = title;
-	msg->message = message;
+    mi.addAddr( ownId );
+    mi.header().subject( title );
+    mi.body().set( message );
 
-	msg->rspeerid_msgto.ids.push_back(ownId);
+    msg->mimeMessage = mi.toString();
 
 	processMsg(msg, true);
 
@@ -1487,16 +1522,10 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	mi.ts = msg->sendTime;
 	mi.rspeerid_srcId = msg->PeerId();
 
-	mi.rspeerid_msgto  = msg->rspeerid_msgto.ids ;
-	mi.rspeerid_msgcc  = msg->rspeerid_msgcc.ids ;
-	mi.rspeerid_msgbcc = msg->rspeerid_msgbcc.ids ;
+    mi.rspeerid_msgbcc = msg->rspeerid_msgbcc.ids;
+    mi.rsgxsid_msgbcc = msg->rsgxsid_msgbcc.ids;
 
-	mi.rsgxsid_msgto  = msg->rsgxsid_msgto.ids ;
-	mi.rsgxsid_msgcc  = msg->rsgxsid_msgcc.ids ;
-	mi.rsgxsid_msgbcc = msg->rsgxsid_msgbcc.ids ;
-
-	mi.title = msg->subject;
-	mi.msg   = msg->message;
+    mi.setMessage( msg->mimeMessage );
 
 	mi.attach_title = msg->attachment.title;
 	mi.attach_comment = msg->attachment.comment;
@@ -1591,7 +1620,9 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 		rs_sprintf(mis.msgId, "%lu", msg->msgId);
 	}
 
-	mis.title = msg->subject;
+    MessageInfo mi( msg->mimeMessage );
+
+    mis.title = mi.header().subject();
 	mis.count = msg->attachment.items.size();
 	mis.ts = msg->sendTime;
 }
@@ -1602,14 +1633,7 @@ void p3MsgService::initMIRsMsg(RsMsgItem *msg,const MessageInfo& info)
 	msg -> msgId = 0;
 	msg -> sendTime = time(NULL);
 	msg -> recvTime = 0;
-	msg -> subject = info.title;
-	msg -> message = info.msg;
-
-	msg->rspeerid_msgto.ids  = info.rspeerid_msgto ;
-	msg->rspeerid_msgcc.ids  = info.rspeerid_msgcc ;
-
-	msg->rsgxsid_msgto.ids  = info.rsgxsid_msgto ;
-	msg->rsgxsid_msgcc.ids  = info.rsgxsid_msgcc ;
+    msg -> mimeMessage = info.toString();
 
 	/* We don't fill in bcc (unless to ourselves) */
 
@@ -1809,11 +1833,9 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 
 		// wipe the item clean and replace the message by the encrypted data.
 
-		item->message = armoured_data ;
-		item->subject = "" ;
+        item->mimeMessage = armoured_data ;
 		item->rspeerid_msgcc.ids.clear() ;
 		item->rspeerid_msgbcc.ids.clear() ;
-		item->rspeerid_msgto.ids.clear() ;
 		item->rsgxsid_msgcc.ids.clear() ;
 		item->rsgxsid_msgbcc.ids.clear() ;
 		item->rsgxsid_msgto.ids.clear() ;
@@ -1868,7 +1890,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
                 return false;
             }
 
-            encrypted_string = mit->second->message ;
+            encrypted_string = mit->second->mimeMessage ;
 				destination_gxs_id = RsGxsId(mit->second->PeerId()) ;
         }
 
@@ -2245,4 +2267,92 @@ void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 
 
 
+/******** MessageInfo implementation ***********/
 
+// this goes into the domain part of addresses in the SMTP/MIME format
+// so those addresses can be distinguished from email addresses
+// We assume that there will never be a "retroshare" TLD
+static const char * RSPEERID_POSTFIX = "rspeerid.retroshare";
+static const char * RSGXSID_POSTFIX  = "rsgxsid.retroshare";
+
+void MessageInfo::setMessage( const std::string & msg )
+{
+    load( msg.begin(), msg.end() );
+}
+
+const std::string MessageInfo::toString() const
+{
+    std::ostringstream msgStream;
+    msgStream << *static_cast< const mimetic::MimeEntity * const >( this );
+    return msgStream.str();
+}
+
+void MessageInfo::addAddr( const MsgAddress & addr )
+{
+    std::string addrString;
+
+    switch( addr.type() ){
+    case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+        addrString = addr.toRsPeerId().toStdString() + '@' + RSPEERID_POSTFIX;
+        break;
+    case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+        addrString = addr.toGxsId().toStdString() + '@' + RSGXSID_POSTFIX;
+        break;
+    case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+        addrString = addr.toEmail();
+        break;
+    default:
+        return;
+    }
+
+    switch( addr.mode() ){
+    case MsgAddress::MSG_ADDRESS_MODE_TO:
+        header().to().push_back( addrString );
+        break;
+    case MsgAddress::MSG_ADDRESS_MODE_CC:
+        header().cc().push_back( addrString );
+        break;
+    case MsgAddress::MSG_ADDRESS_MODE_BCC:
+        header().bcc().push_back( addrString );
+        break;
+    default:
+        return;
+    }
+}
+
+
+MessageInfo::addr_iterator MessageInfo::addr_iterator::operator ++( int )
+{
+    m_addrItr++;
+    return *this;
+}
+
+bool MessageInfo::addr_iterator::operator != ( const MessageInfo::addr_iterator & addr )
+{
+    return m_addrItr != addr.m_addrItr;
+}
+
+bool MessageInfo::addr_iterator::operator == ( const MessageInfo::addr_iterator & addr )
+{
+    return m_addrItr == addr.m_addrItr;
+}
+
+MsgAddress MessageInfo::addr_iterator::operator * ()
+{
+    mimetic::Address addr = *m_addrItr;
+    mimetic::Mailbox mailbox = addr.mailbox();
+    if( mailbox.domain() == RSPEERID_POSTFIX ){
+        RsPeerId id( mailbox.mailbox() );
+        return MsgAddress( id, m_mode );
+    }
+    if( mailbox.domain() == RSGXSID_POSTFIX ){
+        RsGxsId id( mailbox.mailbox() );
+        return MsgAddress( id, m_mode );
+    }
+    return MsgAddress( addr.str(), m_mode );
+}
+
+void MessageInfo::addr_iterator::operator = ( const MessageInfo::addr_iterator & addr )
+{
+    m_addrItr = addr.m_addrItr;
+}

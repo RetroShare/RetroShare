@@ -243,9 +243,9 @@ void ChatMsgItem::sendMessage()
     /* construct a message */
     MessageInfo mi;
     
-    mi.title = tr("Quick Message").toUtf8().constData();
-    mi.msg =   quickmsgText->toHtml().toUtf8().constData();
-    mi.rspeerid_msgto.push_back(mPeerId);
+    mi.header().subject().assign( tr("Quick Message").toUtf8().constData() );
+    mi.body().assign( quickmsgText->toHtml().toUtf8().constData() );
+    mi.addAddr( MsgAddress( mPeerId, MsgAddress::MSG_ADDRESS_MODE_TO ) );
     
     rsMsgs->MessageSend(mi);
 

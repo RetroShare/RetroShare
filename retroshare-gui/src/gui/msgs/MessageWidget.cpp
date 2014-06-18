@@ -508,19 +508,45 @@ void MessageWidget::fill(const std::string &msgId)
 	RetroShareLink link;
 	QString text;
 
-    for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-    for(std::list<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+    for( MessageInfo::addr_iterator pit = msgInfo.beginTo(); pit != msgInfo.endTo(); pit++){
+        MsgAddress addr = *pit;
+        switch( addr.type() ){
+        case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+            if( link.createMessage( addr.toRsPeerId(), "" ) )  text += link.toHtml() + "   ";
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+            if( link.createMessage( addr.toGxsId(), "" ) )  text += link.toHtml() + "   ";
+            break;
+        case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+            // TODO:
+        case MsgAddress::MSG_ADDRESS_TYPE_UNKNOWN:
+            break;
+        }
+    }
 
 	ui.toText->setText(text);
 
-    if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
+    if (msgInfo.beginCC() != msgInfo.endCC() )
     {
 		ui.cclabel->setVisible(true);
 		ui.ccText->setVisible(true);
 
 		text.clear();
-        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for( MessageInfo::addr_iterator pit = msgInfo.beginCC(); pit != msgInfo.endCC(); pit++){
+            MsgAddress addr = *pit;
+            switch( addr.type() ){
+            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                if( link.createMessage( addr.toRsPeerId(), "" ) )  text += link.toHtml() + "   ";
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                if( link.createMessage( addr.toGxsId(), "" ) )  text += link.toHtml() + "   ";
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+                // TODO:
+            case MsgAddress::MSG_ADDRESS_TYPE_UNKNOWN:
+                break;
+            }
+        }
 
 		ui.ccText->setText(text);
 	} else {
@@ -577,10 +603,11 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.subjectText->setText(tr("Encrypted message"));
 		ui.fromText->setText(tr("Unknown (needs decryption)")) ;
 	} else {
-		ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
+        ui.subjectText->setText(QString::fromUtf8(msgInfo.header().subject().c_str()));
 	}
 
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
+    std::string body = msgInfo.body().data();
+    text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8( body.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS );
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 

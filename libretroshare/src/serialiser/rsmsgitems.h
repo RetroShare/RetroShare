@@ -512,10 +512,8 @@ class RsMsgItem: public RsMessageItem
 		uint32_t sendTime;
 		uint32_t recvTime;
 
-		std::string subject;
-		std::string message;
+        std::string mimeMessage;
 
-		RsTlvPeerIdSet rspeerid_msgto;
 		RsTlvPeerIdSet rspeerid_msgcc;
 		RsTlvPeerIdSet rspeerid_msgbcc;
 

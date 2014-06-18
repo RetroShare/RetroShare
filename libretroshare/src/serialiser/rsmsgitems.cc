@@ -1462,10 +1462,8 @@ void 	RsMsgItem::clear()
 	msgFlags = 0;
 	sendTime = 0;
 	recvTime = 0;
-	subject.clear();
-	message.clear();
+    mimeMessage.clear();
 
-	rspeerid_msgto.TlvClear();
 	rspeerid_msgcc.TlvClear();
 	rspeerid_msgbcc.TlvClear();
 
@@ -1492,7 +1490,6 @@ std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
 
         printIndent(out, int_Indent);
         out << "Message To: " << std::endl;
-		  rspeerid_msgto.print(out, int_Indent);
 		  rsgxsid_msgto.print(out, int_Indent);
 
         printIndent(out, int_Indent);
@@ -1506,11 +1503,7 @@ std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
 		  rsgxsid_msgbcc.print(out, int_Indent);
 
         printIndent(out, int_Indent);
-	std::string cnv_subject(subject.begin(), subject.end());
-        out << "subject:  " << cnv_subject  << std::endl;
-
-        printIndent(out, int_Indent);
-	std::string cnv_message(message.begin(), message.end());
+    std::string cnv_message(mimeMessage.begin(), mimeMessage.end());
         out << "msg:  " << cnv_message  << std::endl;
 
         printIndent(out, int_Indent);
@@ -1603,10 +1596,8 @@ uint32_t    RsMsgItem::serial_size(bool m_bConfiguration)
 	s += 4; /* sendTime  */
 	s += 4; /* recvTime  */
 
-	s += GetTlvStringSize(subject);
-	s += GetTlvStringSize(message);
+    s += GetTlvStringSize(mimeMessage);
 
-	s += rspeerid_msgto.TlvSize();
 	s += rspeerid_msgcc.TlvSize();
 	s += rspeerid_msgbcc.TlvSize();
 
@@ -1652,10 +1643,8 @@ bool     RsMsgItem::serialise(void *data, uint32_t& pktsize,bool config)
 	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
 	ok &= setRawUInt32(data, tlvsize, &offset, recvTime);
 
-	ok &= SetTlvString(data,tlvsize,&offset,TLV_TYPE_STR_SUBJECT,subject);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, message);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, mimeMessage);
 
-	ok &= rspeerid_msgto.SetTlv(data, tlvsize, &offset);
 	ok &= rspeerid_msgcc.SetTlv(data, tlvsize, &offset);
 	ok &= rspeerid_msgbcc.SetTlv(data, tlvsize, &offset);
 
@@ -1713,10 +1702,8 @@ RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
 	ok &= getRawUInt32(data, rssize, &offset, &(item->sendTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvTime));
 
-	ok &= GetTlvString(data,rssize,&offset,TLV_TYPE_STR_SUBJECT,item->subject);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->message);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mimeMessage);
 
-	ok &= item->rspeerid_msgto.GetTlv(data, rssize, &offset);
 	ok &= item->rspeerid_msgcc.GetTlv(data, rssize, &offset);
 	ok &= item->rspeerid_msgbcc.GetTlv(data, rssize, &offset);
 	ok &= item->rsgxsid_msgto.GetTlv(data, rssize, &offset);
