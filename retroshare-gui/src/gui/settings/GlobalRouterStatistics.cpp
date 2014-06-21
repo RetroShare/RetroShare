@@ -23,6 +23,7 @@
 #include <QTimer>
 #include <QObject>
 #include <QFontMetrics>
+#include <time.h>
 
 #include <QPainter>
 #include <QStylePainter>

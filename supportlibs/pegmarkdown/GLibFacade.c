@@ -28,7 +28,7 @@
  */
 
 /* Solaris and Windows do not provide vasprintf() or asprintf(). */
-#if defined(__WIN32) || (defined(__SVR4) && defined(__sun))
+#if (defined(__WIN32) && !defined(__MINGW64_VERSION_MAJOR)) || (defined(__SVR4) && defined(__sun))
 int vasprintf( char **sptr, char *fmt, va_list argv ) 
 { 
     int wanted = vsnprintf( *sptr = NULL, 0, fmt, argv ); 
