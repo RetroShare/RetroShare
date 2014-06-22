@@ -899,7 +899,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         msgComposer->setTitleText(QString::fromUtf8(msgInfo.header().subject().c_str()));
         std::string body = msgInfo.body().data();
         msgComposer->setMsgText(QString::fromUtf8( body.c_str()));
-        msgComposer->setFileList(msgInfo.files);
+// MIME FIXME:        msgComposer->setFileList(msgInfo.files);
 
         // get existing groups
         std::list<RsGroupInfo> groupInfoList;
@@ -955,8 +955,21 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
             }
         }
 
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
+        for( MessageInfo::addr_iterator ait = msgInfo.beginBCC(); ait != msgInfo.endBCC(); ait++ ){
+            MsgAddress addr = *ait;
+            switch( addr.type() ){
+            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                msgComposer->addRecipient(MessageComposer::BCC, addr.toRsPeerId() );
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                msgComposer->addRecipient(MessageComposer::BCC, addr.toGxsId() );
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+                break;
+            default:
+                break;
+            }
+        }
 
         MsgTagInfo tagInfo;
         rsMsgs->getMessageTag(msgId, tagInfo);
@@ -1160,9 +1173,7 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
     std::string body = msgInfo.body().data();
     msgComposer->setQuotedMsg(QString::fromUtf8( body.c_str()), buildReplyHeader(msgInfo) );
 
-    std::list<FileInfo>& files_info = msgInfo.files;
-
-    msgComposer->setFileList(files_info);
+// MIME FIXME:    msgComposer->setFileList(files_info);
 
     // needed to send system flags with reply
     msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
@@ -1225,7 +1236,6 @@ void MessageComposer::sendMessage()
     }
 }
 
-template<class T> void addUnique(std::list<T>& lst,const T& t) { if(std::find(lst.begin(),lst.end(),t) == lst.end()) lst.push_back(t) ; }
 
 bool MessageComposer::sendMessage_internal(bool bDraftbox)
 {
@@ -1261,7 +1271,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             RsFileHash hash ( item->text(COLUMN_FILE_HASH).toStdString() );
             for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); it++) {
                 if (it->hash == hash) {
-                    mi.files.push_back(*it);
+// MIME FIXME:                    mi.files.push_back(*it);
                     break;
                 }
             }
@@ -1315,7 +1325,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
                         break;
                     case CC: mi.addAddr( MsgAddress( *sslIt, MsgAddress::MSG_ADDRESS_MODE_CC ) );
                         break;
-                    case BCC:addUnique(mi.rspeerid_msgbcc,*sslIt);
+                    case BCC:mi.addAddr( MsgAddress( *sslIt, MsgAddress::MSG_ADDRESS_MODE_BCC ) );
                         break;
                     }
                 }
@@ -1332,7 +1342,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             break ;
             case CC: mi.addAddr( MsgAddress( pid, MsgAddress::MSG_ADDRESS_MODE_CC ) );
             break ;
-            case BCC:addUnique(mi.rspeerid_msgbcc,pid);
+            case BCC:mi.addAddr( MsgAddress( pid, MsgAddress::MSG_ADDRESS_MODE_BCC ) );
             break ;
             }
         }
@@ -1347,7 +1357,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             break ;
             case CC: mi.addAddr( MsgAddress( gid, MsgAddress::MSG_ADDRESS_MODE_CC ) );
             break ;
-            case BCC:addUnique(mi.rsgxsid_msgbcc,gid) ;
+            case BCC:mi.addAddr( MsgAddress( gid, MsgAddress::MSG_ADDRESS_MODE_BCC ) );
             break ;
             }
         }
@@ -1361,12 +1371,12 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
     if (bDraftbox)
     {
-        mi.msgId = m_sDraftMsgId;
+        mi.header().messageid() = m_sDraftMsgId;
 
         rsMsgs->MessageToDraft(mi, m_msgParentId);
 
         // use new message id
-        m_sDraftMsgId = mi.msgId;
+        m_sDraftMsgId = mi.header().messageid().str();
 
         switch (m_msgType) {
         case NORMAL:
@@ -1383,7 +1393,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     {
         /* check for the recipient */
         if( mi.beginTo() == mi.endTo() && mi.beginCC() == mi.endCC()
-                && mi.rspeerid_msgbcc.empty() && mi.rsgxsid_msgbcc.empty())
+                && mi.beginBCC() == mi.endBCC() )
         {
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
@@ -1409,15 +1419,15 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         }
     }
 
-    if (mi.msgId.empty() == false) {
+    if (mi.header().messageid().str().empty() == false) {
         MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(mi.msgId, tagInfo);
+        rsMsgs->getMessageTag(mi.header().messageid().str(), tagInfo);
 
         /* insert new tags */
         std::list<uint32_t>::iterator tag;
         for (tag = m_tagIds.begin(); tag != m_tagIds.end(); tag++) {
             if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), *tag) == tagInfo.tagIds.end()) {
-                rsMsgs->setMessageTag(mi.msgId, *tag, true);
+                rsMsgs->setMessageTag(mi.header().messageid().str(), *tag, true);
             } else {
                 tagInfo.tagIds.remove(*tag);
             }
@@ -1425,7 +1435,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
         /* remove deleted tags */
         for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); tag++) {
-            rsMsgs->setMessageTag(mi.msgId, *tag, false);
+            rsMsgs->setMessageTag(mi.header().messageid().str(), *tag, false);
         }
     }
     ui.msgText->document()->setModified(false);

@@ -1212,7 +1212,7 @@ void MessagesDialog::insertMessages()
 
             // No of Files.
             {
-                item[COLUMN_ATTACHEMENTS] -> setText(QString::number(it -> count));
+// MIME FIXME:                item[COLUMN_ATTACHEMENTS] -> setText(QString::number(it -> count));
                 item[COLUMN_ATTACHEMENTS] -> setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, ROLE_SORT);
                 item[COLUMN_ATTACHEMENTS] -> setTextAlignment(Qt::AlignHCenter);
             }

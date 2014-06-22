@@ -1458,20 +1458,11 @@ RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t /*size*/)
 
 void 	RsMsgItem::clear()
 {
-	msgId    = 0;
+    msgId.clear();
 	msgFlags = 0;
 	sendTime = 0;
 	recvTime = 0;
     mimeMessage.clear();
-
-	rspeerid_msgcc.TlvClear();
-	rspeerid_msgbcc.TlvClear();
-
-	rsgxsid_msgto.TlvClear();
-	rsgxsid_msgcc.TlvClear();
-	rsgxsid_msgbcc.TlvClear();
-
-	attachment.TlvClear();
 }
 
 std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
@@ -1489,26 +1480,8 @@ std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
         out << "recvTime:  " << recvTime  << std::endl;
 
         printIndent(out, int_Indent);
-        out << "Message To: " << std::endl;
-		  rsgxsid_msgto.print(out, int_Indent);
-
-        printIndent(out, int_Indent);
-        out << "Message CC: " << std::endl;
-		  rspeerid_msgcc.print(out, int_Indent);
-		  rsgxsid_msgcc.print(out, int_Indent);
-
-        printIndent(out, int_Indent);
-        out << "Message BCC: " << std::endl;
-		  rspeerid_msgbcc.print(out, int_Indent);
-		  rsgxsid_msgbcc.print(out, int_Indent);
-
-        printIndent(out, int_Indent);
     std::string cnv_message(mimeMessage.begin(), mimeMessage.end());
         out << "msg:  " << cnv_message  << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "Attachment: " << std::endl;
-	attachment.print(out, int_Indent);
 
         printRsItemEnd(out, "RsMsgItem", indent);
         return out;
@@ -1543,7 +1516,7 @@ std::ostream& RsPublicMsgInviteConfigItem::print(std::ostream &out, uint16_t ind
 }
 void RsMsgTags::clear()
 {
-	msgId = 0;
+    msgId.clear();
 	tagIds.clear();
 }
 
@@ -1598,15 +1571,6 @@ uint32_t    RsMsgItem::serial_size(bool m_bConfiguration)
 
     s += GetTlvStringSize(mimeMessage);
 
-	s += rspeerid_msgcc.TlvSize();
-	s += rspeerid_msgbcc.TlvSize();
-
-	s += rsgxsid_msgto.TlvSize();
-	s += rsgxsid_msgcc.TlvSize();
-	s += rsgxsid_msgbcc.TlvSize();
-
-	s += attachment.TlvSize();
-
 	if (m_bConfiguration) {
 		// serialise msgId too
 		s += 4;
@@ -1645,17 +1609,8 @@ bool     RsMsgItem::serialise(void *data, uint32_t& pktsize,bool config)
 
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, mimeMessage);
 
-	ok &= rspeerid_msgcc.SetTlv(data, tlvsize, &offset);
-	ok &= rspeerid_msgbcc.SetTlv(data, tlvsize, &offset);
-
-	ok &= rsgxsid_msgto.SetTlv(data, tlvsize, &offset);
-	ok &= rsgxsid_msgcc.SetTlv(data, tlvsize, &offset);
-	ok &= rsgxsid_msgbcc.SetTlv(data, tlvsize, &offset);
-
-	ok &= attachment.SetTlv(data, tlvsize, &offset);
-
 	if (config) // serialise msgId too
-		ok &= setRawUInt32(data, tlvsize, &offset, msgId);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID , msgId);
 
 	if (offset != tlvsize)
 	{
@@ -1704,18 +1659,8 @@ RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
 
     ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mimeMessage);
 
-	ok &= item->rspeerid_msgcc.GetTlv(data, rssize, &offset);
-	ok &= item->rspeerid_msgbcc.GetTlv(data, rssize, &offset);
-	ok &= item->rsgxsid_msgto.GetTlv(data, rssize, &offset);
-	ok &= item->rsgxsid_msgcc.GetTlv(data, rssize, &offset);
-	ok &= item->rsgxsid_msgbcc.GetTlv(data, rssize, &offset);
-
-	ok &= item->attachment.GetTlv(data, rssize, &offset);
-
 	if (m_bConfiguration) {
-		// deserialise msgId too
-		// ok &= getRawUInt32(data, rssize, &offset, &(item->msgId));
-		getRawUInt32(data, rssize, &offset, &(item->msgId)); //use this line for backward compatibility 
+        GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSGID, item->msgId ); //use this line for backward compatibility
 	}
 
 	if (offset != rssize)
@@ -1966,7 +1911,7 @@ bool RsMsgTags::serialise(void *data, uint32_t& pktsize,bool config)
 	/* skip the header */
 	offset += 8;
 
-	ok &= setRawUInt32(data,tlvsize,&offset, msgId);
+    ok &= setRawString(data,tlvsize,&offset, msgId);
 
 	std::list<uint32_t>::iterator mit = tagIds.begin();
 	for(;mit != tagIds.end(); mit++)
@@ -2014,7 +1959,7 @@ RsMsgTags* RsMsgSerialiser::deserialiseMsgTagItem(void* data, uint32_t* pktsize)
 
 
 	/* get mandatory parts first */
-	ok &= getRawUInt32(data, rssize, &offset, &item->msgId);
+    ok &= getRawString(data, rssize, &offset, item->msgId);
 
 	uint32_t tagId;
 	while (offset != rssize)
@@ -2064,7 +2009,7 @@ std::ostream& RsMsgSrcId::print(std::ostream& out, uint16_t indent)
 
 void RsMsgSrcId::clear()
 {
-	msgId = 0;
+    msgId.clear();
 	srcId.clear();
 
 	return;
@@ -2103,7 +2048,7 @@ bool RsMsgSrcId::serialise(void *data, uint32_t& pktsize,bool config)
 	/* skip the header */
 	offset += 8;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, msgId);
+    ok &= setRawString(data, tlvsize, &offset, msgId);
 	ok &= srcId.serialise(data, tlvsize, offset) ;
 
 	if (offset != tlvsize)
@@ -2148,7 +2093,7 @@ RsMsgSrcId* RsMsgSerialiser::deserialiseMsgSrcIdItem(void* data, uint32_t* pktsi
 
 
 	/* get mandatory parts first */
-	ok &= getRawUInt32(data, rssize, &offset, &(item->msgId));
+    ok &= getRawString(data, rssize, &offset, item->msgId );
 	ok &= item->srcId.deserialise(data, rssize, offset);
 
 	if (offset != rssize)
@@ -2190,8 +2135,8 @@ std::ostream& RsMsgParentId::print(std::ostream& out, uint16_t indent)
 
 void RsMsgParentId::clear()
 {
-	msgId = 0;
-	msgParentId = 0;
+    msgId.clear();
+    msgParentId.clear();
 
 	return;
 }
@@ -2228,8 +2173,8 @@ bool RsMsgParentId::serialise(void *data, uint32_t& pktsize,bool config)
 	/* skip the header */
 	offset += 8;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, msgId);
-	ok &= setRawUInt32(data, tlvsize, &offset, msgParentId);
+    ok &= setRawString(data, tlvsize, &offset, msgId);
+    ok &= setRawString(data, tlvsize, &offset, msgParentId);
 
 	if (offset != tlvsize)
 	{
@@ -2273,8 +2218,8 @@ RsMsgParentId* RsMsgSerialiser::deserialiseMsgParentIdItem(void* data, uint32_t*
 
 
 	/* get mandatory parts first */
-	ok &= getRawUInt32(data, rssize, &offset, &(item->msgId));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->msgParentId));
+    ok &= getRawString(data, rssize, &offset, item->msgId );
+    ok &= getRawString(data, rssize, &offset, item->msgParentId );
 
 	if (offset != rssize)
 	{

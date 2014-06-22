@@ -347,6 +347,8 @@ void MessageWidget::getallrecommended()
 		return;
 	}
 
+// MIME FIXME: Should be moved to real attachments
+#if 0
 	const std::list<FileInfo> &recList = msgInfo.files;
 	std::list<FileInfo>::const_iterator it;
 
@@ -357,6 +359,7 @@ void MessageWidget::getallrecommended()
         srcIds.push_back(msgInfo.rspeerid_srcId);
 		rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 	}
+#endif
 }
 
 void MessageWidget::messagesTagsChanged()
@@ -485,6 +488,8 @@ void MessageWidget::fill(const std::string &msgId)
 		return;
 	}
 
+// MIME FIXME: Should be real attachments
+#if 0
 	const std::list<FileInfo> &recList = msgInfo.files;
 	std::list<FileInfo>::const_iterator it;
 
@@ -503,6 +508,7 @@ void MessageWidget::fill(const std::string &msgId)
 
 	/* add the items in! */
 	ui.msgList->insertTopLevelItems(0, items);
+#endif
 
 	/* iterate through the sources */
 	RetroShareLink link;
@@ -555,14 +561,27 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.ccText->clear();
 	}
 
-    if (!msgInfo.rspeerid_msgbcc.empty() || !msgInfo.rsgxsid_msgbcc.empty())
+    if ( msgInfo.beginBCC() != msgInfo.endBCC() )
     {
         ui.bcclabel->setVisible(true);
         ui.bccText->setVisible(true);
 
         text.clear();
-        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for( MessageInfo::addr_iterator pit = msgInfo.beginBCC(); pit != msgInfo.endBCC(); pit++){
+            MsgAddress addr = *pit;
+            switch( addr.type() ){
+            case MsgAddress::MSG_ADDRESS_TYPE_RSPEERID:
+                if( link.createMessage( addr.toRsPeerId(), "" ) )  text += link.toHtml() + "   ";
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_RSGXSID:
+                if( link.createMessage( addr.toGxsId(), "" ) )  text += link.toHtml() + "   ";
+                break;
+            case MsgAddress::MSG_ADDRESS_TYPE_EMAIL:
+                // TODO:
+            case MsgAddress::MSG_ADDRESS_TYPE_UNKNOWN:
+                break;
+            }
+        }
 
 		ui.bccText->setText(text);
 	} else {
@@ -611,7 +630,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
-	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
+// MIME FIXME:	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
 
 	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
 		ui.decryptFrame->show();

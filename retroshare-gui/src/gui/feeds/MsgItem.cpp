@@ -135,7 +135,8 @@ void MsgItem::updateItemStatic()
         std::string body = mi.body().data();
         msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8( body.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
     }
-
+// MIME FIXME: Should be real attachments
+#if 0
 	std::list<FileInfo>::iterator it;
 	for(it = mi.files.begin(); it != mi.files.end(); it++)
 	{
@@ -146,6 +147,7 @@ void MsgItem::updateItemStatic()
 		QLayout *layout = expandFrame->layout();
 		layout->addWidget(fi);
 	}
+#endif
 
 	playButton->setEnabled(false);
 	

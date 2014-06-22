@@ -400,8 +400,6 @@ std::ostream &RsTlvFileItem::print(std::ostream &out, uint16_t indent) const
 
 void RsTlvFileSet::TlvClear()
 {
-	title.clear();
-	comment.clear();
 	items.clear();  
 }
 
@@ -417,13 +415,6 @@ uint32_t RsTlvFileSet::TlvSize() const
 	{
 		s += (*it).TlvSize();
 	}
-
-	/* now add comment and title length of this tlv object */
-
-	if (title.length() > 0)
-		s += GetTlvStringSize(title); 
-	if (comment.length() > 0)
-		s += GetTlvStringSize(comment);
 
 	return s;
 }
@@ -456,12 +447,6 @@ bool     RsTlvFileSet::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 			return false;
 	}
 
-	/* now optional ones */
-	if (title.length() > 0)
-		ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_TITLE, title);
-	if (comment.length() > 0)
-		ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_COMMENT, comment); 
-	
 	return ok;
 
 }
@@ -504,16 +489,6 @@ bool     RsTlvFileSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 				items.push_back(newitem);
 			}
 		}
-		else if (tlvsubtype == TLV_TYPE_STR_TITLE)
-		{
-			ok &= GetTlvString(data, tlvend, offset, 
-					TLV_TYPE_STR_TITLE, title);
-		}
-		else if (tlvsubtype == TLV_TYPE_STR_COMMENT)
-		{
-			ok &= GetTlvString(data, tlvend, offset, 
-					TLV_TYPE_STR_COMMENT, comment);
-		}
 		else
 		{
 			/* unknown subtype -> error */
@@ -553,30 +528,12 @@ std::ostream &RsTlvFileSet::print(std::ostream &out, uint16_t indent) const
 
 
 	printIndent(out, int_Indent);
-	out << "Mandatory:"  << std::endl;
 	std::list<RsTlvFileItem>::const_iterator it;
 	
 	for(it = items.begin(); it != items.end() ; ++it)
 	{
 		it->print(out, int_Indent);
 	}
-	printIndent(out, int_Indent);
-	out << "Optional:" << std::endl;
-
-	/* now optional ones */
-	if (title.length() > 0)
-	{
-		printIndent(out, int_Indent);
-		std::string cnv_title(title.begin(), title.end());
-		out << "Title: " << cnv_title << std::endl;
-	}
-	if (comment.length() > 0)
-	{
-		printIndent(out, int_Indent);
-		std::string cnv_comment(comment.begin(), comment.end());
-		out << "Comment: " << cnv_comment << std::endl;
-	}
-
 	printEnd(out, "RsTlvFileSet", indent);
 
 	return out;

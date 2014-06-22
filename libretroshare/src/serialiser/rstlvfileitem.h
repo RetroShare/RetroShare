@@ -69,8 +69,6 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
 	std::list<RsTlvFileItem> items; /// Mandatory 
-	std::string title;   		/// Optional: title of file set
-	std::string comment; 		/// Optional: comments for file
 };
 
 

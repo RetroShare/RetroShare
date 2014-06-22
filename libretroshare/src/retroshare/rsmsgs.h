@@ -165,31 +165,17 @@ public:
     addr_iterator beginCC() const { mimetic::AddressList::const_iterator it = header().cc().begin(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_CC ); }
     addr_iterator endCC() const { mimetic::AddressList::const_iterator it = header().cc().end(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_CC ); }
 
+    addr_iterator beginBCC() const { mimetic::AddressList::const_iterator it = header().bcc().begin(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_BCC ); }
+    addr_iterator endBCC() const { mimetic::AddressList::const_iterator it = header().bcc().end(); return addr_iterator( it, MsgAddress::MSG_ADDRESS_MODE_BCC ); }
+
     void setMessage( const std::string & msg );
     const std::string toString() const;
     void addAddr( const MsgAddress & addr );
-
-
-    std::string msgId;
 
     RsPeerId rspeerid_srcId;
     RsGxsId  rsgxsid_srcId;
 
     unsigned int msgflags;
-
-	 // friend destinations
-	 //
-    std::list<RsPeerId> rspeerid_msgbcc;		//    -
-    std::list<RsGxsId> rsgxsid_msgbcc;		//    -
-
-
-    std::string attach_title;
-    std::string attach_comment;
-    std::list<FileInfo> files;
-
-    int size;  /* total of files */
-    int count; /* file count     */
-
     int ts;
 };
 
@@ -205,7 +191,6 @@ class MsgInfoSummary
 	uint32_t msgflags;
 
 	std::string title;
-	int count; /* file count     */
 	time_t ts;
 
 };

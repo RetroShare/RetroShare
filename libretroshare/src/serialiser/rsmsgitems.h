@@ -507,21 +507,12 @@ class RsMsgItem: public RsMessageItem
 		// ----------- Specific fields ------------- //
 
 		uint32_t msgFlags;
-		uint32_t msgId;
+        std::string msgId;
 
 		uint32_t sendTime;
 		uint32_t recvTime;
 
         std::string mimeMessage;
-
-		RsTlvPeerIdSet rspeerid_msgcc;
-		RsTlvPeerIdSet rspeerid_msgbcc;
-
-		RsTlvGxsIdSet rsgxsid_msgto;
-		RsTlvGxsIdSet rsgxsid_msgcc;
-		RsTlvGxsIdSet rsgxsid_msgbcc;
-
-		RsTlvFileSet attachment;
 };
 
 class RsMsgTagType : public RsMessageItem
@@ -560,7 +551,7 @@ public:
 
 		// ----------- Specific fields ------------- //
 		//
-	uint32_t msgId;
+    std::string msgId;
 	std::list<uint32_t> tagIds;
 };
 
@@ -580,7 +571,7 @@ class RsMsgSrcId : public RsMessageItem
 		// ----------- Specific fields ------------- //
 		//
 
-		uint32_t msgId;
+        std::string msgId;
 		RsPeerId srcId;
 };
 class RsPublicMsgInviteConfigItem : public RsMessageItem
@@ -618,8 +609,8 @@ class RsMsgParentId : public RsMessageItem
 
 		// ----------- Specific fields ------------- //
 		//
-		uint32_t msgId;
-		uint32_t msgParentId;
+        std::string msgId;
+        std::string msgParentId;
 };
 
 class RsMsgSerialiser: public RsSerialType
