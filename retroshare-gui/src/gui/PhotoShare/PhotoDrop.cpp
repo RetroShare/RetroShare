@@ -22,6 +22,7 @@
  */
 
 #include <QtGui>
+#include <QGridLayout>
 
 #include "PhotoDrop.h"
 

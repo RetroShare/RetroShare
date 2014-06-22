@@ -97,8 +97,8 @@ static void displayWarningAboutDSAKeys()
 	msgBox.exec();
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
 #ifdef WINDOWS_SYS
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0) && QT_VERSION < QT_VERSION_CHECK (5, 3, 0)
 QStringList filedialog_open_filenames_hook(QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options)
 {
 	return QFileDialog::getOpenFileNames(parent, caption, dir, filter, selectedFilter, options | QFileDialog::DontUseNativeDialog);
@@ -126,7 +126,10 @@ int main(int argc, char *argv[])
 #ifdef WINDOWS_SYS
 	// The current directory of the application is changed when using the native dialog on Windows
 	// This is a quick fix until libretroshare is using a absolute path in the portable Version
-#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK (5, 3, 0)
+	// Do we need a solution in v0.6?
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0) && QT_VERSION < QT_VERSION_CHECK (5, 3, 0)
 	typedef QStringList (*_qt_filedialog_open_filenames_hook)(QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options);
 	typedef QString (*_qt_filedialog_open_filename_hook)     (QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options);
 	typedef QString (*_qt_filedialog_save_filename_hook)     (QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options);
@@ -141,7 +144,8 @@ int main(int argc, char *argv[])
 	qt_filedialog_open_filenames_hook = filedialog_open_filenames_hook;
 	qt_filedialog_save_filename_hook = filedialog_save_filename_hook;
 	qt_filedialog_existing_directory_hook = filedialog_existing_directory_hook;
-#else
+#endif
+#if QT_VERSION < QT_VERSION_CHECK (5, 0, 0)
 	extern bool Q_GUI_EXPORT qt_use_native_dialogs;
 	qt_use_native_dialogs = false;
 #endif
