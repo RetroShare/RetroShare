@@ -44,7 +44,6 @@
 #include "common/RsCollectionFile.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
-#include "gui/chat/ChatDialog.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsmsgs.h>
@@ -63,7 +62,6 @@
 #define HOST_SEARCH      "search"
 #define HOST_CERTIFICATE "certificate"
 #define HOST_PUBLIC_MSG  "public_msg"
-#define HOST_PRIVATE_CHAT "private_chat"
 #define HOST_REGEXP      "file|person|forum|channel|search|message|certificate|private_chat|public_msg"
 
 #define FILE_NAME       "name"
@@ -97,10 +95,6 @@
 #define CERTIFICATE_LOC_IPPORT   "locipp"
 #define CERTIFICATE_DYNDNS       "dyndns"
 #define CERTIFICATE_RADIX        "radix"
-
-#define PRIVATE_CHAT_TIME_STAMP  "time_stamp"
-#define PRIVATE_CHAT_STRING      "encrypted_data"
-#define PRIVATE_CHAT_GPG_ID      "gpgid"
 
 #define PUBLIC_MSG_TIME_STAMP  "time_stamp"
 #define PUBLIC_MSG_SRC_PGP_ID  "gpgid"
@@ -208,17 +202,6 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		}
 	}
 
-	if(url.host() == HOST_PRIVATE_CHAT) 
-	{
-		bool ok ;
-		_type = TYPE_PRIVATE_CHAT ;
-		_time_stamp = urlQuery.queryItemValue(PRIVATE_CHAT_TIME_STAMP).toUInt(&ok) ;
-		_encrypted_chat_info = urlQuery.queryItemValue(PRIVATE_CHAT_STRING) ;
-		_GPGid = urlQuery.queryItemValue(PRIVATE_CHAT_GPG_ID) ;
-
-		check() ;
-		return;
-	}
 	if(url.host() == HOST_PUBLIC_MSG) 
 	{
 		bool ok ;
@@ -343,19 +326,6 @@ bool RetroShareLink::createFile(const QString& name, uint64_t size, const QStrin
 	return valid();
 }
 
-bool RetroShareLink::createPrivateChatInvite(time_t time_stamp,const QString& gpg_id,const QString& encrypted_chat_info) 
-{
-	clear() ;
-
-	_type = TYPE_PRIVATE_CHAT ;
-	_time_stamp = time_stamp ;
-	_encrypted_chat_info = encrypted_chat_info ;
-	_GPGid = gpg_id ;
-
-	check() ;
-
-	return valid() ;
-}
 bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& issuer_pgp_id,const QString& hash) 
 {
 	clear() ;
@@ -605,11 +575,6 @@ void RetroShareLink::check()
 				_valid = false;
 			break;
 
-		case TYPE_PRIVATE_CHAT:
-			if(!checkRadix64(_encrypted_chat_info)) _valid = false ;
-			if(!checkPGPId(_GPGid)) _valid = false ;
-			break ;
-
 		case TYPE_PUBLIC_MSG:
 			if(!checkHash(_hash)) _valid = false ;
 			if(!checkPGPId(_GPGid)) _valid = false ;
@@ -686,16 +651,6 @@ QString RetroShareLink::title() const
 				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 				return QString("Click to send a private message to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
 			}
-		case TYPE_PRIVATE_CHAT:
-			{
-				RsPeerDetails detail;
-				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
-
-				if (_GPGid.toStdString() == rsPeers->getGPGOwnId().toStdString())
-					return QString("Click to open a private chat canal to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
-				else
-					return QString("This is a private chat invite for %1 (%2). You can't use it.").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
-			}
 		case TYPE_EXTRAFILE:
 			return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
 		case TYPE_FILE:
@@ -771,15 +726,6 @@ QString RetroShareLink::toString() const
 			urlQuery.addQueryItem(FILE_NAME, encodeItem(_name));
 			urlQuery.addQueryItem(FILE_SIZE, QString::number(_size));
 			urlQuery.addQueryItem(FILE_HASH, _hash);
-
-			break;
-
-		case TYPE_PRIVATE_CHAT:
-			url.setScheme(RSLINK_SCHEME) ;
-			url.setHost(HOST_PRIVATE_CHAT) ;
-			urlQuery.addQueryItem(PRIVATE_CHAT_TIME_STAMP,QString::number(_time_stamp)) ;
-			urlQuery.addQueryItem(PRIVATE_CHAT_GPG_ID,_GPGid) ;
-			urlQuery.addQueryItem(PRIVATE_CHAT_STRING,_encrypted_chat_info) ;
 
 			break;
 
@@ -869,9 +815,6 @@ QString RetroShareLink::niceName() const
 		return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
 	}
 
-	if(type() == TYPE_PRIVATE_CHAT) {
-		return QString("Private chat invite (Valid only for key %1)").arg(_GPGid);
-	}
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;
 		rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
@@ -1079,7 +1022,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_SEARCH:
 				case TYPE_MESSAGE:
 				case TYPE_CERTIFICATE:
-				case TYPE_PRIVATE_CHAT:
 				case TYPE_PUBLIC_MSG:
 					// no need to ask
 					break;

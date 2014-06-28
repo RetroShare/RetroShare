@@ -86,7 +86,6 @@ class RetroShareLink
         bool createMessage(const RsPeerId &peerId, const QString& subject);
         bool createMessage(const RsGxsId &peerId, const QString& subject);
         bool createCertificate(const RsPeerId &ssl_id) ;
-		bool createPrivateChatInvite(time_t time_stamp,const QString& gpg_id,const QString& encrypted_chat_info) ;
 		bool createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
         bool createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
 
@@ -107,7 +106,6 @@ class RetroShareLink
                const QString& location() const { return _location ; }
         const QString& radix() const { return _radix ; }
         time_t timeStamp() const { return _time_stamp ; }
-               const QString& encryptedPrivateChatInfo() const { return _encrypted_chat_info ; }
                QString title() const;
 
 		unsigned int subType() const { return _subType; }
