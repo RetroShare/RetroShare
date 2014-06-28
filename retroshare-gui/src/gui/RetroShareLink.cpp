@@ -294,16 +294,8 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	if (url.host() == HOST_CERTIFICATE) {
 		_type = TYPE_CERTIFICATE;
-		_SSLid = urlQuery.queryItemValue(CERTIFICATE_SSLID);
-		_name = urlQuery.queryItemValue(CERTIFICATE_NAME);
-		_location = urlQuery.queryItemValue(CERTIFICATE_LOCATION);
 		_radix = urlQuery.queryItemValue(CERTIFICATE_RADIX);
-		_GPGBase64String = urlQuery.queryItemValue(CERTIFICATE_GPG_BASE64);
-		_GPGid = urlQuery.queryItemValue(CERTIFICATE_GPG_ID);
-		_GPGBase64CheckSum = urlQuery.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
-		_ext_ip_port = urlQuery.queryItemValue(CERTIFICATE_EXT_IPPORT);
-		_loc_ip_port = urlQuery.queryItemValue(CERTIFICATE_LOC_IPPORT);
-		_dyndns_name = urlQuery.queryItemValue(CERTIFICATE_DYNDNS);
+
 		std::cerr << "Got a certificate link!!" << std::endl;
 		check() ;
 		return;
@@ -408,47 +400,11 @@ bool RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 		return false;
 	}
 
-	std::string gpg_base_64_str = "" ;
-	std::string gpg_base_64_checksum_str = "" ;
-
-	if(!rsPeers->GetPGPBase64StringAndCheckSum(detail.gpg_id,gpg_base_64_str,gpg_base_64_checksum_str))
-		return false ;
-
-	_GPGBase64String = QString::fromStdString(gpg_base_64_str) ;
-	_GPGBase64CheckSum = QString::fromStdString(gpg_base_64_checksum_str) ;
-
 	_type = TYPE_CERTIFICATE;
-
-	_GPGid = QString::fromStdString(detail.gpg_id.toStdString()).right(8);
-
-	// if(detail.isOnlyGPGdetail)
-	// {
-	// 	_SSLid.clear();
-	// 	_location.clear();
-	// 	_ext_ip_port.clear();
-	// 	_loc_ip_port.clear();
-	// }
-	// else
-	// {
-	_SSLid = QString::fromStdString(ssl_id.toStdString()) ;
 	_radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false).c_str());
 	_radix.replace("\n","");
-	_location = QString::fromUtf8(detail.location.c_str()) ;
-	_ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
-	_loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
-	_dyndns_name = QString::fromStdString(detail.dyndns);
-	//}
-	_name = QString::fromUtf8(detail.name.c_str()) ;
 
-	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
-	std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
 	std::cerr << "Found radix                = " << _radix.toStdString() << std::endl;
-	std::cerr << "Found SSLId                = " << _SSLid.toStdString() << std::endl;
-	std::cerr << "Found GPGId                = " << _GPGid.toStdString() << std::endl;
-	std::cerr << "Found Local    IP+Port     = " << _loc_ip_port.toStdString() << std::endl;
-	std::cerr << "Found External IP+Port     = " << _ext_ip_port.toStdString() << std::endl;
-	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
-	std::cerr << "Found DNS                  = " << _dyndns_name.toStdString() << std::endl;
 
 	return true;
 }
@@ -753,7 +709,14 @@ QString RetroShareLink::title() const
 		case TYPE_MESSAGE:
 			return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
 		case TYPE_CERTIFICATE:
-			return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") + QString("PGP Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
+			RsPeerDetails details ;
+			uint32_t error_code ;
+
+			if(!rsPeers->loadDetailsFromStringCert(_radix.toStdString(),details,error_code))
+				return QObject::tr("This cert is malformed. Error code: ")+QString::number(error_code) ;
+			else
+				return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") 
+						+ QString("PGP Id = ") + QString::fromStdString(details.gpg_id.toStdString()) + QString("\nSSLId = ")+QString::fromStdString(details.id.toStdString());
 	}
 
 	return "";
@@ -889,27 +852,7 @@ QString RetroShareLink::toString() const
 		case TYPE_CERTIFICATE:
 			url.setScheme(RSLINK_SCHEME);
 			url.setHost(HOST_CERTIFICATE) ;
-			if (!_SSLid.isEmpty()) {
-				urlQuery.addQueryItem(CERTIFICATE_SSLID, _SSLid);
-			}
-			urlQuery.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
-			urlQuery.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
-			urlQuery.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
-			if (!_location.isEmpty()) {
-				urlQuery.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
-			}
 			urlQuery.addQueryItem(CERTIFICATE_RADIX, _radix);
-			urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
-			if (!_loc_ip_port.isEmpty()) {
-				urlQuery.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
-			}
-			if (!_ext_ip_port.isEmpty()) {
-				urlQuery.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
-			}
-			if (!_dyndns_name.isEmpty()) {
-				urlQuery.addQueryItem(CERTIFICATE_DYNDNS, encodeItem(_dyndns_name));
-			}
-
 			break;
 	}
 
@@ -934,11 +877,15 @@ QString RetroShareLink::niceName() const
 		rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
 	}
-	if(type() == TYPE_CERTIFICATE) {
-		if (_location.isEmpty()) {
-			return QString("RetroShare Certificate (%1)").arg(_name);
-		}
-		return QString("RetroShare Certificate (%1, @%2)").arg(_name, _location);	// should add SSL id there
+	if(type() == TYPE_CERTIFICATE) 
+	{
+		RsPeerDetails details ;
+		uint32_t error_code ;
+
+		if(!rsPeers->loadDetailsFromStringCert(_radix.toStdString(),details,error_code))
+			return QObject::tr("This cert is malformed. Error code: ")+QString::number(error_code) ;
+		else
+			return QString("RetroShare Certificate (%1, @%2)").arg(QString::fromUtf8(details.name.c_str()), QString::fromUtf8(details.location.c_str()));	// should add SSL id there
 	}
 
 	return name();
@@ -1242,37 +1189,10 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #endif
 					needNotifySuccess = true;
 
-					//QString RS_Certificate ;
-					//RS_Certificate += "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" ;
-					//RS_Certificate += "Version: Retroshare Generated cert.\n" ;
-					//RS_Certificate += "\n" ;
-
-					//QString radix = link.GPGRadix64Key() ;
-
-					//while(radix.size() > 64)
-					//{
-					//	RS_Certificate += radix.left(64) + "\n" ;
-					//	radix = radix.right(radix.size() - 64) ;
-					//}
-					//RS_Certificate += radix.left(64) + "\n" ;
-					//RS_Certificate += "=" + link.GPGBase64CheckSum() + "\n" ;
-					//RS_Certificate += "-----END PGP PUBLIC KEY BLOCK-----\n" ;
-					//RS_Certificate += "--SSLID--" + link.SSLId() + ";--LOCATION--" + link.location() + ";\n" ;
-
-					//if(!link.externalIPAndPort().isNull())
-					//	RS_Certificate += "--EXT--" + link.externalIPAndPort() + ";" ;
-					//if(!link.localIPAndPort().isNull())
-					//	RS_Certificate += "--LOCAL--" + link.localIPAndPort() + ";" ;
-					//if(!link.dyndns().isNull())
-					//	RS_Certificate += "--DYNDNS--" + link.dyndns() + ";" ;
-					//RS_Certificate += "\n" ;
-
 					std::cerr << "Usign this certificate:" << std::endl;
-					//std::cerr << RS_Certificate.toStdString() << std::endl;
 					std::cerr << link.radix().toStdString() << std::endl;
 
 					ConnectFriendWizard connectFriendWizard;
-					//					connectFriendWizard.setCertificate(RS_Certificate, (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
 					connectFriendWizard.setCertificate(link.radix(), (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
 					connectFriendWizard.exec();
 					needNotifySuccess = false;
@@ -1296,49 +1216,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					//		 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
 				}
 				break ;
-
-//			case TYPE_PRIVATE_CHAT:
-//				{
-//					std::cerr << "Opening a private chat window " << std::endl;
-//					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
-//					std::cerr << "      enc-string = " << link._encrypted_chat_info.toStdString() << std::endl;
-//					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
-//
-//					if(link._time_stamp < time(NULL))
-//					{
-//						QMessageBox::information(NULL,QObject::tr("Chat link is expired"),QObject::tr("This chat link is expired. The destination peer will not answer.")) ;
-//						break ;
-//					}
-//					if(RsPgpId(link._GPGid.toStdString()) != rsPeers->getGPGOwnId())
-//					{
-//						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't use it. Key ID = ")+link._GPGid) ;
-//						break ;
-//					}
-//
-//					DistantChatPeerId dpid  ;
-//					uint32_t error_code ;
-//
-//					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,dpid,error_code))
-//					{
-//						QString error_msg ;
-//						switch(error_code)
-//						{
-//							default:
-//							case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED:  error_msg = QObject::tr("The link could not be decrypted.") ; break ;
-//							case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH: error_msg = QObject::tr("The link signature cannot be checked.") ; break ;
-//							case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY:        error_msg = QObject::tr("The link is signed by an unknown key.") ; break ;
-//						}
-//						QMessageBox::information(NULL,QObject::tr("Chat connection is not possible"),error_msg) ;
-//					}
-//					else
-//					{
-//						if(error_code == RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY)
-//							QMessageBox::information(NULL,QObject::tr("Chat connection is unauthenticated"),QObject::tr("Signature check failed!\nMake sure you know who you're talking to.")) ;
-//
-//						ChatDialog::chatFriend(dpid);
-//					}
-//				}
-//				break ;
 
 			case TYPE_FILE:
 			case TYPE_EXTRAFILE:
@@ -1537,7 +1414,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 					if(!ssl_id.isNull() && rsPeers->getPeerDetails(ssl_id,detail) && detail.accept_connection)
 					{
-						//if (detail.accept_connection || RsPeerId(detail.id) == rsPeers->getOwnId() || RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) 
 						MessageComposer *msg = MessageComposer::newMsg();
 						msg->addRecipient(MessageComposer::TO, detail.id);
 						if (link.subject().isEmpty() == false) {
