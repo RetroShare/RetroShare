@@ -55,29 +55,29 @@ class p3Msgs: public RsMsgs
 	   * @param msgList ref to list summarising client's msgs
 	   */
 	  virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-	  virtual bool getMessage(const std::string &mId, MessageInfo &msg);
+      virtual bool getMessage(const RsMessageId &mId, MessageInfo &msg);
 	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
 	  virtual bool MessageSend(MessageInfo &info);
-	  virtual bool decryptMessage(const std::string& mid);
+      virtual bool decryptMessage(const RsMessageId &mid);
 	  virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
-	  virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId);
-	  virtual bool MessageToTrash(const std::string &mid, bool bTrash);
-	  virtual bool MessageDelete(const std::string &mid);
-	  virtual bool MessageRead(const std::string &mid, bool unreadByUser);
-	  virtual bool MessageReplied(const std::string &mid, bool replied);
-	  virtual bool MessageForwarded(const std::string &mid, bool forwarded);
-	  virtual bool MessageStar(const std::string &mid, bool star);
-	  virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load);
-	  virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId);
+      virtual bool MessageToDraft(MessageInfo &info, const RsMessageId &msgParentId);
+      virtual bool MessageToTrash(const RsMessageId &mid, bool bTrash);
+      virtual bool MessageDelete(const RsMessageId &mid);
+      virtual bool MessageRead(const RsMessageId &mid, bool unreadByUser);
+      virtual bool MessageReplied(const RsMessageId &mid, bool replied);
+      virtual bool MessageForwarded(const RsMessageId &mid, bool forwarded);
+      virtual bool MessageStar(const RsMessageId &mid, bool star);
+      virtual bool MessageLoadEmbeddedImages(const RsMessageId &mid, bool load);
+      virtual bool getMsgParentId(const RsMessageId &msgId, RsMessageId &msgParentId);
 
 	  virtual bool getMessageTagTypes(MsgTagType& tags);
 	  virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
 	  virtual bool removeMessageTagType(uint32_t tagId);
 
-	  virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info);
+      virtual bool getMessageTag(const RsMessageId &msgId, MsgTagInfo& info);
 	  /* set == false && tagId == 0 --> remove all */
-	  virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
+      virtual bool setMessageTag(const RsMessageId &msgId, uint32_t tagId, bool set);
 
 	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
 

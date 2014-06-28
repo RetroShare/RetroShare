@@ -151,7 +151,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     listMode = LIST_NOTHING;
 
-    mCurrMsgId  = "";
+    mCurrMsgId  = RsMessageId();
 
     // Set the QStandardItemModel
     MessagesModel = new QStandardItemModel(0, COLUMN_COUNT);
@@ -531,8 +531,8 @@ bool MessagesDialog::hasMessageStar(int nRow)
 
 void MessagesDialog::messageslistWidgetCustomPopupMenu( QPoint /*point*/ )
 {
-    std::string cid;
-    std::string mid;
+    RsPeerId cid;
+    RsMessageId mid;
 
     MessageInfo msgInfo;
     if (getCurrentMsg(cid, mid)) {
@@ -659,8 +659,8 @@ void MessagesDialog::newmessage()
 
 void MessagesDialog::openAsWindow()
 {
-    std::string cid;
-    std::string mid;
+    RsPeerId cid;
+    RsMessageId mid;
 
     if(!getCurrentMsg(cid, mid))
         return ;
@@ -677,8 +677,8 @@ void MessagesDialog::openAsWindow()
 
 void MessagesDialog::openAsTab()
 {
-    std::string cid;
-    std::string mid;
+    RsPeerId cid;
+    RsMessageId mid;
 
     if(!getCurrentMsg(cid, mid))
         return ;
@@ -696,8 +696,8 @@ void MessagesDialog::openAsTab()
 
 void MessagesDialog::editmessage()
 {
-    std::string cid;
-    std::string mid;
+    RsPeerId cid;
+    RsMessageId mid;
 
     if(!getCurrentMsg(cid, mid))
         return ;
@@ -1001,7 +1001,7 @@ void MessagesDialog::insertMessages()
         for (nRow = 0; nRow < nRowCount; ) {
             std::string msgIdFromRow = MessagesModel->item(nRow, COLUMN_DATA)->data(ROLE_MSGID).toString().toStdString();
             for(it = msgToShow.begin(); it != msgToShow.end(); it++) {
-                if (it->msgId == msgIdFromRow) {
+                if (it->msgId == RsMessageId(msgIdFromRow)) {
                     break;
                 }
             }
@@ -1040,7 +1040,7 @@ void MessagesDialog::insertMessages()
             // search exisisting items
             nRowCount = MessagesModel->rowCount();
             for (nRow = 0; nRow < nRowCount; nRow++) {
-                if (it->msgId == MessagesModel->item(nRow, COLUMN_DATA)->data(ROLE_MSGID).toString().toStdString()) {
+                if (it->msgId == RsMessageId( MessagesModel->item(nRow, COLUMN_DATA)->data(ROLE_MSGID).toString().toStdString())) {
                     break;
                 }
             }
@@ -1160,7 +1160,7 @@ void MessagesDialog::insertMessages()
             item[COLUMN_SUBJECT]->setData(text + dateString, ROLE_SORT);
 
             // internal data
-            QString msgId = QString::fromStdString(it->msgId);
+            QString msgId = QString::fromStdString(it->msgId.toStdString() );
             item[COLUMN_DATA]->setData(QString::fromStdString(it->srcId.toStdString()), ROLE_SRCID);
             item[COLUMN_DATA]->setData(msgId, ROLE_MSGID);
             item[COLUMN_DATA]->setData(it->msgflags, ROLE_MSGFLAGS);
@@ -1210,32 +1210,40 @@ void MessagesDialog::insertMessages()
                 item[i]->setForeground(brush);
             }
 
-            // No of Files.
-            {
-// MIME FIXME:                item[COLUMN_ATTACHEMENTS] -> setText(QString::number(it -> count));
-                item[COLUMN_ATTACHEMENTS] -> setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, ROLE_SORT);
-                item[COLUMN_ATTACHEMENTS] -> setTextAlignment(Qt::AlignHCenter);
-            }
-
+            unsigned int filecount = 0;
             if (filterColumn == COLUMN_CONTENT) {
                 // need content for filter
                 if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
                     gotInfo = true;
                     QTextDocument doc;
-                    mimetic::MimeEntityList meList = msgInfo.body().parts();
-                    std::string body;
-                    for( mimetic::MimeEntityList::const_iterator it = meList.begin(); it != meList.end(); it++ ){
+                    if( msgInfo.header().contentType().str() == "multipart/mixed" ){
+                        mimetic::MimeEntityList & parts = msgInfo.body().parts();
+                        filecount = parts.size() - 1;  // first part will be the text body
+                        for( mimetic::MimeEntityList::const_iterator it = parts.begin(); it != parts.end(); it++ ){
                         mimetic::MimeEntity * part = *it;
                         if( part->header().contentType().type() == "text" ){
-                            body = part->body().data();
+                                std::string body = part->body().data();
+                                doc.setHtml( QString::fromUtf8( body.c_str() ) );
+                                break;
                         }
                     }
+                    }
+                    else if( msgInfo.header().contentType().type() == "text" ){
+                        std::string body = msgInfo.body().data();
                     doc.setHtml( QString::fromUtf8( body.c_str() ) );
+                    }
                     item[COLUMN_CONTENT]->setText(doc.toPlainText().replace(QString("\n"), QString(" ")));
                 } else {
                     std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
                     item[COLUMN_CONTENT]->setText("");
                 }
+            }
+
+            // No of Files.
+            {
+                item[COLUMN_ATTACHEMENTS] -> setText(QString::number( filecount ));
+                item[COLUMN_ATTACHEMENTS] -> setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, ROLE_SORT);
+                item[COLUMN_ATTACHEMENTS] -> setTextAlignment(Qt::AlignHCenter);
             }
 
 				if(it->msgflags & RS_MSG_ENCRYPTED)
@@ -1339,8 +1347,8 @@ void MessagesDialog::doubleClicked(const QModelIndex &index)
     /* activate row */
     clicked (index);
 
-    std::string cid;
-    std::string mid;
+    RsPeerId cid;
+    RsMessageId mid;
 
     if(!getCurrentMsg(cid, mid))
         return ;
@@ -1386,7 +1394,7 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool read)
 
         std::string mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString().toStdString();
 
-        if (rsMsgs->MessageRead(mid, !read)) {
+        if (rsMsgs->MessageRead(RsMessageId(mid), !read)) {
             int msgFlag = item[COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
             msgFlag &= ~RS_MSG_NEW;
 
@@ -1444,7 +1452,7 @@ void MessagesDialog::setMsgStar(const QList<int> &Rows, bool star)
 
         std::string mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString().toStdString();
 
-        if (rsMsgs->MessageStar(mid, star)) {
+        if (rsMsgs->MessageStar(RsMessageId(mid), star)) {
             int msgFlag = item[COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
             msgFlag &= ~RS_MSG_STAR;
 
@@ -1470,8 +1478,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     std::cerr << "MessagesDialog::insertMsgTxtAndFiles()" << std::endl;
 
     /* get its Ids */
-    std::string cid;
-    std::string mid;
+    RsMessageId cid;
+    RsMessageId mid;
 
     QModelIndex currentIndex = proxyModel->mapToSource(Index);
     if (currentIndex.isValid() == false) {
@@ -1488,7 +1496,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         updateInterface();
         return;
     }
-    mid = item->data(ROLE_MSGID).toString().toStdString();
+    mid = RsMessageId(item->data(ROLE_MSGID).toString().toStdString());
 
     int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
     if (nCount == 1) {
@@ -1550,12 +1558,12 @@ void MessagesDialog::decryptSelectedMsg()
 
     // Force refill
     mCurrMsgId.clear();
-    msgWidget->fill("");
+    msgWidget->fill(RsMessageId());
 
     insertMsgTxtAndFiles(ui.messagestreeView->currentIndex());
 }
 
-bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
+bool MessagesDialog::getCurrentMsg(RsPeerId &cid, RsMessageId &mid)
 {
     QModelIndex currentIndex = ui.messagestreeView->currentIndex();
     currentIndex = proxyModel->mapToSource(currentIndex);
@@ -1583,8 +1591,8 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
     if (item == NULL) {
         return false;
     }
-    cid = item->data(ROLE_SRCID).toString().toStdString();
-    mid = item->data(ROLE_MSGID).toString().toStdString();
+    cid = RsPeerId(item->data(ROLE_SRCID).toString().toStdString());
+    mid = RsMessageId(item->data(ROLE_MSGID).toString().toStdString());
     return true;
 }
 
@@ -1623,9 +1631,9 @@ void MessagesDialog::removemessage()
 //            closeTab(mid.toStdString());
 
             if (bDelete) {
-                rsMsgs->MessageDelete(mid.toStdString());
+                rsMsgs->MessageDelete(RsMessageId(mid.toStdString()));
             } else {
-                rsMsgs->MessageToTrash(mid.toStdString(), true);
+                rsMsgs->MessageToTrash(RsMessageId(mid.toStdString()), true);
             }
         }
     }
@@ -1641,7 +1649,7 @@ void MessagesDialog::undeletemessage()
     getSelectedMsgCount (&Rows, NULL, NULL, NULL);
     for (int nRow = 0; nRow < Rows.size(); nRow++) {
         QString mid = MessagesModel->item (Rows [nRow], COLUMN_DATA)->data(ROLE_MSGID).toString();
-        rsMsgs->MessageToTrash(mid.toStdString(), false);
+        rsMsgs->MessageToTrash(RsMessageId(mid.toStdString()), false);
     }
 
     // LockUpdate -> insertMessages();
@@ -1911,7 +1919,7 @@ void MessagesDialog::tagAboutToShow()
 		QStandardItem* item = MessagesModel->item(rows [0], COLUMN_DATA);
 		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
 
-		rsMsgs->getMessageTag(msgId, tagInfo);
+        rsMsgs->getMessageTag(RsMessageId(msgId), tagInfo);
 	}
 
 	menu->activateActions(tagInfo.tagIds);
@@ -1927,7 +1935,7 @@ void MessagesDialog::tagRemoveAll()
 		QStandardItem* item = MessagesModel->item(rows [row], COLUMN_DATA);
 		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
 
-		rsMsgs->setMessageTag(msgId, 0, false);
+        rsMsgs->setMessageTag(RsMessageId(msgId), 0, false);
 		Lock.setUpdate(true);
 	}
 
@@ -1948,7 +1956,7 @@ void MessagesDialog::tagSet(int tagId, bool set)
 		QStandardItem* item = MessagesModel->item(rows [row], COLUMN_DATA);
 		std::string msgId = item->data(ROLE_MSGID).toString().toStdString();
 
-		if (rsMsgs->setMessageTag(msgId, tagId, set)) {
+        if (rsMsgs->setMessageTag(RsMessageId(msgId), tagId, set)) {
 			Lock.setUpdate(true);
 		}
 	}
@@ -1992,7 +2000,7 @@ void MessagesDialog::tabCloseRequested(int tab)
 	}
 }
 
-void MessagesDialog::closeTab(const std::string &msgId)
+void MessagesDialog::closeTab(const RsMessageId &msgId)
 {
     QList<MessageWidget*> msgWidgets;
 
@@ -2063,7 +2071,7 @@ void MessagesDialog::updateInterface()
 		count = getSelectedMsgCount(NULL, NULL, NULL, NULL);
 	} else {
 		MessageWidget *msg = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
-		if (msg && msg->msgId().empty() == false) {
+        if (msg && msg->msgId().isNull() == false) {
 			count = 1;
 		}
 	}

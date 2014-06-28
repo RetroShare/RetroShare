@@ -1573,7 +1573,7 @@ uint32_t    RsMsgItem::serial_size(bool m_bConfiguration)
 
 	if (m_bConfiguration) {
 		// serialise msgId too
-		s += 4;
+        s += GetTlvStringSize(msgId.toStdString());
 	}
 	
 	return s;
@@ -1609,8 +1609,10 @@ bool     RsMsgItem::serialise(void *data, uint32_t& pktsize,bool config)
 
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, mimeMessage);
 
-	if (config) // serialise msgId too
-        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID , msgId);
+    if( config ){
+        std::string mId = msgId.toStdString();
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID , mId);
+    }
 
 	if (offset != tlvsize)
 	{
@@ -1660,7 +1662,9 @@ RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
     ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mimeMessage);
 
 	if (m_bConfiguration) {
-        GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSGID, item->msgId ); //use this line for backward compatibility
+        std::string mId;
+        GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSGID, mId ); //use this line for backward compatibility
+        item->msgId = RsMessageId( mId );
 	}
 
 	if (offset != rssize)
@@ -1883,7 +1887,7 @@ uint32_t RsMsgTags::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
-	s += 4; /* msgId */
+    s += msgId.serial_size();
 	s += tagIds.size() * 4; /* tagIds */
 
 	return s;
@@ -1911,7 +1915,7 @@ bool RsMsgTags::serialise(void *data, uint32_t& pktsize,bool config)
 	/* skip the header */
 	offset += 8;
 
-    ok &= setRawString(data,tlvsize,&offset, msgId);
+    ok &= setRawString(data,tlvsize,&offset, msgId.toStdString());
 
 	std::list<uint32_t>::iterator mit = tagIds.begin();
 	for(;mit != tagIds.end(); mit++)
@@ -1959,7 +1963,9 @@ RsMsgTags* RsMsgSerialiser::deserialiseMsgTagItem(void* data, uint32_t* pktsize)
 
 
 	/* get mandatory parts first */
-    ok &= getRawString(data, rssize, &offset, item->msgId);
+    std::string mId;
+    ok &= getRawString(data, rssize, &offset, mId);
+    item->msgId = RsMessageId( mId );
 
 	uint32_t tagId;
 	while (offset != rssize)
@@ -2019,7 +2025,7 @@ uint32_t RsMsgSrcId::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
-	s += 4;
+    s += msgId.serial_size();
 	s += srcId.serial_size() ;
 
 	return s;
@@ -2048,8 +2054,8 @@ bool RsMsgSrcId::serialise(void *data, uint32_t& pktsize,bool config)
 	/* skip the header */
 	offset += 8;
 
-    ok &= setRawString(data, tlvsize, &offset, msgId);
-	ok &= srcId.serialise(data, tlvsize, offset) ;
+    ok &= msgId.serialise(data, tlvsize, offset);
+    ok &= srcId.serialise(data, tlvsize, offset);
 
 	if (offset != tlvsize)
 	{
@@ -2093,7 +2099,12 @@ RsMsgSrcId* RsMsgSerialiser::deserialiseMsgSrcIdItem(void* data, uint32_t* pktsi
 
 
 	/* get mandatory parts first */
-    ok &= getRawString(data, rssize, &offset, item->msgId );
+    std::string mId;
+    ok &= getRawString(data, rssize, &offset, mId );
+    item->msgId = RsMessageId( mId );
+
+
+
 	ok &= item->srcId.deserialise(data, rssize, offset);
 
 	if (offset != rssize)
@@ -2145,8 +2156,8 @@ uint32_t RsMsgParentId::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
-	s += 4; // srcId
-	s += 4; // msgParentId
+    s += msgId.SIZE_IN_BYTES; // srcId
+    s += msgParentId.SIZE_IN_BYTES; // msgParentId
 
 	return s;
 }
@@ -2173,8 +2184,8 @@ bool RsMsgParentId::serialise(void *data, uint32_t& pktsize,bool config)
 	/* skip the header */
 	offset += 8;
 
-    ok &= setRawString(data, tlvsize, &offset, msgId);
-    ok &= setRawString(data, tlvsize, &offset, msgParentId);
+    ok &= setRawString(data, tlvsize, &offset, msgId.toStdString());
+    ok &= setRawString(data, tlvsize, &offset, msgParentId.toStdString());
 
 	if (offset != tlvsize)
 	{
@@ -2218,8 +2229,12 @@ RsMsgParentId* RsMsgSerialiser::deserialiseMsgParentIdItem(void* data, uint32_t*
 
 
 	/* get mandatory parts first */
-    ok &= getRawString(data, rssize, &offset, item->msgId );
-    ok &= getRawString(data, rssize, &offset, item->msgParentId );
+    std::string mId, mPId;
+    ok &= getRawString(data, rssize, &offset, mId );
+    ok &= getRawString(data, rssize, &offset, mPId );
+    item->msgId = RsMessageId( mId );
+    item->msgParentId = RsMessageId( mPId );
+
 
 	if (offset != rssize)
 	{

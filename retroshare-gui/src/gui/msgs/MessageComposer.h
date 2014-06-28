@@ -58,9 +58,9 @@ public:
     static void recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
     static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
 
-    static MessageComposer *newMsg(const std::string &msgId = "");
-    static MessageComposer *replyMsg(const std::string &msgId, bool all);
-    static MessageComposer *forwardMsg(const std::string &msgId);
+    static MessageComposer *newMsg(const RsMessageId &msgId = RsMessageId());
+    static MessageComposer *replyMsg(const RsMessageId &msgId, bool all);
+    static MessageComposer *forwardMsg(const RsMessageId &msgId);
 
     /* worker fns */
     void  setFileList(const std::list<DirDetails>&);
@@ -208,8 +208,8 @@ private:
     QHash<QString, QString> autoLinkTitleDictionary;
     QHash<QString, int> autoLinkTargetDictionary;
 
-    std::string m_msgParentId; // parent message id
-    std::string m_sDraftMsgId; // existing message id
+    RsMessageId m_msgParentId; // parent message id
+    RsMessageId m_sDraftMsgId; // existing message id
     enumMessageType m_msgType;
     std::list<uint32_t> m_tagIds;
     QList<QLabel*> tagLabels;

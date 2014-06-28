@@ -24,6 +24,8 @@
 
 #include <QWidget>
 #include "ui_MessageWidget.h"
+#include <retroshare/rsmsgs.h>
+
 
 class QToolButton;
 class QAction;
@@ -48,18 +50,18 @@ public:
 	MessageWidget(bool controlled, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~MessageWidget();
 
-	static MessageWidget *openMsg(const std::string &msgId, bool window);
+    static MessageWidget *openMsg(const RsMessageId &msgId, bool window);
 
-    std::string msgId() { return currMsgId; }
+    RsMessageId msgId() { return currMsgId; }
 	void connectAction(enumActionType actionType, QToolButton* button);
 	void connectAction(enumActionType actionType, QAction* action);
 
-	void fill(const std::string &msgId);
+    void fill(const RsMessageId &msgId);
 	void processSettings(const QString &settingsGroup, bool load);
 
 	QString subject(bool noEmpty);
 
-	static bool decryptMsg(const std::string &msgId);
+    static bool decryptMsg(const RsMessageId &msgId);
 
 private slots:
 	void reply();
@@ -90,7 +92,7 @@ private:
 
 	bool isControlled;
 	bool isWindow;
-	std::string currMsgId;
+    RsMessageId currMsgId;
 	unsigned int currMsgFlags;
 
 	QList<QLabel*> tagLabels;

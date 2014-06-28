@@ -417,7 +417,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			for (msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt) {
 				if (fi.mId1.empty()) {
 					/* store first message */
-					fi.mId1 = msgIt->msgId;
+                    fi.mId1 = msgIt->msgId.toStdString();
 				}
 
 				if (msgIt->msgflags & RS_MSG_TRASH) {
@@ -426,7 +426,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 
 				if ((msgIt->msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX) {
 					/* take message from inbox */
-					fi.mId1 = msgIt->msgId;
+                    fi.mId1 = msgIt->msgId.toStdString();
 					break;
 				}
 			}

@@ -507,7 +507,7 @@ class RsMsgItem: public RsMessageItem
 		// ----------- Specific fields ------------- //
 
 		uint32_t msgFlags;
-        std::string msgId;
+        RsMessageId msgId;
 
 		uint32_t sendTime;
 		uint32_t recvTime;
@@ -551,7 +551,7 @@ public:
 
 		// ----------- Specific fields ------------- //
 		//
-    std::string msgId;
+    RsMessageId msgId;
 	std::list<uint32_t> tagIds;
 };
 
@@ -571,7 +571,7 @@ class RsMsgSrcId : public RsMessageItem
 		// ----------- Specific fields ------------- //
 		//
 
-        std::string msgId;
+        RsMessageId msgId;
 		RsPeerId srcId;
 };
 class RsPublicMsgInviteConfigItem : public RsMessageItem
@@ -609,8 +609,8 @@ class RsMsgParentId : public RsMessageItem
 
 		// ----------- Specific fields ------------- //
 		//
-        std::string msgId;
-        std::string msgParentId;
+        RsMessageId msgId;
+        RsMessageId msgParentId;
 };
 
 class RsMsgSerialiser: public RsSerialType

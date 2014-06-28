@@ -26,6 +26,7 @@
 
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
+#include <retroshare/rsmsgs.h>
 
 #define IMAGE_MESSAGES          ":/images/evolution.png"
 
@@ -127,7 +128,7 @@ private:
   void updateMessageSummaryList();
   void insertMsgTxtAndFiles(QModelIndex index = QModelIndex(), bool bSetToRead = true);
 
-  bool getCurrentMsg(std::string &cid, std::string &mid);
+  bool getCurrentMsg(RsPeerId &cid, RsMessageId &mid);
   void setMsgAsReadUnread(const QList<int> &Rows, bool read);
   void setMsgStar(const QList<int> &Rows, bool mark);
 
@@ -140,7 +141,7 @@ private:
   void setToolbarButtonStyle(Qt::ToolButtonStyle style);
   void fillQuickView();
 
-  void closeTab(const std::string &msgId);
+  void closeTab(const RsMessageId &msgId);
 
   bool inProcessSettings;
   bool inChange;
@@ -148,7 +149,7 @@ private:
 
   enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } listMode;
 
-  std::string mCurrMsgId;
+  RsMessageId mCurrMsgId;
 
   // timer and index for showing message
   QTimer *timer;

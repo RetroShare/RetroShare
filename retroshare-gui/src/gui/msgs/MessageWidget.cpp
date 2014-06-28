@@ -86,14 +86,14 @@ protected:
 	uint msgFlags;
 };
 
-MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
+MessageWidget *MessageWidget::openMsg(const RsMessageId &msgId, bool window)
 {
-	if (msgId.empty()) {
+    if (msgId.isNull()) {
 		return NULL;
 	}
 
 	MessageInfo msgInfo;
-	if (!rsMsgs->getMessage(msgId, msgInfo)) {
+    if (!rsMsgs->getMessage(RsMessageId(msgId), msgInfo)) {
 		std::cerr << "MessageWidget::openMsg() Couldn't find Msg" << std::endl;
 		return NULL;
 	}
@@ -300,7 +300,7 @@ void MessageWidget::togglefileview()
 void MessageWidget::getcurrentrecommended()
 {
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+    if (rsMsgs->getMessage(RsMessageId(currMsgId), msgInfo) == false) {
 		return;
 	}
 
@@ -343,7 +343,7 @@ void MessageWidget::getallrecommended()
 {
 	/* get Message */
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+    if (rsMsgs->getMessage(RsMessageId(currMsgId), msgInfo) == false) {
 		return;
 	}
 
@@ -376,7 +376,7 @@ void MessageWidget::messagesChanged()
 
 	/* test Message */
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+    if (rsMsgs->getMessage(RsMessageId(currMsgId), msgInfo) == false) {
 		/* messages was removed */
 		if (isWindow) {
 			window()->close();
@@ -404,12 +404,12 @@ void MessageWidget::showTagLabels()
 {
 	clearTagLabels();
 
-	if (currMsgId.empty()) {
+    if (currMsgId.isNull()) {
 		return;
 	}
 
 	MsgTagInfo tagInfo;
-	rsMsgs->getMessageTag(currMsgId, tagInfo);
+    rsMsgs->getMessageTag(RsMessageId(currMsgId), tagInfo);
 
 	if (tagInfo.tagIds.empty() == false) {
 		ui.tagsLabel->setVisible(true);
@@ -442,7 +442,7 @@ void MessageWidget::refill()
 
 	//fill(msg_id) ;
 }
-void MessageWidget::fill(const std::string &msgId)
+void MessageWidget::fill(const RsMessageId &msgId)
 {
 //	if (currMsgId == msgId) {
 //		// message doesn't changed
@@ -453,7 +453,7 @@ void MessageWidget::fill(const std::string &msgId)
 
 	currMsgId = msgId;
 
-	if (currMsgId.empty()) {
+    if (currMsgId.isNull()) {
 		/* blank it */
 		ui.dateText-> setText("");
 		ui.toText->setText("");
@@ -483,32 +483,10 @@ void MessageWidget::fill(const std::string &msgId)
 	clearTagLabels();
 
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+    if (rsMsgs->getMessage(RsMessageId(currMsgId), msgInfo) == false) {
 		std::cerr << "MessageWidget::fill() Couldn't find Msg" << std::endl;
 		return;
 	}
-
-// MIME FIXME: Should be real attachments
-#if 0
-	const std::list<FileInfo> &recList = msgInfo.files;
-	std::list<FileInfo>::const_iterator it;
-
-	ui.msgList->clear();
-
-	QList<QTreeWidgetItem*> items;
-	for (it = recList.begin(); it != recList.end(); it++) {
-		QTreeWidgetItem *item = new QTreeWidgetItem;
-		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
-		item->setText(COLUMN_FILE_SIZE, QString::number(it->size));
-        item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
-
-		/* add to the list */
-		items.append(item);
-	}
-
-	/* add the items in! */
-	ui.msgList->insertTopLevelItems(0, items);
-#endif
 
 	/* iterate through the sources */
 	RetroShareLink link;
@@ -625,12 +603,61 @@ void MessageWidget::fill(const std::string &msgId)
         ui.subjectText->setText(QString::fromUtf8(msgInfo.header().subject().c_str()));
 	}
 
-    std::string body = msgInfo.body().data();
+    unsigned int filecount = 0;
+    std::string body;
+    if( msgInfo.header().contentType().str() == "multipart/mixed" ){
+        QList<QTreeWidgetItem*> items;
+        mimetic::MimeEntityList & parts = msgInfo.body().parts();
+        filecount = parts.size() - 1;  // first part will be the text body
+        for( mimetic::MimeEntityList::const_iterator it = parts.begin(); it != parts.end(); it++ ){
+            mimetic::MimeEntity * part = *it;
+            if( part->header().contentType().type() == "text" ){
+                body = part->body().data();
+            }
+            else if( part->header().contentType().type() == "application" ){
+                part->header().contentType().param( "name" );
+                QTreeWidgetItem *item = new QTreeWidgetItem;
+                item->setText(COLUMN_FILE_NAME, QString::fromUtf8( part->header().contentType().param( "name" ).c_str() ));
+                items.append(item);
+            }
+        }
+        ui.msgList->insertTopLevelItems(0, items);
+    }
+    else if( msgInfo.header().contentType().type() == "multipart/alternative" ){
+        // MIME FIXME:
+    }
+    else if( msgInfo.header().contentType().type() == "text" ){
+        body = msgInfo.body().data();
+    }
+
+
+    // MIME FIXME: Should be real attachments
+    #if 0
+        const std::list<FileInfo> &recList = msgInfo.files;
+        std::list<FileInfo>::const_iterator it;
+
+        ui.msgList->clear();
+
+        QList<QTreeWidgetItem*> items;
+        for (it = recList.begin(); it != recList.end(); it++) {
+            QTreeWidgetItem *item = new QTreeWidgetItem;
+            item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
+            item->setText(COLUMN_FILE_SIZE, QString::number(it->size));
+            item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
+
+            /* add to the list */
+            items.append(item);
+        }
+
+        /* add the items in! */
+        ui.msgList->insertTopLevelItems(0, items);
+    #endif
+
     text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8( body.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS );
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
-// MIME FIXME:	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
+    ui.filesText->setText(QString("(%1 %2)").arg(filecount).arg(filecount == 1 ? tr("File") : tr("Files")));
 
 	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
 		ui.decryptFrame->show();
@@ -715,7 +742,7 @@ void MessageWidget::reply()
 {
 	/* put msg on msgBoard, and switch to it. */
 
-	if (currMsgId.empty()) {
+    if (currMsgId.isNull()) {
 		return;
 	}
 
@@ -734,7 +761,7 @@ void MessageWidget::replyAll()
 {
 	/* put msg on msgBoard, and switch to it. */
 
-	if (currMsgId.empty()) {
+    if (currMsgId.isNull()) {
 		return;
 	}
 
@@ -753,7 +780,7 @@ void MessageWidget::forward()
 {
 	/* put msg on msgBoard, and switch to it. */
 
-	if (currMsgId.empty()) {
+    if (currMsgId.isNull()) {
 		return;
 	}
 
@@ -787,7 +814,7 @@ void MessageWidget::anchorClicked(const QUrl &url)
 
 void MessageWidget::loadImagesAlways()
 {
-	if (currMsgId.empty()) {
+    if (currMsgId.isNull()) {
 		return;
 	}
 
@@ -801,15 +828,15 @@ void MessageWidget::decrypt()
 	}
 
 	// Force refill
-	std::string msgId = currMsgId;
+    RsMessageId msgId = currMsgId;
 	currMsgId.clear();
 
 	fill(msgId);
 }
 
-bool MessageWidget::decryptMsg(const std::string &msgId)
+bool MessageWidget::decryptMsg(const RsMessageId &msgId)
 {
-	if (msgId.empty()) {
+    if (msgId.isNull()) {
 		return false;
 	}
 

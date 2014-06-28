@@ -57,6 +57,7 @@
 #include "textformat.h"
 #include "util/misc.h"
 #include "util/DateTime.h"
+#include "util/radix64.h"
 #include "TagsMenu.h"
 #include "gui/common/TagDefs.h"
 #include "gui/connect/ConfCertDialog.h"
@@ -866,16 +867,16 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
     }
 }
 
-MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
+MessageComposer *MessageComposer::newMsg(const RsMessageId &msgId)
 {
     MessageComposer *msgComposer = new MessageComposer();
 
     msgComposer->addEmptyRecipient();
 
-    if (msgId.empty() == false) {
+    if (msgId.isNull() == false) {
         // fill existing message
         MessageInfo msgInfo;
-        if (!rsMsgs->getMessage(msgId, msgInfo)) {
+        if (!rsMsgs->getMessage(RsMessageId(msgId), msgInfo)) {
             std::cerr << "MessageComposer::newMsg() Couldn't find Msg" << std::endl;
             delete msgComposer;
             return NULL;
@@ -972,7 +973,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         }
 
         MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(msgId, tagInfo);
+        rsMsgs->getMessageTag(RsMessageId(msgId), tagInfo);
 
         msgComposer->m_tagIds = tagInfo.tagIds;
         msgComposer->showTagLabels();
@@ -1093,7 +1094,7 @@ void MessageComposer::setQuotedMsg(const QString &msg, const QString &header)
     ui.msgText->setFocus( Qt::OtherFocusReason );
 }
 
-MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
+MessageComposer *MessageComposer::replyMsg(const RsMessageId &msgId, bool all)
 {
     MessageInfo msgInfo;
     if (!rsMsgs->getMessage(msgId, msgInfo)) {
@@ -1156,7 +1157,7 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     return msgComposer;
 }
 
-MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
+MessageComposer *MessageComposer::forwardMsg(const RsMessageId &msgId)
 {
     MessageInfo msgInfo;
     if (!rsMsgs->getMessage(msgId, msgInfo)) {
@@ -1252,10 +1253,6 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     // needed to send system flags with reply
     mi.msgflags = msgFlags;
 
-    QString text;
-    RsHtml::optimizeHtml(ui.msgText, text);
-    mi.body().assign( text.toUtf8().constData() );
-
     /* check for existing title */
     if (bDraftbox == false && mi.header().subject().empty()) {
         if (QMessageBox::warning(this, tr("RetroShare"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
@@ -1265,17 +1262,47 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     }
 
     int filesCount = ui.msgFileList->topLevelItemCount();
+    if( filesCount == 0){
+        mi.header().contentType().set("text/plain");
+        mi.body().assign( ui.msgText->toPlainText().toStdString() );
+//        QString text;
+//        RsHtml::optimizeHtml(ui.msgText, text);
+//        mi.body().assign( text.toUtf8().constData() );
+    }
+    else{
+        mi.header().contentType().set("multipart/mixed");
+        mimetic::MimeEntity * textBody = new mimetic::MimeEntity;
+        textBody->header().contentType().set( "text/plain" );
+        textBody->body().assign( ui.msgText->toPlainText().toStdString() );
+        mimetic::MimeEntityList & parts = mi.body().parts();
+        parts.push_back( textBody );
+
     for (int i = 0; i < filesCount; i++) {
         QTreeWidgetItem *item = ui.msgFileList->topLevelItem(i);
         if (item->checkState(COLUMN_FILE_CHECKED)) {
             RsFileHash hash ( item->text(COLUMN_FILE_HASH).toStdString() );
             for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); it++) {
-                if (it->hash == hash) {
-// MIME FIXME:                    mi.files.push_back(*it);
+                    FileInfo fInfo = *it;
+                    if ( fInfo.hash == hash) {
+                        std::ifstream attachmentStream( fInfo.path.c_str() );
+                        if( !attachmentStream.good()){
+                            QMessageBox::warning(this, tr("RetroShare"), tr("Cannot open file to attach: ") + QString::fromStdString( fInfo.fname ) );
+                            return false;
+                        }
+                        std::string attachmentString((std::istreambuf_iterator<char>(attachmentStream)), std::istreambuf_iterator<char>());
+                        mimetic::MimeEntity * attachment = new mimetic::MimeEntity;
+                        std::string contentType = std::string( "application/octet-stream; name=" ) + fInfo.fname;
+                        attachment->header().contentType().set( contentType );
+                        attachment->header().contentTransferEncoding().set( "base64" );
+                        std::string base64Attachment;
+                        Radix64::encode( attachmentString.c_str(), attachmentString.length(), base64Attachment );
+                        attachment->body().assign( base64Attachment );
+                        parts.push_back( attachment );
                     break;
                 }
             }
         }
+    }
     }
 
     /* get the ids from the send list */
@@ -1371,12 +1398,10 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
     if (bDraftbox)
     {
-        mi.header().messageid() = m_sDraftMsgId;
-
         rsMsgs->MessageToDraft(mi, m_msgParentId);
 
         // use new message id
-        m_sDraftMsgId = mi.header().messageid().str();
+        m_sDraftMsgId = mi.getMessageId();
 
         switch (m_msgType) {
         case NORMAL:
@@ -1405,29 +1430,29 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             return false;
         }
 
-        if (m_msgParentId.empty() == false) {
+        if (m_msgParentId.isNull() == false) {
             switch (m_msgType) {
             case NORMAL:
                 break;
             case REPLY:
-                rsMsgs->MessageReplied(m_msgParentId, true);
+                rsMsgs->MessageReplied(RsMessageId(m_msgParentId), true);
                 break;
             case FORWARD:
-                rsMsgs->MessageForwarded(m_msgParentId, true);
+                rsMsgs->MessageForwarded(RsMessageId(m_msgParentId), true);
                 break;
             }
         }
     }
 
-    if (mi.header().messageid().str().empty() == false) {
+    if (mi.getMessageId().isNull() == false) {
         MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(mi.header().messageid().str(), tagInfo);
+        rsMsgs->getMessageTag(mi.getMessageId(), tagInfo);
 
         /* insert new tags */
         std::list<uint32_t>::iterator tag;
         for (tag = m_tagIds.begin(); tag != m_tagIds.end(); tag++) {
             if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), *tag) == tagInfo.tagIds.end()) {
-                rsMsgs->setMessageTag(mi.header().messageid().str(), *tag, true);
+                rsMsgs->setMessageTag(mi.getMessageId(), *tag, true);
             } else {
                 tagInfo.tagIds.remove(*tag);
             }
@@ -1435,7 +1460,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
         /* remove deleted tags */
         for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); tag++) {
-            rsMsgs->setMessageTag(mi.header().messageid().str(), *tag, false);
+            rsMsgs->setMessageTag(mi.getMessageId(), *tag, false);
         }
     }
     ui.msgText->document()->setModified(false);
@@ -2404,6 +2429,7 @@ void MessageComposer::fileHashingFinished(QList<HashedFile> hashedFiles)
     QList<HashedFile>::iterator it;
     for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
         FileInfo info;
+        info.path = it->filepath.toUtf8().constData();
         info.fname = it->filename.toUtf8().constData();
         info.hash = it->hash;
         info.size = it->size;

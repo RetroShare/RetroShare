@@ -62,29 +62,29 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 
 		/* External Interface */
 		bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-		bool 	getMessage(const std::string &mid, MessageInfo &msg);
+        bool 	getMessage(const RsMessageId &mid, MessageInfo &msg);
 		void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
-		bool decryptMessage(const std::string& mid) ;
-		bool    removeMsgId(const std::string &mid); 
-		bool    markMsgIdRead(const std::string &mid, bool bUnreadByUser);
-		bool    setMsgFlag(const std::string &mid, uint32_t flag, uint32_t mask);
-		bool    getMsgParentId(const std::string &msgId, std::string &msgParentId);
+        bool    decryptMessage(const RsMessageId &mid) ;
+        bool    removeMsgId(const RsMessageId &mid);
+        bool    markMsgIdRead(const RsMessageId &mid, bool bUnreadByUser);
+        bool    setMsgFlag(const RsMessageId &mid, uint32_t flag, uint32_t mask);
+        bool    getMsgParentId(const RsMessageId &msgId, RsMessageId &msgParentId);
 		// msgParentId == 0 --> remove
-        bool    setMsgParentId(std::string msgId, const std::string &msgParentId);
+        bool    setMsgParentId(RsMessageId msgId, const RsMessageId &msgParentId);
 
 		bool    MessageSend(MessageInfo &info);
 		bool    SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
-		bool    MessageToDraft(MessageInfo &info, const std::string &msgParentId);
-		bool    MessageToTrash(const std::string &mid, bool bTrash);
+        bool    MessageToDraft(MessageInfo &info, const RsMessageId &msgParentId);
+        bool    MessageToTrash(const RsMessageId &mid, bool bTrash);
 
 		bool 	getMessageTagTypes(MsgTagType& tags);
 		bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
 		bool    removeMessageTagType(uint32_t tagId);
 
-		bool 	getMessageTag(const std::string &msgId, MsgTagInfo& info);
+        bool 	getMessageTag(const RsMessageId &msgId, MsgTagInfo& info);
 		/* set == false && tagId == 0 --> remove all */
-		bool 	setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
+        bool 	setMessageTag(const RsMessageId &msgId, uint32_t tagId, bool set);
 
 		bool    resetMessageStandardTagTypes(MsgTagType& tags);
 
@@ -132,7 +132,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		// This contains the ongoing tunnel handling contacts.
 		// The map is indexed by the hash
 		//
-        std::map<GRouterMsgPropagationId,std::string> _ongoing_messages ;
+        std::map<GRouterMsgPropagationId,RsMessageId> _ongoing_messages ;
 
 		// Overloaded from GRouterClientService
 
@@ -149,7 +149,6 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 
 		void handleIncomingItem(RsMsgItem *) ;
 
-        std::string getNewUniqueMsgId();
 		int     sendMessage(RsMsgItem *item);
 		void    checkSizeAndSendMessage(RsMsgItem *msg);
 
@@ -160,9 +159,9 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
 		void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
 
-		RsMsgItem *initMIRsMsg(const MessageInfo &info, const RsPeerId& to);
-		RsMsgItem *initMIRsMsg(const MessageInfo &info, const RsGxsId& to);
-        void initMIRsMsg(RsMsgItem *item, MessageInfo info) ;
+        RsMsgItem *initMIRsMsg(MessageInfo &info, const RsPeerId& to);
+        RsMsgItem *initMIRsMsg(MessageInfo &info, const RsGxsId& to);
+        void initMIRsMsg(RsMsgItem *item, MessageInfo &info) ;
 
 		void    initStandardTagTypes();
 
@@ -176,24 +175,24 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		RsMsgSerialiser *_serialiser ;
 
 		/* stored list of messages */
-        std::map<std::string, RsMsgItem *> imsg;
+        std::map<RsMessageId, RsMsgItem *> imsg;
 		/* ones that haven't made it out yet! */
-        std::map<std::string, RsMsgItem *> msgOutgoing;
+        std::map<RsMessageId, RsMsgItem *> msgOutgoing;
 
 		std::map<RsPeerId, RsMsgItem *> _pendingPartialMessages ;
 
 		/* maps for tags types and msg tags */
 
 		std::map<uint32_t, RsMsgTagType*> mTags;
-        std::map<std::string, RsMsgTags*> mMsgTags;
+        std::map<RsMessageId, RsMsgTags*> mMsgTags;
 
 		uint32_t mMsgUniqueId;
 
 		// used delete msgSrcIds after config save
-        std::map< std::string, RsMsgSrcId*> mSrcIds;
+        std::map<RsMessageId, RsMsgSrcId*> mSrcIds;
 
 		// save the parent of the messages in draft for replied and forwarded
-        std::map<std::string, RsMsgParentId*> mParentId;
+        std::map<RsMessageId, RsMsgParentId*> mParentId;
 
 		std::string config_dir;
 

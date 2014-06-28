@@ -55,7 +55,7 @@ private:
 	uint32_t mFeedId;
 
     RsPeerId mPeerId;
-	std::string mMsgId;
+    RsMessageId mMsgId;
 
 	bool mIsHome;
 

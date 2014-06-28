@@ -78,7 +78,7 @@ bool p3Msgs::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 
 
 
-bool p3Msgs::getMessage(const std::string &mid, MessageInfo &msg)
+bool p3Msgs::getMessage(const RsMessageId &mid, MessageInfo &msg)
 {
 	return mMsgSrv->getMessage(mid, msg);
 }
@@ -96,7 +96,7 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 	return mMsgSrv->MessageSend(info);
 }
 
-bool p3Msgs::decryptMessage(const std::string& mId)
+bool p3Msgs::decryptMessage(const RsMessageId & mId)
 {
 	return mMsgSrv->decryptMessage(mId);
 }
@@ -114,24 +114,24 @@ bool p3Msgs::SystemMessage(const std::string &title, const std::string &message,
 	return mMsgSrv->SystemMessage(title, message, systemFlag);
 }
 
-bool p3Msgs::MessageToDraft(MessageInfo &info, const std::string &msgParentId)
+bool p3Msgs::MessageToDraft(MessageInfo &info, const RsMessageId &msgParentId)
 {
 	return mMsgSrv->MessageToDraft(info, msgParentId);
 }
 
-bool p3Msgs::MessageToTrash(const std::string &mid, bool bTrash)
+bool p3Msgs::MessageToTrash(const RsMessageId &mid, bool bTrash)
 {
 	return mMsgSrv->MessageToTrash(mid, bTrash);
 }
 
-bool p3Msgs::getMsgParentId(const std::string &msgId, std::string &msgParentId)
+bool p3Msgs::getMsgParentId(const RsMessageId &msgId, RsMessageId &msgParentId)
 {
 	return mMsgSrv->getMsgParentId(msgId, msgParentId);
 }
 
 /****************************************/
 /****************************************/
-bool p3Msgs::MessageDelete(const std::string &mid)
+bool p3Msgs::MessageDelete(const RsMessageId &mid)
 {
 	//std::cerr << "p3Msgs::MessageDelete() ";
 	//std::cerr << "mid: " << mid << std::endl;
@@ -139,7 +139,7 @@ bool p3Msgs::MessageDelete(const std::string &mid)
 	return mMsgSrv -> removeMsgId(mid);
 }
 
-bool p3Msgs::MessageRead(const std::string &mid, bool unreadByUser)
+bool p3Msgs::MessageRead(const RsMessageId &mid, bool unreadByUser)
 {
 	//std::cerr << "p3Msgs::MessageRead() ";
 	//std::cerr << "mid: " << mid << std::endl;
@@ -147,17 +147,17 @@ bool p3Msgs::MessageRead(const std::string &mid, bool unreadByUser)
 	return mMsgSrv -> markMsgIdRead(mid, unreadByUser);
 }
 
-bool p3Msgs::MessageReplied(const std::string &mid, bool replied)
+bool p3Msgs::MessageReplied(const RsMessageId &mid, bool replied)
 {
 	return mMsgSrv->setMsgFlag(mid, replied ? RS_MSG_FLAGS_REPLIED : 0, RS_MSG_FLAGS_REPLIED);
 }
 
-bool p3Msgs::MessageForwarded(const std::string &mid, bool forwarded)
+bool p3Msgs::MessageForwarded(const RsMessageId &mid, bool forwarded)
 {
 	return mMsgSrv->setMsgFlag(mid, forwarded ? RS_MSG_FLAGS_FORWARDED : 0, RS_MSG_FLAGS_FORWARDED);
 }
 
-bool p3Msgs::MessageLoadEmbeddedImages(const std::string &mid, bool load)
+bool p3Msgs::MessageLoadEmbeddedImages(const RsMessageId &mid, bool load)
 {
 	return mMsgSrv->setMsgFlag(mid, load ? RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES : 0, RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES);
 }
@@ -167,7 +167,7 @@ bool 	p3Msgs::getMessageTagTypes(MsgTagType& tags)
 	return mMsgSrv->getMessageTagTypes(tags);
 }
 
-bool p3Msgs::MessageStar(const std::string &mid, bool star)
+bool p3Msgs::MessageStar(const RsMessageId &mid, bool star)
 
 {
 	return mMsgSrv->setMsgFlag(mid, star ? RS_MSG_FLAGS_STAR : 0, RS_MSG_FLAGS_STAR);
@@ -183,12 +183,12 @@ bool    p3Msgs::removeMessageTagType(uint32_t tagId)
 	return mMsgSrv->removeMessageTagType(tagId);
 }
 
-bool 	p3Msgs::getMessageTag(const std::string &msgId, MsgTagInfo& info)
+bool 	p3Msgs::getMessageTag(const RsMessageId &msgId, MsgTagInfo& info)
 {
 	return mMsgSrv->getMessageTag(msgId, info);
 }
 
-bool 	p3Msgs::setMessageTag(const std::string &msgId, uint32_t tagId, bool set)
+bool 	p3Msgs::setMessageTag(const RsMessageId &msgId, uint32_t tagId, bool set)
 {
 	return mMsgSrv->setMessageTag(msgId, tagId, set);
 }

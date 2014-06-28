@@ -116,14 +116,6 @@ RsServiceInfo p3MsgService::getServiceInfo()
 }
 
 
-std::string p3MsgService::getNewUniqueMsgId()
-{
-    // MIME FIXME: This will go into MessageInfo where the ID is generated during message creation. A message will then retain it's id
-    std::ostringstream mid;
-    mid << "<" << time(NULL) << "." << RSRandom::random_u64() << "@retroshare>";
-    return mid.str();
-}
-
 int	p3MsgService::tick()
 {
 	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
@@ -160,9 +152,10 @@ int	p3MsgService::status()
 
 void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 {
-	mi -> recvTime = time(NULL);
-	mi -> msgId = getNewUniqueMsgId();
+    MessageInfo msgInfo( mi->mimeMessage.substr( 0, mi->mimeMessage.find( "\r\n\r\n" ) ) );
+    mi->msgId = msgInfo.getMessageId();
 
+	mi -> recvTime = time(NULL);
 	{
 		RsStackMutex stack(mMsgMtx); /*** STACK LOCKED MTX ***/
 
@@ -177,13 +170,13 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 			if (notify)
 			{
                 if(mi->msgFlags & RS_MSG_FLAGS_ENCRYPTED){
-// MIME FIXME:                    notify->AddPopupMessage(RS_POPUP_ENCRYPTED_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
+                    notify->AddPopupMessage(RS_POPUP_ENCRYPTED_MSG, mi->PeerId().toStdString(), msgInfo.header().subject(), "" );
                 }
                 else{
-// MIME FIXME:                    notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
+                    notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), msgInfo.header().subject(), "" );
                 }
 
-                notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, mi->msgId, "", "");
+                notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, mi->msgId.toStdString(), "", "");
 			}
 		}
 		else
@@ -195,7 +188,7 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 		RsMsgSrcId* msi = new RsMsgSrcId();
 		msi->msgId = mi->msgId;
 		msi->srcId = mi->PeerId();
-        mSrcIds.insert(std::pair<std::string, RsMsgSrcId*>(msi->msgId, msi));
+        mSrcIds.insert(std::pair<RsMessageId, RsMsgSrcId*>(msi->msgId, msi));
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
 
@@ -346,11 +339,11 @@ int     p3MsgService::checkOutgoingMessages()
 	{
         const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
-        std::list<std::string>::iterator it;
-        std::list<std::string> toErase;
+        std::list<RsMessageId>::iterator it;
+        std::list<RsMessageId> toErase;
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-        std::map<std::string, RsMsgItem *>::iterator mit;
+        std::map<RsMessageId, RsMsgItem *>::iterator mit;
 		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		{
 			if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH) 
@@ -402,7 +395,7 @@ int     p3MsgService::checkOutgoingMessages()
 				msgOutgoing.erase(mit);
 			}
 
-            std::map<std::string, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(*it);
+            std::map<RsMessageId, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(*it);
 			if (srcIt != mSrcIds.end()) {
 				delete (srcIt->second);
 				mSrcIds.erase(srcIt);
@@ -427,11 +420,11 @@ int     p3MsgService::checkOutgoingMessages()
 bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 {
 
-    std::map<std::string, RsMsgItem *>::iterator mit;
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
-    std::map<std::string, RsMsgTags* >::iterator mit3;
-    std::map<std::string, RsMsgSrcId* >::iterator lit;
-    std::map<std::string, RsMsgParentId* >::iterator mit4;
+    std::map<RsMessageId, RsMsgTags* >::iterator mit3;
+    std::map<RsMessageId, RsMsgSrcId* >::iterator lit;
+    std::map<RsMessageId, RsMsgParentId* >::iterator mit4;
 
     MsgTagType stdTags;
 
@@ -538,8 +531,8 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     std::list<RsMsgItem*> items;
     std::list<RsItem*>::iterator it;
     std::map<uint32_t, RsMsgTagType*>::iterator tagIt;
-    std::map<std::string, RsPeerId> srcIdMsgMap;
-    std::map<std::string, RsPeerId>::iterator srcIt;
+    std::map<RsMessageId, RsPeerId> srcIdMsgMap;
+    std::map<RsMessageId, RsPeerId>::iterator srcIt;
 
 	bool distant_messaging_set = false ;
 
@@ -568,16 +561,16 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		}
 		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
 		{
-            mMsgTags.insert(std::pair<std::string, RsMsgTags* >(mti->msgId, mti));
+            mMsgTags.insert(std::pair<RsMessageId, RsMsgTags* >(mti->msgId, mti));
 		}
 		else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
 		{
-            srcIdMsgMap.insert(std::pair<std::string, RsPeerId>(msi->msgId, msi->srcId));
-            mSrcIds.insert(std::pair<std::string, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
+            srcIdMsgMap.insert(std::pair<RsMessageId, RsPeerId>(msi->msgId, msi->srcId));
+            mSrcIds.insert(std::pair<RsMessageId, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
 		}
 		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
 		{
-            mParentId.insert(std::pair<std::string, RsMsgParentId*>(msp->msgId, msp));
+            mParentId.insert(std::pair<RsMessageId, RsMsgParentId*>(msp->msgId, msp));
 		}
 
 		RsConfigKeyValueSet *vitem = NULL ;
@@ -607,11 +600,6 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	for (msgIt = items.begin(); msgIt != items.end(); msgIt++)
 	{
 		mitem = *msgIt;
-
-		/* STORE MsgID */
-        if (mitem->msgId.empty()) {
-		    mitem->msgId = getNewUniqueMsgId();
-		}
 
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -643,7 +631,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 
 	/* remove missing msgId in mSrcIds */
 	for (srcIt = srcIdMsgMap.begin(); srcIt != srcIdMsgMap.end(); srcIt++) {
-        std::map<std::string, RsMsgSrcId*>::iterator it = mSrcIds.find(srcIt->first);
+        std::map<RsMessageId, RsMsgSrcId*>::iterator it = mSrcIds.find(srcIt->first);
 		if (it != mSrcIds.end()) {
 			delete(it->second);
 			mSrcIds.erase(it);
@@ -651,7 +639,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	}
 
 	/* remove missing msgId in mParentId */
-    std::map<std::string, RsMsgParentId *>::iterator mit = mParentId.begin();
+    std::map<RsMessageId, RsMsgParentId *>::iterator mit = mParentId.begin();
 	while (mit != mParentId.end()) {
 		if (imsg.find(mit->first) == imsg.end()) {
 			if (msgOutgoing.find(mit->first) == msgOutgoing.end()) {
@@ -687,7 +675,7 @@ void p3MsgService::loadWelcomeMsg()
                          "Enjoy.";
     mi.body().set( body );
 
-	msg -> msgId = getNewUniqueMsgId();
+    msg -> msgId = mi.getMessageId();
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -714,7 +702,7 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-    std::map<std::string, RsMsgItem *>::iterator mit;
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
 	for(mit = imsg.begin(); mit != imsg.end(); mit++)
 	{
 		MsgInfoSummary mis;
@@ -731,9 +719,9 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 	return true;
 }
 
-bool p3MsgService::getMessage(const std::string &msgId, MessageInfo &msg)
+bool p3MsgService::getMessage(const RsMessageId &msgId, MessageInfo &msg)
 {
-    std::map<std::string, RsMsgItem *>::iterator mit;
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -750,7 +738,7 @@ bool p3MsgService::getMessage(const std::string &msgId, MessageInfo &msg)
 	/* mit valid */
 	initRsMI(mit->second, msg);
 
-    std::map<std::string, RsMsgSrcId*>::const_iterator it = mSrcIds.find(msgId) ;
+    std::map<RsMessageId, RsMsgSrcId*>::const_iterator it = mSrcIds.find(msgId) ;
 	if(it != mSrcIds.end())
 		msg.rsgxsid_srcId = RsGxsId(it->second->srcId) ;
 
@@ -768,8 +756,8 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
     if (pnSentbox) *pnSentbox = 0;
     if (pnTrashbox) *pnTrashbox = 0;
 
-    std::map<std::string, RsMsgItem *>::iterator mit;
-    std::map<std::string, RsMsgItem *> *apMsg [2] = { &imsg, &msgOutgoing };
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
+    std::map<RsMessageId, RsMsgItem *> *apMsg [2] = { &imsg, &msgOutgoing };
 
     for (int i = 0; i < 2; i++) {
         for (mit = apMsg [i]->begin(); mit != apMsg [i]->end(); mit++) {
@@ -802,10 +790,10 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
 }
 
 /* remove based on the unique mid (stored in sid) */
-bool    p3MsgService::removeMsgId(const std::string &msgId)
+bool    p3MsgService::removeMsgId(const RsMessageId &msgId)
 {
-    std::map<std::string, RsMsgItem *>::iterator mit;
-    if ( msgId.empty() ) {
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
+    if ( msgId.isNull() ) {
 		std::cerr << "p3MsgService::removeMsgId: Unknown msgId " << msgId << std::endl;
 		return false;
 	}
@@ -833,7 +821,7 @@ bool    p3MsgService::removeMsgId(const std::string &msgId)
 			delete mi;
 		}
 
-        std::map<std::string, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(msgId);
+        std::map<RsMessageId, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(msgId);
 		if (srcIt != mSrcIds.end()) {
 			changed = true;
 			delete (srcIt->second);
@@ -845,7 +833,7 @@ bool    p3MsgService::removeMsgId(const std::string &msgId)
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
         setMessageTag(msgId, 0, false);
-		setMsgParentId(msgId, 0);
+        setMsgParentId(msgId, RsMessageId());
 
 		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 	}
@@ -853,9 +841,9 @@ bool    p3MsgService::removeMsgId(const std::string &msgId)
 	return changed;
 }
 
-bool    p3MsgService::markMsgIdRead(const std::string &msgId, bool unreadByUser)
+bool    p3MsgService::markMsgIdRead(const RsMessageId &msgId, bool unreadByUser)
 {
-    std::map<std::string, RsMsgItem *>::iterator mit;
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
 	bool changed = false;
 
 	{
@@ -895,9 +883,9 @@ bool    p3MsgService::markMsgIdRead(const std::string &msgId, bool unreadByUser)
 	return true;
 }
 
-bool    p3MsgService::setMsgFlag(const std::string &msgId, uint32_t flag, uint32_t mask)
+bool    p3MsgService::setMsgFlag(const RsMessageId &msgId, uint32_t flag, uint32_t mask)
 {
-    std::map<std::string, RsMsgItem *>::iterator mit;
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
 	bool changed = false;
 
 	{
@@ -931,13 +919,13 @@ bool    p3MsgService::setMsgFlag(const std::string &msgId, uint32_t flag, uint32
 	return true;
 }
 
-bool    p3MsgService::getMsgParentId(const std::string &msgId, std::string &msgParentId)
+bool    p3MsgService::getMsgParentId(const RsMessageId &msgId, RsMessageId &msgParentId)
 {
 	msgParentId.clear();
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-    std::map<std::string, RsMsgParentId *>::iterator mit = mParentId.find( msgId );
+    std::map<RsMessageId, RsMsgParentId *>::iterator mit = mParentId.find( msgId );
 	if (mit == mParentId.end()) {
 		return false;
 	}
@@ -947,9 +935,9 @@ bool    p3MsgService::getMsgParentId(const std::string &msgId, std::string &msgP
 	return true;
 }
 
-bool    p3MsgService::setMsgParentId(std::string msgId, const std::string & msgParentId)
+bool    p3MsgService::setMsgParentId(RsMessageId msgId, const RsMessageId & msgParentId)
 {
-    std::map<std::string, RsMsgParentId *>::iterator mit;
+    std::map<RsMessageId, RsMsgParentId *>::iterator mit;
 
 	bool changed = false;
 
@@ -959,17 +947,17 @@ bool    p3MsgService::setMsgParentId(std::string msgId, const std::string & msgP
 		mit = mParentId.find(msgId);
 		if (mit == mParentId.end())
 		{
-            if ( !msgParentId.empty() ) {
+            if ( !msgParentId.isNull() ) {
 				RsMsgParentId* msp = new RsMsgParentId();
 				msp->PeerId (mServiceCtrl->getOwnId());
 				msp->msgId = msgId;
 				msp->msgParentId = msgParentId;
-                mParentId.insert(std::pair<std::string, RsMsgParentId*>(msgId, msp));
+                mParentId.insert(std::pair<RsMessageId, RsMsgParentId*>(msgId, msp));
 
 				changed = true;
 			}
 		} else {
-            if ( !msgParentId.empty() ) {
+            if ( !msgParentId.isNull() ) {
 				if (mit->second->msgParentId != msgParentId) {
 					mit->second->msgParentId = msgParentId;
 					changed = true;
@@ -1000,8 +988,6 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 		"p3MsgService::sendMessage()");
 
-	item -> msgId = getNewUniqueMsgId(); /* grabs Mtx as well */
-
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -1015,7 +1001,7 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 			RsMsgSrcId* msi = new RsMsgSrcId();
 			msi->msgId = item->msgId;
 			msi->srcId = item->PeerId();
-            mSrcIds.insert(std::pair<std::string, RsMsgSrcId*>(msi->msgId, msi));
+            mSrcIds.insert(std::pair<RsMessageId, RsMsgSrcId*>(msi->msgId, msi));
 		}
 	}
 
@@ -1095,9 +1081,6 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 
 		/* use processMsg to get the new msgId */
 		processMsg(msg, false);
-
-		// return new message id
-        info.header().messageid() = msg->msgId;
 	}
 
 	return true;
@@ -1141,21 +1124,17 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 	return true;
 }
 
-bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParentId)
+bool p3MsgService::MessageToDraft(MessageInfo &info, const RsMessageId &msgParentId)
 {
     RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
     if (msg)
     {
-        std::string msgId;
+        RsMessageId msgId;
         if ( !info.header().messageid().str().empty() ) {
-            msgId = info.header().messageid().str();
+            msgId = info.getMessageId();
         }
 
-        if ( !msgId.empty() ) {
             msg->msgId = msgId;
-        } else {
-            msg->msgId = getNewUniqueMsgId(); /* grabs Mtx as well */
-        }
 
         {
             RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1163,9 +1142,9 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
             /* add pending flag */
             msg->msgFlags |= (RS_MSG_OUTGOING | RS_MSG_FLAGS_DRAFT);
 
-            if ( !msgId.empty() ) {
+            if ( !msgId.isNull() ) {
                 // remove existing message
-                std::map<std::string, RsMsgItem *>::iterator mit;
+                std::map<RsMessageId, RsMsgItem *>::iterator mit;
                 mit = imsg.find(msgId);
                 if (mit != imsg.end()) {
                     RsMsgItem *mi = mit->second;
@@ -1175,9 +1154,6 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
             }
             /* STORE MsgID */
             imsg[msg->msgId] = msg;
-
-            // return new message id
-            info.header().messageid( msg->msgId );
         }
 
         setMsgParentId( msg->msgId, msgParentId );
@@ -1282,7 +1258,7 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 		}
 
 		/* search for messages with this tag type */
-        std::map<std::string, RsMsgTags*>::iterator mit1;
+        std::map<RsMessageId, RsMsgTags*>::iterator mit1;
                 for (mit1 = mMsgTags.begin(); mit1 != mMsgTags.end(); ) {
 			RsMsgTags* tag = mit1->second;
 
@@ -1315,16 +1291,16 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 	return true;
 }
 
-bool 	p3MsgService::getMessageTag(const std::string &msgId, MsgTagInfo& info)
+bool 	p3MsgService::getMessageTag(const RsMessageId &msgId, MsgTagInfo& info)
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-    if ( msgId.empty() ) {
+    if ( msgId.isNull() ) {
 		std::cerr << "p3MsgService::MessageGetMsgTag: Unknown msgId " << msgId << std::endl;
 		return false;
 	}
 
-    std::map<std::string, RsMsgTags*>::iterator mit;
+    std::map<RsMessageId, RsMsgTags*>::iterator mit;
 
     if(mMsgTags.end() != ( mit = mMsgTags.find( msgId ))) {
         info.msgId = mit->second->msgId;
@@ -1337,9 +1313,9 @@ bool 	p3MsgService::getMessageTag(const std::string &msgId, MsgTagInfo& info)
 }
 
 /* set == false && tagId == 0 --> remove all */
-bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool set)
+bool 	p3MsgService::setMessageTag(const RsMessageId &msgId, uint32_t tagId, bool set)
 {
-    if ( msgId.empty() ) {
+    if ( msgId.isNull() ) {
 		std::cerr << "p3MsgService::MessageSetMsgTag: Unknown msgId " << msgId << std::endl;
 		return false;
 	}
@@ -1356,7 +1332,7 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-        std::map<std::string, RsMsgTags*>::iterator mit;
+        std::map<RsMessageId, RsMsgTags*>::iterator mit;
         mit = mMsgTags.find( msgId );
 
 		if (mit == mMsgTags.end()) {
@@ -1368,7 +1344,7 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
                 tag->msgId = msgId;
 				tag->tagIds.push_back(tagId);
 
-                mMsgTags.insert(std::pair<std::string, RsMsgTags*>(tag->msgId, tag));
+                mMsgTags.insert(std::pair<RsMessageId, RsMsgTags*>(tag->msgId, tag));
 
 				nNotifyType = NOTIFY_TYPE_ADD;
 			}
@@ -1438,9 +1414,9 @@ bool    p3MsgService::resetMessageStandardTagTypes(MsgTagType& tags)
 }
 
 /* move message to trash based on the unique mid */
-bool p3MsgService::MessageToTrash(const std::string &msgId, bool bTrash)
+bool p3MsgService::MessageToTrash(const RsMessageId &msgId, bool bTrash)
 {
-    std::map<std::string, RsMsgItem *>::iterator mit;
+    std::map<RsMessageId, RsMsgItem *>::iterator mit;
 
     bool bChanged = false;
     bool bFound = false;
@@ -1610,15 +1586,17 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	mis.ts = msg->sendTime;
 }
 
-void p3MsgService::initMIRsMsg(RsMsgItem *msg, MessageInfo info)
+void p3MsgService::initMIRsMsg(RsMsgItem *msg, MessageInfo & info)
 {
 	msg -> msgFlags = 0;
-    msg -> msgId.clear();
 	msg -> sendTime = time(NULL);
 	msg -> recvTime = 0;
 
+    msg -> msgId = info.getMessageId();
+
 	/* We don't fill in bcc (unless to ourselves) */
     // MIME FIXME: Do not delete BCC fields for SMTP mails to a gateway
+    // MIME FIXME: the following used to clear BCC from a copy. Now it is the original. BCC needs to be treated outside of the MimeEntity tree
 	if (msg->PeerId() == mServiceCtrl->getOwnId()){
         info.header().bcc().clear();
 	}
@@ -1632,7 +1610,7 @@ void p3MsgService::initMIRsMsg(RsMsgItem *msg, MessageInfo info)
 	if (info.msgflags & RS_MSG_FRIEND_RECOMMENDATION)
 		msg->msgFlags |= RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
 }
-RsMsgItem *p3MsgService::initMIRsMsg( const MessageInfo& info, const RsGxsId& to)
+RsMsgItem *p3MsgService::initMIRsMsg( MessageInfo& info, const RsGxsId& to)
 {
 	RsMsgItem *msg = new RsMsgItem();
 
@@ -1657,7 +1635,7 @@ RsMsgItem *p3MsgService::initMIRsMsg( const MessageInfo& info, const RsGxsId& to
 	return msg ;
 }
 
-RsMsgItem *p3MsgService::initMIRsMsg( const MessageInfo &info, const RsPeerId& to)
+RsMsgItem *p3MsgService::initMIRsMsg( MessageInfo &info, const RsPeerId& to)
 {
 	RsMsgItem *msg = new RsMsgItem();
 
@@ -1830,7 +1808,7 @@ std::string printNumber(uint32_t n,bool hex)
     os << n ;
     return os.str() ;
 }
-bool p3MsgService::decryptMessage(const std::string& msgId)
+bool p3MsgService::decryptMessage(const RsMessageId& msgId)
 {
     uint8_t *decrypted_data = NULL;
     char *encrypted_data = NULL;
@@ -1846,7 +1824,7 @@ bool p3MsgService::decryptMessage(const std::string& msgId)
         {
             RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-            std::map<std::string, RsMsgItem *>::iterator mit = imsg.find(msgId);
+            std::map<RsMessageId, RsMsgItem *>::iterator mit = imsg.find(msgId);
 
             if(mit == imsg.end())
             {
@@ -2046,7 +2024,7 @@ bool p3MsgService::decryptMessage(const std::string& msgId)
                     msgi.msgFlags &= ~RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
             }
 
-            std::map<std::string, RsMsgSrcId*>::iterator it = mSrcIds.find(msgi.msgId) ;
+            std::map<RsMessageId, RsMsgSrcId*>::iterator it = mSrcIds.find(msgi.msgId) ;
 
             if(it == mSrcIds.end())
             {
@@ -2056,7 +2034,7 @@ bool p3MsgService::decryptMessage(const std::string& msgId)
                 msi->msgId = msgi.msgId;
                 msi->srcId = RsPeerId(senders_id) ;
 
-                mSrcIds.insert(std::pair<std::string, RsMsgSrcId*>(msi->msgId, msi));
+                mSrcIds.insert(std::pair<RsMessageId, RsMsgSrcId*>(msi->msgId, msi));
             }
             else
             {
@@ -2169,7 +2147,7 @@ void p3MsgService::acknowledgeDataReceived(const GRouterMsgPropagationId& id)
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::acknowledgeDataReceived(): acknowledging data received for msg propagation id  " << id << std::endl;
 #endif
-    std::map<GRouterMsgPropagationId,std::string>::iterator it = _ongoing_messages.find(id) ;
+    std::map<GRouterMsgPropagationId,RsMessageId>::iterator it = _ongoing_messages.find(id) ;
 
 	if(it == _ongoing_messages.end())
 	{
@@ -2177,11 +2155,11 @@ void p3MsgService::acknowledgeDataReceived(const GRouterMsgPropagationId& id)
 		return ;
 	}
 
-    std::string msg_id = it->second ;
+    RsMessageId msg_id = it->second ;
 
 	// we should now remove the item from the msgOutgoing list.
 	
-    std::map<std::string,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id) ;
+    std::map<RsMessageId,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id) ;
 
 	if(it2 == msgOutgoing.end())
 	{
@@ -2238,6 +2216,22 @@ void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 // We assume that there will never be a "retroshare" TLD
 static const char * RSPEERID_POSTFIX = "rspeerid.retroshare";
 static const char * RSGXSID_POSTFIX  = "rsgxsid.retroshare";
+static const char * RSMSGID_POSTFIX  = "retroshare";
+
+MessageInfo::MessageInfo()
+{
+    std::ostringstream mid;
+    mid << "<" << time(NULL) << "." << RSRandom::random_u64() << "@" << RSMSGID_POSTFIX << ">";
+    header().messageid() = mid.str();
+}
+
+RsMessageId MessageInfo::getMessageId()
+{
+    std::string id = header().messageid().str();
+    return RsDirUtil::sha1sum( (unsigned char*)id.c_str(), id.length() );
+}
+
+
 
 void MessageInfo::setMessage( const std::string & msg )
 {

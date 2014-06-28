@@ -162,7 +162,7 @@ void MessageWindow::tagAboutToShow()
 
 	// activate actions
 	MsgTagInfo tagInfo;
-	rsMsgs->getMessageTag(msgWidget->msgId(), tagInfo);
+    rsMsgs->getMessageTag(RsMessageId(msgWidget->msgId()), tagInfo);
 
 	menu->activateActions(tagInfo.tagIds);
 }
@@ -173,7 +173,7 @@ void MessageWindow::tagRemoveAll()
 		return;
 	}
 
-	rsMsgs->setMessageTag(msgWidget->msgId(), 0, false);
+    rsMsgs->setMessageTag(RsMessageId(msgWidget->msgId()), 0, false);
 }
 
 void MessageWindow::tagSet(int tagId, bool set)
@@ -186,7 +186,7 @@ void MessageWindow::tagSet(int tagId, bool set)
 		return;
 	}
 
-	rsMsgs->setMessageTag(msgWidget->msgId(), tagId, set);
+    rsMsgs->setMessageTag(RsMessageId(msgWidget->msgId()), tagId, set);
 }
 
 void MessageWindow::setupFileActions()

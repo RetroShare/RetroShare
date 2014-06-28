@@ -95,7 +95,6 @@ typedef std::string 	ChatLobbyNickName ;
 typedef RsPeerId 				DistantChatPeerId ;
 typedef GRouterKeyIdType	DistantMsgPeerId ;
 
-typedef uint64_t     MessageId ;
 
 class MsgAddress
 {
@@ -139,8 +138,11 @@ class MsgAddress
 
 class MessageInfo : public mimetic::MimeEntity
 {
+    MessageInfo( const MessageInfo & );
 public:
-    MessageInfo() {}
+    typedef std::string MimeMsgId;
+
+    MessageInfo();
     MessageInfo( const std::string & msg ){ setMessage( msg ); }
 
     class addr_iterator {
@@ -172,6 +174,9 @@ public:
     const std::string toString() const;
     void addAddr( const MsgAddress & addr );
 
+    RsMessageId getMessageId();
+
+
     RsPeerId rspeerid_srcId;
     RsGxsId  rsgxsid_srcId;
 
@@ -185,7 +190,7 @@ class MsgInfoSummary
 	public:
 	MsgInfoSummary() {}
 
-	std::string msgId;
+    RsMessageId msgId;
 	RsPeerId srcId;
 
 	uint32_t msgflags;
@@ -200,7 +205,7 @@ class MsgTagInfo
 public:
 	MsgTagInfo() {}
 
-	std::string msgId;
+    RsMessageId msgId;
 	std::list<uint32_t> tagIds;
 };
 
@@ -322,22 +327,22 @@ virtual ~RsMsgs() { return; }
 /****************************************/
 
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
-virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
+virtual bool getMessage(const RsMessageId &mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
-virtual bool decryptMessage(const std::string& mId) = 0 ;
+virtual bool decryptMessage(const RsMessageId& mId) = 0 ;
 
 virtual bool MessageSend(MessageInfo &info) = 0;
 virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;
-virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId) = 0;
-virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
-virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
+virtual bool MessageToDraft(MessageInfo &info, const RsMessageId &msgParentId) = 0;
+virtual bool MessageToTrash(const RsMessageId &mid, bool bTrash)   = 0;
+virtual bool getMsgParentId(const RsMessageId &msgId, RsMessageId &msgParentId) = 0;
 
-virtual bool MessageDelete(const std::string &mid)                 = 0;
-virtual bool MessageRead(const std::string &mid, bool unreadByUser) = 0;
-virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
-virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
-virtual bool MessageStar(const std::string &mid, bool mark) = 0;
-virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load) = 0;
+virtual bool MessageDelete(const RsMessageId &mid)                 = 0;
+virtual bool MessageRead(const RsMessageId &mid, bool unreadByUser) = 0;
+virtual bool MessageReplied(const RsMessageId &mid, bool replied) = 0;
+virtual bool MessageForwarded(const RsMessageId &mid, bool forwarded) = 0;
+virtual bool MessageStar(const RsMessageId &mid, bool mark) = 0;
+virtual bool MessageLoadEmbeddedImages(const RsMessageId &mid, bool load) = 0;
 
 /* message tagging */
 
@@ -346,8 +351,8 @@ virtual bool getMessageTagTypes(MsgTagType& tags) = 0;
 virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color) = 0;
 virtual bool removeMessageTagType(uint32_t tagId) = 0;
 
-virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info) = 0;
-virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) = 0;
+virtual bool getMessageTag(const RsMessageId &msgId, MsgTagInfo& info) = 0;
+virtual bool setMessageTag(const RsMessageId &msgId, uint32_t tagId, bool set) = 0;
 
 virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
