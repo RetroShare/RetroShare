@@ -638,7 +638,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	if (!existingUser)
 	{
 		std::cerr << "No Existing User" << std::endl;
-		RsInitConfig::preferedId == "";
+		RsInitConfig::preferedId = "";
 
 	}
 
