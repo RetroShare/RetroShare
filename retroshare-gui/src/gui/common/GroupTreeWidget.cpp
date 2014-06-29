@@ -528,15 +528,15 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 
 	/* Find out which has given word in it */
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
-	QTreeWidgetItem *item;
-	while ((item = *itemIterator) != NULL) {
+	QTreeWidgetItem *tmpItem;
+	while ((tmpItem = *itemIterator) != NULL) {
 		itemIterator++;
 
-		if (item->data(COLUMN_DATA, ROLE_ID).toString().isEmpty()) {
+		if (tmpItem->data(COLUMN_DATA, ROLE_ID).toString().isEmpty()) {
 			continue;
 		}
 
-		calculateScore(item, filterText);
+		calculateScore(tmpItem, filterText);
 	}
 }
 
