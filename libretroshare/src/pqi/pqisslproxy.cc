@@ -214,10 +214,45 @@ int 	pqisslproxy::Proxy_Method_Response()
 
 	char method_response[2];
 
-	// read from the socket.
-	int recvd = recv(sockfd, method_response, 2, MSG_WAITALL);
+    /*
+      first it was:
+
+          int recvd = recv(sockfd, method_response, 2, MSG_WAITALL);
+
+      this does not work on windows, because the socket is in nonblocking mode
+      the winsock reference says about the recv function and MSG_WAITALL:
+
+      "Note that if the underlying transport does not support MSG_WAITALL,
+       or if the socket is in a non-blocking mode, then this call will fail with WSAEOPNOTSUPP."
+
+       now it is a two step process:
+
+           int recvd = recv(sockfd, method_response, 2, MSG_PEEK); // test how many bytes are in the input queue
+           if (enaugh bytes available){
+               recvd = recv(sockfd, method_response, 2, 0);
+           }
+
+       this does not work on windows:
+           if ((recvd == -1) && (errno == EAGAIN)) return TRY_AGAIN_LATER;
+
+       instead have to do:
+           if ((recvd == -1) && (WSAGetLastError() == WSAEWOULDBLOCK)) return TRY_AGAIN_LATER;
+     */
+
+    // test how many bytes can be read from the queue
+    int recvd = recv(sockfd, method_response, 2, MSG_PEEK);
 	if (recvd != 2)
 	{
+#ifdef WINDOWS_SYS
+        if ((recvd == -1) && (WSAGetLastError() == WSAEWOULDBLOCK))
+        {
+#ifdef PROXY_DEBUG
+            std::cerr << "pqisslproxy::Proxy_Method_Response() waiting for more data (windows)";
+            std::cerr << std::endl;
+#endif
+            return 0;
+        }
+#endif
 		if ((recvd == -1) && (errno == EAGAIN))
 		{
 
@@ -227,14 +262,35 @@ int 	pqisslproxy::Proxy_Method_Response()
 #endif
 
 			return 0;
-		}
-
+        }
+        else if (recvd == -1)
+        {
 #ifdef PROXY_DEBUG
-		std::cerr << "pqisslproxy::Proxy_Method_Response() Error recving response";
-		std::cerr << std::endl;
+            std::cerr << "pqisslproxy::Proxy_Method_Response() recv error peek";
+            std::cerr << std::endl;
 #endif
-		return -1;
+            return -1;
+        }
+        else
+        {
+#ifdef PROXY_DEBUG
+            std::cerr << "pqisslproxy::Proxy_Method_Response() waiting for more data";
+            std::cerr << std::endl;
+#endif
+            return 0;
+        }
 	}
+
+    // read the bytes
+    recvd = recv(sockfd, method_response, 2, 0);
+    if (recvd != 2)
+    {
+#ifdef PROXY_DEBUG
+        std::cerr << "pqisslproxy::Proxy_Method_Response() recv error";
+        std::cerr << std::endl;
+#endif
+        return -1;
+    }
 
 	// does it make sense?
 	if (method_response[0] != 0x05)
@@ -345,9 +401,20 @@ int 	pqisslproxy::Proxy_Connection_Complete()
 
 	char socks_response[MAX_SOCKS_REQUEST_LEN];
 
-	int recvd = recv(sockfd, socks_response, 5, MSG_WAITALL); 
+    // test how many bytes can be read
+    int recvd = recv(sockfd, socks_response, 5, MSG_PEEK);
 	if (recvd != 5)
 	{
+#ifdef WINDOWS_SYS
+        if ((recvd == -1) && (WSAGetLastError() == WSAEWOULDBLOCK))
+        {
+#ifdef PROXY_DEBUG
+            std::cerr << "pqisslproxy::Proxy_Connection_Complete() waiting for more data (windows)";
+            std::cerr << std::endl;
+#endif
+            return 0;
+        }
+#endif
 		if ((recvd == -1) && (errno == EAGAIN))
 		{
 #ifdef PROXY_DEBUG
@@ -356,13 +423,34 @@ int 	pqisslproxy::Proxy_Connection_Complete()
 #endif
 			return 0;
 		}
-
+        else if (recvd == -1)
+        {
 #ifdef PROXY_DEBUG
-		std::cerr << "pqisslproxy::Proxy_Connection_Complete() recv error";
-		std::cerr << std::endl;
+            std::cerr << "pqisslproxy::Proxy_Connection_Complete() recv error peek";
+            std::cerr << std::endl;
 #endif
-		return -1;
+            return -1;
+        }
+        else
+        {
+#ifdef PROXY_DEBUG
+            std::cerr << "pqisslproxy::Proxy_Connection_Complete() waiting for more data";
+            std::cerr << std::endl;
+#endif
+            return 0;
+        }
 	}
+
+    // read the bytes
+    recvd = recv(sockfd, socks_response, 5, 0);
+    if (recvd != 5)
+    {
+#ifdef PROXY_DEBUG
+        std::cerr << "pqisslproxy::Proxy_Connection_Complete() recv error";
+        std::cerr << std::endl;
+#endif
+        return -1;
+    }
 			
 	// error checking.
 	if (socks_response[0] != 0x05)
@@ -429,10 +517,20 @@ int 	pqisslproxy::Proxy_Connection_Complete()
 	}
 
 
-	// read the remaining bytes.
-	recvd = recv(sockfd, &(socks_response[5]), address_bytes + 1, MSG_WAITALL); // address_bytes - 1 + 2...
+    // test how many bytes can be read
+    recvd = recv(sockfd, &(socks_response[5]), address_bytes + 1, MSG_PEEK); // address_bytes - 1 + 2...
 	if (recvd != address_bytes + 1)
 	{
+#ifdef WINDOWS_SYS
+        if((recvd == -1) && (WSAGetLastError() == WSAEWOULDBLOCK))
+        {
+#ifdef PROXY_DEBUG
+            std::cerr << "pqisslproxy::Proxy_Connection_Complete() waiting for more data(2) (windows)";
+            std::cerr << std::endl;
+#endif
+            return 0;
+        }
+#endif
 		if ((recvd == -1) && (errno == EAGAIN))
 		{
 #ifdef PROXY_DEBUG
@@ -442,13 +540,34 @@ int 	pqisslproxy::Proxy_Connection_Complete()
 			// Waiting - shouldn't happen.
 			return 0;
 		}
-
+        else if (recvd == -1)
+        {
 #ifdef PROXY_DEBUG
-		std::cerr << "pqisslproxy::Proxy_Connection_Complete() ERROR recving(2)";
-		std::cerr << std::endl;
+            std::cerr << "pqisslproxy::Proxy_Connection_Complete() ERROR recving(2)";
+            std::cerr << std::endl;
 #endif
-		return -1;
+            return -1;
+        }
+        else
+        {
+#ifdef PROXY_DEBUG
+            std::cerr << "pqisslproxy::Proxy_Connection_Complete() waiting for more data(2)";
+            std::cerr << std::endl;
+#endif
+            return 0;
+        }
 	}
+
+    // read the bytes
+    recvd = recv(sockfd, &(socks_response[5]), address_bytes + 1, 0); // address_bytes - 1 + 2...
+    if (recvd != address_bytes + 1)
+    {
+#ifdef PROXY_DEBUG
+        std::cerr << "pqisslproxy::Proxy_Connection_Complete() recv error (2)";
+        std::cerr << std::endl;
+#endif
+        return -1;
+    }
 
 #ifdef PROXY_DEBUG
 	std::cerr << "pqisslproxy::Proxy_Connection_Complete() Received String: ";

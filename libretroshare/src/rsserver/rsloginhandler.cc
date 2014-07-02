@@ -689,11 +689,11 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 
 std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts.PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
+	return rsAccounts->PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
 }
 
 std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts.PathAccountKeysDirectory() + "/" + "help.dta" ;
+	return rsAccounts->PathAccountKeysDirectory() + "/" + "help.dta" ;
 }
 

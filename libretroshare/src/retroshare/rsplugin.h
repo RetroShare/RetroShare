@@ -62,6 +62,12 @@ class SoundEvents;
 class FeedNotify;
 class ChatWidget;
 class ChatWidgetHolder;
+// for gxs based plugins
+class RsNxsNetMgr;
+class RsGxsIdExchange;
+class RsGcxs;
+class PgpAuxUtils;
+class p3Config;
 
 // Plugin API version. Not used yet, but will be in the future the
 // main value that decides for compatibility.
@@ -93,7 +99,21 @@ public:
 
     RsPlugInInterfaces() 
 	 { 
+        // save the string
+        uint8_t strdata[sizeof(std::string)];
+        memcpy(strdata, &mGxsDir, sizeof(std::string));
+
 		 memset(this,0,sizeof(RsPlugInInterfaces)) ;	// zero all pointers.
+
+         // because the evil above destroyed the string, we have to rebuild it
+         // above lines are sure meant good, but they also lead to confusion because the whole object is zero
+         // this fixes a evil hack with another evil hack.
+         memcpy(&mGxsDir, strdata, sizeof(std::string));
+
+         // idea for a clean solution to init the pointers with zero:
+         // wrap the raw pointers into a template class, which zeros the pointers
+         // then we can't forget to zero a single pointer
+
 	 }
     RsPeers  *mPeers;
     RsFiles  *mFiles;
@@ -102,6 +122,13 @@ public:
     RsDisc   *mDisc;
     RsDht    *mDht;
     RsNotify *mNotify;
+
+    // gxs parts needed for Social Network Plugin
+    std::string     mGxsDir;
+    RsNxsNetMgr     *mRsNxsNetMgr;
+    RsGxsIdExchange *mGxsIdService;
+    RsGcxs          *mGxsCirlces;
+    PgpAuxUtils     *mPgpAuxUtils;
 };
 
 class RsPlugin
@@ -119,7 +146,11 @@ class RsPlugin
 		// exchange of data, such as chat, messages, etc.
 		// Example plugin: VOIP
 		//
-		virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
+        //virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
+        // gxs netservice is not a RsPQIService
+        // so have two fns which result in the same gxs netservice to be returned
+        virtual p3Service   *p3_service() 		const	{ return NULL ; }
+        virtual p3Config   *p3_config() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
 
 		// Shutdown

@@ -178,10 +178,14 @@ uint32_t RsGxsMsgMetaData::serial_size()
     s += mOrigMsgId.serial_size();
     s += mAuthorId.serial_size();
 
+    std::cerr << "RsGxsMsgMetaData::serial_size(): ids="<<s<<" signSet="<<signSet.TlvSize();
+
     s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
     s += 4;
     s += 4;
+
+    std::cerr << "sum="<<s<<std::endl;
 
     return s;
 }

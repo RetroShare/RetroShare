@@ -406,9 +406,11 @@ void RsPluginManager::registerClientServices(p3ServiceServer *pqih)
 	std::cerr << "  Registering pqi services." << std::endl;
 
 	for(uint32_t i=0;i<_plugins.size();++i)
-		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_pqi_service() != NULL)
+        //if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_pqi_service() != NULL)
+        if(_plugins[i].plugin != NULL && _plugins[i].plugin->p3_service() != NULL)
 		{
-			pqih->addService(_plugins[i].plugin->rs_pqi_service(), true) ;
+            //pqih->addService(_plugins[i].plugin->rs_pqi_service(), true) ;
+            pqih->addService(_plugins[i].plugin->p3_service(), true) ;
 			std::cerr << "    Added pqi service for plugin " << _plugins[i].plugin->getPluginName() << std::endl;
 		}
 }
@@ -422,8 +424,10 @@ void RsPluginManager::addConfigurations(p3ConfigMgr *ConfigMgr)
 		{
 			if( _plugins[i].plugin->rs_cache_service() != NULL)
 				ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->rs_cache_service());
-			else if(_plugins[i].plugin->rs_pqi_service() != NULL)
-				ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->rs_pqi_service());
+            //else if(_plugins[i].plugin->rs_pqi_service() != NULL)
+            //	ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->rs_pqi_service());
+            else if(_plugins[i].plugin->p3_config() != NULL)
+                ConfigMgr->addConfiguration(_plugins[i].plugin->configurationFileName(), _plugins[i].plugin->p3_config());
 			else
 				continue ;
 

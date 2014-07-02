@@ -147,5 +147,5 @@ class RsAccountsDetail
 };
 
 // Global singleton declaration of data.
-extern RsAccountsDetail rsAccounts;
+extern RsAccountsDetail *rsAccounts;
 
