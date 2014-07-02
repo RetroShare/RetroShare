@@ -1765,11 +1765,11 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Private chat invite from </source>
-        <translation>Private Chateinladung von</translation>
+        <translation>Private Chateinladung von </translation>
     </message>
     <message>
         <source>Private chat invite to </source>
-        <translation>Private Chateinladung an</translation>
+        <translation>Private Chateinladung an </translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>

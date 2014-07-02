@@ -1425,7 +1425,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
 					  return ;
 				  }
 
-				  name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(_distant_peers[id])).arg(QString::fromStdString(details.name)) ;
+				  name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(_distant_peers[id])).arg(QString::fromUtf8(details.name.c_str())) ;
 				  icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
 			  }
 			  else if(rsPeers->getPeerDetails(id, details) && (!details.isOnlyGPGdetail))

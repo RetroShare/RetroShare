@@ -434,7 +434,7 @@ ChatPage::load()
 		else
 		{
 			QListWidgetItem *item = new QListWidgetItem;
-			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(detail.name)+" ("+QString::fromStdString(invites[i].destination_pgp_id)+", " + QString::fromStdString(detail.name) + ", valid until " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
+			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromUtf8(detail.name.c_str())+" ("+QString::fromStdString(invites[i].destination_pgp_id)+", " + QString::fromUtf8(detail.name.c_str()) + ", valid until " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
 			item->setData(Qt::UserRole,QString::fromStdString(invites[i].hash)) ;
 
 			ui._personal_invites_LW->insertItem(0,item) ;

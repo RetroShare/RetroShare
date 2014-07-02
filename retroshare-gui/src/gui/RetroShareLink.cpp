@@ -676,7 +676,7 @@ QString RetroShareLink::title() const
 		{
 			RsPeerDetails detail;
 			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
-			return QString("Click to send a private message to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+			return QString("Click to send a private message to %1 (%2).").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 		}
 	case TYPE_PRIVATE_CHAT:
 		{
@@ -684,9 +684,9 @@ QString RetroShareLink::title() const
 			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
 
 			if (_GPGid.toStdString() == rsPeers->getGPGOwnId()) 
-				return QString("Click to open a private chat canal to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+				return QString("Click to open a private chat canal to %1 (%2).").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 			else
-				return QString("This is a private chat invite for %1 (%2). You can't use it.").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+				return QString("This is a private chat invite for %1 (%2). You can't use it.").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 		}
 	case TYPE_EXTRAFILE:
 		return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
@@ -879,7 +879,7 @@ QString RetroShareLink::niceName() const
 	if(type() == TYPE_PUBLIC_MSG) {
 			RsPeerDetails detail;
 			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
-		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 	}
 	if(type() == TYPE_CERTIFICATE) {
 		if (_location.isEmpty()) {

@@ -615,7 +615,7 @@ void  FriendsDialog::insertSendList()
 
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, QString::fromStdString(details.name));
+		item -> setText(0, QString::fromUtf8(details.name.c_str()));
 
 		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		//item -> setFlags(Qt::ItemIsUserCheckable);
