@@ -271,7 +271,7 @@ bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, 
 
 	QInputDialog dialog;
 	dialog.setWindowTitle(tr("PGP key passphrase"));
-	dialog.setLabelText((prev_is_bad?tr("Wrong password !") + "\n\n" : QString()) + QString::fromUtf8(key_details.c_str()));
+	dialog.setLabelText(prev_is_bad?tr("Wrong password !") + "\n\n" : tr("Please enter your PGP password for key:") + QString::fromUtf8(key_details.c_str()));
 	dialog.setTextEchoMode(QLineEdit::Password);
 	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
 	dialog.setModal(true);
