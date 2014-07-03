@@ -863,7 +863,6 @@ private:
 
 private:
 
-    std::vector<RsGxsNotify*> mChanges;
     std::vector<RsGxsGroupChange*> mGroupChange;
     std::vector<RsGxsMsgChange*> mMsgChange;
 

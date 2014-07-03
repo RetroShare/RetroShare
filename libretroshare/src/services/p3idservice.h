@@ -476,9 +476,6 @@ std::string genRandomId(int len = 20);
  * Other Data that is protected by the Mutex.
  */
 
-	std::vector<RsGxsGroupChange*> mGroupChange;
-	std::vector<RsGxsMsgChange*> mMsgChange;
-
 	private:
 
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;

@@ -534,6 +534,10 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 		changes.push_back(msgChanges);
 	 	receiveHelperChanges(changes);
 	}
+	else
+	{
+		delete(msgChanges);
+	}
 
 	/* request the summary info from the parents */
 	uint32_t token_b;
@@ -668,6 +672,10 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 
 		changes.push_back(msgChanges);
 	 	receiveHelperChanges(changes);
+	}
+	else
+	{
+		delete(msgChanges);
 	}
 
 	// DONE!.
