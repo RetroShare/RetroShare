@@ -406,8 +406,8 @@ ChatPage::load()
 
 			QString tt ;
 			tt +=        tr("Name : ") + QString::fromStdString(detail.name) ;
-			tt += "\n" + QString("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id) ;
-			tt += "\n" + QString("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
+			tt += "\n" + tr("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id) ;
+			tt += "\n" + tr("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
 
 			if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNED)
 				if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNATURE_OK)
@@ -434,7 +434,7 @@ ChatPage::load()
 		else
 		{
 			QListWidgetItem *item = new QListWidgetItem;
-			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromUtf8(detail.name.c_str())+" ("+QString::fromStdString(invites[i].destination_pgp_id)+", " + QString::fromUtf8(detail.name.c_str()) + ", valid until " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
+			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromUtf8(detail.name.c_str())+" ("+QString::fromStdString(invites[i].destination_pgp_id)+", " + QString::fromUtf8(detail.name.c_str()) + tr(", valid until ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
 			item->setData(Qt::UserRole,QString::fromStdString(invites[i].hash)) ;
 
 			ui._personal_invites_LW->insertItem(0,item) ;
