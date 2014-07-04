@@ -1483,7 +1483,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
                 return ;
             }
 
-            name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromStdString(detail.mNickname)) ;
+            name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
             icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
         }
             break ;

@@ -649,7 +649,7 @@ QString RetroShareLink::title() const
 			{
 				RsPeerDetails detail;
 				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
-				return QString("Click to send a private message to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+				return QString("Click to send a private message to %1 (%2).").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 			}
 		case TYPE_EXTRAFILE:
 			return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
@@ -818,7 +818,7 @@ QString RetroShareLink::niceName() const
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;
 		rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
-		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 	}
 	if(type() == TYPE_CERTIFICATE) 
 	{

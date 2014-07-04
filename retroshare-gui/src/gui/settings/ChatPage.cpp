@@ -314,9 +314,9 @@ ChatPage::load()
 		 item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromUtf8(detail.name.c_str())) ;
 
 		 QString tt ;
-		 tt +=        tr("Name : ") + QString::fromStdString(detail.name) ;
-		 tt += "\n" + QString("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
-		 tt += "\n" + QString("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
+		 tt +=        tr("Name : ") + QString::fromUtf8(detail.name.c_str())) ;
+		 tt += "\n" + tr("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
+		 tt += "\n" + tr("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
 
 		 item->setData(Qt::UserRole,QString::fromStdString(invites[i].pid.toStdString())) ;
 		 item->setToolTip(tt) ;
