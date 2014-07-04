@@ -44,20 +44,22 @@ RsGxsUpdateBroadcast *RsGxsUpdateBroadcast::get(RsGxsIfaceHelper *ifaceImpl)
 void RsGxsUpdateBroadcast::poll()
 {
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgsMeta;
 	std::list<RsGxsGroupId> grps;
+	std::list<RsGxsGroupId> grpsMeta;
 
 	if (mIfaceImpl->updated(true, true))
 	{
-		mIfaceImpl->msgsChanged(msgs);
-		if (!msgs.empty())
+		mIfaceImpl->msgsChanged(msgs, msgsMeta);
+		if (!msgs.empty() || !msgsMeta.empty())
 		{
-			emit msgsChanged(msgs);
+			emit msgsChanged(msgs, msgsMeta);
 		}
 
-		mIfaceImpl->groupsChanged(grps);
-		if (!grps.empty())
+		mIfaceImpl->groupsChanged(grps, grpsMeta);
+		if (!grps.empty() || !grpsMeta.empty())
 		{
-			emit grpsChanged(grps);
+			emit grpsChanged(grps, grpsMeta);
 		}
 
 		emit changed();

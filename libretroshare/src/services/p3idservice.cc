@@ -224,7 +224,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	{
 	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-	       if (msgChange)
+	       if (msgChange && !msgChange->metaChange())
 	       {
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::notifyChanges() Found Message Change Notification";
@@ -243,7 +243,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	       }
 
 	       /* shouldn't need to worry about groups - as they need to be subscribed to */
-		if (groupChange)
+		if (groupChange && !groupChange->metaChange())
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";

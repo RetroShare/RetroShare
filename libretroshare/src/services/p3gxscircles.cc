@@ -184,7 +184,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	{
 	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-	       if (msgChange)
+	       if (msgChange && !msgChange->metaChange())
 	       {
 #ifdef DEBUG_CIRCLES
 			std::cerr << "p3GxsCircles::notifyChanges() Found Message Change Notification";
@@ -203,7 +203,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	       }
 
 	       /* add groups to ExternalIdList (Might get Personal Circles here until NetChecks in place) */
-		if (groupChange)
+		if (groupChange && !groupChange->metaChange())
 		{
 #ifdef DEBUG_CIRCLES
 			std::cerr << "p3GxsCircles::notifyChanges() Found Group Change Notification";

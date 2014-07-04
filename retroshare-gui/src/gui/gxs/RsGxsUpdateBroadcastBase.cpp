@@ -14,8 +14,8 @@ RsGxsUpdateBroadcastBase::RsGxsUpdateBroadcastBase(RsGxsIfaceHelper *ifaceImpl, 
 
 	mUpdateBroadcast = RsGxsUpdateBroadcast::get(ifaceImpl);
 	connect(mUpdateBroadcast, SIGNAL(changed()), this, SLOT(updateBroadcastChanged()));
-	connect(mUpdateBroadcast, SIGNAL(grpsChanged(std::list<RsGxsGroupId>)), this, SLOT(updateBroadcastGrpsChanged(std::list<RsGxsGroupId>)));
-	connect(mUpdateBroadcast, SIGNAL(msgsChanged(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >)), this, SLOT(updateBroadcastMsgsChanged(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >)));
+	connect(mUpdateBroadcast, SIGNAL(grpsChanged(std::list<RsGxsGroupId>, std::list<RsGxsGroupId>)), this, SLOT(updateBroadcastGrpsChanged(std::list<RsGxsGroupId>,std::list<RsGxsGroupId>)));
+	connect(mUpdateBroadcast, SIGNAL(msgsChanged(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >, std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >)), this, SLOT(updateBroadcastMsgsChanged(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >,std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >)));
 }
 
 RsGxsUpdateBroadcastBase::~RsGxsUpdateBroadcastBase()
@@ -42,7 +42,9 @@ void RsGxsUpdateBroadcastBase::securedUpdateDisplay()
 
 	/* Clear updated ids */
 	mGrpIds.clear();
+	mGrpIdsMeta.clear(),
 	mMsgIds.clear();
+	mMsgIdsMeta.clear();
 }
 
 void RsGxsUpdateBroadcastBase::showEvent(QShowEvent */*event*/)
@@ -53,7 +55,7 @@ void RsGxsUpdateBroadcastBase::showEvent(QShowEvent */*event*/)
 	}
 
 	if (!mUpdateWhenInvisible) {
-		if (!mGrpIds.empty() || !mMsgIds.empty()) {
+		if (!mGrpIds.empty() || !mGrpIdsMeta.empty() || !mMsgIds.empty() || !mMsgIdsMeta.empty()) {
 			securedUpdateDisplay();
 		}
 	}
@@ -69,7 +71,7 @@ void RsGxsUpdateBroadcastBase::updateBroadcastChanged()
 	}
 }
 
-void RsGxsUpdateBroadcastBase::updateBroadcastGrpsChanged(const std::list<RsGxsGroupId> &grpIds)
+void RsGxsUpdateBroadcastBase::updateBroadcastGrpsChanged(const std::list<RsGxsGroupId> &grpIds, const std::list<RsGxsGroupId> &grpIdsMeta)
 {
 	std::list<RsGxsGroupId>::const_iterator it;
 	for (it = grpIds.begin(); it != grpIds.end(); ++it) {
@@ -77,15 +79,68 @@ void RsGxsUpdateBroadcastBase::updateBroadcastGrpsChanged(const std::list<RsGxsG
 			mGrpIds.push_back(*it);
 		}
 	}
+	for (it = grpIdsMeta.begin(); it != grpIdsMeta.end(); ++it) {
+		if (std::find(mGrpIdsMeta.begin(), mGrpIdsMeta.end(), *it) == mGrpIdsMeta.end()) {
+			mGrpIdsMeta.push_back(*it);
+		}
+	}
 }
 
-void RsGxsUpdateBroadcastBase::updateBroadcastMsgsChanged(const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds)
+void RsGxsUpdateBroadcastBase::updateBroadcastMsgsChanged(const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds, const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIdsMeta)
 {
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mapIt;
 	for (mapIt = msgIds.begin(); mapIt != msgIds.end(); ++mapIt) {
 		const RsGxsGroupId &grpId = mapIt->first;
 		const std::vector<RsGxsMessageId> &srcMsgIds = mapIt->second;
 		std::vector<RsGxsMessageId> &destMsgIds = mMsgIds[grpId];
+
+		std::vector<RsGxsMessageId>::const_iterator msgIt;
+		for (msgIt = srcMsgIds.begin(); msgIt != srcMsgIds.end(); ++msgIt) {
+			if (std::find(destMsgIds.begin(), destMsgIds.end(), *msgIt) == destMsgIds.end()) {
+				destMsgIds.push_back(*msgIt);
+			}
+		}
+	}
+	for (mapIt = msgIdsMeta.begin(); mapIt != msgIdsMeta.end(); ++mapIt) {
+		const RsGxsGroupId &grpId = mapIt->first;
+		const std::vector<RsGxsMessageId> &srcMsgIds = mapIt->second;
+		std::vector<RsGxsMessageId> &destMsgIds = mMsgIdsMeta[grpId];
+
+		std::vector<RsGxsMessageId>::const_iterator msgIt;
+		for (msgIt = srcMsgIds.begin(); msgIt != srcMsgIds.end(); ++msgIt) {
+			if (std::find(destMsgIds.begin(), destMsgIds.end(), *msgIt) == destMsgIds.end()) {
+				destMsgIds.push_back(*msgIt);
+			}
+		}
+	}
+}
+
+void RsGxsUpdateBroadcastBase::getAllGrpIds(std::list<RsGxsGroupId> &grpIds)
+{
+	std::list<RsGxsGroupId>::const_iterator it;
+	for (it = mGrpIds.begin(); it != mGrpIds.end(); ++it) {
+		if (std::find(grpIds.begin(), grpIds.end(), *it) == grpIds.end()) {
+			grpIds.push_back(*it);
+		}
+	}
+	for (it = mGrpIdsMeta.begin(); it != mGrpIdsMeta.end(); ++it) {
+		if (std::find(grpIds.begin(), grpIds.end(), *it) == grpIds.end()) {
+			grpIds.push_back(*it);
+		}
+	}
+}
+
+void RsGxsUpdateBroadcastBase::getAllMsgIds(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds)
+{
+	/* Copy first map */
+	msgIds = mMsgIds;
+
+	/* Append second map */
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mapIt;
+	for (mapIt = mMsgIdsMeta.begin(); mapIt != mMsgIdsMeta.end(); ++mapIt) {
+		const RsGxsGroupId &grpId = mapIt->first;
+		const std::vector<RsGxsMessageId> &srcMsgIds = mapIt->second;
+		std::vector<RsGxsMessageId> &destMsgIds = msgIds[grpId];
 
 		std::vector<RsGxsMessageId>::const_iterator msgIt;
 		for (msgIt = srcMsgIds.begin(); msgIt != srcMsgIds.end(); ++msgIt) {

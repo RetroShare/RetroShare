@@ -31,30 +31,32 @@ public:
 
 /*!
  * Relevant to group changes
- * TODO: extent to indicate whether a meta change or actual data
  */
 class RsGxsGroupChange : public RsGxsNotify
 {
 public:
-	RsGxsGroupChange(NotifyType type) : NOTIFY_TYPE(type) {}
+	RsGxsGroupChange(NotifyType type, bool metaChange) : NOTIFY_TYPE(type), mMetaChange(metaChange) {}
     std::list<RsGxsGroupId> mGrpIdList;
     NotifyType getType(){ return NOTIFY_TYPE;}
+    bool metaChange() { return mMetaChange; }
 private:
     const NotifyType NOTIFY_TYPE;
+    bool mMetaChange;
 };
 
 /*!
  * Relevant to message changes
- * TODO: extent to indicate whether a meta change or actual data
  */
 class RsGxsMsgChange : public RsGxsNotify
 {
 public:
-	RsGxsMsgChange(NotifyType type) : NOTIFY_TYPE(type) {}
+	RsGxsMsgChange(NotifyType type, bool metaChange) : NOTIFY_TYPE(type), mMetaChange(metaChange) {}
     std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;
 	NotifyType getType(){ return NOTIFY_TYPE;}
+    bool metaChange() { return mMetaChange; }
 private:
     const NotifyType NOTIFY_TYPE;
+    bool mMetaChange;
 };
 
 

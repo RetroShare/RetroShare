@@ -27,9 +27,29 @@ const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIds()
 	return mBase->getGrpIds();
 }
 
+const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIdsMeta()
+{
+	return mBase->getGrpIdsMeta();
+}
+
+void RsGxsUpdateBroadcastWidget::getAllGrpIds(std::list<RsGxsGroupId> &grpIds)
+{
+	mBase->getAllGrpIds(grpIds);
+}
+
 const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIds()
 {
 	return mBase->getMsgIds();
+}
+
+const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIdsMeta()
+{
+	return mBase->getMsgIdsMeta();
+}
+
+void RsGxsUpdateBroadcastWidget::getAllMsgIds(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds)
+{
+	mBase->getAllMsgIds(msgIds);
 }
 
 void RsGxsUpdateBroadcastWidget::fillDisplay(bool complete)

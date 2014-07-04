@@ -915,15 +915,21 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 
 }
 
-void RsGenExchange::msgsChanged(std::map<RsGxsGroupId,
-                             std::vector<RsGxsMessageId> >& msgs)
+void RsGenExchange::msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta)
 {
 	if(mGenMtx.trylock())
 	{
 		while(!mMsgChange.empty())
 		{
 			RsGxsMsgChange* mc = mMsgChange.back();
-			msgs = mc->msgChangeMap;
+			if (mc->metaChange())
+			{
+				msgsMeta = mc->msgChangeMap;
+			}
+			else
+			{
+				msgs = mc->msgChangeMap;
+			}
 			mMsgChange.pop_back();
 			delete mc;
 		}
@@ -931,7 +937,7 @@ void RsGenExchange::msgsChanged(std::map<RsGxsGroupId,
 	}
 }
 
-void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds)
+void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds, std::list<RsGxsGroupId>& grpIdsMeta)
 {
 
 	if(mGenMtx.trylock())
@@ -942,7 +948,14 @@ void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds)
 			std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
 			std::list<RsGxsGroupId>::iterator lit = gList.begin();
 			for(; lit != gList.end(); lit++)
+				if (gc->metaChange())
+				{
+					grpIdsMeta.push_back(*lit);
+				}
+				else
+				{
 					grpIds.push_back(*lit);
+				}
 
 			mGroupChange.pop_back();
 			delete gc;
@@ -1480,8 +1493,9 @@ void RsGenExchange::setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair
 
 void RsGenExchange::processMsgMetaChanges()
 {
-
     RsStackMutex stack(mGenMtx);
+
+    GxsMsgReq msgIds;
 
     std::map<uint32_t, MsgLocMetaData>::iterator mit = mMsgLocMetaMap.begin(),
     mit_end = mMsgLocMetaMap.end();
@@ -1492,6 +1506,7 @@ void RsGenExchange::processMsgMetaChanges()
 
         int32_t value, mask;
         bool ok = true;
+        bool changed = false;
 
         // for meta flag changes get flag to apply mask
         if(m.val.getAsInt32(RsGeneralDataService::MSG_META_STATUS, value))
@@ -1515,6 +1530,7 @@ void RsGenExchange::processMsgMetaChanges()
                     {
                         RsGxsMsgMetaData* meta = *(msgMetaV.begin());
                         value = (meta->mMsgStatus & ~mask) | (mask & value);
+                        changed = (meta->mMsgStatus != value);
                         m.val.put(RsGeneralDataService::MSG_META_STATUS, value);
                         delete meta;
                         ok = true;
@@ -1524,18 +1540,28 @@ void RsGenExchange::processMsgMetaChanges()
             }
         }
 
-
         ok &= mDataStore->updateMessageMetaData(m) == 1;
         uint32_t token = mit->first;
 
         if(ok)
         {
             mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
-        }else
+            if (changed)
+            {
+                msgIds[m.msgId.first].push_back(m.msgId.second);
+            }
+        }
+        else
         {
             mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
         }
         mMsgNotify.insert(std::make_pair(token, m.msgId));
+    }
+
+    if (!msgIds.empty()) {
+        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, true);
+        c->msgChangeMap = msgIds;
+        mNotifications.push_back(c);
     }
 
     mMsgLocMetaMap.clear();
@@ -1544,6 +1570,8 @@ void RsGenExchange::processMsgMetaChanges()
 void RsGenExchange::processGrpMetaChanges()
 {
     RsStackMutex stack(mGenMtx);
+
+    std::list<RsGxsGroupId> grpChanged;
 
     std::map<uint32_t, GrpLocMetaData>::iterator mit = mGrpLocMetaMap.begin(),
     mit_end = mGrpLocMetaMap.end();
@@ -1561,11 +1589,19 @@ void RsGenExchange::processGrpMetaChanges()
         if(ok)
         {
             mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+            grpChanged.push_back(g.grpId);
         }else
         {
             mDataAccess->updatePublicRequestStatus(token, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
         }
         mGrpNotify.insert(std::make_pair(token, g.grpId));
+    }
+
+    if(!grpChanged.empty())
+    {
+        RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, true);
+        gc->mGrpIdList = grpChanged;
+        mNotifications.push_back(gc);
     }
 
     mGrpLocMetaMap.clear();
@@ -1798,7 +1834,7 @@ void RsGenExchange::publishMsgs()
 
 	if(!msgChangeMap.empty())
 	{
-		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISH);
+		RsGxsMsgChange* ch = new RsGxsMsgChange(RsGxsNotify::TYPE_PUBLISH, false);
 		ch->msgChangeMap = msgChangeMap;
 		mNotifications.push_back(ch);
 	}
@@ -1929,7 +1965,7 @@ void RsGenExchange::processGroupDelete()
 
 	if(!grpDeleted.empty())
 	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH);
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
 		gc->mGrpIdList = grpDeleted;
 		mNotifications.push_back(gc);
 	}
@@ -2168,7 +2204,7 @@ void RsGenExchange::publishGrps()
 
     if(!grpChanged.empty())
     {
-    	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH);
+    	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
     	gc->mGrpIdList = grpChanged;
     	mNotifications.push_back(gc);
     }
@@ -2374,7 +2410,7 @@ void RsGenExchange::processRecvdMessages()
     {
     	removeDeleteExistingMessages(msgs, msgIds);
         mDataStore->storeMessage(msgs);
-        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE);
+        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
         c->msgChangeMap = msgIds;
         mNotifications.push_back(c);
     }
@@ -2483,7 +2519,7 @@ void RsGenExchange::processRecvdGroups()
 
     if(!grpIds.empty())
     {
-        RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE);
+        RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, false);
         c->mGrpIdList = grpIds;
         mNotifications.push_back(c);
         mDataStore->storeGroup(grps);

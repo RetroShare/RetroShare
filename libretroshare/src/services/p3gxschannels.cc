@@ -135,7 +135,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	for(it = changes.begin(); it != changes.end(); it++)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-		if (msgChange)
+		if (msgChange && !msgChange->metaChange())
 		{
 			std::cerr << "p3GxsChannels::notifyChanges() Found Message Change Notification";
 			std::cerr << std::endl;

@@ -269,9 +269,10 @@ public:
      * If receivedChanges is not passed RsGxsNotify changes
      * this function does nothing
      * @param grpIds returns list of grpIds that have changed
+     * @param grpIdsMeta returns list of grpIds with meta data changes
      * @see updated
      */
-    void groupsChanged(std::list<RsGxsGroupId>& grpIds);
+    void groupsChanged(std::list<RsGxsGroupId>& grpIds, std::list<RsGxsGroupId>& grpIdsMeta);
 
     /*!
      * The msg changed. \n
@@ -280,10 +281,10 @@ public:
      * If receivedChanges is not passed RsGxsNotify changes
      * this function does nothing
      * @param msgs returns map of message ids that have changed
+     * @param msgsMeta returns map of message ids with meta data changes
      * @see updated
      */
-    void msgsChanged(std::map<RsGxsGroupId,
-                             std::vector<RsGxsMessageId> >& msgs);
+    void msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta);
 
 
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
