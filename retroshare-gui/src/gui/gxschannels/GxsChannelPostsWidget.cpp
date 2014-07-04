@@ -119,7 +119,8 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 		/* Do we need to fill all posts? */
 		requestPosts(mChannelId);
 	} else {
-		const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = getMsgIds();
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+		getAllMsgIds(msgs);
 		if (!msgs.empty())
 		{
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(mChannelId);

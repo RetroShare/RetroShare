@@ -166,7 +166,9 @@ GxsFeedItem::~GxsFeedItem()
 
 void GxsFeedItem::fillDisplay(bool /*complete*/)
 {
-	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = mUpdateBroadcastBase->getMsgIds();
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+	mUpdateBroadcastBase->getAllMsgIds(msgs);
+
 	if (!msgs.empty())
 	{
 		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
