@@ -42,7 +42,7 @@ public:
 void 	setNewPage();
 
 void 	setupData(const RsGxsGroupId &groupId, const RsGxsMessageId &pageId);
-void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
+void 	loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
 
 void 	setRepublishMode(RsGxsMessageId &origMsgId);
 

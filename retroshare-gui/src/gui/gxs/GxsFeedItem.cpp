@@ -252,7 +252,7 @@ void GxsFeedItem::loadGroupMeta(const uint32_t &token)
 	}
 }
 
-void GxsFeedItem::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void GxsFeedItem::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
 	std::cerr << "GxsFeedItem::loadRequest()";
 	std::cerr << std::endl;

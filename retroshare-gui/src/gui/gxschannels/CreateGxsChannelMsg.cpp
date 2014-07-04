@@ -699,7 +699,7 @@ void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
 	}
 }
 
-void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void CreateGxsChannelMsg::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
 	std::cerr << "CreateGxsChannelMsg::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

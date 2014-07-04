@@ -38,7 +38,7 @@ public:
         PhotoSlideShow(const RsPhotoAlbum& mAlbum, QWidget *parent = 0);
         virtual ~PhotoSlideShow();
 
-        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+        void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
 
 private slots:
 	void showPhotoDetails();

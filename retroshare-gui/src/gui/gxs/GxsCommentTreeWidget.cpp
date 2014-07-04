@@ -475,7 +475,7 @@ QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMess
 
 
 
-void GxsCommentTreeWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void GxsCommentTreeWidget::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
 	std::cerr << "GxsCommentTreeWidget::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

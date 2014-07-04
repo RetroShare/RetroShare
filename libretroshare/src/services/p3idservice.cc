@@ -311,12 +311,10 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 }
 
 
-bool p3IdService:: getOwnIds(std::list<RsGxsId> &ownIds)
+void p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	ownIds = mOwnIds;
-
-	return true;
 }
 
 

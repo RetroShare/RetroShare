@@ -118,7 +118,7 @@ void PhotoDialog::createComment()
 
 /*************** message loading **********************/
 
-void PhotoDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void PhotoDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
     std::cerr << "PhotoShare::loadRequest()";
     std::cerr << std::endl;

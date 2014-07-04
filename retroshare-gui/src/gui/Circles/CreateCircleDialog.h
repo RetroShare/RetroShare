@@ -42,7 +42,7 @@ public:
 	void editNewId(bool isExternal);
 	void editExistingId(const RsGxsGroupId& circleId);
 
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    virtual void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
 
 private slots:
 	void addMember();

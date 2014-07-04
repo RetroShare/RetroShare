@@ -1836,7 +1836,7 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void GxsForumThreadWidget::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
 	std::cerr << "GxsForumsDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

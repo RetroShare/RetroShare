@@ -638,7 +638,7 @@ void PhotoShare::loadPhotoData(const uint32_t &token)
 
 /**************************** Request / Response Filling of Data ************************/
 
-void PhotoShare::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void PhotoShare::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
         std::cerr << "PhotoShare::loadRequest()";
         std::cerr << std::endl;

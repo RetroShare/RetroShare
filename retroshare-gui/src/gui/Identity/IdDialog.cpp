@@ -746,7 +746,7 @@ void IdDialog::insertRepList(uint32_t token)
 	mStateHelper->setActive(IDDIALOG_REPLIST, true);
 }
 
-void IdDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req)
+void IdDialog::loadRequest(const TokenQueueBase * /*queue*/, const TokenRequest &req)
 {
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

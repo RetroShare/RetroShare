@@ -1,5 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-		VOIP \
-		FeedReader
+                VOIP \
+                FeedReader \
+                rssocialnet 
+                #Lua4RS

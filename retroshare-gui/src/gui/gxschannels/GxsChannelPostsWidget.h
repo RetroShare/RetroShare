@@ -64,7 +64,7 @@ public:
     virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
 
 	/* NEW GXS FNS */
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
 
 protected:
 	virtual void updateDisplay(bool complete);

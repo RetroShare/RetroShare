@@ -63,6 +63,7 @@ class FeedNotify;
 class ChatWidget;
 class ChatWidgetHolder;
 // for gxs based plugins
+class RsIdentity;
 class RsNxsNetMgr;
 class RsGxsIdExchange;
 class RsGcxs;
@@ -88,47 +89,50 @@ class p3Config;
 
 class RsPluginHandler;
 
+// helper class to store a pointer
+// it is usefull because it initialises itself to NULL
+// usage:
+//   replace type* ptr;
+//   with inited_ptr<type> ptr;
+// this class can
+// - get assigned a pointer
+// - be dereferenced
+// - be converted back to a pointer
+template<class T> class inited_ptr{
+public:
+    inited_ptr(): _ptr(NULL){}
+    inited_ptr(const inited_ptr<T>& other): _ptr(other._ptr){}
+    inited_ptr<T>& operator= (const inited_ptr<T>& other){ _ptr = other._ptr; return *this;}
+    inited_ptr<T>& operator= (T* ptr){ _ptr = ptr; return *this;}
+    operator T* () const { return _ptr;}
+    T* operator ->() const { return _ptr;}
+    T& operator *() const { return *_ptr;}
+private:
+    T* _ptr;
+};
+
 /*!
  *
  * convenience class to store gui interfaces
  *
  */
 class RsPlugInInterfaces {
-
 public:
+    inited_ptr<RsPeers>  mPeers;
+    inited_ptr<RsFiles>  mFiles;
+    inited_ptr<RsMsgs>   mMsgs;
+    inited_ptr<RsTurtle> mTurtle;
+    inited_ptr<RsDisc>   mDisc;
+    inited_ptr<RsDht>    mDht;
+    inited_ptr<RsNotify> mNotify;
 
-    RsPlugInInterfaces() 
-	 { 
-        // save the string
-        uint8_t strdata[sizeof(std::string)];
-        memcpy(strdata, &mGxsDir, sizeof(std::string));
-
-		 memset(this,0,sizeof(RsPlugInInterfaces)) ;	// zero all pointers.
-
-         // because the evil above destroyed the string, we have to rebuild it
-         // above lines are sure meant good, but they also lead to confusion because the whole object is zero
-         // this fixes a evil hack with another evil hack.
-         memcpy(&mGxsDir, strdata, sizeof(std::string));
-
-         // idea for a clean solution to init the pointers with zero:
-         // wrap the raw pointers into a template class, which zeros the pointers
-         // then we can't forget to zero a single pointer
-
-	 }
-    RsPeers  *mPeers;
-    RsFiles  *mFiles;
-    RsMsgs   *mMsgs;
-    RsTurtle *mTurtle;
-    RsDisc   *mDisc;
-    RsDht    *mDht;
-    RsNotify *mNotify;
-
-    // gxs parts needed for Social Network Plugin
+    // gxs
     std::string     mGxsDir;
-    RsNxsNetMgr     *mRsNxsNetMgr;
-    RsGxsIdExchange *mGxsIdService;
-    RsGcxs          *mGxsCirlces;
-    PgpAuxUtils     *mPgpAuxUtils;
+    inited_ptr<RsIdentity>      mIdentity;
+    inited_ptr<RsNxsNetMgr>     mRsNxsNetMgr;
+    inited_ptr<RsGxsIdExchange> mGxsIdService;
+    inited_ptr<RsGcxs>          mGxsCirlces;
+    inited_ptr<PgpAuxUtils>     mPgpAuxUtils;
 };
 
 class RsPlugin

@@ -26,7 +26,7 @@ private slots:
 	void setFullScreen();
 
 public:
-    void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
 private:
     void setUp();
 

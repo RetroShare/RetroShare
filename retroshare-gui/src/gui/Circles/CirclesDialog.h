@@ -43,7 +43,7 @@ public:
 	virtual QString pageName() const { return tr("Circles") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+    void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
 
 protected:
 	virtual void updateDisplay(bool complete);

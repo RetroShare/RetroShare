@@ -760,7 +760,7 @@ void GxsChannelPostsWidget::acknowledgeMessageUpdate(const uint32_t &token)
 	}
 }
 
-void GxsChannelPostsWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void GxsChannelPostsWidget::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
 #ifdef DEBUG_CHANNEL
 	std::cerr << "GxsChannelPostsWidget::loadRequest() UserType: " << req.mUserType;

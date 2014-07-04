@@ -162,6 +162,7 @@ class RsNotify
 	public:
 		/* registration of notifies clients */
 		virtual void registerNotifyClient(NotifyClient *nc) = 0;
+        virtual void unregisterNotifyClient(NotifyClient *nc) = 0;
 
 		/* Pull methods for retroshare-gui                   */
 		/* this should probably go into a different service. */

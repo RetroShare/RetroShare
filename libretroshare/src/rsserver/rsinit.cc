@@ -1477,16 +1477,13 @@ int RsServer::StartupRetroShare()
 	interfaces.mDisc   = rsDisc;
 	interfaces.mDht    = rsDht;
 	interfaces.mNotify = mNotify;
-
     // gxs
-    std::cerr << currGxsDir << std::endl;
-    interfaces.mGxsDir          = "";
     interfaces.mGxsDir          = currGxsDir;
+    interfaces.mIdentity        = mGxsIdService;
     interfaces.mRsNxsNetMgr     = nxsMgr;
     interfaces.mGxsIdService    = mGxsIdService;
     interfaces.mGxsCirlces      = mGxsCircles;
     interfaces.mPgpAuxUtils     = pgpAuxUtils;
-
 	mPluginsManager->setInterfaces(interfaces);
 
 	// now add plugin objects inside the loop:

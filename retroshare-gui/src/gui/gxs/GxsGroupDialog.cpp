@@ -725,7 +725,7 @@ void GxsGroupDialog::loadGroup(uint32_t token)
 	}
 }
 
-void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void GxsGroupDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
 	std::cerr << "GxsGroupDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

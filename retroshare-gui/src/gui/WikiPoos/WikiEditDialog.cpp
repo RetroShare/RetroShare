@@ -899,7 +899,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 
 
 
-void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void WikiEditDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
 {
 	std::cerr << "WikiEditDialog::loadRequest()";
 	std::cerr << std::endl;
