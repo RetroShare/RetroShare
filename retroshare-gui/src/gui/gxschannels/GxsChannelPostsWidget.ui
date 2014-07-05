@@ -256,7 +256,7 @@
   <customwidget>
    <class>SubscribeToolButton</class>
    <extends>QToolButton</extends>
-   <header>gui/Common/SubscribeToolButton.h</header>
+   <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
