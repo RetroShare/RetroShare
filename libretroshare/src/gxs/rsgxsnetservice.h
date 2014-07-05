@@ -183,6 +183,7 @@ private:
     /*!
      * Process a transaction item, assumes a general lock
      * @param item the transaction item to process
+     * @return false ownership of item left with callee
      */
     bool locked_processTransac(RsNxsTransac* item);
 

@@ -743,8 +743,10 @@ void RsGxsNetService::recvNxsItemQueue(){
 				std::cerr << "handlingTransaction, transN" << ni->transactionNumber << std::endl;
 #endif
 
-				if(handleTransaction(ni))
-					continue ;
+                if(!handleTransaction(ni))
+                    delete ni;
+
+                continue;
 			}
 
 
@@ -893,7 +895,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 		// note state as receiving, commencement item
 		// is sent on next run() loop
 		tr->mFlag = NxsTransaction::FLAG_STATE_STARTING;
-
+        return;
 		// commencement item for outgoing transaction
 	}else if(item->transactFlag & RsNxsTransac::FLAG_BEGIN_P2){
 
@@ -907,7 +909,8 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 		TransactionIdMap& transMap = mTransactions[mOwnId];
 		NxsTransaction* tr = transMap[transN];
 		tr->mFlag = NxsTransaction::FLAG_STATE_SENDING;
-
+        delete item;
+        return true;
 		// end transac item for outgoing transaction
 	}else if(item->transactFlag & RsNxsTransac::FLAG_END_SUCCESS){
 
@@ -920,10 +923,12 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 		// on next run() loop
 		TransactionIdMap& transMap = mTransactions[mOwnId];
 		NxsTransaction* tr = transMap[transN];
-		tr->mFlag = NxsTransaction::FLAG_STATE_COMPLETED;
-	}
-
-	return true;
+        tr->mFlag = NxsTransaction::FLAG_STATE_COMPLETED;
+        delete item;
+        return true;
+    }
+    else
+        return false;
 }
 
 void RsGxsNetService::run(){
