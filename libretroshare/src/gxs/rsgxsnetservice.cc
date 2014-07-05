@@ -895,7 +895,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 		// note state as receiving, commencement item
 		// is sent on next run() loop
 		tr->mFlag = NxsTransaction::FLAG_STATE_STARTING;
-        return;
+        return true;
 		// commencement item for outgoing transaction
 	}else if(item->transactFlag & RsNxsTransac::FLAG_BEGIN_P2){
 
