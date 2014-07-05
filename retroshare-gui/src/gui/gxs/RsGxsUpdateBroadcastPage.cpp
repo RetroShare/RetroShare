@@ -22,9 +22,29 @@ void RsGxsUpdateBroadcastPage::setUpdateWhenInvisible(bool update)
 	mBase->setUpdateWhenInvisible(update);
 }
 
+const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastPage::getGrpIdsMeta()
+{
+	return mBase->getGrpIdsMeta();
+}
+
+void RsGxsUpdateBroadcastPage::getAllGrpIds(std::list<RsGxsGroupId> &grpIds)
+{
+	mBase->getAllGrpIds(grpIds);
+}
+
 const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastPage::getGrpIds()
 {
 	return mBase->getGrpIds();
+}
+
+const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastPage::getMsgIdsMeta()
+{
+	return mBase->getMsgIdsMeta();
+}
+
+void RsGxsUpdateBroadcastPage::getAllMsgIds(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds)
+{
+	mBase->getAllMsgIds(msgIds);
 }
 
 const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastPage::getMsgIds()

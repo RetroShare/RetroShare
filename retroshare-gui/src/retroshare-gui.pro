@@ -459,6 +459,7 @@ HEADERS +=  rshare.h \
             gui/common/MimeTextEdit.h \
             gui/common/UIStateHelper.h \
             gui/common/FloatingHelpBrowser.h \
+            gui/common/SubscribeToolButton.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -746,6 +747,7 @@ SOURCES +=  main.cpp \
             gui/common/MimeTextEdit.cpp \
             gui/common/UIStateHelper.cpp \
             gui/common/FloatingHelpBrowser.cpp \
+            gui/common/SubscribeToolButton.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \

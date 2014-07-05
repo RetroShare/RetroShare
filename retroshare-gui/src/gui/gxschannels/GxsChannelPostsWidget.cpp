@@ -68,11 +68,14 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	mStateHelper->addWidget(TOKEN_TYPE_GROUP_DATA, ui->postButton);
 	mStateHelper->addWidget(TOKEN_TYPE_GROUP_DATA, ui->logoLabel);
+	mStateHelper->addWidget(TOKEN_TYPE_GROUP_DATA, ui->subscribeToolButton);
 
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
+	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
 //	connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
+
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_TITLE, tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Message"), FILTER_MSG, tr("Search Message"));
@@ -94,7 +97,18 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	/* load settings */
 	processSettings(true);
 
+	/* Initialize subscribe button */
+	QIcon icon;
+	icon.addPixmap(QPixmap(":/images/redled.png"), QIcon::Normal, QIcon::On);
+	icon.addPixmap(QPixmap(":/images/start.png"), QIcon::Normal, QIcon::Off);
+	mAutoDownloadAction = new QAction(icon, "", this);
+	mAutoDownloadAction->setCheckable(true);
+	connect(mAutoDownloadAction, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
+
+	ui->subscribeToolButton->addSubscribedAction(mAutoDownloadAction);
+
 	/* Initialize GUI */
+	setAutoDownload(false);
 	setGroupId(channelId);
 }
 
@@ -102,6 +116,8 @@ GxsChannelPostsWidget::~GxsChannelPostsWidget()
 {
 	// save settings
 	processSettings(false);
+
+	delete(mAutoDownloadAction);
 }
 
 void GxsChannelPostsWidget::updateDisplay(bool complete)
@@ -113,9 +129,19 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 		return;
 	}
 
+	bool updateGroup = false;
+	if (mChannelId.isNull()) {
+		return;
+	}
+
+	const std::list<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
+	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), mChannelId) != grpIdsMeta.end()) {
+		updateGroup = true;
+	}
+
 	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
 	if (!mChannelId.isNull() && std::find(grpIds.begin(), grpIds.end(), mChannelId) != grpIds.end()) {
-		requestGroupData(mChannelId);
+		updateGroup = true;
 		/* Do we need to fill all posts? */
 		requestPosts(mChannelId);
 	} else {
@@ -129,6 +155,10 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 				requestRelatedPosts(mChannelId, mit->second);
 			}
 		}
+	}
+
+	if (updateGroup) {
+		requestGroupData(mChannelId);
 	}
 }
 
@@ -257,7 +287,10 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		mStateHelper->setWidgetEnabled(ui->postButton, false);
 	}
 
-	setAutoDownloadButton(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+
+	bool autoDownload = rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId);
+	setAutoDownload(autoDownload);
 }
 
 static bool sortChannelMsgSummaryAsc(const RsGxsChannelPost &msg1, const RsGxsChannelPost &msg2)
@@ -551,12 +584,35 @@ void GxsChannelPostsWidget::setAllMessagesRead(bool read)
 #endif
 }
 
-void GxsChannelPostsWidget::setAutoDownloadButton(bool autoDl)
+void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
 {
-	if (autoDl) {
-		ui->actionEnable_Auto_Download->setText(tr("Disable Auto-Download"));
-	}else{
-		ui->actionEnable_Auto_Download->setText(tr("Enable Auto-Download"));
+	if (mChannelId.isNull()) {
+		return;
+	}
+
+	uint32_t token;
+	rsGxsChannels->subscribeToGroup(token, mChannelId, subscribe);
+//	mChannelQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
+}
+
+void GxsChannelPostsWidget::setAutoDownload(bool autoDl)
+{
+	mAutoDownloadAction->setChecked(autoDl);
+	mAutoDownloadAction->setText(autoDl ? tr("Disable Auto-Download") : tr("Enable Auto-Download"));
+}
+
+void GxsChannelPostsWidget::toggleAutoDownload()
+{
+	RsGxsGroupId grpId = groupId();
+	if (grpId.isNull()) {
+		return;
+	}
+
+	bool autoDownload = rsGxsChannels->getChannelAutoDownload(grpId);
+	if (!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+	{
+		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
+		std::cerr << std::endl;
 	}
 }
 

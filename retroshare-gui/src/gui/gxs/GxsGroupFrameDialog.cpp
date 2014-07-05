@@ -49,7 +49,7 @@
 #define IMAGE_COMMENT        ""
 
 #define TOKEN_TYPE_GROUP_SUMMARY    1
-#define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
+//#define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
 //#define TOKEN_TYPE_CURRENTGROUP     3
 
 #define MAX_COMMENT_TITLE 32
@@ -193,7 +193,7 @@ void GxsGroupFrameDialog::setSingleTab(bool singleTab)
 
 void GxsGroupFrameDialog::updateDisplay(bool complete)
 {
-	if (complete || !getGrpIds().empty()) {
+	if (complete || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
 		/* Update group list */
 		requestGroupSummary();
 	}
@@ -312,7 +312,8 @@ void GxsGroupFrameDialog::groupSubscribe(bool subscribe)
 
 	uint32_t token;
 	mInterface->subscribeToGroup(token, mGroupId, subscribe);
-	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
+// Replaced by meta data changed
+//	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void GxsGroupFrameDialog::showGroupDetails()
@@ -720,6 +721,11 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 	ui->groupTreeWidget->fillGroupItems(mPopularGroups, popList);
 	ui->groupTreeWidget->fillGroupItems(mOtherGroups, otherList);
 
+	/* Re-fill group */
+	if (!ui->groupTreeWidget->activateId(QString::fromStdString(mGroupId.toStdString()), true)) {
+		mGroupId.clear();
+	}
+
 	updateMessageSummaryList(RsGxsGroupId());
 }
 
@@ -814,18 +820,18 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void GxsGroupFrameDialog::acknowledgeSubscribeChange(const uint32_t &token)
-{
-#ifdef DEBUG_GROUPFRAMEDIALOG
-	std::cerr << "GxsGroupFrameDialog::acknowledgeSubscribeChange()";
-	std::cerr << std::endl;
-#endif
+//void GxsGroupFrameDialog::acknowledgeSubscribeChange(const uint32_t &token)
+//{
+//#ifdef DEBUG_GROUPFRAMEDIALOG
+//	std::cerr << "GxsGroupFrameDialog::acknowledgeSubscribeChange()";
+//	std::cerr << std::endl;
+//#endif
 
-	RsGxsGroupId groupId;
-	mInterface->acknowledgeGrp(token, groupId);
+//	RsGxsGroupId groupId;
+//	mInterface->acknowledgeGrp(token, groupId);
 
-	fillComplete();
-}
+//	fillComplete();
+//}
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -887,9 +893,9 @@ void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenReques
 			loadGroupSummary(req.mToken);
 			break;
 
-		case TOKEN_TYPE_SUBSCRIBE_CHANGE:
-			acknowledgeSubscribeChange(req.mToken);
-			break;
+//		case TOKEN_TYPE_SUBSCRIBE_CHANGE:
+//			acknowledgeSubscribeChange(req.mToken);
+//			break;
 
 //		case TOKEN_TYPE_CURRENTGROUP:
 //			loadGroupSummary_CurrentGroup(req.mToken);

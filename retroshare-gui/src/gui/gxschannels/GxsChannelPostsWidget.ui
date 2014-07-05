@@ -124,6 +124,22 @@
        </widget>
       </item>
       <item>
+       <widget class="SubscribeToolButton" name="subscribeToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string notr="true">Subscribe</string>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -227,22 +243,6 @@
     </widget>
    </item>
   </layout>
-  <action name="actionsetAllAsRead">
-   <property name="text">
-    <string>Set all as read</string>
-   </property>
-   <property name="toolTip">
-    <string>Set all as read</string>
-   </property>
-  </action>
-  <action name="actionEnable_Auto_Download">
-   <property name="text">
-    <string>Enable Auto-Download</string>
-   </property>
-   <property name="toolTip">
-    <string>Enable Auto-Download</string>
-   </property>
-  </action>
   <zorder>toolBarFrame</zorder>
   <zorder>scrollArea</zorder>
   <zorder>headFrame</zorder>
@@ -252,6 +252,11 @@
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SubscribeToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/Common/SubscribeToolButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -71,6 +71,8 @@ protected:
 
 private slots:
 	void createMsg();
+	void toggleAutoDownload();
+	void subscribeGroup(bool subscribe);
 	void filterChanged(int filter);
 	void filterItems(const QString& text);
 
@@ -80,7 +82,7 @@ private slots:
 private:
 	void processSettings(bool load);
 
-	void setAutoDownloadButton(bool autoDl);
+	void setAutoDownload(bool autoDl);
 	void clearPosts();
 
 	/* NEW GXS FNS */
@@ -109,7 +111,7 @@ private:
 	//QList<ChanMsgItem *> mChanMsgItems;
 	QList<GxsChannelPostItem *> mChannelPostItems;
 
-	std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
+	QAction *mAutoDownloadAction;
 
 	UIStateHelper *mStateHelper;
 

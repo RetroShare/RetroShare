@@ -148,7 +148,7 @@ private:
 	void loadGroupSummary(const uint32_t &token);
 
 	// subscribe/unsubscribe ack.
-	void acknowledgeSubscribeChange(const uint32_t &token);
+//	void acknowledgeSubscribeChange(const uint32_t &token);
 
 	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
