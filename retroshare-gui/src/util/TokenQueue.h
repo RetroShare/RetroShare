@@ -39,7 +39,7 @@
 #define TOKENREQ_MSGINFO        2
 #define TOKENREQ_MSGRELATEDINFO 3
 
-class TokenQueueBase;
+class TokenQueue;
 
 class TokenRequest
 {
@@ -57,7 +57,7 @@ class TokenResponse
 public:
 	//virtual ~TokenResponse() { return; }
 	// These Functions are overloaded to get results out.
-    virtual void loadRequest(const TokenQueueBase *queue, const TokenRequest &req) = 0;
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) = 0;
 };
 
 
@@ -65,10 +65,12 @@ public:
  * An important thing to note is that all requests are stacked (so FIFO)
  * This is to prevent overlapped loads on GXS UIs
  */
-class TokenQueueBase
+class TokenQueue: public QObject
 {
+	Q_OBJECT
+
 public:
-    TokenQueueBase(RsTokenService *service, TokenResponse *resp);
+	TokenQueue(RsTokenService *service, TokenResponse *resp);
 
 	/* generic handling of token / response update behaviour */
 
@@ -101,17 +103,9 @@ public:
 	void cancelActiveRequestTokens(const uint32_t& userType);
 
 protected:
-    /**
-      start a timer
-      implement this for timer handling
-      call pollRequests() on timer event
-      @param dt seconds until timer fires
-    */
-    virtual void doPoll(float dt) = 0;
+	void doPoll(float dt);
 
-    /**
-      call this on the timer event
-      */
+private slots:
 	void pollRequests();
 
 private:
@@ -120,24 +114,8 @@ private:
 
 	RsTokenService *mService;
 	TokenResponse *mResponder;
-};
 
-// better name would be TokenQueueQt, because this class uses the Qt Timer
-class TokenQueue: public QObject, public TokenQueueBase
-{
-    Q_OBJECT
-
-public:
-    TokenQueue(RsTokenService *service, TokenResponse *resp);
-
-protected:
-    virtual void doPoll(float dt);
-
-private slots:
-    void onTimerEvent();
-
-private:
-    QTimer *mTrigger;
+	QTimer *mTrigger;
 };
 
 #endif

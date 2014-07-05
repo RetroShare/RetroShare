@@ -146,7 +146,7 @@ public:
 	uint32_t mode() { return mMode; }
 
 	// overloaded from TokenResponse
-    virtual void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private:
 	void newGroup();

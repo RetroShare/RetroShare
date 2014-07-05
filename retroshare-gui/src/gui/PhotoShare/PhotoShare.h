@@ -61,7 +61,7 @@ private:
         void loadPhotoList(const uint32_t &token);
         void loadPhotoData(const uint32_t &token);
 
-        void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+        void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
         void acknowledgeGroup(const uint32_t &token);
         void acknowledgeMessage(const uint32_t &token);

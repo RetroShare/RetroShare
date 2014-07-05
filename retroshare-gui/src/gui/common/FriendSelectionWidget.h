@@ -112,7 +112,7 @@ public:
 protected:
 	void changeEvent(QEvent *e);
 
-    virtual void loadRequest(const TokenQueueBase *queue,const TokenRequest& req);
+	virtual void loadRequest(const TokenQueue *queue,const TokenRequest& req);
 	virtual void updateDisplay(bool complete);
 
 signals:

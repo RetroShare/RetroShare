@@ -141,7 +141,7 @@ private:
 	void insertGroupData(const std::list<RsGroupMetaData> &groupList);
 	void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
 
-    void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 	
 
 private:

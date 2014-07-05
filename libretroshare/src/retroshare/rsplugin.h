@@ -33,6 +33,7 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rsfiles.h"
 #include "util/rsversion.h"
+#include "util/rsinitedptr.h"
 
 class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
@@ -89,28 +90,6 @@ class p3Config;
 
 class RsPluginHandler;
 
-// helper class to store a pointer
-// it is usefull because it initialises itself to NULL
-// usage:
-//   replace type* ptr;
-//   with inited_ptr<type> ptr;
-// this class can
-// - get assigned a pointer
-// - be dereferenced
-// - be converted back to a pointer
-template<class T> class inited_ptr{
-public:
-    inited_ptr(): _ptr(NULL){}
-    inited_ptr(const inited_ptr<T>& other): _ptr(other._ptr){}
-    inited_ptr<T>& operator= (const inited_ptr<T>& other){ _ptr = other._ptr; return *this;}
-    inited_ptr<T>& operator= (T* ptr){ _ptr = ptr; return *this;}
-    operator T* () const { return _ptr;}
-    T* operator ->() const { return _ptr;}
-    T& operator *() const { return *_ptr;}
-private:
-    T* _ptr;
-};
-
 /*!
  *
  * convenience class to store gui interfaces
@@ -118,21 +97,21 @@ private:
  */
 class RsPlugInInterfaces {
 public:
-    inited_ptr<RsPeers>  mPeers;
-    inited_ptr<RsFiles>  mFiles;
-    inited_ptr<RsMsgs>   mMsgs;
-    inited_ptr<RsTurtle> mTurtle;
-    inited_ptr<RsDisc>   mDisc;
-    inited_ptr<RsDht>    mDht;
-    inited_ptr<RsNotify> mNotify;
+    RsUtil::inited_ptr<RsPeers>  mPeers;
+    RsUtil::inited_ptr<RsFiles>  mFiles;
+    RsUtil::inited_ptr<RsMsgs>   mMsgs;
+    RsUtil::inited_ptr<RsTurtle> mTurtle;
+    RsUtil::inited_ptr<RsDisc>   mDisc;
+    RsUtil::inited_ptr<RsDht>    mDht;
+    RsUtil::inited_ptr<RsNotify> mNotify;
 
     // gxs
     std::string     mGxsDir;
-    inited_ptr<RsIdentity>      mIdentity;
-    inited_ptr<RsNxsNetMgr>     mRsNxsNetMgr;
-    inited_ptr<RsGxsIdExchange> mGxsIdService;
-    inited_ptr<RsGcxs>          mGxsCirlces;
-    inited_ptr<PgpAuxUtils>     mPgpAuxUtils;
+    RsUtil::inited_ptr<RsIdentity>      mIdentity;
+    RsUtil::inited_ptr<RsNxsNetMgr>     mRsNxsNetMgr;
+    RsUtil::inited_ptr<RsGxsIdExchange> mGxsIdService;
+    RsUtil::inited_ptr<RsGcxs>          mGxsCirlces;
+    RsUtil::inited_ptr<PgpAuxUtils>     mPgpAuxUtils;
 };
 
 class RsPlugin

@@ -39,7 +39,7 @@ public:
 	~CreateGxsForumMsg();
 
 	void newMsg(); /* cleanup */
-    virtual void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 	void fileHashingFinished(QList<HashedFile> hashedFiles);

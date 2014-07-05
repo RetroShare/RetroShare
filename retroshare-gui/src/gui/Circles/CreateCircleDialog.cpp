@@ -628,7 +628,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 	}
 }
 
-void CreateCircleDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
+void CreateCircleDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "CreateCircleDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

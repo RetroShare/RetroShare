@@ -109,7 +109,8 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
-		serialiser/rspluginitems.h
+		serialiser/rspluginitems.h \
+    util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
 

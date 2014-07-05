@@ -271,7 +271,7 @@ void GroupListView::wheelEvent(QWheelEvent *event)
 {
     //scaleView(pow((double)2, -event->delta() / 240.0));
 }
-void GroupListView::loadRequest(const TokenQueueBase * /*queue*/, const TokenRequest &req)
+void GroupListView::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req)
 {
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

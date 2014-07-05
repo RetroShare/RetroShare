@@ -271,7 +271,7 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
 	return true;
 }
 
-void PhotoSlideShow::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
+void PhotoSlideShow::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "PhotoSlideShow::loadRequest()";
 	std::cerr << std::endl;

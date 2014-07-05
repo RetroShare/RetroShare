@@ -441,7 +441,7 @@ void CreateGxsForumMsg::loadParentMsg(const uint32_t &token)
 	}
 }
 
-void CreateGxsForumMsg::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
+void CreateGxsForumMsg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "CreateGxsForum::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

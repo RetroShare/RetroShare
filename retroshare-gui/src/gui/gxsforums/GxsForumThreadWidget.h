@@ -54,7 +54,7 @@ public:
 	virtual void setAllMessagesRead(bool read);
 
 	// Callback for all Loads.
-    virtual void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);

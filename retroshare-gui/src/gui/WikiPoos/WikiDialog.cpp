@@ -499,7 +499,7 @@ void WikiDialog::loadWikiPage(const uint32_t &token)
 	updateWikiPage(page);
 }
 
-void WikiDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
+void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "WikiDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

@@ -35,7 +35,7 @@ public:
 	 void setEdgeLength(uint32_t l) ;
 	 uint32_t edgeLength() const { return _edge_length ; }
 
-     void loadRequest(const TokenQueueBase * /*queue*/, const TokenRequest &req) ;
+	 void loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req) ;
 
 	 void requestIdList() ;
 	 void requestCirclesList() ;

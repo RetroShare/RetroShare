@@ -44,7 +44,7 @@ public:
 	void setupNewId(bool pseudo);
 	void setupExistingId(std::string keyId);
 
-    void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 	void idTypeToggled(bool checked);

@@ -1,8 +1,6 @@
 QT     += network xml script
 CONFIG += qt gui uic qrc resources idle bitdht
 
-CONFIG += console
-
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
 
@@ -13,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 4
 	CONFIG += uitools
 }
-
 
 # Below is for GXS services.
 # Should be disabled for releases.
@@ -139,6 +136,11 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
+	debug {
+		# show console output
+		CONFIG += console
+	}
+
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
@@ -169,10 +171,7 @@ win32 {
 		LIBS += -lsqlcipher
 	}
 
-        #LIBS += ../../supportlibs/openssl/lib/libssl.a ../../supportlibs/openssl/lib/libcrypto.a
-        # self-reminder: heartbleed openssl laying around in libs directory
-        LIBS += -lssl -lcrypto
-        LIBS += -lpthread -lminiupnpc -lz
+	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32

@@ -657,7 +657,7 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
 	}
 }
 
-void CirclesDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
+void CirclesDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

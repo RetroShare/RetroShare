@@ -285,7 +285,16 @@ void p3Notify::registerNotifyClient(NotifyClient *cl)
 	notifyClients.push_back(cl) ;
 }
 
-void p3Notify::unregisterNotifyClient(NotifyClient *nc)
+bool p3Notify::unregisterNotifyClient(NotifyClient *nc)
 {
-    notifyClients.erase(std::find(notifyClients.begin(), notifyClients.end(), nc));
+    std::list<NotifyClient*>::iterator it = std::find(notifyClients.begin(), notifyClients.end(), nc);
+    if(it != notifyClients.end())
+    {
+        notifyClients.erase(it);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

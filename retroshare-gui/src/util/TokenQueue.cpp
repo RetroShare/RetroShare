@@ -32,13 +32,15 @@
  *****/
 
 /** Constructor */
-TokenQueueBase::TokenQueueBase(RsTokenService *service, TokenResponse *resp)
-    :  mService(service), mResponder(resp)
+TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
+	: QObject(NULL), mService(service), mResponder(resp)
 {
-
+	mTrigger = new RsProtectedTimer(this);
+	mTrigger->setSingleShot(true);
+	connect(mTrigger, SIGNAL(timeout()), this, SLOT(pollRequests()));
 }
 
-bool TokenQueueBase::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
+bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_GROUPINFO;
 	mService->requestGroupInfo(token, anstype, opts, ids);
@@ -47,7 +49,7 @@ bool TokenQueueBase::requestGroupInfo(uint32_t &token, uint32_t anstype, const R
 	return true;
 }
 
-bool TokenQueueBase::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, uint32_t usertype)
+bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_GROUPINFO;
 	mService->requestGroupInfo(token, anstype, opts);
@@ -56,7 +58,7 @@ bool TokenQueueBase::requestGroupInfo(uint32_t &token, uint32_t anstype, const R
 	return true;
 }
 
-bool TokenQueueBase::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const GxsMsgReq& ids, uint32_t usertype)
+bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const GxsMsgReq& ids, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGINFO;
 	mService->requestMsgInfo(token, anstype, opts, ids);
@@ -65,7 +67,7 @@ bool TokenQueueBase::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsT
 	return true;
 }
 
-bool TokenQueueBase::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgId, uint32_t usertype)
+bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgId, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGINFO;
 	mService->requestMsgRelatedInfo(token, anstype, opts, msgId);
@@ -74,7 +76,7 @@ bool TokenQueueBase::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  c
 	return true;
 }
 
-bool TokenQueueBase::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
+bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGINFO;
 	mService->requestMsgInfo(token, anstype, opts, grpIds);
@@ -83,7 +85,7 @@ bool TokenQueueBase::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsT
 	return true;
 }
 
-void TokenQueueBase::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
+void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
 {
 	std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype;
 	std::cerr << " AnsType: " << anstype << " UserType: " << usertype;
@@ -107,7 +109,13 @@ void TokenQueueBase::queueRequest(uint32_t token, uint32_t basictype, uint32_t a
 	}
 }
 
-void TokenQueueBase::pollRequests()
+void TokenQueue::doPoll(float dt)
+{
+	/* single shot poll */
+	mTrigger->start(dt * 1000);
+}
+
+void TokenQueue::pollRequests()
 {
 	double pollPeriod = 1.0; // max poll period.
 
@@ -149,7 +157,7 @@ void TokenQueueBase::pollRequests()
 	}
 }
 
-bool TokenQueueBase::checkForRequest(uint32_t token)
+bool TokenQueue::checkForRequest(uint32_t token)
 {
 	/* check token */
 	uint32_t status =  mService->requestStatus(token);
@@ -157,7 +165,7 @@ bool TokenQueueBase::checkForRequest(uint32_t token)
 			 (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) );
 }
 
-bool TokenQueueBase::activeRequestExist(const uint32_t& userType) const
+bool TokenQueue::activeRequestExist(const uint32_t& userType) const
 {
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
@@ -174,7 +182,7 @@ bool TokenQueueBase::activeRequestExist(const uint32_t& userType) const
 	return false;
 }
 
-void TokenQueueBase::activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens) const
+void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens) const
 {
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
@@ -187,7 +195,7 @@ void TokenQueueBase::activeRequestTokens(const uint32_t& userType, std::list<uin
 	}
 }
 
-void TokenQueueBase::cancelActiveRequestTokens(const uint32_t& userType)
+void TokenQueue::cancelActiveRequestTokens(const uint32_t& userType)
 {
 	std::list<uint32_t> tokens;
 	activeRequestTokens(userType, tokens);
@@ -199,7 +207,7 @@ void TokenQueueBase::cancelActiveRequestTokens(const uint32_t& userType)
 	}
 }
 
-void TokenQueueBase::loadRequest(const TokenRequest &req)
+void TokenQueue::loadRequest(const TokenRequest &req)
 {
 	std::cerr << "TokenQueue::loadRequest(): ";
 	std::cerr << "Token: " << req.mToken << " Type: " << req.mType;
@@ -209,7 +217,7 @@ void TokenQueueBase::loadRequest(const TokenRequest &req)
 	mResponder->loadRequest(this, req);
 }
 
-bool TokenQueueBase::cancelRequest(const uint32_t token)
+bool TokenQueue::cancelRequest(const uint32_t token)
 {
 	/* cancel at lower level first */
 	mService->cancelRequest(token);
@@ -234,23 +242,3 @@ bool TokenQueueBase::cancelRequest(const uint32_t token)
 
 	return false;
 }
-
-TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
-    : QObject(NULL), TokenQueueBase(service, resp)
-{
-    mTrigger = new RsProtectedTimer(this);
-    mTrigger->setSingleShot(true);
-    connect(mTrigger, SIGNAL(timeout()), this, SLOT(onTimerEvent()));
-}
-
-void TokenQueue::doPoll(float dt)
-{
-    /* single shot poll */
-    mTrigger->start(dt * 1000);
-}
-
-void TokenQueue::onTimerEvent()
-{
-    pollRequests();
-}
-

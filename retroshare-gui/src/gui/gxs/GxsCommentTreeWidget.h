@@ -42,7 +42,7 @@ public:
     void getCurrentMsgId(RsGxsMessageId& parentId);
     void applyRankings(std::map<RsGxsMessageId, uint32_t>& positions);
 
-    void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+    void loadRequest(const TokenQueue *queue, const TokenRequest &req);
     void setVoteId(const RsGxsId &voterId);
 
 protected:

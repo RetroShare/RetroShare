@@ -231,7 +231,7 @@ void FriendSelectionWidget::fillList()
 	secured_fillList() ;
 }
 
-void FriendSelectionWidget::loadRequest(const TokenQueueBase */*queue*/, const TokenRequest &req)
+void FriendSelectionWidget::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
 {
 	// store all IDs locally, and call fillList() ;
 

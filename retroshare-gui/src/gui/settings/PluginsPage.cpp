@@ -144,7 +144,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 	// todo
 	ui.enableAll->setChecked(rsPlugins->getAllowAllPlugins());
 	ui.enableAll->setToolTip(tr("Check this for developing plugins. They will not\nbe checked for the hash. However, in normal\ntimes, checking the hash protects you from\nmalicious behavior of crafted plugins."));
-    //ui.enableAll->setEnabled(false);
+    ui.enableAll->setEnabled(false);
 
 	QObject::connect(ui.enableAll,SIGNAL(toggled(bool)),this,SLOT(toggleEnableAll(bool))) ;
 }

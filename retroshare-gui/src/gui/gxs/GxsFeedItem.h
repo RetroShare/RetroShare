@@ -52,7 +52,7 @@ protected:
 	void requestMessage();
 
 	virtual void loadGroupMeta(const uint32_t &token);
-    virtual void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	// general fns that can be implemented here.
 

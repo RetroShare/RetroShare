@@ -871,7 +871,7 @@ void GxsGroupFrameDialog::acknowledgeSubscribeChange(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void GxsGroupFrameDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
+void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 #ifdef DEBUG_GROUPFRAMEDIALOG
 	std::cerr << "GxsGroupFrameDialog::loadRequest() UserType: " << req.mUserType;

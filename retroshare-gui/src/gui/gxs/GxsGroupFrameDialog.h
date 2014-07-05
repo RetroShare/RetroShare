@@ -75,7 +75,7 @@ public:
         bool navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId);
 
 	// Callback for all Loads.
-    virtual void loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
 	virtual void showEvent(QShowEvent *event);

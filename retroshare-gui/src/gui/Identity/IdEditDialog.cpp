@@ -468,7 +468,7 @@ void IdEditDialog::updateId()
 	close();
 }
 
-void IdEditDialog::loadRequest(const TokenQueueBase */*queue*/, const TokenRequest &req)
+void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
 {
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;

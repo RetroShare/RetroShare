@@ -52,7 +52,7 @@ public:
 	virtual QString helpText() const { return ""; } //MainPage
 
 
-void 	loadRequest(const TokenQueueBase *queue, const TokenRequest &req);
+void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 

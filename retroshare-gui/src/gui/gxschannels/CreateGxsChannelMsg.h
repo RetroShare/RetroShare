@@ -51,7 +51,7 @@ public:
 	QPixmap picture;
 
 	// overload from TokenResponse
-    virtual void loadRequest(const TokenQueueBase *, const TokenRequest&);
+	virtual void loadRequest(const TokenQueue*, const TokenRequest&);
 
 protected:
 	virtual void dragEnterEvent(QDragEnterEvent *event);

@@ -853,7 +853,7 @@ void PostedListDialog::acknowledgeSubscribeChange(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void PostedListDialog::loadRequest(const TokenQueueBase *queue, const TokenRequest &req)
+void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "PostedListDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
