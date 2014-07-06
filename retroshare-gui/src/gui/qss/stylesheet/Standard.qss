@@ -208,8 +208,10 @@ ChatWidget QPushButton#sendButton:hover {
 
 ChatWidget QPushButton#sendButton:pressed {
 	border-image: url(:/images/btn_green_pressed.png) 4;
+}
 
-
+ChatWidget QPushButton#sendButton:disabled {
+	border-image: url(:/images/btn_red.png) 4;
 }
 
 PopupChatWindow QToolBar#chattoolBar{

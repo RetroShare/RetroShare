@@ -131,6 +131,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
 	connect(ui->chatTextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
+	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateLenOfChatTextEdit()));
 
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
@@ -837,8 +838,27 @@ void ChatWidget::updateStatusTyping()
 	}
 }
 
+void ChatWidget::updateLenOfChatTextEdit()
+{
+	QTextEdit *chatWidget = ui->chatTextEdit;
+	QString text;
+	RsHtml::optimizeHtml(chatWidget, text);
+	std::wstring msg = text.toStdWString();
+	bool msgToLarge = (msg.length()>=size_t(rsMsgs->getMaxMessageSecuritySize()));
+
+	ui->sendButton->setEnabled(!msgToLarge);
+	text = tr("%1This message counts %2 characters.").arg(msgToLarge?tr("Warning: "):"").arg(msg.length());
+	ui->sendButton->setToolTip(text);
+	ui->chatTextEdit->setToolTip(msgToLarge?text:"");
+}
+
 void ChatWidget::sendChat()
 {
+	if (!ui->sendButton->isEnabled()){
+		//Something block sending
+		return;
+	}
+
 	QTextEdit *chatWidget = ui->chatTextEdit;
 
 	if (chatWidget->toPlainText().isEmpty()) {

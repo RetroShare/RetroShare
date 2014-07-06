@@ -384,6 +384,7 @@ virtual int     getPrivateChatQueueCount(bool incoming) = 0;
 virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids) = 0;
 virtual	bool   getPrivateChatQueue(bool incoming, const RsPeerId& id, std::list<ChatInfo> &chats) = 0;
 virtual	bool   clearPrivateChatQueue(bool incoming, const RsPeerId& id) = 0;
+virtual int    getMaxMessageSecuritySize() = 0;
 
 virtual void   sendStatusString(const RsPeerId& id,const std::string& status_string) = 0 ;
 virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;

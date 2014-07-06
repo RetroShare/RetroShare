@@ -161,6 +161,11 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 		bool getPrivateChatQueue(bool incoming, const RsPeerId &id, std::list<ChatInfo> &chats);
 
 		/*!
+		 * Return the max message size for security forwarding
+		 */
+		static int getMaxMessageSecuritySize();
+
+		/*!
 		 * Checks message security, especially remove billion laughs attacks
 		 */
 

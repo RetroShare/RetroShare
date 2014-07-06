@@ -82,6 +82,7 @@ static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size
 static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
 static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
+static const uint32_t MAX_MESSAGE_SECURITY_SIZE           = 6000 ; // Max message size to forward other friends
 
 p3ChatService::p3ChatService(p3ServiceControl *sc,p3IdService *pids, p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(), p3Config(), mChatMtx("p3ChatService"), mIdService(pids),mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
@@ -1141,12 +1142,22 @@ void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
 	RsServer::notify()->notifyPeerHasNewAvatar(ca->PeerId().toStdString()) ;
 }
 
+int p3ChatService::getMaxMessageSecuritySize()
+{
+	return MAX_MESSAGE_SECURITY_SIZE;
+}
+
 bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 {
 	// Remove too big messages
-	if (ci->message.length() > 6000 && (ci->chatFlags & RS_CHAT_FLAG_LOBBY))
+	if (ci->message.length() > MAX_MESSAGE_SECURITY_SIZE && (ci->chatFlags & RS_CHAT_FLAG_LOBBY))
 	{
-		ci->message = "**** Security warning: Message bigger than 6000 characters, forwarded to you by ";
+		std::ostringstream os;
+		os << getMaxMessageSecuritySize();
+
+		ci->message = "**** Security warning: Message bigger than ";
+		ci->message += os.str();
+		ci->message += " characters, forwarded to you by ";
 		ci->message += rsPeers->getPeerName(ci->PeerId());
 		ci->message += ", dropped. ****";
 		return false;

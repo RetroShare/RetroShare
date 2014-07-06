@@ -152,6 +152,7 @@ private slots:
 	void resetFont();
 	void setFont();
 
+	void updateLenOfChatTextEdit();
 	void sendChat();
 
 	void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;

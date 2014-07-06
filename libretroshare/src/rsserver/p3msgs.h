@@ -159,6 +159,11 @@ class p3Msgs: public RsMsgs
 	  virtual	bool	clearPrivateChatQueue(bool incoming, const RsPeerId& id);
 
 	  /*!
+	   * Return the max message size for security forwarding
+	   */
+	  virtual int getMaxMessageSecuritySize();
+
+	  /*!
 	   * sends immediate status string to a specific peer, e.g. in a private chat
 	   * @param peer_id peer to send status string to
 	   * @param status_string immediate status to send

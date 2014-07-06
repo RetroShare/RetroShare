@@ -252,6 +252,11 @@ bool	p3Msgs::clearPrivateChatQueue(bool incoming, const RsPeerId& id)
 	return mChatSrv->clearPrivateChatQueue(incoming, id);
 }
 
+int	p3Msgs::getMaxMessageSecuritySize()
+{
+	return mChatSrv->getMaxMessageSecuritySize();
+}
+
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)
 {
 	mChatSrv->getOwnAvatarJpegData(data,size) ;
