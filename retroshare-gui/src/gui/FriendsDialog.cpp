@@ -590,7 +590,11 @@ void FriendsDialog::sendMsg()
     std::cerr << "FriendsDialog::sendMsg(): " << msg << std::endl;
 #endif
 
-    rsMsgs->sendPublicChat(message);
+    if (rsMsgs->sendPublicChat(message)) {
+        QString name = ui.nicknameLabel->text();
+        QDateTime currentTime = QDateTime::currentDateTime();
+        addChatMsg(false, false, name, currentTime, currentTime, text);
+    }//if (rsMsgs->sendPublicChat(message))
     ui.lineEdit->clear();
     // workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
     // QTextEdit::clear() does not reset the CharFormat if document contains hyperlinks that have been accessed.
