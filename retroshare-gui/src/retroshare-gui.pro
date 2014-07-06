@@ -1125,7 +1125,8 @@ gxsforums {
 		gui/gxsforums/GxsForumGroupDialog.h \
 		gui/gxsforums/CreateGxsForumMsg.h \
 		gui/gxsforums/GxsForumThreadWidget.h \
-		gui/gxsforums/GxsForumsFillThread.h
+		gui/gxsforums/GxsForumsFillThread.h \
+		gui/gxsforums/GxsForumUserNotify.h
 
 	FORMS += gui/gxsforums/CreateGxsForumMsg.ui \
 		gui/gxsforums/GxsForumThreadWidget.ui
@@ -1134,7 +1135,8 @@ gxsforums {
 		gui/gxsforums/GxsForumGroupDialog.cpp \
 		gui/gxsforums/CreateGxsForumMsg.cpp \
 		gui/gxsforums/GxsForumThreadWidget.cpp \
-		gui/gxsforums/GxsForumsFillThread.cpp
+		gui/gxsforums/GxsForumsFillThread.cpp \
+		gui/gxsforums/GxsForumUserNotify.cpp
 }
 	
 	
@@ -1144,7 +1146,8 @@ gxschannels {
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
 		gui/gxschannels/GxsChannelPostsWidget.h \
-		gui/feeds/GxsChannelPostItem.h
+		gui/feeds/GxsChannelPostItem.h \
+		gui/gxschannels/GxsChannelUserNotify.h
 	
 	FORMS += gui/gxschannels/GxsChannelPostsWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
@@ -1154,7 +1157,8 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
-		gui/feeds/GxsChannelPostItem.cpp
+		gui/feeds/GxsChannelPostItem.cpp \
+		gui/gxschannels/GxsChannelUserNotify.cpp
 }
 	
 	
@@ -1211,6 +1215,7 @@ gxsgui {
 		gui/gxs/RsGxsUpdateBroadcastBase.h \
 		gui/gxs/RsGxsUpdateBroadcastWidget.h \
 		gui/gxs/RsGxsUpdateBroadcastPage.h \
+		gui/gxs/GxsUserNotify.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
 	
@@ -1244,6 +1249,7 @@ gxsgui {
 		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
 		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
+		gui/gxs/GxsUserNotify.cpp \
 		util/TokenQueue.cpp \
 		util/RsGxsUpdateBroadcast.cpp \
 	

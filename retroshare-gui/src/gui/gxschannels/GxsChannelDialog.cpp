@@ -22,6 +22,7 @@
 #include "GxsChannelDialog.h"
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
+#include "GxsChannelUserNotify.h"
 #include "gui/channels/ShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
@@ -44,10 +45,10 @@ GxsChannelDialog::~GxsChannelDialog()
 {
 }
 
-//UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
-//{
-//	return new ChannelUserNotify(parent);
-//}
+UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
+{
+	return new GxsChannelUserNotify(rsGxsChannels, parent);
+}
 
 QString GxsChannelDialog::text(TextType type)
 {

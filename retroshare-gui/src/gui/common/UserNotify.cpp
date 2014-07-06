@@ -40,6 +40,10 @@ UserNotify::UserNotify(QObject *parent) :
 	connect(rApp, SIGNAL(blink(bool)), this, SLOT(blink(bool)));
 }
 
+UserNotify::~UserNotify()
+{
+}
+
 void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem)
 {
 	mMainAction = mainAction;
@@ -87,6 +91,16 @@ void UserNotify::createIcons(QMenu *notifyMenu)
 }
 
 void UserNotify::updateIcon()
+{
+	startUpdate();
+}
+
+void UserNotify::startUpdate()
+{
+	update();
+}
+
+void UserNotify::update()
 {
 	unsigned int count = getNewCount();
 

@@ -40,7 +40,8 @@ public:
 	virtual QString pageName() const { return tr("Channels") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-//	virtual UserNotify *getUserNotify(QObject *parent);
+	virtual UserNotify *getUserNotify(QObject *parent);
+
 protected:
         RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
 private slots:

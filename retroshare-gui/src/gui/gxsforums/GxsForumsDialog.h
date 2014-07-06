@@ -38,7 +38,7 @@ public:
 	virtual QString pageName() const { return tr("Forums") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-//	virtual UserNotify *getUserNotify(QObject *parent);
+	virtual UserNotify *getUserNotify(QObject *parent);
 
 protected:
 

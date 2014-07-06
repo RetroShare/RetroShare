@@ -29,7 +29,6 @@
 class QToolBar;
 class QToolButton;
 class QAction;
-//class QListWidgetItem;
 
 class UserNotify : public QObject
 {
@@ -37,6 +36,7 @@ class UserNotify : public QObject
 
 public:
 	UserNotify(QObject *parent = 0);
+	virtual ~UserNotify();
 
 	void initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem);
 	void createIcons(QMenu *notifyMenu);
@@ -57,6 +57,10 @@ private slots:
 	void trayIconClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
 	void blink(bool on);
 
+protected:
+	virtual void startUpdate();
+	void update();
+
 private:
 	virtual QIcon getIcon() { return QIcon(); }
 	virtual QIcon getMainIcon(bool /*hasNew*/) { return QIcon(); }
@@ -67,6 +71,7 @@ private:
 
 	virtual void iconClicked() {}
 
+private:
 	QToolButton *mMainToolButton;
 	QAction *mMainAction;
 	QListWidgetItem *mListItem;

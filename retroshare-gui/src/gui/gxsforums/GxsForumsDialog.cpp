@@ -22,6 +22,7 @@
 #include "GxsForumsDialog.h"
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
+#include "GxsForumUserNotify.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/channels/ShareKey.h"
@@ -44,10 +45,10 @@ GxsForumsDialog::~GxsForumsDialog()
 {
 }
 
-//UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
-//{
-//	return new GxsForumUserNotify(parent);
-//}
+UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
+{
+	return new GxsForumUserNotify(rsGxsForums, parent);
+}
 
 QString GxsForumsDialog::text(TextType type)
 {
