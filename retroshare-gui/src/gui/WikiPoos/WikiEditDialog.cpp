@@ -50,7 +50,6 @@
 #define WET_ROLE_ORIGPAGEID	Qt::UserRole
 #define WET_ROLE_PAGEID		Qt::UserRole + 1
 #define WET_ROLE_PARENTID	Qt::UserRole + 2
-
 #define WET_ROLE_SORT		Qt::UserRole + 3
 
 
@@ -421,7 +420,7 @@ void WikiEditDialog::setNewPage()
 	ui.headerFrame->setHeaderText(tr("Create New Wiki Page"));
 	setWindowTitle(tr("Create New Wiki Page"));
 
-        /* no need for for REQUIRED ID */
+	/* No need for for REQUIRED ID */
         ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 
 	textReset();
@@ -433,7 +432,7 @@ void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
         mRepublishMode = true;
         mRepublishOrigId = origMsgId;
 	ui.pushButton_Submit->setText(tr("Republish"));
-        /* no need for for REQUIRED ID */
+	/* No need for for REQUIRED ID */
         ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 }
 
@@ -447,15 +446,12 @@ void WikiEditDialog::cancelEdit()
 
 void WikiEditDialog::revertEdit()
 {
-	if (mNewPage)
-	{
+	if (mNewPage) {
 		mCurrentText = "";
-	}
-	else
-	{
+	} else {//if (mNewPage
 		ui.textEdit->setPlainText(QString::fromStdString(mWikiSnapshot.mPage));
 		mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
-	}
+	}//if (mNewPage
         redrawPage();
 	textReset();
 }
@@ -466,8 +462,23 @@ void WikiEditDialog::submitEdit()
 	std::cerr << "WikiEditDialog::submitEdit()";
 	std::cerr << std::endl;
 
-	if (mNewPage)
-	{
+	RsGxsId authorId;
+	switch (ui.comboBox_IdChooser->getChosenId(authorId)) {
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId:
+			mWikiSnapshot.mMeta.mAuthorId = authorId;
+			std::cerr << "WikiEditDialog::submitEdit() AuthorId: " << authorId;
+			std::cerr << std::endl;
+
+		break;
+		case GxsIdChooser::NoId:
+		case GxsIdChooser::None:
+		default:
+			std::cerr << "WikiEditDialog::submitEdit() ERROR GETTING AuthorId!";
+			std::cerr << std::endl;
+	}//switch (ui.comboBox_IdChooser->getChosenId(authorId))
+
+	if (mNewPage) {
 		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
 		mWikiSnapshot.mMeta.mOrigMsgId.clear() ;
 		mWikiSnapshot.mMeta.mMsgId.clear() ;
@@ -476,9 +487,7 @@ void WikiEditDialog::submitEdit()
 
 		std::cerr << "WikiEditDialog::submitEdit() Is New Page";
 		std::cerr << std::endl;
-	}
-	else if (mRepublishMode)
-	{
+	} else if (mRepublishMode) {
 		std::cerr << "WikiEditDialog::submitEdit() In Republish Mode";
 		std::cerr << std::endl;
 		// A New Version of the ThreadHead.
@@ -487,65 +496,44 @@ void WikiEditDialog::submitEdit()
 		mWikiSnapshot.mMeta.mParentId.clear() ;
 		mWikiSnapshot.mMeta.mThreadId.clear() ;
 		mWikiSnapshot.mMeta.mMsgId.clear() ;
-	}
-	else
-	{
+	} else {
 		std::cerr << "WikiEditDialog::submitEdit() In Child Edit Mode";
 		std::cerr << std::endl;
 
 		// A Child of the current message.
 		bool isFirstChild = false;
-        if (mWikiSnapshot.mMeta.mParentId.isNull())
-		{
+		if (mWikiSnapshot.mMeta.mParentId.isNull()) {
 			isFirstChild = true;
-		}
+		}//if (mWikiSnapshot.mMeta.mParentId.isNull())
 
 		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
 
-		if (isFirstChild)
-		{
+		if (isFirstChild){
 			mWikiSnapshot.mMeta.mThreadId = mWikiSnapshot.mMeta.mOrigMsgId;
 			// Special HACK here... parentId points to specific Msg, rather than OrigMsgId.
 			// This allows versioning to work well.
 			mWikiSnapshot.mMeta.mParentId = mWikiSnapshot.mMeta.mMsgId;
-		}
-		else
-		{
+		} else {//if (isFirstChild)
 			// ThreadId is the same.
 			mWikiSnapshot.mMeta.mParentId = mWikiSnapshot.mMeta.mOrigMsgId;
-		}
+		}//if (isFirstChild)
 
         mWikiSnapshot.mMeta.mMsgId.clear() ;
         mWikiSnapshot.mMeta.mOrigMsgId.clear() ;
-	}
+	}//if (mNewPage)
 
 
 	mWikiSnapshot.mMeta.mMsgName = ui.lineEdit_Page->text().toStdString();
 
-	if (!mPreviewMode)
-	{
+	if (!mPreviewMode) {
 		/* can just use the current text */
 		mCurrentText = ui.textEdit->toPlainText();
-	}
+	}//if (!mPreviewMode)
 
-	{	
-		// complicated way of preserving Utf8 text */
+	{// complicated way of preserving Utf8 text */
 		QByteArray byte_array = mCurrentText.toUtf8();
 		mWikiSnapshot.mPage = std::string(byte_array.data());
-	}
-
-	RsGxsId authorId;
-	if (ui.comboBox_IdChooser->getChosenId(authorId))
-	{
-		mWikiSnapshot.mMeta.mAuthorId = authorId;
-		std::cerr << "CreateGxsForumMsg::createMsg() AuthorId: " << authorId;
-		std::cerr << std::endl;
-	}
-	else
-	{
-		std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
-		std::cerr << std::endl;
-	}
+	}// complicated way of preserving Utf8 text */
 
 	std::cerr << "WikiEditDialog::submitEdit() PageTitle: " << mWikiSnapshot.mMeta.mMsgName;
 	std::cerr << std::endl;

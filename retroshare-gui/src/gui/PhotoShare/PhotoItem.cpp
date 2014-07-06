@@ -107,12 +107,20 @@ const RsPhotoPhoto& PhotoItem::getPhotoDetails()
 {
 
 
-    if(ui->idChooser->isVisible())
-    {
+	if (ui->idChooser->isVisible()) {
         RsGxsId id;
-        ui->idChooser->getChosenId(id);
+		switch (ui->idChooser->getChosenId(id)) {
+			case GxsIdChooser::KnowId:
+			case GxsIdChooser::NoId:
+			case GxsIdChooser::UnKnowId:
         mPhotoDetails.mMeta.mAuthorId = id;
-    }
+
+			break;
+			case GxsIdChooser::None:
+			default:
+			break;
+		}//switch (ui->idChooser->getChosenId(id))
+	}//if (ui->idChooser->isVisible())
 
     return mPhotoDetails;
 }

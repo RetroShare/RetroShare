@@ -23,6 +23,7 @@
 
 #include "gui/gxs/GxsCommentDialog.h"
 #include "ui_GxsCommentDialog.h"
+#include "gui/Identity/IdDialog.h"
 
 #include <iostream>
 #include <sstream>
@@ -47,6 +48,7 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
+	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	/* force voterId through - first time */
 	voterSelectionChanged( 0 );
@@ -87,17 +89,20 @@ void GxsCommentDialog::voterSelectionChanged( int index )
 	std::cerr << std::endl;
 
 	RsGxsId voterId; 
-	if (ui->idChooser->getChosenId(voterId))
-	{
+	switch (ui->idChooser->getChosenId(voterId)) {
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId:
 		std::cerr << "GxsCommentDialog::voterSelectionChanged() => " << voterId;
 		std::cerr << std::endl;
 		ui->treeWidget->setVoteId(voterId);
-	}
-	else
-	{
+
+		break;
+		case GxsIdChooser::NoId:
+		case GxsIdChooser::None:
+		default:
 		std::cerr << "GxsCommentDialog::voterSelectionChanged() ERROR nothing selected";
 		std::cerr << std::endl;
-	}
+	}//switch (ui->idChooser->getChosenId(voterId))
 }
 
 void GxsCommentDialog::setCommentHeader(QWidget *header)
@@ -137,4 +142,12 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 	ui->notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 #endif
+}
+
+void  GxsCommentDialog::createNewGxsId()
+{
+	IdEditDialog dlg(this);
+	dlg.setupNewId(false);
+	dlg.exec();
+	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }

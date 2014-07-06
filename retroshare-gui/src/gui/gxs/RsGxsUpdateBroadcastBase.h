@@ -11,6 +11,7 @@ class RsGxsUpdateBroadcastBase : public QObject
 {
 	friend class RsGxsUpdateBroadcastPage;
 	friend class RsGxsUpdateBroadcastWidget;
+	friend class GxsIdChooser;
 
 	Q_OBJECT
 

@@ -26,36 +26,73 @@
 #define _GXS_ID_CHOOSER_H
 
 #include <QComboBox>
+#include <QPushButton>
+#include "util/TokenQueue.h"
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsgxsifacetypes.h>
+
+// This class implement a basic RS functionality which is that ComboBox displaying Id
+// should update regularly. They also should update only when visible, to save CPU time.
+//
+
+class RsGxsIfaceHelper;
+class RsGxsUpdateBroadcastBase;
 
 #define IDCHOOSER_ID_REQUIRED	0x0001
 #define IDCHOOSER_ANON_DEFAULT  0x0002
 
-class GxsIdChooser : public QComboBox
+class GxsIdChooser : public QComboBox, public TokenResponse
 {
         Q_OBJECT
 
 public:
+	GxsIdChooser(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
 	GxsIdChooser(QWidget *parent = NULL);
+	virtual ~GxsIdChooser();
 
+	void setUpdateWhenInvisible(bool update);
+	const std::list<RsGxsGroupId> &getGrpIds();
+	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds();
+
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);//TokenResponse
+
+	enum ChosenId_Ret {None, KnowId, UnKnowId, NoId} ;
 	void loadIds(uint32_t chooserFlags, RsGxsId defId);
-	bool setChosenId(RsGxsId &id);
-	bool getChosenId(RsGxsId &id);
+	void setDefaultId(RsGxsId defId) {mDefaultId=defId;}
+	void setDefaultId(std::string defIdName) {mDefaultIdName=defIdName;}
+
+	bool setChosenId(RsGxsId &gxsId);
+	ChosenId_Ret getChosenId(RsGxsId &gxsId);
+
+protected:
+	virtual void showEvent(QShowEvent *event);
+	virtual void updateDisplay(bool complete);
 
 private slots:
+	void fillDisplay(bool complete);
 	void timer();
+	void myCurrentIndexChanged(int index);
 
 private:
-	void loadPrivateIds();
+	void requestIdList() ;
+	void loadPrivateIds(uint32_t token);
 	void addPrivateId(const RsGxsId &gxsId, bool replace);
-	bool MakeIdDesc(const RsGxsId &id, QString &desc);
+	bool makeIdDesc(const RsGxsId &gxsId, QString &desc);
+	void insertIdList(uint32_t token);
+	void setDefaultItem();
 
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
+	std::string mDefaultIdName;
+	bool mFirstLoad;
+	QPushButton* addNewCxsId;
 
 	QList<RsGxsId> mPendingId;
 	QTimer *mTimer;
 	unsigned int mTimerCount;
+
+	TokenQueue *mIdQueue;
+	RsGxsUpdateBroadcastBase *mBase;
 };
 
 #endif

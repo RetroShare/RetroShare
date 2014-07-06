@@ -47,6 +47,7 @@ public:
 
 private slots:
 	void createPost();
+	void createNewGxsId();
 
 private:
 	QString mLink;

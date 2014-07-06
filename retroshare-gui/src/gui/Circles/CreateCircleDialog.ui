@@ -258,6 +258,38 @@
            <item>
             <widget class="GxsIdChooser" name="idChooser"/>
            </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NewId">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Create new Identity</string>
+            </property>
+            <property name="text">
+             <string>New ID</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           </layout>
          </item>
          <item>
@@ -338,14 +370,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GxsIdChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsIdChooser.h</header>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
-   <class>GxsCircleChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsCircleChooser.h</header>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>HeaderFrame</class>
@@ -354,14 +386,14 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
+   <class>GxsCircleChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsCircleChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

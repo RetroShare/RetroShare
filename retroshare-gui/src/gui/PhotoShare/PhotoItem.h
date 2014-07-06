@@ -43,8 +43,8 @@ private:
     QPixmap getPixmap() { return mThumbNail; }
 
     bool mSelected;
-    RsPhotoPhoto mPhotoDetails;
     PhotoShareItemHolder* mHolder;
+    RsPhotoPhoto mPhotoDetails;
 
     QLabel *mTitleLabel, *mPhotoGrapherLabel;
 };

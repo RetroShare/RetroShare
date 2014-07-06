@@ -33,6 +33,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/common/Emoticons.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/Identity/IdDialog.h"
 
 #include "util/HandleRichText.h"
 #include "util/misc.h"
@@ -89,6 +90,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
 	connect(ui.attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
 	connect(ui.generateCheckBox, SIGNAL(toggled(bool)), ui.generateSpinBox, SLOT(setEnabled(bool)));
+	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	setAcceptDrops(true);
 	ui.hashBox->setDropWidget(this);
@@ -126,10 +128,9 @@ void  CreateGxsForumMsg::newMsg()
 		mStateHelper->clear(CREATEGXSFORUMMSG_PARENTMSG);
 		ui.forumName->setText(tr("No Forum"));
 		return;
-	}
+	}//if ( mForumId.isNull())
 
-	/* request Data */
-	{
+	{/* request Data */
 		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, true);
 
 		RsTokReqOptions opts;
@@ -143,15 +144,12 @@ void  CreateGxsForumMsg::newMsg()
 
 		uint32_t token;
 		mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, groupIds, CREATEGXSFORUMMSG_FORUMINFO);
-	}
+	}/* request Data */
 
-        if (mParentId.isNull())
-	{
+	if (mParentId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
 		mParentMsgLoaded = true;
-	}
-	else
-	{
+	} else {
 		mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, true);
 
 		RsTokReqOptions opts;
@@ -166,7 +164,7 @@ void  CreateGxsForumMsg::newMsg()
 
 		uint32_t token;
 		mForumQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, CREATEGXSFORUMMSG_PARENTMSG);
-	}
+	}//if (mParentId.isNull())
 }
 
 void  CreateGxsForumMsg::loadFormInformation()
@@ -261,21 +259,20 @@ void  CreateGxsForumMsg::createMsg()
 
 	RsHtml::optimizeHtml(ui.forumMessage, desc);
 
-	if(name.isEmpty())
-	{	/* error message */
+	if(name.isEmpty()) {
+		/* error message */
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return; //Don't add  a empty Subject!!
-	}
+	}//if(name.isEmpty())
 
 	RsGxsForumMsg msg;
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
 	msg.mMeta.mMsgId.clear() ;
-	if (mParentMsgLoaded)
-	{
+	if (mParentMsgLoaded) {
 		msg.mMeta.mThreadId = mParentMsg.mMeta.mThreadId;
-	}
+	}//if (mParentMsgLoaded)
 
 	msg.mMeta.mMsgName = std::string(name.toUtf8());
 	msg.mMsg = std::string(desc.toUtf8());
@@ -286,31 +283,31 @@ void  CreateGxsForumMsg::createMsg()
 	if ((msg.mMsg == "") && (msg.mMeta.mMsgName == ""))
 		return; /* do nothing */
 
-	if (ui.signBox->isChecked())
-	{
+	if (ui.signBox->isChecked()) {
 		RsGxsId authorId;
-		if (ui.idChooser->getChosenId(authorId))
-		{
+		switch (ui.idChooser->getChosenId(authorId)) {
+			case GxsIdChooser::KnowId:
+			case GxsIdChooser::UnKnowId:
 			msg.mMeta.mAuthorId = authorId;
 			std::cerr << "CreateGxsForumMsg::createMsg() AuthorId: " << authorId;
 			std::cerr << std::endl;
-		}
-		else
-		{
+
+			break;
+			case GxsIdChooser::NoId:
+			case GxsIdChooser::None:
+			default:
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
 			QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id"), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
-		}
-	}
-	else
-	{
+		}//switch (ui.idChooser->getChosenId(authorId))
+	} else {
 		std::cerr << "CreateGxsForumMsg::createMsg() No Signature (for now :)";
 		std::cerr << std::endl;
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id, it is required"), QMessageBox::Ok, QMessageBox::Ok);
 		return;
-	}
+	}//if (ui.signBox->isChecked())
 
 	int generateCount = 0;
 
@@ -319,8 +316,8 @@ void  CreateGxsForumMsg::createMsg()
 		generateCount = ui.generateSpinBox->value();
 		if (QMessageBox::question(this, "Generate mass data", QString("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
 			return;
-		}
-	}
+		}//if (QMessageBox::question(this,
+	}//if (ui.generateCheckBox->isChecked())
 #endif
 
 	uint32_t token;
@@ -331,13 +328,21 @@ void  CreateGxsForumMsg::createMsg()
 			generateMsg.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(msg.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
 
 			rsGxsForums->createMsg(token, generateMsg);
-		}
+		}//for (int count = 0
 #endif
 	} else {
 		rsGxsForums->createMsg(token, msg);
-	}
+	}//if (generateCount)
 
 	close();
+}
+
+void  CreateGxsForumMsg::createNewGxsId()
+{
+	IdEditDialog dlg(this);
+	dlg.setupNewId(false);
+	dlg.exec();
+	ui.idChooser->setDefaultId(dlg.getLastIdName());
 }
 
 void CreateGxsForumMsg::closeEvent (QCloseEvent * /*event*/)

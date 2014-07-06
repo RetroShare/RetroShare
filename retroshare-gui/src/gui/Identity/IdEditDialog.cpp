@@ -37,6 +37,7 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
 	mIsNew = true;
+	mLastIdName="";
 
 	ui.setupUi(this);
 	
@@ -445,6 +446,7 @@ void IdEditDialog::createId()
 	uint32_t dummyToken = 0;
 	rsIdentity->createIdentity(dummyToken, params);
 
+	mLastIdName = groupname;
 	close();
 }
 
@@ -465,6 +467,8 @@ void IdEditDialog::updateId()
 	uint32_t dummyToken = 0;
 	rsIdentity->updateIdentity(dummyToken, mEditGroup);
 
+
+	mLastIdName = groupname;
 	close();
 }
 

@@ -76,6 +76,8 @@ private slots:
 	void showTopic();
 	void editTopic();
 
+	void createNewGxsId();
+
 	void showGroupDetails();
 	void newPost();
 

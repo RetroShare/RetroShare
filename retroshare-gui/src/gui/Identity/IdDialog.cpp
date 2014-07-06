@@ -30,7 +30,7 @@
 #include "gui/chat/ChatDialog.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsidentity.h>
+//#include <retroshare/rsidentity.h> //On header
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h"
 

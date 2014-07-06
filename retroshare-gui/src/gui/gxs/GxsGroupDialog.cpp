@@ -26,6 +26,7 @@
 #include "util/misc.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/Identity/IdDialog.h"
 #include "retroshare/rsgxsflags.h"
 
 #include <algorithm>
@@ -84,6 +85,8 @@ void GxsGroupDialog::init()
 	connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
 	connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
 	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
+
+	connect( ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 	connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
@@ -171,6 +174,14 @@ void GxsGroupDialog::initMode()
 		}
 		break;
 	}
+}
+
+void  GxsGroupDialog::createNewGxsId()
+{
+	IdEditDialog dlg(this);
+	dlg.setupNewId(false);
+	dlg.exec();
+	ui.idChooser->setDefaultId(dlg.getLastIdName());
 }
 
 void GxsGroupDialog::clearForm()
@@ -445,36 +456,44 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 	std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 	std::cerr << std::endl;
 
+	switch (ui.idChooser->getChosenId(meta.mAuthorId)) {
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId:
+		break;
+		case GxsIdChooser::NoId:
+		case GxsIdChooser::None:
+		default:
+		return false;
+	}//switch (ui.idChooser->getChosenId(meta.mAuthorId))
+
 	QString name = misc::removeNewLine(ui.groupName->text());
 	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 
-	if(name.isEmpty())
-	{
+	if(name.isEmpty()) {
 		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 		std::cerr << " Invalid GroupName";
 		std::cerr << std::endl;
 		return false;
-	}
+	}//if(name.isEmpty())
+
 	// Fill in the MetaData as best we can.
 	meta.mGroupName = std::string(name.toUtf8());
 
 	meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();
 
-	if (!setCircleParameters(meta))
-	{
+	if (!setCircleParameters(meta)){
 		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 		std::cerr << " Invalid Circles";
 		std::cerr << std::endl;
 		return false;
-	}
+	}//if (!setCircleParameters(meta))
 
 	std::cerr << "void GxsGroupDialog::prepareGroupMetaData() meta.mCircleType: ";
 	std::cerr << meta.mCircleType << " Internal: " << meta.mInternalCircle;
 	std::cerr << " External: " << meta.mCircleId;
 	std::cerr << std::endl;
 
-	ui.idChooser->getChosenId(meta.mAuthorId);
 
 	return true;
 }

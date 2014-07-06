@@ -27,6 +27,7 @@
 #include "PostedUserTypes.h"
 
 #include "util/TokenQueue.h"
+#include "gui/Identity/IdDialog.h"
 
 #include <iostream>
 
@@ -39,6 +40,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 	
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));
 	ui->headerFrame->setHeaderText(tr("Submit a new Post"));
@@ -55,15 +57,20 @@ PostedCreatePostDialog::~PostedCreatePostDialog()
 void PostedCreatePostDialog::createPost()
 {
 	RsGxsId authorId;
-	if (!ui->idChooser->getChosenId(authorId))
-	{
+	switch (ui->idChooser->getChosenId(authorId)) {
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId:
+		break;
+		case GxsIdChooser::NoId:
+		case GxsIdChooser::None:
+		default:
 		std::cerr << "PostedCreatePostDialog::createPost() ERROR GETTING AuthorId!, Post Failed";
 		std::cerr << std::endl;
 
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id first"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return;
-	}
+	}//switch (ui->idChooser->getChosenId(authorId))
 
 	RsPostedPost post;
 	post.mMeta.mGroupId = mGrpId;
@@ -76,11 +83,19 @@ void PostedCreatePostDialog::createPost()
 		/* error message */
 		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty title!!
-	}
+	}//if(ui->titleEdit->text().isEmpty())
 
 	uint32_t token;
 	mPosted->createPost(token, post);
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
 
 	accept();
+}
+
+void  PostedCreatePostDialog::createNewGxsId()
+{
+	IdEditDialog dlg(this);
+	dlg.setupNewId(false);
+	dlg.exec();
+	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }

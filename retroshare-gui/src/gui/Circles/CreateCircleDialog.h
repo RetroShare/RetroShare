@@ -53,6 +53,7 @@ private slots:
 
 	void createCircle();
 	void filterChanged(const QString &text);
+	void createNewGxsId();
 
 private:
 

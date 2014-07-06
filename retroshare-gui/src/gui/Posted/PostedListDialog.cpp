@@ -28,6 +28,7 @@
 #include "PostedDialog.h"
 #include "PostedItem.h"
 #include "PostedUserTypes.h"
+#include "gui/Identity/IdDialog.h"
 
 #include <iostream>
 
@@ -76,6 +77,8 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	
 	connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
+	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
+
 	// default sort method.
 	mSortMethod = RsPosted::HotRankType;
 	mLastSortMethod = RsPosted::TopRankType; // to be different.
@@ -96,6 +99,9 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	otherTopics = ui.groupTreeWidget->addCategoryItem(tr("Other Topics"), QIcon(IMAGE_FOLDERYELLOW), false);
 
 	ui.hotSortButton->setChecked(true);
+
+	/* fill in the available OwnIds for signing */
+	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
 	connect(ui.submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
 }
@@ -244,15 +250,20 @@ void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 {
 	/* must grab AuthorId from Layout */
 	RsGxsId authorId;
-	if (!ui.idChooser->getChosenId(authorId))
-	{
+	switch (ui.idChooser->getChosenId(authorId)) {
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId:
+		break;
+		case GxsIdChooser::NoId:
+		case GxsIdChooser::None:
+		default:
 		std::cerr << "PostedListDialog::createPost() ERROR GETTING AuthorId!, Vote Failed";
 		std::cerr << std::endl;
 
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id before Voting"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return;
-	}
+	}//switch (ui.idChooser->getChosenId(authorId))
 
 	RsGxsVote vote;
 
@@ -261,14 +272,11 @@ void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	vote.mMeta.mParentId = msgId.second;
 	vote.mMeta.mAuthorId = authorId;
 
-	if (up)
-	{
+	if (up) {
 		vote.mVoteType = GXS_VOTE_UP;
-	}
-	else
-	{
+	} else { //if (up)
 		vote.mVoteType = GXS_VOTE_DOWN;
-	}
+	}//if (up)
 
 	std::cerr << "PostedListDialog::submitVote()";
 	std::cerr << std::endl;
@@ -396,6 +404,14 @@ void PostedListDialog::editTopic()
 	cf.exec ();
 }
 
+void  PostedListDialog::createNewGxsId()
+{
+	IdEditDialog dlg(this);
+	dlg.setupNewId(false);
+	dlg.exec();
+	ui.idChooser->setDefaultId(dlg.getLastIdName());
+}
+
 void PostedListDialog::showGroupDetails()
 {
 	if (mCurrTopicId.isNull())
@@ -422,10 +438,10 @@ void PostedListDialog::requestGroupSummary()
 	uint32_t token;
 	mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
 
-	/* refresh Id Chooser Too */
-	RsGxsId currentId ;
-	ui.idChooser->getChosenId(currentId);
-	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, currentId);
+	// /* refresh Id Chooser Too */
+	//RsGxsId currentId ;
+	//ui.idChooser->getChosenId(currentId);
+	//ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, currentId);
 }
 
 void PostedListDialog::acknowledgeGroup(const uint32_t &token)

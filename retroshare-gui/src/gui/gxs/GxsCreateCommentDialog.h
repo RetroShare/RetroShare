@@ -44,6 +44,7 @@ public:
 private slots:
 
 	void createComment();
+	void createNewGxsId();
 
 private:
 	Ui::GxsCreateCommentDialog *ui;

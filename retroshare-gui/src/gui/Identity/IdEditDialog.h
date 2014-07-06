@@ -31,6 +31,7 @@
 #include "util/TokenQueue.h"
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsgxsifacetypes.h>
+#include <QString>
 
 class UIStateHelper;
 
@@ -45,6 +46,8 @@ public:
 	void setupExistingId(std::string keyId);
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+	std::string getLastIdName() {return mLastIdName;}
 
 private slots:
 	void idTypeToggled(bool checked);
@@ -77,6 +80,7 @@ protected:
 	RsGxsIdGroup mEditGroup;
 
 	TokenQueue *mIdQueue;
+	std::string mLastIdName;
 };
 
 #endif

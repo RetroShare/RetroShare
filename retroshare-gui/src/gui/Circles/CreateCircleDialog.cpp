@@ -28,6 +28,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
+#include "gui/Identity/IdDialog.h"
 
 #include <algorithm>
 
@@ -66,6 +67,8 @@ CreateCircleDialog::CreateCircleDialog()
 	connect(ui.treeWidget_IdList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedId(QTreeWidgetItem*, QTreeWidgetItem*)));
 	
 	connect(ui.IdFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+
+	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	/* Add filter actions */
 	QTreeWidgetItem *headerItem = ui.treeWidget_IdList->headerItem();
@@ -140,6 +143,7 @@ void CreateCircleDialog::setupForPersonalCircle()
 	ui.frame_Distribution->hide();
 	ui.idChooserLabel->hide();
 	ui.idChooser->hide();
+	ui.toolButton_NewId->hide();
 
 	getPgpIdentities();
 }
@@ -154,6 +158,7 @@ void CreateCircleDialog::setupForExternalCircle()
 	ui.frame_Distribution->show();
 	ui.idChooserLabel->show();
 	ui.idChooser->show();
+	ui.toolButton_NewId->show();
 	
 	requestGxsIdentities();
 }
@@ -229,90 +234,83 @@ void CreateCircleDialog::createCircle()
 	std::cerr << std::endl;
 
 	QString name = ui.circleName->text();
-	QString desc;
+	//QString desc;
 
-	if(name.isEmpty())
-	{	/* error message */
+	if(name.isEmpty()) {
+		/* error message */
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a name for your Circle"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return; //Don't add  a empty Subject!!
-	}
+	}//if(name.isEmpty())
 
 	RsGxsCircleGroup circle;
 
 	circle.mMeta.mGroupName = std::string(name.toUtf8());
 
 	RsGxsId authorId;
-	if (ui.idChooser->getChosenId(authorId))
-	{
+	switch (ui.idChooser->getChosenId(authorId)) {
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId:
 		circle.mMeta.mAuthorId = authorId;
 		std::cerr << "CreateCircleDialog::createCircle() AuthorId: " << authorId;
 		std::cerr << std::endl;
-	}
-	else
-	{
+
+		break;
+		case GxsIdChooser::NoId:
+		case GxsIdChooser::None:
+		default:
 		std::cerr << "CreateCircleDialog::createCircle() No AuthorId Chosen!";
 		std::cerr << std::endl;
-	}
+	}//switch (ui.idChooser->getChosenId(authorId))
 
 
 	/* copy Ids from GUI */
 	QTreeWidget *tree = ui.treeWidget_membership;
 	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; i++)
-	{
+	for(int i = 0; i < count; i++) {
 		QTreeWidgetItem *item = tree->topLevelItem(i);
 		QString keyId = item->text(RSCIRCLEID_COL_KEYID);
 
 		/* insert into circle */
-		if (mIsExternalCircle)
-		{
+		if (mIsExternalCircle) {
             circle.mInvitedMembers.push_back(RsGxsId(keyId.toStdString()));
 			std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
 			std::cerr << std::endl;
-		}
-		else
-		{
+		} else {//if (mIsExternalCircle)
 			circle.mLocalFriends.push_back(RsPgpId(keyId.toStdString()));	
 			std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString();
 			std::cerr << std::endl;
-		}
+		}//if (mIsExternalCircle)
 
-	}
+	}//for(int i = 0; i < count; i++)
 
-	if (mIsExistingCircle)
-	{
+	if (mIsExistingCircle) {
 		std::cerr << "CreateCircleDialog::createCircle() Existing Circle TODO";
 		std::cerr << std::endl;
 
 		// cannot edit these yet.
 		QMessageBox::warning(this, tr("RetroShare"),tr("Cannot Edit Existing Circles Yet"), QMessageBox::Ok, QMessageBox::Ok);
 		return; 
-	}
+	}//if (mIsExistingCircle)
 
-	if (mIsExternalCircle)
-	{
+	if (mIsExternalCircle) {
 		std::cerr << "CreateCircleDialog::createCircle() External Circle";
 		std::cerr << std::endl;
 
 		// set distribution from GUI.
 		circle.mMeta.mCircleId.clear() ;
-		if (ui.radioButton_Public->isChecked())
-		{
+		if (ui.radioButton_Public->isChecked()) {
 			std::cerr << "CreateCircleDialog::createCircle() Public Circle";
 			std::cerr << std::endl;
 
 			circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_PUBLIC;
-		}
-		else if (ui.radioButton_Self->isChecked())
-		{
+
+		} else if (ui.radioButton_Self->isChecked()) {
 			std::cerr << "CreateCircleDialog::createCircle() ExtSelfRef Circle";
 			std::cerr << std::endl;
 
 			circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_EXT_SELF;
-		}
-		else if (ui.radioButton_Restricted->isChecked())
-		{
+		} else if (ui.radioButton_Restricted->isChecked()) {
 			std::cerr << "CreateCircleDialog::createCircle() External (Other) Circle";
 			std::cerr << std::endl;
 
@@ -320,37 +318,31 @@ void CreateCircleDialog::createCircle()
 
 			/* grab circle ID from chooser */
 			RsGxsCircleId chosenId;
-			if (ui.circleComboBox->getChosenCircle(chosenId))
-			{
+			if (ui.circleComboBox->getChosenCircle(chosenId)) {
 				std::cerr << "CreateCircleDialog::createCircle() ChosenId: " << chosenId;
 				std::cerr << std::endl;
 
  				circle.mMeta.mCircleId = chosenId;
-			}
-			else
-			{
+			} else {//if (ui.circleComboBox->getChosenCircle(chosenId))
 				std::cerr << "CreateCircleDialog::createCircle() Error no Id Chosen";
 				std::cerr << std::endl;
 
 				QMessageBox::warning(this, tr("RetroShare"),tr("No Restriction Circle Selected"), QMessageBox::Ok, QMessageBox::Ok);
 				return; 
-			}
-		}
-		else
-		{
+			}//if (ui.circleComboBox->getChosenCircle(chosenId))
+		} else { //if (ui.radioButton_Public->isChecked())
 			QMessageBox::warning(this, tr("RetroShare"),tr("No Circle Limitations Selected"), QMessageBox::Ok, QMessageBox::Ok);
 			return; 
-		}
-	}
-	else
-	{
+		}//if (ui.radioButton_Public->isChecked())
+	} else {//if (mIsExternalCircle)
 		std::cerr << "CreateCircleDialog::createCircle() Personal Circle";
 		std::cerr << std::endl;
 
 		// set personal distribution
 		circle.mMeta.mCircleId.clear() ;
 		circle.mMeta.mCircleType = GXS_CIRCLE_TYPE_LOCAL;
-	}
+	}//if (mIsExternalCircle)
+
 	std::cerr << "CreateCircleDialog::createCircle() : mCircleType: " << circle.mMeta.mCircleType;
 	std::cerr << std::endl;
 	std::cerr << "CreateCircleDialog::createCircle() : mCircleId: " << circle.mMeta.mCircleId;
@@ -673,4 +665,12 @@ void CreateCircleDialog::filterIds()
 	QString text = ui.IdFilter->text();
 
 	ui.treeWidget_IdList->filterItems(filterColumn, text);
+}
+
+void  CreateCircleDialog::createNewGxsId()
+{
+	IdEditDialog dlg(this);
+	dlg.setupNewId(false);
+	dlg.exec();
+	ui.idChooser->setDefaultId(dlg.getLastIdName());
 }
