@@ -103,6 +103,7 @@ private:
 	bool filterItem(GxsChannelPostItem *pItem, const QString &text, const int filter);
 
     RsGxsGroupId mChannelId; /* current Channel */
+	int mSubscribeFlags;
 	TokenQueue *mChannelQueue;
 
 	/* Layout Pointers */

@@ -27,11 +27,6 @@
 #include "gui/notifyqt.h"
 #include "gui/channels/ShareKey.h"
 
-// These should be in retroshare/ folder.
-//#include "retroshare/rsgxsflags.h"
-
-//#define DEBUG_FORUMS
-
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsForums, parent)
@@ -61,9 +56,7 @@ QString GxsForumsDialog::text(TextType type)
 		return "<b>Open points:</b><ul>"
 		       "<li>Restore forum keys"
 		       "<li>Display AUTHD"
-		       "<li>Copy/navigate forum link"
-		       "<li>Display author of post"
-		       "<li>Display count of unread messages"
+		       "<li>Navigate forum link"
 		       "<li>Don't show own posts as unread"
 		       "<li>Remove messages"
 		       "</ul>";

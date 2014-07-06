@@ -28,10 +28,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 
-/****
- * #define DEBUG_CHANNEL
- ***/
-
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsChannels, parent)
@@ -62,10 +58,8 @@ QString GxsChannelDialog::text(TextType type)
 		        "<li>Threaded load of messages"
 		        "<li>Share key"
 		        "<li>Restore channel keys"
-		        "<li>Copy/navigate channel link"
-		        "<li>Display count of unread messages"
-		        "<li>Set all as read"
-		        "<li>Set read/unread status"
+		        "<li>Navigate channel link"
+		        "<li>Don't show own posts as unread"
 		        "</ul>";
 
 	case TEXT_YOUR_GROUP:

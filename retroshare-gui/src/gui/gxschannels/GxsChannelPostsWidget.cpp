@@ -92,6 +92,7 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	ui->nameLabel->setMinimumWidth(20);
 
+	mSubscribeFlags = 0;
 	mInProcessSettings = false;
 
 	/* load settings */
@@ -161,11 +162,6 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 		requestGroupData(mChannelId);
 	}
 }
-
-//UserNotify *GxsChannelPostsWidget::getUserNotify(QObject *parent)
-//{
-//	return new ChannelUserNotify(parent);
-//}
 
 void GxsChannelPostsWidget::processSettings(bool load)
 {
@@ -266,6 +262,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 {
 	mStateHelper->setActive(TOKEN_TYPE_GROUP_DATA, true);
 
+	mSubscribeFlags = group.mMeta.mSubscribeFlags;
+
 	/* IMAGE */
 	QPixmap chanImage;
 	if (group.mImage.mData != NULL) {
@@ -278,7 +276,7 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	/* set Channel name */
 	ui->nameLabel->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
-	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
+	if (mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
 		mStateHelper->setWidgetEnabled(ui->postButton, true);
 	}
@@ -287,7 +285,7 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		mStateHelper->setWidgetEnabled(ui->postButton, false);
 	}
 
-	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mSubscribeFlags));
 
 	bool autoDownload = rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId);
 	setAutoDownload(autoDownload);
@@ -557,31 +555,18 @@ void GxsChannelPostsWidget::fillThreadAddMsg(const QString &channelId, const QSt
 
 void GxsChannelPostsWidget::setAllMessagesRead(bool read)
 {
-#if 0
-	if (mChannelId.isNull()) {
+	if (mChannelId.isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
 
-	if (!rsChannels) {
-		return;
+	QList<GxsChannelPostItem *>::iterator mit;
+	for (mit = mChannelPostItems.begin(); mit != mChannelPostItems.end(); ++mit) {
+		GxsChannelPostItem *item = *mit;
+		RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
+
+		uint32_t token;
+		rsGxsChannels->setMessageReadStatus(token, msgPair, read);
 	}
-
-	ChannelInfo ci;
-	if (rsChannels->getChannelInfo(mChannelId, ci) == false) {
-		return;
-	}
-
-	if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
-		std::list<ChannelMsgSummary> msgs;
-		std::list<ChannelMsgSummary>::iterator it;
-
-		rsChannels->getChannelMsgList(mChannelId, msgs);
-
-		for(it = msgs.begin(); it != msgs.end(); it++) {
-			rsChannels->setMessageStatus(mChannelId, it->msgId, CHANNEL_MSG_STATUS_READ, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
-		}
-	}
-#endif
 }
 
 void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
@@ -640,6 +625,8 @@ void GxsChannelPostsWidget::requestGroupData(const RsGxsGroupId &grpId)
 	std::cerr << "GxsChannelPostsWidget::requestGroupData()";
 	std::cerr << std::endl;
 #endif
+
+	mSubscribeFlags = 0;
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_DATA);
 
