@@ -51,6 +51,7 @@
 #define TOKEN_TYPE_GROUP_SUMMARY    1
 //#define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
 //#define TOKEN_TYPE_CURRENTGROUP     3
+#define TOKEN_TYPE_STATISTICS       4
 
 #define MAX_COMMENT_TITLE 32
 
@@ -196,6 +197,10 @@ void GxsGroupFrameDialog::updateDisplay(bool complete)
 	if (complete || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
 		/* Update group list */
 		requestGroupSummary();
+	} else {
+		if (!getMsgIds().empty() || !getMsgIdsMeta().empty()) {
+			updateMessageSummaryList(RsGxsGroupId());
+		}
 	}
 }
 
@@ -735,37 +740,28 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 		return;
 	}
 
-	QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
+	std::list<RsGxsGroupId> groupIds;
 
-	for (int item = 0; item < 2; item++) {
-		int child;
-		int childCount = items[item]->childCount();
-		for (child = 0; child < childCount; child++) {
-			QTreeWidgetItem *childItem = items[item]->child(child);
-			std::string childId = ui->groupTreeWidget->itemId(childItem).toStdString();
-			if (childId.empty()) {
-				continue;
-			}
-
-			if (groupId.isNull() || childId == groupId.toStdString()) {
-				/* calculate unread messages */
-				unsigned int newMessageCount = 0;
-				unsigned int unreadMessageCount = 0;
-
-//#TODO				mInterface->getMessageCount(childId, newMessageCount, unreadMessageCount);
-
-				std::cerr << "IMPLEMENT mInterface->getMessageCount()";
-				std::cerr << std::endl;
-
-				ui->groupTreeWidget->setUnreadCount(childItem, unreadMessageCount);
-
-				if (groupId.isNull() == false) {
-					/* Calculate only this group */
-					break;
+	if (groupId.isNull()) {
+		QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
+		for (int item = 0; item < 2; item++) {
+			int child;
+			int childCount = items[item]->childCount();
+			for (child = 0; child < childCount; child++) {
+				QTreeWidgetItem *childItem = items[item]->child(child);
+				QString childId = ui->groupTreeWidget->itemId(childItem);
+				if (childId.isEmpty()) {
+					continue;
 				}
+
+				groupIds.push_back(RsGxsGroupId(childId.toLatin1().constData()));
 			}
 		}
+	} else {
+		groupIds.push_back(groupId);
 	}
+
+	requestGroupStatistics(groupIds);
 }
 
 /*********************** **** **** **** ***********************/
@@ -877,6 +873,53 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
+void GxsGroupFrameDialog::requestGroupStatistics(const std::list<RsGxsGroupId> &groupIds)
+{
+//	uint32_t token;
+//	GxsServiceStatistic stats;
+//	mInterface->getGroupStatistic(token, stats);
+//	TokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
+
+	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_STATISTICS);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+	uint32_t token;
+	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, TOKEN_TYPE_STATISTICS);
+}
+
+void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
+{
+	GxsMsgMetaMap msgList;
+	mInterface->getMsgSummary(token, msgList);
+
+	GxsMsgMetaMap::const_iterator groupIt;
+	for (groupIt = msgList.begin(); groupIt != msgList.end(); ++groupIt) {
+		const RsGxsGroupId &groupId = groupIt->first;
+		QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(groupId.toStdString()));
+		if (!item) {
+			continue;
+		}
+
+		const std::vector<RsMsgMetaData> &groupData = groupIt->second;
+
+		unsigned int newCount = 0;
+		std::vector<RsMsgMetaData>::const_iterator msgIt;
+		for (msgIt = groupData.begin(); msgIt != groupData.end(); ++msgIt) {
+			const RsMsgMetaData &metaData = *msgIt;
+			if (IS_MSG_NEW(metaData.mMsgStatus) || IS_MSG_UNREAD(metaData.mMsgStatus)) {
+				++newCount;
+			}
+		}
+
+		ui->groupTreeWidget->setUnreadCount(item, newCount);
+	}
+}
+
+/*********************** **** **** **** ***********************/
+/*********************** **** **** **** ***********************/
+
 void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 #ifdef DEBUG_GROUPFRAMEDIALOG
@@ -900,6 +943,10 @@ void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenReques
 //		case TOKEN_TYPE_CURRENTGROUP:
 //			loadGroupSummary_CurrentGroup(req.mToken);
 //			break;
+
+		case TOKEN_TYPE_STATISTICS:
+			loadGroupStatistics(req.mToken);
+			break;
 
 		default:
 			std::cerr << "GxsGroupFrameDialog::loadRequest() ERROR: INVALID TYPE";

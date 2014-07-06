@@ -147,6 +147,9 @@ private:
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
 
+	void requestGroupStatistics(const std::list<RsGxsGroupId> &groupIds);
+	void loadGroupStatistics(const uint32_t &token);
+
 	// subscribe/unsubscribe ack.
 //	void acknowledgeSubscribeChange(const uint32_t &token);
 
