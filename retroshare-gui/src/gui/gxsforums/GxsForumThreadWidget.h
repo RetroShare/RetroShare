@@ -85,6 +85,7 @@ private slots:
 	/* handle splitter */
 	void togglethreadview();
 
+	void subscribeGroup(bool subscribe);
 	void createthread();
 	void createmessage();
 

@@ -99,6 +99,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->progressBar, UISTATE_LOADING_VISIBLE);
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->progressText, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->subscribeToolButton);
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->newthreadButton);
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->threadTreeWidget, UISTATE_ACTIVE_ENABLED);
 
@@ -131,6 +132,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 
+	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
 	connect(ui->newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
 	connect(ui->newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
@@ -919,6 +921,8 @@ void GxsForumThreadWidget::insertForumThreads(const RsGxsForumGroup &group)
 	ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 	mForumDescription = QString::fromUtf8(group.mDescription.c_str());
 
+	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mSubscribeFlags));
+
 	ui->progressBar->reset();
 	mStateHelper->setActive(TOKEN_TYPE_CURRENTFORUM, true);
 
@@ -1521,6 +1525,17 @@ void GxsForumThreadWidget::copyMessageLink()
 #endif
 
 	QMessageBox::warning(this, "RetroShare", "ToDo");
+}
+
+void GxsForumThreadWidget::subscribeGroup(bool subscribe)
+{
+	if (mForumId.isNull()) {
+		return;
+	}
+
+	uint32_t token;
+	rsGxsForums->subscribeToGroup(token, mForumId, subscribe);
+//	mThreadQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void GxsForumThreadWidget::createmessage()

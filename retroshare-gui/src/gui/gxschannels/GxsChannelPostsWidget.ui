@@ -101,6 +101,22 @@
        <number>2</number>
       </property>
       <item>
+       <widget class="SubscribeToolButton" name="subscribeToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string notr="true">Subscribe</string>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QToolButton" name="postButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
@@ -117,22 +133,6 @@
           <width>32</width>
           <height>16</height>
          </size>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="SubscribeToolButton" name="subscribeToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string notr="true">Subscribe</string>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
