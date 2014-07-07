@@ -93,7 +93,7 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char *
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
 #endif
 	std::string password;
-	RsServer::notify()->askForPassword(std::string("\n    ")+uid_hint+" :", prev_was_bad, password) ;
+	RsServer::notify()->askForPassword(uid_hint, prev_was_bad, password) ;
 
 	return password ;
 }

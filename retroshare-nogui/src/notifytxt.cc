@@ -103,7 +103,8 @@ bool NotifyTxt::askForPluginConfirmation(const std::string& plugin_file_name, co
 
 bool NotifyTxt::askForPassword(const std::string& question, bool prev_is_bad, std::string& password)
 {
-	char *passwd = getpass(question.c_str()) ;
+	std::string question1="Please enter your PGP password for key:\n    " + question + " :";
+	char *passwd = getpass(question1.c_str()) ;
 	password = passwd;
 
 	return !password.empty();
