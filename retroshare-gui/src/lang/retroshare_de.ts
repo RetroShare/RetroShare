@@ -10519,6 +10519,10 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
         <source>Encrypted message</source>
         <translation>Verschlüsselte Nachr.</translation>
     </message>
+    <message>
+        <source>Please enter your PGP password for key</source>
+        <translation>Bitte gib dein Passwort ein für Schlüssel</translation>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
