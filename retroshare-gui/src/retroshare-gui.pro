@@ -75,8 +75,19 @@ linux-* {
 	gxs {
 		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-		LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+		isEmpty(SQLCIPHER_OK) {
+			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+
+			! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+				message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
+				error(Please fix this and try again. Will stop now.)
+			}
+
+			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+		} else {
+			LIBS += -lsqlcipher
+		}
 	}
 
 	LIBS *= -lglib-2.0
