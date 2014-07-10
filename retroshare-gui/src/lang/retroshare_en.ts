@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.1">
 <context>
     <name>AWidget</name>
     <message>
         <source>version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About RetroShare </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -23,10 +27,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About RetroShare %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Max score: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -40,6 +40,10 @@
     </message>
     <message>
         <source>Have fun ;-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About RetroShare </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -416,6 +420,86 @@ p, li { white-space: pre-wrap; }
         <source>Appearance</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tool Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On Tool Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On List Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for menu?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for the page?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Beside Icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Under Icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose the style of Tool Buttons.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose the style of List Items.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon Size = 8x8</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon Size = 16x16</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon Size = 24x24</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inon Size = 32x32</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove surplus text in status bar.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compact Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Sound Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Toaster Disable</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -434,14 +518,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Circles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Posted Links</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wiki Pages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -550,267 +626,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>BlogDetails</name>
-    <message>
-        <source>Blog Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BlogMsgItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BlogNewItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Updated Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BlogsDialog</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create New Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>My Blogs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribed Blogs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popular Blogs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Blogs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post to Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Blog Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a new Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popularity: %1
-Fetches: %2
-Available: %3</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>BlogsMsgItem</name>
-    <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comments here</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>BwCtrlWindow</name>
     <message>
         <source>Bandwidth Control Window</source>
@@ -868,357 +683,27 @@ p, li { white-space: pre-wrap; }
         <source>Allowed Recvd</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>CalDialog</name>
     <message>
-        <source>Form</source>
+        <source>TOTALS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Local Calendars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shared Calendar List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Location:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allow List:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;Disabled&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer Calendars</source>
+        <source>Totals</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>ChanMsgItem</name>
+    <name>ChannelPage</name>
     <message>
-        <source>Toggle Message Read Status</source>
+        <source>New channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New</source>
+        <source>Open all forums in new tab</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Feed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ChanNewItem</name>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Updated Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Destination directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDialog</name>
-    <message>
-        <source>GxsChannels</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ChannelFeed</name>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post to Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Auto-Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>My Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribed Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popular Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Disable Auto-Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Channel Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set destination directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[Default]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select channel destination directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish rights restored.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish not restored.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Channel Selected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribed</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ChannelUserNotify</name>
-    <message>
-        <source>Channel Post</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1415,10 +900,6 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Subscribed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1478,6 +959,14 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Public Subscribed Lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           	                      invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1679,19 +1168,7 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your personal invites</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Collected contacts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open secured chat tunnel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete this invite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1703,23 +1180,7 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot remove distant chat invite.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a chat invitation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Private chat invite from </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private chat invite to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1751,15 +1212,51 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Signed with key not in keyring</source>
+        <source>Search by default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Not signed.</source>
+        <source>Number of char to start search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Authenticated signature</source>
+        <source>Case sensitive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whole Words</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move to cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color All Text Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of found text coloring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color of found text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose color of found text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>People around you can chat to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP id : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valid until : </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1924,6 +1421,70 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>is Busy and may not reply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find Case Sensitively</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find Whole Words</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move To Cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after X items found (need more CPU)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WARNING: Could take long time on big history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> items found (need more CPU)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Next &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctr+M&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1This message counts %2 characters.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> founded items.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No items founded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctr+M&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2776,6 +2337,10 @@ distant messages to this peer
 even if you don&apos;t make friends.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConnectProgressDialog</name>
@@ -3157,529 +2722,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>CreateBlog</name>
-    <message>
-        <source>Create new Blog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Logo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Blog Logo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CreateBlogMsg</name>
-    <message>
-        <source>New Blog Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Post to:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Visual Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blog Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Html Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>toolBar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>toolBar_2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>blockquote</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Increase font Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Decrease font size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Code</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>splitPost</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ordered List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unordered List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print Preview...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Export PDF...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Insert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>F&amp;ormat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Bold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Italic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Underline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>C&amp;enter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Justify</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Text Color...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Application</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The document has been modified.
-Do you want to save your changes?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open File...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export PDF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Choose Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannel</name>
-    <message>
-        <source>Create a new Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Key With</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Logo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannelMsg</name>
-    <message>
-        <source>New Channel Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Post to:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add File to Attach</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Channel Thumbnail</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attachments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto Thumbnail</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drag and Drop Files from Search Results</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Links</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>About to post un-owned files to a channel.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File already Added and Hashed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load thumbnail picture</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CreateCircleDialog</name>
     <message>
         <source>Circle Details</source>
@@ -3719,14 +2761,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Known Identities</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>All PGP IDs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Known PGP IDs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3793,142 +2827,40 @@ p, li { white-space: pre-wrap; }
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>CreateForum</name>
     <message>
-        <source>Create new Forum</source>
+        <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Name</source>
+        <source>Signed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>check peers you would like to share private publish key with</source>
+        <source>Signed by known nodes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share Key With</source>
+        <source>Create new Identity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Description</source>
+        <source>New ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type:</source>
+        <source>Edit Circle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
+        <source>PGP Identity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
+        <source>Anon Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CreateForumMsg</name>
-    <message>
-        <source>Post Forum Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sign Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attach files via drag and drop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
+        <source>PGP Linked Id</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4067,6 +2999,10 @@ p, li { white-space: pre-wrap; }
         <source>Generate mass data</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateGxsForumMsg</name>
@@ -4138,6 +3074,18 @@ p, li { white-space: pre-wrap; }
         <source>Generate mass data</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
@@ -4191,89 +3139,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>CreateMsgLinkDialog</name>
-    <message>
-        <source>Invite type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Validity time :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>hour</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>day</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>week</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>month</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private chat invite creation failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The creation of the chat invite failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private chat invite created</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create distant chat invite</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Messaging invite creation failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The creation of the messaging invite failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Messaging invite created</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create distant chat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4961,126 +3826,6 @@ you plug it in.</source>
     </message>
 </context>
 <context>
-    <name>EditChanDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>EditForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ExampleDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Person</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto Connect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trust Level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Person Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auth Code</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vote Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vote Down</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
@@ -5331,147 +4076,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ForumMsgItem</name>
-    <message>
-        <source>Subject: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe To Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown Forum Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please give a Text Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ForumNewItem</name>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Updated Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
@@ -5499,287 +4103,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load embedded images</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ForumUserNotify</name>
-    <message>
-        <source>Forum Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ForumsDialog</name>
-    <message>
-        <source>Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Threaded View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flat View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Previous Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download all files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>with children</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Placeholder for missing Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can&apos;t reply an Anonymous Author</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load images always for this message</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ForumsFillThread</name>
-    <message>
-        <source>Unknown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>none</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6174,134 +4497,8 @@ p, li { white-space: pre-wrap; }
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>GamesDialog</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Game:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GameType: 0. Want to Add your Game here?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GameType: 1. Get In Touch with the developers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GameType: 2.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Title / Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create New Game</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invite All Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Game Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GameID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Player</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invite</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Interested</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move Player</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Play Game</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel Game</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Invite List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove from Invite List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Interested in Playing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Not Interested in Game</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Not Interested</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Confirm Peer in Game</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Peer from Game</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Interested in Game</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quit Game</source>
+        <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6527,6 +4724,30 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Passwords do not match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a Hidden Location.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion and your selected port,  you must first launch TOR and create a new hidden service to generate this address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Hidden Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please put in a valid address of the form: 31769173498.onion:7800</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6789,6 +5010,56 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>GlobalRouterStatistics</name>
+    <message>
+        <source>Router Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GlobalRouterStatisticsWidget</name>
+    <message>
+        <source>Pending packets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> by </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> size=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Status </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> secs ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Managed keys</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> : Service ID = </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Routing matrix  (</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
@@ -6912,6 +5183,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No one can anonymously access this directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GroupListView</name>
+    <message>
+        <source>Anonymous</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7044,18 +5322,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post to Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enable Auto-Download</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7077,58 +5343,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Channel Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish rights restored.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish not restored.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Channel Selected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Todo</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7156,6 +5370,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Channel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7211,6 +5429,80 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelPostsWidget</name>
+    <message>
+        <source>Post to Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Channel Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelUserNotify</name>
+    <message>
+        <source>Channel Post</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7273,6 +5565,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OwnVote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7342,6 +5642,14 @@ p, li { white-space: pre-wrap; }
 before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsForumGroupDialog</name>
@@ -7359,6 +5667,18 @@ before you can comment</source>
     </message>
     <message>
         <source>Create Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Forum Admins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Forum Admins</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7546,6 +5866,13 @@ before you can comment</source>
     </message>
 </context>
 <context>
+    <name>GxsForumUserNotify</name>
+    <message>
+        <source>Forum Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GxsForumsDialog</name>
     <message>
         <source>Forums</source>
@@ -7553,14 +5880,6 @@ before you can comment</source>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7577,54 +5896,6 @@ before you can comment</source>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in new tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7645,10 +5916,6 @@ before you can comment</source>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Todo</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7778,16 +6045,91 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Circle Selection - Personal disabled for now</source>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit Group Changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to Prepare Group MetaData - please Review</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsGroupFrameDialog</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open in new tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Publish Rights</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>GxsIdChooser</name>
-    <message>
-        <source>Loading</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Not found</source>
         <translation type="unfinished"></translation>
@@ -8133,30 +6475,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your Rating</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Overall Rating</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Implicit Score</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rating</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Local Reputation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Todo</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8190,6 +6508,78 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat with this peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Launches a distant chat with this peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to delete this Identity ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Really delete? </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Itentities</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8259,6 +6649,22 @@ p, li { white-space: pre-wrap; }
         <source>Create New Identity</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
@@ -8294,10 +6700,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LocalSharedFilesDialog</name>
     <message>
-        <source>Create collection file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8327,6 +6729,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set command for opening this file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collection</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8370,46 +6776,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare %1 a secure decentralized communication platform</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>News feed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File sharing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat Lobbies</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blogs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Getting Started</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8558,6 +6924,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Service permissions matrix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8857,10 +7227,6 @@ Do you want to save message to draft box?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unknown friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8994,11 +7360,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP key unknown</source>
+        <source>Respond to:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
+        <source>[no identity]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10005,10 +8371,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Send Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> If I accept connection from peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10098,6 +8460,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>News feed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10239,6 +8605,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Disable All Toaster temporaly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable All Toasters</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10292,6 +8666,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Encrypted message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter your PGP password for key</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10442,6 +8820,41 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PeopleDialog</name>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;People&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends / Friends of Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pseudonyms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>People</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10700,6 +9113,37 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PluginManager</name>
+    <message>
+        <source>base folder %1 doesn&apos;t exist, default load failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: instance &apos;%1&apos;can&apos;t create a widget</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: no plugin with name &apos;%1&apos; found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: failed to revove file %1(uninstalling plugin &apos;%2&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error(uninstall): no plugin with name &apos;%1&apos; found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error(installation): plugin file %1 doesn&apos;t exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: can&apos;t copy %1 as %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
@@ -10711,6 +9155,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Plugins (*.so *.dll)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Widget for plugin %1 not found on plugins frame</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10910,11 +9358,23 @@ p, li { white-space: pre-wrap; }
         <source>Please add a Title</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PostedDialog</name>
     <message>
         <source>Posted Links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10942,6 +9402,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Topic</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11084,6 +9548,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Todo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Topic Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Topic Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posted Links</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11621,34 +10105,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select who can contact you:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat link is expired</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This chat link is expired. The destination peer will not answer.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat link cannot be decrypted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The link could not be decrypted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The link signature cannot be checked.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The link is signed by an unknown key.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Hash error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11658,22 +10114,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Tunnel is pending...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Messaging link is expired</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Messaging link is expired. The destination peer will not receive it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat connection is not possible</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11692,16 +10132,55 @@ Reported error is:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Signature check failed!
-Make sure you know who you&apos;re talking to.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat connection is unauthenticated</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Id: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat this peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to send a private message to %1 (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 (%2, Extra - Source included)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This cert is malformed. Error code: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click this link to send a private message to %1 (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (%1, @%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>secs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Old</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round Trip Time:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading... </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11887,6 +10366,29 @@ p, li { white-space: pre-wrap; }
         <source>Warning!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Browsable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Universal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decide here whether this directory is
+* Network Wide: 	anonymously shared over the network (including your friends)
+* Browsable: 	browsable by your friends
+* Universal: 		both</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If checked, the share is anonymously shared to anybody.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If checked, the share is browsable by your friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RSImageBlockWidget</name>
@@ -12006,6 +10508,10 @@ p, li { white-space: pre-wrap; }
         <source>Recommend in a message to</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Collection</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
@@ -12026,18 +10532,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Total size :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Selected files:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Deselect all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12070,6 +10564,114 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
  Concerned files are listed in red.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Selected files :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file were collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection.&lt;/p&gt;&lt;p&gt;If a directory is selected, all of his children will be added.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item of collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collection Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is the root directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Real Size: Waiting child...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Real File Count: Waiting child...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is a directory. Double-click to expand it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Real Size=%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Real File Count=%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File already exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning, selection contains more than %1 items.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to remove them and all their children, too? &lt;br&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter the new directory&apos;s name</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
@@ -12097,6 +10699,30 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
 
 If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File already exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12160,6 +10786,17 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>built-in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not create data directory: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RttStatistics</name>
+    <message>
+        <source>RTT Statistics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12385,6 +11022,26 @@ Reducing image to %1x%2 pixels?</source>
         <source>Open Folder</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -12504,6 +11161,10 @@ Reducing image to %1x%2 pixels?</source>
         <source>Certificate caused an internal error.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Peer/location not in friendlist (PGP id=</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ServerPage</name>
@@ -12565,10 +11226,6 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Port:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12664,6 +11321,89 @@ The default value is 20.</source>
         <source>Upload (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hidden Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOR Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Outgoing TOR Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOR Socks Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Outgoing Okay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
+
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup TOR? </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incoming TOR Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incoming Okay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Onion Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected torrc Port Configuration:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
+HiddenServicePort 9191 127.0.0.1:9191</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To Receive Connections, you must first setup a TOR Hidden Service. 
+See TOR documentation for HOWTO details.
+
+Once this is done, paste the Onion Address in the box above.
+This is your external address on the TOR network.
+Finally make sure that the Ports match the TOR configuration.
+
+If you have issues connecting over TOR check the TOR logs too.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global routing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discovery On (recommended)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discovery Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hidden - See TOR Config</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ServicePermissionDialog</name>
@@ -12689,6 +11429,85 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Use as direct source, when available</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ServicePermissionsPage</name>
+    <message>
+        <source>ServicePermissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permissions changes are not saved permanently. (TODO)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Row2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shares</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Joe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anne</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jacki</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;		   &lt;p&gt;Permissions allow you to control which services are available to which friends &lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Service</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incompatible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permissions</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12934,6 +11753,26 @@ The default value is 20.</source>
         <source>Recommendation(s)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add Share</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SoundPage</name>
@@ -13156,10 +11995,6 @@ This choice can be reverted in settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Trying tunnel connection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Trying TCP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13173,10 +12008,6 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connected: Tunnel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13334,6 +12165,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>SubscribeToolButton</name>
+    <message>
+        <source>Subscribed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
@@ -13371,6 +12217,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New tag ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ToasterDisable</name>
+    <message>
+        <source>All Toasters are disable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toasters are enable</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13899,6 +12756,30 @@ Try to be patient!</source>
         <source>Try it again?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>RTT Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File sharing</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -13952,69 +12833,6 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Groups</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TrustView</name>
-    <message>
-        <source>Zoom :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing: whole network</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This table normally auto-updates every 10 seconds.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Self</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trust</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> is authenticated (one way) by </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Half</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> authenticated himself</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> authenticated each other</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> is authenticated by </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> peers, including him(her)self.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> authenticated </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing: peers connected to </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14392,7 +13210,11 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit Group</source>
+        <source>Show Wiki Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Wiki Group</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14519,6 +13341,10 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Create Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Group</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

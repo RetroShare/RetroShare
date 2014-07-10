@@ -314,7 +314,7 @@ void  CreateGxsForumMsg::createMsg()
 #ifdef ENABLE_GENERATE
 	if (ui.generateCheckBox->isChecked()) {
 		generateCount = ui.generateSpinBox->value();
-		if (QMessageBox::question(this, "Generate mass data", QString("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+		if (QMessageBox::question(this, tr("Generate mass data"), tr("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
 			return;
 		}//if (QMessageBox::question(this,
 	}//if (ui.generateCheckBox->isChecked())

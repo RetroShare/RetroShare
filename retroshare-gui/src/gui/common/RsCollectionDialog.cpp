@@ -751,7 +751,7 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
 		if (count == MAX_FILE_ADDED_BEFORE_ASK)
 		{
 			QMessageBox msgBox;
-			msgBox.setText(QString("Warning, selection contains more than %1 items.").arg(MAX_FILE_ADDED_BEFORE_ASK));
+			msgBox.setText(tr("Warning, selection contains more than %1 items.").arg(MAX_FILE_ADDED_BEFORE_ASK));
 			msgBox.setInformativeText("Do you want to continue?");
 			msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 			msgBox.setDefaultButton(QMessageBox::No);

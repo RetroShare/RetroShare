@@ -649,10 +649,10 @@ QString RetroShareLink::title() const
 			{
 				RsPeerDetails detail;
 				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
-				return QString("Click to send a private message to %1 (%2).").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
+				return QObject::tr("Click to send a private message to %1 (%2).").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 			}
 		case TYPE_EXTRAFILE:
-			return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
+			return QObject::tr("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
 		case TYPE_FILE:
 			return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
 		case TYPE_PERSON:
@@ -818,7 +818,7 @@ QString RetroShareLink::niceName() const
 	if(type() == TYPE_PUBLIC_MSG) {
 		RsPeerDetails detail;
 		rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
-		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
+		return QObject::tr("Click this link to send a private message to %1 (%2)").arg(QString::fromUtf8(detail.name.c_str())).arg(_GPGid) ;
 	}
 	if(type() == TYPE_CERTIFICATE) 
 	{
@@ -828,7 +828,7 @@ QString RetroShareLink::niceName() const
 		if(!rsPeers->loadDetailsFromStringCert(_radix.toStdString(),details,error_code))
 			return QObject::tr("This cert is malformed. Error code: ")+QString::number(error_code) ;
 		else
-			return QString("RetroShare Certificate (%1, @%2)").arg(QString::fromUtf8(details.name.c_str()), QString::fromUtf8(details.location.c_str()));	// should add SSL id there
+			return QObject::tr("RetroShare Certificate (%1, @%2)").arg(QString::fromUtf8(details.name.c_str()), QString::fromUtf8(details.location.c_str()));	// should add SSL id there
 	}
 
 	return name();

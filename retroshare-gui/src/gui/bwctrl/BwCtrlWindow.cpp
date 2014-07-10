@@ -282,8 +282,8 @@ void BwCtrlWindow::updateBandwidth()
 	peerTreeWidget->addTopLevelItem(item);
 
 	/* do Totals */
-	item -> setData(COLUMN_PEERID, Qt::DisplayRole, QString("TOTALS"));
-	item -> setData(COLUMN_RSNAME, Qt::DisplayRole, QString("Totals"));
+	item -> setData(COLUMN_PEERID, Qt::DisplayRole, tr("TOTALS"));
+	item -> setData(COLUMN_RSNAME, Qt::DisplayRole, tr("Totals"));
 
 	item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, totalRates.mRateIn);
 	item -> setData(COLUMN_IN_MAX, Qt::DisplayRole,totalRates.mRateMaxIn);

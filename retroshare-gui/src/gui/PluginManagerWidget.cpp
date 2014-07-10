@@ -190,7 +190,7 @@ PluginManagerWidget::removePluginFrame(QString pluginName)
     }
 
     // normally unreachable place
-    QString em = QString("Widget for plugin %1 not found on plugins frame")
+    QString em = tr("Widget for plugin %1 not found on plugins frame")
                     .arg( pluginName ) ;
     acceptErrorMessage( em );    
 }

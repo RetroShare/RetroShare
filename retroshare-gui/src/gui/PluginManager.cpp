@@ -61,7 +61,7 @@ PluginManager::defaultLoad(  )
 
     if ( !workDir.exists() )
     {
-        QString em= QString("base folder %1 doesn't exist, default load failed")
+        QString em= tr("base folder %1 doesn't exist, default load failed")
 	              .arg( baseFolder );
         emit errorAppeared( em ); 
 	return ;
@@ -200,7 +200,7 @@ PluginManager::pluginWidget(QString pluginName)
             }
             else
             {
-                QString em=QString("Error: instance '%1'can't create a widget")
+                QString em=tr("Error: instance '%1'can't create a widget")
                             .arg( pluginName );
                 emit errorAppeared( em );
 		return 0;
@@ -213,7 +213,7 @@ PluginManager::pluginWidget(QString pluginName)
     }
     else
     {
-        QString em = QString("Error: no plugin with name '%1' found")
+        QString em = tr("Error: no plugin with name '%1' found")
                         .arg(pluginName);
         emit errorAppeared( em );
     }      
@@ -283,7 +283,7 @@ PluginManager::removePlugin(QString pluginName)
         QFile fl(fn);
         if (!fl.remove())
         {
-	    QString em = QString("Error: failed to revove file %1"
+	    QString em = tr("Error: failed to revove file %1"
 	                         "(uninstalling plugin '%2')")
                             .arg(fn).arg(pluginName);
             emit errorAppeared( em);
@@ -296,7 +296,7 @@ PluginManager::removePlugin(QString pluginName)
     }
     else
     {
-       QString em = QString("Error(uninstall): no plugin with name '%1' found")
+       QString em = tr("Error(uninstall): no plugin with name '%1' found")
 		      .arg(pluginName);
        emit errorAppeared( em );
     }
@@ -311,7 +311,7 @@ PluginManager::installPlugin(QString fileName)
    
     if (!QFile::exists( fileName) )
     {       
-       QString em = QString("Error(installation): flugin file %1 doesn't exist")
+       QString em = tr("Error(installation): plugin file %1 doesn't exist")
  		      .arg( fileName );
 
        emit errorAppeared( em );
@@ -335,7 +335,7 @@ PluginManager::installPlugin(QString fileName)
         } //    
 	else
 	{
-	    QString em = QString("Error: can't copy %1 as %2")
+	    QString em = tr("Error: can't copy %1 as %2")
 	                    .arg(fileName, newFileName) ;
             emit errorAppeared( em );
 	}

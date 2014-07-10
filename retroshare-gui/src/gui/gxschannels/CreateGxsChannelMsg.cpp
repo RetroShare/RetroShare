@@ -642,7 +642,7 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 #ifdef ENABLE_GENERATE
 		if (generateCheckBox->isChecked()) {
 			generateCount = generateSpinBox->value();
-			if (QMessageBox::question(this, "Generate mass data", QString("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+			if (QMessageBox::question(this, tr("Generate mass data"), tr("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
 				return;
 			}
 		}

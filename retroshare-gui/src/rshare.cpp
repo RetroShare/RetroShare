@@ -564,7 +564,7 @@ Rshare::createDataDirectory(QString *errmsg)
     QString path = datadir.absolutePath();
     if (!datadir.mkpath(path)) {
       return err(errmsg, 
-                 QString("Could not create data directory: %1").arg(path));
+                 tr("Could not create data directory: %1").arg(path));
     }
   }
   return true;

@@ -285,11 +285,11 @@ void QuickStartWizard::loadShare()
 		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromStdString((*it).filename)));
 #ifdef USE_COMBOBOX
 		QComboBox *cb = new QComboBox ;
-		cb->addItem(QString("Network Wide")) ;
-		cb->addItem(QString("Browsable")) ;
-		cb->addItem(QString("Universal")) ;
+		cb->addItem(tr("Network Wide")) ;
+		cb->addItem(tr("Browsable")) ;
+		cb->addItem(tr("Universal")) ;
 
-		cb->setToolTip(QString("Decide here whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
+		cb->setToolTip(tr("Decide here whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
 
 		// TODO
 		//  - set combobox current value depending on what rsFiles reports.
@@ -319,8 +319,8 @@ void QuickStartWizard::loadShare()
 		cb1->setChecked( (*it).shareflags & DIR_FLAGS_NETWORK_WIDE_OTHERS ) ;
 		cb2->setChecked( (*it).shareflags & DIR_FLAGS_BROWSABLE_OTHERS ) ;
 
-		cb1->setToolTip(QString("If checked, the share is anonymously shared to anybody.")) ;
-		cb2->setToolTip(QString("If checked, the share is browsable by your friends.")) ;
+		cb1->setToolTip(tr("If checked, the share is anonymously shared to anybody.")) ;
+		cb2->setToolTip(tr("If checked, the share is browsable by your friends.")) ;
 
 		listWidget->setCellWidget(row,1,cb1);
 		listWidget->setCellWidget(row,2,cb2);

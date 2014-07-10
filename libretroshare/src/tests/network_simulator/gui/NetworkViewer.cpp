@@ -33,10 +33,10 @@ NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
 
 	connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
-	action_ClientForHash = new QAction(QString("Client for new random hash"),this) ;
+	action_ClientForHash = new QAction(tr("Client for new random hash"),this) ;
 	QObject::connect(action_ClientForHash,SIGNAL(triggered()),this,SLOT(actionClientForHash())) ;
 
-	action_ProvideGRKey = new QAction(QString("Provide new GRouter key"),this) ;
+	action_ProvideGRKey = new QAction(tr("Provide new GRouter key"),this) ;
 	QObject::connect(action_ProvideGRKey,SIGNAL(triggered()),this,SLOT(actionProvideGRKey())) ;
 
 	setMouseTracking(true) ;
