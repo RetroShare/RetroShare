@@ -916,6 +916,14 @@ p, li { white-space: pre-wrap; }
         <source>Allowed Recvd</source>
         <translation>Erlaubt Empfang</translation>
     </message>
+    <message>
+        <source>TOTALS</source>
+        <translation>ALLE</translation>
+    </message>
+    <message>
+        <source>Totals</source>
+        <translation>Alle</translation>
+    </message>
 </context>
 <context>
     <name>CalDialog</name>
