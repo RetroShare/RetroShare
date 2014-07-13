@@ -4,7 +4,7 @@
 #include <interface/rsvoip.h>
 #include "PluginGUIHandler.h"
 #include <gui/chat/ChatDialog.h>
-#include <gui/AudioChatWidgetHolder.h>
+#include <gui/VOIPChatWidgetHolder.h>
 #include "gui/chat/ChatWidget.h"
 
 void PluginGUIHandler::ReceivedInvitation(const QString& /*peer_id*/)
@@ -42,7 +42,7 @@ void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 			const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
 
 			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList) {
-				AudioChatWidgetHolder *acwh = dynamic_cast<AudioChatWidgetHolder*>(chatWidgetHolder) ;
+				VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
 
 				if (acwh) {
 					for (unsigned int i = 0; i < chunks.size(); ++i) {

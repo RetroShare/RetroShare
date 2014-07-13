@@ -14,6 +14,7 @@ CONFIG += qt uic qrc resources
 MOBILITY = multimedia
 
 INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
+INCLUDEPATH += /usr/include/opencv
 
 #################################### Windows #####################################
 
@@ -32,9 +33,11 @@ SOURCES = services/p3vors.cc \
 			 gui/SpeexProcessor.cpp \
 			 gui/audiodevicehelper.cpp \
           gui/VoipStatistics.cpp \
-          gui/AudioChatWidgetHolder.cpp \
+          gui/VOIPChatWidgetHolder.cpp \
           gui/PluginGUIHandler.cpp \
           gui/PluginNotifier.cpp \
+			 gui/VideoProcessor.cpp \
+			 gui/QVideoDevice.cpp \
           VOIPPlugin.cpp
 
 HEADERS = services/p3vors.h \
@@ -45,9 +48,11 @@ HEADERS = services/p3vors.h \
 			 gui/SpeexProcessor.h \
 			 gui/audiodevicehelper.h \
           gui/VoipStatistics.h \
-          gui/AudioChatWidgetHolder.h \
+          gui/VOIPChatWidgetHolder.h \
           gui/PluginGUIHandler.h \
           gui/PluginNotifier.h \
+			 gui/VideoProcessor.h \
+			 gui/QVideoDevice.h \
 			 interface/rsvoip.h \
           VOIPPlugin.h
 
@@ -81,4 +86,4 @@ TRANSLATIONS +=  \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
 
-LIBS += -lspeex -lspeexdsp
+LIBS += -lspeex -lspeexdsp -lopencv_core -lopencv_highgui

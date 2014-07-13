@@ -12,7 +12,7 @@
 
 #include "gui/VoipStatistics.h"
 #include "gui/AudioInputConfig.h"
-#include "gui/AudioChatWidgetHolder.h"
+#include "gui/VOIPChatWidgetHolder.h"
 #include "gui/PluginGUIHandler.h"
 #include "gui/PluginNotifier.h"
 #include "gui/SoundManager.h"
@@ -80,6 +80,9 @@ void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 
 ConfigPage *VOIPPlugin::qt_config_page() const
 {
+	// The config pages are deleted when config is closed, so it's important not to static the
+	// created object.
+	//
 	return new AudioInputConfig() ;
 }
 
@@ -111,7 +114,7 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 {
 	switch (chatWidget->chatType()) {
 	case ChatWidget::CHATTYPE_PRIVATE:
-		return new AudioChatWidgetHolder(chatWidget);
+		return new VOIPChatWidgetHolder(chatWidget);
 	case ChatWidget::CHATTYPE_UNKNOWN:
 	case ChatWidget::CHATTYPE_LOBBY:
 	case ChatWidget::CHATTYPE_DISTANT:

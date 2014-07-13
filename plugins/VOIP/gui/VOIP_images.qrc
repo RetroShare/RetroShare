@@ -8,6 +8,9 @@
 		<file>images/call-start-22.png</file>
 		<file>images/call-stop-22.png</file>
 		<file>images/call-hold-22.png</file>
+		<file>images/camera-on.png</file>
+		<file>images/camera-off.png</file>
+		<file>images/video-icon-big.png</file>
 	</qresource>
 </RCC>
 

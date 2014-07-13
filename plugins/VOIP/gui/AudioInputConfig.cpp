@@ -55,28 +55,43 @@ void AudioInputDialog::showEvent(QShowEvent *) {
 AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
+	std::cerr << "Creating audioInputConfig object" << std::endl;
+
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
     loaded = false;
 
-    inputProcessor = NULL;
-    inputDevice = NULL;
+    inputAudioProcessor = NULL;
+    inputAudioDevice = NULL;
     abSpeech = NULL;
+
+	 // Create the video pipeline.
+	 //
+	 videoInput = new QVideoInputDevice(this) ;
+	 videoInput->setEchoVideoTarget(ui.videoDisplay) ;
+	 videoInput->setVideoEncoder(NULL) ;
 }
 
 AudioInputConfig::~AudioInputConfig()
 {
-    if (inputDevice) {
-        inputDevice->stop();
-		  delete inputDevice ;
-		  inputDevice = NULL ;
+	std::cerr << "Deleting audioInputConfig object" << std::endl;
+	if(videoInput != NULL)
+	{
+		videoInput->stop() ;
+		delete videoInput ;
+	}
+
+    if (inputAudioDevice) {
+        inputAudioDevice->stop();
+		  delete inputAudioDevice ;
+		  inputAudioDevice = NULL ;
     }
 
-	 if(inputProcessor)
+	 if(inputAudioProcessor)
 	 {
-		 delete inputProcessor ;
-		 inputProcessor = NULL ;
+		 delete inputAudioProcessor ;
+		 inputAudioProcessor = NULL ;
 	 }
 }
 
@@ -168,6 +183,9 @@ void AudioInputConfig::loadSettings() {
         connect( ui.qsAmp, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsAmp_valueChanged(int) ) );
         connect( ui.qcbTransmit, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_qcbTransmit_currentIndexChanged(int) ) );
         loaded = true;
+
+		  std::cerr << "AudioInputConfig:: starting video." << std::endl;
+		  videoInput->start() ;
 }
 
 bool AudioInputConfig::save(QString &/*errmsg*/) {//mainly useless beacause saving occurs in realtime
@@ -248,15 +266,15 @@ void AudioInputConfig::on_qcbTransmit_currentIndexChanged(int v) {
 
 
 void AudioInputConfig::on_Tick_timeout() {
-        if (!inputProcessor) {
-            inputProcessor = new QtSpeex::SpeexInputProcessor();
-            inputProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
+        if (!inputAudioProcessor) {
+            inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
+            inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
 
-            if (!inputDevice) {
-                inputDevice = AudioDeviceHelper::getPreferedInputDevice();
+            if (!inputAudioDevice) {
+                inputAudioDevice = AudioDeviceHelper::getPreferedInputDevice();
             }
-            inputDevice->start(inputProcessor);
-            connect(inputProcessor, SIGNAL(networkPacketReady()), this, SLOT(emptyBuffer()));
+            inputAudioDevice->start(inputAudioProcessor);
+            connect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(emptyBuffer()));
         }
 
         abSpeech->iBelow = ui.qsTransmitMin->value();
@@ -266,14 +284,14 @@ void AudioInputConfig::on_Tick_timeout() {
             rsVoip->setVoipfVADmax(ui.qsTransmitMax->value());
         }
 
-        abSpeech->iValue = iroundf(inputProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
+        abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
 
         abSpeech->update();
 }
 
 void AudioInputConfig::emptyBuffer() {
-    while(inputProcessor->hasPendingPackets()) {
-        inputProcessor->getNetworkPacket(); //that will purge the buffer
+    while(inputAudioProcessor->hasPendingPackets()) {
+        inputAudioProcessor->getNetworkPacket(); //that will purge the buffer
     }
 }
 

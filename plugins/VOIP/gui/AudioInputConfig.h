@@ -38,6 +38,7 @@
 
 #include "ui_AudioInputConfig.h"
 #include "SpeexProcessor.h"
+#include "VideoProcessor.h"
 #include "AudioStats.h"
 
 class AudioInputConfig : public ConfigPage 
@@ -46,9 +47,12 @@ class AudioInputConfig : public ConfigPage
 
 	private:
 		Ui::AudioInput ui;
-		QAudioInput* inputDevice;
-		QtSpeex::SpeexInputProcessor* inputProcessor;
+		QAudioInput* inputAudioDevice;
+		QtSpeex::SpeexInputProcessor* inputAudioProcessor;
 		AudioBar* abSpeech;
+		//VideoDecoder *videoDecoder ;
+		//VideoEncoder *videoEncoder ;
+		QVideoInputDevice *videoInput ;
 		bool loaded;
 
 
