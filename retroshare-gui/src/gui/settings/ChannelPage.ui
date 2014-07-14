@@ -25,15 +25,22 @@
     </spacer>
    </item>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="gxsGroupBox">
+    <widget class="QGroupBox" name="tabsGroupBox">
      <property name="title">
-      <string>New channel</string>
+      <string>Tabs</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QCheckBox" name="openAllInNewTabCheckBox">
         <property name="text">
          <string>Open all forums in new tab</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="hideTabBarWithOneTabCheckBox">
+        <property name="text">
+         <string>Hide tabbar with one open tab</string>
         </property>
        </widget>
       </item>

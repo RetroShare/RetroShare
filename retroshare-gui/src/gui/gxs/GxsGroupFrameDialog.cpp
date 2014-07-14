@@ -192,6 +192,11 @@ void GxsGroupFrameDialog::setSingleTab(bool singleTab)
 	}
 }
 
+void GxsGroupFrameDialog::setHideTabBarWithOneTab(bool hideTabBarWithOneTab)
+{
+	ui->messageTabWidget->setHideTabBarWithOneTab(hideTabBarWithOneTab);
+}
+
 void GxsGroupFrameDialog::updateDisplay(bool complete)
 {
 	if (complete || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {

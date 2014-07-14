@@ -31,9 +31,20 @@ public:
 	RSTabWidget(QWidget *parent = 0);
 
 	void hideCloseButton(int index);
+	void setHideTabBarWithOneTab(bool hideTabBar);
 
 public:
 	QTabBar *tabBar() const;
+
+protected:
+	virtual void tabInserted(int index);
+	virtual void tabRemoved(int index);
+
+private:
+	void hideTabBarWithOneTab();
+
+private:
+	bool mHideTabBarWithOneTab;
 };
 
 #endif

@@ -100,6 +100,7 @@ QString GxsChannelDialog::icon(IconType type)
 void GxsChannelDialog::settingsChanged()
 {
 	setSingleTab(!Settings->getChannelOpenAllInNewTab());
+	setHideTabBarWithOneTab(Settings->getChannelHideTabBarWithOneTab());
 }
 
 GxsGroupDialog *GxsChannelDialog::createNewGroupDialog(TokenQueue *tokenQueue)

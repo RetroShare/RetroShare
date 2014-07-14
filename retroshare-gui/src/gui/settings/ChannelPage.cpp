@@ -38,6 +38,7 @@ ChannelPage::~ChannelPage()
 bool ChannelPage::save(QString &/*errmsg*/)
 {
 	Settings->setChannelOpenAllInNewTab(ui.openAllInNewTabCheckBox->isChecked());
+	Settings->setChannelHideTabBarWithOneTab(ui.hideTabBarWithOneTabCheckBox->isChecked());
 
 	return true;
 }
@@ -46,4 +47,5 @@ bool ChannelPage::save(QString &/*errmsg*/)
 void ChannelPage::load()
 {
 	ui.openAllInNewTabCheckBox->setChecked(Settings->getChannelOpenAllInNewTab());
+	ui.hideTabBarWithOneTabCheckBox->setChecked(Settings->getChannelHideTabBarWithOneTab());
 }

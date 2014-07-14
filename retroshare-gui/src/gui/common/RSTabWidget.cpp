@@ -26,6 +26,7 @@
 
 RSTabWidget::RSTabWidget(QWidget *parent) : QTabWidget(parent)
 {
+	mHideTabBarWithOneTab = false;
 }
 
 QTabBar *RSTabWidget::tabBar() const
@@ -39,5 +40,42 @@ void RSTabWidget::hideCloseButton(int index)
 	QWidget *tabButton = tabBar()->tabButton(index, buttonPosition);
 	if (tabButton) {
 		tabButton->hide();
+	}
+}
+
+void RSTabWidget::setHideTabBarWithOneTab(bool hideTabBar)
+{
+	if (mHideTabBarWithOneTab == hideTabBar) {
+		return;
+	}
+
+	mHideTabBarWithOneTab = hideTabBar;
+	hideTabBarWithOneTab();
+}
+
+void RSTabWidget::tabInserted(int index)
+{
+	QTabWidget::tabInserted(index);
+
+	if (mHideTabBarWithOneTab) {
+		hideTabBarWithOneTab();
+	}
+}
+
+void RSTabWidget::tabRemoved(int index)
+{
+	QTabWidget::tabRemoved(index);
+
+	if (mHideTabBarWithOneTab) {
+		hideTabBarWithOneTab();
+	}
+}
+
+void RSTabWidget::hideTabBarWithOneTab()
+{
+	if (mHideTabBarWithOneTab) {
+		tabBar()->setVisible(count() > 1);
+	} else {
+		tabBar()->show();
 	}
 }

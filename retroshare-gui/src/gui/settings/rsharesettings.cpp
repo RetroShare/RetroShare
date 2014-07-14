@@ -985,7 +985,7 @@ void RshareSettings::setForumExpandNewMessages(bool value)
 
 bool RshareSettings::getForumOpenAllInNewTab()
 {
-    return valueFromGroup("ForumDialog", "OpenAllInNewTab", true).toBool();
+    return valueFromGroup("ForumDialog", "OpenAllInNewTab", false).toBool();
 }
 
 void RshareSettings::setForumOpenAllInNewTab(bool value)
@@ -993,14 +993,34 @@ void RshareSettings::setForumOpenAllInNewTab(bool value)
     setValueToGroup("ForumDialog", "OpenAllInNewTab", value);
 }
 
+bool RshareSettings::getForumHideTabBarWithOneTab()
+{
+    return valueFromGroup("ForumDialog", "HideTabBarWithOneTab", true).toBool();
+}
+
+void RshareSettings::setForumHideTabBarWithOneTab(bool value)
+{
+    setValueToGroup("ForumDialog", "HideTabBarWithOneTab", value);
+}
+
 bool RshareSettings::getChannelOpenAllInNewTab()
 {
-    return valueFromGroup("ChannelDialog", "OpenAllInNewTab", true).toBool();
+    return valueFromGroup("ChannelDialog", "OpenAllInNewTab", false).toBool();
 }
 
 void RshareSettings::setChannelOpenAllInNewTab(bool value)
 {
     setValueToGroup("ChannelDialog", "OpenAllInNewTab", value);
+}
+
+bool RshareSettings::getChannelHideTabBarWithOneTab()
+{
+    return valueFromGroup("ChannelDialog", "HideTabBarWithOneTab", true).toBool();
+}
+
+void RshareSettings::setChannelHideTabBarWithOneTab(bool value)
+{
+    setValueToGroup("ChannelDialog", "HideTabBarWithOneTab", value);
 }
 
 /* time before idle */

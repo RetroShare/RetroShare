@@ -301,10 +301,16 @@ public:
   void setForumExpandNewMessages(bool value);
   bool getForumOpenAllInNewTab();
   void setForumOpenAllInNewTab(bool value);
+  bool getForumHideTabBarWithOneTab();
+  void setForumHideTabBarWithOneTab(bool value);
   bool getForumLoadEmbeddedImages();
   void setForumLoadEmbeddedImages(bool value);
+
+  /* Channels */
   bool getChannelOpenAllInNewTab();
   void setChannelOpenAllInNewTab(bool value);
+  bool getChannelHideTabBarWithOneTab();
+  void setChannelHideTabBarWithOneTab(bool value);
 
   /* time before idle */
   uint getMaxTimeBeforeIdle();

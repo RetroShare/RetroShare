@@ -104,6 +104,7 @@ QString GxsForumsDialog::icon(IconType type)
 void GxsForumsDialog::settingsChanged()
 {
 	setSingleTab(!Settings->getForumOpenAllInNewTab());
+	setHideTabBarWithOneTab(Settings->getForumHideTabBarWithOneTab());
 }
 
 GxsGroupDialog *GxsForumsDialog::createNewGroupDialog(TokenQueue *tokenQueue)

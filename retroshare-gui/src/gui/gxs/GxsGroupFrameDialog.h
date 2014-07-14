@@ -83,6 +83,7 @@ protected:
 
 	RsGxsGroupId groupId() { return mGroupId; }
 	void setSingleTab(bool singleTab);
+	void setHideTabBarWithOneTab(bool hideTabBarWithOneTab);
         bool getCurrentGroupName(QString& name);
         virtual RetroShareLink::enumType getLinkType() = 0;
 
