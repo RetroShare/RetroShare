@@ -95,7 +95,12 @@ public:
 	bool setStyle();
 	const RSStyle *getStyle() { return &style; }
 
+	// Adds one widget in the chat bar. Used to add e.g. new buttons. The widget should be
+	// small enough in size.
 	void addChatBarWidget(QWidget *w) ;
+
+	// Adds a new horizonal widget in the layout of the chat window.
+	void addChatHorizontalWidget(QWidget *w) ;
 
 	bool isActive();
 	void setDefaultExtraFileFlags(TransferRequestFlags f) ;

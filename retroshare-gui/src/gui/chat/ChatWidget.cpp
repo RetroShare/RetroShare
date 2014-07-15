@@ -198,6 +198,12 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 	ui->hashBox->setDefaultTransferRequestFlags(fl) ;
 }
 
+void ChatWidget::addChatHorizontalWidget(QWidget *w)
+{
+	ui->verticalLayout->addWidget(w) ;
+	update() ;
+}
+
 void ChatWidget::addChatBarWidget(QWidget *w)
 {
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
