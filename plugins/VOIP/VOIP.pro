@@ -14,13 +14,22 @@ CONFIG += qt uic qrc resources
 MOBILITY = multimedia
 
 INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
-INCLUDEPATH += /usr/include/opencv
 
 #################################### Windows #####################################
 
+linux-* {
+	INCLUDEPATH += /usr/include
+	LIBS += -lopencv_core -lopencv_highgui
+}
+
 win32 {
-	# Speex
-	INCLUDEPATH += ../../../speex-1.2rc1/include
+	SPEEX_DIR = ../../../speex-1.2rc1
+	OPENCV_DIR = ../../../lib/opencv
+
+	INCLUDEPATH += $${SPEEX_DIR}/include $${OPENCV_DIR}/include
+	LIBS += -L"$$OPENCV_DIR/x86/mingw/staticlib"
+
+	LIBS += -lopencv_core249 -lopencv_highgui249 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32
 }
 
 QMAKE_CXXFLAGS *= -Wall
@@ -86,4 +95,4 @@ TRANSLATIONS +=  \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
 
-LIBS += -lspeex -lspeexdsp -lopencv_core -lopencv_highgui
+LIBS += -lspeex -lspeexdsp
