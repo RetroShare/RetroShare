@@ -47,13 +47,16 @@ QImage JPEGVideoDecoder::decodeData(const unsigned char *encoded_image_data,uint
 {
 	QByteArray qb((char*)encoded_image_data,size) ;
 	QImage image ;
-	if(image.loadFromData(qb))
+	if(image.loadFromData(qb,"JPEG"))
 	{
 		std::cerr << "image decoded successfully" << std::endl;
 		return image ;
 	}
 	else
+	{
+		std::cerr << "image.loadFromData(): returned an error.: " << std::endl;
 		return QImage() ;
+	}
 }
 
 void JPEGVideoEncoder::encodeData(const QImage& image)
@@ -68,11 +71,12 @@ void JPEGVideoEncoder::encodeData(const QImage& image)
 
 	RsVoipDataChunk voip_chunk ;
 	voip_chunk.data = malloc(qb.size());
+	memcpy(voip_chunk.data,qb.data(),qb.size()) ;
 	voip_chunk.size = qb.size() ;
 	voip_chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 
 	_out_queue.push_back(voip_chunk) ;
 
-	std::cerr << "sending encoded data. size = " << qb.size() << std::endl;
+	std::cerr << "sending encoded data. size = " << std::dec << qb.size() << std::endl;
 }
 
