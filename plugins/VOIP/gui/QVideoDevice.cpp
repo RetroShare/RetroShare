@@ -74,8 +74,17 @@ void QVideoInputDevice::grabFrame()
 
 	QImage image = QImage((uchar*)img->imageData,img->width,img->height,QImage::Format_RGB888).scaled(QSize(_encoded_width,_encoded_height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
 
-	if(_video_encoder != NULL) _video_encoder->addImage(image) ;
+	if(_video_encoder != NULL) 
+	{
+		_video_encoder->addImage(image) ;
+		emit networkPacketReady() ;
+	}
 	if(_echo_output_device != NULL) _echo_output_device->showFrame(image) ;
+}
+
+bool QVideoInputDevice::getNextEncodedPacket(RsVoipDataChunk& chunk)
+{
+	return _video_encoder->nextPacket(chunk) ;
 }
 
 QVideoInputDevice::~QVideoInputDevice()

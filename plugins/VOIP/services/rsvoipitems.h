@@ -35,12 +35,16 @@
 
 const uint16_t RS_SERVICE_TYPE_VOIP_PLUGIN = 0xa021;
 
-const uint8_t RS_PKT_SUBTYPE_VOIP_PING 	= 0x01;
-const uint8_t RS_PKT_SUBTYPE_VOIP_PONG 	= 0x02;
-const uint8_t RS_PKT_SUBTYPE_VOIP_PROTOCOL= 0x03 ;
-const uint8_t RS_PKT_SUBTYPE_VOIP_DATA   	= 0x04 ;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PING 	   = 0x01;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PONG 	   = 0x02;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PROTOCOL   = 0x03 ;
+													     // 0x04 is unused because of a change in the protocol
+const uint8_t RS_PKT_SUBTYPE_VOIP_DATA      	= 0x05 ;
 
 const uint8_t QOS_PRIORITY_RS_VOIP = 9 ;
+
+const uint32_t RS_VOIP_FLAGS_VIDEO_DATA = 0x0001 ;
+const uint32_t RS_VOIP_FLAGS_AUDIO_DATA = 0x0002 ;
 
 class RsVoipItem: public RsItem
 {

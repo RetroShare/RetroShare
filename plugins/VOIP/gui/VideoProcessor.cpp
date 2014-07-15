@@ -24,8 +24,16 @@ bool VideoEncoder::addImage(const QImage& img)
 
 	encodeData(img) ;
 
-	if(_echo_output_device != NULL)
-		_echo_output_device->showFrame(img) ;
+	return true ;
+}
+
+bool VideoEncoder::nextPacket(RsVoipDataChunk& chunk)
+{
+	if(_out_queue.empty())
+		return false ;
+
+	chunk = _out_queue.front() ;
+	_out_queue.pop_front() ;
 
 	return true ;
 }
@@ -40,7 +48,10 @@ QImage JPEGVideoDecoder::decodeData(const unsigned char *encoded_image_data,uint
 	QByteArray qb((char*)encoded_image_data,size) ;
 	QImage image ;
 	if(image.loadFromData(qb))
+	{
+		std::cerr << "image decoded successfully" << std::endl;
 		return image ;
+	}
 	else
 		return QImage() ;
 }
@@ -55,6 +66,13 @@ void JPEGVideoEncoder::encodeData(const QImage& image)
 
 	//destination_decoder->receiveEncodedData((unsigned char *)qb.data(),qb.size()) ;
 
-	std::cerr <<"sending encoded data. size = " << qb.size() << std::endl;
+	RsVoipDataChunk voip_chunk ;
+	voip_chunk.data = malloc(qb.size());
+	voip_chunk.size = qb.size() ;
+	voip_chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+
+	_out_queue.push_back(voip_chunk) ;
+
+	std::cerr << "sending encoded data. size = " << qb.size() << std::endl;
 }
 

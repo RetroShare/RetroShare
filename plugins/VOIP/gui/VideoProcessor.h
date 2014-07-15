@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <QImage>
+#include "interface/rsvoip.h"
 
 class QVideoOutputDevice ;
 
@@ -43,20 +44,19 @@ class VideoDecoder
 class VideoEncoder
 {
 	public:
-		VideoEncoder() { _echo_output_device = NULL ;}
+		VideoEncoder() {}
 
 		// Takes the next image to be encoded. 
 		//
-		virtual bool addImage(const QImage& Image) ;
+		bool addImage(const QImage& Image) ;
 
+		bool packetReady() const { return !_out_queue.empty() ; }
+		bool nextPacket(RsVoipDataChunk& ) ;
 	protected:
 		//virtual bool sendEncodedData(unsigned char *mem,uint32_t size) = 0 ;
 		virtual void encodeData(const QImage& image) = 0 ;
 
-		unsigned char *buffer ;
-		uint32_t buffer_size ;
-
-		QVideoOutputDevice *_echo_output_device ;
+		std::list<RsVoipDataChunk> _out_queue ;
 };
 
 // Now derive various image encoding/decoding algorithms.

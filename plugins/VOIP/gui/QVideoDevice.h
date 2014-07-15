@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <QLabel>
+#include "interface/rsvoip.h"
 
 class VideoEncoder ;
 class CvCapture ;
@@ -36,11 +37,18 @@ class QVideoInputDevice: public QObject
 		//
 		void setEchoVideoTarget(QVideoOutputDevice *odev) { _echo_output_device = odev ; }
 	
+		// get the next encoded video data chunk.
+		//
+		bool getNextEncodedPacket(RsVoipDataChunk&) ;
+
 		void start() ;
 		void stop() ;
 
 	protected slots:
 		void grabFrame() ;
+
+	signals:
+		void networkPacketReady() ;
 
 	private:
 		VideoEncoder *_video_encoder ;
@@ -48,5 +56,7 @@ class QVideoInputDevice: public QObject
 		CvCapture *_capture_device ;
 
 		QVideoOutputDevice *_echo_output_device ;
+
+		std::list<RsVoipDataChunk> _out_queue ;
 };
 

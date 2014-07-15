@@ -112,12 +112,15 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	videoWidget->layout()->addWidget(echoVideoDevice = new QVideoOutputDevice(videoWidget)) ;
 	videoWidget->layout()->addWidget(outputVideoDevice = new QVideoOutputDevice(videoWidget)) ;
 
+	connect(inputVideoDevice, SIGNAL(networkPacketReady()), this, SLOT(sendVideoData()));
+
 	echoVideoDevice->setMinimumSize(128,95) ;
 	outputVideoDevice->setMinimumSize(128,95) ;
 
 	mChatWidget->addChatHorizontalWidget(videoWidget) ;
 
 	inputVideoDevice->setEchoVideoTarget(echoVideoDevice) ;
+	inputVideoDevice->setVideoEncoder(inputVideoProcessor) ;
 	outputVideoProcessor->setDisplayTarget(outputVideoDevice) ;
 }
 
@@ -221,6 +224,11 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	}
 }
 
+void VOIPChatWidgetHolder::addVideoData(const QString name, QByteArray* array)
+{
+	outputVideoProcessor->receiveEncodedData((unsigned char *)array->data(),array->size()) ;
+}
+
 void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
 {
     if (!audioCaptureToggleButton->isChecked()) {
@@ -280,6 +288,17 @@ void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
     }
 }
 
+void VOIPChatWidgetHolder::sendVideoData()
+{
+	RsVoipDataChunk chunk ;
+
+	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
+	{
+		std::cerr << "Video data ready: sending it" << std::endl;
+		rsVoip->sendVoipData(mChatWidget->getPeerId(),chunk) ;
+	}
+}
+
 void VOIPChatWidgetHolder::sendAudioData()
 {
     while(inputAudioProcessor && inputAudioProcessor->hasPendingPackets()) {
@@ -287,6 +306,7 @@ void VOIPChatWidgetHolder::sendAudioData()
         RsVoipDataChunk chunk;
         chunk.size = qbarray.size();
         chunk.data = (void*)qbarray.constData();
+		  chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
         rsVoip->sendVoipData(mChatWidget->getPeerId(),chunk);
     }
 }

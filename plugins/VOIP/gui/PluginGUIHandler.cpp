@@ -24,31 +24,42 @@ void PluginGUIHandler::ReceivedVoipAccept(const QString& /*peer_id*/)
 
 void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 {
-        std::cerr << "****** Plugin GUI handler: received VoipData!" << std::endl;
+	std::cerr << "****** Plugin GUI handler: received VoipData!" << std::endl;
 
-    RsPeerId peer_id(qpeer_id.toStdString()) ;
+	RsPeerId peer_id(qpeer_id.toStdString()) ;
 	std::vector<RsVoipDataChunk> chunks ;
 
-    if(!rsVoip->getIncomingData(peer_id,chunks))
+	if(!rsVoip->getIncomingData(peer_id,chunks))
 	{
 		std::cerr << "PluginGUIHandler::ReceivedVoipData(): No data chunks to get. Weird!" << std::endl;
 		return ;
 	}
 
-    ChatDialog *di = ChatDialog::getExistingChat(peer_id) ;
+	ChatDialog *di = ChatDialog::getExistingChat(peer_id) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if (cw) {
 			const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
 
-			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList) {
+			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList) 
+			{
 				VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
 
 				if (acwh) {
 					for (unsigned int i = 0; i < chunks.size(); ++i) {
-						for (unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++){
+						for (unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++)
+						{
 							QByteArray qb(reinterpret_cast<const char *>(chunks[chunkIndex].data),chunks[chunkIndex].size);
-                            acwh->addAudioData(QString::fromStdString(peer_id.toStdString()),&qb);
+
+							if(chunks[chunkIndex].type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO)
+								acwh->addAudioData(QString::fromStdString(peer_id.toStdString()),&qb);
+							else if(chunks[chunkIndex].type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO)
+							{
+								acwh->addVideoData(QString::fromStdString(peer_id.toStdString()),&qb);
+								std::cerr << "data triaged as video." << std::endl;
+							}
+							else
+								std::cerr << "Unknown data type received. type=" << chunks[chunkIndex].type << std::endl;
 						}
 					}
 					break;

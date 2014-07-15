@@ -34,6 +34,7 @@ private slots:
 
 public slots:
 	void sendAudioData();
+	void sendVideoData();
 
 protected:
 	// Audio input/output

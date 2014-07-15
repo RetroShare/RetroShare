@@ -74,22 +74,22 @@ class p3VoRS: public RsPQIService, public RsVoip
 
 		/***** overloaded from rsVoip *****/
 
-        virtual uint32_t getPongResults(const RsPeerId &id, int n, std::list<RsVoipPongResult> &results);
+		virtual uint32_t getPongResults(const RsPeerId &id, int n, std::list<RsVoipPongResult> &results);
 
 		// Call stuff.
 		//
 
 		// Sending data. The client keeps the memory ownership and must delete it after calling this.
-        virtual int sendVoipData(const RsPeerId &peer_id,const RsVoipDataChunk& chunk) ;
+		virtual int sendVoipData(const RsPeerId &peer_id,const RsVoipDataChunk& chunk) ;
 
 		// The server fill in the data and gives up memory ownership. The client must delete the memory
 		// in each chunk once it has been used.
 		//
-        virtual bool getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk>& chunks) ;
+		virtual bool getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk>& chunks) ;
 
-        virtual int sendVoipHangUpCall(const RsPeerId& peer_id) ;
-        virtual int sendVoipRinging(const RsPeerId& peer_id) ;
-        virtual int sendVoipAcceptCall(const RsPeerId &peer_id) ;
+		virtual int sendVoipHangUpCall(const RsPeerId& peer_id) ;
+		virtual int sendVoipRinging(const RsPeerId& peer_id) ;
+		virtual int sendVoipAcceptCall(const RsPeerId &peer_id) ;
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -128,10 +128,10 @@ class p3VoRS: public RsPQIService, public RsVoip
 		 * chat msg items and custom status are saved
 		 */
 		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
-        virtual bool loadList(std::list<RsItem*>& load) ;
-        virtual std::string configurationFileName() const { return "voip.cfg" ; }
+		virtual bool loadList(std::list<RsItem*>& load) ;
+		virtual std::string configurationFileName() const { return "voip.cfg" ; }
 
-        virtual RsServiceInfo getServiceInfo() ;
+		virtual RsServiceInfo getServiceInfo() ;
 
 	private:
 		int   sendPackets();
@@ -141,24 +141,24 @@ class p3VoRS: public RsPQIService, public RsVoip
 		int 	handlePing(RsVoipPingItem *item);
 		int 	handlePong(RsVoipPongItem *item);
 
-        int 	storePingAttempt(const RsPeerId &id, double ts, uint32_t mCounter);
-        int 	storePongResult(const RsPeerId& id, uint32_t counter, double ts, double rtt, double offset);
+		int 	storePingAttempt(const RsPeerId &id, double ts, uint32_t mCounter);
+		int 	storePongResult(const RsPeerId& id, uint32_t counter, double ts, double rtt, double offset);
 
 		void handleProtocol(RsVoipProtocolItem*) ;
 		void handleData(RsVoipDataItem*) ;
 
 		RsMutex mVorsMtx;
 
-        VorsPeerInfo *locked_GetPeerInfo(const RsPeerId& id);
+		VorsPeerInfo *locked_GetPeerInfo(const RsPeerId& id);
 
 		static RsTlvKeyValue push_int_value(const std::string& key,int value) ;
 		static int pop_int_value(const std::string& s) ;
 
-        std::map<RsPeerId, VorsPeerInfo> mPeerInfo;
+		std::map<RsPeerId, VorsPeerInfo> mPeerInfo;
 		time_t mSentPingTime;
 		uint32_t mCounter;
 
-        RsServiceControl *mServiceControl;
+		RsServiceControl *mServiceControl;
 		PluginNotifier *mNotify ;
 
 		int _atransmit ;

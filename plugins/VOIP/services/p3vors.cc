@@ -239,12 +239,23 @@ int p3VoRS::sendVoipData(const RsPeerId& peer_id,const RsVoipDataChunk& chunk)
 	if(item->voip_data == NULL)
 	{
 		std::cerr << "Cannot allocate RsVoipDataItem.voip_data of size " << chunk.size << " !" << std::endl;
+		delete item ;
 		return false ;
 	}
 	memcpy(item->voip_data,chunk.data,chunk.size) ;
-	item->flags = 0 ;
-        item->PeerId(peer_id) ;
-        item->data_size = chunk.size;
+	item->PeerId(peer_id) ;
+	item->data_size = chunk.size;
+
+	if(chunk.type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO) 
+		item->flags = RS_VOIP_FLAGS_AUDIO_DATA ;
+	else if(chunk.type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO) 
+		item->flags = RS_VOIP_FLAGS_VIDEO_DATA ;
+	else
+	{
+		std::cerr << "(EE) p3VoRs: cannot send chunk data. Unknown data type = " << chunk.type << std::endl;
+		delete item ;
+		return false ;
+	}
 
 	sendItem(item) ;
 
@@ -337,7 +348,9 @@ void p3VoRS::handleData(RsVoipDataItem *item)
 
 	// store the data in a queue.
 
-    std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
+	std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
+
+	std::cerr << "Received VOIP data item. size = " << item->data_size << ", flags=" << item->flags <<std::endl;
 
 	if(it == mPeerInfo.end())
 	{
@@ -358,7 +371,7 @@ bool p3VoRS::getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk
 
 	incoming_data_chunks.clear() ;
 
-    std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(peer_id) ;
+	std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(peer_id) ;
 
 	if(it == mPeerInfo.end())
 	{
@@ -370,6 +383,20 @@ bool p3VoRS::getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk
 		RsVoipDataChunk chunk ;
 		chunk.size = (*it2)->data_size ;
 		chunk.data = malloc((*it2)->data_size) ;
+
+		uint32_t type_flags = (*it2)->flags & (RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA) ;
+		if(type_flags == RS_VOIP_FLAGS_AUDIO_DATA)
+			chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
+		else if(type_flags == RS_VOIP_FLAGS_VIDEO_DATA)
+			chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+		else
+		{
+			std::cerr << "(EE) p3VoRS::getIncomingData(): error. Cannot handle item with unknown type " << type_flags << std::endl;
+			delete *it2 ;
+			free(chunk.data) ;
+			continue ;
+		}
+
 		memcpy(chunk.data,(*it2)->voip_data,(*it2)->data_size) ;
 
 		incoming_data_chunks.push_back(chunk) ;
