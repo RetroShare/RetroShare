@@ -97,6 +97,19 @@ public:
 	NxsMsgDataResult mMsgData;
 };
 
+class ServiceStatisticRequest: public GxsRequest
+{
+public:
+    GxsServiceStatistic mServiceStatistic;
+};
+
+struct GroupStatisticRequest: public GxsRequest
+{
+public:
+    RsGxsGroupId mGrpId;
+    GxsGroupStatistic mGroupStatistic;
+};
+
 class MsgRelatedInfoReq : public GxsRequest
 {
 

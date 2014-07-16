@@ -104,14 +104,14 @@ public:
      * total size of groups
      * @param token
      */
-    void requestServiceStatistic(const uint32_t& token);
+    void requestServiceStatistic(uint32_t& token);
 
 	/*!
 	 * To request statistic on a group
 	 * @param token set to value to be redeemed to get statistic
 	 * @param grpId the id of the group
 	 */
-	void requestGroupStatistic(const uint32_t& token, const RsGxsGroupId& grpId);
+    void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId);
 
 
     /* Poll */
@@ -152,10 +152,27 @@ public:
 
 public:
 
+
+
     /*!
      * This must be called periodically to progress requests
      */
     void processRequests();
+
+    /*!
+     * @param token
+     * @param grpStatistic
+     * @return false if token cannot be redeemed
+     */
+    bool getGroupStatistic(const uint32_t &token, GxsGroupStatistic& grpStatistic);
+
+    /*!
+     * @param token
+     * @param servStatistic
+     * @return false if token cannot be redeemed
+     */
+    bool getServiceStatistic(const uint32_t &token, GxsServiceStatistic& servStatistic);
+
 
     /*!
      * Retrieve group list for a given token

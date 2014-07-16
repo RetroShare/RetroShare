@@ -199,14 +199,14 @@ public:
      * total size of groups
      * @param token
      */
-    virtual void requestServiceStatistic(const uint32_t& token) = 0;
+    virtual void requestServiceStatistic(uint32_t& token) = 0;
 
 	/*!
 	 * To request statistic on a group
 	 * @param token set to value to be redeemed to get statistic
 	 * @param grpId the id of the group
 	 */
-	virtual void requestGroupStatistic(const uint32_t& token, const RsGxsGroupId& grpId) = 0;
+    virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId) = 0;
 
 
         /* Cancel Request */

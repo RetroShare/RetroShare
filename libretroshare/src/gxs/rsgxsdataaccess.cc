@@ -287,14 +287,25 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 }
 
 
-void RsGxsDataAccess::requestServiceStatistic(const uint32_t& token)
+void RsGxsDataAccess::requestServiceStatistic(uint32_t& token)
 {
+    ServiceStatisticRequest* req = new ServiceStatisticRequest();
 
+    generateToken(token);
+
+    setReq(req, token, 0, RsTokReqOptions());
+    storeRequest(req);
 }
 
-void RsGxsDataAccess::requestGroupStatistic(const uint32_t& token, const RsGxsGroupId& grpId)
+void RsGxsDataAccess::requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
 {
+    GroupStatisticRequest* req = new GroupStatisticRequest();
+    req->mGrpId = grpId;
 
+    generateToken(token);
+
+    setReq(req, token, 0, RsTokReqOptions());
+    storeRequest(req);
 }
 
 bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
@@ -797,7 +808,69 @@ void RsGxsDataAccess::processRequests()
 		clearRequest(*cit);
 	}
 
-	return;
+    return;
+}
+
+bool RsGxsDataAccess::getGroupStatistic(const uint32_t &token, GxsGroupStatistic &grpStatistic)
+{
+    RsStackMutex stack(mDataMutex);
+
+    GxsRequest* req = locked_retrieveRequest(token);
+
+    if(req == NULL){
+
+                std::cerr << "RsGxsDataAccess::getGroupStatistic() Unable to retrieve grp stats" << std::endl;
+        return false;
+        }else  if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
+
+                GroupStatisticRequest* gsreq = dynamic_cast<GroupStatisticRequest*>(req);
+
+        if(gsreq)
+                {
+                    grpStatistic = gsreq->mGroupStatistic;
+                    locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
+                }
+                else{
+            std::cerr << "RsGxsDataAccess::getGroupStatistic() Req found, failed caste" << std::endl;
+            return false;
+        }
+    }else{
+        std::cerr << "RsGxsDataAccess::getGroupStatistic() Req not ready" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStatistic &servStatistic)
+{
+    RsStackMutex stack(mDataMutex);
+
+    GxsRequest* req = locked_retrieveRequest(token);
+
+    if(req == NULL){
+
+                std::cerr << "RsGxsDataAccess::getServiceStatistic() Unable to retrieve grp stats" << std::endl;
+        return false;
+        }else  if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
+
+                ServiceStatisticRequest* ssreq = dynamic_cast<ServiceStatisticRequest*>(req);
+
+        if(ssreq)
+                {
+                    servStatistic = ssreq->mServiceStatistic;
+                    locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
+                }
+                else{
+            std::cerr << "RsGxsDataAccess::getServiceStatistic() Req found, failed caste" << std::endl;
+            return false;
+        }
+    }else{
+        std::cerr << "RsGxsDataAccess::getServiceStatistic() Req not ready" << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 
