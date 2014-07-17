@@ -214,12 +214,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	} 
 	else 
 	{
-		if(inputVideoDevice) 
-		{
-			delete inputVideoDevice ;
-			inputVideoDevice = NULL ;
-		}
-
+		inputVideoDevice->stop() ;
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
 	}
 }
