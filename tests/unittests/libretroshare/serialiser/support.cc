@@ -67,8 +67,8 @@ void init_item(RsTlvSecurityKeySet& ks)
 	randString(SHORT_STR, ks.groupId);
 	for(int i=1; i<n; i++)
 	{
-		std::string a_str;
-		randString(SHORT_STR, a_str);
+        RsGxsId a_str;
+        a_str.random();
 
 		RsTlvSecurityKey& a_key = ks.keys[a_str];
 		init_item(a_key);
@@ -81,7 +81,7 @@ bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
 
 	if(l.groupId != r.groupId) return false;
 
-	std::map<std::string, RsTlvSecurityKey>::const_iterator l_cit = l.keys.begin(),
+    std::map<RsGxsId, RsTlvSecurityKey>::const_iterator l_cit = l.keys.begin(),
 	r_cit = r.keys.begin();
 
 	for(; l_cit != l.keys.end(); l_cit++, r_cit++){
@@ -190,7 +190,7 @@ void init_item(RsTlvSecurityKey& sk)
 	sk.endTS = randnum;
 	sk.keyFlags = randnum;
 	sk.startTS = randnum;
-	randString(SHORT_STR, sk.keyId);
+    sk.keyId.random();
 
 	std::string randomStr;
 	randString(LARGE_STR, randomStr);
@@ -202,7 +202,7 @@ void init_item(RsTlvSecurityKey& sk)
 
 void init_item(RsTlvKeySignature& ks)
 {
-	randString(SHORT_STR, ks.keyId);
+    ks.keyId.random();
 
 	std::string signData;
 	randString(LARGE_STR, signData);
