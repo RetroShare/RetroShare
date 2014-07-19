@@ -724,7 +724,9 @@ void RsGxsDataAccess::processRequests()
 		MsgMetaReq* mmr;
 		MsgDataReq* mdr;
 		MsgIdReq* mir;
-                MsgRelatedInfoReq* mri;
+        MsgRelatedInfoReq* mri;
+        GroupStatisticRequest* gsr;
+        ServiceStatisticRequest* ssr;
 
 		for(it = mRequests.begin(); it != mRequests.end(); it++)
 		{
@@ -766,10 +768,18 @@ void RsGxsDataAccess::processRequests()
 				{
 					getMsgList(mir);
 				}
-                                else if((mri = dynamic_cast<MsgRelatedInfoReq*>(req)) != NULL)
-                                {
-                                        getMsgRelatedInfo(mri);
-                                }
+                else if((mri = dynamic_cast<MsgRelatedInfoReq*>(req)) != NULL)
+                {
+                        getMsgRelatedInfo(mri);
+                }
+                else if((gsr = dynamic_cast<GroupStatisticRequest*>(req)) != NULL)
+                {
+                    getGroupStatistic(gsr);
+                }
+                else if((ssr = dynamic_cast<ServiceStatisticRequest*>(req)) != NULL)
+                {
+                    getServiceStatistic(ssr);
+                }
 				else
 				{
 					std::cerr << "RsGxsDataAccess::processRequests() Failed to process request, token: "
@@ -1452,6 +1462,8 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
         RsGxsMsgMetaData* m = msgMetaV[i];
         req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();
     }
+
+    cleanseMsgMetaMap(metaResult);
     return true;
 }
 
@@ -1477,6 +1489,7 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
         getGroupStatistic(&gr);
         req->mServiceStatistic.mNumMsgs += gr.mGroupStatistic.mNumMsgs;
         req->mServiceStatistic.mSizeOfMsgs += gr.mGroupStatistic.mTotalSizeOfMsgs;
+        delete m;
     }
 
     req->mServiceStatistic.mSizeStore = req->mServiceStatistic.mSizeOfGrps + req->mServiceStatistic.mSizeOfMsgs;
