@@ -59,6 +59,16 @@ bool GenExchangeTestService::getMsgRelatedDataTS(const uint32_t &token, GxsMsgRe
     return getMsgRelatedData(token, msgItems);
 }
 
+bool GenExchangeTestService::getGroupStatisticTS(const uint32_t &token, GxsGroupStatistic &stats)
+{
+    return getGroupStatistic(token, stats);
+}
+
+bool GenExchangeTestService::getServiceStatisticTS(const uint32_t &token, GxsServiceStatistic &stats)
+{
+    return getServiceStatistic(token, stats);
+}
+
 bool GenExchangeTestService::getMsgMetaTS(const uint32_t &token, GxsMsgMetaMap &msgInfo)
 {
     return getMsgMeta(token, msgInfo);

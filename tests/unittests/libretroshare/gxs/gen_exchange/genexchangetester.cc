@@ -17,6 +17,16 @@ GenExchangeTest::~GenExchangeTest()
 {
 }
 
+bool GenExchangeTest::getServiceStatistic(const uint32_t &token, GxsServiceStatistic &servStatistic)
+{
+    mTestService->getServiceStatisticTS(token, servStatistic);
+}
+
+bool GenExchangeTest::getGroupStatistic(const uint32_t &token, GxsGroupStatistic &grpStatistic)
+{
+    mTestService->getGroupStatisticTS(token, grpStatistic);
+}
+
 
 void GenExchangeTest::pollForToken(uint32_t token, const RsTokReqOptions &opts, bool fill)
 {

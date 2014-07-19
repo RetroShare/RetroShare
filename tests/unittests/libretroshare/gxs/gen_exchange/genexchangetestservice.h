@@ -81,6 +81,16 @@ public:
      */
     bool getMsgRelatedDataTS(const uint32_t &token, GxsMsgRelatedDataMap& msgItems);
 
+    /*!
+     *
+     *
+     *
+     */
+    bool getGroupStatisticTS(const uint32_t &token, GxsGroupStatistic &stats);
+
+
+    bool getServiceStatisticTS(const uint32_t &token, GxsServiceStatistic &stats);
+
 
     void setGroupSubscribeFlagTS(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask);
 

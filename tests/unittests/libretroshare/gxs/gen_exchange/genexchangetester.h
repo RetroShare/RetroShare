@@ -52,6 +52,9 @@ public:
 
 protected:
 
+    bool getServiceStatistic(const uint32_t &token, GxsServiceStatistic &servStatistic);
+    bool getGroupStatistic(const uint32_t &token, GxsGroupStatistic &grpStatistic);
+
 	/*!
 	 * After each request and publish operation this should
 	 * be called to ensure the operation has completed
