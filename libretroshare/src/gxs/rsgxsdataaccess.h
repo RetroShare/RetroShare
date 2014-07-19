@@ -399,11 +399,25 @@ private:
 
     /*!
      * Attempts to retrieve messages related to msgIds of associated equest
-     * @param token request token to be redeemed
-     * @param msgIds
+     * @param req Request object to satisfy
      * @return false if data cannot be found for token
      */
     bool getMsgRelatedInfo(MsgRelatedInfoReq* req);
+
+
+    /*!
+     *
+     * Attempts to retrieve group statistic
+     * @param req Request object to satisfy
+     */
+    bool getGroupStatistic(GroupStatisticRequest* req);
+
+    /*!
+     *
+     * Attempts to service statistic
+     * @param req request object to satisfy
+     */
+    bool getServiceStatistic(ServiceStatisticRequest* req);
 
     /*!
      * This filter msgs based of options supplied (at the moment just status masks)

@@ -311,6 +311,7 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
 
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
     grpMeta->mGroupFlags = c.getInt32(COL_NXS_FLAGS);
+    grpMeta->mGrpSize = c.getInt32(COL_NXS_FILE_LEN);
 
     offset = 0;
 
@@ -441,7 +442,7 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
     offset = 0;
     data = (char*)c.getData(COL_SIGN_SET, data_len);
     msgMeta->signSet.GetTlv(data, data_len, &offset);
-
+    msgMeta->mMsgSize = c.getInt32(COL_NXS_FILE_LEN);
 
     msgMeta->mMsgFlags = c.getInt32(COL_NXS_FLAGS);
     msgMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);

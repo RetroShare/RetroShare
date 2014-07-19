@@ -75,6 +75,7 @@ public:
     uint32_t    mMsgCount; // ???
     uint32_t      mLastPost; // ???
     uint32_t    mReputationCutOff;
+    uint32_t    mGrpSize;
 
     uint32_t    mGroupStatus;
     uint32_t    mRecvTS;
@@ -116,6 +117,7 @@ public:
     // normally READ / UNREAD flags. LOCAL Data.
 
     uint32_t    mMsgStatus;
+    uint32_t    mMsgSize;
     time_t      mChildTs;
     uint32_t recvTS;
     RsFileHash mHash;

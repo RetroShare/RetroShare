@@ -1435,6 +1435,55 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     return true;
 }
 
+bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
+{
+    // filter based on options
+    GxsMsgIdResult metaReq;
+    metaReq[req->mGrpId] = std::vector<RsGxsMessageId>();
+    GxsMsgMetaResult metaResult;
+    mDataStore->retrieveGxsMsgMetaData(metaReq, metaResult);
+
+    std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
+
+    req->mGroupStatistic.mNumMsgs = msgMetaV.size();
+    req->mGroupStatistic.mTotalSizeOfMsgs = 0;
+    for(int i = 0; i < msgMetaV.size(); i++)
+    {
+        RsGxsMsgMetaData* m = msgMetaV[i];
+        req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();
+    }
+    return true;
+}
+
+// potentially very expensive!
+bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
+{
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
+
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
+
+    req->mServiceStatistic.mNumGrps = grpMeta.size();
+    req->mServiceStatistic.mSizeOfGrps = 0;
+    req->mServiceStatistic.mSizeOfMsgs = 0;
+
+    for(; mit != grpMeta.end(); mit++)
+    {
+        RsGxsGrpMetaData* m = mit->second;
+        req->mServiceStatistic.mSizeOfGrps += m->mGrpSize + m->serial_size();
+        GroupStatisticRequest gr;
+        gr.mGrpId = m->mGroupId;
+        getGroupStatistic(&gr);
+        req->mServiceStatistic.mNumMsgs += gr.mGroupStatistic.mNumMsgs;
+        req->mServiceStatistic.mSizeOfMsgs += gr.mGroupStatistic.mTotalSizeOfMsgs;
+    }
+
+    req->mServiceStatistic.mSizeStore = req->mServiceStatistic.mSizeOfGrps + req->mServiceStatistic.mSizeOfMsgs;
+
+    return true;
+}
+
 bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 {
 
