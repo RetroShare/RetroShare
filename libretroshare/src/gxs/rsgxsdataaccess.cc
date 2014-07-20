@@ -1460,12 +1460,25 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
 
     std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
 
+    req->mGroupStatistic.mGrpId = req->mGrpId;
     req->mGroupStatistic.mNumMsgs = msgMetaV.size();
     req->mGroupStatistic.mTotalSizeOfMsgs = 0;
+    req->mGroupStatistic.mNumMsgsNew = 0;
+    req->mGroupStatistic.mNumMsgsUnread = 0;
+
     for(int i = 0; i < msgMetaV.size(); i++)
     {
         RsGxsMsgMetaData* m = msgMetaV[i];
         req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();
+
+        if (IS_MSG_NEW(m->mMsgStatus))
+        {
+            ++req->mGroupStatistic.mNumMsgsNew;
+        }
+        if (IS_MSG_UNREAD(m->mMsgStatus))
+        {
+            ++req->mGroupStatistic.mNumMsgsUnread;
+        }
     }
 
     cleanseMsgMetaMap(metaResult);
@@ -1485,6 +1498,8 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
     req->mServiceStatistic.mSizeOfGrps = 0;
     req->mServiceStatistic.mSizeOfMsgs = 0;
     req->mServiceStatistic.mNumGrpsSubscribed = 0;
+    req->mServiceStatistic.mNumMsgsNew = 0;
+    req->mServiceStatistic.mNumMsgsUnread = 0;
 
     for(; mit != grpMeta.end(); mit++)
     {
@@ -1496,6 +1511,8 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
         req->mServiceStatistic.mNumMsgs += gr.mGroupStatistic.mNumMsgs;
         req->mServiceStatistic.mSizeOfMsgs += gr.mGroupStatistic.mTotalSizeOfMsgs;
         req->mServiceStatistic.mNumGrpsSubscribed += m->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ? 1 : 0;
+        req->mServiceStatistic.mNumMsgsNew += gr.mGroupStatistic.mNumMsgsNew;
+        req->mServiceStatistic.mNumMsgsUnread += gr.mGroupStatistic.mNumMsgsUnread;
 
         delete m;
     }

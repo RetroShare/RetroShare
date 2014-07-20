@@ -48,6 +48,7 @@ private:
 
 private:
 	RsGxsIfaceHelper *mInterface;
+	RsTokenService *mTokenService;
 	TokenQueue *mTokenQueue;
 	RsGxsUpdateBroadcastBase *mBase;
 	unsigned int mNewMessageCount;

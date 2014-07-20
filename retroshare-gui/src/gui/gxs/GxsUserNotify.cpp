@@ -25,7 +25,6 @@
 #include "retroshare/rsgxsifacehelper.h"
 
 #define TOKEN_TYPE_STATISTICS  1
-#define TOKEN_TYPE_GROUP_META  2
 
 GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     UserNotify(parent), TokenResponse()
@@ -33,6 +32,7 @@ GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
 	mNewMessageCount = 0;
 
 	mInterface = ifaceImpl;
+	mTokenService = mInterface->getTokenService();
 	mTokenQueue = new TokenQueue(mInterface->getTokenService(), this);
 
 	mBase = new RsGxsUpdateBroadcastBase(ifaceImpl);
@@ -51,22 +51,11 @@ GxsUserNotify::~GxsUserNotify()
 
 void GxsUserNotify::startUpdate()
 {
-//	uint32_t token;
-//	GxsServiceStatistic stats;
-//	mInterface->getServiceStatistic(token, stats);
-//	TokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
-
 	mNewMessageCount = 0;
 
-	/* Get all messages until statistics are available */
-	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_META);
-	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_STATISTICS);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-
 	uint32_t token;
-	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, TOKEN_TYPE_GROUP_META);
+	mTokenService->requestServiceStatistic(token);
+	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
 }
 
 void GxsUserNotify::loadRequest(const TokenQueue *queue, const TokenRequest &req)
@@ -76,54 +65,12 @@ void GxsUserNotify::loadRequest(const TokenQueue *queue, const TokenRequest &req
 		switch(req.mUserType) {
 		case TOKEN_TYPE_STATISTICS:
 			{
-				GxsMsgMetaMap msgList;
-				mInterface->getMsgSummary(req.mToken, msgList);
+				GxsServiceStatistic stats;
+				mInterface->getServiceStatistic(req.mToken, stats);
 
-				GxsMsgMetaMap::const_iterator groupIt;
-				for (groupIt = msgList.begin(); groupIt != msgList.end(); ++groupIt) {
-					const std::vector<RsMsgMetaData> &groupData = groupIt->second;
-
-					std::vector<RsMsgMetaData>::const_iterator msgIt;
-					for (msgIt = groupData.begin(); msgIt != groupData.end(); ++msgIt) {
-						const RsMsgMetaData &metaData = *msgIt;
-						if (IS_MSG_NEW(metaData.mMsgStatus)) {
-							++mNewMessageCount;
-						}
-					}
-				}
+				mNewMessageCount = stats.mNumMsgsNew;
 
 				update();
-			}
-			break;
-		case TOKEN_TYPE_GROUP_META:
-			{
-				std::list<RsGroupMetaData> groupMeta;
-				mInterface->getGroupSummary(req.mToken, groupMeta);
-
-				if (!groupMeta.size()) {
-					update();
-					return;
-				}
-
-				std::list<RsGxsGroupId> groupIds;
-				std::list<RsGroupMetaData>::const_iterator groupIt;
-				for (groupIt = groupMeta.begin(); groupIt != groupMeta.end(); groupIt++) {
-					uint32_t flags = groupIt->mSubscribeFlags;
-					if (IS_GROUP_SUBSCRIBED(flags)) {
-						groupIds.push_back(groupIt->mGroupId);
-					}
-				}
-
-				if (!groupIds.size()) {
-					update();
-					return;
-				}
-
-				RsTokReqOptions opts;
-				opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
-
-				uint32_t token;
-				mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, TOKEN_TYPE_STATISTICS);
 			}
 			break;
 		}

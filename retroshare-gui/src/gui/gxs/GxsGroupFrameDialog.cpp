@@ -82,6 +82,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 
 	/* Setup Queue */
 	mInterface = ifaceImpl;
+	mTokenService = mInterface->getTokenService();
 	mTokenQueue = new TokenQueue(mInterface->getTokenService(), this);
 
 	/* Setup UI helper */
@@ -203,8 +204,13 @@ void GxsGroupFrameDialog::updateDisplay(bool complete)
 		/* Update group list */
 		requestGroupSummary();
 	} else {
-		if (!getMsgIds().empty() || !getMsgIdsMeta().empty()) {
-			updateMessageSummaryList(RsGxsGroupId());
+		/* Update all groups of changed messages */
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		getAllMsgIds(msgIds);
+
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator msgIt;
+		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
+			updateMessageSummaryList(msgIt->first);
 		}
 	}
 }
@@ -745,8 +751,6 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 		return;
 	}
 
-	std::list<RsGxsGroupId> groupIds;
-
 	if (groupId.isNull()) {
 		QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
 		for (int item = 0; item < 2; item++) {
@@ -759,14 +763,12 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 					continue;
 				}
 
-				groupIds.push_back(RsGxsGroupId(childId.toLatin1().constData()));
+				requestGroupStatistics(RsGxsGroupId(childId.toLatin1().constData()));
 			}
 		}
 	} else {
-		groupIds.push_back(groupId);
+		requestGroupStatistics(groupId);
 	}
-
-	requestGroupStatistics(groupIds);
 }
 
 /*********************** **** **** **** ***********************/
@@ -878,48 +880,24 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void GxsGroupFrameDialog::requestGroupStatistics(const std::list<RsGxsGroupId> &groupIds)
+void GxsGroupFrameDialog::requestGroupStatistics(const RsGxsGroupId &groupId)
 {
-//	uint32_t token;
-//	GxsServiceStatistic stats;
-//	mInterface->getGroupStatistic(token, stats);
-//	TokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
-
-	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_STATISTICS);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
-
 	uint32_t token;
-	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, TOKEN_TYPE_STATISTICS);
+	mTokenService->requestGroupStatistic(token, groupId);
+	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
 }
 
 void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
 {
-	GxsMsgMetaMap msgList;
-	mInterface->getMsgSummary(token, msgList);
+	GxsGroupStatistic stats;
+	mInterface->getGroupStatistic(token, stats);
 
-	GxsMsgMetaMap::const_iterator groupIt;
-	for (groupIt = msgList.begin(); groupIt != msgList.end(); ++groupIt) {
-		const RsGxsGroupId &groupId = groupIt->first;
-		QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(groupId.toStdString()));
-		if (!item) {
-			continue;
-		}
-
-		const std::vector<RsMsgMetaData> &groupData = groupIt->second;
-
-		unsigned int newCount = 0;
-		std::vector<RsMsgMetaData>::const_iterator msgIt;
-		for (msgIt = groupData.begin(); msgIt != groupData.end(); ++msgIt) {
-			const RsMsgMetaData &metaData = *msgIt;
-			if (IS_MSG_NEW(metaData.mMsgStatus) || IS_MSG_UNREAD(metaData.mMsgStatus)) {
-				++newCount;
-			}
-		}
-
-		ui->groupTreeWidget->setUnreadCount(item, newCount);
+	QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+	if (!item) {
+		return;
 	}
+
+	ui->groupTreeWidget->setUnreadCount(item, stats.mNumMsgsUnread);
 }
 
 /*********************** **** **** **** ***********************/

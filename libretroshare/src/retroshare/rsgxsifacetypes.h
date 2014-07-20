@@ -139,6 +139,8 @@ public:
 	RsGxsGroupId mGrpId;
 	uint32_t mNumMsgs;
 	uint32_t mTotalSizeOfMsgs;
+	uint32_t mNumMsgsNew;
+	uint32_t mNumMsgsUnread;
 };
 
 class GxsServiceStatistic
@@ -150,6 +152,8 @@ public:
 	uint32_t mSizeOfMsgs;
 	uint32_t mSizeOfGrps;
 	uint32_t mNumGrpsSubscribed;
+	uint32_t mNumMsgsNew;
+	uint32_t mNumMsgsUnread;
 	uint32_t mSizeStore;
 };
 

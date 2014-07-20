@@ -148,7 +148,7 @@ private:
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
 
-	void requestGroupStatistics(const std::list<RsGxsGroupId> &groupIds);
+	void requestGroupStatistics(const RsGxsGroupId &groupId);
 	void loadGroupStatistics(const uint32_t &token);
 
 	// subscribe/unsubscribe ack.
@@ -167,6 +167,7 @@ private:
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
+	RsTokenService *mTokenService;
 	TokenQueue *mTokenQueue;
 	GxsMessageFrameWidget *mMessageWidget;
 
