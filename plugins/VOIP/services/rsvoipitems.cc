@@ -181,9 +181,8 @@ bool RsVoipDataItem::serialise(void *data, uint32_t& pktsize)
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, flags);
 	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
-        std::cerr << "data_size : " << data_size << std::endl;
-        //memcpy(data+offset,voip_data,data_size) ;
-        memcpy( &((uint8_t*)data)[offset],voip_data,data_size) ;
+
+	memcpy( &((uint8_t*)data)[offset],voip_data,data_size) ;
 	offset += data_size ;
 
 	if (offset != tlvsize)
@@ -239,7 +238,7 @@ RsVoipProtocolItem::RsVoipProtocolItem(void *data, uint32_t pktsize)
 
 	uint32_t offset = 0;
 
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP_PLUGIN != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PING != getRsItemSubType(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_VOIP_PLUGIN != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_VOIP_PROTOCOL != getRsItemSubType(rstype)))
 		throw std::runtime_error("Wrong packet type!") ;
 
 	if (pktsize < rssize)    /* check size */

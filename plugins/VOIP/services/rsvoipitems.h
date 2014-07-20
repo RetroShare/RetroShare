@@ -106,7 +106,7 @@ class RsVoipProtocolItem: public RsVoipItem
 		RsVoipProtocolItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL) {}
 		RsVoipProtocolItem(void *data,uint32_t size) ;
 
-		enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3 } ;
+		enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3, VoipProtocol_Bandwidth = 4 } ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;
 		virtual uint32_t serial_size() const ; 							

@@ -53,6 +53,8 @@ class VorsPeerInfo
 
 	uint32_t mLostPongs;
 	uint32_t mSentPings;
+	uint32_t total_bytes_received ;
+	uint32_t average_incoming_bandwidth ;
 
 	std::list<RsVoipPongResult> mPongResults;
 	std::list<RsVoipDataItem*> incoming_queue ;
@@ -136,7 +138,9 @@ class p3VoRS: public RsPQIService, public RsVoip
 	private:
 		int   sendPackets();
 		void 	sendPingMeasurements();
-		//int 	processIncoming();
+		void 	sendBandwidthInfo();
+
+		int sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec) ;
 
 		int 	handlePing(RsVoipPingItem *item);
 		int 	handlePong(RsVoipPongItem *item);
@@ -156,6 +160,7 @@ class p3VoRS: public RsPQIService, public RsVoip
 
 		std::map<RsPeerId, VorsPeerInfo> mPeerInfo;
 		time_t mSentPingTime;
+		time_t mSentBandwidthInfoTime;
 		uint32_t mCounter;
 
 		RsServiceControl *mServiceControl;

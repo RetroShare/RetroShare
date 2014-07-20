@@ -17,10 +17,13 @@ class PluginNotifier: public QObject
         void notifyReceivedVoipInvite(const RsPeerId &peer_id) ;
         void notifyReceivedVoipHangUp(const RsPeerId& peer_id) ;
         void notifyReceivedVoipAccept(const RsPeerId &peer_id) ;
+        void notifyReceivedVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec) ;
 
 	signals:
 		void voipInvitationReceived(const QString&) ;	// signal emitted when an invitation has been received
 		void voipDataReceived(const QString&) ;			// signal emitted when some voip data has been received
 		void voipHangUpReceived(const QString& peer_id) ; // emitted when the peer closes the call (i.e. hangs up)
 		void voipAcceptReceived(const QString& peer_id) ; // emitted when the peer accepts the call
+		void voipBandwidthInfoReceived(const QString& peer_id,int bytes_per_sec) ; // emitted when measured bandwidth info is received by the peer.
 };
+

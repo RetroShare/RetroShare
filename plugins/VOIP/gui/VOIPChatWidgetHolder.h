@@ -25,6 +25,7 @@ public:
 
 	void addAudioData(const QString name, QByteArray* array) ;
 	void addVideoData(const QString name, QByteArray* array) ;
+	void setAcceptedBandwidth(const QString name, uint32_t bytes_per_sec) ;
 
 private slots:
 	void toggleAudioListen();

@@ -15,6 +15,7 @@ class QVideoOutputDevice: public QLabel
 		QVideoOutputDevice(QWidget *parent) ;
 		
 		void showFrame(const QImage&) ;
+		void showFrameOff() ;
 };
 
 // Responsible for grabbing the video from the webcam and sending it to the 

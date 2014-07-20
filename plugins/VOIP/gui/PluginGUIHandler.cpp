@@ -24,8 +24,6 @@ void PluginGUIHandler::ReceivedVoipAccept(const QString& /*peer_id*/)
 
 void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 {
-	std::cerr << "****** Plugin GUI handler: received VoipData!" << std::endl;
-
 	RsPeerId peer_id(qpeer_id.toStdString()) ;
 	std::vector<RsVoipDataChunk> chunks ;
 
@@ -54,10 +52,7 @@ void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 							if(chunks[chunkIndex].type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO)
 								acwh->addAudioData(QString::fromStdString(peer_id.toStdString()),&qb);
 							else if(chunks[chunkIndex].type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO)
-							{
 								acwh->addVideoData(QString::fromStdString(peer_id.toStdString()),&qb);
-								std::cerr << "data triaged as video." << std::endl;
-							}
 							else
 								std::cerr << "Unknown data type received. type=" << chunks[chunkIndex].type << std::endl;
 						}
@@ -75,3 +70,32 @@ void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 	}
 }
 
+void PluginGUIHandler::ReceivedVoipBandwidthInfo(const QString& qpeer_id,int bytes_per_sec)
+{
+	RsPeerId peer_id(qpeer_id.toStdString()) ;
+
+	ChatDialog *di = ChatDialog::getExistingChat(peer_id) ;
+
+	std::cerr << "PluginGUIHandler::received bw info for peer " << qpeer_id.toStdString() << ": " << bytes_per_sec << " Bps" << std::endl;
+	if(!di)
+	{
+		std::cerr << "Error: received bandwidth info for a chat dialog that does not stand VOIP (Peer id = " << peer_id.toStdString() << "!" << std::endl;
+		return ;
+	}
+
+	ChatWidget *cw = di->getChatWidget();
+	if(!cw) 
+	{
+		return ;
+	}
+
+	const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
+
+	foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList) 
+	{
+		VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
+
+		if (acwh) 
+			acwh->setAcceptedBandwidth(QString::fromStdString(peer_id.toStdString()),bytes_per_sec);
+	}
+}

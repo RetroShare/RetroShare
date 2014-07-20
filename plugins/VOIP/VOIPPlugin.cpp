@@ -71,6 +71,7 @@ VOIPPlugin::VOIPPlugin()
 	QObject::connect(mPluginNotifier,SIGNAL(voipDataReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipData(const QString&)),Qt::QueuedConnection) ;
 	QObject::connect(mPluginNotifier,SIGNAL(voipAcceptReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipAccept(const QString&)),Qt::QueuedConnection) ;
 	QObject::connect(mPluginNotifier,SIGNAL(voipHangUpReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipHangUp(const QString&)),Qt::QueuedConnection) ;
+	QObject::connect(mPluginNotifier,SIGNAL(voipBandwidthInfoReceived(const QString&,int)),mPluginGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const QString&,int)),Qt::QueuedConnection) ;
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)

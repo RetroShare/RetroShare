@@ -24,8 +24,6 @@
 VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	: QObject(), ChatWidgetHolder(chatWidget)
 {
-	std::cerr << "****** VOIPLugin: Creating new VOIPChatWidgetHolder !!" << std::endl;
-
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/images/audio-volume-muted-22.png")) ;
 	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Normal,QIcon::On) ;
@@ -136,7 +134,6 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 
 void VOIPChatWidgetHolder::toggleAudioListen()
 {
-	std::cerr << "******** VOIPLugin: Toggling audio listen!" << std::endl;
     if (audioListenToggleButton->isChecked()) {
         audioListenToggleButton->setToolTip(tr("Mute yourself"));
     } else {
@@ -150,22 +147,19 @@ void VOIPChatWidgetHolder::toggleAudioListen()
 
 void VOIPChatWidgetHolder::hangupCall()
 {
-	std::cerr << "******** VOIPLugin: Hangup call!" << std::endl;
-
-        disconnect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
-        if (inputAudioDevice) {
-            inputAudioDevice->stop();
-        }        
-        if (outputAudioDevice) {
-            outputAudioDevice->stop();
-        }
-        audioListenToggleButton->setChecked(false);
-        audioCaptureToggleButton->setChecked(false);
+	disconnect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
+	if (inputAudioDevice) {
+		inputAudioDevice->stop();
+	}        
+	if (outputAudioDevice) {
+		outputAudioDevice->stop();
+	}
+	audioListenToggleButton->setChecked(false);
+	audioCaptureToggleButton->setChecked(false);
 }
 
 void VOIPChatWidgetHolder::toggleAudioCapture()
 {
-	std::cerr << "******** VOIPLugin: Toggling audio mute capture!" << std::endl;
     if (audioCaptureToggleButton->isChecked()) {
         //activate audio output
         audioListenToggleButton->setChecked(true);
@@ -199,8 +193,6 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
 }
 void VOIPChatWidgetHolder::toggleVideoCapture()
 {
-	std::cerr << "******** VOIPLugin: Toggling video capture!" << std::endl;
-
 	if (videoCaptureToggleButton->isChecked()) 
 	{
 		//activate video input
@@ -216,12 +208,18 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	{
 		inputVideoDevice->stop() ;
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
+		outputVideoDevice->showFrameOff();
 	}
 }
 
 void VOIPChatWidgetHolder::addVideoData(const QString name, QByteArray* array)
 {
 	outputVideoProcessor->receiveEncodedData((unsigned char *)array->data(),array->size()) ;
+}
+
+void VOIPChatWidgetHolder::setAcceptedBandwidth(const QString name, uint32_t bytes_per_sec)
+{
+	inputVideoProcessor->setMaximumFrameRate(bytes_per_sec) ;
 }
 
 void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
@@ -288,10 +286,7 @@ void VOIPChatWidgetHolder::sendVideoData()
 	RsVoipDataChunk chunk ;
 
 	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
-	{
-		std::cerr << "Video data ready: sending it" << std::endl;
 		rsVoip->sendVoipData(mChatWidget->getPeerId(),chunk) ;
-	}
 }
 
 void VOIPChatWidgetHolder::sendAudioData()

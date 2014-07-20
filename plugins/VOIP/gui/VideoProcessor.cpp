@@ -7,21 +7,13 @@
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
 
-//bool VideoDecoder::getNextImage(QImage& image)
-//{
-//	if(_image_queue.empty())
-//		return false ;
-//
-//	image = _image_queue.front() ;
-//	_image_queue.pop_front() ;
-//
-//	return true ;
-//}
+VideoDecoder::VideoDecoder()
+{
+	_output_device = NULL ;
+}
 
 bool VideoEncoder::addImage(const QImage& img)
 {
-	std::cerr << "VideoEncoder: adding image." << std::endl;
-
 	encodeData(img) ;
 
 	return true ;
@@ -48,16 +40,19 @@ QImage JPEGVideoDecoder::decodeData(const unsigned char *encoded_image_data,uint
 	QByteArray qb((char*)encoded_image_data,size) ;
 	QImage image ;
 	if(image.loadFromData(qb,"JPEG"))
-	{
-		std::cerr << "image decoded successfully" << std::endl;
 		return image ;
-	}
 	else
 	{
 		std::cerr << "image.loadFromData(): returned an error.: " << std::endl;
 		return QImage() ;
 	}
 }
+
+void VideoEncoder::setMaximumFrameRate(uint32_t bytes_per_sec)
+{
+	std::cerr << "Video Encoder: maximum frame rate is set to " << bytes_per_sec << " Bps" << std::endl;
+}
+
 
 void JPEGVideoEncoder::encodeData(const QImage& image)
 {
@@ -67,8 +62,6 @@ void JPEGVideoEncoder::encodeData(const QImage& image)
 	buffer.open(QIODevice::WriteOnly) ;
 	image.save(&buffer,"JPEG") ;
 
-	//destination_decoder->receiveEncodedData((unsigned char *)qb.data(),qb.size()) ;
-
 	RsVoipDataChunk voip_chunk ;
 	voip_chunk.data = malloc(qb.size());
 	memcpy(voip_chunk.data,qb.data(),qb.size()) ;
@@ -76,7 +69,5 @@ void JPEGVideoEncoder::encodeData(const QImage& image)
 	voip_chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 
 	_out_queue.push_back(voip_chunk) ;
-
-	std::cerr << "sending encoded data. size = " << std::dec << qb.size() << std::endl;
 }
 

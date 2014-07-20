@@ -96,16 +96,16 @@ QVideoInputDevice::~QVideoInputDevice()
 QVideoOutputDevice::QVideoOutputDevice(QWidget *parent)
 	: QLabel(parent)
 {
+	showFrameOff() ;
+}
+
+void QVideoOutputDevice::showFrameOff()
+{
 	setPixmap(QPixmap(":/images/video-icon-big.png").scaled(170,128,Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
 }
 
 void QVideoOutputDevice::showFrame(const QImage& img)
 {
-	//std::cerr << "Displaying frame!!" << std::endl;
-
-	//QPainter painter(this) ;
-	//painter.drawImage(QPointF(0,0),img) ;
-
 	setPixmap(QPixmap::fromImage(img).scaled(minimumSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
 }
 

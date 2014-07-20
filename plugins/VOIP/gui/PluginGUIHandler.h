@@ -5,6 +5,7 @@
 // in the main GUI thread.
 //
 
+#include <stdint.h>
 #include <QObject>
 
 class PluginGUIHandler: public QObject
@@ -16,4 +17,5 @@ class PluginGUIHandler: public QObject
 		void ReceivedVoipData(const QString& peer_id) ;
 		void ReceivedVoipHangUp(const QString& peer_id) ;
 		void ReceivedVoipAccept(const QString& peer_id) ;
+		void ReceivedVoipBandwidthInfo(const QString& peer_id,int) ;
 };

@@ -47,8 +47,9 @@
 RsVoip *rsVoip = NULL;
 
 
-#define MAX_PONG_RESULTS	150
-#define VORS_PING_PERIOD  	10
+#define MAX_PONG_RESULTS		150
+#define VORS_PING_PERIOD  		10
+#define VORS_BANDWIDTH_PERIOD 5
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -121,6 +122,7 @@ p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
 	addSerialType(new RsVoipSerialiser());
 
 	mSentPingTime = 0;
+	mSentBandwidthInfoTime = 0;
 	mCounter = 0;
 
         //plugin default configuration
@@ -170,20 +172,49 @@ int	p3VoRS::sendPackets()
 {
 	time_t now = time(NULL);
 	time_t pt;
+	time_t pt2;
 	{
 		RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
 		pt = mSentPingTime;
+		pt2 = mSentBandwidthInfoTime;
 	}
 
-	if (now - pt > VORS_PING_PERIOD)
+	if (now > pt + VORS_PING_PERIOD)
 	{
 		sendPingMeasurements();
 
 		RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
 		mSentPingTime = now;
 	}
+	if (now > pt2 + VORS_BANDWIDTH_PERIOD)
+	{
+		sendBandwidthInfo();
+
+		RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+		mSentBandwidthInfoTime = now;
+	}
 	return true ;
 }
+void p3VoRS::sendBandwidthInfo()
+{
+    std::set<RsPeerId> onlineIds;
+	 mServiceControl->getPeersConnected(getServiceInfo().mServiceType, onlineIds);
+
+	 RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+
+	for(std::map<RsPeerId,VorsPeerInfo>::iterator it(mPeerInfo.begin());it!=mPeerInfo.end();++it)
+	{
+		it->second.average_incoming_bandwidth = 0.75 * it->second.average_incoming_bandwidth + 0.25 * it->second.total_bytes_received / VORS_BANDWIDTH_PERIOD ;
+		it->second.total_bytes_received = 0 ;
+
+		if(onlineIds.find(it->first) == onlineIds.end() || it->second.average_incoming_bandwidth == 0)
+			continue ;
+
+		std::cerr << "average bandwidth for peer " << it->first << ": " << it->second.average_incoming_bandwidth << " Bps" << std::endl;
+		sendVoipBandwidth(it->first,it->second.average_incoming_bandwidth) ;
+	}
+}
+
 int p3VoRS::sendVoipHangUpCall(const RsPeerId &peer_id)
 {
 	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
@@ -220,7 +251,18 @@ int p3VoRS::sendVoipRinging(const RsPeerId &peer_id)
 
 	return true ;
 }
+int p3VoRS::sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec)
+{
+	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
 
+	item->protocol = RsVoipProtocolItem::VoipProtocol_Bandwidth ;
+	item->flags = bytes_per_sec ;
+	item->PeerId(peer_id) ;
+
+	sendItem(item) ;
+
+	return true ;
+}
 int p3VoRS::sendVoipData(const RsPeerId& peer_id,const RsVoipDataChunk& chunk)
 {
 #ifdef DEBUG_VORS
@@ -333,6 +375,11 @@ void p3VoRS::handleProtocol(RsVoipProtocolItem *item)
 																  std::cerr << "p3VoRS::handleProtocol(): Received protocol Close call." << std::endl;
 #endif
 																  break ;
+		case RsVoipProtocolItem::VoipProtocol_Bandwidth: mNotify->notifyReceivedVoipBandwidth(item->PeerId(),(uint32_t)item->flags);
+#ifdef DEBUG_VORS
+																  std::cerr << "p3VoRS::handleProtocol(): Received protocol bandwidth. Value=" << item->flags << std::endl;
+#endif
+																  break ;
 		default:
 #ifdef DEBUG_VORS
 																  std::cerr << "p3VoRS::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
@@ -350,19 +397,20 @@ void p3VoRS::handleData(RsVoipDataItem *item)
 
 	std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
 
-	std::cerr << "Received VOIP data item. size = " << item->data_size << ", flags=" << item->flags <<std::endl;
-
 	if(it == mPeerInfo.end())
 	{
 		std::cerr << "Peer unknown to VOIP process. Dropping data" << std::endl;
 		delete item ;
+		return ;
 	}
-	else
-	{
-		it->second.incoming_queue.push_back(item) ;	// be careful with the delete action!
+	it->second.incoming_queue.push_back(item) ;	// be careful with the delete action!
 
-		mNotify->notifyReceivedVoipData(item->PeerId());
-	}
+	// For Video data, measure the bandwidth
+	
+	if(item->flags & RS_VOIP_FLAGS_VIDEO_DATA)
+		it->second.total_bytes_received += item->data_size ;
+
+	mNotify->notifyReceivedVoipData(item->PeerId());
 }
 
 bool p3VoRS::getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk>& incoming_data_chunks)
@@ -609,7 +657,6 @@ VorsPeerInfo *p3VoRS::locked_GetPeerInfo(const RsPeerId &id)
 		mPeerInfo[id] = pinfo;
 
 		it = mPeerInfo.find(id);
-
 	}
 
 	return &(it->second);
@@ -626,6 +673,8 @@ bool VorsPeerInfo::initialisePeerInfo(const RsPeerId& id)
 
 	mSentPings = 0;
 	mLostPongs = 0;
+	average_incoming_bandwidth = 0 ;
+	total_bytes_received = 0 ;
 
 	mPongResults.clear();
 

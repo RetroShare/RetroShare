@@ -12,7 +12,7 @@ class QVideoOutputDevice ;
 class VideoDecoder
 {
 	public:
-		VideoDecoder() { _output_device = NULL ;}
+		VideoDecoder() ;
 
 		// Gets the next image to be displayed. Once returned, the image should
 		// be cleared from the incoming queue.
@@ -20,6 +20,10 @@ class VideoDecoder
 		void setDisplayTarget(QVideoOutputDevice *odev) { _output_device = odev ; }
 
 		virtual void receiveEncodedData(const unsigned char *data,uint32_t size) ;
+
+		// returns the current (measured) frame rate in bytes per second.
+		//
+		uint32_t currentFrameRate() const; 
 
 	private:
 		QVideoOutputDevice *_output_device ;
@@ -30,12 +34,12 @@ class VideoDecoder
 		//
 		virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) = 0 ;
 
-		// This buffer accumulated incoming encoded data, until a full packet is obtained,
-		// since the stream might not send images at once. When incoming images are decoded, the
-		// data is removed from the buffer.
-		//
-		unsigned char *buffer ;
-		uint32_t buffer_size ;
+//		// This buffer accumulated incoming encoded data, until a full packet is obtained,
+//		// since the stream might not send images at once. When incoming images are decoded, the
+//		// data is removed from the buffer.
+//		//
+//		unsigned char *buffer ;
+//		uint32_t buffer_size ;
 };
 
 // This class encodes video using a video codec (possibly homemade, or based on existing codecs)
@@ -52,6 +56,11 @@ class VideoEncoder
 
 		bool packetReady() const { return !_out_queue.empty() ; }
 		bool nextPacket(RsVoipDataChunk& ) ;
+
+		// Used to tweak the compression ratio so that the video can stream ok.
+		//
+		void setMaximumFrameRate(uint32_t bytes_per_second) ;
+
 	protected:
 		//virtual bool sendEncodedData(unsigned char *mem,uint32_t size) = 0 ;
 		virtual void encodeData(const QImage& image) = 0 ;
