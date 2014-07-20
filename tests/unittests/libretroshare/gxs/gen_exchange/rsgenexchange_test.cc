@@ -6,6 +6,7 @@
 #include "gxspublishmsgtest.h"
 #include "gxs/rsdataservice.h"
 #include "rsdummyservices.h"
+#include "gxsteststats.h"
 
 
 /*!
@@ -35,6 +36,21 @@ TEST(libretroshare_gxs, RsGenExchange)
 
     GxsPublishGroupTest testGrpPublishing(&testService, dataStore);
     testGrpPublishing.runTests();
+
+    //GxsPublishMsgTest testMsgPublishing(&testService, dataStore);
+    //testMsgPublishing.runTests();
+}
+
+TEST(libretroshare_gxs, GetStats)
+{
+
+    RsGeneralDataService* dataStore = new RsDataService("./", "testServiceDb", RS_SERVICE_TYPE_DUMMY, NULL, "");
+
+    // we want to use default authentication which is NO authentication :)
+    GenExchangeTestService testService(dataStore, NULL, NULL);
+
+    GxsTestStats testStats(&testService, dataStore);
+    testStats.runTests();
 
     //GxsPublishMsgTest testMsgPublishing(&testService, dataStore);
     //testMsgPublishing.runTests();

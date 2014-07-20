@@ -26,6 +26,7 @@
 #include <time.h>
 
 #include "rsgxsdataaccess.h"
+#include "retroshare/rsgxsflags.h"
 
 // This bit will be filled out over time.
 #define RS_TOKREQOPT_MSG_VERSIONS	0x0001		// MSGRELATED: Returns All MsgIds with OrigMsgId = MsgId.
@@ -293,7 +294,9 @@ void RsGxsDataAccess::requestServiceStatistic(uint32_t& token)
 
     generateToken(token);
 
-    setReq(req, token, 0, RsTokReqOptions());
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+    setReq(req, token, 0, opts);
     storeRequest(req);
 }
 
@@ -304,7 +307,9 @@ void RsGxsDataAccess::requestGroupStatistic(uint32_t& token, const RsGxsGroupId&
 
     generateToken(token);
 
-    setReq(req, token, 0, RsTokReqOptions());
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
+    setReq(req, token, 0, opts);
     storeRequest(req);
 }
 
@@ -860,7 +865,7 @@ bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStati
 
     if(req == NULL){
 
-                std::cerr << "RsGxsDataAccess::getServiceStatistic() Unable to retrieve grp stats" << std::endl;
+                std::cerr << "RsGxsDataAccess::getServiceStatistic() Unable to retrieve service stats" << std::endl;
         return false;
         }else  if(req->status == GXS_REQUEST_V2_STATUS_COMPLETE){
 
@@ -1479,6 +1484,7 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
     req->mServiceStatistic.mNumGrps = grpMeta.size();
     req->mServiceStatistic.mSizeOfGrps = 0;
     req->mServiceStatistic.mSizeOfMsgs = 0;
+    req->mServiceStatistic.mNumGrpsSubscribed = 0;
 
     for(; mit != grpMeta.end(); mit++)
     {
@@ -1489,6 +1495,8 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
         getGroupStatistic(&gr);
         req->mServiceStatistic.mNumMsgs += gr.mGroupStatistic.mNumMsgs;
         req->mServiceStatistic.mSizeOfMsgs += gr.mGroupStatistic.mTotalSizeOfMsgs;
+        req->mServiceStatistic.mNumGrpsSubscribed += m->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ? 1 : 0;
+
         delete m;
     }
 

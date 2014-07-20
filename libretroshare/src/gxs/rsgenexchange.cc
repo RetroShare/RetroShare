@@ -976,14 +976,14 @@ bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId,
 	return true;
 }
 
-bool RsGenExchange::getGroupStatistic(const uint32_t& /*token*/, GxsGroupStatistic& /*stats*/)
+bool RsGenExchange::getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats)
 {
-	return false;
+    return mDataAccess->getGroupStatistic(token, stats);
 }
 
-bool RsGenExchange::getServiceStatistic(const uint32_t& /*token*/, GxsServiceStatistic& /*stats*/)
+bool RsGenExchange::getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats)
 {
-	return false;
+    return mDataAccess->getServiceStatistic(token, stats);
 }
 
 bool RsGenExchange::updated(bool willCallGrpChanged, bool willCallMsgChanged)

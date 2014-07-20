@@ -286,10 +286,12 @@ HEADERS += libretroshare/gxs/gen_exchange/genexchangetester.h \
 	libretroshare/gxs/gen_exchange/genexchangetestservice.h \
 	libretroshare/gxs/gen_exchange/gxspublishgrouptest.h \
 	libretroshare/gxs/gen_exchange/rsdummyservices.h \
+	libretroshare/gxs/gen_exchange/gxsteststats.cpp
 
 #	libretroshare/gxs/gen_exchange/gxsmsgrelatedtest.h \
 
 SOURCES += libretroshare/gxs/gen_exchange/gxspublishgrouptest.cc \
+	libretroshare/gxs/gen_exchange/gxsteststats.cpp \
 	libretroshare/gxs/gen_exchange/gxspublishmsgtest.cc \
 	libretroshare/gxs/gen_exchange/rsdummyservices.cc \
 	libretroshare/gxs/gen_exchange/rsgenexchange_test.cc \

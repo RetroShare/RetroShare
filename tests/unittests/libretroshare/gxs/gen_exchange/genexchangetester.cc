@@ -19,12 +19,12 @@ GenExchangeTest::~GenExchangeTest()
 
 bool GenExchangeTest::getServiceStatistic(const uint32_t &token, GxsServiceStatistic &servStatistic)
 {
-    mTestService->getServiceStatisticTS(token, servStatistic);
+    return mTestService->getServiceStatisticTS(token, servStatistic);
 }
 
 bool GenExchangeTest::getGroupStatistic(const uint32_t &token, GxsGroupStatistic &grpStatistic)
 {
-    mTestService->getGroupStatisticTS(token, grpStatistic);
+    return mTestService->getGroupStatisticTS(token, grpStatistic);
 }
 
 

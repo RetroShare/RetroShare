@@ -44,6 +44,8 @@
 #define GXS_REQUEST_TYPE_MSG_RELATED_META		0x00800000
 #define GXS_REQUEST_TYPE_MSG_RELATED_IDS 		0x01000000
 
+#define GXS_REQUEST_TYPE_GROUP_STATS            0x01600000
+#define GXS_REQUEST_TYPE_SERVICE_STATS          0x03200000
 
 
 // This bit will be filled out over time.
