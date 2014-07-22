@@ -912,7 +912,7 @@ void GxsForumThreadWidget::insertThreads()
 	}
 
 	// Get Current Forum Info... then complete insertForumThreads().
-	requestGroup_CurrentForum(mForumId);
+	requestGroup_CurrentForum();
 }
 
 void GxsForumThreadWidget::insertForumThreads(const RsGxsForumGroup &group)
@@ -1693,7 +1693,7 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-void GxsForumThreadWidget::requestGroup_CurrentForum(const RsGxsGroupId &forumId)
+void GxsForumThreadWidget::requestGroup_CurrentForum()
 {
 	ui->progressBar->reset();
 	mStateHelper->setLoading(TOKEN_TYPE_CURRENTFORUM, true);
@@ -1706,9 +1706,9 @@ void GxsForumThreadWidget::requestGroup_CurrentForum(const RsGxsGroupId &forumId
 	mThreadQueue->cancelActiveRequestTokens(TOKEN_TYPE_CURRENTFORUM);
 
 	std::list<RsGxsGroupId> grpIds;
-	grpIds.push_back(forumId);
+	grpIds.push_back(mForumId);
 
-	std::cerr << "GxsForumsDialog::requestGroup_CurrentForum(" << forumId << ")";
+	std::cerr << "GxsForumsDialog::requestGroup_CurrentForum(" << mForumId << ")";
 	std::cerr << std::endl;
 
 	uint32_t token;

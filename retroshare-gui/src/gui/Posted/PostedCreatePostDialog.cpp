@@ -45,6 +45,8 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));
 	ui->headerFrame->setHeaderText(tr("Submit a new Post"));
 
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 }

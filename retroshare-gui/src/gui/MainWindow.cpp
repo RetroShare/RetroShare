@@ -412,9 +412,7 @@ void MainWindow::initStackedPage()
   //notify.push_back(QPair<MainPage*, QAction*>(gxsforumDialog, action));
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   
-  PostedDialog *postedDialog = NULL;
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
-  postedDialog->setup();
 
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
@@ -960,6 +958,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 			 Page = _instance->blogsFeed;
 			 return true ;
 #endif
+		case Posted:
+			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
+			return true ;
 		 default:
 			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << page << ")" << std::endl;
 	 }

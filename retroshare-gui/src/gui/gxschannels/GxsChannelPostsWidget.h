@@ -86,13 +86,13 @@ private:
 	void clearPosts();
 
 	/* NEW GXS FNS */
-	void requestGroupData(const RsGxsGroupId &grpId);
+	void requestGroupData();
 	void loadGroupData(const uint32_t &token);
 
-	void requestPosts(const RsGxsGroupId &grpId);
+	void requestPosts();
 	void loadPosts(const uint32_t &token);
 
-	void requestRelatedPosts(const RsGxsGroupId &grpId, const std::vector<RsGxsMessageId> &msgIds);
+	void requestRelatedPosts(const std::vector<RsGxsMessageId> &msgIds);
 	void loadRelatedPosts(const uint32_t &token);
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);

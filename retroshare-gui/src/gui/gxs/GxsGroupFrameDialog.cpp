@@ -261,15 +261,19 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
-	action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share"), this, SLOT(shareKey()));
-	action->setEnabled(!mGroupId.isNull() && isAdmin);
+	if (shareKeyType()) {
+		action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share"), this, SLOT(shareKey()));
+		action->setEnabled(!mGroupId.isNull() && isAdmin);
+	}
 
 	if (!mGroupId.isNull() && isPublisher && !isAdmin) {
 		contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights" ), this, SLOT(restoreGroupKeys()));
 	}
 
-	action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
-	action->setEnabled(!mGroupId.isNull());
+	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
+		action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
+		action->setEnabled(!mGroupId.isNull());
+	}
 
 	contextMnu.addSeparator();
 

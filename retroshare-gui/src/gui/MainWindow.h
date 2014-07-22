@@ -48,6 +48,7 @@ class ToasterDisable;
 //class ForumsDialog;
 class GxsChannelDialog ;
 class GxsForumsDialog ;
+class PostedDialog;
 class FriendsDialog;
 class ChatLobbyWidget;
 class ChatDialog;
@@ -98,7 +99,8 @@ public:
 #endif
 #ifdef RS_USE_LINKS
         Links              = 10,  /** Links page. */
-#endif        
+#endif
+        Posted             = 11,  /** Posted links */
     };
 
     /** Create main window */
@@ -137,6 +139,7 @@ public:
 	 SharedFilesDialog *sharedfilesDialog;
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
+	 PostedDialog      *postedDialog;
 
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;

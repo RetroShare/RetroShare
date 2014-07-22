@@ -142,7 +142,7 @@ private:
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 
-	void requestGroup_CurrentForum(const RsGxsGroupId &forumId);
+	void requestGroup_CurrentForum();
 	void loadGroup_CurrentForum(const uint32_t &token);
 
 	void requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId);

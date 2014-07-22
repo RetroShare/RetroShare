@@ -24,56 +24,43 @@
 #ifndef MRK_POSTED_DIALOG_H
 #define MRK_POSTED_DIALOG_H
 
-#include <retroshare/rsposted.h>
+#include "gui/gxs/GxsGroupFrameDialog.h"
 
-#include "gui/gxs/GxsCommentContainer.h"
-#include "gui/Posted/PostedListDialog.h"
-#include "gui/Posted/PostedItem.h"
+#define IMAGE_POSTED ":/images/wikibook_32.png"
 
-#define IMAGE_POSTED              ":/images/wikibook_32.png"
-
-class PostedDialog : public GxsCommentContainer
+class PostedDialog : public GxsGroupFrameDialog
 {
 	Q_OBJECT
 
 public:
-	PostedDialog(QWidget *parent = 0)
-	:GxsCommentContainer(parent) { return; }
+	/** Default Constructor */
+	PostedDialog(QWidget *parent = 0);
+	/** Default Destructor */
+	~PostedDialog();
 
-        virtual QIcon iconPixmap() const { return QIcon(IMAGE_POSTED) ; } //MainPage
-        virtual QString pageName() const { return tr("Posted") ; } //MainPage
-        virtual QString helpText() const { return ""; } //MainPage
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_POSTED) ; } //MainPage
+	virtual QString pageName() const { return tr("Posted") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
+	virtual UserNotify *getUserNotify(QObject *parent);
 
-	virtual GxsServiceDialog *createServiceDialog()
-	{
-		return new PostedListDialog(this);
-	}
+protected:
+	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
 
-	virtual QString getServiceName()
-	{
-		return tr("Posted Links");
-	}
+private slots:
+	void settingsChanged();
 
-	virtual RsTokenService *getTokenService()
-	{
-		return rsPosted->getTokenService();
-	}
-
-	virtual RsGxsCommentService *getCommentService()
-	{
-		return rsPosted;
-	}
-
-	virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
-	{
-		return new PostedItem(NULL, 0, grpId, msgId, true);
-	}
-
-	virtual QPixmap getServicePixmap()
-	{
-		return QPixmap(":/images/posted_24.png");
-	}
+private:
+	/* GxsGroupFrameDialog */
+	virtual QString text(TextType type);
+	virtual QString icon(IconType type);
+	virtual QString settingsGroupName() { return "PostedDialog"; }
+	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue);
+	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
+	virtual int shareKeyType();
+	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
+	virtual RsGxsCommentService *getCommentService();
+	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 };
 
 #endif

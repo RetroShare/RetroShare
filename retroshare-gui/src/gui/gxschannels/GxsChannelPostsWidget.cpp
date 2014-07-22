@@ -125,8 +125,8 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 {
 	if (complete) {
 		/* Fill complete */
-		requestGroupData(mChannelId);
-		requestPosts(mChannelId);
+		requestGroupData();
+		requestPosts();
 		return;
 	}
 
@@ -144,7 +144,7 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 	if (!mChannelId.isNull() && std::find(grpIds.begin(), grpIds.end(), mChannelId) != grpIds.end()) {
 		updateGroup = true;
 		/* Do we need to fill all posts? */
-		requestPosts(mChannelId);
+		requestPosts();
 	} else {
 		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
 		getAllMsgIds(msgs);
@@ -153,13 +153,13 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(mChannelId);
 			if(mit != msgs.end())
 			{
-				requestRelatedPosts(mChannelId, mit->second);
+				requestRelatedPosts(mit->second);
 			}
 		}
 	}
 
 	if (updateGroup) {
-		requestGroupData(mChannelId);
+		requestGroupData();
 	}
 }
 
@@ -244,6 +244,10 @@ void GxsChannelPostsWidget::openComments(uint32_t /*type*/, const RsGxsGroupId &
 void GxsChannelPostsWidget::createMsg()
 {
 	if (mChannelId.isNull()) {
+		return;
+	}
+
+	if (!IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
 
@@ -619,7 +623,7 @@ void GxsChannelPostsWidget::clearPosts()
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-void GxsChannelPostsWidget::requestGroupData(const RsGxsGroupId &grpId)
+void GxsChannelPostsWidget::requestGroupData()
 {
 #ifdef DEBUG_CHANNEL
 	std::cerr << "GxsChannelPostsWidget::requestGroupData()";
@@ -630,7 +634,7 @@ void GxsChannelPostsWidget::requestGroupData(const RsGxsGroupId &grpId)
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_DATA);
 
-	if (grpId.isNull()) {
+	if (mChannelId.isNull()) {
 		mStateHelper->setActive(TOKEN_TYPE_GROUP_DATA, false);
 		mStateHelper->setLoading(TOKEN_TYPE_GROUP_DATA, false);
 		mStateHelper->clear(TOKEN_TYPE_GROUP_DATA);
@@ -647,7 +651,7 @@ void GxsChannelPostsWidget::requestGroupData(const RsGxsGroupId &grpId)
 	emit groupChanged(this);
 
 	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(grpId);
+	groupIds.push_back(mChannelId);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
@@ -684,7 +688,7 @@ void GxsChannelPostsWidget::loadGroupData(const uint32_t &token)
 	emit groupChanged(this);
 }
 
-void GxsChannelPostsWidget::requestPosts(const RsGxsGroupId &grpId)
+void GxsChannelPostsWidget::requestPosts()
 {
 #ifdef DEBUG_CHANNEL
 	std::cerr << "GxsChannelPostsWidget::requestPosts()";
@@ -696,7 +700,7 @@ void GxsChannelPostsWidget::requestPosts(const RsGxsGroupId &grpId)
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_POSTS);
 
-	if (grpId.isNull()) {
+	if (mChannelId.isNull()) {
 		mStateHelper->setActive(TOKEN_TYPE_POSTS, false);
 		mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
 		mStateHelper->clear(TOKEN_TYPE_POSTS);
@@ -708,7 +712,7 @@ void GxsChannelPostsWidget::requestPosts(const RsGxsGroupId &grpId)
 	emit groupChanged(this);
 
 	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(grpId);
+	groupIds.push_back(mChannelId);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
@@ -735,7 +739,7 @@ void GxsChannelPostsWidget::loadPosts(const uint32_t &token)
 	emit groupChanged(this);
 }
 
-void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const std::vector<RsGxsMessageId> &msgIds)
+void GxsChannelPostsWidget::requestRelatedPosts(const std::vector<RsGxsMessageId> &msgIds)
 {
 #ifdef DEBUG_CHANNEL
 	std::cerr << "GxsChannelPostsWidget::requestRelatedPosts()";
@@ -744,7 +748,7 @@ void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_RELATEDPOSTS);
 
-	if (grpId.isNull()) {
+	if (mChannelId.isNull()) {
 		mStateHelper->setActive(TOKEN_TYPE_POSTS, false);
 		mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
 		mStateHelper->clear(TOKEN_TYPE_POSTS);
@@ -766,7 +770,7 @@ void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const
 	uint32_t token;
 	std::vector<RsGxsGrpMsgIdPair> relatedMsgIds;
 	for (std::vector<RsGxsMessageId>::const_iterator msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
-		relatedMsgIds.push_back(RsGxsGrpMsgIdPair(grpId, *msgIt));
+		relatedMsgIds.push_back(RsGxsGrpMsgIdPair(mChannelId, *msgIt));
 	}
 	mChannelQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, relatedMsgIds, TOKEN_TYPE_RELATEDPOSTS);
 }
@@ -800,7 +804,7 @@ void GxsChannelPostsWidget::acknowledgeMessageUpdate(const uint32_t &token)
 	rsGxsChannels->acknowledgeMsg(token, msgId);
 	if (msgId.first == mChannelId)
 	{
-		requestPosts(mChannelId);
+		requestPosts();
 	}
 }
 
