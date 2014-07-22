@@ -26,7 +26,7 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#define IMAGE_POSTED ":/images/wikibook_32.png"
+#define IMAGE_POSTED ":/images/posted_32.png"
 
 class PostedDialog : public GxsGroupFrameDialog
 {
