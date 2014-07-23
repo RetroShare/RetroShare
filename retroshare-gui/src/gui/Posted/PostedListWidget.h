@@ -26,20 +26,18 @@
 
 #include <QMap>
 
-#include "gui/gxs/GxsMessageFrameWidget.h"
+#include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
-#include "util/TokenQueue.h"
 
 class RsPostedGroup;
 class RsPostedPost;
 class PostedItem;
-class UIStateHelper;
 
 namespace Ui {
 class PostedListWidget;
 }
 
-class PostedListWidget : public GxsMessageFrameWidget, public FeedHolder, public TokenResponse
+class PostedListWidget : public GxsMessageFramePostWidget, public FeedHolder
 {
 	Q_OBJECT
 
@@ -48,11 +46,7 @@ public:
 	~PostedListWidget();
 
 	/* GxsMessageFrameWidget */
-	virtual RsGxsGroupId groupId() { return mPostedId; }
-	virtual void setGroupId(const RsGxsGroupId &postedId);
-	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
-	virtual void setAllMessagesRead(bool read);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
@@ -60,11 +54,16 @@ public:
 	virtual void openChat(const RsPeerId& peerId);
 	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
 
-	/* NEW GXS FNS */
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	/* GXS functions */
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
-	virtual void updateDisplay(bool complete);
+	/* GxsMessageFramePostWidget */
+	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
+	virtual void insertPosts(const uint32_t &token);
+	virtual void insertRelatedPosts(const uint32_t &token);
+	virtual void setMessageRead(GxsFeedItem *item, bool read);
+	virtual void clearPosts();
 
 private slots:
 	void createNewGxsId();
@@ -84,8 +83,6 @@ private:
 	void processSettings(bool load);
 	void updateShowText();
 
-	void clearPosts();
-
 	/*!
 	 * Only removes it from layout
 	 */
@@ -93,17 +90,10 @@ private:
 
 	void loadPost(const RsPostedPost &post);
 
-	void requestGroupData();
-	void loadGroupData(const uint32_t &token);
 	void insertPostedDetails(const RsPostedGroup &group);
 
 	// subscribe/unsubscribe ack.
 //	void acknowledgeSubscribeChange(const uint32_t &token);
-
-	// posts
-	void acknowledgePostMsg(const uint32_t &token);
-	void loadPostData(const uint32_t &token);
-	void requestPosts();
 
 	// votes
 	void acknowledgeVoteMsg(const uint32_t& token);
@@ -114,28 +104,15 @@ private:
 	//void applyRanking(const PostedRanking& ranks);
 	void applyRanking();
 
-	// update displayed item
-	void updateDisplayedItems(const std::vector<RsGxsMessageId>& msgIds);
-	void updateCurrentDisplayComplete(const uint32_t& token);
-
 private:
 	int	mSortMethod;
 	int	mLastSortMethod;
 	int	mPostIndex;
 	int	mPostShow;
 
-	int mSubscribeFlags;
-	RsGxsGroupId mPostedId;
-	QString mName;
+	uint32_t mTokenTypeVote;
 
 	QMap<RsGxsMessageId, PostedItem*> mPosts;
-	std::list<PostedItem *> mPostList;
-
-	TokenQueue *mPostedQueue;
-
-	//CommentHolder* mCommentHolder;
-
-	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
 	Ui::PostedListWidget *ui;

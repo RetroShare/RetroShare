@@ -24,11 +24,9 @@
 
 #include <map>
 
-#include "gui/gxs/GxsMessageFrameWidget.h"
+#include "gui/gxs/GxsMessageFramePostWidget.h"
 
 #include "gui/feeds/FeedHolder.h"
-
-#include "util/TokenQueue.h"
 
 namespace Ui {
 class GxsChannelPostsWidget;
@@ -37,10 +35,8 @@ class GxsChannelPostsWidget;
 //class ChanMsgItem;
 class GxsChannelPostItem;
 class QTreeWidgetItem;
-class UIStateHelper;
-class QBoxLayout;
 
-class GxsChannelPostsWidget : public GxsMessageFrameWidget, public TokenResponse, public FeedHolder
+class GxsChannelPostsWidget : public GxsMessageFramePostWidget, public FeedHolder
 {
 	Q_OBJECT
 
@@ -51,23 +47,21 @@ public:
 	~GxsChannelPostsWidget();
 
 	/* GxsMessageFrameWidget */
-	virtual RsGxsGroupId groupId() { return mChannelId; }
-	virtual void setGroupId(const RsGxsGroupId &channelId);
-	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
-	virtual void setAllMessagesRead(bool read);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
 	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-    virtual void openChat(const RsPeerId& peerId);
-    virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
-
-	/* NEW GXS FNS */
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	virtual void openChat(const RsPeerId& peerId);
+	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
 
 protected:
-	virtual void updateDisplay(bool complete);
+	/* GxsMessageFramePostWidget */
+	virtual void groupNameChanged(const QString &name);
+	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
+	virtual void insertPosts(const uint32_t &token);
+	virtual void insertRelatedPosts(const uint32_t &token);
+	virtual void setMessageRead(GxsFeedItem *item, bool read);
 
 private slots:
 	void createMsg();
@@ -83,38 +77,13 @@ private:
 	void processSettings(bool load);
 
 	void setAutoDownload(bool autoDl);
-	void clearPosts();
-
-	/* NEW GXS FNS */
-	void requestGroupData();
-	void loadGroupData(const uint32_t &token);
-
-	void requestPosts();
-	void loadPosts(const uint32_t &token);
-
-	void requestRelatedPosts(const std::vector<RsGxsMessageId> &msgIds);
-	void loadRelatedPosts(const uint32_t &token);
+	bool filterItem(GxsChannelPostItem *pItem, const QString &text, const int filter);
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
 	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related);
 
-	void acknowledgeMessageUpdate(const uint32_t &token);
-
-	bool filterItem(GxsChannelPostItem *pItem, const QString &text, const int filter);
-
-    RsGxsGroupId mChannelId; /* current Channel */
-	int mSubscribeFlags;
-	TokenQueue *mChannelQueue;
-
-	/* Layout Pointers */
-	QBoxLayout *mMsgLayout;
-
-	//QList<ChanMsgItem *> mChanMsgItems;
-	QList<GxsChannelPostItem *> mChannelPostItems;
-
+private:
 	QAction *mAutoDownloadAction;
-
-	UIStateHelper *mStateHelper;
 
 	bool mInProcessSettings;
 

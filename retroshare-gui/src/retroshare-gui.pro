@@ -1180,7 +1180,6 @@ posted {
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedGroupDialog.h \
 		gui/Posted/PostedCreatePostDialog.h \
-		gui/Posted/PostedUserTypes.h \
 		gui/Posted/PostedUserNotify.h
 
 		#gui/Posted/PostedCreateCommentDialog.h \
@@ -1225,6 +1224,7 @@ gxsgui {
 		gui/gxs/GxsCreateCommentDialog.h \
 		gui/gxs/GxsGroupFrameDialog.h \
 		gui/gxs/GxsMessageFrameWidget.h \
+		gui/gxs/GxsMessageFramePostWidget.h \
 		gui/gxs/GxsFeedItem.h \
 		gui/gxs/RsGxsUpdateBroadcastBase.h \
 		gui/gxs/RsGxsUpdateBroadcastWidget.h \
@@ -1259,6 +1259,7 @@ gxsgui {
 		gui/gxs/GxsCreateCommentDialog.cpp \
 		gui/gxs/GxsGroupFrameDialog.cpp \
 		gui/gxs/GxsMessageFrameWidget.cpp \
+		gui/gxs/GxsMessageFramePostWidget.cpp \
 		gui/gxs/GxsFeedItem.cpp \
 		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \

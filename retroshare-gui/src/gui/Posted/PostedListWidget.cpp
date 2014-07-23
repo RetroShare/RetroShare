@@ -28,57 +28,29 @@
 
 #include "PostedCreatePostDialog.h"
 #include "PostedItem.h"
-#include "PostedUserTypes.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/common/UIStateHelper.h"
 
 #include <retroshare/rsposted.h>
-
-/*********************** **** **** **** ***********************/
-/** Request / Response of Data ********************************/
-/*********************** **** **** **** ***********************/
-
-//#define POSTEDDIALOG_LISTING        1
-//#define POSTEDDIALOG_CURRENTFORUM   2
-#define POSTEDDIALOG_INSERTTHREADS  3
-//#define POSTEDDIALOG_INSERTCHILD    4
-//#define POSTEDDIALOG_INSERT_POST    5
-//#define POSTEDDIALOG_REPLY_MESSAGE  6
-
-/****************************************************************
- */
-
-// token types to deal with
 
 #define POSTED_DEFAULT_LISTING_LENGTH 10
 #define POSTED_MAX_INDEX	      10000
 
 /** Constructor */
 PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent)
-    : GxsMessageFrameWidget(rsPosted, parent),
+    : GxsMessageFramePostWidget(rsPosted, parent),
       ui(new Ui::PostedListWidget)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
 	/* Setup UI helper */
-	mStateHelper = new UIStateHelper(this);
+	mStateHelper->addWidget(mTokenTypePosts, ui->hotSortButton);
+	mStateHelper->addWidget(mTokenTypePosts, ui->newSortButton);
+	mStateHelper->addWidget(mTokenTypePosts, ui->topSortButton);
 
-	// No progress yet
-//	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
-//	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressBar, UISTATE_LOADING_VISIBLE);
-//	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressLabel, UISTATE_LOADING_VISIBLE);
-
-//	mStateHelper->addLoadPlaceholder(TOKEN_TYPE_GROUP_DATA, ui->nameLabel);
-
-//	mStateHelper->addWidget(TOKEN_TYPE_GROUP_DATA, ui->postButton);
-//	mStateHelper->addWidget(TOKEN_TYPE_GROUP_DATA, ui->logoLabel);
-//	mStateHelper->addWidget(TOKEN_TYPE_GROUP_DATA, ui->subscribeToolButton);
-
-	/* Setup Queue */
-	mPostedQueue = new TokenQueue(rsPosted->getTokenService(), this);
-
-	mSubscribeFlags = 0;
+	mStateHelper->addWidget(mTokenTypeGroupData, ui->submitPostButton);
+//	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
 	connect(ui->hotSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui->newSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
@@ -93,6 +65,8 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	mLastSortMethod = RsPosted::TopRankType; // to be different.
 	mPostIndex = 0;
 	mPostShow = POSTED_DEFAULT_LISTING_LENGTH;
+
+	mTokenTypeVote = nextTokenType();
 
 	ui->hotSortButton->setChecked(true);
 
@@ -114,58 +88,6 @@ PostedListWidget::~PostedListWidget()
 	processSettings(false);
 }
 
-void PostedListWidget::updateDisplay(bool complete)
-{
-	std::cerr << "rsPosted->updateDisplay()";
-	std::cerr << std::endl;
-
-	if (complete) {
-		/* Fill complete */
-		requestGroupData();
-		requestPosts();
-		return;
-	}
-
-	if (mPostedId.isNull()) {
-		return;
-	}
-
-	bool updateGroup = false;
-
-	const std::list<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), mPostedId) != grpIdsMeta.end()) {
-		updateGroup = true;
-	}
-
-	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
-	if (!mPostedId.isNull() && std::find(grpIds.begin(), grpIds.end(), mPostedId) != grpIds.end()) {
-		updateGroup = true;
-		/* Do we need to fill all posts? */
-		requestPosts();
-	} else {
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
-		getAllMsgIds(msgs);
-		if (!msgs.empty())
-		{
-			std::cerr << "rsPosted->msgsChanged():";
-			std::cerr << std::endl;
-
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit;
-			mit = msgs.find(mPostedId);
-			if(mit != msgs.end())
-			{
-				std::cerr << "current Group -> updating Displayed Items";
-				std::cerr << std::endl;
-				updateDisplayedItems(mit->second);
-			}
-		}
-	}
-
-	if (updateGroup) {
-		requestGroupData();
-	}
-}
-
 void PostedListWidget::processSettings(bool load)
 {
 //	Settings->beginGroup(QString("PostedListWidget"));
@@ -179,38 +101,11 @@ void PostedListWidget::processSettings(bool load)
 //	Settings->endGroup();
 }
 
-void PostedListWidget::setGroupId(const RsGxsGroupId &groupId)
-{
-	if (mPostedId == groupId) {
-		if (!groupId.isNull()) {
-			return;
-		}
-	}
-
-	mPostedId = groupId;
-	mName = mPostedId.isNull () ? "" : tr("Loading");
-
-	emit groupChanged(this);
-
-	fillComplete();
-}
-
-QString PostedListWidget::groupName(bool withUnreadCount)
-{
-	QString name = mPostedId.isNull () ? tr("No name") : mName;
-
-//	if (withUnreadCount && mUnreadCount) {
-//		name += QString(" (%1)").arg(mUnreadCount);
-//	}
-
-	return name;
-}
-
 QIcon PostedListWidget::groupIcon()
 {
-//	if (mStateHelper->isLoading(TOKEN_TYPE_GROUP_DATA) || mStateHelper->isLoading(TOKEN_TYPE_POSTS)) {
+	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypePosts)) {
 //		return QIcon(":/images/kalarm.png");
-//	}
+	}
 
 //	if (mNewCount) {
 //		return QIcon(":/images/message-state-new.png");
@@ -247,14 +142,14 @@ void PostedListWidget::openComments(uint32_t /*feed_type*/, const RsGxsGroupId &
 
 void PostedListWidget::newPost()
 {
-	if (mPostedId.isNull())
+	if (groupId().isNull())
 		return;
 
-	if (!IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
+	if (!IS_GROUP_SUBSCRIBED(subscribeFlags())) {
 		return;
 	}
 
- 	PostedCreatePostDialog *cp = new PostedCreatePostDialog(mPostedQueue, rsPosted, mPostedId, this);
+ 	PostedCreatePostDialog *cp = new PostedCreatePostDialog(mTokenQueue, rsPosted, groupId(), this);
 	cp->show();
 
 	/* window will destroy itself! */
@@ -290,7 +185,7 @@ void PostedListWidget::updateShowText()
 
 void PostedListWidget::getRankings()
 {
-	if (mPostedId.isNull())
+	if (groupId().isNull())
 		return;
 
 	std::cerr << "PostedListWidget::getRankings()";
@@ -368,50 +263,7 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 
 	uint32_t token;
 	rsPosted->createVote(token, vote);
-	mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_VOTE);
-}
-
-/*****************************************************************************************/
-
-void PostedListWidget::updateDisplayedItems(const std::vector<RsGxsMessageId> &msgIds)
-{
-	mPostedQueue->cancelActiveRequestTokens(TOKEN_USER_TYPE_POST_MOD);
-
-	if (mPostedId.isNull()) {
-		mStateHelper->setActive(TOKEN_USER_TYPE_POST, false);
-		mStateHelper->setLoading(TOKEN_USER_TYPE_POST, false);
-		mStateHelper->clear(TOKEN_USER_TYPE_POST);
-		emit groupChanged(this);
-		return;
-	}
-
-	if (msgIds.empty()) {
-		return;
-	}
-
-	mStateHelper->setLoading(TOKEN_USER_TYPE_POST, true);
-	emit groupChanged(this);
-
-	RsTokReqOptions opts;
-
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-
-	GxsMsgReq msgs;
-	msgs[mPostedId] = msgIds;
-
-	std::cerr << "PostedListWidget::updateDisplayedItems(" << mPostedId << ")";
-	std::cerr << std::endl;
-
-	std::vector<RsGxsMessageId>::const_iterator it;
-	for(it = msgIds.begin(); it != msgIds.end(); it++)
-	{
-		std::cerr << "\t\tMsgId: " << *it;
-		std::cerr << std::endl;
-	}
-
-	uint32_t token;
-	mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgs, TOKEN_USER_TYPE_POST_MOD);
+	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, mTokenTypeVote);
 }
 
 void PostedListWidget::createNewGxsId()
@@ -421,6 +273,8 @@ void PostedListWidget::createNewGxsId()
 	dlg.exec();
 	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }
+
+/*****************************************************************************************/
 
 void PostedListWidget::acknowledgeVoteMsg(const uint32_t &token)
 {
@@ -437,76 +291,9 @@ void PostedListWidget::loadVoteData(const uint32_t &/*token*/)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void PostedListWidget::requestGroupData()
-{
-#ifdef DEBUG_POSTED
-	std::cerr << "PostedListWidget::requestGroupData()";
-	std::cerr << std::endl;
-#endif
-
-	mSubscribeFlags = 0;
-
-	mPostedQueue->cancelActiveRequestTokens(TOKEN_USER_TYPE_TOPIC);
-
-	if (mPostedId.isNull()) {
-		mStateHelper->setActive(TOKEN_USER_TYPE_TOPIC, false);
-		mStateHelper->setLoading(TOKEN_USER_TYPE_TOPIC, false);
-		mStateHelper->clear(TOKEN_USER_TYPE_TOPIC);
-
-		emit groupChanged(this);
-
-		return;
-	}
-
-	mStateHelper->setLoading(TOKEN_USER_TYPE_TOPIC, true);
-	emit groupChanged(this);
-
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mPostedId);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	uint32_t token;
-	mPostedQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, TOKEN_USER_TYPE_TOPIC);
-}
-
-void PostedListWidget::loadGroupData(const uint32_t &token)
-{
-	std::cerr << "PostedListWidget::loadGroupData()";
-	std::cerr << std::endl;
-
-	std::vector<RsPostedGroup> groups;
-	rsPosted->getGroupData(token, groups);
-
-	mStateHelper->setLoading(TOKEN_USER_TYPE_TOPIC, false);
-
-	if (groups.size() == 1)
-	{
-		insertPostedDetails(groups[0]);
-	}
-	else
-	{
-		std::cerr << "PostedListWidget::loadGroupData() ERROR Invalid Number of Groups...";
-		std::cerr << std::endl;
-
-		mStateHelper->setActive(TOKEN_USER_TYPE_TOPIC, false);
-		mStateHelper->clear(TOKEN_USER_TYPE_TOPIC);
-	}
-
-	emit groupChanged(this);
-}
-
 void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 {
-	mStateHelper->setActive(TOKEN_USER_TYPE_TOPIC, true);
-
-	mSubscribeFlags = group.mMeta.mSubscribeFlags;
-
-	/* set name */
-	mName = QString::fromUtf8(group.mMeta.mGroupName.c_str());
-
-	if (mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
+	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
 		mStateHelper->setWidgetEnabled(ui->submitPostButton, true);
 	}
@@ -515,85 +302,13 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 		mStateHelper->setWidgetEnabled(ui->submitPostButton, false);
 	}
 
-//	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mSubscribeFlags));
+//	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 }
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
-
-void PostedListWidget::requestPosts()
-{
-	std::cerr << "PostedListWidget::loadCurrentForumThreads(" << mPostedId << ")";
-	std::cerr << std::endl;
-
-	clearPosts();
-
-	mPostedQueue->cancelActiveRequestTokens(TOKEN_USER_TYPE_POST);
-
-	if (mPostedId.isNull())
-	{
-		std::cerr << "PostedListWidget::loadCurrentForumThreads() Empty GroupId .. ignoring Req";
-		std::cerr << std::endl;
-
-		mStateHelper->setActive(TOKEN_USER_TYPE_POST, false);
-		mStateHelper->setLoading(TOKEN_USER_TYPE_POST, false);
-		mStateHelper->clear(TOKEN_USER_TYPE_POST);
-		emit groupChanged(this);
-		return;
-	}
-
-	mStateHelper->setLoading(TOKEN_USER_TYPE_POST, true);
-	emit groupChanged(this);
-
-	/* initiate loading */
-	RsTokReqOptions opts;
-
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-	
-	std::list<RsGxsGroupId> grpIds;
-	grpIds.push_back(mPostedId);
-
-	std::cerr << "PostedListWidget::requestGroupThreadData_InsertThreads(" << mPostedId << ")";
-	std::cerr << std::endl;
-
-	uint32_t token;
-	mPostedQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, TOKEN_USER_TYPE_POST);
-}
-
-void PostedListWidget::acknowledgePostMsg(const uint32_t &token)
-{
-	RsGxsGrpMsgIdPair msgId;
-
-	// just acknowledge, don't load anything
-	rsPosted->acknowledgeMsg(token, msgId);
-}
-
-void PostedListWidget::loadPostData(const uint32_t &token)
-{
-	std::cerr << "PostedListWidget::loadGroupThreadData_InsertThreads()";
-	std::cerr << std::endl;
-
-	mStateHelper->setActive(TOKEN_USER_TYPE_POST, true);
-	clearPosts();
-
-	std::vector<RsPostedPost> posts;
-	rsPosted->getPostData(token, posts);
-	std::vector<RsPostedPost>::iterator vit;
-
-	for(vit = posts.begin(); vit != posts.end(); vit++)
-	{
-		RsPostedPost& p = *vit;
-		loadPost(p);
-	}
-
-	applyRanking();
-
-	mStateHelper->setLoading(TOKEN_USER_TYPE_POST, false);
-	emit groupChanged(this);
-}
 
 void PostedListWidget::loadPost(const RsPostedPost &post)
 {
@@ -602,13 +317,20 @@ void PostedListWidget::loadPost(const RsPostedPost &post)
 	mPosts.insert(post.mMeta.mMsgId, item);
 	//QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 	//alayout->addWidget(item);
-	mPostList.push_back(item);
+	mPostItems.push_back(item);
 }
 
-static bool CmpPIHot(const PostedItem *a, const PostedItem *b)
+static bool CmpPIHot(const GxsFeedItem *a, const GxsFeedItem *b)
 {
-	const RsPostedPost &postA = a->getPost();
-	const RsPostedPost &postB = b->getPost();
+	const PostedItem *aa = dynamic_cast<const PostedItem*>(a);
+	const PostedItem *bb = dynamic_cast<const PostedItem*>(b);
+
+	if (!aa || !bb) {
+		return true;
+	}
+
+	const RsPostedPost &postA = aa->getPost();
+	const RsPostedPost &postB = bb->getPost();
 
 	if (postA.mHotScore == postB.mHotScore)
 	{
@@ -618,10 +340,17 @@ static bool CmpPIHot(const PostedItem *a, const PostedItem *b)
 	return (postA.mHotScore > postB.mHotScore);
 }
 
-static bool CmpPITop(const PostedItem *a, const PostedItem *b)
+static bool CmpPITop(const GxsFeedItem *a, const GxsFeedItem *b)
 {
-	const RsPostedPost &postA = a->getPost();
-	const RsPostedPost &postB = b->getPost();
+	const PostedItem *aa = dynamic_cast<const PostedItem*>(a);
+	const PostedItem *bb = dynamic_cast<const PostedItem*>(b);
+
+	if (!aa || !bb) {
+		return true;
+	}
+
+	const RsPostedPost &postA = aa->getPost();
+	const RsPostedPost &postB = bb->getPost();
 
 	if (postA.mTopScore == postB.mTopScore)
 	{
@@ -631,9 +360,16 @@ static bool CmpPITop(const PostedItem *a, const PostedItem *b)
 	return (postA.mTopScore > postB.mTopScore);
 }
 
-static bool CmpPINew(const PostedItem *a, const PostedItem *b)
+static bool CmpPINew(const GxsFeedItem *a, const GxsFeedItem *b)
 {
-	return (a->getPost().mNewScore > b->getPost().mNewScore);
+	const PostedItem *aa = dynamic_cast<const PostedItem*>(a);
+	const PostedItem *bb = dynamic_cast<const PostedItem*>(b);
+
+	if (!aa || !bb) {
+		return true;
+	}
+
+	return (aa->getPost().mNewScore > bb->getPost().mNewScore);
 }
 
 void PostedListWidget::applyRanking()
@@ -651,17 +387,17 @@ void PostedListWidget::applyRanking()
 		case RsPosted::HotRankType:
 			std::cerr << "PostedListWidget::applyRanking() HOT";
 			std::cerr << std::endl;
-			mPostList.sort(CmpPIHot);
+			qSort(mPostItems.begin(), mPostItems.end(), CmpPIHot);
 			break;
 		case RsPosted::NewRankType:
 			std::cerr << "PostedListWidget::applyRanking() NEW";
 			std::cerr << std::endl;
-			mPostList.sort(CmpPINew);
+			qSort(mPostItems.begin(), mPostItems.end(), CmpPINew);
 			break;
 		case RsPosted::TopRankType:
 			std::cerr << "PostedListWidget::applyRanking() TOP";
 			std::cerr << std::endl;
-			mPostList.sort(CmpPITop);
+			qSort(mPostItems.begin(), mPostItems.end(), CmpPITop);
 			break;
 	}
 	mLastSortMethod = mSortMethod;
@@ -673,10 +409,12 @@ void PostedListWidget::applyRanking()
 	QLayout *alayout = ui->scrollAreaWidgetContents->layout();
 	int counter = 0;
 	time_t min_ts = 0;
-	std::list<PostedItem *>::iterator it;
-	for(it = mPostList.begin(); it != mPostList.end(); it++)
+	foreach (GxsFeedItem *feedItem, mPostItems)
 	{
-		PostedItem *item = (*it);
+		PostedItem *item = dynamic_cast<PostedItem*>(feedItem);
+		if (!item) {
+			continue;
+		}
 		std::cerr << "PostedListWidget::applyRanking() Item: " << item;
 		std::cerr << std::endl;
 		
@@ -720,47 +458,9 @@ void PostedListWidget::applyRanking()
 
 void PostedListWidget::clearPosts()
 {
-	std::cerr << "PostedListWidget::clearPosts()" << std::endl;
-
-	std::list<PostedItem *> postedItems;
-	std::list<PostedItem *>::iterator pit;
-
-	QLayout *alayout = ui->scrollAreaWidgetContents->layout();
-	int count = alayout->count();
-	for(int i = 0; i < count; i++)
-	{
-		QLayoutItem *litem = alayout->itemAt(i);
-		if (!litem)
-		{
-			std::cerr << "PostedListWidget::clearPosts() missing litem";
-			std::cerr << std::endl;
-			continue;
-		}
-
-		PostedItem *item = dynamic_cast<PostedItem *>(litem->widget());
-		if (item)
-		{
-			std::cerr << "PostedListWidget::clearPosts() item: " << item;
-			std::cerr << std::endl;
-
-			postedItems.push_back(item);
-		}
-		else
-		{
-			std::cerr << "PostedListWidget::clearPosts() Found Child, which is not a PostedItem???";
-			std::cerr << std::endl;
-		}
-	}
-
-	for(pit = postedItems.begin(); pit != postedItems.end(); pit++)
-	{
-		PostedItem *item = *pit;
-		alayout->removeWidget(item);
-		delete item;
-	}
+	GxsMessageFramePostWidget::clearPosts();
 
 	mPosts.clear();
-	mPostList.clear();
 }
 
 void PostedListWidget::shallowClearPosts()
@@ -804,22 +504,6 @@ void PostedListWidget::shallowClearPosts()
 	}
 }
 
-void PostedListWidget::setAllMessagesRead(bool read)
-{
-//	if (mPostedId.isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
-//		return;
-//	}
-
-//	QList<GxsChannelPostItem *>::iterator mit;
-//	for (mit = mChannelPostItems.begin(); mit != mChannelPostItems.end(); ++mit) {
-//		GxsChannelPostItem *item = *mit;
-//		RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
-
-//		uint32_t token;
-//		rsGxsChannels->setMessageReadStatus(token, msgPair, read);
-//	}
-}
-
 //void PostedListWidget::subscribeGroup(bool subscribe)
 //{
 //	if (mChannelId.isNull()) {
@@ -831,15 +515,52 @@ void PostedListWidget::setAllMessagesRead(bool read)
 ////	mChannelQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
 //}
 
-void PostedListWidget::updateCurrentDisplayComplete(const uint32_t &token)
-{
-	std::cerr << "PostedListWidget::updateCurrentDisplayComplete()";
-	std::cerr << std::endl;
+//void PostedListWidget::acknowledgeSubscribeChange(const uint32_t &token)
+//{
+//	std::cerr << "PostedListWidget::acknowledgeSubscribeChange()";
+//	std::cerr << std::endl;
 
+//	std::vector<RsPostedPost> posts;
+//	RsGxsGroupId groupId;
+//	rsPosted->acknowledgeGrp(token, groupId);
+
+//	insertGroups();
+//}
+
+bool PostedListWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)
+{
+	std::vector<RsPostedGroup> groups;
+	rsPosted->getGroupData(token, groups);
+
+	if (groups.size() == 1)
+	{
+		insertPostedDetails(groups[0]);
+		metaData = groups[0].mMeta;
+		return true;
+	}
+
+	return false;
+}
+
+void PostedListWidget::insertPosts(const uint32_t &token)
+{
 	std::vector<RsPostedPost> posts;
 	rsPosted->getPostData(token, posts);
 
-	mStateHelper->setActive(TOKEN_USER_TYPE_POST, true);
+	std::vector<RsPostedPost>::iterator vit;
+	for(vit = posts.begin(); vit != posts.end(); vit++)
+	{
+		RsPostedPost& p = *vit;
+		loadPost(p);
+	}
+
+	applyRanking();
+}
+
+void PostedListWidget::insertRelatedPosts(const uint32_t &token)
+{
+	std::vector<RsPostedPost> posts;
+	rsPosted->getRelatedPosts(token, posts);
 
 	std::vector<RsPostedPost>::iterator vit;
 	for(vit = posts.begin(); vit != posts.end(); vit++)
@@ -871,22 +592,15 @@ void PostedListWidget::updateCurrentDisplayComplete(const uint32_t &token)
 	}
 
 	applyRanking();
-
-	mStateHelper->setLoading(TOKEN_USER_TYPE_POST, false);
-	emit groupChanged(this);
 }
 
-//void PostedListWidget::acknowledgeSubscribeChange(const uint32_t &token)
-//{
-//	std::cerr << "PostedListWidget::acknowledgeSubscribeChange()";
-//	std::cerr << std::endl;
+void PostedListWidget::setMessageRead(GxsFeedItem *item, bool read)
+{
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
 
-//	std::vector<RsPostedPost> posts;
-//	RsGxsGroupId groupId;
-//	rsPosted->acknowledgeGrp(token, groupId);
-
-//	insertGroups();
-//}
+	uint32_t token;
+	rsPosted->setMessageReadStatus(token, msgPair, read);
+}
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -897,58 +611,21 @@ void PostedListWidget::loadRequest(const TokenQueue *queue, const TokenRequest &
 	std::cerr << "PostedListWidget::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
 
-	if (queue == mPostedQueue)
+	if (queue == mTokenQueue)
 	{
 		/* now switch on req */
-		switch(req.mUserType)
-		{
-			case TOKEN_USER_TYPE_TOPIC:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadGroupData(req.mToken);
-						break;
-					default:
-						std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
-						break;
-				}
-				break;
-			case TOKEN_USER_TYPE_POST:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_ACK:
-						acknowledgePostMsg(req.mToken);
-						break;
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadPostData(req.mToken);
-						break;
-					default:
-						std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
-						break;
-				}
-				break;
-			case TOKEN_USER_TYPE_VOTE:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_ACK:
-						acknowledgeVoteMsg(req.mToken);
-						break;
-					default:
-						std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
-						break;
-				}
-				break;
-			case TOKEN_USER_TYPE_POST_MOD:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_DATA:
-						updateCurrentDisplayComplete(req.mToken);
-						break;
-					default:
-						std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
-						break;
-				}
-				break;
+		if (req.mUserType == mTokenTypeVote) {
+			switch(req.mAnsType)
+			{
+				case RS_TOKREQ_ANSTYPE_ACK:
+					acknowledgeVoteMsg(req.mToken);
+					break;
+				default:
+					std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
+					break;
+			}
+			return;
+		}
 //			case TOKEN_USER_TYPE_POST_RANKINGS:
 //				switch(req.mAnsType)
 //				{
@@ -962,10 +639,7 @@ void PostedListWidget::loadRequest(const TokenQueue *queue, const TokenRequest &
 //			case TOKEN_USER_TYPE_SUBSCRIBE_CHANGE:
 //				acknowledgeSubscribeChange(req.mToken);
 //				break;
-			default:
-				std::cerr << "PostedListWidget::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
-		}
 	}
+
+	GxsMessageFramePostWidget::loadRequest(queue, req);
 }

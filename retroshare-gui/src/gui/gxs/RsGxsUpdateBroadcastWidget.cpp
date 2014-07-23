@@ -6,6 +6,8 @@ RsGxsUpdateBroadcastWidget::RsGxsUpdateBroadcastWidget(RsGxsIfaceHelper *ifaceIm
 {
 	mBase = new RsGxsUpdateBroadcastBase(ifaceImpl, this);
 	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
+
+	mInterfaceHelper = ifaceImpl;
 }
 
 RsGxsUpdateBroadcastWidget::~RsGxsUpdateBroadcastWidget()

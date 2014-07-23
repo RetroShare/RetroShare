@@ -31,6 +31,8 @@ public:
 	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIdsMeta();
 	void getAllMsgIds(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds);
 
+	RsGxsIfaceHelper *interfaceHelper() { return mInterfaceHelper; }
+
 protected:
 	virtual void showEvent(QShowEvent *event);
 
@@ -42,4 +44,5 @@ private slots:
 
 private:
 	RsGxsUpdateBroadcastBase *mBase;
+	RsGxsIfaceHelper *mInterfaceHelper;
 };

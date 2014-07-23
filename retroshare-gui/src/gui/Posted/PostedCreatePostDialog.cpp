@@ -24,7 +24,6 @@
 #include <QMessageBox>
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
-#include "PostedUserTypes.h"
 
 #include "util/TokenQueue.h"
 #include "gui/Identity/IdDialog.h"
@@ -89,7 +88,7 @@ void PostedCreatePostDialog::createPost()
 
 	uint32_t token;
 	mPosted->createPost(token, post);
-	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
+//	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
 
 	accept();
 }
