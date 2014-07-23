@@ -73,8 +73,7 @@ private slots:
 
 	void getRankings();
 
-//	void subscribeTopic();
-//	void unsubscribeTopic();
+	void subscribeGroup(bool subscribe);
 
 	void showNext();
 	void showPrev();

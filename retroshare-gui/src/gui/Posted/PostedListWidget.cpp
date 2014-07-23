@@ -50,13 +50,14 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	mStateHelper->addWidget(mTokenTypePosts, ui->topSortButton);
 
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->submitPostButton);
-//	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
+	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
 	connect(ui->hotSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui->newSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui->topSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(showNext()));
 	connect(ui->prevButton, SIGNAL(clicked()), this, SLOT(showPrev()));
+	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
 
 	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
@@ -274,6 +275,17 @@ void PostedListWidget::createNewGxsId()
 	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }
 
+void PostedListWidget::subscribeGroup(bool subscribe)
+{
+	if (groupId().isNull()) {
+		return;
+	}
+
+	uint32_t token;
+	rsPosted->subscribeToGroup(token, groupId(), subscribe);
+//	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
+}
+
 /*****************************************************************************************/
 
 void PostedListWidget::acknowledgeVoteMsg(const uint32_t &token)
@@ -302,7 +314,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 		mStateHelper->setWidgetEnabled(ui->submitPostButton, false);
 	}
 
-//	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 }
 
 /*********************** **** **** **** ***********************/
@@ -504,29 +516,6 @@ void PostedListWidget::shallowClearPosts()
 	}
 }
 
-//void PostedListWidget::subscribeGroup(bool subscribe)
-//{
-//	if (mChannelId.isNull()) {
-//		return;
-//	}
-
-//	uint32_t token;
-//	rsGxsChannels->subscribeToGroup(token, mChannelId, subscribe);
-////	mChannelQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
-//}
-
-//void PostedListWidget::acknowledgeSubscribeChange(const uint32_t &token)
-//{
-//	std::cerr << "PostedListWidget::acknowledgeSubscribeChange()";
-//	std::cerr << std::endl;
-
-//	std::vector<RsPostedPost> posts;
-//	RsGxsGroupId groupId;
-//	rsPosted->acknowledgeGrp(token, groupId);
-
-//	insertGroups();
-//}
-
 bool PostedListWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)
 {
 	std::vector<RsPostedGroup> groups;
@@ -636,9 +625,6 @@ void PostedListWidget::loadRequest(const TokenQueue *queue, const TokenRequest &
 //						std::cerr << "Error, unexpected anstype:" << req.mAnsType << std::endl;
 //						break;
 //				}
-//			case TOKEN_USER_TYPE_SUBSCRIBE_CHANGE:
-//				acknowledgeSubscribeChange(req.mToken);
-//				break;
 	}
 
 	GxsMessageFramePostWidget::loadRequest(queue, req);
