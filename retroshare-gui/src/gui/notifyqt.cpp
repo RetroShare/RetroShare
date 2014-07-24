@@ -273,7 +273,6 @@ bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, 
 	dialog.setWindowTitle(tr("PGP key passphrase"));
 	dialog.setLabelText((prev_is_bad ? QString("%1\n\n").arg(tr("Wrong password !")) : QString()) + QString("%1:\n    %2").arg(tr("Please enter your PGP password for key"), QString::fromUtf8(key_details.c_str())));
 	dialog.setTextEchoMode(QLineEdit::Password);
-	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
 	dialog.setModal(true);
 
 	int ret = dialog.exec();
@@ -302,7 +301,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	text += "</UL>" ;
 
 	dialog.setText(text) ;
-	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
+	dialog.setWindowIcon(QIcon(":/images/logo/logo_32.png"));
 	dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No) ;
 
 	int ret = dialog.exec();

@@ -205,7 +205,6 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const ColFileInfo& co
 static void showErrorBox(const QString& fileName, const QString& error)
 {
 	QMessageBox mb(QMessageBox::Warning, QObject::tr("Failed to process collection file"), QObject::tr("The collection file %1 could not be opened.\nReported error is: \n\n%2").arg(fileName).arg(error), QMessageBox::Ok);
-	mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 	mb.exec();
 }
 

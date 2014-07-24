@@ -58,12 +58,12 @@ uint32_t PostedEditEnabledFlags = PostedCreateEnabledFlags;
 uint32_t PostedEditDefaultsFlags = PostedCreateDefaultsFlags;
 
 PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-	:GxsGroupDialog(tokenQueue, PostedCreateEnabledFlags, PostedCreateDefaultsFlags, parent)
+    : GxsGroupDialog(tokenQueue, PostedCreateEnabledFlags, PostedCreateDefaultsFlags, parent)
 {
 }
 
 PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
-:GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, PostedEditEnabledFlags, PostedEditDefaultsFlags, parent)
+    : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, PostedEditEnabledFlags, PostedEditDefaultsFlags, parent)
 {
 }
 

@@ -26,7 +26,6 @@
 #include "gui/common/StatusDefs.h"
 #include "rshare.h"
 
-#define IMAGE_WINDOW         ":/images/rstray3.png"
 #define IMAGE_TYPING         ":/images/typing.png"
 #define IMAGE_CHAT           ":/images/chat.png"
 

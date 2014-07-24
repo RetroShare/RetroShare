@@ -35,7 +35,7 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsnotify.h>
 
-#define IMAGE_WINDOW         ":/images/rstray3.png"
+
 #define IMAGE_TYPING         ":/images/typing.png"
 #define IMAGE_CHAT           ":/images/chat.png"
 
@@ -100,8 +100,6 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags f
 		/* signal toggled is called */
 		ui.actionSetOnTop->setChecked(Settings->valueFromGroup("ChatWindow", "OnTop", false).toBool());
 	}
-
-	setWindowIcon(QIcon(IMAGE_WINDOW));
 }
 
 /** Destructor. */
@@ -285,7 +283,7 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 		if (cd && cd->hasPeerStatus()) {
 			icon = QIcon(StatusDefs::imageIM(cd->getPeerStatus()));
 		} else {
-			icon = QIcon(IMAGE_WINDOW);
+			icon = qApp->windowIcon();
 		}
 	}
 

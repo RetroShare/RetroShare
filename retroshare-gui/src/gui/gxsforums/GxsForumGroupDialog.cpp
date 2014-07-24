@@ -58,12 +58,12 @@ const uint32_t ForumEditEnabledFlags = ForumCreateEnabledFlags;
 const uint32_t ForumEditDefaultsFlags = ForumCreateDefaultsFlags;
 
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-	:GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
+    : GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
 }
 
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
-:GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ForumEditEnabledFlags, ForumEditDefaultsFlags, parent)
+    : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ForumEditEnabledFlags, ForumEditDefaultsFlags, parent)
 {
 }
 
@@ -72,18 +72,17 @@ void GxsForumGroupDialog::initUi()
 	switch (mode())
 	{
 	case MODE_CREATE:
-                setUiText(UITYPE_SERVICE_HEADER, tr("Create New Forum"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Forum"));
 		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Forum"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Forum"));
-
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Forum"));
 		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Forum"));
 		break;
-        }
+	}
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Forum Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Forum Admins"));

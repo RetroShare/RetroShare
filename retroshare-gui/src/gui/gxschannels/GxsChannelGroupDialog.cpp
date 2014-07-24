@@ -58,12 +58,12 @@ const uint32_t ChannelEditEnabledFlags = ChannelCreateEnabledFlags;
 const uint32_t ChannelEditDefaultsFlags = ChannelCreateDefaultsFlags;
 
 GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-	:GxsGroupDialog(tokenQueue, ChannelCreateEnabledFlags, ChannelCreateDefaultsFlags, parent)
+    : GxsGroupDialog(tokenQueue, ChannelCreateEnabledFlags, ChannelCreateDefaultsFlags, parent)
 {
 }
 
 GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
-:GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ChannelEditEnabledFlags, ChannelEditDefaultsFlags, parent)
+    : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ChannelEditEnabledFlags, ChannelEditDefaultsFlags, parent)
 {
 }
 
@@ -97,11 +97,11 @@ QPixmap GxsChannelGroupDialog::serviceImage()
 	break;
 		case MODE_SHOW:
 		return QPixmap(":/images/channels.png");
-		break;
 	case MODE_EDIT:
 		return QPixmap(":/images/channels.png");
-		break;
 	}
+
+	return QPixmap();
 }
 
 bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)

@@ -1045,9 +1045,11 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->linksDialog;
 #endif
 		case Channels:
-                        return _instance->gxschannelDialog;
+			return _instance->gxschannelDialog;
 		case Forums:
-                        return _instance->gxsforumDialog;
+			return _instance->gxsforumDialog;
+		case Posted:
+			return _instance->postedDialog;
 #ifdef BLOGS
 		case Blogs:
 			return _instance->blogsFeed;
@@ -1452,7 +1454,6 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 	if(!already_warned)
 	{
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
-		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 
 		QCheckBox *checkbox = new QCheckBox(tr("Don't ask me again")) ;
 		mb.layout()->addWidget(checkbox) ;
@@ -1475,13 +1476,11 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
         // QUrl can't handle the old RetroShare link format properly
         if (url.host().isEmpty()) {
             QMessageBox mb("RetroShare", tr("It seems to be an old RetroShare link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
-            mb.setWindowIcon(QIcon(":/images/rstray3.png"));
             mb.exec();
             return;
         }
 
         QMessageBox mb("RetroShare", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
-        mb.setWindowIcon(QIcon(":/images/rstray3.png"));
         mb.exec();
         return;
     }

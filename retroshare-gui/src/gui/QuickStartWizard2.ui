@@ -28,10 +28,6 @@
   <property name="windowTitle">
    <string>Quick Start Wizard</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
-  </property>
   <property name="modal">
    <bool>true</bool>
   </property>

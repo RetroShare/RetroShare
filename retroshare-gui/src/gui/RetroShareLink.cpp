@@ -1056,7 +1056,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			question += "<br><br>" + content + "</body></html>";
 
 			QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
-			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 			if (mb.exec() == QMessageBox::No) {
 				return 0;
 			}
@@ -1497,7 +1496,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	if (result.isEmpty() == false) {
 		QMessageBox mb(QObject::tr("Result"), "<html><body>" + result + "</body></html>", QMessageBox::Information, QMessageBox::Ok, 0, 0);
-		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 		mb.exec();
 	}
 

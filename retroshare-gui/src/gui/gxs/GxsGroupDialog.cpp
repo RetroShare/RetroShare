@@ -37,26 +37,26 @@
 #include <iostream>
 
 // Control of Publish Signatures.
-#define RSGXS_GROUP_SIGN_PUBLISH_MASK  		0x000000ff
-#define RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED 	0x00000001
-#define RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED 	0x00000002
-#define RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD	0x00000004
-#define RSGXS_GROUP_SIGN_PUBLISH_NONEREQ	0x00000008
+#define RSGXS_GROUP_SIGN_PUBLISH_MASK       0x000000ff
+#define RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED  0x00000001
+#define RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED  0x00000002
+#define RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD 0x00000004
+#define RSGXS_GROUP_SIGN_PUBLISH_NONEREQ    0x00000008
 
 // Author Signature.
-#define RSGXS_GROUP_SIGN_AUTHOR_MASK  		0x0000ff00
-#define RSGXS_GROUP_SIGN_AUTHOR_GPG 		0x00000100
-#define RSGXS_GROUP_SIGN_AUTHOR_REQUIRED 	0x00000200
-#define RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN	0x00000400
-#define RSGXS_GROUP_SIGN_AUTHOR_NONE		0x00000800
+#define RSGXS_GROUP_SIGN_AUTHOR_MASK        0x0000ff00
+#define RSGXS_GROUP_SIGN_AUTHOR_GPG         0x00000100
+#define RSGXS_GROUP_SIGN_AUTHOR_REQUIRED    0x00000200
+#define RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN 0x00000400
+#define RSGXS_GROUP_SIGN_AUTHOR_NONE        0x00000800
 
-#define GXSGROUP_NEWGROUPID		1
-#define GXSGROUP_LOADGROUP		2
-#define GXSGROUP_INTERNAL_LOADGROUP	3
+#define GXSGROUP_NEWGROUPID         1
+#define GXSGROUP_LOADGROUP          2
+#define GXSGROUP_INTERNAL_LOADGROUP 3
 
 /** Constructor */
 GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -67,7 +67,7 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, uint32_t enableFl
 }
 
 GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -82,21 +82,21 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *t
 void GxsGroupDialog::init()
 {
 	// connect up the buttons.
-	connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
-	connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
-	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
+	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
+	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
+	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
 
-	connect( ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
+	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
-	connect( ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
-	connect( ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
+	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
+	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
 	ui.typePublic->setChecked(true);
 	updateCircleOptions();
 
-	connect( ui.typePublic, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
-	connect( ui.typeGroup, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
-	connect( ui.typeLocal, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect(ui.typePublic, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect(ui.typeGroup, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect(ui.typeLocal, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
 
 	if (!ui.pubKeyShare_cb->isChecked())
 	{
@@ -111,16 +111,22 @@ void GxsGroupDialog::init()
 
 	/* Setup Reasonable Defaults */
 
-    ui.idChooser->loadIds(0,RsGxsId());
-    ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL,RsGxsCircleId());
-    ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL,RsGxsCircleId());
+	ui.idChooser->loadIds(0,RsGxsId());
+	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
+	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, RsGxsCircleId());
 
 	initMode();
+}
+
+QIcon GxsGroupDialog::serviceWindowIcon()
+{
+	return qApp->windowIcon();
 }
 
 void GxsGroupDialog::showEvent(QShowEvent*)
 {
 	ui.headerFrame->setHeaderImage(serviceImage());
+	setWindowIcon(serviceWindowIcon());
 
 	initUi();
 }
@@ -374,7 +380,6 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 		case GXS_CIRCLE_TYPE_EXTERNAL:
 			ui.typeGroup->setChecked(true);
 			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
-
 			break;
 		default:
 			std::cerr << "CreateCircleDialog::updateCircleGUI() INVALID mCircleType";
@@ -411,7 +416,6 @@ void GxsGroupDialog::submitGroup()
 
 		case MODE_EDIT:
 		{
-
 			editGroup();
 		}
 		break;
@@ -457,12 +461,12 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 	std::cerr << std::endl;
 
 	switch (ui.idChooser->getChosenId(meta.mAuthorId)) {
-		case GxsIdChooser::KnowId:
-		case GxsIdChooser::UnKnowId:
+	case GxsIdChooser::KnowId:
+	case GxsIdChooser::UnKnowId:
 		break;
-		case GxsIdChooser::NoId:
-		case GxsIdChooser::None:
-		default:
+	case GxsIdChooser::NoId:
+	case GxsIdChooser::None:
+	default:
 		return false;
 	}//switch (ui.idChooser->getChosenId(meta.mAuthorId))
 
@@ -494,10 +498,9 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 	std::cerr << " External: " << meta.mCircleId;
 	std::cerr << std::endl;
 
-
 	return true;
 }
-	
+
 void GxsGroupDialog::createGroup()
 {
 	std::cerr << "GxsGroupDialog::createGroup()";
@@ -545,7 +548,7 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_NONEREQ;
 	}
 
-// Author Signature.
+	// Author Signature.
 	if (ui.personal_pgp->isChecked()) {
 		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_GPG;
 	} else if (ui.personal_required->isChecked()) {
@@ -577,13 +580,13 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN) {
 		ui.personal_ifnopub->setChecked(true);
 	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_NONE) {
-			// Its the same... but not quite.
-			//ui.personal_noifpub->setChecked();
+		// Its the same... but not quite.
+		//ui.personal_noifpub->setChecked();
 	}
 
 	/* guess at comments */
-	if ((signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD)
-			&& (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN))
+	if ((signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD) &&
+	    (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN))
 	{
 		ui.comments_allowed->setChecked(true);
 	}

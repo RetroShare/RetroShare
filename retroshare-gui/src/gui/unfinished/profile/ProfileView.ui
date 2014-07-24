@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Profile View</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
-  </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
@@ -49,7 +45,7 @@ border-image: url(:/images/avatar_background.png);
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../images.qrc">:/images/user/personal64.png</pixmap>
+        <pixmap resource="../../images.qrc">:/images/user/personal64.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -186,7 +182,7 @@ p, li { white-space: pre-wrap; }
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../images.qrc">
+        <iconset resource="../../images.qrc">
          <normaloff>:/images/user/kuser24.png</normaloff>:/images/user/kuser24.png</iconset>
        </property>
        <property name="iconSize">
@@ -283,7 +279,7 @@ p, li { white-space: pre-wrap; }
       <string>Close Profile</string>
      </property>
      <property name="icon">
-      <iconset resource="../images.qrc">
+      <iconset resource="../../images.qrc">
        <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
      </property>
     </widget>
@@ -291,11 +287,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
+  <include location="../../images.qrc"/>
  </resources>
  <connections/>
 </ui>

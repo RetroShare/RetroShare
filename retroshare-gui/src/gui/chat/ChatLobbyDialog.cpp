@@ -266,7 +266,6 @@ void ChatLobbyDialog::changeNickname()
 	QInputDialog dialog;
 	dialog.setWindowTitle(tr("Change nick name"));
 	dialog.setLabelText(tr("Please enter your new nick name"));
-	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
 
 	std::string nickName;
 	rsMsgs->getNickNameForChatLobby(lobbyId, nickName);

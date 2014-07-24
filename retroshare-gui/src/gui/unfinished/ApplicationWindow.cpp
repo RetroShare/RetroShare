@@ -77,9 +77,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     //Settings->loadWidgetInformation(this);
 
-    // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
     QAction *action;

@@ -165,6 +165,7 @@ protected:
 
 	virtual void initUi() = 0;
 	virtual QPixmap serviceImage() = 0;
+	virtual QIcon serviceWindowIcon();
 
 	void setUiText(UiType uiType, const QString &text);
 
@@ -201,7 +202,6 @@ protected:
 	QString getDescription();
 
 private slots:
-
 	/* actions to take.... */
 	void cancelDialog();
 
@@ -246,7 +246,6 @@ private:
 	uint32_t mDefaultsFlags;
 
 protected:
-
 	/** Qt Designer generated object */
 	Ui::GxsGroupDialog ui;
 };

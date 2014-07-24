@@ -121,7 +121,6 @@ bool EventReceiver::sendRetroShareLink(const QString& link)
 			Q_UNUSED(link);
 
 			QMessageBox mb(QMessageBox::Critical, "RetroShare", QObject::tr("Start with a RetroShare link is only supported for Windows."), QMessageBox::Ok);
-			mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 			mb.exec();
 
 			result = false;

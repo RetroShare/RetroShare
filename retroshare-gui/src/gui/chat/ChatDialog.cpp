@@ -256,7 +256,6 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 
 		// more than one ssl ids online or all offline
 		QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one locations.\nPlease choose one of it to chat with."), QMessageBox::Ok);
-		mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 		mb.exec();
 	} else {
         getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);

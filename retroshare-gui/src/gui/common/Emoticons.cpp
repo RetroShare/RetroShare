@@ -134,7 +134,6 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
     smWidget->setAttribute( Qt::WA_DeleteOnClose);
     smWidget->setWindowTitle("Emoticons");
-    smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
     smWidget->setBaseSize(countPerLine*buttonWidth, rowCount*buttonHeight);
 
     //Warning: this part of code was taken from kadu instant messenger;

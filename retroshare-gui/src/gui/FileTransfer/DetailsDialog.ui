@@ -13,19 +13,15 @@
   <property name="windowTitle">
    <string>Details</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
-  </property>
   <layout class="QGridLayout">
    <item row="0" column="0" colspan="3">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="icon">
-       <iconset resource="images.qrc">
+       <iconset resource="../images.qrc">
         <normaloff>:/images/blockdevice.png</normaloff>:/images/blockdevice.png</iconset>
       </attribute>
       <attribute name="title">
@@ -45,7 +41,7 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="images.qrc">:/images/graph-downloaded.png</pixmap>
+              <pixmap resource="../images.qrc">:/images/graph-downloaded.png</pixmap>
              </property>
             </widget>
            </item>
@@ -66,7 +62,7 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="images.qrc">:/images/graph-downloading.png</pixmap>
+              <pixmap resource="../images.qrc">:/images/graph-downloading.png</pixmap>
              </property>
             </widget>
            </item>
@@ -87,7 +83,7 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="images.qrc">:/images/graph-notdownload.png</pixmap>
+              <pixmap resource="../images.qrc">:/images/graph-notdownload.png</pixmap>
              </property>
             </widget>
            </item>
@@ -121,7 +117,7 @@
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="images.qrc">:/images/graph-checking.png</pixmap>
+              <pixmap resource="../images.qrc">:/images/graph-checking.png</pixmap>
              </property>
             </widget>
            </item>
@@ -199,7 +195,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections>
   <connection>
