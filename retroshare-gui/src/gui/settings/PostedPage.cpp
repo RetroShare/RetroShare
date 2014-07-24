@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2014, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,38 +19,32 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "ForumPage.h"
+#include "PostedPage.h"
+#include "ui_PostedPage.h"
 #include "rsharesettings.h"
 
-ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags)
+PostedPage::PostedPage(QWidget * parent, Qt::WindowFlags flags)
+    : ConfigPage(parent, flags),
+      ui(new Ui::PostedPage)
 {
-	ui.setupUi(this);
+	ui->setupUi(this);
 	setAttribute(Qt::WA_QuitOnClose, false);
 }
 
-ForumPage::~ForumPage()
+PostedPage::~PostedPage()
 {
 }
 
 /** Saves the changes on this page */
-bool ForumPage::save(QString &/*errmsg*/)
+bool PostedPage::save(QString &/*errmsg*/)
 {
-	Settings->setForumMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
-	Settings->setForumExpandNewMessages(ui.expandNewMessages->isChecked());
-	Settings->setForumLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
-
-	ui.groupFrameSettingsWidget->saveSettings(GroupFrameSettings::Forum);
+	ui->groupFrameSettingsWidget->saveSettings(GroupFrameSettings::Posted);
 
 	return true;
 }
 
 /** Loads the settings for this page */
-void ForumPage::load()
+void PostedPage::load()
 {
-	ui.setMsgToReadOnActivate->setChecked(Settings->getForumMsgSetToReadOnActivate());
-	ui.expandNewMessages->setChecked(Settings->getForumExpandNewMessages());
-	ui.loadEmbeddedImages->setChecked(Settings->getForumLoadEmbeddedImages());
-
-	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Forum);
+	ui->groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Posted);
 }

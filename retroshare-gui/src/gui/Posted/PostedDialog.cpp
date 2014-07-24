@@ -27,8 +27,7 @@
 #include "PostedListWidget.h"
 #include "PostedUserNotify.h"
 //#include "gui/channels/ShareKey.h"
-//#include "gui/settings/rsharesettings.h"
-//#include "gui/notifyqt.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <retroshare/rsposted.h>
 
@@ -36,9 +35,6 @@
 PostedDialog::PostedDialog(QWidget *parent)
     : GxsGroupFrameDialog(rsPosted, parent)
 {
-//	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
-
-	settingsChanged();
 }
 
 PostedDialog::~PostedDialog()
@@ -96,12 +92,6 @@ QString PostedDialog::icon(IconType type)
 	}
 
 	return "";
-}
-
-void PostedDialog::settingsChanged()
-{
-	setSingleTab(true /*!Settings->getPostedOpenAllInNewTab()*/);
-	setHideTabBarWithOneTab(true /*Settings->getPostedHideTabBarWithOneTab()*/);
 }
 
 GxsGroupDialog *PostedDialog::createNewGroupDialog(TokenQueue *tokenQueue)

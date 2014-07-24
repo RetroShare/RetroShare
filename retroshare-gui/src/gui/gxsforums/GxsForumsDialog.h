@@ -41,11 +41,8 @@ public:
 	virtual UserNotify *getUserNotify(QObject *parent);
 
 protected:
-
-        RetroShareLink::enumType getLinkType();
-
-private slots:
-	void settingsChanged();
+	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
+	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Forum; }
 
 private:
 	/* GxsGroupFrameDialog */

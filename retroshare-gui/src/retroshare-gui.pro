@@ -420,9 +420,11 @@ HEADERS +=  rshare.h \
             gui/settings/TransferPage.h \
             gui/settings/ChatPage.h \
             gui/settings/ChannelPage.h \
+            gui/settings/PostedPage.h \
             gui/settings/RelayPage.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
+            gui/settings/GroupFrameSettingsWidget.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/DownloadToaster.h \
@@ -581,10 +583,12 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/SoundPage.ui \
             gui/settings/ChatPage.ui \
             gui/settings/ChannelPage.ui \
+            gui/settings/PostedPage.ui \
             gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
             gui/settings/GlobalRouterStatistics.ui \
             gui/settings/PluginItem.ui \
+            gui/settings/GroupFrameSettingsWidget.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \
             gui/toaster/DownloadToaster.ui \
@@ -783,9 +787,11 @@ SOURCES +=  main.cpp \
             gui/settings/TransferPage.cpp \
             gui/settings/ChatPage.cpp \
             gui/settings/ChannelPage.cpp \
+            gui/settings/PostedPage.cpp \
             gui/settings/RelayPage.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
+            gui/settings/GroupFrameSettingsWidget.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/dhtstatus.cpp \

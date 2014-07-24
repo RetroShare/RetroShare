@@ -32,9 +32,6 @@
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsChannels, parent)
 {
-	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
-
-	settingsChanged();
 }
 
 GxsChannelDialog::~GxsChannelDialog()
@@ -95,12 +92,6 @@ QString GxsChannelDialog::icon(IconType type)
 	}
 
 	return "";
-}
-
-void GxsChannelDialog::settingsChanged()
-{
-	setSingleTab(!Settings->getChannelOpenAllInNewTab());
-	setHideTabBarWithOneTab(Settings->getChannelHideTabBarWithOneTab());
 }
 
 GxsGroupDialog *GxsChannelDialog::createNewGroupDialog(TokenQueue *tokenQueue)

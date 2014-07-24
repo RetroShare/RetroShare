@@ -38,6 +38,7 @@
 #include "ChannelPage.h"
 #include "MessagePage.h"
 #include "ForumPage.h"
+#include "PostedPage.h"
 #include "PluginsPage.h"
 #include "ServicePermissionsPage.h"
 #include "rsharesettings.h"
@@ -143,6 +144,7 @@ RSettingsWin::initStackedWidget()
     addPage(new MessagePage());
     addPage(new ChannelPage());
     addPage(new ForumPage());
+	addPage(new PostedPage());
     addPage(new ChatPage());
     addPage(new AppearancePage());
     addPage(new SoundPage() );

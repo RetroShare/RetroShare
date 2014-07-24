@@ -138,6 +138,11 @@ void GxsGroupFrameDialog::initUi()
 	// load settings
 	mSettingsName = settingsGroupName();
 	processSettings(true);
+
+	if (groupFrameSettingsType() != GroupFrameSettings::Nothing) {
+		connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+		settingsChanged();
+	}
 }
 
 void GxsGroupFrameDialog::showEvent(QShowEvent *event)
@@ -175,6 +180,15 @@ void GxsGroupFrameDialog::processSettings(bool load)
 	ui->groupTreeWidget->processSettings(Settings, load);
 
 	Settings->endGroup();
+}
+
+void GxsGroupFrameDialog::settingsChanged()
+{
+	GroupFrameSettings groupFrameSettings;
+	if (Settings->getGroupFrameSettings(groupFrameSettingsType(), groupFrameSettings)) {
+		setSingleTab(!groupFrameSettings.mOpenAllInNewTab);
+		setHideTabBarWithOneTab(groupFrameSettings.mHideTabBarWithOneTab);
+	}
 }
 
 void GxsGroupFrameDialog::setSingleTab(bool singleTab)

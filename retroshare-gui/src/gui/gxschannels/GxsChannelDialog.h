@@ -43,9 +43,10 @@ public:
 	virtual UserNotify *getUserNotify(QObject *parent);
 
 protected:
-        RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Channel; }
+
 private slots:
-	void settingsChanged();
 	void toggleAutoDownload();
 
 private:

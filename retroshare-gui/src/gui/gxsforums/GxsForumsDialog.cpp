@@ -23,7 +23,6 @@
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
 #include "GxsForumUserNotify.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/channels/ShareKey.h"
 
@@ -31,9 +30,6 @@
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsForums, parent)
 {
-	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
-
-	settingsChanged();
 }
 
 GxsForumsDialog::~GxsForumsDialog()
@@ -74,11 +70,6 @@ QString GxsForumsDialog::text(TextType type)
 	return "";
 }
 
-RetroShareLink::enumType GxsForumsDialog::getLinkType()
-{
-    return RetroShareLink::TYPE_FORUM;
-}
-
 QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {
@@ -99,12 +90,6 @@ QString GxsForumsDialog::icon(IconType type)
 	}
 
 	return "";
-}
-
-void GxsForumsDialog::settingsChanged()
-{
-	setSingleTab(!Settings->getForumOpenAllInNewTab());
-	setHideTabBarWithOneTab(Settings->getForumHideTabBarWithOneTab());
 }
 
 GxsGroupDialog *GxsForumsDialog::createNewGroupDialog(TokenQueue *tokenQueue)

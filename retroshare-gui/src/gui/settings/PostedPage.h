@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2014, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,30 +19,35 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "ChannelPage.h"
-#include "rsharesettings.h"
+#ifndef POSTEDPAGE_H
+#define POSTEDPAGE_H
 
-ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags)
-{
-	ui.setupUi(this);
-	setAttribute(Qt::WA_QuitOnClose, false);
+#include <retroshare-gui/configpage.h>
+
+namespace Ui {
+class PostedPage;
 }
 
-ChannelPage::~ChannelPage()
+class PostedPage : public ConfigPage
 {
-}
+	Q_OBJECT
 
-/** Saves the changes on this page */
-bool ChannelPage::save(QString &/*errmsg*/)
-{
-	ui.groupFrameSettingsWidget->saveSettings(GroupFrameSettings::Channel);
+public:
+	PostedPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	~PostedPage();
 
-	return true;
-}
+	/** Saves the changes on this page */
+	virtual bool save(QString &errmsg);
+	/** Loads the settings for this page */
+	virtual void load();
 
-/** Loads the settings for this page */
-void ChannelPage::load()
-{
-	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
-}
+	virtual QPixmap iconPixmap() const { return QPixmap(":/images/posted_32.png") ; }
+	virtual QString pageName() const { return tr("Posted") ; }
+	virtual QString helpText() const { return ""; }
+
+private:
+	Ui::PostedPage *ui;
+};
+
+#endif // !POSTEDPAGE_H
+

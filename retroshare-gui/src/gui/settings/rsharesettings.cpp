@@ -983,44 +983,44 @@ void RshareSettings::setForumExpandNewMessages(bool value)
     setValueToGroup("ForumDialog", "ExpandNewMessages", value);
 }
 
-bool RshareSettings::getForumOpenAllInNewTab()
+static QString groupFrameSettingsTypeToString(GroupFrameSettings::Type type)
 {
-    return valueFromGroup("ForumDialog", "OpenAllInNewTab", false).toBool();
+	switch (type) {
+	case GroupFrameSettings::Nothing:
+		return "";
+	case GroupFrameSettings::Forum:
+		return "Forum";
+	case GroupFrameSettings::Channel:
+		return "Channel";
+	case GroupFrameSettings::Posted:
+		return "Posted";
+	}
+
+	return "";
 }
 
-void RshareSettings::setForumOpenAllInNewTab(bool value)
+bool RshareSettings::getGroupFrameSettings(GroupFrameSettings::Type type, GroupFrameSettings &groupFrameSettings)
 {
-    setValueToGroup("ForumDialog", "OpenAllInNewTab", value);
+	QString group = groupFrameSettingsTypeToString(type);
+	if (group.isEmpty()) {
+		return false;
+	}
+
+	groupFrameSettings.mOpenAllInNewTab = valueFromGroup(group, "OpenAllInNewTab", false).toBool();
+	groupFrameSettings.mHideTabBarWithOneTab = valueFromGroup(group, "HideTabBarWithOneTab", true).toBool();
+
+	return true;
 }
 
-bool RshareSettings::getForumHideTabBarWithOneTab()
+void RshareSettings::setGroupFrameSettings(GroupFrameSettings::Type type, const GroupFrameSettings &groupFrameSettings)
 {
-    return valueFromGroup("ForumDialog", "HideTabBarWithOneTab", true).toBool();
-}
+	QString group = groupFrameSettingsTypeToString(type);
+	if (group.isEmpty()) {
+		return;
+	}
 
-void RshareSettings::setForumHideTabBarWithOneTab(bool value)
-{
-    setValueToGroup("ForumDialog", "HideTabBarWithOneTab", value);
-}
-
-bool RshareSettings::getChannelOpenAllInNewTab()
-{
-    return valueFromGroup("ChannelDialog", "OpenAllInNewTab", false).toBool();
-}
-
-void RshareSettings::setChannelOpenAllInNewTab(bool value)
-{
-    setValueToGroup("ChannelDialog", "OpenAllInNewTab", value);
-}
-
-bool RshareSettings::getChannelHideTabBarWithOneTab()
-{
-    return valueFromGroup("ChannelDialog", "HideTabBarWithOneTab", true).toBool();
-}
-
-void RshareSettings::setChannelHideTabBarWithOneTab(bool value)
-{
-    setValueToGroup("ChannelDialog", "HideTabBarWithOneTab", value);
+	setValueToGroup(group, "OpenAllInNewTab", groupFrameSettings.mOpenAllInNewTab);
+	setValueToGroup(group, "HideTabBarWithOneTab", groupFrameSettings.mHideTabBarWithOneTab);
 }
 
 /* time before idle */

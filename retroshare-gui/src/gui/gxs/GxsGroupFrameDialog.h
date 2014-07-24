@@ -25,6 +25,7 @@
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "RsAutoUpdatePage.h"
 #include "gui/RetroShareLink.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <inttypes.h>
 
@@ -84,15 +85,16 @@ protected:
 	RsGxsGroupId groupId() { return mGroupId; }
 	void setSingleTab(bool singleTab);
 	void setHideTabBarWithOneTab(bool hideTabBarWithOneTab);
-        bool getCurrentGroupName(QString& name);
-        virtual RetroShareLink::enumType getLinkType() = 0;
-
+	bool getCurrentGroupName(QString& name);
+	virtual RetroShareLink::enumType getLinkType() = 0;
+	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
 
 private slots:
 	void todo();
 
 	/** Create the context popup menu and it's submenus */
 	void groupTreeCustomPopupMenu(QPoint point);
+	void settingsChanged();
 
 	void restoreGroupKeys();
 	void newGroup();

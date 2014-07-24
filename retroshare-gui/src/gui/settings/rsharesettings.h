@@ -64,6 +64,23 @@ class QTableWidget;
 class QToolBar;
 class QMainWindow;
 
+class GroupFrameSettings
+{
+public:
+	enum Type { Nothing, Forum, Channel, Posted };
+
+public:
+	GroupFrameSettings()
+	{
+		mOpenAllInNewTab = false;
+		mHideTabBarWithOneTab = true;
+	}
+
+public:
+	bool mOpenAllInNewTab;
+	bool mHideTabBarWithOneTab;
+};
+
 /** Handles saving and restoring RShares's settings
  *
  * NOTE: Qt 4.1 documentation states that constructing a QSettings object is
@@ -303,18 +320,12 @@ public:
   void setForumMsgSetToReadOnActivate(bool value);
   bool getForumExpandNewMessages();
   void setForumExpandNewMessages(bool value);
-  bool getForumOpenAllInNewTab();
-  void setForumOpenAllInNewTab(bool value);
-  bool getForumHideTabBarWithOneTab();
-  void setForumHideTabBarWithOneTab(bool value);
   bool getForumLoadEmbeddedImages();
   void setForumLoadEmbeddedImages(bool value);
 
-  /* Channels */
-  bool getChannelOpenAllInNewTab();
-  void setChannelOpenAllInNewTab(bool value);
-  bool getChannelHideTabBarWithOneTab();
-  void setChannelHideTabBarWithOneTab(bool value);
+  /* GroupFrameSettings */
+  bool getGroupFrameSettings(GroupFrameSettings::Type type, GroupFrameSettings &groupFrameSettings);
+  void setGroupFrameSettings(GroupFrameSettings::Type type, const GroupFrameSettings &groupFrameSettings);
 
   /* time before idle */
   uint getMaxTimeBeforeIdle();

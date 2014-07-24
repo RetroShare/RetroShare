@@ -61,24 +61,21 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QCheckBox" name="openAllInNewTabCheckBox">
-        <property name="text">
-         <string>Open all forums in new tab</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="hideTabBarWithOneTabCheckBox">
-        <property name="text">
-         <string>Hide tabbar with one open tab</string>
-        </property>
-       </widget>
+       <widget class="GroupFrameSettingsWidget" name="groupFrameSettingsWidget" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GroupFrameSettingsWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/settings/GroupFrameSettingsWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
