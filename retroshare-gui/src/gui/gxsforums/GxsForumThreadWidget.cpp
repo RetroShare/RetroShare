@@ -210,6 +210,9 @@ GxsForumThreadWidget::~GxsForumThreadWidget()
 		mFillThread = NULL;
 	}
 
+	// save settings
+	processSettings(false);
+
 	delete ui;
 
 //	delete(mTimer);
@@ -223,7 +226,7 @@ void GxsForumThreadWidget::processSettings(bool load)
 
 	QHeaderView *header = ui->threadTreeWidget->header();
 
-	Settings->beginGroup(QString("GxsForumsDialog"));
+	Settings->beginGroup(QString("ForumThreadWidget"));
 
 	if (load) {
 		// load settings
@@ -449,7 +452,7 @@ bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 void GxsForumThreadWidget::togglethreadview()
 {
 	// save state of button
-	Settings->setValueToGroup("GxsForumsDialog", "expandButton", ui->expandButton->isChecked());
+	Settings->setValueToGroup("ForumThreadWidget", "expandButton", ui->expandButton->isChecked());
 
 	togglethreadview_internal();
 }
@@ -873,7 +876,7 @@ void GxsForumThreadWidget::insertThreads()
 {
 #ifdef DEBUG_FORUMS
 	/* get the current Forum */
-	std::cerr << "GxsForumsDialog::insertThreads()" << std::endl;
+	std::cerr << "GxsForumThreadWidget::insertThreads()" << std::endl;
 #endif
 
 	if (mFillThread) {
@@ -905,7 +908,7 @@ void GxsForumThreadWidget::insertThreads()
 		mLastForumID.clear();
 
 #ifdef DEBUG_FORUMS
-		std::cerr << "GxsForumsDialog::insertThreads() Current Thread Invalid" << std::endl;
+		std::cerr << "GxsForumThreadWidget::insertThreads() Current Thread Invalid" << std::endl;
 #endif
 
 		return;
@@ -927,7 +930,7 @@ void GxsForumThreadWidget::insertForumThreads(const RsGxsForumGroup &group)
 	mStateHelper->setActive(TOKEN_TYPE_CURRENTFORUM, true);
 
 #ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsDialog::insertThreads() Start filling Forum threads" << std::endl;
+	std::cerr << "GxsForumThreadWidget::insertThreads() Start filling Forum threads" << std::endl;
 #endif
 
 	// create fill thread
@@ -978,7 +981,7 @@ void GxsForumThreadWidget::insertForumThreads(const RsGxsForumGroup &group)
 void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
 {
 #ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsDialog::fillThreads()" << std::endl;
+	std::cerr << "GxsForumThreadWidget::fillThreads()" << std::endl;
 #endif
 
 	int index = 0;
@@ -1050,7 +1053,7 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 	}
 
 #ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumsDialog::fillThreads() done" << std::endl;
+	std::cerr << "GxsForumThreadWidget::fillThreads() done" << std::endl;
 #endif
 }
 
@@ -1192,7 +1195,7 @@ void GxsForumThreadWidget::insertPostData(const RsGxsForumMsg &msg)
 
 	if ((msg.mMeta.mGroupId != mForumId) || (msg.mMeta.mMsgId != mThreadId))
 	{
-		std::cerr << "GxsForumsDialog::insertPostData() Ignoring Invalid Data....";
+		std::cerr << "GxsForumThreadWidget::insertPostData() Ignoring Invalid Data....";
 		std::cerr << std::endl;
 		std::cerr << "\t CurrForumId: " << mForumId << " != msg.GroupId: " << msg.mMeta.mGroupId;
 		std::cerr << std::endl;
@@ -1333,13 +1336,13 @@ void GxsForumThreadWidget::nextUnreadMessage()
 
 // TODO
 #if 0
-void GxsForumsDialog::removemessage()
+void GxsForumThreadWidget::removemessage()
 {
-	//std::cerr << "GxsForumsDialog::removemessage()" << std::endl;
+	//std::cerr << "GxsForumThreadWidget::removemessage()" << std::endl;
 	std::string cid, mid;
 	if (!getCurrentMsg(cid, mid))
 	{
-		//std::cerr << "GxsForumsDialog::removemessage()";
+		//std::cerr << "GxsForumThreadWidget::removemessage()";
 		//std::cerr << " No Message selected" << std::endl;
 		return;
 	}
@@ -1569,14 +1572,14 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 	link.createMessage(meta.mAuthorId, "");
 	QString from = link.toHtml();
 
-	QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumsDialog", "Original Message"));
-	header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumsDialog", "From"), from);
+	QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumThreadWidget", "Original Message"));
+	header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "From"), from);
 
-	header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumsDialog", "Sent"), DateTime::formatLongDateTime(meta.mPublishTs));
-	header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("GxsForumsDialog", "Subject"), QString::fromUtf8(meta.mMsgName.c_str()));
+	header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "Sent"), DateTime::formatLongDateTime(meta.mPublishTs));
+	header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("GxsForumThreadWidget", "Subject"), QString::fromUtf8(meta.mMsgName.c_str()));
 	header += "<br>";
 
-	header += QApplication::translate("GxsForumsDialog", "On %1, %2 wrote:").arg(DateTime::formatDateTime(meta.mPublishTs), from);
+	header += QApplication::translate("GxsForumThreadWidget", "On %1, %2 wrote:").arg(DateTime::formatDateTime(meta.mPublishTs), from);
 
 	return header;
 }
@@ -1597,7 +1600,7 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 {
 	if ((msg.mMeta.mGroupId != mForumId) || (msg.mMeta.mMsgId != mThreadId))
 	{
-		std::cerr << "GxsForumsDialog::replyMessageData() ERROR Message Ids have changed!";
+		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
 		std::cerr << std::endl;
 		return;
 	}
@@ -1628,7 +1631,7 @@ void GxsForumThreadWidget::changedViewBox()
 	}
 
 	// save index
-	Settings->setValueToGroup("GxsForumsDialog", "viewBox", ui->viewBox->currentIndex());
+	Settings->setValueToGroup("ForumThreadWidget", "viewBox", ui->viewBox->currentIndex());
 
 	ui->threadTreeWidget->clear();
 
@@ -1649,7 +1652,7 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 	}
 
 	// save index
-	Settings->setValueToGroup("GxsForumsDialog", "filterColumn", column);
+	Settings->setValueToGroup("ForumThreadWidget", "filterColumn", column);
 }
 
 void GxsForumThreadWidget::filterItems(const QString& text)
@@ -1708,7 +1711,7 @@ void GxsForumThreadWidget::requestGroup_CurrentForum()
 	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(mForumId);
 
-	std::cerr << "GxsForumsDialog::requestGroup_CurrentForum(" << mForumId << ")";
+	std::cerr << "GxsForumThreadWidget::requestGroup_CurrentForum(" << mForumId << ")";
 	std::cerr << std::endl;
 
 	uint32_t token;
@@ -1717,7 +1720,7 @@ void GxsForumThreadWidget::requestGroup_CurrentForum()
 
 void GxsForumThreadWidget::loadGroup_CurrentForum(const uint32_t &token)
 {
-	std::cerr << "GxsForumsDialog::loadGroup_CurrentForum()";
+	std::cerr << "GxsForumThreadWidget::loadGroup_CurrentForum()";
 	std::cerr << std::endl;
 
 	std::vector<RsGxsForumGroup> groups;
@@ -1729,7 +1732,7 @@ void GxsForumThreadWidget::loadGroup_CurrentForum(const uint32_t &token)
 	}
 	else
 	{
-		std::cerr << "GxsForumsDialog::loadGroupSummary_CurrentForum() ERROR Invalid Number of Groups...";
+		std::cerr << "GxsForumThreadWidget::loadGroupSummary_CurrentForum() ERROR Invalid Number of Groups...";
 		std::cerr << std::endl;
 
 		mStateHelper->setLoading(TOKEN_TYPE_CURRENTFORUM, false);
@@ -1753,7 +1756,7 @@ void GxsForumThreadWidget::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &ms
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
 
-	std::cerr << "GxsForumsDialog::requestMsgData_InsertPost(" << msgId.first << "," << msgId.second << ")";
+	std::cerr << "GxsForumThreadWidget::requestMsgData_InsertPost(" << msgId.first << "," << msgId.second << ")";
 	std::cerr << std::endl;
 
 	std::vector<RsGxsGrpMsgIdPair> msgIds;
@@ -1767,7 +1770,7 @@ void GxsForumThreadWidget::requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &ms
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-	std::cerr << "GxsForumsDialog::requestMsgData_InsertPost(" << msgId.first << "," << msgId.second << ")";
+	std::cerr << "GxsForumThreadWidget::requestMsgData_InsertPost(" << msgId.first << "," << msgId.second << ")";
 	std::cerr << std::endl;
 
 	GxsMsgReq msgIds;
@@ -1783,13 +1786,13 @@ void GxsForumThreadWidget::loadMsgData_InsertPost(const uint32_t &token)
 {
 	mStateHelper->setLoading(TOKEN_TYPE_INSERT_POST, false);
 
-	std::cerr << "GxsForumsDialog::loadMsgData_InsertPost()";
+	std::cerr << "GxsForumThreadWidget::loadMsgData_InsertPost()";
 	std::cerr << std::endl;
 
 	std::vector<RsGxsForumMsg> msgs;
 	if (rsGxsForums->getMsgData(token, msgs)) {
 		if (msgs.size() != 1) {
-			std::cerr << "GxsForumsDialog::loadMsgData_InsertPost() ERROR Wrong number of answers";
+			std::cerr << "GxsForumThreadWidget::loadMsgData_InsertPost() ERROR Wrong number of answers";
 			std::cerr << std::endl;
 			mStateHelper->setActive(TOKEN_TYPE_INSERT_POST, false);
 			mStateHelper->clear(TOKEN_TYPE_INSERT_POST);
@@ -1797,7 +1800,7 @@ void GxsForumThreadWidget::loadMsgData_InsertPost(const uint32_t &token)
 		}
 		insertPostData(msgs[0]);
 	} else {
-		std::cerr << "GxsForumsDialog::loadMsgData_InsertPost() ERROR Missing Message Data...";
+		std::cerr << "GxsForumThreadWidget::loadMsgData_InsertPost() ERROR Missing Message Data...";
 		std::cerr << std::endl;
 
 		mStateHelper->setActive(TOKEN_TYPE_INSERT_POST, false);
@@ -1813,7 +1816,7 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-	std::cerr << "GxsForumsDialog::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
+	std::cerr << "GxsForumThreadWidget::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
 	std::cerr << std::endl;
 
 	GxsMsgReq msgIds;
@@ -1826,7 +1829,7 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 
 void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 {
-	std::cerr << "GxsForumsDialog::loadMsgData_ReplyMessage()";
+	std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage()";
 	std::cerr << std::endl;
 
 	std::vector<RsGxsForumMsg> msgs;
@@ -1834,7 +1837,7 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 	{
 		if (msgs.size() != 1)
 		{
-			std::cerr << "GxsForumsDialog::loadMsgData_ReplyMessage() ERROR Wrong number of answers";
+			std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Wrong number of answers";
 			std::cerr << std::endl;
 			return;
 		}
@@ -1843,7 +1846,7 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 	}
 	else
 	{
-		std::cerr << "GxsForumsDialog::loadMsgData_ReplyMessage() ERROR Missing Message Data...";
+		std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Missing Message Data...";
 		std::cerr << std::endl;
 	}
 }
@@ -1853,7 +1856,7 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 
 void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-	std::cerr << "GxsForumsDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << "GxsForumThreadWidget::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
 
 	if (queue == mThreadQueue)
@@ -1874,7 +1877,7 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			break;
 
 		default:
-			std::cerr << "GxsForumsDialog::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << "GxsForumThreadWidget::loadRequest() ERROR: INVALID TYPE";
 			std::cerr << std::endl;
 			break;
 		}

@@ -48,7 +48,7 @@ private:
 	/* GxsGroupFrameDialog */
 	virtual QString text(TextType type);
 	virtual QString icon(IconType type);
-	virtual QString settingsGroupName() { return "GxsForumsDialog"; }
+	virtual QString settingsGroupName() { return "ForumsDialog"; }
 	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue);
 	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
 	virtual int shareKeyType();

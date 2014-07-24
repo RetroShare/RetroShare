@@ -87,9 +87,11 @@ PostedListWidget::~PostedListWidget()
 {
 	// save settings
 	processSettings(false);
+
+	delete(ui);
 }
 
-void PostedListWidget::processSettings(bool load)
+void PostedListWidget::processSettings(bool /*load*/)
 {
 //	Settings->beginGroup(QString("PostedListWidget"));
 //

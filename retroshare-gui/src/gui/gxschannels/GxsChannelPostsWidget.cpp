@@ -107,12 +107,14 @@ GxsChannelPostsWidget::~GxsChannelPostsWidget()
 	processSettings(false);
 
 	delete(mAutoDownloadAction);
+
+	delete ui;
 }
 
-void GxsChannelPostsWidget::processSettings(bool load)
+void GxsChannelPostsWidget::processSettings(bool /*load*/)
 {
 	mInProcessSettings = true;
-//	Settings->beginGroup(QString("GxsChannelDialog"));
+//	Settings->beginGroup(QString("ChannelPostsWidget"));
 //
 //	if (load) {
 //		// load settings

@@ -20,7 +20,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _RSHARESETTINGS_H
 #define _RSHARESETTINGS_H
 
@@ -60,7 +59,6 @@
 
 //Forward declaration.
 class QWidget;
-class QTableWidget;
 class QToolBar;
 class QMainWindow;
 
@@ -90,151 +88,151 @@ public:
 class RshareSettings : public RSettings
 {
 public:
-  enum enumLastDir
-  {
-    LASTDIR_EXTRAFILE,
-    LASTDIR_CERT,
-    LASTDIR_HISTORY,
-    LASTDIR_IMAGES,
-    LASTDIR_MESSAGES,
-    LASTDIR_BLOGS,
-    LASTDIR_SOUNDS
-  };
+	enum enumLastDir
+	{
+		LASTDIR_EXTRAFILE,
+		LASTDIR_CERT,
+		LASTDIR_HISTORY,
+		LASTDIR_IMAGES,
+		LASTDIR_MESSAGES,
+		LASTDIR_BLOGS,
+		LASTDIR_SOUNDS
+	};
 
-  enum enumToasterPosition
-  {
-    TOASTERPOS_TOPLEFT,
-    TOASTERPOS_TOPRIGHT,
-    TOASTERPOS_BOTTOMLEFT,
-    TOASTERPOS_BOTTOMRIGHT
-  };
+	enum enumToasterPosition
+	{
+		TOASTERPOS_TOPLEFT,
+		TOASTERPOS_TOPRIGHT,
+		TOASTERPOS_BOTTOMLEFT,
+		TOASTERPOS_BOTTOMRIGHT
+	};
 
-  enum enumMsgOpen
-  {
-    MSG_OPEN_TAB,
-    MSG_OPEN_WINDOW
-  };
+	enum enumMsgOpen
+	{
+		MSG_OPEN_TAB,
+		MSG_OPEN_WINDOW
+	};
 
 public:
-  /* create settings object */
-  static void Create(bool forceCreateNew = false);
+	/* create settings object */
+	static void Create(bool forceCreateNew = false);
 
-  /** Gets the currently preferred language code for RShare. */
-  QString getLanguageCode();
-  /** Saves the preferred language code. */
-  void setLanguageCode(QString languageCode);
- 
-  /** Gets the interface style key (e.g., "windows", "motif", etc.) */
-  QString getInterfaceStyle();
-  /** Sets the interface style key. */
-  void setInterfaceStyle(QString styleKey);
-  
-  /** Sets the stylesheet */
-  void setSheetName(QString sheet);
-  /** Gets the stylesheet */
-  QString getSheetName();
+	/** Gets the currently preferred language code for RShare. */
+	QString getLanguageCode();
+	/** Saves the preferred language code. */
+	void setLanguageCode(QString languageCode);
 
-  /** Gets the page button Location.*/
-  bool getPageButtonLoc();
-  /** Sets the page button Location.*/
-  void setPageButtonLoc(bool onToolBar);
+	/** Gets the interface style key (e.g., "windows", "motif", etc.) */
+	QString getInterfaceStyle();
+	/** Sets the interface style key. */
+	void setInterfaceStyle(QString styleKey);
 
-  /** Gets the action button Location.*/
-  bool getActionButtonLoc();
-  /** Sets the action button Location.*/
-  void setActionButtonLoc(bool onToolBar);
+	/** Sets the stylesheet */
+	void setSheetName(QString sheet);
+	/** Gets the stylesheet */
+	QString getSheetName();
 
-  /** Gets the tool button's style.*/
-  Qt::ToolButtonStyle getToolButtonStyle();
-  /** Sets the tool button's style.*/
-  void setToolButtonStyle(Qt::ToolButtonStyle style);
+	/** Gets the page button Location.*/
+	bool getPageButtonLoc();
+	/** Sets the page button Location.*/
+	void setPageButtonLoc(bool onToolBar);
 
-  /** Gets the tool button's size.*/
-  int getToolButtonSize();
-  /** Sets the tool button's size.*/
-  void setToolButtonSize(int size);
+	/** Gets the action button Location.*/
+	bool getActionButtonLoc();
+	/** Sets the action button Location.*/
+	void setActionButtonLoc(bool onToolBar);
 
-  /** Gets the list item icon's size.*/
-  int getListItemIconSize();
-  /** Sets the list item icon's size.*/
-  void setListItemIconSize(int size);
+	/** Gets the tool button's style.*/
+	Qt::ToolButtonStyle getToolButtonStyle();
+	/** Sets the tool button's style.*/
+	void setToolButtonStyle(Qt::ToolButtonStyle style);
 
-  /** Returns true if RetroShare's main window should be visible when the
+	/** Gets the tool button's size.*/
+	int getToolButtonSize();
+	/** Sets the tool button's size.*/
+	void setToolButtonSize(int size);
+
+	/** Gets the list item icon's size.*/
+	int getListItemIconSize();
+	/** Sets the list item icon's size.*/
+	void setListItemIconSize(int size);
+
+	/** Returns true if RetroShare's main window should be visible when the
   * application starts. */
-  bool getStartMinimized();
-  /** Sets whether to show main window when the application starts. */
-  void setStartMinimized(bool startMinimized);
+	bool getStartMinimized();
+	/** Sets whether to show main window when the application starts. */
+	void setStartMinimized(bool startMinimized);
 
-  bool getCloseToTray();
-  void setCloseToTray(bool closeToTray);
+	bool getCloseToTray();
+	void setCloseToTray(bool closeToTray);
 
-  /** Returns true if RetroShare should start on system boot. */
-  bool runRetroshareOnBoot(bool &minimized);
+	/** Returns true if RetroShare should start on system boot. */
+	bool runRetroshareOnBoot(bool &minimized);
 
-  /** Set whether to run RetroShare on system boot. */
-  void setRunRetroshareOnBoot(bool run, bool minimized);
+	/** Set whether to run RetroShare on system boot. */
+	void setRunRetroshareOnBoot(bool run, bool minimized);
 
-  /** Returns true if the user can set retroshare as protocol */
-  bool canSetRetroShareProtocol();
-  /** Returns true if retroshare:// is registered as protocol */
-  bool getRetroShareProtocol();
-  /** Register retroshare:// as protocl */
-  bool setRetroShareProtocol(bool value);
+	/** Returns true if the user can set retroshare as protocol */
+	bool canSetRetroShareProtocol();
+	/** Returns true if retroshare:// is registered as protocol */
+	bool getRetroShareProtocol();
+	/** Register retroshare:// as protocl */
+	bool setRetroShareProtocol(bool value);
 
-  /* Get the destination log file. */
-  QString getLogFile();
-  /** Set the destination log file. */
-  void setLogFile(QString file);
+	/* Get the destination log file. */
+	QString getLogFile();
+	/** Set the destination log file. */
+	void setLogFile(QString file);
 
-  QString getLastDir(enumLastDir type);
-  void setLastDir(enumLastDir type, const QString &lastDir);
+	QString getLastDir(enumLastDir type);
+	void setLastDir(enumLastDir type, const QString &lastDir);
 
-  /* Get the bandwidth graph line filter. */
-  uint getBWGraphFilter();
-  /** Set the bandwidth graph line filter. */
-  void setBWGraphFilter(uint line, bool status);
+	/* Get the bandwidth graph line filter. */
+	uint getBWGraphFilter();
+	/** Set the bandwidth graph line filter. */
+	void setBWGraphFilter(uint line, bool status);
 
-  /** Set the bandwidth graph opacity setting. */
-  int getBWGraphOpacity();
-  /** Set the bandwidth graph opacity settings. */
-  void setBWGraphOpacity(int value);
+	/** Set the bandwidth graph opacity setting. */
+	int getBWGraphOpacity();
+	/** Set the bandwidth graph opacity settings. */
+	void setBWGraphOpacity(int value);
 
-  /** Gets whether the bandwidth graph is always on top. */
-  bool getBWGraphAlwaysOnTop();
-  /** Sets whether the bandwidth graph is always on top. */
-  void setBWGraphAlwaysOnTop(bool alwaysOnTop);
-  
-  uint getNewsFeedFlags();
-  void setNewsFeedFlags(uint flags);
+	/** Gets whether the bandwidth graph is always on top. */
+	bool getBWGraphAlwaysOnTop();
+	/** Sets whether the bandwidth graph is always on top. */
+	void setBWGraphAlwaysOnTop(bool alwaysOnTop);
 
-  uint getChatFlags();
-  void setChatFlags(uint flags);
+	uint getNewsFeedFlags();
+	void setNewsFeedFlags(uint flags);
 
-  uint getChatLobbyFlags();
-  void setChatLobbyFlags(uint flags);
+	uint getChatFlags();
+	void setChatFlags(uint flags);
 
-  uint getNotifyFlags();
-  void setNotifyFlags(uint flags);
+	uint getChatLobbyFlags();
+	void setChatLobbyFlags(uint flags);
 
-  uint getTrayNotifyFlags();
-  void setTrayNotifyFlags(uint flags);
+	uint getNotifyFlags();
+	void setNotifyFlags(uint flags);
 
-  uint getTrayNotifyBlinkFlags();
-  void setTrayNotifyBlinkFlags(uint flags);
+	uint getTrayNotifyFlags();
+	void setTrayNotifyFlags(uint flags);
 
-  uint getMessageFlags();
-  void setMessageFlags(uint flags);
+	uint getTrayNotifyBlinkFlags();
+	void setTrayNotifyBlinkFlags(uint flags);
 
-  bool getDisplayTrayChatLobby();
-  void setDisplayTrayChatLobby(bool bValue);
-  bool getDisplayTrayGroupChat();
-  void setDisplayTrayGroupChat(bool bValue);
+	uint getMessageFlags();
+	void setMessageFlags(uint flags);
 
-  bool getAddFeedsAtEnd();
-  void setAddFeedsAtEnd(bool bValue);
+	bool getDisplayTrayChatLobby();
+	void setDisplayTrayChatLobby(bool bValue);
+	bool getDisplayTrayGroupChat();
+	void setDisplayTrayGroupChat(bool bValue);
 
-  bool getChatSendMessageWithCtrlReturn();
-  void setChatSendMessageWithCtrlReturn(bool bValue);
+	bool getAddFeedsAtEnd();
+	void setAddFeedsAtEnd(bool bValue);
+
+	bool getChatSendMessageWithCtrlReturn();
+	void setChatSendMessageWithCtrlReturn(bool bValue);
 
 	void setChatSearchCharToStartSearch(int iValue);
 	int getChatSearchCharToStartSearch();
@@ -257,92 +255,91 @@ public:
 	void setChatSearchFoundColor(QRgb rgbValue);
 	QRgb getChatSearchFoundColor();
 
-  enumToasterPosition getToasterPosition();
-  void setToasterPosition(enumToasterPosition position);
+	enumToasterPosition getToasterPosition();
+	void setToasterPosition(enumToasterPosition position);
 
-  QPoint getToasterMargin();
-  void   setToasterMargin(QPoint margin);
+	QPoint getToasterMargin();
+	void   setToasterMargin(QPoint margin);
 
-  /* chat font */
-  QString getChatScreenFont();
-  void    setChatScreenFont(const QString &font);
+	/* chat font */
+	QString getChatScreenFont();
+	void    setChatScreenFont(const QString &font);
 
-  /* chat styles */
-  void getPublicChatStyle(QString &stylePath, QString &styleVariant);
-  void setPublicChatStyle(const QString &stylePath, const QString &styleVariant);
+	/* chat styles */
+	void getPublicChatStyle(QString &stylePath, QString &styleVariant);
+	void setPublicChatStyle(const QString &stylePath, const QString &styleVariant);
 
-  void getPrivateChatStyle(QString &stylePath, QString &styleVariant);
-  void setPrivateChatStyle(const QString &stylePath, const QString &styleVariant);
+	void getPrivateChatStyle(QString &stylePath, QString &styleVariant);
+	void setPrivateChatStyle(const QString &stylePath, const QString &styleVariant);
 
-  void getHistoryChatStyle(QString &stylePath, QString &styleVariant);
-  void setHistoryChatStyle(const QString &stylePath, const QString &styleVariant);
+	void getHistoryChatStyle(QString &stylePath, QString &styleVariant);
+	void setHistoryChatStyle(const QString &stylePath, const QString &styleVariant);
 
-  /* Chat */
-  int  getPublicChatHistoryCount();
-  void setPublicChatHistoryCount(int value);
+	/* Chat */
+	int  getPublicChatHistoryCount();
+	void setPublicChatHistoryCount(int value);
 
-  int  getPrivateChatHistoryCount();
-  void setPrivateChatHistoryCount(int value);
+	int  getPrivateChatHistoryCount();
+	void setPrivateChatHistoryCount(int value);
 
-  int  getLobbyChatHistoryCount();
-  void setLobbyChatHistoryCount(int value);
+	int  getLobbyChatHistoryCount();
+	void setLobbyChatHistoryCount(int value);
 
-  //! Save placement, state and size information of a window.
-  void saveWidgetInformation(QWidget *widget);
+	//! Save placement, state and size information of a window.
+	void saveWidgetInformation(QWidget *widget);
 
-  //! Load placement, state and size information of a window.
-  void loadWidgetInformation(QWidget *widget);
+	//! Load placement, state and size information of a window.
+	void loadWidgetInformation(QWidget *widget);
 
-  //! Method overload. Save window and toolbar information.
-  void saveWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
+	//! Method overload. Save window and toolbar information.
+	void saveWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
 
-  //! Method overload. Restore window and toolbar information.
-  void loadWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
+	//! Method overload. Restore window and toolbar information.
+	void loadWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
 
-  /* MainWindow */
-  int  getLastPageInMainWindow ();
-  void setLastPageInMainWindow (int value);
-  uint getStatusBarFlags();
-  void setStatusBarFlags(uint flags);
-  void setStatusBarFlag(uint flag, bool enable);
+	/* MainWindow */
+	int  getLastPageInMainWindow ();
+	void setLastPageInMainWindow (int value);
+	uint getStatusBarFlags();
+	void setStatusBarFlags(uint flags);
+	void setStatusBarFlag(uint flag, bool enable);
 
-  /* Messages */
-  bool getMsgSetToReadOnActivate();
-  void setMsgSetToReadOnActivate(bool value);
-  bool getMsgLoadEmbeddedImages();
-  void setMsgLoadEmbeddedImages(bool value);
+	/* Message */
+	bool getMsgSetToReadOnActivate();
+	void setMsgSetToReadOnActivate(bool value);
+	bool getMsgLoadEmbeddedImages();
+	void setMsgLoadEmbeddedImages(bool value);
 
-  enumMsgOpen getMsgOpen();
-  void setMsgOpen(enumMsgOpen value);
+	enumMsgOpen getMsgOpen();
+	void setMsgOpen(enumMsgOpen value);
 
-  /* Forums */
-  bool getForumMsgSetToReadOnActivate();
-  void setForumMsgSetToReadOnActivate(bool value);
-  bool getForumExpandNewMessages();
-  void setForumExpandNewMessages(bool value);
-  bool getForumLoadEmbeddedImages();
-  void setForumLoadEmbeddedImages(bool value);
+	/* Forum */
+	bool getForumMsgSetToReadOnActivate();
+	void setForumMsgSetToReadOnActivate(bool value);
+	bool getForumExpandNewMessages();
+	void setForumExpandNewMessages(bool value);
+	bool getForumLoadEmbeddedImages();
+	void setForumLoadEmbeddedImages(bool value);
 
-  /* GroupFrameSettings */
-  bool getGroupFrameSettings(GroupFrameSettings::Type type, GroupFrameSettings &groupFrameSettings);
-  void setGroupFrameSettings(GroupFrameSettings::Type type, const GroupFrameSettings &groupFrameSettings);
+	/* GroupFrame settings */
+	bool getGroupFrameSettings(GroupFrameSettings::Type type, GroupFrameSettings &groupFrameSettings);
+	void setGroupFrameSettings(GroupFrameSettings::Type type, const GroupFrameSettings &groupFrameSettings);
 
-  /* time before idle */
-  uint getMaxTimeBeforeIdle();
-  void setMaxTimeBeforeIdle(uint value);
+	/* time before idle */
+	uint getMaxTimeBeforeIdle();
+	void setMaxTimeBeforeIdle(uint value);
 
 protected:
-  /** Default constructor. */
-  RshareSettings();
+	/** Default constructor. */
+	RshareSettings();
 
-  void initSettings();
+	void initSettings();
 
-  /* member for fast access */
-  int m_maxTimeBeforeIdle;
+	/* member for fast access */
+	int m_maxTimeBeforeIdle;
 };
 
 // the one and only global settings object
 extern RshareSettings *Settings;
 
 #endif
-
