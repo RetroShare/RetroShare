@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include "ChatUserNotify.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 #include "gui/chat/ChatDialog.h"
@@ -34,53 +33,12 @@ ChatUserNotify::ChatUserNotify(QObject *parent) :
 	connect(NotifyQt::getInstance(), SIGNAL(privateChatChanged(int, int)), this, SLOT(privateChatChanged(int, int)));
 }
 
-bool ChatUserNotify::hasSetting(QString &name)
+bool ChatUserNotify::hasSetting(QString *name, QString *group)
 {
-	name = tr("Private Chat");
+	if (name) *name = tr("Private Chat");
+	if (group) *group = "PrivateChat";
 
 	return true;
-}
-
-bool ChatUserNotify::notifyEnabled()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_PRIVATECHAT);
-}
-
-bool ChatUserNotify::notifyCombined()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_PRIVATECHAT_COMBINED);
-}
-
-bool ChatUserNotify::notifyBlink()
-{
-	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_PRIVATECHAT);
-}
-
-void ChatUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
-{
-	uint notifyFlags = Settings->getTrayNotifyFlags();
-	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
-
-	if (enabled) {
-		notifyFlags |= TRAYNOTIFY_PRIVATECHAT;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_PRIVATECHAT;
-	}
-
-	if (combined) {
-		notifyFlags |= TRAYNOTIFY_PRIVATECHAT_COMBINED;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_PRIVATECHAT_COMBINED;
-	}
-
-	if (blink) {
-		blinkFlags |= TRAYNOTIFY_BLINK_PRIVATECHAT;
-	} else {
-		blinkFlags &= ~TRAYNOTIFY_BLINK_PRIVATECHAT;
-	}
-
-	Settings->setTrayNotifyFlags(notifyFlags);
-	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon ChatUserNotify::getIcon()

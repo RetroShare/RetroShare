@@ -55,7 +55,6 @@
 #define SETTING_NEWSFEED_FLAGS		"NewsFeedFlags"
 #define SETTING_CHAT_FLAGS		"ChatFlags"
 #define SETTING_NOTIFY_FLAGS		"NotifyFlags"
-#define SETTING_TRAYNOTIFY_FLAGS	"TrayNotifyFlags"
 #define SETTING_CHAT_AVATAR			"ChatAvatar"
 
 /* Default Retroshare Settings */
@@ -455,26 +454,6 @@ uint RshareSettings::getNotifyFlags()
 void RshareSettings::setNotifyFlags(uint flags)
 {
 	setValue(SETTING_NOTIFY_FLAGS, flags);
-}
-
-uint RshareSettings::getTrayNotifyFlags()
-{
-	return value(SETTING_TRAYNOTIFY_FLAGS, TRAYNOTIFY_PRIVATECHAT | TRAYNOTIFY_MESSAGES | TRAYNOTIFY_CHANNELS | TRAYNOTIFY_FORUMS | TRAYNOTIFY_POSTED ).toUInt();
-}
-
-void RshareSettings::setTrayNotifyFlags(uint flags)
-{
-	setValue(SETTING_TRAYNOTIFY_FLAGS, flags);
-}
-
-uint RshareSettings::getTrayNotifyBlinkFlags()
-{
-	return value("TrayNotifyBlinkFlags", 0).toUInt();
-}
-
-void RshareSettings::setTrayNotifyBlinkFlags(uint flags)
-{
-	setValue("TrayNotifyBlinkFlags", flags);
 }
 
 uint RshareSettings::getMessageFlags()

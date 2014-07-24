@@ -41,11 +41,11 @@ public:
 	void initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem);
 	void createIcons(QMenu *notifyMenu);
 
-	virtual bool hasSetting(QString &/*name*/) { return false; }
-	virtual bool notifyEnabled() { return false; }
-	virtual bool notifyCombined() { return false; }
-	virtual bool notifyBlink() { return false; }
-	virtual void setNotifyEnabled(bool /*enabled*/, bool /*combined*/, bool /*blink*/) {}
+	virtual bool hasSetting(QString */*name*/, QString */*group*/) { return false; }
+	bool notifyEnabled();
+	bool notifyCombined();
+	bool notifyBlink();
+	void setNotifyEnabled(bool enabled, bool combined, bool blink);
 
 signals:
 	void countChanged();

@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include "GxsChannelUserNotify.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/MainWindow.h"
 
 GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
@@ -28,53 +27,12 @@ GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject 
 {
 }
 
-bool GxsChannelUserNotify::hasSetting(QString &name)
+bool GxsChannelUserNotify::hasSetting(QString *name, QString *group)
 {
-	name = tr("Channel Post");
+	if (name) *name = tr("Channel Post");
+	if (group) *group = "Channel";
 
 	return true;
-}
-
-bool GxsChannelUserNotify::notifyEnabled()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_CHANNELS);
-}
-
-bool GxsChannelUserNotify::notifyCombined()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_CHANNELS_COMBINED);
-}
-
-bool GxsChannelUserNotify::notifyBlink()
-{
-	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_CHANNELS);
-}
-
-void GxsChannelUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
-{
-	uint notifyFlags = Settings->getTrayNotifyFlags();
-	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
-
-	if (enabled) {
-		notifyFlags |= TRAYNOTIFY_CHANNELS;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_CHANNELS;
-	}
-
-	if (combined) {
-		notifyFlags |= TRAYNOTIFY_CHANNELS_COMBINED;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_CHANNELS_COMBINED;
-	}
-
-	if (blink) {
-		blinkFlags |= TRAYNOTIFY_BLINK_CHANNELS;
-	} else {
-		blinkFlags &= ~TRAYNOTIFY_BLINK_CHANNELS;
-	}
-
-	Settings->setTrayNotifyFlags(notifyFlags);
-	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon GxsChannelUserNotify::getIcon()

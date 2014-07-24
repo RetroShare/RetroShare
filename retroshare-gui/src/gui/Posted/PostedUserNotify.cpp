@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include "PostedUserNotify.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/MainWindow.h"
 
 PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
@@ -28,53 +27,12 @@ PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent)
 {
 }
 
-bool PostedUserNotify::hasSetting(QString &name)
+bool PostedUserNotify::hasSetting(QString *name, QString *group)
 {
-	name = tr("Posted");
+	if (name) *name = tr("Posted");
+	if (group) *group = "Posted";
 
 	return true;
-}
-
-bool PostedUserNotify::notifyEnabled()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_POSTED);
-}
-
-bool PostedUserNotify::notifyCombined()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_POSTED_COMBINED);
-}
-
-bool PostedUserNotify::notifyBlink()
-{
-	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_POSTED);
-}
-
-void PostedUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
-{
-	uint notifyFlags = Settings->getTrayNotifyFlags();
-	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
-
-	if (enabled) {
-		notifyFlags |= TRAYNOTIFY_POSTED;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_POSTED;
-	}
-
-	if (combined) {
-		notifyFlags |= TRAYNOTIFY_POSTED_COMBINED;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_POSTED_COMBINED;
-	}
-
-	if (blink) {
-		blinkFlags |= TRAYNOTIFY_BLINK_POSTED;
-	} else {
-		blinkFlags &= ~TRAYNOTIFY_BLINK_POSTED;
-	}
-
-	Settings->setTrayNotifyFlags(notifyFlags);
-	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon PostedUserNotify::getIcon()

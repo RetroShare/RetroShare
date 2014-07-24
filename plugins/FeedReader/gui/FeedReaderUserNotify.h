@@ -35,11 +35,7 @@ class FeedReaderUserNotify : public UserNotify
 public:
 	FeedReaderUserNotify(FeedReaderDialog *feedReaderDialog, RsFeedReader *feedReader, FeedReaderNotify *notify, QObject *parent);
 
-	virtual bool hasSetting(QString &name);
-	virtual bool notifyEnabled();
-	virtual bool notifyCombined();
-	virtual bool notifyBlink();
-	virtual void setNotifyEnabled(bool enabled, bool combined, bool blink);
+	virtual bool hasSetting(QString *name, QString *group);
 
 private slots:
 	void feedChanged(const QString &feedId, int type);

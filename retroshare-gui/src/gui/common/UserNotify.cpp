@@ -25,6 +25,7 @@
 
 #include "UserNotify.h"
 #include "rshare.h"
+#include "gui/settings/rsharesettings.h"
 
 UserNotify::UserNotify(QObject *parent) :
 	QObject(parent)
@@ -42,6 +43,50 @@ UserNotify::UserNotify(QObject *parent) :
 
 UserNotify::~UserNotify()
 {
+}
+
+bool UserNotify::notifyEnabled()
+{
+	QString group;
+	if (!hasSetting(NULL, &group) || group.isEmpty()) {
+		return false;
+	}
+
+	return Settings->valueFromGroup(group, "TrayNotifyEnable", true).toBool();
+}
+
+bool UserNotify::notifyCombined()
+{
+	QString group;
+	if (!hasSetting(NULL, &group) || group.isEmpty()) {
+		return false;
+	}
+
+	return Settings->valueFromGroup(group, "TrayNotifyCombined", false).toBool();
+}
+
+bool UserNotify::notifyBlink()
+{
+	QString group;
+	if (!hasSetting(NULL, &group) || group.isEmpty()) {
+		return false;
+	}
+
+	return Settings->valueFromGroup(group, "TrayNotifyBlink", false).toBool();
+}
+
+void UserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
+{
+	QString group;
+	if (!hasSetting(NULL, &group) || group.isEmpty()) {
+		return;
+	}
+
+	Settings->beginGroup(group);
+	Settings->setValue("TrayNotifyEnable", enabled);
+	Settings->setValue("TrayNotifyCombined", combined);
+	Settings->setValue("TrayNotifyBlink", blink);
+	Settings->endGroup();
 }
 
 void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem)

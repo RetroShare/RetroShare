@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include "MessageUserNotify.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 
@@ -32,53 +31,12 @@ MessageUserNotify::MessageUserNotify(QObject *parent) :
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(updateIcon()));
 }
 
-bool MessageUserNotify::hasSetting(QString &name)
+bool MessageUserNotify::hasSetting(QString *name, QString *group)
 {
-	name = tr("Message");
+	if (name) *name = tr("Message");
+	if (group) *group = "Message";
 
 	return true;
-}
-
-bool MessageUserNotify::notifyEnabled()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_MESSAGES);
-}
-
-bool MessageUserNotify::notifyCombined()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_MESSAGES_COMBINED);
-}
-
-bool MessageUserNotify::notifyBlink()
-{
-	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_MESSAGES);
-}
-
-void MessageUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
-{
-	uint notifyFlags = Settings->getTrayNotifyFlags();
-	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
-
-	if (enabled) {
-		notifyFlags |= TRAYNOTIFY_MESSAGES;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_MESSAGES;
-	}
-
-	if (combined) {
-		notifyFlags |= TRAYNOTIFY_MESSAGES_COMBINED;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_MESSAGES_COMBINED;
-	}
-
-	if (blink) {
-		blinkFlags |= TRAYNOTIFY_BLINK_MESSAGES;
-	} else {
-		blinkFlags &= ~TRAYNOTIFY_BLINK_MESSAGES;
-	}
-
-	Settings->setTrayNotifyFlags(notifyFlags);
-	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon MessageUserNotify::getIcon()

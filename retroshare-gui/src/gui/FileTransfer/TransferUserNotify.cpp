@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include "TransferUserNotify.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 
@@ -32,53 +31,12 @@ TransferUserNotify::TransferUserNotify(QObject *parent) :
 	connect(NotifyQt::getInstance(), SIGNAL(downloadCompleteCountChanged(int)), this, SLOT(downloadCountChanged(int)));
 }
 
-bool TransferUserNotify::hasSetting(QString &name)
+bool TransferUserNotify::hasSetting(QString *name, QString *group)
 {
-	name = tr("Download completed");
+	if (name) *name = tr("Download completed");
+	if (group) *group = "Transfer";
 
 	return true;
-}
-
-bool TransferUserNotify::notifyEnabled()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_TRANSFERS);
-}
-
-bool TransferUserNotify::notifyCombined()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_TRANSFERS_COMBINED);
-}
-
-bool TransferUserNotify::notifyBlink()
-{
-	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_TRANSFERS);
-}
-
-void TransferUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
-{
-	uint notifyFlags = Settings->getTrayNotifyFlags();
-	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
-
-	if (enabled) {
-		notifyFlags |= TRAYNOTIFY_TRANSFERS;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_TRANSFERS;
-	}
-
-	if (combined) {
-		notifyFlags |= TRAYNOTIFY_TRANSFERS_COMBINED;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_TRANSFERS_COMBINED;
-	}
-
-	if (blink) {
-		blinkFlags |= TRAYNOTIFY_BLINK_TRANSFERS;
-	} else {
-		blinkFlags &= ~TRAYNOTIFY_BLINK_TRANSFERS;
-	}
-
-	Settings->setTrayNotifyFlags(notifyFlags);
-	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon TransferUserNotify::getIcon()

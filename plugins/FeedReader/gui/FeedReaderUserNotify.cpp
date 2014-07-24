@@ -35,35 +35,12 @@ FeedReaderUserNotify::FeedReaderUserNotify(FeedReaderDialog *feedReaderDialog, R
 	connect(mNotify, SIGNAL(msgChanged(QString,QString,int)), this, SLOT(updateIcon()), Qt::QueuedConnection);
 }
 
-bool FeedReaderUserNotify::hasSetting(QString &name)
+bool FeedReaderUserNotify::hasSetting(QString *name, QString *group)
 {
-	name = tr("FeedReader Message");
+	if (name) *name = tr("FeedReader Message");
+	if (group) *group = "FeedReader";
 
 	return true;
-}
-
-bool FeedReaderUserNotify::notifyEnabled()
-{
-	return Settings->valueFromGroup("FeedReader", "TrayNotifyEnable", true).toBool();
-}
-
-bool FeedReaderUserNotify::notifyCombined()
-{
-	return Settings->valueFromGroup("FeedReader", "TrayNotifyCombined", false).toBool();
-}
-
-bool FeedReaderUserNotify::notifyBlink()
-{
-	return Settings->valueFromGroup("FeedReader", "TrayNotifyBlink", false).toBool();
-}
-
-void FeedReaderUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
-{
-	Settings->beginGroup("FeedReader");
-	Settings->setValue("TrayNotifyEnable", enabled);
-	Settings->setValue("TrayNotifyCombined", combined);
-	Settings->setValue("TrayNotifyBlink", blink);
-	Settings->endGroup();
 }
 
 QIcon FeedReaderUserNotify::getIcon()

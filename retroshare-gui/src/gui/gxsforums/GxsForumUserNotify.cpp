@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include "GxsForumUserNotify.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/MainWindow.h"
 
 GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
@@ -28,53 +27,12 @@ GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *par
 {
 }
 
-bool GxsForumUserNotify::hasSetting(QString &name)
+bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 {
-	name = tr("Forum Post");
+	if (name) *name = tr("Forum Post");
+	if (group) *group = "Forum";
 
 	return true;
-}
-
-bool GxsForumUserNotify::notifyEnabled()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_FORUMS);
-}
-
-bool GxsForumUserNotify::notifyCombined()
-{
-	return (Settings->getTrayNotifyFlags() & TRAYNOTIFY_FORUMS_COMBINED);
-}
-
-bool GxsForumUserNotify::notifyBlink()
-{
-	return (Settings->getTrayNotifyBlinkFlags() & TRAYNOTIFY_BLINK_FORUMS);
-}
-
-void GxsForumUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
-{
-	uint notifyFlags = Settings->getTrayNotifyFlags();
-	uint blinkFlags = Settings->getTrayNotifyBlinkFlags();
-
-	if (enabled) {
-		notifyFlags |= TRAYNOTIFY_FORUMS;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_FORUMS;
-	}
-
-	if (combined) {
-		notifyFlags |= TRAYNOTIFY_FORUMS_COMBINED;
-	} else {
-		notifyFlags &= ~TRAYNOTIFY_FORUMS_COMBINED;
-	}
-
-	if (blink) {
-		blinkFlags |= TRAYNOTIFY_BLINK_FORUMS;
-	} else {
-		blinkFlags &= ~TRAYNOTIFY_BLINK_FORUMS;
-	}
-
-	Settings->setTrayNotifyFlags(notifyFlags);
-	Settings->setTrayNotifyBlinkFlags(blinkFlags);
 }
 
 QIcon GxsForumUserNotify::getIcon()

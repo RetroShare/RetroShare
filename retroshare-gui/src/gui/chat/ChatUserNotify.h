@@ -31,11 +31,7 @@ class ChatUserNotify : public UserNotify
 public:
 	ChatUserNotify(QObject *parent = 0);
 
-	virtual bool hasSetting(QString &name);
-	virtual bool notifyEnabled();
-	virtual bool notifyCombined();
-	virtual bool notifyBlink();
-	virtual void setNotifyEnabled(bool enabled, bool combined, bool blink);
+	virtual bool hasSetting(QString *name, QString *group);
 
 private slots:
 	void privateChatChanged(int list, int type);

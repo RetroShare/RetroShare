@@ -76,7 +76,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
       UserNotify *userNotify = *it;
 
       QString name;
-      if (!userNotify->hasSetting(name)) {
+      if (!userNotify->hasSetting(&name, NULL)) {
           continue;
       }
 
