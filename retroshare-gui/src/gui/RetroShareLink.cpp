@@ -408,92 +408,36 @@ bool RetroShareLink::createUnknwonSslCertificate(const RsPeerId& sslId, const Rs
 	return false;
 }
 
-bool RetroShareLink::createForum(const std::string& id, const std::string& msgId)
+bool RetroShareLink::createGxsGroupLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const QString &groupName)
 {
 	clear();
 
-#if 0
-	if (!id.empty()) {
-		_hash = QString::fromStdString(id);
-		_msgId = QString::fromStdString(msgId);
-
-		_type = TYPE_FORUM;
-
-		if (msgId.empty()) {
-			ForumInfo fi;
-			if (rsForums->getForumInfo(id, fi)) {
-				_name = QString::fromStdWString(fi.forumName);
-			}
-		} else {
-			ForumMsgInfo mi;
-			if (rsForums->getForumMessage(id, msgId, mi)) {
-				_name = ForumsDialog::titleFromInfo(mi);
-			}
-		}
+	if (!groupId.isNull()) {
+		_hash = QString::fromStdString(groupId.toStdString());
+		_type = linkType;
+		_name = groupName;
 	}
-#endif
 
 	check();
 
 	return valid();
 }
 
-bool RetroShareLink::createChannel(const std::string &id, const std::string &msgId)
+bool RetroShareLink::createGxsMessageLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &msgName)
 {
 	clear();
 
-#if 0
-	if (!id.empty()) {
-		_hash = QString::fromStdString(id);
-		_msgId = QString::fromStdString(msgId);
-
-		_type = TYPE_CHANNEL;
-
-		if (msgId.empty()) {
-			ChannelInfo ci;
-			if (rsChannels->getChannelInfo(id, ci)) {
-				_name = QString::fromStdWString(ci.channelName);
-			}
-		} else {
-			ChannelMsgInfo mi;
-			if (rsChannels->getChannelMessage(id, msgId, mi)) {
-				_name = QString::fromStdWString(mi.subject);
-			}
-		}
+	if (!groupId.isNull() && !msgId.isNull()) {
+		_hash = QString::fromStdString(groupId.toStdString());
+		_msgId = QString::fromStdString(msgId.toStdString());
+		_type = linkType;
+		_name = msgName;
 	}
-#endif
 
 	check();
 
 	return valid();
 }
-
-bool RetroShareLink::createGxsLink(const RsGxsGroupId &id, const RsGxsMessageId &msgId,
-                                   const std::string& groupName, const std::string& msgSubject,
-                                   const RetroShareLink::enumType &linkType)
-{
-    clear();
-
-    if (!id.isNull()) {
-        _hash = QString::fromStdString(id.toStdString());
-
-        if(!msgId.isNull())
-            _msgId = QString::fromStdString(msgId.toStdString());
-
-        _type = linkType;
-
-        if (msgId.isNull()) {
-                        _name = QString::fromStdString(groupName);
-        } else {
-                        _name = QString::fromStdString(msgSubject);
-        }
-    }
-
-    check();
-
-    return valid();
-}
-
 
 bool RetroShareLink::createSearch(const QString& keywords)
 {

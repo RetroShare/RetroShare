@@ -56,17 +56,18 @@
 class RetroShareLink
 {
 	public:
-		enum enumType { 	TYPE_UNKNOWN       = 0x00, 
-								TYPE_FILE          = 0x01, 
-								TYPE_PERSON        = 0x02, 
-								TYPE_FORUM         = 0x03, 
-								TYPE_CHANNEL       = 0x04, 
-								TYPE_SEARCH        = 0x05, 
-								TYPE_MESSAGE       = 0x06, 
-								TYPE_CERTIFICATE   = 0x07,
-								TYPE_EXTRAFILE     = 0x08, 
-								TYPE_PRIVATE_CHAT  = 0x09,
-                                                                TYPE_PUBLIC_MSG    = 0x0a
+		enum enumType {
+		    TYPE_UNKNOWN       = 0x00,
+		    TYPE_FILE          = 0x01,
+		    TYPE_PERSON        = 0x02,
+		    TYPE_FORUM         = 0x03,
+		    TYPE_CHANNEL       = 0x04,
+		    TYPE_SEARCH        = 0x05,
+		    TYPE_MESSAGE       = 0x06,
+		    TYPE_CERTIFICATE   = 0x07,
+		    TYPE_EXTRAFILE     = 0x08,
+		    TYPE_PRIVATE_CHAT  = 0x09,
+		    TYPE_PUBLIC_MSG    = 0x0a
 		};
 
 	public:
@@ -76,18 +77,15 @@ class RetroShareLink
 
 		bool createFile(const QString& name, uint64_t size, const QString& hash);
 		bool createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
-        bool createPerson(const RsPgpId &id);
-		bool createForum(const std::string& id, const std::string& msgId);
-		bool createChannel(const std::string& id, const std::string& msgId);
-                bool createGxsLink(const RsGxsGroupId &id, const RsGxsMessageId &msgId,
-                                   const std::string& groupName, const std::string& msgSubject,
-                                   const RetroShareLink::enumType &linkType);
+		bool createPerson(const RsPgpId &id);
+		bool createGxsGroupLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const QString &groupName);
+		bool createGxsMessageLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &msgName);
 		bool createSearch(const QString& keywords);
-        bool createMessage(const RsPeerId &peerId, const QString& subject);
-        bool createMessage(const RsGxsId &peerId, const QString& subject);
-        bool createCertificate(const RsPeerId &ssl_id) ;
+		bool createMessage(const RsPeerId &peerId, const QString& subject);
+		bool createMessage(const RsGxsId &peerId, const QString& subject);
+		bool createCertificate(const RsPeerId &ssl_id) ;
 		bool createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
-        bool createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
+		bool createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
 
 		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }

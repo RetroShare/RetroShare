@@ -189,11 +189,11 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	{
 		title = tr("Channel Feed") + ": ";
 		RetroShareLink link;
-		link.createChannel(post.mMeta.mGroupId.toStdString(), "");
+		link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, post.mMeta.mGroupId, "");
 		title += link.toHtml();
 		ui->titleLabel->setText(title);
 		RetroShareLink msgLink;
-		msgLink.createChannel(post.mMeta.mGroupId.toStdString(), post.mMeta.mMsgId.toStdString());
+		msgLink.createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, post.mMeta.mGroupId, post.mMeta.mMsgId, QString::fromUtf8(post.mMeta.mMsgName.c_str()));
 		ui->subjectLabel->setText(msgLink.toHtml());
 
 		if (IS_GROUP_SUBSCRIBED(mSubscribeFlags) || IS_GROUP_ADMIN(mSubscribeFlags))
@@ -312,6 +312,11 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	}
 
 	mInUpdateItemStatic = false;
+}
+
+QString GxsChannelPostItem::messageName()
+{
+	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 }
 
 void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
@@ -532,25 +537,6 @@ void GxsChannelPostItem::channelMsgReadSatusChanged(const QString& channelId, co
 			}
 		}
 		updateItemStatic();
-	}
-#endif
-}
-
-void GxsChannelPostItem::copyLink()
-{
-#if 0
-	if (mChanId.empty() || mMsgId.empty()) {
-		return;
-	}
-
-	ChannelMsgInfo cmi;
-	if (rsChannels->getChannelMessage(mChanId, mMsgId, cmi)) {
-		RetroShareLink link;
-		if (link.createChannel(cmi.channelId, cmi.msgId)) {
-			QList<RetroShareLink> urls;
-			urls.push_back(link);
-			RSLinkClipboard::copyLinks(urls);
-		}
 	}
 #endif
 }

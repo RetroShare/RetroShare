@@ -386,47 +386,22 @@ void GxsGroupFrameDialog::copyGroupLink()
 		return;
 	}
 
-        RetroShareLink link;
+	RetroShareLink link;
 
-        QString name;
-        if(!getCurrentGroupName(name)) return;
+	QString name;
+	if(!getCurrentGroupName(name)) return;
 
-        if (link.createGxsLink(mGroupId, RsGxsMessageId(), name.toStdString(), "", getLinkType())) {
-                QList<RetroShareLink> urls;
-                urls.push_back(link);
-                RSLinkClipboard::copyLinks(urls);
-        }
+	if (link.createGxsGroupLink(getLinkType(), mGroupId, name)) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
 }
-
-
 
 bool GxsGroupFrameDialog::getCurrentGroupName(QString& name)
 {
-    GroupTreeWidget* gtw = ui->groupTreeWidget;
-
-    QString id = QString::fromStdString(mGroupId.toStdString());
-
-    if(gtw->getGroupName(id, mYourGroups, name))
-    {
-        return true;
-    }
-    else if(gtw->getGroupName(id, mSubscribedGroups, name))
-    {
-        return true;
-    }
-    else if(gtw->getGroupName(id, mYourGroups, name))
-    {
-        return true;
-    }
-    else if(gtw->getGroupName(id, mOtherGroups, name))
-    {
-        return true;
-    }
-
-    return false;
+	return ui->groupTreeWidget->getGroupName(QString::fromStdString(mGroupId.toStdString()), name);
 }
-
-
 
 void GxsGroupFrameDialog::markMsgAsRead()
 {

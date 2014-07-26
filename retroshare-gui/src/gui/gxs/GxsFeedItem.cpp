@@ -97,6 +97,24 @@ void GxsFeedItem::subscribe()
 	}
 }
 
+void GxsFeedItem::copyLink()
+{
+	if (mGroupId.isNull() || mMessageId.isNull()) {
+		return;
+	}
+
+	if (getLinkType() == RetroShareLink::TYPE_UNKNOWN) {
+		return;
+	}
+
+	RetroShareLink link;
+	if (link.createGxsMessageLink(getLinkType(), mGroupId, mMessageId, messageName())) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
+}
+
 void GxsFeedItem::updateItemStatic()
 {
 	std::cerr << "GxsFeedItem::updateItemStatic()";

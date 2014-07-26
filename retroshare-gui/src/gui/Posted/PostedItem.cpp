@@ -175,6 +175,11 @@ RsPostedPost &PostedItem::post()
 	return mPost;
 }
 
+QString PostedItem::messageName()
+{
+	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
+}
+
 void PostedItem::makeDownVote()
 {
 	RsGxsGrpMsgIdPair msgId;

@@ -53,6 +53,8 @@ signals:
 
 protected:
 	virtual void loadMessage(const uint32_t &token);
+	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+	virtual QString messageName();
 
 private:
 	void setup();

@@ -73,7 +73,7 @@ public:
 	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0);
 	~GxsGroupFrameDialog();
 
-        bool navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId);
+	bool navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);

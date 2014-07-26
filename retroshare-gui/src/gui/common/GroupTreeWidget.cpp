@@ -423,7 +423,6 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 
 	item->setText(COLUMN_NAME, name);
 	item->setFont(COLUMN_NAME, font);
-
 }
 
 QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
@@ -467,19 +466,16 @@ RSTreeWidget *GroupTreeWidget::treeWidget()
 	return ui->treeWidget;
 }
 
-bool GroupTreeWidget::getGroupName(QString id, QTreeWidgetItem* categoryItem, QString& name)
+bool GroupTreeWidget::getGroupName(QString id, QString& name)
 {
-    int childCount = categoryItem->childCount();
-    for (int child = 0; child < childCount; child++) {
-            QTreeWidgetItem *childItem = categoryItem->child(child);
-            if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == id) {
-                    /* Found child */
+	QTreeWidgetItem *item = getItemFromId(id);
+	if (item == NULL) {
+		return false;
+	}
 
-                    name = childItem->text(COLUMN_NAME);
-                    return true;
-            }
-    }
-    return false;
+	name = item->data(COLUMN_DATA, ROLE_NAME).toString();
+
+	return true;
 }
 
 int GroupTreeWidget::subscribeFlags(const QString &id)

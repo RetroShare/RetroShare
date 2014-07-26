@@ -55,6 +55,8 @@ public:
 
 protected:
 	virtual void loadMessage(const uint32_t &token);
+	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+	virtual QString messageName();
 
 private slots:
 	/* default stuff */
@@ -62,7 +64,6 @@ private slots:
 	void readAndClearItem();
 	void download();
 	void play();
-	void copyLink();
 	void loadComments();
 
 	void readToggled(bool checked);

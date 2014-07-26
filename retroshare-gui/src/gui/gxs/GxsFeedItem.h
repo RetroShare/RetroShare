@@ -26,6 +26,8 @@
 
 #include <retroshare/rsgxsifacehelper.h>
 #include "util/TokenQueue.h"
+#include "gui/RetroShareLink.h"
+
 #include <stdint.h>
 
 class FeedHolder;
@@ -54,6 +56,9 @@ protected:
 	virtual void loadGroupMeta(const uint32_t &token);
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
+	virtual RetroShareLink::enumType getLinkType() = 0;
+	virtual QString messageName() = 0;
+
 	// general fns that can be implemented here.
 
 protected slots:
@@ -61,6 +66,7 @@ protected slots:
 	void subscribe();
 	void unsubscribe();
 	void removeItem();
+	void copyLink();
 
 private slots:
 	/* RsGxsUpdateBroadcastBase */
@@ -85,4 +91,3 @@ private:
 };
 
 #endif
-
