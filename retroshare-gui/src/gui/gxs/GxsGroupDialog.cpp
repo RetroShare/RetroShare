@@ -319,7 +319,7 @@ void GxsGroupDialog::setupReadonly()
 {
 	ui.groupName->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_NAME));
 
-	ui.groupLogo->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
+	//ui.groupLogo->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 	ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 
 	ui.groupDesc->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
@@ -470,7 +470,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		return false;
 	}//switch (ui.idChooser->getChosenId(meta.mAuthorId))
 
-	QString name = misc::removeNewLine(ui.groupName->text());
+	QString name = getName();
 	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 
 	if(name.isEmpty()) {
@@ -506,8 +506,8 @@ void GxsGroupDialog::createGroup()
 	std::cerr << "GxsGroupDialog::createGroup()";
 	std::cerr << std::endl;
 
-	QString name = misc::removeNewLine(ui.groupName->text());
-
+	/* Check name */
+	QString name = getName();
 	if(name.isEmpty())
 	{
 		/* error message */
@@ -679,21 +679,31 @@ void GxsGroupDialog::addGroupLogo()
 	
 	if (img.isNull())
 		return;
-	
-	picture = img;
-	
-	// to show the selected
-	ui.groupLogo->setPixmap(picture);
+
+	setLogo(img);
 }
 
 QPixmap GxsGroupDialog::getLogo()
 {
-	return picture;
+	return mPicture;
+}
+
+void GxsGroupDialog::setLogo(const QPixmap &pixmap)
+{
+	mPicture = pixmap;
+
+	// to show the selected
+	ui.groupLogo->setPixmap(mPicture);
+}
+
+QString GxsGroupDialog::getName()
+{
+	return misc::removeNewLine(ui.groupName->text());
 }
 
 QString GxsGroupDialog::getDescription()
 {
-    return ui.groupDesc->toPlainText();
+	return ui.groupDesc->toPlainText();
 }
 
 /***********************************************************************************
@@ -707,13 +717,17 @@ void GxsGroupDialog::sendShareList(std::string /*groupId*/)
 
 void GxsGroupDialog::setShareList()
 {
-	if (ui.pubKeyShare_cb->isChecked()){
-		this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
-		ui.contactsdockWidget->show();
-	} else {  // hide share widget
-		ui.contactsdockWidget->hide();
-		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	if (ui.pubKeyShare_cb->isChecked()) {
+		QMessageBox::warning(this, "", "ToDo");
+		ui.pubKeyShare_cb->setChecked(false);
 	}
+//	if (ui.pubKeyShare_cb->isChecked()){
+//		this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
+//		ui.contactsdockWidget->show();
+//	} else {  // hide share widget
+//		ui.contactsdockWidget->hide();
+//		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+//	}
 }
 
 /***********************************************************************************

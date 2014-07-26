@@ -196,6 +196,19 @@ protected:
 	QPixmap getLogo();
 
 	/*!
+	 * This sets a group logo into the ui \n
+	 * Should be calleld by deriving service
+	 * @param pixmap
+	 */
+	void setLogo(const QPixmap &pixmap);
+
+	/*!
+	 * This returns a group name string from the ui
+	 * @return group name string
+	 */
+	QString getName();
+
+	/*!
 	 * This returns a group description string from the ui
 	 * @return group description string
 	 */
@@ -234,7 +247,7 @@ private:
 	bool prepareGroupMetaData(RsGroupMetaData &meta);
 
 	std::list<std::string> mShareList;
-	QPixmap picture;
+	QPixmap mPicture;
 	RsTokenService *mTokenService;
 	TokenQueue *mExternalTokenQueue;
 	TokenQueue *mInternalTokenQueue;

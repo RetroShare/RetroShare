@@ -19,6 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QBuffer>
+
 #include "GxsChannelGroupDialog.h"
 
 #include <retroshare/rsgxschannels.h>
@@ -94,8 +96,7 @@ QPixmap GxsChannelGroupDialog::serviceImage()
 	{
 	case MODE_CREATE:
 		return QPixmap(":/images/add_channel64.png");
-	break;
-		case MODE_SHOW:
+	case MODE_SHOW:
 		return QPixmap(":/images/channels.png");
 	case MODE_EDIT:
 		return QPixmap(":/images/channels.png");
@@ -104,12 +105,31 @@ QPixmap GxsChannelGroupDialog::serviceImage()
 	return QPixmap();
 }
 
+void GxsChannelGroupDialog::prepareChannelGroup(RsGxsChannelGroup &group, const RsGroupMetaData &meta)
+{
+	group.mMeta = meta;
+	group.mDescription = getDescription().toUtf8().constData();
+
+	QPixmap pixmap = getLogo();
+
+	if (!pixmap.isNull()) {
+		QByteArray ba;
+		QBuffer buffer(&ba);
+
+		buffer.open(QIODevice::WriteOnly);
+		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
+
+		group.mImage.copy((uint8_t *) ba.data(), ba.size());
+	} else {
+		group.mImage.clear();
+	}
+}
+
 bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {
 	// Specific Function.
 	RsGxsChannelGroup grp;
-	grp.mMeta = meta;
-	grp.mDescription = getDescription().toUtf8().constData();
+	prepareChannelGroup(grp, meta);
 
 	rsGxsChannels->createGroup(token, grp);
 	return true;
@@ -118,8 +138,7 @@ bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMe
 bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
 {
 	RsGxsChannelGroup grp;
-	grp.mMeta = editedMeta;
-	grp.mDescription = getDescription().toUtf8().constData();
+	prepareChannelGroup(grp, editedMeta);
 
 	std::cerr << "GxsChannelGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
@@ -151,8 +170,16 @@ bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsG
 	std::cerr << "GxsChannelsGroupDialog::service_loadGroup() Unfinished Loading";
 	std::cerr << std::endl;
 
-	groupMetaData = groups[0].mMeta;
-	description = QString::fromUtf8(groups[0].mDescription.c_str());
+	const RsGxsChannelGroup &group = groups[0];
+	groupMetaData = group.mMeta;
+	description = QString::fromUtf8(group.mDescription.c_str());
+
+	if (group.mImage.mData) {
+		QPixmap pixmap;
+		if (pixmap.loadFromData(group.mImage.mData, group.mImage.mSize, "PNG")) {
+			setLogo(pixmap);
+		}
+	}
 
 	return true;
 }
