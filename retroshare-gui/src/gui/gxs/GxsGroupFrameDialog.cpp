@@ -450,8 +450,10 @@ void GxsGroupFrameDialog::shareKey()
 		return;
 	}
 
-	ShareKey shareUi(this, mGroupId.toStdString(), shareKeyType());
-	shareUi.exec();
+	QMessageBox::warning(this, "", "ToDo");
+
+//	ShareKey shareUi(this, mGroupId.toStdString(), shareKeyType());
+//	shareUi.exec();
 }
 
 void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
