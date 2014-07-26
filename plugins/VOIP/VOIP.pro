@@ -29,7 +29,7 @@ win32 {
 	INCLUDEPATH += $${SPEEX_DIR}/include $${OPENCV_DIR}/include
 	LIBS += -L"$$OPENCV_DIR/x86/mingw/staticlib"
 
-	LIBS += -lopencv_core249 -lopencv_highgui249 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32
+	LIBS += -lopencv_core249 -lopencv_highgui249 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32 -lz
 }
 
 QMAKE_CXXFLAGS *= -Wall
