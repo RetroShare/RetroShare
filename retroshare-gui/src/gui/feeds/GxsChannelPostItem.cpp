@@ -73,7 +73,17 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, cons
 	loadPost(post);
 }
 
-bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post)
+void GxsChannelPostItem::setContent(const QVariant &content)
+{
+	if (!content.canConvert<RsGxsChannelPost>()) {
+		return;
+	}
+
+	RsGxsChannelPost post = content.value<RsGxsChannelPost>();
+	setContent(post);
+}
+
+bool GxsChannelPostItem::setContent(const RsGxsChannelPost &post)
 {
 	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
 		std::cerr << "GxsChannelPostItem::setPost() - Wrong id, cannot set post";

@@ -24,6 +24,8 @@
 #ifndef MRK_POSTED_POSTED_ITEM_H
 #define MRK_POSTED_POSTED_ITEM_H
 
+#include <QMetaType>
+
 #include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
@@ -42,6 +44,7 @@ public:
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
 	void setContent(const RsPostedPost& post);
+	virtual void setContent(const QVariant &content);
 
 private slots:
 	void loadComments();
@@ -63,5 +66,7 @@ private:
 	bool mSelected;
 	RsPostedPost mPost;
 };
+
+Q_DECLARE_METATYPE(RsPostedPost)
 
 #endif

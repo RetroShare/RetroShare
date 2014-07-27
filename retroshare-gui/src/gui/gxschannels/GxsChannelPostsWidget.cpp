@@ -311,7 +311,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 			}
 		}
 		if (item) {
-			item->setPost(*it);
+			item->setContent(*it);
 			//TODO: Sort timestamp
 		} else {
 			item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true, false);

@@ -78,6 +78,16 @@ void PostedItem::loadMessage(const uint32_t &token)
 	setContent(mPost);
 }
 
+void PostedItem::setContent(const QVariant &content)
+{
+	if (!content.canConvert<RsPostedPost>()) {
+		return;
+	}
+
+	RsPostedPost post = content.value<RsPostedPost>();
+	setContent(post);
+}
+
 void PostedItem::setContent(const RsPostedPost &post)
 {
 	mPost = post;

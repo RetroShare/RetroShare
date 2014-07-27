@@ -24,6 +24,8 @@
 #ifndef _GXS_CHANNEL_POST_ITEM_H
 #define _GXS_CHANNEL_POST_ITEM_H
 
+#include <QMetaType>
+
 #include <retroshare/rsgxschannels.h>
 #include "gui/gxs/GxsFeedItem.h"
 #include <stdint.h>
@@ -46,8 +48,10 @@ public:
 	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
+	virtual void setContent(const QVariant &content);
+	bool setContent(const RsGxsChannelPost &post);
+
 	void setFileCleanUpWarning(uint32_t time_left);
-	bool setPost(const RsGxsChannelPost &post);
 
 	const QString getTitleLabel() {return QString::fromUtf8(mPost.mMeta.mMsgName.c_str()); }
 	const QString getMsgLabel() {return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS); }
@@ -95,5 +99,7 @@ private:
 	/** Qt Designer generated object */
 	Ui::GxsChannelPostItem *ui;
 };
+
+Q_DECLARE_METATYPE(RsGxsChannelPost)
 
 #endif

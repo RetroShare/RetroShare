@@ -45,6 +45,8 @@ public:
 	RsGxsGroupId groupId() { return mGroupId; }
 	RsGxsMessageId messageId() { return mMessageId; }
 
+	virtual void setContent(const QVariant &content) = 0;
+
 protected:
 	// generic Fns - to be overloaded.
 	virtual void updateItemStatic();
