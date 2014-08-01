@@ -19,6 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QDateTime>
+
 #include "GxsChannelPostsWidget.h"
 #include "ui_GxsChannelPostsWidget.h"
 #include "gui/feeds/GxsChannelPostItem.h"
@@ -30,6 +32,8 @@
 #include <algorithm>
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
+
+#define ROLE_PUBLISH FEED_TREEWIDGET_SORTROLE
 
 /****
  * #define DEBUG_CHANNEL
@@ -48,6 +52,8 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
+
+	mInProcessSettings = false;
 
 	/* Setup UI helper */
 
@@ -69,8 +75,7 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_TITLE, tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Message"), FILTER_MSG, tr("Search Message"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Filename"), FILTER_FILE_NAME, tr("Search Filename"));
-	ui->filterLineEdit->setCurrentFilter( Settings->valueFromGroup("ChannelFeed", "filter", FILTER_TITLE).toInt());
-	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->feedWidget, SLOT(setFilterText(QString)));
 	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged(int)));
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
@@ -81,7 +86,9 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	ui->nameLabel->setMinimumWidth(20);
 
-	mInProcessSettings = false;
+	/* Initialize feed widget */
+	ui->feedWidget->setSortRole(ROLE_PUBLISH, Qt::DescendingOrder);
+	ui->feedWidget->setFilterCallback(filterItem);
 
 	/* load settings */
 	processSettings(true);
@@ -111,18 +118,19 @@ GxsChannelPostsWidget::~GxsChannelPostsWidget()
 	delete ui;
 }
 
-void GxsChannelPostsWidget::processSettings(bool /*load*/)
+void GxsChannelPostsWidget::processSettings(bool load)
 {
 	mInProcessSettings = true;
-//	Settings->beginGroup(QString("ChannelPostsWidget"));
-//
-//	if (load) {
-//		// load settings
-//	} else {
-//		// save settings
-//	}
-//
-//	Settings->endGroup();
+	Settings->beginGroup(QString("ChannelPostsWidget"));
+
+	if (load) {
+		// load settings
+		ui->filterLineEdit->setCurrentFilter(Settings->value("filter", FILTER_TITLE).toInt());
+	} else {
+		// save settings
+	}
+
+	Settings->endGroup();
 	mInProcessSettings = false;
 }
 
@@ -155,7 +163,7 @@ QIcon GxsChannelPostsWidget::groupIcon()
 
 QScrollArea *GxsChannelPostsWidget::getScrollArea()
 {
-	return ui->scrollArea;
+	return NULL;
 }
 
 void GxsChannelPostsWidget::deleteFeedItem(QWidget * /*item*/, uint32_t /*type*/)
@@ -216,116 +224,85 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 
 void GxsChannelPostsWidget::filterChanged(int filter)
 {
+	ui->feedWidget->setFilterType(filter);
+
 	if (mInProcessSettings) {
 		return;
 	}
-	filterItems(ui->filterLineEdit->text());
 
 	// save index
-	Settings->setValueToGroup("ChannelFeed", "filter", filter);
+	Settings->setValueToGroup("ChannelPostsWidget", "filter", filter);
 }
 
-void GxsChannelPostsWidget::filterItems(const QString& text)
+/*static*/ bool GxsChannelPostsWidget::filterItem(FeedItem *feedItem, const QString &text, int filter)
 {
-	int filter = ui->filterLineEdit->currentFilter();
-
-	/* Search exisiting item */
-	QList<GxsFeedItem*>::iterator lit;
-	for (lit = mPostItems.begin(); lit != mPostItems.end(); lit++)
-	{
-		GxsChannelPostItem *item = dynamic_cast<GxsChannelPostItem*>(*lit);
-		if (!item) {
-			continue;
-		}
-		filterItem(item,text,filter);
+	GxsChannelPostItem *item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+	if (!item) {
+		return true;
 	}
-}
 
-bool GxsChannelPostsWidget::filterItem(GxsChannelPostItem *pItem, const QString &text, const int filter)
-{
 	bool bVisible = text.isEmpty();
 
 	switch(filter)
 	{
 	case FILTER_TITLE:
-		bVisible=pItem->getTitleLabel().contains(text,Qt::CaseInsensitive);
+		bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
 		break;
 	case FILTER_MSG:
-		bVisible=pItem->getMsgLabel().contains(text,Qt::CaseInsensitive);
+		bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
 		break;
 	case FILTER_FILE_NAME:
 	{
-		std::list<SubFileItem *> fileItems=pItem->getFileItems();
+		std::list<SubFileItem *> fileItems = item->getFileItems();
 		std::list<SubFileItem *>::iterator lit;
-		for(lit = fileItems.begin(); lit != fileItems.end(); lit++)
+		for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
 		{
 			SubFileItem *fi = *lit;
-			QString fileName=QString::fromUtf8(fi->FileName().c_str());
-			bVisible=(bVisible || fileName.contains(text,Qt::CaseInsensitive));
+			QString fileName = QString::fromUtf8(fi->FileName().c_str());
+			bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
 		}
-	}
 		break;
+	}
 	default:
-		bVisible=true;
+		bVisible = true;
 		break;
 	}
-	pItem->setVisible(bVisible);
 
-	return (bVisible);
-}
-
-static bool sortChannelMsgSummaryAsc(const RsGxsChannelPost &msg1, const RsGxsChannelPost &msg2)
-{
-	return (msg1.mMeta.mPublishTs > msg2.mMeta.mPublishTs);
-}
-
-static bool sortChannelMsgSummaryDesc(const RsGxsChannelPost &msg1, const RsGxsChannelPost &msg2)
-{
-	return (msg1.mMeta.mPublishTs < msg2.mMeta.mPublishTs);
+	return bVisible;
 }
 
 void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related)
 {
 	std::vector<RsGxsChannelPost>::const_iterator it;
 
-	// Do these need sorting? probably.
-	// can we add that into the request?
-	if (related) {
-		/* Sort descending to add posts at top */
-		std::sort(posts.begin(), posts.end(), sortChannelMsgSummaryDesc);
-	} else {
-		std::sort(posts.begin(), posts.end(), sortChannelMsgSummaryAsc);
-	}
-
 	uint32_t subscribeFlags = 0xffffffff;
+
+	ui->feedWidget->setSortingEnabled(false);
 
 	for (it = posts.begin(); it != posts.end(); it++)
 	{
+		const RsGxsChannelPost &msg = *it;
+
 		GxsChannelPostItem *item = NULL;
 		if (related) {
-			foreach (GxsFeedItem *loopItem, mPostItems) {
-				if (loopItem->messageId() == it->mMeta.mMsgId) {
-					item = dynamic_cast<GxsChannelPostItem*>(loopItem);
-					break;
-				}
-			}
+			FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(msg.mMeta.mGroupId, msg.mMeta.mMsgId);
+			item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 		}
 		if (item) {
 			item->setContent(*it);
 			//TODO: Sort timestamp
 		} else {
 			item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true, false);
-			if (!ui->filterLineEdit->text().isEmpty())
-				filterItem(item, ui->filterLineEdit->text(), ui->filterLineEdit->currentFilter());
-
-			mPostItems.push_back(item);
-			if (related) {
-				ui->verticalLayout->insertWidget(0, item);
-			} else {
-				ui->verticalLayout->addWidget(item);
-			}
+			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(msg.mMeta.mPublishTs));
 		}
 	}
+
+	ui->feedWidget->setSortingEnabled(true);
+}
+
+void GxsChannelPostsWidget::clearPosts()
+{
+	ui->feedWidget->clear();
 }
 
 void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
@@ -391,10 +368,24 @@ void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
 	insertChannelPosts(posts, true);
 }
 
-void GxsChannelPostsWidget::setMessageRead(GxsFeedItem *item, bool read)
+static void setAllMessagesReadCallback(FeedItem *feedItem, const QVariant &data)
 {
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
+	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
+	if (!channelPostItem) {
+		return;
+	}
+
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
 
 	uint32_t token;
-	rsGxsChannels->setMessageReadStatus(token, msgPair, read);
+	rsGxsChannels->setMessageReadStatus(token, msgPair, data.toBool());
+}
+
+void GxsChannelPostsWidget::setAllMessagesRead(bool read)
+{
+	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
+		return;
+	}
+
+	ui->feedWidget->withAll(setAllMessagesReadCallback, read);
 }

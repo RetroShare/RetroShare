@@ -47,6 +47,7 @@ public:
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
+	virtual void setAllMessagesRead(bool read);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
@@ -62,7 +63,6 @@ protected:
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
 	virtual void insertPosts(const uint32_t &token);
 	virtual void insertRelatedPosts(const uint32_t &token);
-	virtual void setMessageRead(GxsFeedItem *item, bool read);
 	virtual void clearPosts();
 
 private slots:
@@ -112,6 +112,7 @@ private:
 	uint32_t mTokenTypeVote;
 
 	QMap<RsGxsMessageId, PostedItem*> mPosts;
+	QList<PostedItem*> mPostItems;
 
 	/* UI - from Designer */
 	Ui::PostedListWidget *ui;

@@ -423,12 +423,8 @@ void PostedListWidget::applyRanking()
 	QLayout *alayout = ui->scrollAreaWidgetContents->layout();
 	int counter = 0;
 	time_t min_ts = 0;
-	foreach (GxsFeedItem *feedItem, mPostItems)
+	foreach (PostedItem *item, mPostItems)
 	{
-		PostedItem *item = dynamic_cast<PostedItem*>(feedItem);
-		if (!item) {
-			continue;
-		}
 		std::cerr << "PostedListWidget::applyRanking() Item: " << item;
 		std::cerr << std::endl;
 		
@@ -472,8 +468,11 @@ void PostedListWidget::applyRanking()
 
 void PostedListWidget::clearPosts()
 {
-	GxsMessageFramePostWidget::clearPosts();
-
+	/* clear all messages */
+	foreach (PostedItem *item, mPostItems) {
+		delete(item);
+	}
+	mPostItems.clear();
 	mPosts.clear();
 }
 
@@ -585,12 +584,18 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 	applyRanking();
 }
 
-void PostedListWidget::setMessageRead(GxsFeedItem *item, bool read)
+void PostedListWidget::setAllMessagesRead(bool read)
 {
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
+	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
+		return;
+	}
 
-	uint32_t token;
-	rsPosted->setMessageReadStatus(token, msgPair, read);
+	foreach (PostedItem *item, mPostItems) {
+		RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
+
+		uint32_t token;
+		rsPosted->setMessageReadStatus(token, msgPair, read);
+	}
 }
 
 /*********************** **** **** **** ***********************/

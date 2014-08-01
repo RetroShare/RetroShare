@@ -48,8 +48,8 @@
 #define SELF_LOAD      1
 #define DATA_PROVIDED  2
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
-	GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsGxsChannels, true, autoUpdate)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
+	GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, true, autoUpdate)
 {
 	mMode = SELF_LOAD;
 
@@ -57,8 +57,8 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, cons
 }
 
 /** Constructor */
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subFlags, bool isHome, bool autoUpdate) :
-	GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, false, autoUpdate)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subFlags, bool isHome, bool autoUpdate) :
+	GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, false, autoUpdate)
 {
 	std::cerr << "GxsChannelPostItem::GxsChannelPostItem() Direct Load";
 	std::cerr << std::endl;
@@ -249,7 +249,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	}
 	
 	// differences between Feed or Top of Comment.
-	if (mParent)
+	if (mFeedHolder)
 	{
 		ui->commentButton->show();
 
@@ -348,7 +348,8 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 	ui->frame->style()->unpolish(ui->frame);
 
 	QPalette palette = ui->frame->palette();
-	palette.setColor(ui->frame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL);
+	palette.setColor(ui->frame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
+	palette.setColor(QPalette::Base, isNew ? COLOR_NEW : COLOR_NORMAL); // QTreeWidget
 	ui->frame->setPalette(palette);
 
 	ui->frame->setProperty("new", isNew);
@@ -447,14 +448,14 @@ void GxsChannelPostItem::updateItem()
 	//downloadButton->setEnabled(true);
 }
 
-void GxsChannelPostItem::toggle()
+void GxsChannelPostItem::expand(bool open)
 {
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->lockLayout(this, true);
+		mFeedHolder->lockLayout(this, true);
 	}
 
-	if (ui->expandFrame->isHidden())
+	if (open)
 	{
 		ui->expandFrame->show();
 		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
@@ -469,10 +470,17 @@ void GxsChannelPostItem::toggle()
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
-	if (mParent)
+	emit sizeChanged(this);
+
+	if (mFeedHolder)
 	{
-		mParent->lockLayout(this, false);
+		mFeedHolder->lockLayout(this, false);
 	}
+}
+
+void GxsChannelPostItem::toggle()
+{
+	expand(ui->expandFrame->isHidden());
 }
 
 /*********** SPECIFIC FUNCTIONS ***********************/

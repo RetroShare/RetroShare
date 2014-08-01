@@ -24,7 +24,10 @@
 #ifndef _GXS_GENERIC_FEED_ITEM_H
 #define _GXS_GENERIC_FEED_ITEM_H
 
+#include <QMetaType>
+
 #include <retroshare/rsgxsifacehelper.h>
+#include "gui/feeds/FeedItem.h"
 #include "util/TokenQueue.h"
 #include "gui/RetroShareLink.h"
 
@@ -33,13 +36,13 @@
 class FeedHolder;
 class RsGxsUpdateBroadcastBase;
 
-class GxsFeedItem : public QWidget, public TokenResponse
+class GxsFeedItem : public FeedItem, public TokenResponse
 {
 	Q_OBJECT
 
 public:
 	/** Note parent can = NULL */
-	GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate);
+	GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate);
 	virtual ~GxsFeedItem();
 
 	RsGxsGroupId groupId() { return mGroupId; }
@@ -75,7 +78,7 @@ private slots:
 	void fillDisplay(bool complete);
 
 protected:
-	FeedHolder *mParent;
+	FeedHolder *mFeedHolder;
 	uint32_t    mFeedId;
 	bool        mIsHome;
 
@@ -91,5 +94,8 @@ private:
 	TokenQueue *mLoadQueue;
 	RsGxsUpdateBroadcastBase *mUpdateBroadcastBase;
 };
+
+Q_DECLARE_METATYPE(RsGxsGroupId)
+Q_DECLARE_METATYPE(RsGxsMessageId)
 
 #endif

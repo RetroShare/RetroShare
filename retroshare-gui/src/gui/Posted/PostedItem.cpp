@@ -32,14 +32,14 @@
 
 /** Constructor */
 
-PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
-	GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsPosted, true, false)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
+	GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, true, false)
 {
 	setup();
 }
 
-PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome) :
-	GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false, false),
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome) :
+	GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false, false),
 	mPost(post)
 {
 	setup();
@@ -115,7 +115,7 @@ void PostedItem::setContent(const RsPostedPost &post)
 	// FIX THIS UP LATER.
 	notes->setText(QString::fromUtf8(post.mNotes.c_str()));
 	// differences between Feed or Top of Comment.
-	if (mParent)
+	if (mFeedHolder)
 	{
 		// feed.
 		frame_notes->hide();
@@ -218,9 +218,10 @@ void PostedItem::loadComments()
 {
 	std::cerr << "PostedItem::loadComments()";
 	std::cerr << std::endl;
-	if (mParent)
+
+	if (mFeedHolder)
 	{
 		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-		mParent->openComments(0, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, title);
+		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, title);
 	}
 }

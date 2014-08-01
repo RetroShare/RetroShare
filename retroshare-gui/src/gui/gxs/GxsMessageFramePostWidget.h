@@ -40,7 +40,6 @@ public:
 	virtual void setGroupId(const RsGxsGroupId &groupId);
 	virtual QString groupName(bool withUnreadCount);
 //	virtual QIcon groupIcon() = 0;
-	virtual void setAllMessagesRead(bool read);
 
 	/* GXS functions */
 	uint32_t nextTokenType() { return ++mNextTokenType; }
@@ -52,8 +51,7 @@ protected:
 	virtual void updateDisplay(bool complete);
 	virtual void groupNameChanged(const QString &/*name*/) {}
 
-	virtual void setMessageRead(GxsFeedItem *item, bool read) = 0;
-	virtual void clearPosts();
+	virtual void clearPosts() = 0;
 
 	/* GXS functions */
 	void requestGroupData();
@@ -74,7 +72,6 @@ protected:
 	uint32_t mTokenTypePosts;
 	uint32_t mTokenTypeRelatedPosts;
 	UIStateHelper *mStateHelper;
-	QList<GxsFeedItem*> mPostItems;
 
 private:
 	RsGxsGroupId mGroupId; /* current group */

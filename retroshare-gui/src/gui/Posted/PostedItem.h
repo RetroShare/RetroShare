@@ -46,6 +46,9 @@ public:
 	void setContent(const RsPostedPost& post);
 	virtual void setContent(const QVariant &content);
 
+	/* FeedItem */
+	virtual void expand(bool /*open*/) {}
+
 private slots:
 	void loadComments();
 	void makeUpVote();

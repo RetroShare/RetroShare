@@ -44,8 +44,8 @@ class GxsChannelPostItem : public GxsFeedItem
 
 public:
 	/** Default Constructor */
-	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome, bool autoUpdate);
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
 	virtual void setContent(const QVariant &content);
@@ -56,6 +56,9 @@ public:
 	const QString getTitleLabel() {return QString::fromUtf8(mPost.mMeta.mMsgName.c_str()); }
 	const QString getMsgLabel() {return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS); }
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
+
+	/* FeedItem */
+	virtual void expand(bool open);
 
 protected:
 	virtual void loadMessage(const uint32_t &token);

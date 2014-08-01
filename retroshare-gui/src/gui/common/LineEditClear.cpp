@@ -182,7 +182,7 @@ void LineEditClear::setCurrentFilter(int id)
 			if (action->data().toInt() == id) {
 				action->setChecked(true);
 				activateAction(action);
-//				emit filterChanged(id);
+				emit filterChanged(id);
 				break;
 			}
 		}

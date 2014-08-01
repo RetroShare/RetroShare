@@ -32,9 +32,9 @@ namespace Ui {
 class GxsChannelPostsWidget;
 }
 
-//class ChanMsgItem;
 class GxsChannelPostItem;
 class QTreeWidgetItem;
+class FeedItem;
 
 class GxsChannelPostsWidget : public GxsMessageFramePostWidget, public FeedHolder
 {
@@ -48,6 +48,7 @@ public:
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
+	virtual void setAllMessagesRead(bool read);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
@@ -61,14 +62,13 @@ protected:
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
 	virtual void insertPosts(const uint32_t &token);
 	virtual void insertRelatedPosts(const uint32_t &token);
-	virtual void setMessageRead(GxsFeedItem *item, bool read);
+	virtual void clearPosts();
 
 private slots:
 	void createMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(int filter);
-	void filterItems(const QString& text);
 
 	//void fillThreadFinished();
 	//void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
@@ -77,7 +77,7 @@ private:
 	void processSettings(bool load);
 
 	void setAutoDownload(bool autoDl);
-	bool filterItem(GxsChannelPostItem *pItem, const QString &text, const int filter);
+	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
 	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related);

@@ -42,17 +42,17 @@ void GxsFeedItem::removeItem()
 	std::cerr << std::endl;
 #endif
 
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->lockLayout(this, true);
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	hide();
 
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->lockLayout(this, false);
-		mParent->deleteFeedItem(this, mFeedId);
+		mFeedHolder->lockLayout(this, false);
+		mFeedHolder->deleteFeedItem(this, mFeedId);
 	}
 }
 
@@ -63,9 +63,9 @@ void GxsFeedItem::comments(const QString &title)
 	std::cerr << std::endl;
 #endif
 
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->openComments(mFeedId, mGroupId, mMessageId, title);
+		mFeedHolder->openComments(mFeedId, mGroupId, mMessageId, title);
 	}
 }
 
@@ -131,14 +131,14 @@ void GxsFeedItem::updateItem()
 
 /***********************************************************/
 
-GxsFeedItem::GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate) :
-	QWidget(NULL)
+GxsFeedItem::GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate) :
+	FeedItem(NULL)
 {
 	std::cerr << "GxsFeedItem::GxsFeedItem()";
 	std::cerr << std::endl;
 
 	/* this are just generally useful for all children */
-	mParent = parent;
+	mFeedHolder = feedHolder;
 	mFeedId = feedId;
 	mIsHome = isHome;
 

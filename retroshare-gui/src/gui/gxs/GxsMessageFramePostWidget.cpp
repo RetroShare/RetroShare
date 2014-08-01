@@ -116,26 +116,6 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 	}
 }
 
-void GxsMessageFramePostWidget::setAllMessagesRead(bool read)
-{
-	if (mGroupId.isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
-		return;
-	}
-
-	foreach (GxsFeedItem *item, mPostItems) {
-		setMessageRead(item, read);
-	}
-}
-
-void GxsMessageFramePostWidget::clearPosts()
-{
-	/* clear all messages */
-	foreach (GxsFeedItem *item, mPostItems) {
-		delete(item);
-	}
-	mPostItems.clear();
-}
-
 /**************************************************************/
 /** Request / Response of Data ********************************/
 /**************************************************************/

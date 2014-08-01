@@ -450,6 +450,7 @@ HEADERS +=  rshare.h \
             gui/common/RSPlainTextEdit.h \
             gui/common/RSTreeWidget.h \
             gui/common/RSTreeWidgetItem.h \
+            gui/common/RSFeedWidget.h \
             gui/common/RSTabWidget.h \
             gui/common/RSItemDelegate.h \
             gui/common/PeerDefs.h \
@@ -495,6 +496,7 @@ HEADERS +=  rshare.h \
             gui/elastic/arrow.h \
             gui/elastic/node.h \
             gui/NewsFeed.h \
+            gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/PeerItem.h \
             gui/feeds/MsgItem.h \
@@ -615,6 +617,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/RSImageBlockWidget.ui \
             gui/common/RsCollectionDialog.ui \
             gui/common/HeaderFrame.ui \
+            gui/common/RSFeedWidget.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
@@ -740,6 +743,7 @@ SOURCES +=  main.cpp \
             gui/common/RSPlainTextEdit.cpp \
             gui/common/RSTreeWidget.cpp \
             gui/common/RSTreeWidgetItem.cpp \
+            gui/common/RSFeedWidget.cpp \
             gui/common/RSTabWidget.cpp \
             gui/common/RSItemDelegate.cpp \
             gui/common/PeerDefs.cpp \
@@ -816,6 +820,7 @@ SOURCES +=  main.cpp \
             gui/elastic/arrow.cpp \
             gui/elastic/node.cpp \
             gui/NewsFeed.cpp \
+            gui/feeds/FeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
             gui/feeds/PeerItem.cpp \
             gui/feeds/MsgItem.cpp \
