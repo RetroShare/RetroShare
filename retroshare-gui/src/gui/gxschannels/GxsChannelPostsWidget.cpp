@@ -57,10 +57,10 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	/* Setup UI helper */
 
-	// No progress yet
-	mStateHelper->addWidget(mTokenTypePosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
-//	mStateHelper->addWidget(mTokenTypePosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
-//	mStateHelper->addWidget(mTokenTypePosts, ui->progressLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypePosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypePosts, ui->filterLineEdit);
+
+	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
 
 	mStateHelper->addLoadPlaceholder(mTokenTypeGroupData, ui->nameLabel);
 
@@ -81,7 +81,6 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
 	ui->loadingLabel->hide();
-	ui->progressLabel->hide();
 	ui->progressBar->hide();
 
 	ui->nameLabel->setMinimumWidth(20);
@@ -271,33 +270,69 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 	return bVisible;
 }
 
-void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related)
+void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool related)
 {
+	GxsChannelPostItem *item = NULL;
+	if (related) {
+		FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(post.mMeta.mGroupId, post.mMeta.mMsgId);
+		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+	}
+	if (item) {
+		item->setContent(post);
+		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
+	} else {
+		uint32_t subscribeFlags = 0xffffffff;
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, subscribeFlags, true, false);
+		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
+	}
+}
+
+void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
+{
+	/* show fill progress */
+	if (count) {
+		ui->progressBar->setValue(current * ui->progressBar->maximum() / count);
+	}
+
+	if (!post.canConvert<RsGxsChannelPost>()) {
+		return;
+	}
+
+	createPostItem(post.value<RsGxsChannelPost>(), related);
+}
+
+void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related)
+{
+	if (related && thread) {
+		std::cerr << "GxsChannelPostsWidget::insertChannelPosts fill only related posts as thread is not possible" << std::endl;
+		return;
+	}
+
 	std::vector<RsGxsChannelPost>::const_iterator it;
 
-	uint32_t subscribeFlags = 0xffffffff;
+	int count = posts.size();
+	int pos = 0;
 
-	ui->feedWidget->setSortingEnabled(false);
+	if (!thread) {
+		ui->feedWidget->setSortingEnabled(false);
+	}
 
 	for (it = posts.begin(); it != posts.end(); it++)
 	{
-		const RsGxsChannelPost &msg = *it;
-
-		GxsChannelPostItem *item = NULL;
-		if (related) {
-			FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(msg.mMeta.mGroupId, msg.mMeta.mMsgId);
-			item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+		if (thread && thread->stopped()) {
+			break;
 		}
-		if (item) {
-			item->setContent(*it);
-			//TODO: Sort timestamp
+
+		if (thread) {
+			thread->emitAddPost(qVariantFromValue(*it), related, ++pos, count);
 		} else {
-			item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true, false);
-			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(msg.mMeta.mPublishTs));
+			createPostItem(*it, related);
 		}
 	}
 
-	ui->feedWidget->setSortingEnabled(true);
+	if (!thread) {
+		ui->feedWidget->setSortingEnabled(true);
+	}
 }
 
 void GxsChannelPostsWidget::clearPosts()
@@ -352,12 +387,12 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	return false;
 }
 
-void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
+void GxsChannelPostsWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
 {
 	std::vector<RsGxsChannelPost> posts;
 	rsGxsChannels->getPostData(token, posts);
 
-	insertChannelPosts(posts, false);
+	insertChannelPosts(posts, thread, false);
 }
 
 void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
@@ -365,7 +400,7 @@ void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
 	std::vector<RsGxsChannelPost> posts;
 	rsGxsChannels->getRelatedPosts(token, posts);
 
-	insertChannelPosts(posts, true);
+	insertChannelPosts(posts, NULL, true);
 }
 
 static void setAllMessagesReadCallback(FeedItem *feedItem, const QVariant &data)

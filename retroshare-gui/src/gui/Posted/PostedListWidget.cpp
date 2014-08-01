@@ -49,6 +49,10 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	mStateHelper->addWidget(mTokenTypePosts, ui->newSortButton);
 	mStateHelper->addWidget(mTokenTypePosts, ui->topSortButton);
 
+	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->hotSortButton);
+	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->newSortButton);
+	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->topSortButton);
+
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->submitPostButton);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
@@ -532,7 +536,7 @@ bool PostedListWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &m
 	return false;
 }
 
-void PostedListWidget::insertPosts(const uint32_t &token)
+void PostedListWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThread */*thread*/)
 {
 	std::vector<RsPostedPost> posts;
 	rsPosted->getPostData(token, posts);

@@ -22,18 +22,24 @@
 #ifndef GXSMESSAGEFRAMEPOSTWIDGET_H
 #define GXSMESSAGEFRAMEPOSTWIDGET_H
 
+#include <QThread>
+
 #include "GxsMessageFrameWidget.h"
 #include "util/TokenQueue.h"
 
 class GxsFeedItem;
 class UIStateHelper;
+class GxsMessageFramePostThread;
 
 class GxsMessageFramePostWidget : public GxsMessageFrameWidget, public TokenResponse
 {
 	Q_OBJECT
 
+	friend class GxsMessageFramePostThread;
+
 public:
 	explicit GxsMessageFramePostWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = NULL);
+	virtual ~GxsMessageFramePostWidget();
 
 	/* GxsMessageFrameWidget */
 	virtual RsGxsGroupId groupId();
@@ -53,6 +59,10 @@ protected:
 
 	virtual void clearPosts() = 0;
 
+	/* Thread functions */
+	virtual bool useThread() { return false; }
+	virtual void fillThreadCreatePost(const QVariant &/*post*/, bool /*related*/, int /*current*/, int /*count*/) {}
+
 	/* GXS functions */
 	void requestGroupData();
 	void loadGroupData(const uint32_t &token);
@@ -60,11 +70,15 @@ protected:
 
 	void requestPosts();
 	void loadPosts(const uint32_t &token);
-	virtual void insertPosts(const uint32_t &token) = 0;
+	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
 
 	void requestRelatedPosts(const std::vector<RsGxsMessageId> &msgIds);
 	void loadRelatedPosts(const uint32_t &token);
 	virtual void insertRelatedPosts(const uint32_t &token) = 0;
+
+private slots:
+	void fillThreadFinished();
+	void fillThreadAddPost(const QVariant &post, bool related, int current, int count);
 
 protected:
 	TokenQueue *mTokenQueue;
@@ -78,6 +92,30 @@ private:
 	QString mGroupName;
 	int mSubscribeFlags;
 	uint32_t mNextTokenType;
+	GxsMessageFramePostThread *mFillThread;
+};
+
+class GxsMessageFramePostThread : public QThread
+{
+	Q_OBJECT
+
+public:
+	GxsMessageFramePostThread(uint32_t token, GxsMessageFramePostWidget *parent);
+	~GxsMessageFramePostThread();
+
+	void run();
+	void stop(bool waitForStop);
+	bool stopped() { return mStopped; }
+
+	void emitAddPost(const QVariant &post, bool related, int current, int count);
+
+signals:
+	void addPost(const QVariant &post, bool related, int current, int count);
+
+private:
+	uint32_t mToken;
+	GxsMessageFramePostWidget *mParent;
+	volatile bool mStopped;
 };
 
 #endif // GXSMESSAGEFRAMEPOSTWIDGET_H

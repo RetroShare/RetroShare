@@ -22,6 +22,7 @@
 #include <QLabel>
 #include <QWidget>
 #include <QLineEdit>
+#include <QProgressBar>
 
 #include "UIStateHelper.h"
 #include "RSTreeWidget.h"
@@ -441,7 +442,16 @@ void UIStateHelper::updateData(UIStateHelperData *data)
 		UIStates states = it.value();
 
 		if (states & (UISTATE_LOADING_VISIBLE | UISTATE_LOADING_INVISIBLE | UISTATE_ACTIVE_VISIBLE | UISTATE_ACTIVE_INVISIBLE)) {
-			widget->setVisible(isWidgetVisible(widget));
+			bool visible = isWidgetVisible(widget);
+			widget->setVisible(visible);
+
+			if (!visible) {
+				/* Reset progressbar */
+				QProgressBar *progressBar = dynamic_cast<QProgressBar*>(widget);
+				if (progressBar) {
+					progressBar->setValue(0);
+				}
+			}
 		}
 
 		if (states & (UISTATE_LOADING_ENABLED | UISTATE_LOADING_DISABLED | UISTATE_ACTIVE_ENABLED | UISTATE_ACTIVE_DISABLED)) {

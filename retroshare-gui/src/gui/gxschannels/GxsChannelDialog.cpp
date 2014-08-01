@@ -52,7 +52,6 @@ QString GxsChannelDialog::text(TextType type)
 		return tr("Create Channel");
 	case TEXT_TODO:
 		return "<b>Open points:</b><ul>"
-		        "<li>Threaded load of messages"
 		        "<li>Share key"
 		        "<li>Restore channel keys"
 		        "<li>Navigate channel link"

@@ -19,6 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QApplication>
+
 #include "GxsMessageFramePostWidget.h"
 #include "GxsFeedItem.h"
 #include "gui/common/UIStateHelper.h"
@@ -34,6 +36,7 @@ GxsMessageFramePostWidget::GxsMessageFramePostWidget(RsGxsIfaceHelper *ifaceImpl
 
 	mSubscribeFlags = 0;
 	mNextTokenType = 0;
+	mFillThread = NULL;
 
 	mTokenTypeGroupData = nextTokenType();
 	mTokenTypePosts = nextTokenType();
@@ -41,6 +44,15 @@ GxsMessageFramePostWidget::GxsMessageFramePostWidget(RsGxsIfaceHelper *ifaceImpl
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
+}
+
+GxsMessageFramePostWidget::~GxsMessageFramePostWidget()
+{
+	if (mFillThread) {
+		mFillThread->stop(true);
+		delete(mFillThread);
+		mFillThread = NULL;
+	}
 }
 
 void GxsMessageFramePostWidget::setGroupId(const RsGxsGroupId &groupId)
@@ -114,6 +126,50 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 	if (updateGroup) {
 		requestGroupData();
 	}
+}
+
+void GxsMessageFramePostWidget::fillThreadAddPost(const QVariant &post, bool related, int current, int count)
+{
+	if (sender() == mFillThread) {
+		fillThreadCreatePost(post, related, current, count);
+	}
+}
+
+void GxsMessageFramePostWidget::fillThreadFinished()
+{
+#ifdef ENABLE_DEBUG
+	std::cerr << "GxsMessageFramePostWidget::fillThreadFinished()" << std::endl;
+#endif
+
+	/* Thread has finished */
+	GxsMessageFramePostThread *thread = dynamic_cast<GxsMessageFramePostThread*>(sender());
+	if (thread) {
+		if (thread == mFillThread) {
+			/* Current thread has finished */
+			mFillThread = NULL;
+
+			mStateHelper->setLoading(mTokenTypePosts, false);
+			emit groupChanged(this);
+		}
+
+#ifdef ENABLE_DEBUG
+		if (thread->stopped()) {
+			// thread was stopped
+			std::cerr << "GxsMessageFramePostWidget::fillThreadFinished() Thread was stopped" << std::endl;
+		}
+#endif
+
+#ifdef ENABLE_DEBUG
+		std::cerr << "GxsMessageFramePostWidget::fillThreadFinished() Delete thread" << std::endl;
+#endif
+
+		thread->deleteLater();
+		thread = NULL;
+	}
+
+#ifdef ENABLE_DEBUG
+	std::cerr << "GxsMessageFramePostWidget::fillThreadFinished done()" << std::endl;
+#endif
 }
 
 /**************************************************************/
@@ -197,9 +253,19 @@ void GxsMessageFramePostWidget::requestPosts()
 #endif
 
 	/* Request all posts */
-	clearPosts();
 
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypePosts);
+
+	if (mFillThread) {
+		/* Stop current fill thread */
+		GxsMessageFramePostThread *thread = mFillThread;
+		mFillThread = NULL;
+		thread->stop(false);
+
+		mStateHelper->setLoading(mTokenTypePosts, false);
+	}
+
+	clearPosts();
 
 	if (mGroupId.isNull()) {
 		mStateHelper->setActive(mTokenTypePosts, false);
@@ -231,9 +297,26 @@ void GxsMessageFramePostWidget::loadPosts(const uint32_t &token)
 
 	mStateHelper->setActive(mTokenTypePosts, true);
 
-	insertPosts(token);
+	if (useThread()) {
+		/* Create fill thread */
+		mFillThread = new GxsMessageFramePostThread(token, this);
 
-	mStateHelper->setLoading(mTokenTypePosts, false);
+		// connect thread
+		connect(mFillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
+		connect(mFillThread, SIGNAL(addPost(QVariant,bool,int,int)), this, SLOT(fillThreadAddPost(QVariant,bool,int,int)), Qt::BlockingQueuedConnection);
+
+#ifdef ENABLE_DEBUG
+		std::cerr << "GxsMessageFramePostWidget::loadPosts() Start fill thread" << std::endl;
+#endif
+
+		/* Start thread */
+		mFillThread->start();
+	} else {
+		insertPosts(token, NULL);
+
+		mStateHelper->setLoading(mTokenTypePosts, false);
+	}
+
 	emit groupChanged(this);
 }
 
@@ -247,9 +330,9 @@ void GxsMessageFramePostWidget::requestRelatedPosts(const std::vector<RsGxsMessa
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypeRelatedPosts);
 
 	if (mGroupId.isNull()) {
-		mStateHelper->setActive(mTokenTypePosts, false);
-		mStateHelper->setLoading(mTokenTypePosts, false);
-		mStateHelper->clear(mTokenTypePosts);
+		mStateHelper->setActive(mTokenTypeRelatedPosts, false);
+		mStateHelper->setLoading(mTokenTypeRelatedPosts, false);
+		mStateHelper->clear(mTokenTypeRelatedPosts);
 		emit groupChanged(this);
 		return;
 	}
@@ -258,7 +341,7 @@ void GxsMessageFramePostWidget::requestRelatedPosts(const std::vector<RsGxsMessa
 		return;
 	}
 
-	mStateHelper->setLoading(mTokenTypePosts, true);
+	mStateHelper->setLoading(mTokenTypeRelatedPosts, true);
 	emit groupChanged(this);
 
 	RsTokReqOptions opts;
@@ -280,11 +363,11 @@ void GxsMessageFramePostWidget::loadRelatedPosts(const uint32_t &token)
 	std::cerr << std::endl;
 #endif
 
-	mStateHelper->setActive(mTokenTypePosts, true);
+	mStateHelper->setActive(mTokenTypeRelatedPosts, true);
 
 	insertRelatedPosts(token);
 
-	mStateHelper->setLoading(mTokenTypePosts, false);
+	mStateHelper->setLoading(mTokenTypeRelatedPosts, false);
 	emit groupChanged(this);
 }
 
@@ -308,4 +391,53 @@ void GxsMessageFramePostWidget::loadRequest(const TokenQueue *queue, const Token
 			std::cerr << std::endl;
 		}
 	}
+}
+
+/**************************************************************/
+/** GxsMessageFramePostThread *********************************/
+/**************************************************************/
+
+GxsMessageFramePostThread::GxsMessageFramePostThread(uint32_t token, GxsMessageFramePostWidget *parent)
+    : QThread(parent), mToken(token), mParent(parent)
+{
+	mStopped = false;
+}
+
+GxsMessageFramePostThread::~GxsMessageFramePostThread()
+{
+#ifdef ENABLE_DEBUG
+	std::cerr << "GxsMessageFramePostThread::~GxsMessageFramePostThread" << std::endl;
+#endif
+}
+
+void GxsMessageFramePostThread::stop(bool waitForStop)
+{
+	if (waitForStop) {
+		disconnect();
+	}
+
+	mStopped = true;
+	QApplication::processEvents();
+
+	if (waitForStop) {
+		wait();
+	}
+}
+
+void GxsMessageFramePostThread::run()
+{
+#ifdef ENABLE_DEBUG
+	std::cerr << "GxsMessageFramePostThread::run()" << std::endl;
+#endif
+
+	mParent->insertPosts(mToken, this);
+
+#ifdef ENABLE_DEBUG
+	std::cerr << "GxsMessageFramePostThread::run() stopped: " << (stopped() ? "yes" : "no") << std::endl;
+#endif
+}
+
+void GxsMessageFramePostThread::emitAddPost(const QVariant &post, bool related, int current, int count)
+{
+	emit addPost(post, related, current, count);
 }

@@ -60,18 +60,17 @@ protected:
 	/* GxsMessageFramePostWidget */
 	virtual void groupNameChanged(const QString &name);
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
-	virtual void insertPosts(const uint32_t &token);
+	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
 	virtual void insertRelatedPosts(const uint32_t &token);
 	virtual void clearPosts();
+	virtual bool useThread() { return true; }
+	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
 
 private slots:
 	void createMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(int filter);
-
-	//void fillThreadFinished();
-	//void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
 
 private:
 	void processSettings(bool load);
@@ -80,7 +79,9 @@ private:
 	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
-	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related);
+	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related);
+
+	void createPostItem(const RsGxsChannelPost &post, bool related);
 
 private:
 	QAction *mAutoDownloadAction;
