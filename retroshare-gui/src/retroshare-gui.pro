@@ -1168,15 +1168,21 @@ gxschannels {
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
 		gui/gxschannels/GxsChannelPostsWidget.h \
+		gui/gxschannels/GxsChannelFilesWidget.h \
+		gui/gxschannels/GxsChannelFilesStatusWidget.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
 	FORMS += gui/gxschannels/GxsChannelPostsWidget.ui \
+		gui/gxschannels/GxsChannelFilesWidget.ui \
+		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
 		gui/gxschannels/GxsChannelPostsWidget.cpp \
+		gui/gxschannels/GxsChannelFilesWidget.cpp \
+		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
 		gui/feeds/GxsChannelPostItem.cpp \

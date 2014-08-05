@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QDateTime>
+#include <QSignalMapper>
 
 #include "GxsChannelPostsWidget.h"
 #include "ui_GxsChannelPostsWidget.h"
@@ -39,11 +40,9 @@
  * #define DEBUG_CHANNEL
  ***/
 
-/* Filters */
-#define FILTER_TITLE     1
-#define FILTER_MSG       2
-#define FILTER_FILE_NAME 3
-#define FILTER_COUNT     3
+/* View mode */
+#define VIEW_MODE_FEEDS  1
+#define VIEW_MODE_FILES  2
 
 /** Constructor */
 GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent) :
@@ -76,7 +75,18 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	ui->filterLineEdit->addFilter(QIcon(), tr("Message"), FILTER_MSG, tr("Search Message"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Filename"), FILTER_FILE_NAME, tr("Search Filename"));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->feedWidget, SLOT(setFilterText(QString)));
+	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->fileWidget, SLOT(setFilterText(QString)));
 	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged(int)));
+
+	/* Initialize view button */
+	//setViewMode(VIEW_MODE_FEEDS); see processSettings
+
+	QSignalMapper *signalMapper = new QSignalMapper(this);
+	connect(ui->feedToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->fileToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(ui->feedToolButton, VIEW_MODE_FEEDS);
+	signalMapper->setMapping(ui->fileToolButton, VIEW_MODE_FILES);
+	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setViewMode(int)));
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
@@ -125,6 +135,7 @@ void GxsChannelPostsWidget::processSettings(bool load)
 	if (load) {
 		// load settings
 		ui->filterLineEdit->setCurrentFilter(Settings->value("filter", FILTER_TITLE).toInt());
+		setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
 	} else {
 		// save settings
 	}
@@ -221,16 +232,45 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	setAutoDownload(autoDownload);
 }
 
-void GxsChannelPostsWidget::filterChanged(int filter)
+void GxsChannelPostsWidget::setViewMode(int viewMode)
 {
-	ui->feedWidget->setFilterType(filter);
+	switch (viewMode) {
+	case VIEW_MODE_FEEDS:
+		ui->feedWidget->show();
+		ui->fileWidget->hide();
 
-	if (mInProcessSettings) {
+		ui->feedToolButton->setChecked(true);
+		ui->fileToolButton->setChecked(false);
+
+		break;
+	case VIEW_MODE_FILES:
+		ui->feedWidget->hide();
+		ui->fileWidget->show();
+
+		ui->feedToolButton->setChecked(false);
+		ui->fileToolButton->setChecked(true);
+
+		break;
+	default:
+		setViewMode(VIEW_MODE_FEEDS);
 		return;
 	}
 
-	// save index
-	Settings->setValueToGroup("ChannelPostsWidget", "filter", filter);
+	if (!mInProcessSettings) {
+		/* Save view mode */
+		Settings->setValueToGroup("ChannelPostsWidget", "viewMode", viewMode);
+	}
+}
+
+void GxsChannelPostsWidget::filterChanged(int filter)
+{
+	ui->feedWidget->setFilterType(filter);
+	ui->fileWidget->setFilterType(filter);
+
+	if (!mInProcessSettings) {
+		// save index
+		Settings->setValueToGroup("ChannelPostsWidget", "filter", filter);
+	}
 }
 
 /*static*/ bool GxsChannelPostsWidget::filterItem(FeedItem *feedItem, const QString &text, int filter)
@@ -285,6 +325,8 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, subscribeFlags, true, false);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
+
+	ui->fileWidget->addFiles(post, related);
 }
 
 void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)

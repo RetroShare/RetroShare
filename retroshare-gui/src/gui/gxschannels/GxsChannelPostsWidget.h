@@ -41,6 +41,14 @@ class GxsChannelPostsWidget : public GxsMessageFramePostWidget, public FeedHolde
 	Q_OBJECT
 
 public:
+	/* Filters */
+	enum Filter {
+		FILTER_TITLE =     1,
+		FILTER_MSG =       2,
+		FILTER_FILE_NAME = 3
+	};
+
+public:
 	/** Default Constructor */
 	GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent = 0);
 	/** Default Destructor */
@@ -71,6 +79,7 @@ private slots:
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
 	void filterChanged(int filter);
+	void setViewMode(int viewMode);
 
 private:
 	void processSettings(bool load);

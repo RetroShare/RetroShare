@@ -194,6 +194,47 @@
        </widget>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="viewModeLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="feedToolButton">
+          <property name="toolTip">
+           <string>Show feeds</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/view-feeds.png</normaloff>:/images/view-feeds.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="fileToolButton">
+          <property name="toolTip">
+           <string>Show files</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/view-files.png</normaloff>:/images/view-files.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <widget class="LineEditClear" name="filterLineEdit">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -225,6 +266,16 @@
     </widget>
    </item>
    <item>
+    <widget class="GxsChannelFilesWidget" name="fileWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="RSFeedWidget" name="feedWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -235,9 +286,20 @@
     </widget>
    </item>
   </layout>
+  <action name="actionFeeds">
+   <property name="text">
+    <string>Feeds</string>
+   </property>
+  </action>
+  <action name="actionFiles">
+   <property name="text">
+    <string>Files</string>
+   </property>
+  </action>
   <zorder>toolBarFrame</zorder>
   <zorder>headFrame</zorder>
   <zorder>feedWidget</zorder>
+  <zorder>fileWidget</zorder>
  </widget>
  <customwidgets>
   <customwidget>
@@ -254,6 +316,12 @@
    <class>RSFeedWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/RSFeedWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsChannelFilesWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/gxschannels/GxsChannelFilesWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

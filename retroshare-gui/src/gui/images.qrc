@@ -692,5 +692,7 @@
         <file>images/btn_red_pressed.png</file>
         <file>images/btn_red_hover.png</file>
         <file>images/btn_red.png</file>
+        <file>images/view-feeds.png</file>
+        <file>images/view-files.png</file>
     </qresource>
 </RCC>
