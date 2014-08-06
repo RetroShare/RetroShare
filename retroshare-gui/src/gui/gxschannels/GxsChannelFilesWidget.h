@@ -44,6 +44,7 @@ public:
 	~GxsChannelFilesWidget();
 
 	void addFiles(const RsGxsChannelPost &post, bool related);
+	void clear();
 
 public slots:
 	void setFilter(const QString &text, int type);

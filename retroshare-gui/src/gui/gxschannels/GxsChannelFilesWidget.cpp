@@ -118,6 +118,11 @@ void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost &post, bool related)
 	}
 }
 
+void GxsChannelFilesWidget::clear()
+{
+	ui->treeWidget->clear();
+}
+
 void GxsChannelFilesWidget::setFilter(const QString &text, int type)
 {
 	if (mFilterText == text && mFilterType == type) {

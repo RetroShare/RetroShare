@@ -380,6 +380,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 void GxsChannelPostsWidget::clearPosts()
 {
 	ui->feedWidget->clear();
+	ui->fileWidget->clear();
 }
 
 void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
