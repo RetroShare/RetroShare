@@ -36,6 +36,7 @@ ChannelPage::~ChannelPage()
 /** Saves the changes on this page */
 bool ChannelPage::save(QString &/*errmsg*/)
 {
+	Settings->setChannelLoadThread(ui.loadThreadCheckBox->isChecked());
 	ui.groupFrameSettingsWidget->saveSettings(GroupFrameSettings::Channel);
 
 	return true;
@@ -44,5 +45,6 @@ bool ChannelPage::save(QString &/*errmsg*/)
 /** Loads the settings for this page */
 void ChannelPage::load()
 {
+	ui.loadThreadCheckBox->setChecked(Settings->getChannelLoadThread());
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
 }

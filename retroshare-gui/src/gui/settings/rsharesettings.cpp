@@ -968,6 +968,17 @@ void RshareSettings::setForumLoadEmbeddedImages(bool value)
 	setValueToGroup("Forum", "LoadEmbeddedImages", value);
 }
 
+/* Channel */
+bool RshareSettings::getChannelLoadThread()
+{
+	return valueFromGroup("Channel", "LoadThread", true).toBool();
+}
+
+void RshareSettings::setChannelLoadThread(bool value)
+{
+	setValueToGroup("Channel", "LoadThread", value);
+}
+
 /* GroupFrame settings */
 static QString groupFrameSettingsTypeToString(GroupFrameSettings::Type type)
 {

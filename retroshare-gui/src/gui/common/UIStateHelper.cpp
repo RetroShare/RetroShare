@@ -311,6 +311,9 @@ bool UIStateHelper::isWidgetVisible(QWidget *widget)
 	}
 
 	if (visible) {
+		int visibleCount = 0;
+		int invisibleCount = 0;
+
 		QMap<long, UIStateHelperData*>::iterator dataIt;
 		for (dataIt = mData.begin(); dataIt != mData.end(); ++dataIt) {
 			UIStateHelperData *data = dataIt.value();
@@ -323,30 +326,40 @@ bool UIStateHelper::isWidgetVisible(QWidget *widget)
 
 			if (states & (UISTATE_LOADING_VISIBLE | UISTATE_LOADING_INVISIBLE)) {
 				if (states & UISTATE_LOADING_VISIBLE) {
-					if (!data->mLoading) {
-						visible = false;
-						break;
+					if (data->mLoading) {
+						++visibleCount;
+					} else {
+						++invisibleCount;
 					}
 				} else if (states & UISTATE_LOADING_INVISIBLE) {
 					if (data->mLoading) {
-						visible = false;
-						break;
+						++invisibleCount;
+					} else {
+						++visibleCount;
 					}
 				}
 			}
 
 			if (states & (UISTATE_ACTIVE_VISIBLE | UISTATE_ACTIVE_INVISIBLE)) {
 				if (states & UISTATE_ACTIVE_VISIBLE) {
-					if (!data->mActive) {
-						visible = false;
-						break;
+					if (data->mActive) {
+						++visibleCount;
+					} else {
+						++invisibleCount;
 					}
 				} else if (states & UISTATE_ACTIVE_INVISIBLE) {
 					if (data->mActive) {
-						visible = false;
-						break;
+						++invisibleCount;
+					} else {
+						++visibleCount;
 					}
 				}
+			}
+		}
+
+		if (visibleCount + invisibleCount) {
+			if (!visibleCount) {
+				visible = false;
 			}
 		}
 	}

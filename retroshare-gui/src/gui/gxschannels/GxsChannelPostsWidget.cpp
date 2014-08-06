@@ -29,7 +29,7 @@
 #include "gui/common/UIStateHelper.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/SubFileItem.h"
-
+#include "gui/notifyqt.h"
 #include <algorithm>
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
@@ -57,6 +57,7 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	/* Setup UI helper */
 
 	mStateHelper->addWidget(mTokenTypePosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypePosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
 	mStateHelper->addWidget(mTokenTypePosts, ui->filterLineEdit);
 
 	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
@@ -67,8 +68,10 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->logoLabel);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
+	/* Connect signals */
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
+	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_TITLE, tr("Search Title"));
@@ -114,6 +117,7 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	/* Initialize GUI */
 	setAutoDownload(false);
+	settingsChanged();
 	setGroupId(channelId);
 }
 
@@ -142,6 +146,13 @@ void GxsChannelPostsWidget::processSettings(bool load)
 
 	Settings->endGroup();
 	mInProcessSettings = false;
+}
+
+void GxsChannelPostsWidget::settingsChanged()
+{
+	mUseThread = Settings->getChannelLoadThread();
+
+	mStateHelper->setWidgetVisible(ui->progressBar, mUseThread);
 }
 
 void GxsChannelPostsWidget::groupNameChanged(const QString &name)

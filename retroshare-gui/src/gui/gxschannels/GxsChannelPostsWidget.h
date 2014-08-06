@@ -71,7 +71,7 @@ protected:
 	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
 	virtual void insertRelatedPosts(const uint32_t &token);
 	virtual void clearPosts();
-	virtual bool useThread() { return true; }
+	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
 
 private slots:
@@ -80,6 +80,7 @@ private slots:
 	void subscribeGroup(bool subscribe);
 	void filterChanged(int filter);
 	void setViewMode(int viewMode);
+	void settingsChanged();
 
 private:
 	void processSettings(bool load);
@@ -96,6 +97,7 @@ private:
 	QAction *mAutoDownloadAction;
 
 	bool mInProcessSettings;
+	bool mUseThread;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidget *ui;
