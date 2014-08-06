@@ -121,6 +121,7 @@ void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost &post, bool related)
 void GxsChannelFilesWidget::clear()
 {
 	ui->treeWidget->clear();
+	closeFeedItem();
 }
 
 void GxsChannelFilesWidget::setFilter(const QString &text, int type)
