@@ -99,7 +99,7 @@ void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost &post, bool related)
 
 		treeItem->setText(COLUMN_FILENAME, QString::fromUtf8(file.mName.c_str()));
 		treeItem->setText(COLUMN_SIZE, misc::friendlyUnit(file.mSize));
-		treeItem->setData(COLUMN_SIZE, ROLE_SORT, file.mSize);
+		treeItem->setData(COLUMN_SIZE, ROLE_SORT, (qulonglong)file.mSize);
 		treeItem->setText(COLUMN_TITLE, QString::fromUtf8(post.mMeta.mMsgName.c_str()));
 		treeItem->setText(COLUMN_PUBLISHED, DateTime::formatDateTime(post.mMeta.mPublishTs));
 		treeItem->setData(COLUMN_PUBLISHED, ROLE_SORT, QDateTime::fromTime_t(post.mMeta.mPublishTs));
