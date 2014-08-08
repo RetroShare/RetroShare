@@ -287,8 +287,9 @@ class RsPeers
 		virtual ~RsPeers() { return; }
 
 		/* Updates ... */
-		virtual bool FriendsChanged() 					= 0;
-		virtual bool OthersChanged() 					= 0;
+        // not implemented
+        //virtual bool FriendsChanged() 					= 0;
+        //virtual bool OthersChanged() 					= 0;
 
 		/* Peer Details (Net & Auth) */
 		virtual const RsPeerId& getOwnId()					= 0;

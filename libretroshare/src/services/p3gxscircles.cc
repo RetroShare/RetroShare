@@ -220,9 +220,15 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
 				// for new circles we need to add them to the list.
-				RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-				RsGxsCircleId tempId(git->toStdString());
-				mCircleExternalIdList.push_back(tempId);
+                // we don't know the type of this circle here
+                // original behavior was to add all ids to the external ids list
+                addCircleIdToList(RsGxsCircleId(*git), 0);
+
+                // reset the cached circle data for this id
+                {
+                    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+                    mCircleCache.erase(RsGxsCircleId(*git));
+                }
 			}
 		}
 	}
@@ -419,7 +425,7 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 /********************************************************************************/
 /********************************************************************************/
 
-bool 	p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
+void p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
 {
 #ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::createGroup()";
@@ -432,7 +438,15 @@ bool 	p3GxsCircles::createGroup(uint32_t& token, RsGxsCircleGroup &group)
 	item->convertFrom(group);
 
 	RsGenExchange::publishGroup(token, item);
-	return true;
+}
+
+void p3GxsCircles::updateGroup(uint32_t &token, RsGxsCircleGroup &group)
+{
+    // note: refresh of circle cache gets triggered in the RsGenExchange::notifyChanges() callback
+    RsGxsCircleGroupItem* item = new RsGxsCircleGroupItem();
+    item->convertFrom(group);
+
+    RsGenExchange::updateGroup(token, item);
 }
 
 RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/)
@@ -457,18 +471,9 @@ RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpIt
 		item->meta.mCircleId = RsGxsCircleId(item->meta.mGroupId);
 	}
 
-	{
-		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-
-		if (item->meta.mCircleType == GXS_CIRCLE_TYPE_LOCAL)
-		{
-			mCirclePersonalIdList.push_back(RsGxsCircleId(item->meta.mGroupId.toStdString()));
-		}
-		else
-		{
-			mCircleExternalIdList.push_back(RsGxsCircleId(item->meta.mGroupId.toStdString()));
-		}
-	}
+    // the advantage of adding the id to the list now is, that we know the cirlce type at this point
+    // this is not the case in NotifyChanges()
+    addCircleIdToList(RsGxsCircleId(item->meta.mGroupId), item->meta.mCircleType);
 
 	return SERVICE_CREATE_SUCCESS;
 }
@@ -596,29 +601,21 @@ bool p3GxsCircles::load_CircleIdList(uint32_t token)
 	std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
 
-        std::list<RsGroupMetaData> groups;
-    	bool ok = RsGenExchange::getGroupMeta(token, groups);
+    std::list<RsGroupMetaData> groups;
+    bool ok = RsGenExchange::getGroupMeta(token, groups);
 
 	if(ok)
 	{
 		// Save List 
-        	std::list<RsGroupMetaData>::iterator it;
-		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+        {
+            RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+            mCirclePersonalIdList.clear();
+            mCircleExternalIdList.clear();
+        }
 
-		mCirclePersonalIdList.clear();
-		mCircleExternalIdList.clear();
-
-		for(it = groups.begin(); it != groups.end(); it++)
+        for(std::list<RsGroupMetaData>::iterator it = groups.begin(); it != groups.end(); it++)
 		{
-			RsGxsCircleId tempId(it->mGroupId.toStdString());
-			if (it->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
-			{
-				mCirclePersonalIdList.push_back(tempId);
-			}
-			else
-			{
-				mCircleExternalIdList.push_back(tempId);
-			}
+            addCircleIdToList(RsGxsCircleId(it->mGroupId), it->mCircleType);
 		}
 	}
 	else
@@ -1259,6 +1256,24 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 		// TODO - work out when we flag as PROCESSED.
 	}
 	return false;
+}
+
+void p3GxsCircles::addCircleIdToList(const RsGxsCircleId &circleId, uint32_t circleType)
+{
+    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+
+    if (circleType == GXS_CIRCLE_TYPE_LOCAL)
+    {
+        if(mCirclePersonalIdList.end() == std::find(mCirclePersonalIdList.begin(), mCirclePersonalIdList.end(), circleId)){
+            mCirclePersonalIdList.push_back(circleId);
+        }
+    }
+    else
+    {
+        if(mCircleExternalIdList.end() == std::find(mCircleExternalIdList.begin(), mCircleExternalIdList.end(), circleId)){
+            mCircleExternalIdList.push_back(circleId);
+        }
+    }
 }
 
 

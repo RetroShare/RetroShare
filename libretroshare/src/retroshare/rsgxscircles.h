@@ -130,9 +130,11 @@ virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
 	/* standard load */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;
 
-	/* make new group */
-virtual bool createGroup(uint32_t& token, RsGxsCircleGroup &group) = 0;
+    /* make new group */
+virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group) = 0;
 
+    /* update an existing group */
+virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) = 0;
 
 };
 
