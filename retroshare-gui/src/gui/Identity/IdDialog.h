@@ -46,7 +46,7 @@ public:
 	IdDialog(QWidget *parent = 0);
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
-	virtual QString pageName() const { return tr("Itentities") ; } //MainPage
+	virtual QString pageName() const { return tr("Identities") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
