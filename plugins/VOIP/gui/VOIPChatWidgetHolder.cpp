@@ -69,7 +69,7 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	videoCaptureToggleButton->setMinimumSize(QSize(28,28)) ;
 	videoCaptureToggleButton->setMaximumSize(QSize(28,28)) ;
 	videoCaptureToggleButton->setText(QString()) ;
-	videoCaptureToggleButton->setToolTip(tr("Start Call"));
+	videoCaptureToggleButton->setToolTip(tr("Start Video Call"));
 	videoCaptureToggleButton->setIcon(icon3) ;
 	videoCaptureToggleButton->setIconSize(QSize(22,22)) ;
 	videoCaptureToggleButton->setAutoRaise(true) ;
