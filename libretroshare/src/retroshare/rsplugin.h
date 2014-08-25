@@ -33,6 +33,7 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rsfiles.h"
 #include "util/rsversion.h"
+#include "util/rsinitedptr.h"
 
 class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
@@ -62,6 +63,13 @@ class SoundEvents;
 class FeedNotify;
 class ChatWidget;
 class ChatWidgetHolder;
+// for gxs based plugins
+class RsIdentity;
+class RsNxsNetMgr;
+class RsGxsIdExchange;
+class RsGcxs;
+class PgpAuxUtils;
+class p3Config;
 
 // Plugin API version. Not used yet, but will be in the future the
 // main value that decides for compatibility.
@@ -88,20 +96,22 @@ class RsPluginHandler;
  *
  */
 class RsPlugInInterfaces {
-
 public:
+    RsUtil::inited_ptr<RsPeers>  mPeers;
+    RsUtil::inited_ptr<RsFiles>  mFiles;
+    RsUtil::inited_ptr<RsMsgs>   mMsgs;
+    RsUtil::inited_ptr<RsTurtle> mTurtle;
+    RsUtil::inited_ptr<RsDisc>   mDisc;
+    RsUtil::inited_ptr<RsDht>    mDht;
+    RsUtil::inited_ptr<RsNotify> mNotify;
 
-    RsPlugInInterfaces() 
-	 { 
-		 memset(this,0,sizeof(RsPlugInInterfaces)) ;	// zero all pointers.
-	 }
-    RsPeers  *mPeers;
-    RsFiles  *mFiles;
-    RsMsgs   *mMsgs;
-    RsTurtle *mTurtle;
-    RsDisc   *mDisc;
-    RsDht    *mDht;
-    RsNotify *mNotify;
+    // gxs
+    std::string     mGxsDir;
+    RsUtil::inited_ptr<RsIdentity>      mIdentity;
+    RsUtil::inited_ptr<RsNxsNetMgr>     mRsNxsNetMgr;
+    RsUtil::inited_ptr<RsGxsIdExchange> mGxsIdService;
+    RsUtil::inited_ptr<RsGcxs>          mGxsCirlces;
+    RsUtil::inited_ptr<PgpAuxUtils>     mPgpAuxUtils;
 };
 
 class RsPlugin
@@ -119,7 +129,11 @@ class RsPlugin
 		// exchange of data, such as chat, messages, etc.
 		// Example plugin: VOIP
 		//
-		virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
+        //virtual RsPQIService   *rs_pqi_service() 		const	{ return NULL ; }
+        // gxs netservice is not a RsPQIService
+        // so have two fns which result in the same gxs netservice to be returned
+        virtual p3Service   *p3_service() 		const	{ return NULL ; }
+        virtual p3Config   *p3_config() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
 
 		// Shutdown

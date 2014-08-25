@@ -1,6 +1,9 @@
 QT     += network xml script
 CONFIG += qt gui uic qrc resources idle bitdht
 
+#QMAKE_CFLAGS += -fmudflap 
+#LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
+
 greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 5
 	QT     += uitools widgets multimedia printsupport
@@ -144,6 +147,11 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
+	debug {
+		# show console output
+		CONFIG += console
+	}
+
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra

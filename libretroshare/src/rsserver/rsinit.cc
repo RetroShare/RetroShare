@@ -81,56 +81,56 @@
 // #define AUTHSSL_DEBUG
 // #define FIM_DEBUG
 
-
 //std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
 
 class RsInitConfig 
 {
 	public:
 
-                static RsFileHash main_executable_hash;
+		RsFileHash main_executable_hash;
 
 #ifdef WINDOWS_SYS
-                static bool portable;
-                static bool isWindowsXP;
+		bool portable;
+		bool isWindowsXP;
 #endif
-		static rs_lock_handle_t lockHandle;
+		rs_lock_handle_t lockHandle;
 
-		static std::string passwd;
-		static std::string gxs_passwd;
+		std::string passwd;
+		std::string gxs_passwd;
 
-                static bool autoLogin;                  /* autoLogin allowed */
-                static bool startMinimised; 		/* Icon or Full Window */
+		bool autoLogin;                  /* autoLogin allowed */
+		bool startMinimised; 		/* Icon or Full Window */
 
-                /* Key Parameters that must be set before
-                 * RetroShare will start up:
-                 */
+		/* Key Parameters that must be set before
+		 * RetroShare will start up:
+		 */
 
-                /* Listening Port */
-                static bool forceExtPort;
-                static bool forceLocalAddr;
-                static unsigned short port;
-                static std::string inet ;
+		/* Listening Port */
+		bool forceExtPort;
+		bool forceLocalAddr;
+		unsigned short port;
+		std::string inet ;
 
 		/* v0.6 features */
-		static bool        hiddenNodeSet;
-		static std::string hiddenNodeAddress;
-		static uint16_t    hiddenNodePort;
+		bool        hiddenNodeSet;
+		std::string hiddenNodeAddress;
+		uint16_t    hiddenNodePort;
 
-                /* Logging */
-                static bool haveLogFile;
-                static bool outStderr;
-                static int  debugLevel;
-                static std::string logfname;
+		/* Logging */
+		bool haveLogFile;
+		bool outStderr;
+		int  debugLevel;
+		std::string logfname;
 
-                static bool load_trustedpeer;
-                static std::string load_trustedpeer_file;
+		bool load_trustedpeer;
+		std::string load_trustedpeer_file;
 
-                static bool udpListenerOnly;
+		bool udpListenerOnly;
 
-                static std::string RetroShareLink;
+		std::string RetroShareLink;
 };
 
+static RsInitConfig *rsInitConfig = NULL;
 
 const int p3facestartupzone = 47238;
 
@@ -145,78 +145,49 @@ const int p3facestartupzone = 47238;
 static const std::string configLogFileName = "retro.log";
 static const int SSLPWD_LEN = 64;
 
-RsFileHash RsInitConfig::main_executable_hash;
-
-rs_lock_handle_t RsInitConfig::lockHandle;
-
-std::string RsInitConfig::passwd;
-std::string RsInitConfig::gxs_passwd;
-
-bool RsInitConfig::autoLogin;  		/* autoLogin allowed */
-bool RsInitConfig::startMinimised; /* Icon or Full Window */
-std::string RsInitConfig::RetroShareLink;
-
-/* Directories */
-#ifdef WINDOWS_SYS
-bool RsInitConfig::portable = false;
-bool RsInitConfig::isWindowsXP = false;
-#endif
-
-/* Listening Port */
-bool RsInitConfig::forceExtPort;
-bool RsInitConfig::forceLocalAddr;
-unsigned short RsInitConfig::port;
-std::string RsInitConfig::inet;
-
-/* v0.6 features */
-bool RsInitConfig::hiddenNodeSet = false;
-std::string RsInitConfig::hiddenNodeAddress;
-uint16_t RsInitConfig::hiddenNodePort;
-
-/* Logging */
-bool RsInitConfig::haveLogFile;
-bool RsInitConfig::outStderr;
-int  RsInitConfig::debugLevel;
-std::string RsInitConfig::logfname;
-
-bool RsInitConfig::load_trustedpeer;
-std::string RsInitConfig::load_trustedpeer_file;
-
-bool RsInitConfig::udpListenerOnly;
-
-
 void RsInit::InitRsConfig()
 {
+	rsInitConfig = new RsInitConfig ;
+
+	/* Directories */
+#ifdef WINDOWS_SYS
+	rsInitConfig->portable = false;
+	rsInitConfig->isWindowsXP = false;
+#endif
+	/* v0.6 features */
+	rsInitConfig->hiddenNodeSet = false;
+
+
 #ifndef WINDOWS_SYS
-	RsInitConfig::lockHandle = -1;
+	rsInitConfig->lockHandle = -1;
 #else
-	RsInitConfig::lockHandle = NULL;
+	rsInitConfig->lockHandle = NULL;
 #endif
 
 
-	RsInitConfig::load_trustedpeer = false;
-	RsInitConfig::port = 0 ;
-	RsInitConfig::forceLocalAddr = false;
-	RsInitConfig::haveLogFile    = false;
-	RsInitConfig::outStderr      = false;
-	RsInitConfig::forceExtPort   = false;
+	rsInitConfig->load_trustedpeer = false;
+	rsInitConfig->port = 0 ;
+	rsInitConfig->forceLocalAddr = false;
+	rsInitConfig->haveLogFile    = false;
+	rsInitConfig->outStderr      = false;
+	rsInitConfig->forceExtPort   = false;
 
-	RsInitConfig::inet = std::string("127.0.0.1");
+	rsInitConfig->inet = std::string("127.0.0.1");
 
-	RsInitConfig::autoLogin      = false; // .
-	RsInitConfig::startMinimised = false;
-	RsInitConfig::passwd         = "";
-	RsInitConfig::debugLevel	= PQL_WARNING;
-	RsInitConfig::udpListenerOnly = false;
+	rsInitConfig->autoLogin      = false; // .
+	rsInitConfig->startMinimised = false;
+	rsInitConfig->passwd         = "";
+	rsInitConfig->debugLevel	= PQL_WARNING;
+	rsInitConfig->udpListenerOnly = false;
 
 	/* setup the homePath (default save location) */
-//	RsInitConfig::homePath = getHomePath();
+	//	rsInitConfig->homePath = getHomePath();
 
 #ifdef WINDOWS_SYS
 	// test for portable version
 	if (GetFileAttributes(L"portable") != (DWORD) -1) {
 		// use portable version
-		RsInitConfig::portable = true;
+		rsInitConfig->portable = true;
 	}
 
 	// test for Windows XP
@@ -228,20 +199,20 @@ void RsInit::InitRsConfig()
 		if (osvi.dwMajorVersion == 5) {
 			if (osvi.dwMinorVersion == 1) {
 				/* Windows XP */
-				RsInitConfig::isWindowsXP = true;
+				rsInitConfig->isWindowsXP = true;
 			} else if (osvi.dwMinorVersion == 2) {
 				SYSTEM_INFO si;
 				memset(&si, 0, sizeof(si));
 				GetSystemInfo(&si);
 				if (osvi.wProductType == VER_NT_WORKSTATION && si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64) {
 					/* Windows XP Professional x64 Edition */
-					RsInitConfig::isWindowsXP = true;
+					rsInitConfig->isWindowsXP = true;
 				}
 			}
 		}
 	}
 
-	if (RsInitConfig::isWindowsXP) {
+	if (rsInitConfig->isWindowsXP) {
 		std::cerr << "Running Windows XP" << std::endl;
 	} else {
 		std::cerr << "Not running Windows XP" << std::endl;
@@ -358,8 +329,8 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
-			//RsInitConfig::logfname = "" ;
-			//RsInitConfig::inet = "" ;
+			//rsInitConfig->logfname = "" ;
+			//rsInitConfig->inet = "" ;
 
 #ifdef __APPLE__
 	/* HACK to avoid stupid OSX Finder behaviour
@@ -377,20 +348,20 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			argstream as(argc,argv) ;
 
 
-			as >> option('a',"auto-login"       ,RsInitConfig::autoLogin      ,"AutoLogin (Windows Only) + StartMinimised")
-			   >> option('m',"minimized"        ,RsInitConfig::startMinimised ,"Start minimized."                         )
-			   >> option('s',"stderr"           ,RsInitConfig::outStderr      ,"output to stderr instead of log file."    )
-			   >> option('u',"udp"              ,RsInitConfig::udpListenerOnly,"Only listen to UDP."                      )
-			   >> option('e',"external-port"    ,RsInitConfig::forceExtPort   ,"Use a forwarded external port."           )
+			as >> option('a',"auto-login"       ,rsInitConfig->autoLogin      ,"AutoLogin (Windows Only) + StartMinimised")
+			   >> option('m',"minimized"        ,rsInitConfig->startMinimised ,"Start minimized."                         )
+			   >> option('s',"stderr"           ,rsInitConfig->outStderr      ,"output to stderr instead of log file."    )
+			   >> option('u',"udp"              ,rsInitConfig->udpListenerOnly,"Only listen to UDP."                      )
+			   >> option('e',"external-port"    ,rsInitConfig->forceExtPort   ,"Use a forwarded external port."           )
 
-			   >> parameter('l',"log-file"      ,RsInitConfig::logfname       ,"logfile"   ,"Set Log filename."                        ,false)
-			   >> parameter('d',"debug-level"   ,RsInitConfig::debugLevel     ,"level"     ,"Set debug level."                         ,false)
-			   >> parameter('w',"password"      ,RsInitConfig::passwd         ,"password"  ,"Set Login Password."                      ,false)
-			   >> parameter('i',"ip-address"    ,RsInitConfig::inet           ,"nnn.nnn.nnn.nnn", "Set IP address to use."                   ,false)
-			   >> parameter('p',"port"          ,RsInitConfig::port           ,"port", "Set listenning port to use."              ,false)
+			   >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                        ,false)
+			   >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                         ,false)
+			   >> parameter('w',"password"      ,rsInitConfig->passwd         ,"password"  ,"Set Login Password."                      ,false)
+			   >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Set IP address to use."                   ,false)
+			   >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."              ,false)
 			   >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
 			   >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
-			   >> parameter('r',"link"          ,RsInitConfig::RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
+			   >> parameter('r',"link"          ,rsInitConfig->RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
 #endif
@@ -398,10 +369,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 			as.defaultErrorHandling(true) ;
 
-			if(RsInitConfig::autoLogin)         RsInitConfig::startMinimised = true ;
-			if(RsInitConfig::outStderr)         RsInitConfig::haveLogFile    = false ;
-			if(!RsInitConfig::logfname.empty()) RsInitConfig::haveLogFile    = true;
-			if(RsInitConfig::inet != "127.0.0.1") RsInitConfig::forceLocalAddr = true;
+			if(rsInitConfig->autoLogin)         rsInitConfig->startMinimised = true ;
+			if(rsInitConfig->outStderr)         rsInitConfig->haveLogFile    = false ;
+			if(!rsInitConfig->logfname.empty()) rsInitConfig->haveLogFile    = true;
+			if(rsInitConfig->inet != "127.0.0.1") rsInitConfig->forceLocalAddr = true;
 #ifdef LOCALNET_TESTING
 			if(!portRestrictions.empty())       doPortRestrictions           = true;
 #endif
@@ -446,29 +417,29 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          }
 #endif
 
-			setOutputLevel(RsInitConfig::debugLevel);
+			setOutputLevel(rsInitConfig->debugLevel);
 
 //	// set the default Debug Level...
-//	if (RsInitConfig::haveDebugLevel)
+//	if (rsInitConfig->haveDebugLevel)
 //	{
-//		if ((RsInitConfig::debugLevel > 0) &&
-//			(RsInitConfig::debugLevel <= PQL_DEBUG_ALL))
+//		if ((rsInitConfig->debugLevel > 0) &&
+//			(rsInitConfig->debugLevel <= PQL_DEBUG_ALL))
 //		{
 //			std::cerr << "Setting Debug Level to: ";
-//			std::cerr << RsInitConfig::debugLevel;
+//			std::cerr << rsInitConfig->debugLevel;
 //			std::cerr << std::endl;
 //		}
 //		else
 //		{
 //			std::cerr << "Ignoring Invalid Debug Level: ";
-//			std::cerr << RsInitConfig::debugLevel;
+//			std::cerr << rsInitConfig->debugLevel;
 //			std::cerr << std::endl;
 //		}
 //	}
 
 	// set the debug file.
-	if (RsInitConfig::haveLogFile)
-		setDebugFile(RsInitConfig::logfname.c_str());
+	if (rsInitConfig->haveLogFile)
+		setDebugFile(rsInitConfig->logfname.c_str());
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
@@ -519,10 +490,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	uint64_t tmp_size ;
 	std::string tmp_name ;
 
-	if(!RsDirUtil::getFileHash(argv[0],RsInitConfig::main_executable_hash,tmp_size,NULL))
+	if(!RsDirUtil::getFileHash(argv[0],rsInitConfig->main_executable_hash,tmp_size,NULL))
 		std::cerr << "Cannot hash executable! Plugins will not be loaded correctly." << std::endl;
 	else
-		std::cerr << "Hashed main executable: " << RsInitConfig::main_executable_hash << std::endl;
+		std::cerr << "Hashed main executable: " << rsInitConfig->main_executable_hash << std::endl;
 
 	/* At this point we want to.
 	 * 1) Load up Dase Directory.
@@ -534,12 +505,14 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	AuthSSL::AuthSSLInit();
 	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
+	rsAccounts = new RsAccountsDetail() ;
+
 	// first check config directories, and set bootstrap values.
-	if(!rsAccounts.setupBaseDirectory(opt_base_dir))
+	if(!rsAccounts->setupBaseDirectory(opt_base_dir))
 		return RS_INIT_BASE_DIR_ERROR ; 
 
 	// Setup PGP stuff.
-	std::string pgp_dir = rsAccounts.PathPGPDirectory();
+	std::string pgp_dir = rsAccounts->PathPGPDirectory();
 
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
@@ -550,7 +523,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 						pgp_dir + "/lock");
 
 	// load Accounts.
-	if (!rsAccounts.loadAccounts())
+	if (!rsAccounts->loadAccounts())
 	{
 		return RS_INIT_NO_KEYRING ;
 	}
@@ -558,7 +531,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	// choose alternative account.
 	if(prefUserString != "")
 	{
-		if (!rsAccounts.selectAccountByString(prefUserString))
+		if (!rsAccounts->selectAccountByString(prefUserString))
 		{
 			std::cerr << "Invalid User name/GPG id/SSL id: not found in list";
 			std::cerr << std::endl;
@@ -568,16 +541,16 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	/* check that we have selected someone */
 	RsPeerId preferredId;
-	bool existingUser = rsAccounts.getPreferredAccountId(preferredId);
+	bool existingUser = rsAccounts->getPreferredAccountId(preferredId);
 
 	if (existingUser)
 	{
-		if (RsInitConfig::passwd != "")
+		if (rsInitConfig->passwd != "")
 		{
 			return RS_INIT_HAVE_ACCOUNT;
 		}
 
-		if(RsLoginHandler::getSSLPassword(preferredId,false,RsInitConfig::passwd))
+		if(RsLoginHandler::getSSLPassword(preferredId,false,rsInitConfig->passwd))
 		{
 			RsInit::setAutoLogin(true);
 			std::cerr << "Autologin has succeeded" << std::endl;
@@ -603,7 +576,7 @@ int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lock
 	const std::string lockFile = accountDir + "/" + "lock";
 	lockFilePath = lockFile;
 
-	return RsDirUtil::createLockFile(lockFile,RsInitConfig::lockHandle) ;
+	return RsDirUtil::createLockFile(lockFile,rsInitConfig->lockHandle) ;
 }
 
 /*
@@ -612,7 +585,7 @@ int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lock
  */
 void	RsInit::UnlockConfigDirectory()
 {
-	RsDirUtil::releaseLockFile(RsInitConfig::lockHandle) ;
+	RsDirUtil::releaseLockFile(rsInitConfig->lockHandle) ;
 }
 
 
@@ -631,7 +604,7 @@ bool RsInit::collectEntropy(uint32_t n)
                 /* Login SSL */
 bool     RsInit::LoadPassword(const std::string& inPwd)
 {
-	RsInitConfig::passwd = inPwd;
+	rsInitConfig->passwd = inPwd;
 	return true;
 }
 
@@ -647,14 +620,14 @@ bool     RsInit::LoadPassword(const std::string& inPwd)
  */
 int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
 {
-	if (!rsAccounts.lockPreferredAccount())
+	if (!rsAccounts->lockPreferredAccount())
 	{
 		return 3; // invalid PreferredAccount.
 	}
 
 	// Logic that used to be external to RsInit...
 	RsPeerId accountId;
-	if (!rsAccounts.getPreferredAccountId(accountId))
+	if (!rsAccounts->getPreferredAccountId(accountId))
 	{
 		return 3; // invalid PreferredAccount;
 	}
@@ -662,13 +635,13 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 	RsPgpId pgpId;
 	std::string pgpName, pgpEmail, location;
 
-	if (!rsAccounts.getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
+	if (!rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
 		return 3; // invalid PreferredAccount;
 		
-	if (!rsAccounts.SelectPGPAccount(pgpId))
+	if (!rsAccounts->SelectPGPAccount(pgpId))
 		return 3; // PGP Error.
 	
-	int retVal = LockConfigDirectory(rsAccounts.PathAccountDirectory(), lockFilePath);
+	int retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
 	if(retVal != 0)
 		return retVal;
 
@@ -694,20 +667,20 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
 	RsPeerId preferredId;
-	if (!rsAccounts.getPreferredAccountId(preferredId))
+	if (!rsAccounts->getPreferredAccountId(preferredId))
 	{
 		std::cerr << "No Account Selected" << std::endl;
 		return 0;
 	}
 		
 	
-	if (rsAccounts.PathCertFile() == "")
+	if (rsAccounts->PathCertFile() == "")
 	{
 	  std::cerr << "RetroShare needs a certificate" << std::endl;
 	  return 0;
 	}
 
-	if (rsAccounts.PathKeyFile() == "")
+	if (rsAccounts->PathKeyFile() == "")
 	{
 	  std::cerr << "RetroShare needs a key" << std::endl;
 	  return 0;
@@ -715,21 +688,21 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	//check if password is already in memory
 	
-	if(RsInitConfig::passwd == "") {
-		if (RsLoginHandler::getSSLPassword(preferredId,true,RsInitConfig::passwd) == false) {
+	if(rsInitConfig->passwd == "") {
+		if (RsLoginHandler::getSSLPassword(preferredId,true,rsInitConfig->passwd) == false) {
 			std::cerr << "RsLoginHandler::getSSLPassword() Failed!";
 			return 0 ;
 		}
 	} else {
-		if (RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(preferredId,RsInitConfig::passwd) == false) {
+		if (RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(preferredId,rsInitConfig->passwd) == false) {
 			std::cerr << "RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile() Failed!";
 			return 0;
 		}
 	}
 
-	std::cerr << "rsAccounts.PathKeyFile() : " << rsAccounts.PathKeyFile() << std::endl;
+	std::cerr << "rsAccounts->PathKeyFile() : " << rsAccounts->PathKeyFile() << std::endl;
 
-	if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts.PathCertFile().c_str(), rsAccounts.PathKeyFile().c_str(), RsInitConfig::passwd.c_str()))
+	if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts->PathCertFile().c_str(), rsAccounts->PathKeyFile().c_str(), rsInitConfig->passwd.c_str()))
 	{
 		std::cerr << "SSL Auth Failed!";
 		return 0 ;
@@ -740,25 +713,25 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		std::cerr << "RetroShare will AutoLogin next time";
 		std::cerr << std::endl;
 
-		RsLoginHandler::enableAutoLogin(preferredId,RsInitConfig::passwd);
-		RsInitConfig::autoLogin = true ;
+		RsLoginHandler::enableAutoLogin(preferredId,rsInitConfig->passwd);
+		rsInitConfig->autoLogin = true ;
 	}
 
 	/* wipe out password */
 
 	// store pword to allow gxs use it to services' key their databases
 	// ideally gxs should have its own password
-	RsInitConfig::gxs_passwd = RsInitConfig::passwd;
-	RsInitConfig::passwd = "";
+	rsInitConfig->gxs_passwd = rsInitConfig->passwd;
+	rsInitConfig->passwd = "";
 	
-	rsAccounts.storePreferredAccount();      
+	rsAccounts->storePreferredAccount();      
 	return 1;
 }
 
 bool RsInit::RsClearAutoLogin()
 {
 	RsPeerId preferredId;
-	if (!rsAccounts.getPreferredAccountId(preferredId))
+	if (!rsAccounts->getPreferredAccountId(preferredId))
 	{
 		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
 		return 0;
@@ -770,7 +743,7 @@ bool RsInit::RsClearAutoLogin()
 bool RsInit::isPortable()
 {
 #ifdef WINDOWS_SYS
-    return RsInitConfig::portable;
+    return rsInitConfig->portable;
 #else
     return false;
 #endif
@@ -779,7 +752,7 @@ bool RsInit::isPortable()
 bool RsInit::isWindowsXP()
 {
 #ifdef WINDOWS_SYS
-    return RsInitConfig::isWindowsXP;
+    return rsInitConfig->isWindowsXP;
 #else
     return false;
 #endif
@@ -787,12 +760,12 @@ bool RsInit::isWindowsXP()
 	
 bool RsInit::getStartMinimised()
 {
-	return RsInitConfig::startMinimised;
+	return rsInitConfig->startMinimised;
 }
 
 std::string RsInit::getRetroShareLink()
 {
-	return RsInitConfig::RetroShareLink;
+	return rsInitConfig->RetroShareLink;
 }
 
 int RsInit::getSslPwdLen(){
@@ -800,20 +773,20 @@ int RsInit::getSslPwdLen(){
 }
 
 bool RsInit::getAutoLogin(){
-	return RsInitConfig::autoLogin;
+	return rsInitConfig->autoLogin;
 }
 
 void RsInit::setAutoLogin(bool autoLogin){
-	RsInitConfig::autoLogin = autoLogin;
+	rsInitConfig->autoLogin = autoLogin;
 }
 
 /* Setup Hidden Location; */
 bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 {
 	/* parse the bugger (todo) */
-	RsInitConfig::hiddenNodeSet = true;
-	RsInitConfig::hiddenNodeAddress = hiddenaddress;
-	RsInitConfig::hiddenNodePort = port;
+	rsInitConfig->hiddenNodeSet = true;
+	rsInitConfig->hiddenNodeAddress = hiddenaddress;
+	rsInitConfig->hiddenNodePort = port;
 	return true;
 }
 
@@ -991,15 +964,15 @@ int RsServer::StartupRetroShare()
 
 	/* set the debugging to crashMode */
 	std::cerr << "set the debugging to crashMode." << std::endl;
-	if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
+	if ((!rsInitConfig->haveLogFile) && (!rsInitConfig->outStderr))
 	{
-		std::string crashfile = rsAccounts.PathAccountDirectory();
+		std::string crashfile = rsAccounts->PathAccountDirectory();
 		crashfile +=  "/" + configLogFileName;
 		setDebugCrashMode(crashfile.c_str());
 	}
 
 	unsigned long flags = 0;
-	if (RsInitConfig::udpListenerOnly)
+	if (rsInitConfig->udpListenerOnly)
 	{
 		flags |= PQIPERSON_NO_LISTENER;
 	}
@@ -1008,8 +981,8 @@ int RsServer::StartupRetroShare()
 	// Load up Certificates, and Old Configuration (if present)
 	std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
 
-	std::string emergencySaveDir = rsAccounts.PathAccountDirectory();
-	std::string emergencyPartialsDir = rsAccounts.PathAccountDirectory();
+	std::string emergencySaveDir = rsAccounts->PathAccountDirectory();
+	std::string emergencyPartialsDir = rsAccounts->PathAccountDirectory();
 	if (emergencySaveDir != "")
 	{
 		emergencySaveDir += "/";
@@ -1023,13 +996,13 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "Load Configuration" << std::endl;
 
-	mConfigMgr = new p3ConfigMgr(rsAccounts.PathAccountDirectory());
+	mConfigMgr = new p3ConfigMgr(rsAccounts->PathAccountDirectory());
 	mGeneralConfig = new p3GeneralConfig();
 
 	// Get configuration options from rsAccounts.
 	bool isHiddenNode   = false;
 	bool isFirstTimeRun = false;
-	rsAccounts.getAccountOptions(isHiddenNode, isFirstTimeRun);
+	rsAccounts->getAccountOptions(isHiddenNode, isFirstTimeRun);
 
 	/**************************************************************************/
 	/* setup classes / structures */
@@ -1058,14 +1031,14 @@ int RsServer::StartupRetroShare()
 	//        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
 	//            mConnMgr->addFriend(*sslIdsIt);
 	//        }
-	//p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
+	//p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, rsInitConfig->configDir);
 	/**************************** BITDHT ***********************************/
 
 	// Make up an address. XXX
 
 	struct sockaddr_in tmpladdr;
 	sockaddr_clear(&tmpladdr);
-	tmpladdr.sin_port = htons(RsInitConfig::port);
+	tmpladdr.sin_port = htons(rsInitConfig->port);
 
 
 #ifdef LOCALNET_TESTING
@@ -1101,7 +1074,7 @@ int RsServer::StartupRetroShare()
 #define BITDHT_BOOTSTRAP_FILENAME  	"bdboot.txt"
 
 
-	std::string bootstrapfile = rsAccounts.PathAccountDirectory();
+	std::string bootstrapfile = rsAccounts->PathAccountDirectory();
 	if (bootstrapfile != "")
 	{
 		bootstrapfile += "/";
@@ -1118,7 +1091,7 @@ int RsServer::StartupRetroShare()
 	if (!RsDirUtil::checkFile(bootstrapfile,tmp_size,true))
 	{
 		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
-		std::string installfile = rsAccounts.PathDataDirectory();
+		std::string installfile = rsAccounts->PathDataDirectory();
 		installfile += "/";
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
 
@@ -1182,7 +1155,7 @@ int RsServer::StartupRetroShare()
 #ifdef LOCALNET_TESTING
 
 	// 	// HACK Proxy Port near Dht Port - For Relay Testing.
-	// 	uint16_t rndport = RsInitConfig::port + 3;
+	// 	uint16_t rndport = rsInitConfig->port + 3;
 	// 	sndladdr.sin_port = htons(rndport);
 
 	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(UDP_TEST_RESTRICTED_LAYER, sndladdr);
@@ -1235,7 +1208,7 @@ int RsServer::StartupRetroShare()
 
 	/****** New Ft Server **** !!! */
 	ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
-	ftserver->setConfigDirectory(rsAccounts.PathAccountDirectory());
+	ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
 
 	ftserver->SetupFtServer() ;
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
@@ -1252,7 +1225,7 @@ int RsServer::StartupRetroShare()
 
 
 	/* create Cache Services */
-	std::string config_dir = rsAccounts.PathAccountDirectory();
+	std::string config_dir = rsAccounts->PathAccountDirectory();
 	std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
 
@@ -1261,7 +1234,7 @@ int RsServer::StartupRetroShare()
 #ifndef WINDOWS_SYS
 	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions6/")) ;
 #endif
-	std::string extensions_dir = rsAccounts.PathBaseDirectory() + "/extensions6/" ;
+	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
 
 	if(!RsDirUtil::checkCreateDirectory(extensions_dir))
@@ -1272,7 +1245,7 @@ int RsServer::StartupRetroShare()
 	// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
 #endif
 
-	mPluginsManager = new RsPluginManager(RsInitConfig::main_executable_hash) ;
+	mPluginsManager = new RsPluginManager(rsInitConfig->main_executable_hash) ;
 	rsPlugins  = mPluginsManager ;
 	mConfigMgr->addConfiguration("plugins.cfg", mPluginsManager);
 	mPluginsManager->loadConfiguration() ;
@@ -1283,9 +1256,15 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
 	mPluginsManager->setServiceControl(serviceCtrl) ;
 
+//	std::cerr << "rsinitconf (core 1) = " << (void*)rsInitConfig<<std::endl;
+//	std::cerr << "gxs_passwd (core 1) = " << (void*)&rsInitConfig->gxs_passwd<<" \"" <<  rsInitConfig->gxs_passwd << "\""<< std::endl;
+
 	// Now load the plugins. This parses the available SO/DLL files for known symbols.
 	//
 	mPluginsManager->loadPlugins(plugins_directories) ;
+
+//	std::cerr << "rsinitconf (core 1) = " << (void*)rsInitConfig<<std::endl;
+//	std::cerr << "gxs_passwd (core 2) = " << (void*)&rsInitConfig->gxs_passwd<< " \"" << rsInitConfig->gxs_passwd << "\""<< std::endl;
 
 	// Also load some plugins explicitly. This is helpful for
 	// - developping plugins 
@@ -1300,7 +1279,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_ENABLE_GXS
 
-	std::string currGxsDir = rsAccounts.PathAccountDirectory() + "/gxs";
+	std::string currGxsDir = rsAccounts->PathAccountDirectory() + "/gxs";
         RsDirUtil::checkCreateDirectory(currGxsDir);
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);
@@ -1308,7 +1287,7 @@ int RsServer::StartupRetroShare()
         /**** Identity service ****/
 
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
-                        RS_SERVICE_GXS_TYPE_GXSID, NULL, RsInitConfig::gxs_passwd);
+                        RS_SERVICE_GXS_TYPE_GXSID, NULL, rsInitConfig->gxs_passwd);
 
         // init gxs services
 	PgpAuxUtils *pgpAuxUtils = new PgpAuxUtilsImpl();
@@ -1316,7 +1295,7 @@ int RsServer::StartupRetroShare()
 
         // circles created here, as needed by Ids.
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
-                        RS_SERVICE_GXS_TYPE_GXSCIRCLE, NULL, RsInitConfig::gxs_passwd);
+                        RS_SERVICE_GXS_TYPE_GXSCIRCLE, NULL, rsInitConfig->gxs_passwd);
 
 	// create GxsCircles - early, as IDs need it.
         mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService, pgpAuxUtils);
@@ -1345,7 +1324,7 @@ int RsServer::StartupRetroShare()
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                         RS_SERVICE_GXS_TYPE_POSTED, 
-			NULL, RsInitConfig::gxs_passwd);
+			NULL, rsInitConfig->gxs_passwd);
 
         mPosted = new p3Posted(posted_ds, NULL, mGxsIdService);
 
@@ -1361,7 +1340,7 @@ int RsServer::StartupRetroShare()
 
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                         RS_SERVICE_GXS_TYPE_WIKI,
-                        NULL, RsInitConfig::gxs_passwd);
+                        NULL, rsInitConfig->gxs_passwd);
 
         mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
 
@@ -1376,7 +1355,7 @@ int RsServer::StartupRetroShare()
         /**** Forum GXS service ****/
 
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
-                                                            RS_SERVICE_GXS_TYPE_FORUMS, NULL, RsInitConfig::gxs_passwd);
+                                                            RS_SERVICE_GXS_TYPE_FORUMS, NULL, rsInitConfig->gxs_passwd);
 
 
         mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
@@ -1392,7 +1371,7 @@ int RsServer::StartupRetroShare()
         /**** Channel GXS service ****/
 
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
-                                                            RS_SERVICE_GXS_TYPE_CHANNELS, NULL, RsInitConfig::gxs_passwd);
+                                                            RS_SERVICE_GXS_TYPE_CHANNELS, NULL, rsInitConfig->gxs_passwd);
 
         mGxsChannels = new p3GxsChannels(gxschannels_ds, NULL, mGxsIdService);
 
@@ -1408,7 +1387,7 @@ int RsServer::StartupRetroShare()
 #if 0 // PHOTO IS DISABLED FOR THE MOMENT
         /**** Photo service ****/
         RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
-                        RS_SERVICE_GXS_TYPE_PHOTO, NULL, RsInitConfig::gxs_passwd);
+                        RS_SERVICE_GXS_TYPE_PHOTO, NULL, rsInitConfig->gxs_passwd);
 
         // init gxs services
         mPhoto = new p3PhotoService(photo_ds, NULL, mGxsIdService);
@@ -1425,7 +1404,7 @@ int RsServer::StartupRetroShare()
         /**** Wire GXS service ****/
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
                         RS_SERVICE_GXS_TYPE_WIRE, 
-			NULL, RsInitConfig::gxs_passwd);
+			NULL, rsInitConfig->gxs_passwd);
 
         mWire = new p3Wire(wire_ds, NULL, mGxsIdService);
 
@@ -1446,7 +1425,7 @@ int RsServer::StartupRetroShare()
         //pqih->addService(photo_ns, true);
 
         // remove pword from memory
-        RsInitConfig::gxs_passwd = "";
+        rsInitConfig->gxs_passwd = "";
 
 #endif // RS_ENABLE_GXS.
 
@@ -1498,7 +1477,13 @@ int RsServer::StartupRetroShare()
 	interfaces.mDisc   = rsDisc;
 	interfaces.mDht    = rsDht;
 	interfaces.mNotify = mNotify;
-
+    // gxs
+    interfaces.mGxsDir          = currGxsDir;
+    interfaces.mIdentity        = mGxsIdService;
+    interfaces.mRsNxsNetMgr     = nxsMgr;
+    interfaces.mGxsIdService    = mGxsIdService;
+    interfaces.mGxsCirlces      = mGxsCircles;
+    interfaces.mPgpAuxUtils     = pgpAuxUtils;
 	mPluginsManager->setInterfaces(interfaces);
 
 	// now add plugin objects inside the loop:
@@ -1636,7 +1621,7 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "Force Any Configuration before Startup (After Load)" << std::endl;
 
-	if (RsInitConfig::forceLocalAddr)
+	if (rsInitConfig->forceLocalAddr)
 	{
 		struct sockaddr_storage laddr;
 
@@ -1646,24 +1631,24 @@ int RsServer::StartupRetroShare()
 		struct sockaddr_in *lap = (struct sockaddr_in *) &laddr;
 		
 		lap->sin_family = AF_INET;
-		lap->sin_port = htons(RsInitConfig::port);
+		lap->sin_port = htons(rsInitConfig->port);
 
 		// universal
-		lap->sin_addr.s_addr = inet_addr(RsInitConfig::inet.c_str());
+		lap->sin_addr.s_addr = inet_addr(rsInitConfig->inet.c_str());
 
 		mPeerMgr->setLocalAddress(ownId, laddr);
 	}
 
-	if (RsInitConfig::forceExtPort)
+	if (rsInitConfig->forceExtPort)
 	{
 		mPeerMgr->setOwnNetworkMode(RS_NET_MODE_EXT);
 		mPeerMgr->setOwnVisState(RS_VS_DISC_FULL, RS_VS_DHT_FULL);
 
 	}
 
-	if (RsInitConfig::hiddenNodeSet)
+	if (rsInitConfig->hiddenNodeSet)
 	{
-		mPeerMgr->setupHiddenNode(RsInitConfig::hiddenNodeAddress, RsInitConfig::hiddenNodePort);
+		mPeerMgr->setupHiddenNode(rsInitConfig->hiddenNodeAddress, rsInitConfig->hiddenNodePort);
 	}
 	else if (isHiddenNode)
 	{

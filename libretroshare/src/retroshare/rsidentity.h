@@ -209,7 +209,7 @@ public:
 
 //virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
 virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
-virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
+virtual void  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
 
 	// 
 virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 

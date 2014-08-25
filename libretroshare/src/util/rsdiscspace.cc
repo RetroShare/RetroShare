@@ -161,13 +161,13 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 #endif
 													break ;
 
-			case RS_CONFIG_DIRECTORY: 		rs = crossSystemDiskStats(rsAccounts.PathAccountDirectory().c_str(),free_blocks,block_size) ;
+			case RS_CONFIG_DIRECTORY: 		rs = crossSystemDiskStats(rsAccounts->PathAccountDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << RsInit::RsConfigDirectory() << std::endl ;
 #endif
 													break ;
 
-			case RS_PGP_DIRECTORY: 		   rs = crossSystemDiskStats(rsAccounts.PathPGPDirectory().c_str(),free_blocks,block_size) ;
+			case RS_PGP_DIRECTORY: 		   rs = crossSystemDiskStats(rsAccounts->PathPGPDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << RsInit::RsPGPDirectory() << std::endl ;
 #endif

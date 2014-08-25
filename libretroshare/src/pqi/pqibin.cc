@@ -185,7 +185,7 @@ BinEncryptedFileInterface::~BinEncryptedFileInterface()
 {
 	if((sizeData > 0) && data != NULL)
 	{
-		delete[] data;
+		free(data);
 	}
 
 }
@@ -193,7 +193,7 @@ BinEncryptedFileInterface::~BinEncryptedFileInterface()
 int BinEncryptedFileInterface::senddata(void* data, int len)
 {
 
-	char* encrytedData = NULL;
+	void* encrytedData = NULL;
 	int encDataLen = 0;
 
 	// encrypt using own ssl public key
@@ -205,8 +205,8 @@ int BinEncryptedFileInterface::senddata(void* data, int len)
 
 	if((encDataLen > 0) && (encrytedData != NULL))
 	{
-		BinFileInterface::senddata(encrytedData, encDataLen);
-		delete[] encrytedData;
+		BinFileInterface::senddata((unsigned char *)encrytedData, encDataLen);
+		free(encrytedData);
 	}
 	else
 	{
@@ -288,7 +288,7 @@ int BinEncryptedFileInterface::close()
 {
 	if(data != NULL)
 	{
-		delete[] data;
+		free(data);
 		sizeData = 0;
 		haveData = false;
 		cpyCount = 0;

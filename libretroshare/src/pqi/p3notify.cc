@@ -26,6 +26,7 @@
 
 #include "pqi/p3notify.h"
 #include <stdint.h>
+#include <algorithm>
 
 RsNotify *rsNotify = NULL ;
 
@@ -284,3 +285,16 @@ void p3Notify::registerNotifyClient(NotifyClient *cl)
 	notifyClients.push_back(cl) ;
 }
 
+bool p3Notify::unregisterNotifyClient(NotifyClient *nc)
+{
+    std::list<NotifyClient*>::iterator it = std::find(notifyClients.begin(), notifyClients.end(), nc);
+    if(it != notifyClients.end())
+    {
+        notifyClients.erase(it);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

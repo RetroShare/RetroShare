@@ -257,7 +257,7 @@ virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
 
 //virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
 virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
-virtual bool  getOwnIds(std::list<RsGxsId> &ownIds);
+virtual void  getOwnIds(std::list<RsGxsId> &ownIds);
 
 
 

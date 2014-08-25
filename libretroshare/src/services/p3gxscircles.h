@@ -40,6 +40,35 @@
 #include <map>
 #include <string>
 
+// TODO:
+// can now edit circles. this leads to the following situation:
+//    if someone gets removed from a self.retricted circle, he won't notice
+//    because he can't receive the updated circle group if he is not part of the group anymore
+//
+// idea 1: refresh circle groups for example every week
+//   if a circle was not refreshed since two weeks we can assume we where deleted
+//   pro: does not leak info, simple to implement, does work even if the network topology changed (unfriending)
+//   con: delay until we know about the deletion
+//
+// idea 2: add a field with deleted members to the circle group
+//   then circle members can tell deleted circle members that they where deleted
+//   pro: faster notification about deletion
+//   con: more complicated, leaks info because the deleted member learns who is still a member
+//   question: how to authenticate the deletion message?
+//
+// idea 3: make a two phase deletion process
+//   first add members to a to-delete list
+//   then wait a week to let the changes propagate
+//   then remove from allowed peers list
+//   pro: easy to implement
+//   con: deletion process is slow
+//   improvement idea: let only circle groups sync when the member is on he to-delete list
+//     but don't allow sync of data from other services
+//     this requires that the netservice knows that he is dealing with a circle group
+//
+// fact: have to use a timeout mechanism.
+//   a timeout is the only thing which works even with a two months old backup
+
 /* 
  * Circles Identity Service
  *
@@ -152,7 +181,8 @@ virtual RsServiceInfo getServiceInfo();
 
 
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);
-	virtual bool createGroup(uint32_t& token, RsGxsCircleGroup &group);
+    virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group);
+    virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group);
 
 
 	/**********************************************/
@@ -197,6 +227,11 @@ virtual RsServiceInfo getServiceInfo();
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
 	PgpAuxUtils *mPgpUtils;
+
+    // put a circle id into the external or personal circle id list
+    // this function locks the mutex
+    // if the id is already in the list, it will not be added again
+    void addCircleIdToList(const RsGxsCircleId& circleId, uint32_t circleType);
 
 	RsMutex mCircleMtx; /* Locked Below Here */
 

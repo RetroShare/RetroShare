@@ -311,12 +311,10 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 }
 
 
-bool p3IdService:: getOwnIds(std::list<RsGxsId> &ownIds)
+void p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	ownIds = mOwnIds;
-
-	return true;
 }
 
 
@@ -2290,9 +2288,13 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	// copy meta data to be sure its all the same.
 	//item->group.mMeta = item->meta;
 
-	// Reload in a little bit.
-	// HACK to get it to work.
-	RsTickEvent::schedule_in(GXSID_EVENT_CACHEOWNIDS, OWNID_RELOAD_DELAY);
+    // do it like p3gxscircles: save the new grp id
+    // this allows the user interface
+    // to see the grp id on the list of ownIds immediately after the group was created
+    {
+        RsStackMutex stack(mIdMtx);
+        mOwnIds.push_back(RsGxsId(item->meta.mGroupId));
+    }
 
 	return createStatus;
 }

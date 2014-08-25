@@ -1253,7 +1253,7 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         }
 
     	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
-        out = new unsigned char[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
+        out = (unsigned char*)malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
 
     	net_ekl = htonl(eklen);
     	memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
@@ -1268,7 +1268,7 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
     	// now encrypt actual data
         if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) {
             free(ek);
-            delete[] (unsigned char*) out;
+            free(out);
             out = NULL;
             return false;
         }
@@ -1279,7 +1279,7 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
     	// add padding
         if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) {
             free(ek);
-            delete[] (unsigned char*) out;
+				free(out) ;
             out = NULL;
             return false;
         }
@@ -1360,11 +1360,11 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
             return false;
         }
 
-        out = new unsigned char[inlen - in_offset];
+        out = (unsigned char*)malloc(inlen - in_offset);
 
         if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) {
             free(ek);
-            delete[] (unsigned char*) out;
+				free(out) ;
             out = NULL;
             return false;
         }
@@ -1374,7 +1374,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
         if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) {
             free(ek);
-            delete[] (unsigned char*) out;
+				free(out) ;
             out = NULL;
             return false;
         }
@@ -1386,9 +1386,9 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
         EVP_CIPHER_CTX_cleanup(&ctx);
 
-        #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSLimpl::decrypt() finished with outlen : " << outlen << std::endl;
-        #endif
+#ifdef AUTHSSL_DEBUG
+		  std::cerr << "AuthSSLimpl::decrypt() finished with outlen : " << outlen << std::endl;
+#endif
 
         return true;
 }
