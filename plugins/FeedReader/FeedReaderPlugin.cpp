@@ -110,7 +110,7 @@ FeedNotify *FeedReaderPlugin::qt_feedNotify()
 	return mFeedNotify;
 }
 
-RsPQIService *FeedReaderPlugin::rs_pqi_service() const
+p3Service *FeedReaderPlugin::p3_service() const
 {
 	if (mFeedReader == NULL) {
 		//Todo: Replace with gxs forums

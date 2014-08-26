@@ -12,7 +12,7 @@ class VOIPPlugin: public RsPlugin
 		VOIPPlugin() ;
 		virtual ~VOIPPlugin() {}
 
-		virtual RsPQIService   *rs_pqi_service() 			const	;
+		virtual p3Service      *p3_service() 			const	;
 		virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_VOIP_PLUGIN ; }
 		virtual ConfigPage     *qt_config_page()        const ;
 		virtual QDialog        *qt_about_page()         const ;
