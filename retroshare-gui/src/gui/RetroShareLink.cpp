@@ -372,6 +372,8 @@ bool RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 
 	_type = TYPE_CERTIFICATE;
 	_radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false).c_str());
+	_name = QString::fromUtf8(detail.name.c_str());
+	_location = QString::fromUtf8(detail.location.c_str());
 	_radix.replace("\n","");
 
 	std::cerr << "Found radix                = " << _radix.toStdString() << std::endl;
@@ -743,6 +745,8 @@ QString RetroShareLink::toString() const
 			url.setScheme(RSLINK_SCHEME);
 			url.setHost(HOST_CERTIFICATE) ;
 			urlQuery.addQueryItem(CERTIFICATE_RADIX, _radix);
+			urlQuery.addQueryItem(CERTIFICATE_NAME, _name);
+			urlQuery.addQueryItem(CERTIFICATE_LOCATION, _location);
 			break;
 	}
 
