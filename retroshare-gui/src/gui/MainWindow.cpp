@@ -117,14 +117,9 @@
  *
  ****/
 #define USE_DHTWINDOW	1
-#define USE_BWCTRLWINDOW	1
 
 #ifdef USE_DHTWINDOW
 #include "dht/DhtWindow.h"
-#endif
-
-#ifdef USE_BWCTRLWINDOW
-#include "bwctrl/BwCtrlWindow.h"
 #endif
 
 
@@ -621,9 +616,6 @@ void MainWindow::createTrayIcon()
 #ifdef USE_DHTWINDOW
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("DHT Details"), this, SLOT(showDhtWindow()));
 #endif
-#ifdef USE_BWCTRLWINDOW
-    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Bandwidth Details"), this, SLOT(showBwCtrlWindow()));
-#endif
 
 #ifdef UNFINISHED
     trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
@@ -1111,16 +1103,6 @@ void MainWindow::showDhtWindow()
     DhtWindow::showYourself();
 #endif
 }
-
-
-/** Shows Bandwitch Control window */
-void MainWindow::showBwCtrlWindow()
-{
-#ifdef USE_BWCTRLWINDOW
-    BwCtrlWindow::showYourself();
-#endif
-}
-
 
 /** Shows Application window */
 #ifdef UNFINISHED

@@ -205,7 +205,6 @@ private slots:
     void newRsCollection();
     void showMessengerWindow();
     void showDhtWindow();
-    void showBwCtrlWindow();
     void servicePermission();
 
 #ifdef UNFINISHED    

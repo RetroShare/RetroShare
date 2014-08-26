@@ -165,7 +165,7 @@ QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & /*option*/, const QM
 
 /**************************************************************************************************/
 /********************************************** STATIC WINDOW *************************************/
-BwCtrlWindow * BwCtrlWindow::mInstance = NULL;
+/*BwCtrlWindow * BwCtrlWindow::mInstance = NULL;
 
 void BwCtrlWindow::showYourself()
 {
@@ -187,14 +187,14 @@ void BwCtrlWindow::releaseInstance()
     if (mInstance) {
         delete mInstance;
     }
-}
+}*/
 
 /********************************************** STATIC WINDOW *************************************/
 
 
 
 BwCtrlWindow::BwCtrlWindow(QWidget *parent) :
-    QMainWindow(parent),
+    QWidget(parent),
     ui(new Ui::BwCtrlWindow)
 {
     ui->setupUi(this);
@@ -203,6 +203,8 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent) :
 
 	BWDelegate = new BWListDelegate();
 	ui->bwTreeWidget->setItemDelegate(BWDelegate);
+
+  //ui->tabWidget->addTab(dhtdetails = new DhtWindow(),QIcon(), tr("DHT"));
 
 
 	// tick for gui update.
@@ -213,10 +215,11 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent) :
 
 BwCtrlWindow::~BwCtrlWindow()
 {
-    delete ui;
-    mInstance = NULL;
+    //delete ui;
+    //mInstance = NULL;
 }
 
+/*
 void BwCtrlWindow::changeEvent(QEvent *e)
 {
     QMainWindow::changeEvent(e);
@@ -227,7 +230,7 @@ void BwCtrlWindow::changeEvent(QEvent *e)
     default:
         break;
     }
-}
+}*/
 
 void BwCtrlWindow::update()
 {

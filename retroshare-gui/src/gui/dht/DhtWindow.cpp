@@ -34,6 +34,10 @@
 #include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
 
+#include <gui/FileTransfer/TurtleRouterStatistics.h>
+#include <gui/settings/GlobalRouterStatistics.h>
+#include <gui/bwctrl/BwCtrlWindow.h>
+
 /********************************************** STATIC WINDOW *************************************/
 DhtWindow * DhtWindow::mInstance = NULL;
 
@@ -70,8 +74,17 @@ DhtWindow::DhtWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
+    
+    BwCtrlWindow *bwdlg = new BwCtrlWindow ;
+    ui->tabWidget->addTab(bwdlg, tr("Bandwidth details"));
+    
+    TurtleRouterStatistics *trs = new TurtleRouterStatistics ;
+    ui->tabWidget->addTab(trs,tr("Turtle router")) ;
 
-	// tick for gui update.
+    GlobalRouterStatistics *grs = new GlobalRouterStatistics ;
+    ui->tabWidget->addTab(grs,tr("Global router")) ;
+
+    // tick for gui update.
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1000);
@@ -506,7 +519,7 @@ void DhtWindow::updateNetPeers()
 	}
 
 
-	QString connstr;
+	/*QString connstr;
 	connstr =  tr("#Peers: ") + QString::number(nPeers);
 	connstr += tr(" DHT: (#off:") + QString::number(nOfflinePeers);
 	connstr += tr(",unreach:") + QString::number(nUnreachablePeers);
@@ -515,9 +528,19 @@ void DhtWindow::updateNetPeers()
 	connstr += tr(",#dir:") + QString::number(nDirectPeers);
 	connstr += tr(",#proxy:") + QString::number(nProxyPeers);
 	connstr += tr(",#relay:") + QString::number(nRelayPeers);
-	connstr += ")";
+	connstr += ")";*/
+	
+	ui->label_peers->setText(QString::number(nPeers));
+	ui->label_offline->setText(QString::number(nOfflinePeers)); 
+	ui->label_unreachable->setText(QString::number(nUnreachablePeers)); 
+	ui->label_online->setText(QString::number(nOnlinePeers)); 
+	
+	ui->label_disconnected->setText(QString::number(nDisconnPeers));
+	ui->label_direct->setText(QString::number(nDirectPeers)); 
+	ui->label_proxy->setText(QString::number(nProxyPeers)); 
+	ui->label_relay->setText(QString::number(nRelayPeers)); 
 
-	ui->peerSummaryLabel->setText(connstr);
+	//ui->peerSummaryLabel->setText(connstr);
 }
 
 

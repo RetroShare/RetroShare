@@ -1,126 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>BwCtrlWindow</class>
- <widget class="QMainWindow" name="BwCtrlWindow">
-  <property name="enabled">
-   <bool>true</bool>
-  </property>
+ <widget class="QWidget" name="BwCtrlWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>297</height>
+    <width>597</width>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Bandwidth Control Window</string>
+   <string>Form</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
-  </property>
-  <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="bwSummaryLabel">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTreeWidget" name="bwTreeWidget">
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <column>
       <property name="text">
-       <string>Bandwidth Measurements</string>
+       <string>Name</string>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QTreeWidget" name="bwTreeWidget">
-      <property name="sortingEnabled">
-       <bool>true</bool>
+     </column>
+     <column>
+      <property name="text">
+       <string>ID</string>
       </property>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>ID</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>In (KB/s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>InMax (KB/s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>InQueue</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>InAllocated (KB/s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Allocated Sent</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Out (KB/s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>OutMax (KB/s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>OutQueue</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>OutAllowed (KB/s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Allowed Recvd</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>525</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+     </column>
+     <column>
+      <property name="text">
+       <string>In (KB/s)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>InMax (KB/s)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>InQueue</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>InAllocated (KB/s)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Allocated Sent</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Out (KB/s)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>OutMax (KB/s)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>OutQueue</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>OutAllowed (KB/s)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Allowed Recvd</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

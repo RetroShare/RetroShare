@@ -67,13 +67,13 @@ namespace Ui {
     class BwCtrlWindow;
 }
 
-class BwCtrlWindow : public QMainWindow {
+class BwCtrlWindow : public QWidget {
     Q_OBJECT
 public:
 
-    static void showYourself ();
-    static BwCtrlWindow* getInstance();
-    static void releaseInstance();
+    //static void showYourself ();
+    //static BwCtrlWindow* getInstance();
+    //static void releaseInstance();
 
 
     BwCtrlWindow(QWidget *parent = 0);
@@ -85,12 +85,12 @@ public slots:
 	void update();
 	
 protected:
-    void changeEvent(QEvent *e);
+    //void changeEvent(QEvent *e);
 
 private:
     Ui::BwCtrlWindow *ui;
 
-    static BwCtrlWindow *mInstance;
+    //static BwCtrlWindow *mInstance;
 
 	BWListDelegate *BWDelegate;
 
