@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DHT Details</string>
+   <string>Statistics</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">

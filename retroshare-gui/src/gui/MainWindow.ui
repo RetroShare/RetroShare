@@ -33,6 +33,12 @@
          <height>0</height>
         </size>
        </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
        <property name="alternatingRowColors">
         <bool>false</bool>
        </property>
@@ -61,7 +67,7 @@
         <enum>QListView::SinglePass</enum>
        </property>
        <property name="spacing">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="viewMode">
         <enum>QListView::ListMode</enum>
