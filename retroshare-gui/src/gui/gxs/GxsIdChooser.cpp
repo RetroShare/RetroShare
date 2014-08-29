@@ -73,6 +73,10 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 
 GxsIdChooser::~GxsIdChooser()
 {
+	if (mIdQueue) {
+		delete(mIdQueue);
+		mIdQueue = NULL;
+	}
 }
 
 void GxsIdChooser::setUpdateWhenInvisible(bool update)
