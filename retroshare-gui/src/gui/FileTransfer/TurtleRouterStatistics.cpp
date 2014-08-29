@@ -239,6 +239,7 @@ void TurtleRouterStatistics::updateDisplay()
 	//updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	_tst_CW->updateTunnelStatistics(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	_tst_CW->update();
+	updateTunnelGraph();
 }
 
 QString TurtleRouterStatistics::getPeerName(const RsPeerId &peer_id)
@@ -306,8 +307,8 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	oy += celly ;
 
 	painter.drawText(ox,oy+celly,tr("Turtle router traffic")+":") ; oy += celly*2 ;
-	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Dn")+"\t: " + speedString(info.tr_dn_Bps) ) ; oy += celly ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Incoming file data")+"\t: " + speedString(info.data_dn_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Outgoing file data")+"\t: " + speedString(info.data_up_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data    ")+"\t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
@@ -350,4 +351,18 @@ void TurtleRouterStatisticsWidget::resizeEvent(QResizeEvent *event)
 
 	 QWidget::resizeEvent(event);
 	 update();
+}
+
+void TurtleRouterStatistics::updateTunnelGraph()
+{
+	TurtleTrafficStatisticsInfo info ;
+	rsTurtle->getTrafficStatistics(info) ;
+	
+	updateGraph(info.tr_up_Bps,info.tr_dn_Bps,info.data_dn_Bps,info.data_up_Bps,info.unknown_updn_Bps);
+}
+
+void TurtleRouterStatistics::updateGraph(qreal bytesTrup, qreal bytesTrdown, qreal bytesDatadown, qreal bytesDataup, qreal bytesunknownupdn)
+{
+  /* Graph only cares about kilobytes */
+  frmGraph->addPoints(bytesTrup/1024.0, bytesTrdown/1024.0, bytesDatadown/1024.0, bytesDataup/1024.0, bytesunknownupdn/1024.0 );
 }

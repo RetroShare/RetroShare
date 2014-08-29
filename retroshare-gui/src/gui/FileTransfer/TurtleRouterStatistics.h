@@ -39,6 +39,11 @@ class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterSt
 		
 		// Cache for peer names.
         static QString getPeerName(const RsPeerId& peer_id) ;
+        
+ public slots:       
+	void updateTunnelGraph();       
+	void updateGraph(qreal bytesTrup, qreal bytesTrdown, qreal bytesDatadown, qreal bytesDataup, qreal bytesunknownupdn);
+
 
 	private:
 											

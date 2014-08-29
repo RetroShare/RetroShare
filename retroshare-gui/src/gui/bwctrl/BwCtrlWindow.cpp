@@ -283,6 +283,9 @@ void BwCtrlWindow::updateBandwidth()
 			/* insert */
 	QTreeWidgetItem *item = new QTreeWidgetItem();
 	peerTreeWidget->addTopLevelItem(item);
+	peerTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+	
+	updateGraph(totalRates.mRateIn,totalRates.mRateOut);
 
 	/* do Totals */
 	item -> setData(COLUMN_PEERID, Qt::DisplayRole, tr("TOTALS"));
@@ -420,5 +423,10 @@ void BwCtrlWindow::updateBandwidth()
 	}
 }
 
-
+/** Adds new data to the graph. */
+void BwCtrlWindow::updateGraph(qreal bytesRead, qreal bytesWritten)
+{
+  /* Graph only cares about kilobytes */
+  ui->frmGraph->addPoints(bytesRead/*/1024.0*/, bytesWritten/*/1024.0*/);
+}
 

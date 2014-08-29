@@ -15,74 +15,109 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTreeWidget" name="bwTreeWidget">
-     <property name="sortingEnabled">
-      <bool>true</bool>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <column>
-      <property name="text">
-       <string>Name</string>
+     <widget class="QTreeWidget" name="bwTreeWidget">
+      <property name="sortingEnabled">
+       <bool>true</bool>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>ID</string>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>In (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InMax (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InQueue</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InAllocated (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Allocated Sent</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Out (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutMax (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutQueue</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutAllowed (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Allowed Recvd</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="GraphFrame" name="frmGraph">
+      <property name="minimumSize">
+       <size>
+        <width>120</width>
+        <height>80</height>
+       </size>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>In (KB/s)</string>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>InMax (KB/s)</string>
+      <property name="contextMenuPolicy">
+       <enum>Qt::NoContextMenu</enum>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>InQueue</string>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>InAllocated (KB/s)</string>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Allocated Sent</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Out (KB/s)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>OutMax (KB/s)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>OutQueue</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>OutAllowed (KB/s)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Allowed Recvd</string>
-      </property>
-     </column>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GraphFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/graphframe.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -164,41 +164,8 @@ void GlobalRouterStatisticsWidget::updateContent()
 	// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
 	// draw...
 	int ox=5,oy=5 ;
-
-	painter.setFont(times_f) ;
-	painter.drawText(ox,oy+celly,tr("Pending packets")+":" + QString::number(cache_infos.size())) ; oy += celly*2 ;
-
-	painter.setFont(monospace_f) ;
-
-	static const QString status_string[5] = { "UNKN", "PEND","SENT","ACKN","DEAD" } ;
-	time_t now = time(NULL) ;
-	std::map<QString, std::vector<QString> > tos ;
-
-	for(uint32_t i=0;i<cache_infos.size();++i)
-	{
-		QString packet_string ;
-		packet_string += QString("Id=")+QString::number(cache_infos[i].mid,16)  ;
-		packet_string += tr(" by ")+QString::fromStdString(cache_infos[i].local_origin.toStdString()) ;
-		packet_string += tr(" size=")+QString::number(cache_infos[i].data_size) ;
-		packet_string += tr(" Status ")+status_string[cache_infos[i].status % 6] ;
-		packet_string += " "+QString::number(now - cache_infos[i].time_stamp) + tr(" secs ago");
-
-		tos[ QString::fromStdString(cache_infos[i].destination.toStdString()) ].push_back(packet_string) ;
-	}
-
-	for(std::map<QString,std::vector<QString> >::const_iterator it(tos.begin());it!=tos.end();++it)
-	{
-		painter.drawText(ox+2*cellx,oy+celly,tr("To: ")+it->first ) ; oy += celly ;
-
-		for(uint32_t i=0;i<it->second.size();++i)
-		{
-			painter.drawText(ox+4*cellx,oy+celly,it->second[i] ) ; 
-			oy += celly ;
-		}
-	}
-
-	oy += celly ;
-
+	
+	
 	painter.setFont(times_f) ;
 	painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
 
@@ -247,6 +214,41 @@ void GlobalRouterStatisticsWidget::updateContent()
 		
 		oy += celly ;
 	}
+	
+	oy += celly ;
+
+	painter.setFont(times_f) ;
+	painter.drawText(ox,oy+celly,tr("Pending packets")+":" + QString::number(cache_infos.size())) ; oy += celly*2 ;
+
+	painter.setFont(monospace_f) ;
+
+	static const QString status_string[5] = { "UNKN", "PEND","SENT","ACKN","DEAD" } ;
+	time_t now = time(NULL) ;
+	std::map<QString, std::vector<QString> > tos ;
+
+	for(uint32_t i=0;i<cache_infos.size();++i)
+	{
+		QString packet_string ;
+		packet_string += QString("Id=")+QString::number(cache_infos[i].mid,16)  ;
+		packet_string += tr(" by ")+QString::fromStdString(cache_infos[i].local_origin.toStdString()) ;
+		packet_string += tr(" size=")+QString::number(cache_infos[i].data_size) ;
+		packet_string += tr(" Status ")+status_string[cache_infos[i].status % 6] ;
+		packet_string += " "+QString::number(now - cache_infos[i].time_stamp) + tr(" secs ago");
+
+		tos[ QString::fromStdString(cache_infos[i].destination.toStdString()) ].push_back(packet_string) ;
+	}
+
+	for(std::map<QString,std::vector<QString> >::const_iterator it(tos.begin());it!=tos.end();++it)
+	{
+		painter.drawText(ox+2*cellx,oy+celly,tr("To: ")+it->first ) ; oy += celly ;
+
+		for(uint32_t i=0;i<it->second.size();++i)
+		{
+			painter.drawText(ox+4*cellx,oy+celly,it->second[i] ) ; 
+			oy += celly ;
+		}
+	}
+
 
 	oy += celly ;
 	oy += celly ;

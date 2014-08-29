@@ -83,6 +83,8 @@ public:
 
 public slots:
 	void update();
+	  /** Adds new data to the graph */
+  void updateGraph(qreal bytesRead, qreal bytesWritten);
 	
 protected:
     //void changeEvent(QEvent *e);

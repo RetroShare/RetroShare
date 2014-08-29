@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>611</width>
-    <height>408</height>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,9 @@
       <enum>Qt::Vertical</enum>
      </property>
      <widget class="QScrollArea" name="_tunnel_statistics_F">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -35,15 +38,50 @@
          <x>0</x>
          <y>0</y>
          <width>593</width>
-         <height>390</height>
+         <height>289</height>
         </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="GraphFrameTunnel" name="frmGraph">
+     <property name="minimumSize">
+      <size>
+       <width>120</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::NoContextMenu</enum>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GraphFrameTunnel</class>
+   <extends>QFrame</extends>
+   <header>gui/graphframetunnel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
