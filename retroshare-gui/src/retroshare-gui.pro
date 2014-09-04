@@ -518,6 +518,7 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
             gui/dht/DhtWindow.h \
+            gui/statistics/StatisticsWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
             gui/channels/ShareKey.h \
             gui/GetStartedDialog.h \
@@ -629,6 +630,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/RSFeedWidget.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
+            gui/statistics/StatisticsWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
             gui/channels/ShareKey.ui \
             gui/GetStartedDialog.ui \
@@ -843,6 +845,7 @@ SOURCES +=  main.cpp \
             gui/connect/ConnectProgressDialog.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
+            gui/statistics/StatisticsWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
             gui/channels/ShareKey.cpp \
             gui/GetStartedDialog.cpp \

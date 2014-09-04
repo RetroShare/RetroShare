@@ -53,6 +53,7 @@
         <file>images/connect_creating.png</file>
         <file>images/connect_no.png</file>
         <file>images/dht16.png</file>
+        <file>images/dht32.png</file>
         <file>images/edit-clear-history.png</file>
         <file>images/edit_16.png</file>
         <file>images/feedback_arrow.png</file>
@@ -379,6 +380,8 @@
         <file>images/no_avatar_70.png</file>
         <file>images/no_avatar_background.png</file>
         <file>images/openimage.png</file>
+        <file>images/office-chart-area-stacked.png</file>
+        <file>images/office-chart-line.png</file>
         <file>images/pasterslink.png</file>
         <file>images/package_games1.png</file>
         <file>images/pin32.png</file>

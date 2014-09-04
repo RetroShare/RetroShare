@@ -58,15 +58,6 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsplugin.h>
 
-/****
- * #define SHOW_RTT_STATISTICS		1
- ****/
-#define SHOW_RTT_STATISTICS		1
-
-#ifdef SHOW_RTT_STATISTICS
-	#include "gui/RttStatistics.h"
-#endif
-
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
@@ -338,10 +329,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_FRIENDSFILES), tr("Friends files")) ;
 
 	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
-
-#ifdef SHOW_RTT_STATISTICS
-         ui.tabWidget->addTab( new RttStatistics(), tr("RTT Statistics")) ;
-#endif
 
 	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;

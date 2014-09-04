@@ -48,12 +48,10 @@
 #include "NewsFeed.h"
 #include "ShareManager.h"
 #include "NetworkView.h"
-//#include "ForumsDialog.h"
 #include "FriendsDialog.h"
 #include "ChatLobbyWidget.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
-//#include "ChannelFeed.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "chat/ChatDialog.h"
@@ -98,6 +96,7 @@
 #include "gui/Circles/CirclesDialog.h"
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/Posted/PostedDialog.h"
+#include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/RsCollectionFile.h"
@@ -109,19 +108,6 @@
 
 #include <iomanip>
 #include <unistd.h>
-
-/****
- *
- * #define USE_DHTWINDOW	1
- * #define USE_BWCTRLWINDOW	1
- *
- ****/
-#define USE_DHTWINDOW	1
-
-#ifdef USE_DHTWINDOW
-#include "dht/DhtWindow.h"
-#endif
-
 
 /* Images for toolbar icons */
 //#define IMAGE_NETWORK2          ":/images/rs1.png"
@@ -613,9 +599,8 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
-#ifdef USE_DHTWINDOW
-    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showDhtWindow()));
-#endif
+    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
+
 
 #ifdef UNFINISHED
     trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
@@ -1096,12 +1081,11 @@ void MainWindow::showMessengerWindow()
     MessengerWindow::showYourself();
 }
 
-/** Shows Dht window */
-void MainWindow::showDhtWindow()
+/** Shows Statistics window */
+void MainWindow::showStatisticsWindow()
 {
-#ifdef USE_DHTWINDOW
-    DhtWindow::showYourself();
-#endif
+    StatisticsWindow::showYourself();
+
 }
 
 /** Shows Application window */

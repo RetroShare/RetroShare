@@ -163,84 +163,30 @@ QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & /*option*/, const QM
 	return QSize(50,17);
 }
 
-/**************************************************************************************************/
-/********************************************** STATIC WINDOW *************************************/
-/*BwCtrlWindow * BwCtrlWindow::mInstance = NULL;
 
-void BwCtrlWindow::showYourself()
+BwCtrlWindow::BwCtrlWindow(QWidget *parent) 
+: RsAutoUpdatePage(1000,parent)
 {
-    if (mInstance == NULL) {
-        mInstance = new BwCtrlWindow();
-    }
-
-    mInstance->show();
-    mInstance->activateWindow();
-}
-
-BwCtrlWindow* BwCtrlWindow::getInstance()
-{
-    return mInstance;
-}
-
-void BwCtrlWindow::releaseInstance()
-{
-    if (mInstance) {
-        delete mInstance;
-    }
-}*/
-
-/********************************************** STATIC WINDOW *************************************/
+    setupUi(this);
 
 
+    BWDelegate = new BWListDelegate();
+    bwTreeWidget->setItemDelegate(BWDelegate);
+    
+    		/* Set header resize modes and initial section sizes Peer TreeView*/
+    QHeaderView * _header = bwTreeWidget->header () ;
+    _header->resizeSection ( COLUMN_RSNAME, 170 );
+	
 
-BwCtrlWindow::BwCtrlWindow(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::BwCtrlWindow)
-{
-    ui->setupUi(this);
-
-    setAttribute ( Qt::WA_DeleteOnClose, true );
-
-	BWDelegate = new BWListDelegate();
-	ui->bwTreeWidget->setItemDelegate(BWDelegate);
-
-  //ui->tabWidget->addTab(dhtdetails = new DhtWindow(),QIcon(), tr("DHT"));
-
-
-	// tick for gui update.
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1000);
 }
 
 BwCtrlWindow::~BwCtrlWindow()
 {
-    //delete ui;
-    //mInstance = NULL;
+
 }
 
-/*
-void BwCtrlWindow::changeEvent(QEvent *e)
+void BwCtrlWindow::updateDisplay()
 {
-    QMainWindow::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
-}*/
-
-void BwCtrlWindow::update()
-{
-	if (!isVisible())
-	{
-#ifdef DEBUG_BWCTRLWINDOW
-		//std::cerr << "BwCtrlWindow::update() !Visible" << std::endl;
-#endif
-		return;
-	}
 
 	/* do nothing if locked, or not visible */
 	if (RsAutoUpdatePage::eventsLocked() == true) 
@@ -269,7 +215,7 @@ void BwCtrlWindow::update()
 
 void BwCtrlWindow::updateBandwidth()
 {
-	QTreeWidget *peerTreeWidget = ui->bwTreeWidget;
+	QTreeWidget *peerTreeWidget = bwTreeWidget;
 
 	peerTreeWidget->clear();
 
@@ -427,6 +373,6 @@ void BwCtrlWindow::updateBandwidth()
 void BwCtrlWindow::updateGraph(qreal bytesRead, qreal bytesWritten)
 {
   /* Graph only cares about kilobytes */
-  ui->frmGraph->addPoints(bytesRead/*/1024.0*/, bytesWritten/*/1024.0*/);
+  frmGraph->addPoints(bytesRead/*/1024.0*/, bytesWritten/*/1024.0*/);
 }
 

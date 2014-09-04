@@ -204,7 +204,7 @@ private slots:
     void addFriend();
     void newRsCollection();
     void showMessengerWindow();
-    void showDhtWindow();
+    void showStatisticsWindow();
     void servicePermission();
 
 #ifdef UNFINISHED    

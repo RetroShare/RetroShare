@@ -26,6 +26,9 @@
 
 #include <QAbstractItemDelegate>
 
+#include "RsAutoUpdatePage.h"
+#include "ui_BwCtrlWindow.h"
+
 // Defines for download list list columns
 #define COLUMN_RSNAME 0
 #define COLUMN_PEERID 1
@@ -63,18 +66,9 @@ public slots:
 signals:
 };
 
-namespace Ui {
-    class BwCtrlWindow;
-}
-
-class BwCtrlWindow : public QWidget {
+class BwCtrlWindow : public RsAutoUpdatePage,  public Ui::BwCtrlWindow {
     Q_OBJECT
 public:
-
-    //static void showYourself ();
-    //static BwCtrlWindow* getInstance();
-    //static void releaseInstance();
-
 
     BwCtrlWindow(QWidget *parent = 0);
     ~BwCtrlWindow();
@@ -82,17 +76,16 @@ public:
 	void updateBandwidth();
 
 public slots:
-	void update();
+		virtual void updateDisplay() ;
+
 	  /** Adds new data to the graph */
-  void updateGraph(qreal bytesRead, qreal bytesWritten);
+    void updateGraph(qreal bytesRead, qreal bytesWritten);
 	
 protected:
     //void changeEvent(QEvent *e);
-
+    
 private:
-    Ui::BwCtrlWindow *ui;
 
-    //static BwCtrlWindow *mInstance;
 
 	BWListDelegate *BWDelegate;
 

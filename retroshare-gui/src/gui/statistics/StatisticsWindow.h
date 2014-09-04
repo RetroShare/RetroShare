@@ -1,5 +1,5 @@
-#ifndef RSDHT_WINDOW_H
-#define RSDHT_WINDOW_H
+#ifndef RSSTATS_WINDOW_H
+#define RSSTATS_WINDOW_H
 
 /****************************************************************
  *  RetroShare is distributed under the following license:
@@ -22,32 +22,55 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMainWindow>
 
-#include "RsAutoUpdatePage.h"
-#include "ui_DhtWindow.h"
+namespace Ui {
+    class StatisticsWindow;
+}
 
-class DhtWindow : public RsAutoUpdatePage/*,  public Ui::DhtWindow*/ {
+class MainPage;
+class QActionGroup;
+
+class DhtWindow;
+class BwCtrlWindow;
+class TurtleRouterStatistics;
+class GlobalRouterStatistics;
+class RttStatistics;
+
+class StatisticsWindow : public QMainWindow {
     Q_OBJECT
 public:
 
-    DhtWindow(QWidget *parent = 0);
-    ~DhtWindow();
+    static void showYourself ();
+    static StatisticsWindow* getInstance();
+    static void releaseInstance();
 
-	void updateNetStatus();
-	void updateNetPeers();
-	void updateDhtPeers();
-	void updateRelays();
+
+    StatisticsWindow(QWidget *parent = 0);
+    ~StatisticsWindow();
+
+  DhtWindow *dhtw;
+  GlobalRouterStatistics *grsdlg;
+  BwCtrlWindow *bwdlg;
+  TurtleRouterStatistics *trsdlg;
+  RttStatistics *rttdlg;
+
 
 public slots:
-	virtual void updateDisplay() ;
+  void setNewPage(int page);
 	
 protected:
-    //void changeEvent(QEvent *e);
+    void changeEvent(QEvent *e);
 
 private:
+    void initStackedPage();
+    
+    Ui::StatisticsWindow *ui;
 
-    /** Qt Designer generated object */
-    Ui::DhtWindow ui;
+    static StatisticsWindow *mInstance;
+    
+    /** Creates a new action for a Main page. */
+    QAction* createPageAction(const QIcon &icon, const QString &text, QActionGroup *group);    
 
 };
 
