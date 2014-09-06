@@ -88,6 +88,7 @@ linux-* {
 			}
 
 			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+			INCLUDEPATH += ../../../lib/sqlcipher/src/
 		} else {
 			LIBS += -lsqlcipher
 		}
