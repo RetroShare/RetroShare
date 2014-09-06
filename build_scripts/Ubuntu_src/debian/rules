@@ -34,12 +34,12 @@ install: build
 	dh_clean -k
 	dh_installdirs
 	install -D -m 644 src/data/retroshare.desktop                           $(CURDIR)/debian/retroshare06/usr/share/applications/retroshare06.desktop
-	install -D -m 644 src/data/24x24/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/24x24/apps/retroshare.png
-	install -D -m 644 src/data/48x48/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/48x48/apps/retroshare.png
-	install -D -m 644 src/data/64x64/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/64x64/apps/retroshare.png
-	install -D -m 644 src/data/retroshare.xpm                               $(CURDIR)/debian/retroshare06/usr/share/pixmaps/retroshare.xpm
-	install -D -m 644 src/plugins/VOIP/libVOIP.so.1.0.0              		$(CURDIR)/debian/retroshare06-voip-plugin/usr/lib/retroshare06/extensions/libVOIP.so
-	install -D -m 644 src/plugins/FeedReader/libFeedReader.so.1.0.0  		$(CURDIR)/debian/retroshare06-feedreader-plugin/usr/lib/retroshare06/extensions/libFeedReader.so
+	install -D -m 644 src/data/24x24/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/24x24/apps/retroshare06.png
+	install -D -m 644 src/data/48x48/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/48x48/apps/retroshare06.png
+	install -D -m 644 src/data/64x64/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/64x64/apps/retroshare06.png
+	install -D -m 644 src/data/retroshare.xpm                               $(CURDIR)/debian/retroshare06/usr/share/pixmaps/retroshare06.xpm
+	install -D -m 644 src/plugins/VOIP/libVOIP.so.1.0.0              		$(CURDIR)/debian/retroshare06-voip-plugin/usr/lib/retroshare/extensions6/libVOIP.so
+	install -D -m 644 src/plugins/FeedReader/libFeedReader.so.1.0.0  		$(CURDIR)/debian/retroshare06-feedreader-plugin/usr/lib/retroshare/extensions6/libFeedReader.so
 	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt                   $(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/bdboot.txt
 	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt                   $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/bdboot.txt
 	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui        		$(CURDIR)/debian/retroshare06-nogui/usr/bin/RetroShare06-nogui

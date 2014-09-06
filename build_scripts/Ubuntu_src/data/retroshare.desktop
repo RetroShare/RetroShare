@@ -1,10 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Version=1.0
-Name=RetroShare
+Name=RetroShare06
 Comment=Securely share files with your friends
-Exec=/usr/bin/RetroShare
-Icon=/usr/share/pixmaps/retroshare.xpm
+Exec=/usr/bin/RetroShare06
+Icon=/usr/share/pixmaps/retroshare06.xpm
 Terminal=false
 Type=Application
 Categories=Application;Network;
