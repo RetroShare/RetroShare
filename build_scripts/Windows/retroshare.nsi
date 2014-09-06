@@ -1,27 +1,88 @@
 ; Script generated with the Venis Install Wizard & modified by defnax
+; Reworked by Thunder
 
-; Define your application name
+# Needed defines
+;!define VERSION ""
+;!define SOURCEDIR ""
+;!define RELEASEDIR ""
+;!define QTDIR ""
+;!define MINGWDIR ""
+
+# Optional defines
+;!define REVISION ""
+;!define OUTDIR ""
+
+# Check needed defines
+!ifndef VERSION
+!error "VERSION is not defined"
+!endif
+
+!ifndef SOURCEDIR
+!error "SOURCEDIR is not defined"
+!endif
+
+!ifndef RELEASEDIR
+!error "RELEASEDIR is not defined"
+!endif
+!ifndef QTDIR
+!error "QTDIR is not defined"
+!endif
+!ifndef MINGWDIR
+!error "MINGWDIR is not defined"
+!endif
+
+# Check optional defines
+!ifdef REVISION
+!define REVISION_ "${REVISION}_"
+!else
+!define REVISION ""
+!define REVISION_ ""
+!endif
+
+!ifdef OUTDIR
+!define OUTDIR_ "${OUTDIR}\"
+!else
+!define OUTDIR ""
+!define OUTDIR_ ""
+!endif
+
+# Application name and version
 !define APPNAME "RetroShare"
-!define VERSION "0.4.13c"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
-; Main Install settings
-Name "${APPNAMEANDVERSION}"
-InstallDir "$PROGRAMFILES\RetroShare"
-InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "RetroShare_${VERSION}_setup.exe"
-BrandingText "${APPNAMEANDVERSION}"
-; Use compression
-SetCompressor LZMA
+# Install path
+!define INSTDIR_NORMAL "$ProgramFiles\${APPNAME}"
+!define INSTDIR_PORTABLE "$Desktop\${APPNAME}"
 
-; Modern interface settings
+!define DATADIR_NORMAL "$APPDATA\${APPNAME}"
+!define DATADIR_PORTABLE "$INSTDIR\Data"
+
+# Main Install settings
+Name "${APPNAMEANDVERSION}"
+InstallDirRegKey HKLM "Software\${APPNAME}" ""
+OutFile "${OUTDIR_}RetroShare_${VERSION}_${REVISION_}setup.exe"
+BrandingText "${APPNAMEANDVERSION}"
+RequestExecutionlevel highest
+# Use compression
+SetCompressor /SOLID LZMA
+
+# Global variables
+Var PortableMode
+Var InstDirNormal
+Var InstDirPortable
+Var DataDir
+Var StyleSheetDir
+
+# Modern interface settings
 !include Sections.nsh
+!include nsDialogs.nsh
 !include "MUI.nsh"
 
-;Interface Settings
+# Interface Settings
 !define MUI_ABORTWARNING
-;!define MUI_HEADERIMAGE
-;!define MUI_HEADERIMAGE_BITMAP "retroshare.bmp" ; optional
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_BITMAP "${SOURCEDIR}\build_scripts\Windows\HeaderImage.bmp"
+;!define MUI_WELCOMEFINISHPAGE_BITMAP "...bmp"
 
 # MUI defines
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
@@ -36,144 +97,63 @@ SetCompressor LZMA
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
-!define MUI_LANGDLL_REGISTRY_ROOT HKLM
-!define MUI_LANGDLL_REGISTRY_KEY ${REGKEY}
-!define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
+;!define MUI_LANGDLL_REGISTRY_ROOT HKLM
+;!define MUI_LANGDLL_REGISTRY_KEY ${REGKEY}
+;!define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
 
-;!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without havinf to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
-
-;!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
-
-
-; Defines the un-/installer logo of RetroShare
+# Defines the un-/installer logo of RetroShare
 !insertmacro MUI_DEFAULT MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
 !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp"
-
-; Set languages (first is default language)
-!insertmacro MUI_RESERVEFILE_LANGDLL
-ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
-
-;--------------------------------
-;Configuration
-
-
-  ;!insertmacro MUI_RESERVEFILE_SPECIALBITMAP
- 
-  LicenseLangString myLicenseData 1033 "license\license.txt"
-  LicenseLangString myLicenseData 1031 "license\license-GER.txt"
-  LicenseLangString myLicenseData 1036 "license\license-FR.txt"
-  LicenseLangString myLicenseData 1055 "license\license-TR.txt"
-  LicenseLangString myLicenseData 2052 "license\license.txt"
-  LicenseLangString myLicenseData 1045 "license\license.txt"
-
-  LicenseData $(myLicenseData)
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "$(myLicenseData)"
-!insertmacro MUI_PAGE_COMPONENTS
+Page Custom PortableModePageCreate PortableModePageLeave
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE dir_leave
 !insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
+# Set languages (first is default language)
+!insertmacro MUI_RESERVEFILE_LANGDLL
+ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
+
 # Installer languages
 !define MUI_LANGDLL_ALLLANGUAGES
 
-!insertmacro MUI_LANGUAGE English
-!insertmacro MUI_LANGUAGE German
-!insertmacro MUI_LANGUAGE French
-!insertmacro MUI_LANGUAGE Turkish
-!insertmacro MUI_LANGUAGE SimpChinese
-!insertmacro MUI_LANGUAGE Polish
+# Translations
+!macro LANG_LOAD LANGUAGE LANGCODE LANGID LICENCEFILE
+  !insertmacro MUI_LANGUAGE "${LANGUAGE}"
+;  !verbose off
+  !define LANG "${LANGUAGE}"
+  !include "lang\${LANGCODE}.nsh"
+  LangString LANGUAGEID "${LANG_${LANG}}" "1031"
+  LicenseLangString myLicenseData ${LANGCODE} ${LICENCEFILE}
+;  !verbose on
+  !undef LANG
+!macroend
 
+!macro LANG_STRING NAME VALUE
+  LangString "${NAME}" "${LANG_${LANG}}" "${VALUE}"
+!macroend
 
-  ;Component-selection page
-    ;Titles
-    
-    LangString sec_main ${LANG_ENGLISH} "Program Files"
-    LangString sec_data ${LANG_ENGLISH} "Program Skins"
-    LangString sec_shortcuts ${LANG_ENGLISH} "Shortcuts"
-    LangString sec_link ${LANG_ENGLISH} "File Association"
-    LangString sec_autostart ${LANG_ENGLISH} "Auto Startup"
-    LangString DESC_sec_main ${LANG_ENGLISH} "Installs the RetroShare program files."
-    LangString DESC_sec_data ${LANG_ENGLISH} "Installs RetroShare Skins"
-    LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
-    LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .pqi file extension"
-    LangString DESC_sec_autostart ${LANG_ENGLISH} "Auto-Run and Login at Startup"
-    LangString LANGUAGEID ${LANG_ENGLISH} "1033"
-    
-    
-    LangString sec_main ${LANG_FRENCH} "RetroShare"
-    LangString sec_data ${LANG_FRENCH} "Programme de Skins"
-    LangString sec_shortcuts ${LANG_FRENCH} "Raccourcis"
-    LangString sec_link ${LANG_FRENCH} "RetroShare fichiers Association"
-    LangString sec_startmenu ${LANG_FRENCH} "Raccourcis du menu Démarrer"
-    LangString sec_autostart ${LANG_FRENCH} "Démarrage automatique"
-    LangString DESC_sec_main ${LANG_FRENCH} "Installe les fichiers du programme."
-    LangString DESC_sec_data ${LANG_FRENCH} "Installe RetroShare Skins"
-    LangString DESC_sec_startmenu ${LANG_FRENCH} "Crée les raccourcis du menu Démarrer"
-    LangString DESC_sec_shortcuts ${LANG_FRENCH} "Crée une icône sur le bureau."
-    LangString DESC_sec_link ${LANG_FRENCH} "Associate RetroShare with .pqi file extension"
-    LangString DESC_sec_autostart ${LANG_FRENCH} "Run and Auto-connexion au démarrage"
-    LangString LANGUAGEID ${LANG_FRENCH} "1036"
+!insertmacro LANG_LOAD "English" "en" "1033" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "French" "fr" "1036" "${SOURCEDIR}\retroshare-gui\src\license\license-FR.txt"
+!insertmacro LANG_LOAD "German" "de" "1031" "${SOURCEDIR}\retroshare-gui\src\license\license-GER.txt"
+!insertmacro LANG_LOAD "Turkish" "tr" "1055" "${SOURCEDIR}\retroshare-gui\src\license\license-TR.txt"
+!insertmacro LANG_LOAD "SimpChinese" "zh_CN" "2052" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Polish" "pl" "1045" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Spanish" "es" "1034" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Russian" "ru" "1049" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Catalan" "ca_ES" "1027" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
 
-    
-    LangString sec_main ${LANG_GERMAN} "Programmdateien"
-    LangString sec_data ${LANG_GERMAN} "Skins f�r das Programm"
-    LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
-    LangString sec_link ${LANG_GERMAN} "Dateiverkn�pfungen"
-    LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
-	  LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
-	  LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verkn�pfung im Startmen�, Desktop oder im Schnellstarter."
-    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verkn�pfen"
-    LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
-    LangString LANGUAGEID ${LANG_GERMAN} "1031"
-        
-    LangString sec_main ${LANG_TURKISH} "Program Dosyalar�"
-    LangString sec_data ${LANG_TURKISH} "Program Skinleri"
-    LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
-    LangString sec_link ${LANG_TURKISH} ".pqi Dosya Kaydet"
-    LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
-	  LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
-	  LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
-    LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
-    LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almas� i�in kaydettirir"
-    LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
-    LangString LANGUAGEID ${LANG_TURKISH} "1055"
-    
-    LangString sec_main ${LANG_SIMPCHINESE} "程序文件"
-    LangString sec_data ${LANG_SIMPCHINESE} "程序皮肤"
-    LangString sec_shortcuts ${LANG_SIMPCHINESE} "快捷方式"
-    LangString sec_link ${LANG_SIMPCHINESE} "RetroShare文件关联"
-    LangString sec_autostart ${LANG_SIMPCHINESE} "自动启动"
-    LangString DESC_sec_main ${LANG_SIMPCHINESE} "安装RetroShare程序"
-    LangString DESC_sec_data ${LANG_SIMPCHINESE} "安装RetroShare皮肤"
-    LangString DESC_sec_shortcuts ${LANG_SIMPCHINESE} "建RetroShare快捷方式"
-    LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.pqi扩展名"
-    LangString DESC_sec_autostart ${LANG_SIMPCHINESE} "启动时自动运行和登录"
-    LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
-    
-    LangString sec_main ${LANG_POLISH} "Pliki programu"
-    LangString sec_data ${LANG_POLISH} "Skórki"
-    LangString sec_shortcuts ${LANG_POLISH} "Skróty"
-    LangString sec_link ${LANG_POLISH} "Skojarz pliki"
-    LangString sec_autostart ${LANG_POLISH} "Automatyczne uruchamianie"
-    LangString DESC_sec_main ${LANG_POLISH} "Instaluje pliki programu RetroShare"
-    LangString DESC_sec_data ${LANG_POLISH} "Instaluje skórki programu RetroShare"
-    LangString DESC_sec_shortcuts ${LANG_POLISH} "Utwórz ikony skrótów na pulpicie, w menu start oraz na pasku szybkiego uruchamiania."
-    LangString DESC_sec_link ${LANG_POLISH} "Skojarz pliki o rozszerzeniu .pqi z RetroShare"
-    LangString DESC_sec_autostart ${LANG_POLISH} "Uruchom i zaloguj podczas startu systemu"
-    LangString LANGUAGEID ${LANG_POLISH} "1045"
-    
-    
+LicenseData $(myLicenseData)
 
-!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-
-Section $(sec_main) sec_main
-
+# Main binaries
+Section $(Section_Main) Section_Main
   ;Set Section required
   SectionIn RO
 
@@ -181,210 +161,284 @@ Section $(sec_main) sec_main
   SetOverwrite on
 
   ; Clears previous error logs
-  Delete "$INSTDIR\*.log"
-	
-  ; Set Section Files and Shortcuts
-  SetOutPath "$INSTDIR\"
-  File /r "release\RetroShare.exe"
-  File /r "D:\Qt\2009.02\mingw\bin\mingwm10.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtCore4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtGui4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtNetwork4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtXml4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtScript4.dll"
-  File /r "pthreadGCE2.dll"
-  File /r "pthreadGC2d.dll"
-  File /r "changelog.txt"
+;  Delete "$INSTDIR\*.log"
 
-  
+  ; Main binaries
+  SetOutPath "$INSTDIR"
+  File "${RELEASEDIR}\retroshare-gui\src\release\RetroShare.exe"
+  File "${RELEASEDIR}\retroshare-nogui\src\release\retroshare-nogui.exe"
 
+  ; Qt binaries
+  File "${QTDIR}\bin\QtCore4.dll"
+  File "${QTDIR}\bin\QtGui4.dll"
+  File "${QTDIR}\bin\QtMultimedia4.dll"
+  File "${QTDIR}\bin\QtSvg4.dll"
+  File "${QTDIR}\bin\QtXml4.dll"
+
+  ; MinGW binaries
+  File "${MINGWDIR}\bin\libstdc++-6.dll"
+  File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
+  File "${MINGWDIR}\bin\libwinpthread-1.dll"
+
+  ; External binaries
+  File "${SOURCEDIR}\..\lib\bin\miniupnpc.dll"
+
+  ; Other files
+  File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
+  File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
+
+  ; Image formats
+  SetOutPath "$INSTDIR\imageformats"
+  File /r "${QTDIR}\plugins\imageformats\qgif4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qico4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qjpeg4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qmng4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qsvg4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qtga4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qtiff4.dll"
+
+  ; Sounds
+  SetOutPath "$INSTDIR\sounds"
+  File /r "${SOURCEDIR}\retroshare-gui\src\sounds\*.*"
+
+  ; Translations
+  SetOutPath "$INSTDIR\translations"
+  File /r "${SOURCEDIR}\retroshare-gui\src\translations\*.qm"
+  File /r "${QTDIR}\translations\qt_*.qm"
+
+  ; License
+  SetOutPath "$INSTDIR\license"
+  File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 SectionEnd
 
-Section  $(sec_data) sec_data
+# Plugins
+SectionGroup $(Section_Plugins) Section_Plugins
+Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
+  SetOutPath "$DataDir\extensions6"
+  File "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
+SectionEnd
 
+Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
+  SetOutPath "$DataDir\extensions6"
+  File "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
+SectionEnd
+SectionGroupEnd
+
+# Data (Styles)
+Section $(Section_Data) Section_Data
   ; Set Section properties
   SetOverwrite on
 
-  ; Set Section Files and Shortcuts
-  SetOutPath "$APPDATA\RetroShare\"
-  ;File /r "data\*"
-  
-  ; We're not ready for external skins...
-  ; Set Section qss need to remove svn path
-  SetOutPath "$INSTDIR\qss\"
-  File /r qss\*.*   
-  
-  ; Set Section skin
-  ; SetOutPath "$INSTDIR\skin\"
-  ; File /r release\skin\*.* 
+  ; Chat style
+  SetOutPath "$StyleSheetDir\stylesheets\Bubble"
+  File /r "${SOURCEDIR}\retroshare-gui\src\gui\qss\chat\Bubble\*.*"
+  SetOutPath "$StyleSheetDir\stylesheets\Bubble_Compact"
+  File /r "${SOURCEDIR}\retroshare-gui\src\gui\qss\chat\Bubble_Compact\*.*"
 
-  ; Add emoticons
-  SetOutPath "$INSTDIR\emoticons\"
-  File /r emoticons\*.*   
-	
-  ; Add Chat Style
-  SetOutPath "$INSTDIR\style\"
-  File /r style\*.*   
-	
+  ; Stylesheets
+  SetOutPath "$INSTDIR\qss"
+  File /r "${SOURCEDIR}\retroshare-gui\src\qss\*.*"
 SectionEnd
 
-Section $(sec_link) sec_link
+;Section $(Section_Link) Section_Link
   ; Delete any existing keys
 
-
   ; Write the file association
-  WriteRegStr HKCR .pqi "" retroshare
-  WriteRegStr HKCR retroshare "" "PQI File"
-  WriteRegBin HKCR retroshare EditFlags 00000100
-  WriteRegStr HKCR "retroshare\shell" "" open
-  WriteRegStr HKCR "retroshare\shell\open\command" "" `"$INSTDIR\RetroShare.exe" "%1"`
-
-SectionEnd
-
-SectionGroup $(sec_shortcuts) sec_shortcuts
-Section  StartMenu SEC0001
-
-  SetOutPath "$INSTDIR"
-  CreateDirectory "$SMPROGRAMS\${APPNAME}"
-  CreateShortCut "$SMPROGRAMS\${APPNAME}\$(^UninstallLink).lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
-
-SectionEnd
-
-Section  Desktop SEC0002
-  
-
-  CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
-  
-SectionEnd
-
-Section  Quicklaunchbar SEC0003
-  
-
-  CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
-  
-SectionEnd
-SectionGroupEnd        
-
-;Section $(sec_autostart) sec_autostart
-
-;  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroRun"   "$INSTDIR\${APPNAME}.exe -a"
-  
+;  WriteRegStr HKCR .pqi "" retroshare
+;  WriteRegStr HKCR retroshare "" "PQI File"
+;  WriteRegBin HKCR retroshare EditFlags 00000100
+;  WriteRegStr HKCR "retroshare\shell" "" open
+;  WriteRegStr HKCR "retroshare\shell\open\command" "" `"$INSTDIR\RetroShare.exe" "%1"`
 ;SectionEnd
 
-Section $(sec_autostart) sec_autostart
-
-  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+# Shortcuts
+SectionGroup $(Section_Shortcuts) Section_Shortcuts
+Section $(Section_StartMenu) Section_StartMenu
+  SetOutPath "$INSTDIR"
+  CreateDirectory "$SMPROGRAMS\${APPNAME}"
+  CreateShortCut "$SMPROGRAMS\${APPNAME}\$(Link_Uninstall).lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
 SectionEnd
 
+Section $(Section_Desktop) Section_Desktop
+  CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+SectionEnd
+
+Section $(Section_QuickLaunch) Section_QuickLaunch
+  CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+SectionEnd
+SectionGroupEnd
+
+Section $(Section_AutoStart) Section_AutoStart
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\${APPNAME}.exe -m"
+SectionEnd
+
+;Section $(Section_AutoStart) Section_AutoStart
+;  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe -m" 0
+;SectionEnd
 
 Section -FinishSection
-
-  WriteRegStr HKLM "Software\${APPNAME}" "" "$INSTDIR"
-  WriteRegStr HKLM "Software\${APPNAME}" "Version" "${VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$INSTDIR\uninstall.exe"
-  WriteUninstaller "$INSTDIR\uninstall.exe"
-
+  ${If} $PortableMode = 0
+    WriteRegStr HKLM "Software\${APPNAME}" "" "$INSTDIR"
+    WriteRegStr HKLM "Software\${APPNAME}" "Version" "${VERSION}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$INSTDIR\uninstall.exe"
+    WriteUninstaller "$INSTDIR\uninstall.exe"
+  ${Else}
+    ; Create the file the application uses to detect portable mode
+    FileOpen $0 "$INSTDIR\portable" w
+    FileClose $0
+  ${EndIf}
 SectionEnd
 
-
-
-;--------------------------------
-;Descriptions
-
+# Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${sec_main} $(DESC_sec_main)
-    !insertmacro MUI_DESCRIPTION_TEXT ${sec_data} $(DESC_sec_data)
-    !insertmacro MUI_DESCRIPTION_TEXT ${sec_shortcuts} $(DESC_sec_shortcuts)
-    !insertmacro MUI_DESCRIPTION_TEXT ${sec_link} $(DESC_sec_link)
-	!insertmacro MUI_DESCRIPTION_TEXT ${sec_autostart} $(DESC_sec_autostart)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Main} $(Section_Main_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Data} $(Section_Data_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Shortcuts} $(Section_Shortcuts_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_StartMenu} $(Section_StartMenu_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Desktop} $(Section_Desktop_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_QuickLaunch} $(Section_QuickLaunch_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugins} $(Section_Plugins_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_FeedReader} $(Section_Plugin_FeedReader_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_VOIP} $(Section_Plugin_VOIP_Desc)
+;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
-;Uninstall section
+# Uninstall
 Section "Uninstall"
-  
   ; Remove file association registry keys
-  DeleteRegKey HKCR .pqi
-  DeleteRegKey HKCR retroshare
-	
+;  DeleteRegKey HKCR .pqi
+  DeleteRegKey HKCR RetroShare
+
   ; Remove program/uninstall regsitry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
   DeleteRegKey HKLM SOFTWARE\${APPNAME}
 
-  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroRun"
-
-  ; Remove files and uninstaller
-  Delete $INSTDIR\RetroShare.exe
-  Delete $INSTDIR\*.dll
-  Delete $INSTDIR\*.dat
-  Delete $INSTDIR\*.txt
-  Delete $INSTDIR\*.ini
-  Delete $INSTDIR\*.log
-
-  Delete $INSTDIR\uninstall.exe
-
-  ; Remove the kadc.ini file.
-  ; Don't remove the directory, otherwise
-  ; we lose the XPGP keys.
-  ; Should make this an option though...
-  Delete "$APPDATA\${APPNAME}\kadc.ini"
-  Delete "$APPDATA\${APPNAME}\*.cfg"
-  Delete "$APPDATA\${APPNAME}\*.conf"
-  Delete "$APPDATA\${APPNAME}\*.log-save"
-  Delete "$APPDATA\${APPNAME}\*.log"
-  Delete "$APPDATA\${APPNAME}\*.failed"
-
-  RMDir /r "$APPDATA\${APPNAME}\cache"
-  RMDir /r "$APPDATA\${APPNAME}\Partials"
-
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\${APPNAME}\*.*"
 
   ; Remove desktop shortcut
   Delete "$DESKTOP\${APPNAME}.lnk"
-  
+
   ; Remove Quicklaunch shortcut
   Delete "$QUICKLAUNCH\${APPNAME}.lnk"
-  
-  ; Remove Autstart 
+
+  ; Remove Autstart
   Delete "$SMSTARTUP\${APPNAME}.lnk"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
   RMDir /r "$INSTDIR"
-  RMDir /r "$INSTDIR\qss"
-  RMDir /r "$INSTDIR\emoticons"
-  RMDir /r "$INSTDIR\style"
 
+  ; Don't remove the directory, otherwise
+  ; we lose the XPGP keys.
+  ; Should make this an option though...
+  RMDir /r "${DATADIR_NORMAL}\extensions6"
+  RMDir /r "${DATADIR_NORMAL}\stylesheets"
 SectionEnd
 
 Function .onInit
+  StrCpy $InstDirNormal "${INSTDIR_NORMAL}"
+  StrCpy $InstDirPortable "${INSTDIR_PORTABLE}"
 
-    InitPluginsDir
-    Push $R1
-    File /oname=$PLUGINSDIR\spltmp.bmp "gui\images\splash.bmp"
-    advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
-    Pop $R1
-    Pop $R1
-    !insertmacro MUI_LANGDLL_DISPLAY
+  StrCpy $PortableMode 0
+  StrCpy $INSTDIR "$InstDirNormal"
+  StrCpy $DataDir "${DATADIR_NORMAL}"
 
-
-
+  InitPluginsDir
+  Push $R1
+  File /oname=$PLUGINSDIR\spltmp.bmp "${SOURCEDIR}\retroshare-gui\src\gui\images\logo\logo_splash.png"
+  advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
+  Pop $R1
+  Pop $R1
+  !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
 
+# Installation mode
 
-# Installer Language Strings
-# TODO Update the Language Strings with the appropriate translations.
+Function RequireAdmin
+  UserInfo::GetAccountType
+  Pop $8
+  ${If} $8 != "admin"
+    MessageBox MB_ICONSTOP "You need administrator rights to install ${APPNAME}"
+    SetErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
+    Abort
+  ${EndIf}
+FunctionEnd
 
-LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall"
-LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
-LangString ^UninstallLink ${LANG_TURKISH} "Kald�r"
-LangString ^UninstallLink ${LANG_FRENCH} "Désinstaller"
-LangString ^UninstallLink ${LANG_SIMPCHINESE} "卸载"
-LangString ^UninstallLink ${LANG_POLISH} "Odinstaluj"
+Function SetModeDestinationFromInstdir
+  ${If} $PortableMode = 0
+    StrCpy $InstDirNormal $INSTDIR
+  ${Else}
+    StrCpy $InstDirPortable $INSTDIR
+  ${EndIf}
+FunctionEnd
 
+Function PortableModePageCreate
+  Call SetModeDestinationFromInstdir ; If the user clicks BACK on the directory page we will remember their mode specific directory
+  !insertmacro MUI_HEADER_TEXT $(Page_InstallMode) $(Page_InstallMode_Desc)
+  nsDialogs::Create 1018
+  Pop $0
+  ${NSD_CreateRadioButton} 5u 25u -10u 8u $(Page_InstallMode_Standard)
+  Pop $1
+  ${NSD_CreateLabel} 18u 40u -10u 24u $(Page_InstallMode_Standard_Desc)
+  Pop $0
+  ${NSD_CreateRadioButton} 5u 75u -10u 8u $(Page_InstallMode_Portable)
+  Pop $2
+  ${NSD_CreateLabel} 18u 90u -10u 24u $(Page_InstallMode_Portable_Desc)
+  Pop $0
+  ${If} $PortableMode = 0
+    SendMessage $1 ${BM_SETCHECK} ${BST_CHECKED} 0
+  ${Else}
+    SendMessage $2 ${BM_SETCHECK} ${BST_CHECKED} 0
+  ${EndIf}
+  nsDialogs::Show
+FunctionEnd
 
+Function PortableModePageLeave
+  ${NSD_GetState} $1 $0
+  ${If} $0 <> ${BST_UNCHECKED}
+    StrCpy $PortableMode 0
+    StrCpy $INSTDIR $InstDirNormal
+    Call RequireAdmin
+    ; Enable sections
+    SectionSetText ${Section_Shortcuts} $(Section_Shortcuts)
+    SectionSetText ${Section_StartMenu} $(Section_StartMenu)
+    SectionSetText ${Section_Desktop} $(Section_Desktop)
+    SectionSetText ${Section_QuickLaunch} $(Section_QuickLaunch)
+    SectionSetText ${Section_AutoStart} $(Section_AutoStart)
+    !insertmacro SelectSection ${Section_Shortcuts}
+    !insertmacro SelectSection ${Section_AutoStart}
+    !insertmacro SelectSection ${Section_StartMenu}
+    !insertmacro SelectSection ${Section_Desktop}
+    !insertmacro SelectSection ${Section_QuickLaunch}
+  ${Else}
+    StrCpy $PortableMode 1
+    StrCpy $INSTDIR $InstDirPortable
+    ; Disable sections
+    !insertmacro UnselectSection ${Section_Shortcuts}
+    !insertmacro UnselectSection ${Section_AutoStart}
+    !insertmacro UnselectSection ${Section_StartMenu}
+    !insertmacro UnselectSection ${Section_Desktop}
+    !insertmacro UnselectSection ${Section_QuickLaunch}
+    SectionSetText ${Section_Shortcuts} ""
+    SectionSetText ${Section_StartMenu} ""
+    SectionSetText ${Section_Desktop} ""
+    SectionSetText ${Section_QuickLaunch} ""
+    SectionSetText ${Section_AutoStart} ""
+  ${EndIf}
+FunctionEnd
 
-; eof
+Function dir_leave
+  ${If} $PortableMode = 0
+    StrCpy $DataDir "${DATADIR_NORMAL}"
+    StrCpy $StyleSheetDir $DataDir
+  ${Else}
+    StrCpy $DataDir "${DATADIR_PORTABLE}"
+    StrCpy $StyleSheetDir $INSTDIR
+  ${EndIf}
+FunctionEnd
