@@ -1,11 +1,10 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.5.5"
+version="0.6.0"
 svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
-workdir=retroshare-$version
-#use_gxs="Y"							# comment out to compile without gxs
-#bubba3="Y"							# comment out to compile for bubba3
+workdir=retroshare06-$version
+#bubba3="Y"		# comment out to compile for bubba3
 ######################################################
 
 echo This script is going to build the debian source package for RetroShare, from the svn.
@@ -40,13 +39,8 @@ echo version is $version
 echo Extracting base archive...
 
 mkdir -p $workdir/src
-
-if test "$use_gxs" = "Y" ; then
-	cp -r debian.gxs $workdir/debian
-else
-	cp -r debian $workdir/debian
-fi
 cp -r data   $workdir/src/
+cp -r debian $workdir/debian
 
 echo Checking out latest snapshot in libbitdht...
 cd $workdir/src/
@@ -63,11 +57,9 @@ cd $workdir
 tar zxvf ../libssh-0.5.4.tar.gz
 cd ..
 
-if ! test "$specific" = "" ; then
-	cd $workdir
-	git clone https://github.com/sqlcipher/sqlcipher.git
-	cd ..
-fi
+cd $workdir
+git clone https://github.com/sqlcipher/sqlcipher.git
+cd ..
 
 # cleaning up protobof generated files
 
@@ -98,11 +90,12 @@ find $workdir -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
 
 cd $workdir
 
+
 #for i in wheezy; do
 #for i in sid ; do
-#for i in precise; do
+for i in precise; do
 #for i in lucid precise quantal raring; do
-for i in wheezy squeeze lucid precise quantal raring saucy; do
+#for i in wheezy squeeze lucid precise quantal raring saucy; do
 #for i in sid squeeze; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
