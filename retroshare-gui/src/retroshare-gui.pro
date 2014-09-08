@@ -324,6 +324,7 @@ HEADERS +=  rshare.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/graphframe.h \
+            gui/dhtgraph.h \
             gui/graphframetunnel.h \
             gui/linetypes.h \
             gui/mainpagestack.h \
@@ -661,6 +662,7 @@ SOURCES +=  main.cpp \
             gui/GenCertDialog.cpp \
             gui/NetworkDialog.cpp \
             gui/graphframe.cpp \
+            gui/dhtgraph.cpp \
             gui/graphframetunnel.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \

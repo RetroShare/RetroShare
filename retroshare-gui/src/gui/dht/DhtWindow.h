@@ -37,9 +37,12 @@ public:
 	void updateNetPeers();
 	void updateDhtPeers();
 	void updateRelays();
+	void getDHTStatus();
 
 public slots:
 	virtual void updateDisplay() ;
+	
+	void updateGraph(qreal rsDHT, qreal allDHT);
 	
 protected:
     //void changeEvent(QEvent *e);
