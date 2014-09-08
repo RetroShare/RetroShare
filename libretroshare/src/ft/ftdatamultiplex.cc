@@ -680,6 +680,9 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const RsPeerId& peerId, const Rs
 	{
 		std::cerr << "Cannot fseek/read from file " << filename << " at position " << (uint64_t)chunk_number * (uint64_t)ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE << std::endl;
 		fclose(fd) ;
+
+		delete[] buf ;
+		return false ;
 	}
 	fclose(fd) ;
 
