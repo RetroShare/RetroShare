@@ -141,7 +141,7 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui.repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
-	
+
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_64.png"));
 	ui.headerFrame->setHeaderText(tr("Identities"));
 
@@ -173,6 +173,28 @@ IdDialog::IdDialog(QWidget *parent)
 	// Hiding RepList until that part is finished.
 	//ui.treeWidget_RepList->setVisible(false);
 	ui.toolButton_Reputation->setVisible(false);
+#ifndef UNFINISHED
+	ui.todoPushButton->hide() ;
+#endif
+
+	QString hlp_str = tr(
+			" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Identities</h1>    \
+			<p>In this tab you can create/edit pseudo-anonymous identities. \
+			</p>                                                   \
+			<p>Identities are used to securely identify your data: sign forum and channel posts,\
+				and receive feedback using Retroshare built-in email system, post comments \
+				after channel posts, etc.</p> \
+			<p>  \
+			Identities can optionally be signed by your Retroshare node's certificate.   \
+			Signed identities are easier to trust but are easily linked to your node's IP address.  \
+			</p>  \
+			<p>  \
+			Anonymous identities allow you to anonymously interact with other users. They cannot be   \
+			spoofed, but noone can prove who really owns a given identity.  \
+			</p> \
+			") ;
+
+	registerHelpButton(ui.helpButton, hlp_str) ;
 }
 
 void IdDialog::todo()
