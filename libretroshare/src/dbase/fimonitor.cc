@@ -141,6 +141,7 @@ HashCache::HashCache(const std::string& path)
 		{
 			std::cerr << "Cannot read from file " + _path+".bin" << ": something's wrong." << std::endl;
 			free(buffer) ;
+			fclose(F) ;
 			return ;
 		}
 		fclose(F) ;
