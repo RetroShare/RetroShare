@@ -461,20 +461,24 @@ void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
 	std::list<uint32_t> removedIds;
 	std::list<uint32_t>::iterator iit;
 
-		std::cerr << "********** p3History::removeMessages called()" << std::endl;
+	std::cerr << "********** p3History::removeMessages called()" << std::endl;
 	{
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
 		std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit;
-		for (mit = mMessages.begin(); mit != mMessages.end(); ++mit) {
+		for (mit = mMessages.begin(); mit != mMessages.end(); ++mit)
+		{
 			iit = ids.begin();
-			while (iit != ids.end()) {
+			while ( !ids.empty() || (iit != ids.end()) )
+			{
 				std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.find(*iit);
-				if (lit != mit->second.end()) {
+				if (lit != mit->second.end())
+				{
+					std::cerr << "**** Removing " << mit->first << " msg id = " << lit->first << std::endl;
+
 					delete(lit->second);
 					mit->second.erase(lit);
 
-		std::cerr << "**** Removing " << mit->first << " msg id = " << lit->first << std::endl;
 					removedIds.push_back(*iit);
 					iit = ids.erase(iit);
 
@@ -483,19 +487,15 @@ void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
 
 				++iit;
 			}
-
-			if (ids.empty()) {
-				break;
-			}
 		}
 	}
 
-	if (removedIds.empty() == false) {
+	if (!removedIds.empty())
+	{
 		IndicateConfigChanged();
 
-		for (iit = removedIds.begin(); iit != removedIds.end(); ++iit) {
+		for (iit = removedIds.begin(); iit != removedIds.end(); ++iit)
 			RsServer::notify()->notifyHistoryChanged(*iit, NOTIFY_TYPE_DEL);
-		}
 	}
 }
 
