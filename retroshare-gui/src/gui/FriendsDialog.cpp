@@ -95,9 +95,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setOwnId();
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
-    //ui.tabWidget->addTab(idDialog = new IdDialog(),QIcon(IMAGE_IDENTITY), tr("Identities"));
-    //ui.tabWidget->addTab(circlesDialog = new CirclesDialog(),QIcon(IMAGE_CIRCLES), tr("Circles"));
-    ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Local network"));
+    ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
     //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
@@ -182,7 +180,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     QToolButton *addFriendButton = new QToolButton(this);
     addFriendButton->setIcon(QIcon(":/images/user/add_user24.png"));
-    addFriendButton->setToolTip(tr("Add Friend"));
+    addFriendButton->setToolTip(tr("Add friend node"));
     connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
     ui.friendList->addToolButton(addFriendButton);
 
@@ -218,16 +216,16 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     }
 
  QString hlp_str = tr(
-  " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Friends</h1>                                   \
-    <p>The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   \
+  " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Network</h1>                                   \
+    <p>The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you. \
     </p>                                                   \
-    <p>You can group friends together to allow a finer level of information access, for instance to only allow      \
-    some friends to see some files.</p> \
+    <p>You can group nodes together to allow a finer level of information access, for instance to only allow      \
+    some nodes to see some of your files.</p> \
     <p>On the right, you will find 3 useful tabs:                                                                   \
     <ul>                                                                                                          \
-      <li>Broadcast sends messages to all connected friends at once</li>                             \
-      <li>Local Network shows the network around you, including friends of your friends</li>                 \
-      <li>Keyring contains keys you collected, mostly forwarded to you by your friends</li>                              \
+      <li>Broadcast sends messages to all connected nodes at once</li>                             \
+      <li>Local network graph shows the network around you, based on discovery information</li>                 \
+      <li>Keyring contains node keys you collected, mostly forwarded to you by your friend nodes</li>                              \
     </ul> </p>                                                                                                      \
   ") ;
 

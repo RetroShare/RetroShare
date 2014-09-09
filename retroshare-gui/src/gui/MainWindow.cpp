@@ -351,10 +351,12 @@ void MainWindow::initStackedPage()
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
   PeopleDialog *peopleDialog = NULL;
+#ifdef RS_USE_CIRCLES
   //ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages),
   //                   action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
   //notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
+#endif
 
   IdDialog *idDialog = NULL;
   //ui->stackPages->add(idDialog = new IdDialog(ui->stackPages),
@@ -363,10 +365,12 @@ void MainWindow::initStackedPage()
   addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
   CirclesDialog *circlesDialog = NULL;
+#ifdef RS_USE_CIRCLES
   //ui->stackPages->add(circlesDialog = new CirclesDialog(ui->stackPages),
   //                   action = createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
   //notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
   addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
+#endif
 
   //ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
   //                  action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));
@@ -396,7 +400,9 @@ void MainWindow::initStackedPage()
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
   WikiDialog *wikiDialog = NULL;
+#ifdef RS_USE_WIKI
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
+#endif
 
 #ifdef BLOGS
   //ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages),
