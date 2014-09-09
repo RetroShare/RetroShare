@@ -1209,11 +1209,9 @@ std::string RsAccountsDetail::getHomePath()
 #else /* Windows */
 
 	char *h2 = getenv("HOMEDRIVE");
-	std::cerr << "getHomePath() -> $HOMEDRIVE = " << h2 << std::endl;
 	char *h3 = getenv("HOMEPATH");
-	std::cerr << "getHomePath() -> $HOMEPATH = " << h3 << std::endl;
 
-	if (h2 == NULL)
+	if(!h2)
 	{
 		// Might be Win95/98
 		// generate default.
