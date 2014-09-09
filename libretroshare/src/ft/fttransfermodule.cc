@@ -188,12 +188,12 @@ bool ftTransferModule::removeFileSource(const RsPeerId& peerId)
 		/* add in new source */
 		mFileSources.erase(mit) ;
 #ifdef FT_DEBUG
-		std::cerr << "ftTransferModule::addFileSource(): removing peer: " << peerId << " from sourceList" << std::cerr << std::endl;
+		std::cerr << "ftTransferModule::addFileSource(): removing peer: " << peerId << " from sourceList" << std::endl;
 #endif
 	}
 #ifdef FT_DEBUG
 	else
-		std::cerr << "ftTransferModule::addFileSource(): Should remove peer: " << peerId << ", but it's not in the source list. " << std::cerr << std::endl;
+		std::cerr << "ftTransferModule::addFileSource(): Should remove peer: " << peerId << ", but it's not in the source list. " << std::endl;
 #endif
 
 	return true;
