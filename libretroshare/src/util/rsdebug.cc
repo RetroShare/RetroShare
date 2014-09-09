@@ -226,7 +226,7 @@ int rslog(unsigned int lvl, int zone, const std::string &msg)
 		std::string timestr = ctime(&t);
 		std::string timestr2 = timestr.substr(0,timestr.length()-1);
 		/* remove the endl */
-		fprintf(ofd, "(%s Z: %d, lvl:%d): %s \n", 
+		fprintf(ofd, "(%s Z: %d, lvl:%u): %s \n", 
 				timestr2.c_str(), zone, lvl, msg.c_str());
 		fflush(ofd);
 		lineCount++;
