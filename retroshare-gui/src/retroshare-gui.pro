@@ -1,6 +1,12 @@
 QT     += network xml script
 CONFIG += qt gui uic qrc resources idle bitdht
 
+# Plz never commit the .pro with these flags enabled.
+# Use this flag when developping new features only.
+#
+# CONFIG += unfinished 
+# CONFIG += debug
+
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
 
@@ -12,27 +18,22 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 	CONFIG += uitools
 }
 
-# Below is for GXS services.
-# Should be disabled for releases.
-CONFIG += gxs debug
+CONFIG += identities
+CONFIG += gxsforums
+CONFIG += gxschannels
+CONFIG += posted
+CONFIG += gxsgui
 
-gxs {
-	
-	CONFIG += identities
-	CONFIG += circles
-	CONFIG += gxsforums
-	CONFIG += gxschannels
-	CONFIG += posted
-	#CONFIG += unfinished
-	CONFIG += gxsgui
-	# thewire is incomplete - dont enable
-	#CONFIG += thewire
+# Gxs is always enabled now.
+
+DEFINES += RS_ENABLE_GXS
+
+unfinished {
+	CONFIG += gxscircles
+	CONFIG += gxsthewire
+	CONFIG += gxsphotoshare
 	CONFIG += wikipoos
-	CONFIG += photoshare
-
-	DEFINES += RS_ENABLE_GXS
 }
-
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
@@ -75,23 +76,23 @@ linux-* {
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lX11 -lz
 
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-		isEmpty(SQLCIPHER_OK) {
-			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+	SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+	isEmpty(SQLCIPHER_OK) {
+# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 
-			! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-				message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
+		! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+			message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
 				error(Please fix this and try again. Will stop now.)
-			}
-
-			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-			INCLUDEPATH += ../../../lib/sqlcipher/src/
-		} else {
-			LIBS += -lsqlcipher
 		}
+
+		LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+		INCLUDEPATH += ../../../lib/sqlcipher/src/
+		INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
+
+	} else {
+		LIBS += -lsqlcipher
 	}
 
 	LIBS *= -lglib-2.0
@@ -178,10 +179,8 @@ win32 {
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"$$PWD/../../../lib"
 
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlcipher
-	}
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += -lsqlcipher
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 # added after bitdht
@@ -217,20 +216,14 @@ macx {
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-		LIBS += ../../../lib/libsqlcipher.a
-                #LIBS += -lsqlite3
+	LIBS += ../../../lib/libsqlcipher.a
+	#LIBS += -lsqlite3
 
-        }
-
-
-    	INCLUDEPATH += .
+	INCLUDEPATH += .
 	#DEFINES* = MAC_IDLE # for idle feature
 	CONFIG -= uitools
-
-
 }
 
 ##################################### FreeBSD ######################################
@@ -244,11 +237,8 @@ freebsd-* {
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-                LIBS += -lsqlite3
-        }
-
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += -lsqlite3
 }
 
 ##################################### OpenBSD ######################################
@@ -267,10 +257,8 @@ openbsd-* {
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-                LIBS += -lsqlite3
-        }
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += -lsqlite3
 
 	LIBS *= -rdynamic
 }
@@ -989,10 +977,9 @@ DEFINES *= CHANNELS_FRAME_CATCHER
 }
 
 
-# BELOW IS GXS New Services.
-
+# BELOW IS GXS Unfinished Services.
 	
-unfinished {
+unfinished_services {
 	
 	DEPENDPATH += gui/unfinished \
 	
@@ -1033,7 +1020,7 @@ unfinished {
 }
 	
 	
-photoshare {
+gxsphotoshare {
 	#DEFINES += RS_USE_PHOTOSHARE
 
 	HEADERS += \
@@ -1095,11 +1082,13 @@ wikipoos {
 		gui/WikiPoos/WikiEditDialog.cpp \
 	
 	RESOURCES += gui/WikiPoos/Wiki_images.qrc
+
+	DEFINES *= RS_USE_WIKI
 }
 	
 	
 	
-thewire {
+gxsthewire {
 	
 	HEADERS += gui/TheWire/PulseItem.h \
 		gui/TheWire/WireDialog.h \
@@ -1140,7 +1129,7 @@ identities {
 	
 }
 	
-circles {
+gxscircles {
 	DEFINES += RS_USE_CIRCLES
 
 	HEADERS +=  \
