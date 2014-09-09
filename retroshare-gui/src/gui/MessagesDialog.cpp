@@ -287,12 +287,15 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
  QString help_str = tr(
  " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Messages</h1>                         \
- <p>Messages are like <b>e-mail</b>: you send/receive them from your friends when both of you are connected.</p> \
- <p>It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is \
- recommended to cryptographically sign distant messages, as a proof of your identity, using the <img width=\"16\" src=\":/images/stock_signature_ok.png\"/> button \
- in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).</p>\
- <p>Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, \
- or recommend friends-to-be to other friends, in order to streathen your network.</p>                   \
+ <p>Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.</p> \
+ <p>It is also possible to send messages to other people's Identities using the global routing system. These messages \
+ 	are always encrypted and are relayed by intermediate nodes until they reach their final destination. </p>\
+	<p>It is recommended to cryptographically sign distant messages, as a proof of your identity, using \
+	the <img width=\"16\" src=\":/images/stock_signature_ok.png\"/> button \
+ 	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</p>\
+ <p>Generally, you may use messages to recommend files to your friends by pasting file links, \
+ or recommend friend nodes to other friends nodes, in order to strenghten your network, or send feedback \
+ to a channel's owner.</p>                   \
  ") ;
 
 	 registerHelpButton(ui.helpButton,help_str) ;
