@@ -769,21 +769,23 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 
 	/* load file into memory, close file */
 	uint8_t *compressed_data = new uint8_t[size] ;
-
-	if(compressed_data == NULL)
+	if(!compressed_data)
 	{
 		std::cerr << "FileIndex::loadIndex(): can't allocate memory for " << size << " bytes." << std::endl;
-		return 0 ;
+		fclose(file);
+		return 0;
 	}
 	int bytesread = 0 ;
 	if(size != (bytesread = fread(compressed_data,1,size,file)))
 	{
 		std::cerr << "FileIndex::loadIndex(): can't read " << size << " bytes from file " << filename << ". Only " << bytesread << " actually read." << std::endl;
-		return 0 ;
+		fclose(file);
+		delete[] compressed_data;
+		return 0;
 	}
-	fclose(file) ;
+	fclose(file);
 
-    RsFileHash tmpout = RsDirUtil::sha1sum((unsigned char *)(compressed_data),size);
+	RsFileHash tmpout = RsDirUtil::sha1sum((unsigned char *)(compressed_data),size);
 
 //	/* calculate hash */
 //	unsigned char sha_buf[SHA_DIGEST_LENGTH];
