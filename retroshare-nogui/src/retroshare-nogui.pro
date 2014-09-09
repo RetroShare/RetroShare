@@ -28,7 +28,7 @@ linux-* {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lz
+	LIBS *= -lcrypto -ldl -lz -lpthread
 	LIBS *= -rdynamic
 
 	gxs {
