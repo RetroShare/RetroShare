@@ -82,7 +82,6 @@ public slots:
     void updateGraph(qreal bytesRead, qreal bytesWritten);
 	
 protected:
-    //void changeEvent(QEvent *e);
     
 private:
 

@@ -71,7 +71,6 @@
 #endif
 
 #include "gui/People/PeopleDialog.h"
-#include "gui/FileTransfer/TurtleRouterDialog.h"
 #include "idle/idle.h"
 
 #include "statusbar/peerstatus.h"

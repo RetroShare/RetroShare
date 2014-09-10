@@ -80,6 +80,7 @@ class RttPlot
 			oy+=2+2*celly ;
 
 			painter->drawRect(ox, oy, PLOT_WIDTH, PLOT_HEIGHT);
+			painter->fillRect(ox, oy, PLOT_WIDTH, PLOT_HEIGHT, QBrush(Qt::white));
 			
 			/* We want antialiased lines and text */
       painter->setRenderHint(QPainter::Antialiasing);

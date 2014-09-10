@@ -340,8 +340,8 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/DLListDelegate.h \
             gui/FileTransfer/ULListDelegate.h \
             gui/FileTransfer/TransfersDialog.h \
-            gui/FileTransfer/TurtleRouterDialog.h \
-            gui/FileTransfer/TurtleRouterStatistics.h \
+            gui/statistics/TurtleRouterDialog.h \
+            gui/statistics/TurtleRouterStatistics.h \
             gui/FileTransfer/TransferUserNotify.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/ImHistoryBrowser.h \
@@ -398,7 +398,7 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageUserNotify.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
-            gui/settings/GlobalRouterStatistics.h \
+            gui/statistics/GlobalRouterStatistics.h \
             gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
@@ -507,9 +507,9 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectFriendWizard.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
-            gui/dht/DhtWindow.h \
+            gui/statistics/DhtWindow.h \
             gui/statistics/StatisticsWindow.h \
-            gui/bwctrl/BwCtrlWindow.h \
+            gui/statistics/BwCtrlWindow.h \
             gui/channels/ShareKey.h \
             gui/GetStartedDialog.h \
             gui/RttStatistics.h \
@@ -537,8 +537,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
-            gui/FileTransfer/TurtleRouterDialog.ui \
-            gui/FileTransfer/TurtleRouterStatistics.ui \
+            gui/statistics/TurtleRouterDialog.ui \
+            gui/statistics/TurtleRouterStatistics.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
@@ -588,7 +588,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/PostedPage.ui \
             gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
-            gui/settings/GlobalRouterStatistics.ui \
+            gui/statistics/GlobalRouterStatistics.ui \
             gui/settings/PluginItem.ui \
             gui/settings/GroupFrameSettingsWidget.ui \
             gui/toaster/MessageToaster.ui \
@@ -619,9 +619,9 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/HeaderFrame.ui \
             gui/common/RSFeedWidget.ui \
             gui/style/StyleDialog.ui \
-            gui/dht/DhtWindow.ui \
+            gui/statistics/DhtWindow.ui \
             gui/statistics/StatisticsWindow.ui \
-            gui/bwctrl/BwCtrlWindow.ui \
+            gui/statistics/BwCtrlWindow.ui \
             gui/channels/ShareKey.ui \
             gui/GetStartedDialog.ui \
             gui/RttStatistics.ui \
@@ -679,8 +679,8 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/DLListDelegate.cpp \
             gui/FileTransfer/ULListDelegate.cpp \
             gui/FileTransfer/xprogressbar.cpp \
-            gui/FileTransfer/TurtleRouterDialog.cpp \
-            gui/FileTransfer/TurtleRouterStatistics.cpp \
+            gui/statistics/TurtleRouterDialog.cpp \
+            gui/statistics/TurtleRouterStatistics.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
             gui/MainPage.cpp \
@@ -774,7 +774,7 @@ SOURCES +=  main.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
-            gui/settings/GlobalRouterStatistics.cpp \
+            gui/statistics/GlobalRouterStatistics.cpp \
             gui/settings/rsettings.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \
@@ -835,9 +835,9 @@ SOURCES +=  main.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/connect/ConnectProgressDialog.cpp \
             gui/groups/CreateGroup.cpp \
-            gui/dht/DhtWindow.cpp \
+            gui/statistics/DhtWindow.cpp \
             gui/statistics/StatisticsWindow.cpp \
-            gui/bwctrl/BwCtrlWindow.cpp \
+            gui/statistics/BwCtrlWindow.cpp \
             gui/channels/ShareKey.cpp \
             gui/GetStartedDialog.cpp \
             gui/RttStatistics.cpp \

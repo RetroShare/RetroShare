@@ -173,7 +173,7 @@ GraphFrameTunnel::paintEvent(QPaintEvent *event)
   _painter->setRenderHint(QPainter::TextAntialiasing);
   
   /* Fill in the background */
-  _painter->fillRect(_rec, QBrush(BACK_COLOR));
+  _painter->fillRect(_rec, QBrush(TBACK_COLOR));
   _painter->drawRect(_rec);
 
   /* Paint the scale */
@@ -370,10 +370,10 @@ GraphFrameTunnel::paintScale()
   for (int i = 1; i < 5; i++) {
     pos = bottom - (i * paintStep);
     scale = i * markStep;
-    _painter->setPen(SCALE_COLOR);
+    _painter->setPen(TSCALE_COLOR);
     _painter->drawText(QPointF(5, pos+FONT_SIZE), 
                        tr("%1 KB/s").arg(scale, 0, 'f', 2));
-    _painter->setPen(GRID_COLOR);
+    _painter->setPen(TGRID_COLOR);
     _painter->drawLine(QPointF(SCALE_WIDTH, pos), 
                        QPointF(_rec.width(), pos));
   }

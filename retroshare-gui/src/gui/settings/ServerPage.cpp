@@ -20,9 +20,9 @@
  ****************************************************************/
 
 #include "ServerPage.h"
-#include <gui/FileTransfer/TurtleRouterDialog.h>
-#include <gui/FileTransfer/TurtleRouterStatistics.h>
-#include <gui/settings/GlobalRouterStatistics.h>
+#include <gui/statistics/TurtleRouterDialog.h>
+#include <gui/statistics/TurtleRouterStatistics.h>
+#include <gui/statistics/GlobalRouterStatistics.h>
 
 #include "rshare.h"
 #include "rsharesettings.h"

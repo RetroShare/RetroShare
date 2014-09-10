@@ -33,16 +33,16 @@
 
 #define HOR_SPC       2   /** Space between data points */
 #define SCALE_WIDTH   75  /** Width of the scale */
-#define MIN_SCALE     10  /** 10 kB/s is the minimum scale */  
+#define MIN_SCALE     5  /** 5 kB/s is the minimum scale */  
 #define SCROLL_STEP   4   /** Horizontal change on graph update */
 
-#define BACK_COLOR    Qt::black
-#define SCALE_COLOR   Qt::green
-#define GRID_COLOR    Qt::darkGreen
+#define TBACK_COLOR    Qt::black
+#define TSCALE_COLOR   Qt::green
+#define TGRID_COLOR    Qt::darkGreen
 #define TRDOWN_COLOR  Qt::cyan
 #define TRUP_COLOR    Qt::yellow
 #define INFILEDATA_COLOR  Qt::magenta
-#define OUTFILEDATA_COLOR    Qt::blue
+#define OUTFILEDATA_COLOR Qt::blue
 #define FORWARDED_COLOR qt::red
 
 #define FONT_SIZE     11

@@ -34,10 +34,10 @@
 #include "retroshare/rspeers.h"
 #include <retroshare/rsplugin.h>
 
-#include <gui/FileTransfer/TurtleRouterStatistics.h>
-#include <gui/settings/GlobalRouterStatistics.h>
-#include <gui/bwctrl/BwCtrlWindow.h>
-#include <gui/dht/DhtWindow.h>
+#include <gui/statistics/TurtleRouterStatistics.h>
+#include <gui/statistics/GlobalRouterStatistics.h>
+#include <gui/statistics/BwCtrlWindow.h>
+#include <gui/statistics/DhtWindow.h>
 
 /****
  * #define SHOW_RTT_STATISTICS		1
@@ -45,7 +45,7 @@
 #define SHOW_RTT_STATISTICS		1
 
 #ifdef SHOW_RTT_STATISTICS
-	#include "gui/RttStatistics.h"
+	#include "gui/statistics/RttStatistics.h"
 #endif
 
 #define IMAGE_DHT           ":/images/dht32.png"
