@@ -512,7 +512,7 @@ HEADERS +=  rshare.h \
             gui/statistics/BwCtrlWindow.h \
             gui/channels/ShareKey.h \
             gui/GetStartedDialog.h \
-            gui/RttStatistics.h \
+            gui/statistics/RttStatistics.h \
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -624,7 +624,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/channels/ShareKey.ui \
             gui/GetStartedDialog.ui \
-            gui/RttStatistics.ui \
+            gui/statistics/RttStatistics.ui \
 
 #            gui/ForumsDialog.ui \
 #            gui/forums/CreateForum.ui \
@@ -840,7 +840,7 @@ SOURCES +=  main.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/channels/ShareKey.cpp \
             gui/GetStartedDialog.cpp \
-            gui/RttStatistics.cpp \
+            gui/statistics/RttStatistics.cpp \
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
