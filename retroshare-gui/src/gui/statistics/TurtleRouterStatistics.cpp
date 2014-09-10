@@ -29,6 +29,7 @@
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>
 #include "TurtleRouterStatistics.h"
+#include "TurtleRouterDialog.h"
 
 #include "gui/settings/rsharesettings.h"
 
@@ -190,6 +191,8 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	_tunnel_statistics_F->viewport()->setBackgroundRole(QPalette::NoRole);
 	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
+	
+	routertabWidget->addTab(new TurtleRouterDialog(),QString(tr("Tunnel Requests")));
 	
 	// load settings
     processSettings(true);

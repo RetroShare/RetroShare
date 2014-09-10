@@ -11,22 +11,13 @@
    </rect>
   </property>
   <layout class="QGridLayout">
-   <property name="leftMargin">
-    <number>6</number>
-   </property>
-   <property name="topMargin">
-    <number>6</number>
-   </property>
-   <property name="rightMargin">
-    <number>6</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>6</number>
    </property>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -501,6 +492,12 @@ behind a firewall or a VPN.</string>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="_turtle_enabled_CB">
            <property name="toolTip">
@@ -508,13 +505,6 @@ behind a firewall or a VPN.</string>
            </property>
            <property name="text">
             <string>Enabled</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_routing_info_PB">
-           <property name="text">
-            <string>Show routing info</string>
            </property>
           </widget>
          </item>
@@ -547,6 +537,13 @@ The default value is 20.</string>
            </property>
            <property name="value">
             <number>20</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_routing_info_PB">
+           <property name="text">
+            <string>Show routing info</string>
            </property>
           </widget>
          </item>
