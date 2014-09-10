@@ -102,6 +102,10 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	QList<int> sizes;
 	sizes << 300 << width(); // Qt calculates the right sizes
 	ui->splitter->setSizes(sizes);
+
+#ifndef UNFINISHED
+	ui->todoPushButton->hide();
+#endif
 }
 
 GxsGroupFrameDialog::~GxsGroupFrameDialog()
@@ -115,6 +119,8 @@ GxsGroupFrameDialog::~GxsGroupFrameDialog()
 
 void GxsGroupFrameDialog::initUi()
 {
+	registerHelpButton(ui->helpButton, getHelpString()) ;
+
 	ui->titleBarPixmap->setPixmap(QPixmap(icon(ICON_NAME)));
 	ui->titleBarLabel->setText(text(TEXT_NAME));
 

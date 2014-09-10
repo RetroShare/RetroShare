@@ -71,12 +71,14 @@ public:
 
 public:
 	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0);
-	~GxsGroupFrameDialog();
+	virtual ~GxsGroupFrameDialog();
 
 	bool navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+	virtual QString getHelpString() const =0;
 
 protected:
 	virtual void showEvent(QShowEvent *event);

@@ -38,6 +38,22 @@ GxsChannelDialog::~GxsChannelDialog()
 {
 }
 
+QString GxsChannelDialog::getHelpString() const
+{
+	QString hlp_str = tr("<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Channels</h1>    \
+    <p>Channels allow you to post data (e.g. movies, music) that will spread in the network</p>            \
+    <p>You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to \
+    your friends. This promotes good channels in the network.</p>\
+    <p>Only the channel's creator can post on that channel. Other peers                       \
+    in the network can only read from it, unless the channel is private. You can however share \
+	 the posting rights or the reading rights with friend Retroshare nodes.</p>\
+	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
+	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
+    ") ;
+				
+	return hlp_str ;
+}
+
 UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
 {
 	return new GxsChannelUserNotify(rsGxsChannels, parent);

@@ -46,6 +46,18 @@ UserNotify *PostedDialog::getUserNotify(QObject *parent)
 	return new PostedUserNotify(rsPosted, parent);
 }
 
+QString PostedDialog::getHelpString() const
+{
+	QString hlp_str = tr("<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Posted</h1>    \
+    <p>The posted service allows you to share internet links, that spread among Retroshare nodes like forums and \
+	 channels</p> \
+	 <p>Links can be commented by subscribed users. A promotion system also gives the opportunity to  \
+	 enlight important links.</p> \
+	 <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>") ;
+
+	return hlp_str ;
+}
+
 QString PostedDialog::text(TextType type)
 {
 	switch (type) {

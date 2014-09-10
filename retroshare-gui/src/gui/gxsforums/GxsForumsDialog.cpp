@@ -36,6 +36,21 @@ GxsForumsDialog::~GxsForumsDialog()
 {
 }
 
+QString GxsForumsDialog::getHelpString() const
+{
+	QString hlp_str = tr(
+			"<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Forums</h1>               \
+			<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>    \
+			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
+			your friends. This automatically promotes interesting forums in the network.</p>            \
+			<p>Forums are either Authenticated (<img src=\":/images/konv_message2.png\" width=\"12\"/>) \
+			or anonymous (<img src=\":/images/konversation.png\" width=\"12\"/>). The former            \
+			class is more resistant to spamming because posts are                                       \
+			cryptographically signed using a Retroshare pseudo-identity.</p>") ;
+
+	return hlp_str ;	
+}
+
 UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
 {
 	return new GxsForumUserNotify(rsGxsForums, parent);

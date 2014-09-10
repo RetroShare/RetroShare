@@ -45,6 +45,7 @@ public:
 protected:
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Channel; }
+	virtual QString getHelpString() const ;
 
 private slots:
 	void toggleAutoDownload();
