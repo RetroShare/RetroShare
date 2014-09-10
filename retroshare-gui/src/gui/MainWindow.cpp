@@ -93,8 +93,12 @@
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/Identity/IdDialog.h"
+#ifdef RS_USE_CIRCLES
 #include "gui/Circles/CirclesDialog.h"
+#endif
+#ifdef RS_USE_WIKI
 #include "gui/WikiPoos/WikiDialog.h"
+#endif
 #include "gui/Posted/PostedDialog.h"
 #include "gui/statistics/StatisticsWindow.h"
 
@@ -350,8 +354,8 @@ void MainWindow::initStackedPage()
   //notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
-  PeopleDialog *peopleDialog = NULL;
 #ifdef RS_USE_CIRCLES
+  PeopleDialog *peopleDialog = NULL;
   //ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages),
   //                   action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
   //notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
@@ -364,8 +368,8 @@ void MainWindow::initStackedPage()
   //notify.push_back(QPair<MainPage*, QAction*>(idDialog, action));
   addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
-  CirclesDialog *circlesDialog = NULL;
 #ifdef RS_USE_CIRCLES
+  CirclesDialog *circlesDialog = NULL;
   //ui->stackPages->add(circlesDialog = new CirclesDialog(ui->stackPages),
   //                   action = createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
   //notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
@@ -399,8 +403,8 @@ void MainWindow::initStackedPage()
   
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
-  WikiDialog *wikiDialog = NULL;
 #ifdef RS_USE_WIKI
+  WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
 

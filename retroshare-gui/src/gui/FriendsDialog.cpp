@@ -55,8 +55,9 @@
 #include "NetworkView.h"
 #include "NetworkDialog.h"
 #include "gui/Identity/IdDialog.h"
+#ifdef RS_USE_CIRCLES
 #include "gui/Circles/CirclesDialog.h"
-
+#endif
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
@@ -258,8 +259,10 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 	{
 		case FriendsDialog::IdTab: ui.tabWidget->setCurrentWidget(idDialog) ;
 											  break ;
+#ifdef RS_USE_CIRCLES
 		case FriendsDialog::CirclesTab: ui.tabWidget->setCurrentWidget(circlesDialog) ;
 											  break ;
+#endif
 		case FriendsDialog::NetworkTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
 											  break ;
 		case FriendsDialog::BroadcastTab: ui.tabWidget->setCurrentWidget(networkDialog) ;

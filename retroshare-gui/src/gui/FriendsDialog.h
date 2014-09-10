@@ -47,7 +47,9 @@ public:
 		 enum Page {
 						 /* Fixed numbers for load and save the last page */
 			 				IdTab              = 0,  /** Identities page. */
+#ifdef RS_USE_CIRCLES
 							CirclesTab         = 1,  /** Circles page. */
+#endif
 							NetworkTab         = 2,  /** Network page. */
 							NetworkViewTab     = 3,  /** Network new graph. */
 							BroadcastTab       = 4   /** Old group chat page. */
@@ -75,7 +77,9 @@ public:
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;
 	 
+#ifdef RS_USE_CIRCLES
 	 CirclesDialog *circlesDialog;
+#endif
 	 IdDialog *idDialog;
 	 
 public slots:
