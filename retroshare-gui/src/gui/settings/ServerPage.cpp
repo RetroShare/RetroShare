@@ -20,9 +20,6 @@
  ****************************************************************/
 
 #include "ServerPage.h"
-#include <gui/statistics/TurtleRouterDialog.h>
-#include <gui/statistics/TurtleRouterStatistics.h>
-#include <gui/statistics/GlobalRouterStatistics.h>
 
 #include "rshare.h"
 #include "rsharesettings.h"
@@ -46,13 +43,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
   connect( ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
   connect( ui._turtle_enabled_CB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTurtleRouting(bool) ) );
-  connect( ui._routing_info_PB, SIGNAL( clicked() ), this, SLOT( showRoutingInfo() ) );
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);
 
-	_routing_info_page = NULL ;
 
 	//load();
 	updateStatus();
@@ -75,17 +70,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
 		ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
-	TurtleRouterStatistics *trs = new TurtleRouterStatistics ;
-	trs->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding)) ;
-	ui.tabWidget->widget(2)->layout()->addWidget(trs) ;
-	ui.tabWidget->widget(2)->layout()->setContentsMargins(0,5,0,0) ;
-	ui.tabWidget->widget(2)->layout()->addItem( new QSpacerItem(0,0,QSizePolicy::Expanding, QSizePolicy::Minimum)) ;
-	ui.tabWidget->widget(2)->layout()->update() ;
-
-	GlobalRouterStatistics *grs = new GlobalRouterStatistics ;
-	grs->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding)) ;
-	ui.tabWidget->addTab(grs,tr("Global routing")) ;
-
 	ui.torpage_incoming->setVisible(false);
 
   /* Hide platform specific features */
@@ -95,14 +79,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	std::cerr << "ServerPage::ServerPage() called";
 	std::cerr << std::endl;
-}
-
-void ServerPage::showRoutingInfo()
-{
-	if(_routing_info_page == NULL)
-		_routing_info_page = new TurtleRouterDialog ;
-
-	_routing_info_page->show() ;
 }
 
 void ServerPage::updateMaxTRUpRate(int b)
@@ -251,7 +227,6 @@ void ServerPage::load()
 void ServerPage::toggleTurtleRouting(bool b)
 {
 	ui._max_tr_up_per_sec_SB->setEnabled(b) ;
-	ui._routing_info_PB->setEnabled(true) ;	// always enabled!
 
 	rsTurtle->setEnabled(b) ;
 }
