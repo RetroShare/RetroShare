@@ -27,6 +27,16 @@
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
+#include "gui/common/GroupTreeWidget.h"
+
+class GxsChannelGroupInfoData : public RsUserdata
+{
+public:
+	GxsChannelGroupInfoData() : RsUserdata() {}
+
+public:
+	QMap<RsGxsGroupId, QIcon> mIcon;
+};
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
@@ -166,5 +176,44 @@ void GxsChannelDialog::toggleAutoDownload()
 	{
 		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
 		std::cerr << std::endl;
+	}
+}
+
+void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+{
+	std::vector<RsGxsChannelGroup> groups;
+	rsGxsChannels->getGroupData(token, groups);
+
+	/* Save groups to fill icons */
+	GxsChannelGroupInfoData *channelData = new GxsChannelGroupInfoData;
+	userdata = channelData;
+
+	std::vector<RsGxsChannelGroup>::iterator groupIt;
+	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
+		RsGxsChannelGroup &group = *groupIt;
+		groupInfo.push_back(group.mMeta);
+
+		if (group.mImage.mData != NULL) {
+			QPixmap image;
+			image.loadFromData(group.mImage.mData, group.mImage.mSize, "PNG");
+			channelData->mIcon[group.mMeta.mGroupId] = image;
+		}
+	}
+}
+
+void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+
+	const GxsChannelGroupInfoData *channelData = dynamic_cast<const GxsChannelGroupInfoData*>(userdata);
+	if (!channelData) {
+		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	QMap<RsGxsGroupId, QIcon>::const_iterator iconIt = channelData->mIcon.find(groupInfo.mGroupId);
+	if (iconIt != channelData->mIcon.end()) {
+		groupItemInfo.icon = iconIt.value();
 	}
 }

@@ -26,6 +26,7 @@
 #include "RsAutoUpdatePage.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/RsUserdata.h"
 
 #include <inttypes.h>
 
@@ -90,6 +91,7 @@ protected:
 	bool getCurrentGroupName(QString& name);
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
+	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
 
 private slots:
 	void todo();
@@ -139,7 +141,6 @@ private:
 	void initUi();
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
-	void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
 
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);
@@ -147,10 +148,12 @@ private:
 	void processSettings(bool load);
 
 	// New Request/Response Loading Functions.
-	void insertGroupsData(const std::list<RsGroupMetaData> &groupList);
+	void insertGroupsData(const std::list<RsGroupMetaData> &groupList, const RsUserdata *userdata);
 
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
+	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_META; } // request only meta data
+	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata); // use with requestGroupSummaryType
 
 	void requestGroupStatistics(const RsGxsGroupId &groupId);
 	void loadGroupStatistics(const uint32_t &token);

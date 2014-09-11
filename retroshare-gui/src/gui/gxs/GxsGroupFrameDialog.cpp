@@ -648,7 +648,7 @@ void GxsGroupFrameDialog::messageTabInfoChanged(QWidget *widget)
 }
 
 ///***** INSERT GROUP LISTS *****/
-void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
+void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata */*userdata*/)
 {
 	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
@@ -669,7 +669,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupI
 	}
 }
 
-void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &groupList)
+void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &groupList, const RsUserdata *userdata)
 {
 	if (!mInitialized) {
 		return;
@@ -688,7 +688,7 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 		uint32_t flags = it->mSubscribeFlags;
 
 		GroupItemInfo groupItemInfo;
-		groupInfoToGroupItemInfo(*it, groupItemInfo);
+		groupInfoToGroupItemInfo(*it, groupItemInfo, userdata);
 
 		if (IS_GROUP_SUBSCRIBED(flags))
 		{
@@ -788,10 +788,16 @@ void GxsGroupFrameDialog::requestGroupSummary()
 	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_SUMMARY);
 
 	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	opts.mReqType = requestGroupSummaryType();
 
 	uint32_t token;
 	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP_SUMMARY);
+}
+
+void GxsGroupFrameDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&/*userdata*/)
+{
+	/* Default implementation for request type GXS_REQUEST_TYPE_GROUP_META */
+	mInterface->getGroupSummary(token, groupInfo);
 }
 
 void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
@@ -802,23 +808,16 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 #endif
 
 	std::list<RsGroupMetaData> groupInfo;
-	mInterface->getGroupSummary(token, groupInfo);
+	RsUserdata *userdata = NULL;
+	loadGroupSummaryToken(token, groupInfo, userdata);
 
-	if (groupInfo.size() > 0)
-	{
-		mStateHelper->setActive(TOKEN_TYPE_GROUP_SUMMARY, true);
-
-		insertGroupsData(groupInfo);
-	}
-	else
-	{
-		std::cerr << "GxsGroupFrameDialog::loadGroupSummary() ERROR No Groups...";
-		std::cerr << std::endl;
-
-		mStateHelper->setActive(TOKEN_TYPE_GROUP_SUMMARY, false);
-	}
+	insertGroupsData(groupInfo, userdata);
 
 	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
+
+	if (userdata) {
+		delete(userdata);
+	}
 }
 
 /*********************** **** **** **** ***********************/

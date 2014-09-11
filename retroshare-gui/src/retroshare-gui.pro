@@ -367,6 +367,7 @@ HEADERS +=  rshare.h \
             util/Widget.h \
             util/rsguiversion.h \
             util/RsAction.h \
+            util/RsUserdata.h \
             util/printpreview.h \
             util/log.h \
             util/misc.h \
