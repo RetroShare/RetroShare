@@ -49,7 +49,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId)
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
 	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
-	headerFrame->setHeaderText(tr("New GxsChannel Post"));
+	headerFrame->setHeaderText(tr("New Channel Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -133,7 +133,7 @@ void CreateGxsChannelMsg::pasteLink()
 
 	if(!not_have.empty())
 	{
-		QString msg = tr("GxsChannel security policy prevents you from posting files that you don't have. If you have these files, you need to share them before, or attach them explicitly:")+"<br><br>" ;
+		QString msg = tr("Channel security policy prevents you from posting files that you don't have. If you have these files, you need to share them before, or attach them explicitly:")+"<br><br>" ;
 
 		for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
 			msg += (*it).toString() + "<br>" ;
