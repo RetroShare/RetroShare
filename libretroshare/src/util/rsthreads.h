@@ -58,6 +58,7 @@ class RsMutex
 		pthread_mutex_destroy(&realMutex); 
 	}
 
+	inline const pthread_t& owner() const { return _thread_id ; }
 #ifdef RSMUTEX_DEBUG
 	void setName(const std::string &name)
 	{

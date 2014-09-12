@@ -648,8 +648,25 @@ void    pqiperson::setMaxRate(bool in, float val)
 
 void    pqiperson::setRateCap(float val_in, float val_out)
 {
-	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
-	return setRateCap_locked(val_in, val_out);
+	// This methods might be called all the way down from pqiperson::tick() down
+	// to pqissludp while completing a UDP connexion, causing a deadlock.
+	//
+	// We need to make sure the mutex is not already locked by current thread. If so, we call the
+	// locked version directly if not, we lock, call, and unlock, possibly waiting if the
+	// lock is already acquired by another thread.
+	//
+	// The lock cannot be locked by the same thread between the first test and
+	// the "else" statement, so there is no possibility for this code to fail.
+	//
+	// We could actually put that code in RsMutex::lock()
+	
+	if(pthread_equal(mPersonMtx.owner(),pthread_self()))			// 1 - unlocked, or already locked by same thread
+		return setRateCap_locked(val_in, val_out);					//     -> do nothing
+	else
+	{																				// 2 - lock was free or locked by different thread => wait.
+		RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+		setRateCap_locked(val_in, val_out);
+	}
 }
 
 void    pqiperson::setRateCap_locked(float val_in, float val_out)
