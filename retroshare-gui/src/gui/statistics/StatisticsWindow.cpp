@@ -142,7 +142,7 @@ void StatisticsWindow::initStackedPage()
                    action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp)); 
 #endif                    
                    
-   std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
+   /*std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
 	 for(int i = 0;i<rsPlugins->nbPlugins();++i)
 	 {
 		 QIcon icon ;
@@ -165,7 +165,7 @@ void StatisticsWindow::initStackedPage()
 		 else
 			 std::cerr << "  No plugin page !" << std::endl;
 
-	 }                                                     
+	 } */                                                    
 
   /* Create the toolbar */
   ui->toolBar->addActions(grp->actions());
