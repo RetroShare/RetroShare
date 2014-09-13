@@ -72,6 +72,13 @@ static bool findTagIcon(int tag_class, int tag_type, QIcon &icon)
 
 QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 {
+    static std::map<RsGxsId,QImage> image_cache ;
+
+    std::map<RsGxsId,QImage>::const_iterator it = image_cache.find(id) ;
+
+    if(it != image_cache.end())
+        return it->second ;
+
     int S = 128 ;
     QImage pix(S,S,QImage::Format_RGB32) ;
 
@@ -130,7 +137,10 @@ QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
             pix.setPixel( S-1-i, S-1-j, q) ;
             pix.setPixel(     i, S-1-j, q) ;
         }
-    return pix.scaled(64,64,Qt::KeepAspectRatio,Qt::SmoothTransformation) ;
+
+    image_cache[id] = pix.scaled(64,64,Qt::KeepAspectRatio,Qt::SmoothTransformation) ;
+
+    return image_cache[id] ;
 }
 
 
