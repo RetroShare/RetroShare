@@ -21,12 +21,14 @@
  *
  */
 
+#include <math.h>
 #include "GxsIdDetails.h"
 
 #include <retroshare/rspeers.h>
 
 #include <iostream>
 #include <QPainter>
+#include <QIcon>
 #include <QObject>
 
 
@@ -68,6 +70,69 @@ static bool findTagIcon(int tag_class, int tag_type, QIcon &icon)
 	return true;
 }
 
+QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+{
+    int S = 128 ;
+    QImage pix(S,S,QImage::Format_RGB32) ;
+
+    uint64_t n = reinterpret_cast<const uint64_t*>(id.toByteArray())[0] ;
+
+    uint8_t a[8] ;
+    for(int i=0;i<8;++i)
+    {
+        a[i] = n&0xff ;
+        n >>= 8 ;
+    }
+    QColor val[16] = {
+            QColor::fromRgb( 255, 110, 180),
+            QColor::fromRgb( 238,  92,  66),
+            QColor::fromRgb( 255, 127,  36),
+            QColor::fromRgb( 255, 193, 193),
+            QColor::fromRgb( 127, 255, 212),
+            QColor::fromRgb(   0, 255, 255),
+            QColor::fromRgb( 224, 255, 255),
+            QColor::fromRgb( 199,  21, 133),
+            QColor::fromRgb(  50, 205,  50),
+            QColor::fromRgb( 107, 142,  35),
+            QColor::fromRgb(  30, 144, 255),
+            QColor::fromRgb(  95, 158, 160),
+            QColor::fromRgb( 143, 188, 143),
+            QColor::fromRgb( 233, 150, 122),
+            QColor::fromRgb( 151, 255, 255),
+            QColor::fromRgb( 162, 205,  90),
+    };
+
+    int c1 = (a[0]^a[1]) & 0xf ;
+    int c2 = (a[1]^a[2]) & 0xf ;
+    int c3 = (a[2]^a[3]) & 0xf ;
+    int c4 = (a[3]^a[4]) & 0xf ;
+
+    for(int i=0;i<S/2;++i)
+        for(int j=0;j<S/2;++j)
+        {
+            float res1 = 0.0f ;
+            float res2 = 0.0f ;
+            float f = 1.70;
+
+            for(int k1=0;k1<4;++k1)
+                for(int k2=0;k2<4;++k2)
+                {
+                    res1 += cos( (2*M_PI*i/(float)S) * k1 * f) * (a[k1  ] & 0xf) + sin( (2*M_PI*j/(float)S) * k2 * f) * (a[k2  ] >> 4) + sin( (2*M_PI*i/(float)S) * k1 * f) * cos( (2*M_PI*j/(float)S) * k2 * f) * (a[k1+k2] >> 4) ;
+                    res2 += cos( (2*M_PI*i/(float)S) * k2 * f) * (a[k1+2] & 0xf) + sin( (2*M_PI*j/(float)S) * k1 * f) * (a[k2+1] >> 4) + sin( (2*M_PI*i/(float)S) * k2 * f) * cos( (2*M_PI*j/(float)S) * k1 * f) * (a[k1^k2] >> 4) ;
+                }
+
+            uint32_t q = 0 ;
+            if(res1 >= 0.0f) q += val[c1].rgb() ; else q += val[c2].rgb() ;
+            if(res2 >= 0.0f) q += val[c3].rgb() ; else q += val[c4].rgb() ;
+
+            pix.setPixel( i, j, q) ;
+            pix.setPixel( S-1-i, j, q) ;
+            pix.setPixel( S-1-i, S-1-j, q) ;
+            pix.setPixel(     i, S-1-j, q) ;
+        }
+    return pix.scaled(64,64,Qt::KeepAspectRatio,Qt::SmoothTransformation) ;
+}
+
 
 static bool CreateIdIcon(const RsGxsId &id, QIcon &idIcon)
 {
@@ -88,8 +153,7 @@ static bool CreateIdIcon(const RsGxsId &id, QIcon &idIcon)
 	return true;
 }
 
-
-bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std::list<QIcon> &icons)
+bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std::list<QIcon> &icons,QString& comment)
 {
 	RsIdentityDetails details;
 	
@@ -121,39 +185,34 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 		str += ")";
 	}
 
+	comment += "Identity name: " + QString::fromUtf8(details.mNickname.c_str()) + "\n";
+    comment += "Identity Id  : " + QString::fromStdString(id.toStdString()) + "\n";
 
-	bool addCode = true;
 	if (details.mPgpLinked)
 	{
-		str += " (PGP) [";
+		comment += "Authentication: signed by " ;
+
 		if (details.mPgpKnown)
 		{
 			/* look up real name */
 			std::string authorName = rsPeers->getGPGName(details.mPgpId);
-			str += QString::fromUtf8(authorName.c_str());
-			str += "]";
-
-			addCode = false;
+			comment += QString::fromUtf8(authorName.c_str());
 		}
+
+		comment += " [";
+		comment += QString::fromStdString(details.mPgpId.toStdString()) ;
+		comment += "]";
 	}
 	else
-	{
-		str += " (Anon) [";
-	}
-
-	if (addCode)
-	{
-        str += QString::fromStdString(id.toStdString().substr(0,5));
-		str += "...]";
-	}
+		comment += "Authentication: anonymous" ;
 
 	if (!doIcons)
-	{
 		return true;
-	}
 
-	QIcon idIcon;
-	CreateIdIcon(id, idIcon);
+    QPixmap pix ;
+    pix.convertFromImage( makeDefaultIcon(id) );
+    QIcon idIcon( pix ) ;
+    //CreateIdIcon(id, idIcon);
 	icons.push_back(idIcon);
 
 	// ICON Logic.
@@ -161,18 +220,12 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 	if (details.mPgpLinked)
 	{
 		if (details.mPgpKnown)
-		{
 			baseIcon = QIcon(IMAGE_PGPKNOWN);
-		}
 		else
-		{
 			baseIcon = QIcon(IMAGE_PGPUNKNOWN);
-		}
 	}
 	else
-	{
 		baseIcon = QIcon(IMAGE_ANON);
-	}
 
 	icons.push_back(baseIcon);
 	// Add In RecognTags Icons.
@@ -185,11 +238,13 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 		}
 	}
 
-	icons.push_back(QIcon(IMAGE_ANON));
-	icons.push_back(QIcon(IMAGE_ANON));
-	icons.push_back(QIcon(IMAGE_ANON));
+//	Cyril: I disabled these three which I believe to have been put for testing purposes.
+//
+//	icons.push_back(QIcon(IMAGE_ANON));
+//	icons.push_back(QIcon(IMAGE_ANON));
+//	icons.push_back(QIcon(IMAGE_ANON));
 
-	std::cerr << "GxsIdTreeWidget::MakeIdDesc() ID Ok";
+    std::cerr << "GxsIdTreeWidget::MakeIdDesc() ID Ok. Comment: " << comment.toStdString() ;
 	std::cerr << std::endl;
 
 	return true;

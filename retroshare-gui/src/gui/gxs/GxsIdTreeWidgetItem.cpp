@@ -82,15 +82,17 @@ void GxsIdRSTreeWidgetItem::loadId()
 	mCount++;
 
 	/* try and get details - if not there ... set callback */
-	QString desc;
+    QString desc;
+    QString comment ;
 	std::list<QIcon> icons;
-	bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons);
+    bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons,comment);
 	QIcon combinedIcon;
 	if (!icons.empty())
 	{
 		GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
 		setIcon(mColumn, combinedIcon);
-	}
+    }
+    setToolTip(mColumn,comment) ;
 
 	setText(mColumn, desc);
 
@@ -162,8 +164,9 @@ void GxsIdTreeWidgetItem::loadId()
 
 	/* try and get details - if not there ... set callback */
 	QString desc;
+	QString comment;
 	std::list<QIcon> icons;
-	bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons);
+	bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons,comment);
 	QIcon combinedIcon;
 	if (!icons.empty())
 	{
@@ -172,6 +175,7 @@ void GxsIdTreeWidgetItem::loadId()
 	}
 	
 	setText(mColumn, desc);
+	setToolTip(mColumn, comment);
 
 	if (loaded)
 	{

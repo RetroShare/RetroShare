@@ -118,7 +118,8 @@ void GxsIdChooser::loadIds(uint32_t chooserFlags, RsGxsId defId)
 bool GxsIdChooser::makeIdDesc(const RsGxsId &gxsId, QString &desc)
 {
 	std::list<QIcon> icons;
-	if (!GxsIdDetails::MakeIdDesc(gxsId, false, desc, icons)) {
+	QString comment ;
+	if (!GxsIdDetails::MakeIdDesc(gxsId, false, desc, icons,comment)) {
 		if (mTimerCount > MAX_TRY) {
 			desc = QString("%1 ... [").arg(tr("Not found"));
 			desc += QString::fromStdString(gxsId.toStdString().substr(0,5));

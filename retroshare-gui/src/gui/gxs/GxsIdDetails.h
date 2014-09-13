@@ -33,9 +33,11 @@ namespace GxsIdDetails
 {
 
 	bool MakeIdDesc(const RsGxsId &id, bool doIcons, 
-			QString &desc, std::list<QIcon> &icons);
+			QString &desc, std::list<QIcon> &icons,QString& comment);
 
 	bool GenerateCombinedIcon(QIcon &outIcon, std::list<QIcon> &icons);
+
+    QImage makeDefaultIcon(const RsGxsId& id);
 
 } // namespace GxsIdDetails.
 

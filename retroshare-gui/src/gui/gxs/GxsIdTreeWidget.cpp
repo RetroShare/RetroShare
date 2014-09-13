@@ -35,8 +35,9 @@ static void paintGxsId( QPainter * painter,
 	const QStyleOptionViewItem & option /*, const QRect &rect */, const RsGxsId &id )
 {
 	QString desc;
+	QString comment;
 	std::list<QIcon> icons;
-	if (!GxsIdDetails::MakeIdDesc(id, true, desc, icons))
+	if (!GxsIdDetails::MakeIdDesc(id, true, desc, icons,comment))
 	{
 		/* flag for reloading */
 	}

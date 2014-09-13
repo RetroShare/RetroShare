@@ -68,10 +68,12 @@ void GxsIdLabel::loadId()
 
 	/* try and get details - if not there ... set callback */
 	QString desc;
+	QString comment ;
 	std::list<QIcon> icons;
-	bool loaded = GxsIdDetails::MakeIdDesc(mId, false, desc, icons);
+	bool loaded = GxsIdDetails::MakeIdDesc(mId, false, desc, icons,comment);
 
 	setText(desc);
+	setToolTip(comment);
 
 	if (loaded)
 	{

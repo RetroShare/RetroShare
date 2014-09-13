@@ -10,6 +10,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include <gui/chat/ChatDialog.h>
+#include <gui/gxs/GxsIdDetails.h>
 #include "IdentityItem.h"
 
 #define IMAGE_MAKEFRIEND ""
@@ -61,70 +62,6 @@ QRectF IdentityItem::boundingRect() const
     return QRectF(-(int)IMG_SIZE/2-10, -(int)IMG_SIZE/2-10, (int)IMG_SIZE+20,(int)IMG_SIZE+35) ;
 }
 
-QImage IdentityItem::makeDefaultIcon(const RsGxsGroupId& id)
-{
-	int S = 128 ;
-	QImage pix(S,S,QImage::Format_RGB32) ;
-
-	uint64_t n = reinterpret_cast<const uint64_t*>(id.toByteArray())[0] ;
-
-	uint8_t a[8] ;
-	for(int i=0;i<8;++i)
-	{
-		a[i] = n&0xff ;
-		n >>= 8 ;
-	}
-	QColor val[16] = {
-		QColor::fromRgb( 255, 110, 180),
-		QColor::fromRgb( 238,  92,  66),
-		QColor::fromRgb( 255, 127,  36),
-		QColor::fromRgb( 255, 193, 193),
-		QColor::fromRgb( 127, 255, 212),
-		QColor::fromRgb(   0, 255, 255),
-		QColor::fromRgb( 224, 255, 255),
-		QColor::fromRgb( 199,  21, 133),
-		QColor::fromRgb(  50, 205,  50),
-		QColor::fromRgb( 107, 142,  35),
-		QColor::fromRgb(  30, 144, 255),
-		QColor::fromRgb(  95, 158, 160),
-		QColor::fromRgb( 143, 188, 143),
-		QColor::fromRgb( 233, 150, 122),
-		QColor::fromRgb( 151, 255, 255),
-	   QColor::fromRgb( 162, 205,  90),
-};
-
-	int c1 = (a[0]^a[1]) & 0xf ;
-	int c2 = (a[1]^a[2]) & 0xf ;
-	int c3 = (a[2]^a[3]) & 0xf ;
-	int c4 = (a[3]^a[4]) & 0xf ;
-
-	for(int i=0;i<S/2;++i)
-		for(int j=0;j<S/2;++j)
-		{
-			float res1 = 0.0f ;
-			float res2 = 0.0f ;
-			float f = 1.70;
-
-			for(int k1=0;k1<4;++k1)
-			for(int k2=0;k2<4;++k2)
-			{
-				res1 += cos( (2*M_PI*i/(float)S) * k1 * f) * (a[k1  ] & 0xf) + sin( (2*M_PI*j/(float)S) * k2 * f) * (a[k2  ] >> 4) + sin( (2*M_PI*i/(float)S) * k1 * f) * cos( (2*M_PI*j/(float)S) * k2 * f) * (a[k1+k2] >> 4) ;
-				res2 += cos( (2*M_PI*i/(float)S) * k2 * f) * (a[k1+2] & 0xf) + sin( (2*M_PI*j/(float)S) * k1 * f) * (a[k2+1] >> 4) + sin( (2*M_PI*i/(float)S) * k2 * f) * cos( (2*M_PI*j/(float)S) * k1 * f) * (a[k1^k2] >> 4) ;
-			}
-
-			uint32_t q = 0 ;
-			if(res1 >= 0.0f) q += val[c1].rgb() ; else q += val[c2].rgb() ;
-			if(res2 >= 0.0f) q += val[c3].rgb() ; else q += val[c4].rgb() ;
-
-			pix.setPixel( i, j, q) ; 
-			pix.setPixel( S-1-i, j, q) ; 
-			pix.setPixel( S-1-i, S-1-j, q) ; 
-			pix.setPixel(     i, S-1-j, q) ; 
-		}
-	return pix.scaled(IMG_SIZE,IMG_SIZE,Qt::KeepAspectRatio,Qt::SmoothTransformation) ;
-}
-
-
 void IdentityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
 	static QColor type_color[4] = { QColor(Qt::yellow), QColor(Qt::green), QColor(Qt::cyan), QColor(Qt::black) } ;
@@ -146,7 +83,7 @@ void IdentityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->setPen(QPen(Qt::black, 0));
 
 	painter->drawRoundedRect(QRectF(-(int)IMG_SIZE/2-10, -(int)IMG_SIZE/2-10, 20+IMG_SIZE, 20+IMG_SIZE),20,15) ;
-	painter->drawImage(QPoint(-(int)IMG_SIZE/2, -(int)IMG_SIZE/2), makeDefaultIcon(_group_info.mMeta.mGroupId)) ;
+	painter->drawImage(QPoint(-(int)IMG_SIZE/2, -(int)IMG_SIZE/2), GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId))) ;
 
 	std::string desc_string = _group_info.mMeta.mGroupName ;
 
