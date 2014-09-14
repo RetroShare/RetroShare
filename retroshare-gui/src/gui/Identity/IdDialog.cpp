@@ -25,6 +25,7 @@
 #include <QMenu>
 
 #include "IdDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/chat/ChatDialog.h"
@@ -475,6 +476,10 @@ void IdDialog::insertIdDetails(uint32_t token)
 	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
 	
 	ui.headerFrame->setHeaderText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
+
+	QPixmap pix = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+    std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
+	ui.headerFrame->setHeaderImage(pix);
 
 	if (data.mPgpKnown)
 	{
