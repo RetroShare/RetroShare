@@ -279,7 +279,11 @@ void GxsGroupDialog::setupDefaults()
 			// default
 			ui.comments_no->setChecked(true);
 		}
-	}
+    }
+#ifndef RS_USE_CIRCLES
+    ui.typeGroup->setEnabled(false);
+    ui.typeLocal->setEnabled(false);
+#endif
 }
 
 void GxsGroupDialog::setupVisibility()
@@ -337,6 +341,9 @@ void GxsGroupDialog::setupReadonly()
 	ui.commentGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
 
 	ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
+#ifndef UNFINISHED
+    ui.pubKeyShare_cb->setEnabled(false) ;
+#endif
 }
 
 void GxsGroupDialog::newGroup()

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>695</width>
-    <height>577</height>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -133,40 +133,50 @@
               </spacer>
              </item>
              <item>
+              <widget class="QLabel" name="label_2">
+               <property name="toolTip">
+                <string>Will be used to send feedback</string>
+               </property>
+               <property name="text">
+                <string>Owner:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="GxsIdChooser" name="idChooser"/>
              </item>
              <item>
-           <widget class="QToolButton" name="toolButton_NewId">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Create new Identity</string>
-            </property>
-            <property name="text">
-             <string>New ID</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
+              <widget class="QToolButton" name="toolButton_NewId">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Create new Identity</string>
+               </property>
+               <property name="text">
+                <string>New ID</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../images.qrc">
+                 <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="autoRaise">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="QCheckBox" name="pubKeyShare_cb">
                <property name="toolTip">

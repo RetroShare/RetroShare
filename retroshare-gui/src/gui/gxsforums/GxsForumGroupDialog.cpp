@@ -85,7 +85,7 @@ void GxsForumGroupDialog::initUi()
 	}
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Forum Admins"));
-	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Forum Admins"));
+    setUiText(UITYPE_CONTACTS_DOCK, tr("Select Forum Admins"));
 }
 
 QPixmap GxsForumGroupDialog::serviceImage()
