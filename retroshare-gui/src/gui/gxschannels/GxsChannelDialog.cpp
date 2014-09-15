@@ -105,13 +105,13 @@ QString GxsChannelDialog::icon(IconType type)
 	case ICON_NEW:
 		return ":/images/add_channel24.png";
 	case ICON_YOUR_GROUP:
-		return ":/images/channelsblue.png";
+		return ":/images/folder16.png";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/images/channelsred.png";
+		return ":/images/folder_red.png";
 	case ICON_POPULAR_GROUP:
-		return ":/images/channelsgreen.png";
+		return ":/images/folder_green.png";
 	case ICON_OTHER_GROUP:
-		return ":/images/channelsyellow.png";
+		return ":/images/folder_yellow.png";
 	case ICON_DEFAULT:
 		return ":/images/channels.png";
 	}
