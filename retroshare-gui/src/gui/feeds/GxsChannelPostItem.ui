@@ -245,6 +245,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="voteUpButton">
+              <property name="toolTip">
+               <string>I like this</string>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -256,6 +259,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="voteDownButton">
+              <property name="toolTip">
+               <string>I dislike this</string>
+              </property>
               <property name="text">
                <string/>
               </property>
