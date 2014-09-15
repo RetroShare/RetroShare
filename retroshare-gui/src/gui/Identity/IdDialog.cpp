@@ -160,6 +160,11 @@ IdDialog::IdDialog(QWidget *parent)
 	ui.filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
 	headerText = headerItem->text(RSID_COL_KEYID);
 	ui.filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
+	
+	    
+   /* Set header resize modes and initial section sizes ID TreeView*/
+   QHeaderView * _idheader = ui.treeWidget_IdList->header () ;
+   _idheader->resizeSection ( RSID_COL_NICKNAME, 170 );
 
 	/* Setup tree */
 	ui.treeWidget_IdList->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
@@ -304,6 +309,10 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	}
 	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+
+	QPixmap pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+	std::cerr << "Setting item image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
+	item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 	{
