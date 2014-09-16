@@ -29,8 +29,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
-#define GXSFORUM_DEBUG	1
-
+//#define GXSFORUM_DEBUG	1
 
 uint32_t RsGxsForumSerialiser::size(RsItem *item)
 {

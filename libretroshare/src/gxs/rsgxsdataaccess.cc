@@ -1086,21 +1086,25 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                         bool addMsg = false;
                         if (oit == origMsgTs.end())
                         {
+#ifdef DATA_DEBUG
                             std::cerr << "RsGxsDataAccess::getMsgList() Found New OrigMsgId: ";
                             std::cerr << msgMeta->mOrigMsgId;
                             std::cerr << " MsgId: " << msgMeta->mMsgId;
                             std::cerr << " TS: " << msgMeta->mPublishTs;
                             std::cerr << std::endl;
+#endif
 
                             addMsg = true;
                         }
                         // check timestamps.
                         else if (oit->second.second < msgMeta->mPublishTs)
                         {
+#ifdef DATA_DEBUG
                             std::cerr << "RsGxsDataAccess::getMsgList() Found Later Msg. OrigMsgId: ";
                             std::cerr << msgMeta->mOrigMsgId;
                             std::cerr << " MsgId: " << msgMeta->mMsgId;
                             std::cerr << " TS: " << msgMeta->mPublishTs;
+#endif
 
                             addMsg = true;
                         }
@@ -1177,9 +1181,10 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
      * Input is msgList + Flags.
      * 1) No Flags => return nothing
      */
-
+#ifdef DATA_DEBUG
     std::cerr << "RsGxsDataAccess::getMsgRelatedList()";
     std::cerr << std::endl;
+#endif
 
     const RsTokReqOptions& opts = req->Options;
 
@@ -1190,67 +1195,85 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
     if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_LATEST";
             std::cerr << std::endl;
+#endif
             onlyLatestMsgs = true;
     }
     else if (opts.mOptions & RS_TOKREQOPT_MSG_VERSIONS)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_VERSIONS";
             std::cerr << std::endl;
+#endif
             onlyAllVersions = true;
     }
 
     if (opts.mOptions & RS_TOKREQOPT_MSG_PARENT)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_PARENTS";
             std::cerr << std::endl;
+#endif
             onlyChildMsgs = true;
     }
 
     if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_THREAD";
             std::cerr << std::endl;
+#endif
             onlyThreadMsgs = true;
     }
 
     if (onlyAllVersions && onlyChildMsgs)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)";
             std::cerr << std::endl;
+#endif
 
             return false;
     }
 
     if (onlyAllVersions && onlyThreadMsgs)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)";
             std::cerr << std::endl;
+#endif
 
             return false;
     }
 
     if ((!onlyLatestMsgs) && onlyChildMsgs)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)";
             std::cerr << std::endl;
+#endif
 
             return false;
     }
 
     if ((!onlyLatestMsgs) && onlyThreadMsgs)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)";
             std::cerr << std::endl;
+#endif
 
             return false;
     }
 
     if (onlyChildMsgs && onlyThreadMsgs)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)";
             std::cerr << std::endl;
+#endif
 
             return false;
     }
@@ -1259,8 +1282,10 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     /* FALL BACK OPTION */
     if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs) && (!onlyThreadMsgs))
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedList() FALLBACK -> NO FLAGS -> SIMPLY RETURN nothing";
             std::cerr << std::endl;
+#endif
 
             return true;
     }
@@ -1302,8 +1327,10 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
         if(!origMeta)
         {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgRelatedInfo(): Cannot find meta of msgId (to relate to)!"
                       << std::endl;
+#endif
             cleanseMsgMetaMap(result);
             return false;
         }
@@ -1345,21 +1372,25 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                     bool addMsg = false;
                     if (oit == origMsgTs.end())
                     {
+#ifdef DATA_DEBUG
                             std::cerr << "RsGxsDataAccess::getMsgRelatedList() Found New OrigMsgId: ";
                             std::cerr << meta->mOrigMsgId;
                             std::cerr << " MsgId: " << meta->mMsgId;
                             std::cerr << " TS: " << meta->mPublishTs;
                             std::cerr << std::endl;
+#endif
 
                             addMsg = true;
                     }
                     // check timestamps.
                     else if (oit->second.second < meta->mPublishTs)
                     {
+#ifdef DATA_DEBUG
                             std::cerr << "RsGxsDataAccess::getMsgRelatedList() Found Later Msg. OrigMsgId: ";
                             std::cerr << meta->mOrigMsgId;
                             std::cerr << " MsgId: " << meta->mMsgId;
                             std::cerr << " TS: " << meta->mPublishTs;
+#endif
 
                             addMsg = true;
                     }

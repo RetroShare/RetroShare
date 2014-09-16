@@ -68,7 +68,6 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 /****
  * #define PEER_DEBUG 1
  ***/
-#define PEER_DEBUG 1
 
 #define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
 #define MIN_RETRY_PERIOD 140

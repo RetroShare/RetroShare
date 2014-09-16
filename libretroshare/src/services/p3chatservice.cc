@@ -57,8 +57,6 @@
  * #define CHAT_DEBUG 1
  * #define DEBUG_DISTANT_CHAT 1
  ****/
-#define DEBUG_DISTANT_CHAT 1
-//#define CHAT_DEBUG 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
 static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
@@ -3364,8 +3362,10 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const Rs
 
 void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 {
+#ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "p3ChatService:  Received DH public key." << std::endl;
 	item->print(std::cerr, 0) ;
+#endif
 
 	// Look for the current state of the key agreement.
 
@@ -3373,7 +3373,11 @@ void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 	TurtleFileHash hash ;
 
 	if(getHashFromVirtualPeerId(vpid,hash))
+	{
+#ifdef DEBUG_DISTANT_CHAT
 		std::cerr << "  hash       = " << hash << std::endl;    
+#endif
+	}
 	else
 	{
 		std::cerr << "  (EE) Cannot get hash from virtual peer id " << vpid << ". Probably a bug!" << std::endl;
@@ -3391,7 +3395,9 @@ void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 
 	// Now check the signature of the DH public key item. 
 	
+#ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "  Checking signature. " << std::endl;
+#endif
 
 	uint32_t pubkey_size = BN_num_bytes(item->public_key) ;
 	unsigned char *data = (unsigned char *)malloc(pubkey_size) ;
@@ -3413,7 +3419,9 @@ void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 	for(int i=0;i<6;++i)
 		if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
 		{
+#ifdef DEBUG_DISTANT_CHAT
 			std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
+#endif
 			usleep(500000) ;	// sleep for 500 msec.
 		}
 		else
@@ -3434,8 +3442,10 @@ void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 		std::cerr << "  (EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
 		return ;
 	}
+#ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "  Signature checks!" << std::endl;
 	std::cerr << "  Computing AES key" << std::endl;
+#endif
 
 	// gets current key params. By default, should contain all null pointers.
 	//
@@ -3449,7 +3459,11 @@ void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 	unsigned char *key_buff = new unsigned char[size] ;
 
 	if(size == DH_compute_key(key_buff,item->public_key,it->second.dh)) 
+	{
+#ifdef DEBUG_DISTANT_CHAT
 		std::cerr << "  DH key computation successed. New key in place." << std::endl;
+#endif
+	}
 	else
 	{
 		std::cerr << "  (EE) DH computation failed. Probably a bug. Error code=" << ERR_get_error() << std::endl;
@@ -3462,9 +3476,11 @@ void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 	memcpy(it->second.aes_key, RsDirUtil::sha1sum(key_buff,size).toByteArray(),DISTANT_CHAT_AES_KEY_SIZE) ;
 	delete[] key_buff ;
 
+#ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "  DH key computed. Tunnel is now secured!" << std::endl;
 	std::cerr << "  Key computed: " ; printBinaryData(it->second.aes_key,16) ; std::cerr << std::endl;
 	std::cerr << "  Sending a ACK packet." << std::endl;
+#endif
 
 	// then we send an ACK packet to notify that the tunnel works. That's useful
 	// because it makes the peer at the other end of the tunnel know that all

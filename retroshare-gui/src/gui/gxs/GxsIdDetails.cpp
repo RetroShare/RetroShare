@@ -169,8 +169,8 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 	
 	if (!rsIdentity->getIdDetails(id, details))
 	{
-        std::cerr << "GxsIdTreeWidget::MakeIdDesc() FAILED TO GET ID " << id;
-		std::cerr << std::endl;
+       // std::cerr << "GxsIdTreeWidget::MakeIdDesc() FAILED TO GET ID " << id;
+		//std::cerr << std::endl;
 
         str = QObject::tr("Loading... ") + QString::fromStdString(id.toStdString().substr(0,5));
 
@@ -254,8 +254,8 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 //	icons.push_back(QIcon(IMAGE_ANON));
 //	icons.push_back(QIcon(IMAGE_ANON));
 
-    std::cerr << "GxsIdTreeWidget::MakeIdDesc() ID Ok. Comment: " << comment.toStdString() ;
-	std::cerr << std::endl;
+//	std::cerr << "GxsIdTreeWidget::MakeIdDesc() ID Ok. Comment: " << comment.toStdString() ;
+//	std::cerr << std::endl;
 
 	return true;
 }

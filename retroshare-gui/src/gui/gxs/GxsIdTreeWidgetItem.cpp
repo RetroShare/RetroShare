@@ -51,8 +51,8 @@ void GxsIdRSTreeWidgetItem::init()
 
 void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
 {
-	std::cerr << " GxsIdRSTreeWidgetItem::setId(" << id << "," << column << ")";
-	std::cerr << std::endl;
+	//std::cerr << " GxsIdRSTreeWidgetItem::setId(" << id << "," << column << ")";
+	//std::cerr << std::endl;
 
 	mId = id;
 	mColumn = column;
@@ -76,8 +76,8 @@ void GxsIdRSTreeWidgetItem::loadId()
 {
 	disconnect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
 
-	std::cerr << " GxsIdRSTreeWidgetItem::loadId() Id: " << mId << ", mCount: " << mCount;
-	std::cerr << std::endl;
+	//std::cerr << " GxsIdRSTreeWidgetItem::loadId() Id: " << mId << ", mCount: " << mCount;
+	//std::cerr << std::endl;
 
 	mCount++;
 
@@ -98,15 +98,15 @@ void GxsIdRSTreeWidgetItem::loadId()
 
     if (loaded)
 	{
-        std::cerr << " GxsIdRSTreeWidgetItem::loadId() Loaded Okay";
-		std::cerr << std::endl;
+     //   std::cerr << " GxsIdRSTreeWidgetItem::loadId() Loaded Okay";
+		//std::cerr << std::endl;
 		return;
 	}
 
 	if (mCount < MAX_ATTEMPTS)
 	{
-		std::cerr << " GxsIdRSTreeWidgetItem::loadId() Starting Timer for re-try";
-		std::cerr << std::endl;
+		//std::cerr << " GxsIdRSTreeWidgetItem::loadId() Starting Timer for re-try";
+		//std::cerr << std::endl;
 
 		/* timer event to try again */
 		connect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));

@@ -73,18 +73,12 @@ GxsIdItemDelegate::GxsIdItemDelegate(GxsIdTreeWidget *tree, int col, QObject *pa
 void GxsIdItemDelegate::paint( QPainter * painter, 
 	const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-	std::cerr << "GxsIdItemDelegate::paint()";
-	std::cerr << std::endl;
-		
     RsGxsId id ( mTree->ItemTextFromIndex(index, mGxsIdColumn).toStdString());
 	paintGxsId(painter, option, id);
 }
 
 QSize GxsIdItemDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const	
 {
-	std::cerr << "GxsIdItemDelegate::sizeHint()";
-	std::cerr << std::endl;
-
 	return QStyledItemDelegate::sizeHint(option, index);
 }
 
@@ -99,18 +93,12 @@ GxsIdRSItemDelegate::GxsIdRSItemDelegate(GxsIdRSTreeWidget *tree, int col, QObje
 void GxsIdRSItemDelegate::paint( QPainter * painter, 
 	const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-	std::cerr << "GxsIdRSItemDelegate::paint()";
-	std::cerr << std::endl;
-		
-    RsGxsId id ( mTree->ItemIdFromIndex(index, mGxsIdColumn));
+	RsGxsId id ( mTree->ItemIdFromIndex(index, mGxsIdColumn));
 	paintGxsId(painter, option, id);
 }
 
 QSize GxsIdRSItemDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const	
 {
-	std::cerr << "GxsIdRSItemDelegate::sizeHint()";
-	std::cerr << std::endl;
-
 	return QStyledItemDelegate::sizeHint(option, index);
 }
 
