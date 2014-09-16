@@ -1110,6 +1110,15 @@ void MessagesDialog::insertMessages()
                         text = "RetroShare";
                     } else {
                         text = QString::fromUtf8(rsPeers->getPeerName(it->srcId).c_str());
+								std::cerr << "(messages) getting name for id " << it->srcId << " => \"" << text.toStdString() << "\"" << std::endl;
+								if(text == "") 
+								{
+									RsIdentityDetails details;
+									if (rsIdentity->getIdDetails(RsGxsId(it->srcId), details) && !details.mNickname.empty())
+										text = QString::fromUtf8(details.mNickname.c_str()) ;
+									else
+										text = "GXS_id(" + QString::fromStdString(it->srcId.toStdString())+")" ;
+								}
                     }
                 } else {
                     if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {

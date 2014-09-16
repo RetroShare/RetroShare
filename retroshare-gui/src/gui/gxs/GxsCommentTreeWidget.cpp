@@ -408,7 +408,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
 
-		GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem();
+        GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL);
 		QString text;
 
 		{

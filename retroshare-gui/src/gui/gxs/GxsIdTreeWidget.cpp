@@ -102,7 +102,7 @@ void GxsIdRSItemDelegate::paint( QPainter * painter,
 	std::cerr << "GxsIdRSItemDelegate::paint()";
 	std::cerr << std::endl;
 		
-    RsGxsId id ( mTree->ItemTextFromIndex(index, mGxsIdColumn).toStdString());
+    RsGxsId id ( mTree->ItemIdFromIndex(index, mGxsIdColumn));
 	paintGxsId(painter, option, id);
 }
 
@@ -157,7 +157,18 @@ void    GxsIdRSTreeWidget::setGxsIdColumn(int col)
 	setItemDelegateForColumn(col, mIdDelegate);
 }
 
-
+RsGxsId GxsIdRSTreeWidget::ItemIdFromIndex(const QModelIndex & index, int column ) const
+{
+    // get real item.
+    QTreeWidgetItem *item = itemFromIndex(index);
+    if (!item)
+    {
+        std::cerr << "GxsIdTreeWidget::ItemTextFromIndex() Invalid Item";
+        std::cerr << std::endl;
+        return RsGxsId();
+    }
+    return RsGxsId(item->data(column,Qt::UserRole).toString().toStdString());
+}
 QString GxsIdRSTreeWidget::ItemTextFromIndex(const QModelIndex & index, int column ) const
 {
 	// get real item.

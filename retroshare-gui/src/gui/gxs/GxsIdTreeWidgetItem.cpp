@@ -93,12 +93,12 @@ void GxsIdRSTreeWidgetItem::loadId()
 		setIcon(mColumn, combinedIcon);
     }
     setToolTip(mColumn,comment) ;
+        setText(mColumn, desc);
+        setData(mColumn,Qt::UserRole, QString::fromStdString(mId.toStdString()));
 
-	setText(mColumn, desc);
-
-	if (loaded)
+    if (loaded)
 	{
-		std::cerr << " GxsIdRSTreeWidgetItem::loadId() Loaded Okay";
+        std::cerr << " GxsIdRSTreeWidgetItem::loadId() Loaded Okay";
 		std::cerr << std::endl;
 		return;
 	}
@@ -113,6 +113,7 @@ void GxsIdRSTreeWidgetItem::loadId()
 	}
 }
 
+#if 0
 /** Constructor */
 GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidget *parent)
 : QObject(NULL), QTreeWidgetItem(parent), mCount(0), mColumn(0)
@@ -193,3 +194,4 @@ void GxsIdTreeWidgetItem::loadId()
 		connect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
 	}
 }
+#endif

@@ -57,6 +57,7 @@ private:
 	int mColumn;
 };
 
+#if 0
 class GxsIdTreeWidgetItem : public QObject, public QTreeWidgetItem
 {
 	Q_OBJECT
@@ -78,5 +79,6 @@ private:
 	int mCount;
 	int mColumn;
 };
+#endif
 
 #endif

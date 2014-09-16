@@ -782,7 +782,7 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
 {
-	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
+    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
 	item->moveToThread(ui->threadTreeWidget->thread());
 
 	QString text;
@@ -810,8 +810,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, text);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
 
-	item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
-	//item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
+    //item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
+    item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
 //#TODO
 #if 0
 	text = QString::fromUtf8(authorName.c_str());

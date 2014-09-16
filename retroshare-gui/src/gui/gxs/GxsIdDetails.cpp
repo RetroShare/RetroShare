@@ -169,7 +169,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 	
 	if (!rsIdentity->getIdDetails(id, details))
 	{
-		std::cerr << "GxsIdTreeWidget::MakeIdDesc() FAILED TO GET ID";
+        std::cerr << "GxsIdTreeWidget::MakeIdDesc() FAILED TO GET ID " << id;
 		std::cerr << std::endl;
 
         str = QObject::tr("Loading... ") + QString::fromStdString(id.toStdString().substr(0,5));

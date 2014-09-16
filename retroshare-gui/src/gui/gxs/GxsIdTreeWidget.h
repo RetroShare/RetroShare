@@ -27,6 +27,7 @@
 #include <QTreeWidget>
 #include <QStyledItemDelegate>
 
+#include "retroshare/rsgxsifacetypes.h"
 #include "gui/common/RSTreeWidget.h"
 
 /*****
@@ -88,6 +89,7 @@ public:
 
 void    setGxsIdColumn(int col);
 QString ItemTextFromIndex(const QModelIndex & index, int column ) const;
+RsGxsId ItemIdFromIndex(const QModelIndex & index, int column ) const;
 
 private:
 	GxsIdRSItemDelegate *mIdDelegate;
