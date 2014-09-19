@@ -59,10 +59,10 @@ if ! test -f ../../retroshare-nogui/src/retroshare-nogui; then
 fi
 
 echo Stripping executables...
-cp ../../retroshare-gui/src/RetroShare              retroshare/usr/bin/
-strip retroshare/usr/bin/RetroShare
-cp ../../retroshare-nogui/src/retroshare-nogui retroshare/usr/bin/
-strip retroshare/usr/bin/retroshare-nogui
+cp ../../retroshare-gui/src/RetroShare              retroshare/usr/bin/RetroShare06
+strip retroshare/usr/bin/RetroShare06
+cp ../../retroshare-nogui/src/retroshare-nogui retroshare/usr/bin/RetroShare06-nogui
+strip retroshare/usr/bin/RetroShare06-nogui
 
 # compute md5 sums
 echo Computing/setting md5 sums...
