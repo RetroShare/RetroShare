@@ -84,6 +84,7 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	hangupButton->setAutoRaise(true) ;		
 	hangupButton->setText(QString()) ;
 	hangupButton->setToolTip(tr("Hangup Call"));
+	hangupButton->hide();
 
 	connect(videoCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleVideoCapture()));
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
@@ -157,6 +158,7 @@ void VOIPChatWidgetHolder::hangupCall()
 	}
 	audioListenToggleButton->setChecked(false);
 	audioCaptureToggleButton->setChecked(false);
+	hangupButton->hide();
 }
 
 void VOIPChatWidgetHolder::toggleAudioCapture()
@@ -165,6 +167,7 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
         //activate audio output
         audioListenToggleButton->setChecked(true);
         audioCaptureToggleButton->setToolTip(tr("Hold Call"));
+        hangupButton->show();
 
         //activate audio input
         if (!inputAudioProcessor) {
@@ -190,6 +193,7 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
             inputAudioDevice->stop();
         }
         audioCaptureToggleButton->setToolTip(tr("Resume Call"));
+        hangupButton->hide();
     }
 }
 void VOIPChatWidgetHolder::toggleVideoCapture()
