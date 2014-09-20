@@ -109,6 +109,7 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	videoWidget->setLayout(new QHBoxLayout()) ;
 	videoWidget->layout()->addWidget(echoVideoDevice = new QVideoOutputDevice(videoWidget)) ;
 	videoWidget->layout()->addWidget(outputVideoDevice = new QVideoOutputDevice(videoWidget)) ;
+	videoWidget->hide();
 
 	connect(inputVideoDevice, SIGNAL(networkPacketReady()), this, SLOT(sendVideoData()));
 
@@ -197,6 +198,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	{
 		//activate video input
 		//
+		videoWidget->show();
 		inputVideoDevice->start() ;
 
 		videoCaptureToggleButton->setToolTip(tr("Shut camera off"));
@@ -209,6 +211,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 		inputVideoDevice->stop() ;
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
 		outputVideoDevice->showFrameOff();
+		videoWidget->hide();
 	}
 }
 
