@@ -600,11 +600,17 @@ bool RetroCursor::moveToLast(){
         return true;
     }
 }
-
 int RetroCursor::getResultCount() const {
 
     if(isOpen())
         return mCount;
+    else
+        return -1;
+}
+int RetroCursor::columnCount() const {
+
+    if(isOpen())
+        return sqlite3_data_count(mStmt);
     else
         return -1;
 }

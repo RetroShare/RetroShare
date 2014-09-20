@@ -239,6 +239,7 @@ public:
      */
     int32_t getResultCount() const;
 
+    int32_t columnCount() const ;
     /*!
      * Current statement is closed and discarded (finalised)
      * before actual opening occurs

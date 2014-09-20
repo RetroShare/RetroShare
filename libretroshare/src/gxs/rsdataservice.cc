@@ -1418,7 +1418,11 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId,
 		while(valid)
 		{
 			std::string msgId;
-			c->getString(0, msgId);
+            c->getString(0, msgId);
+
+            if(c->columnCount() != 1)
+            std::cerr << "(EE) ********* not retrieving all columns!!" << std::endl;
+
 			msgIds.push_back(RsGxsMessageId(msgId));
 			valid = c->moveToNext();
 		}
