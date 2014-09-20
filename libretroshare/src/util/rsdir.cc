@@ -732,7 +732,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	std::wstring t;
 	librs::util::ConvertUtf8ToUtf16(to, t);
 
-	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
+	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
 #else
 	std::string f(from),t(to) ;
 
@@ -1348,7 +1348,7 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 #else
 	std::wstring f(from),t(to) ;
 #endif
-	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
+	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
 #else
 	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
         std::string f(from.begin(), from.end());

@@ -69,7 +69,7 @@
  * #define DEBUG_DWLQUEUE 1
  *****/
 
-static const int32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
+static const int32_t SAVE_TRANSFERS_DELAY 			= 301	; // save transfer progress every 301 seconds.
 static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240	; // time after which an inactive chunk is released
 static const int32_t MAX_TIME_INACTIVE_REQUEUED 	= 120 ; // time after which an inactive ftFileControl is bt-queued
 static const int32_t TIMOUT_CACHE_FILE_TRANSFER 	= 800 ; // time after which cache transfer gets cancelled if inactive.
@@ -1211,8 +1211,6 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 #endif
 					(dit->second)->mTransfer->addFileSource(*it);
 					setPeerState(dit->second->mTransfer, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceId, *it));
-
-					IndicateConfigChanged(); /* new peer for transfer -> save */
 				}
 
 			if (srcIds.size() == 0)
