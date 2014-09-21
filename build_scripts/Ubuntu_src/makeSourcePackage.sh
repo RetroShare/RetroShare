@@ -57,9 +57,9 @@ cd $workdir
 tar zxvf ../libssh-0.5.4.tar.gz
 cd ..
 
-cd $workdir
-git clone https://github.com/sqlcipher/sqlcipher.git
-cd ..
+# cd $workdir
+# git clone https://github.com/sqlcipher/sqlcipher.git
+# cd ..
 
 # cleaning up protobof generated files
 

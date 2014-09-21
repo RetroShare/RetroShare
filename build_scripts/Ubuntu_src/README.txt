@@ -7,3 +7,15 @@ the svn repository of RetroShare. The various files here are:
   clean.sh              : compiles the source package. Produce a binary pkg for a given ubuntu distribution
   make_tgz.sh           : rebuilds the basic directory structure if some config/debian files where modified
                           in the retroshare-0.5 directory
+
+Notes about pbuilder
+====================
+
+To add a ppa dependency:
+	- add this line to ~/.pbuilderrc: OTHERMIRROR="deb http://ppa.launchpad.net/guardianproject/ppa/ubuntu precise main"
+
+			pbuilder-dist precise login --save-after-login
+			# apt-key adv --keyserver pgp.mit.edu --recv-keys  2234F563
+			# exit
+			pbuilder-dist precise update --release-only			# the --release-only is really required!
+
