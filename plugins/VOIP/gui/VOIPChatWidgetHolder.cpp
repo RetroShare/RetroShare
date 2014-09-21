@@ -59,11 +59,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	audioCaptureToggleButton->setCheckable(true) ;
 
 	QIcon icon3 ;
-	icon3.addPixmap(QPixmap(":/images/camera-on.png")) ;
-	icon3.addPixmap(QPixmap(":/images/camera-off.png"),QIcon::Normal,QIcon::On) ;
-	icon3.addPixmap(QPixmap(":/images/camera-off.png"),QIcon::Disabled,QIcon::On) ;
-	icon3.addPixmap(QPixmap(":/images/camera-off.png"),QIcon::Active,QIcon::On) ;
-	icon3.addPixmap(QPixmap(":/images/camera-off.png"),QIcon::Selected,QIcon::On) ;
+	icon3.addPixmap(QPixmap(":/images/video-icon-on.png")) ;
+	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Normal,QIcon::On) ;
+	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Disabled,QIcon::On) ;
+	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Active,QIcon::On) ;
+	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Selected,QIcon::On) ;
 
 	videoCaptureToggleButton = new QToolButton ;
 	videoCaptureToggleButton->setMinimumSize(QSize(28,28)) ;

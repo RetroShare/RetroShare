@@ -11,6 +11,8 @@
 		<file>images/camera-on.png</file>
 		<file>images/camera-off.png</file>
 		<file>images/video-icon-big.png</file>
+		<file>images/video-icon-on.png</file>
+		<file>images/Video-icon-off.png</file>
 	</qresource>
 </RCC>
 
