@@ -26,7 +26,7 @@
 
 #include <string>
 #include <inttypes.h>
-#include <sqlite3.h>
+#include <sqlcipher/sqlite3.h>
 
 class RetroBind
 {

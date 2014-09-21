@@ -24,7 +24,7 @@
  *
  */
 
-#include "sqlite3.h"
+#include <sqlcipher/sqlite3.h>
 
 #include <string>
 #include <set>
