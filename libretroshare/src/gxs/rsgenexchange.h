@@ -39,7 +39,7 @@
 #include "serialiser/rsnxsitems.h"
 #include "rsgxsutil.h"
 
-#define DEFAULT_MSG_STORE_PERIOD 60*60*24*30 // 1 month
+#define DEFAULT_MSG_STORE_PERIOD 60*60*24*31*4 // 4 months
 
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
@@ -307,6 +307,7 @@ public:
 
 protected:
 
+	bool messagePublicationTest(const RsGxsMsgMetaData&) ;
     /*!
      * retrieves group data associated to a request token
      * @param token token to be redeemed for grpitem retrieval

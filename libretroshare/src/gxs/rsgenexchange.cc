@@ -48,7 +48,7 @@
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-#define GEN_EXCH_DEBUG	1
+//#define GEN_EXCH_DEBUG	1
 
 #define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
 #define INTEGRITY_CHECK_PERIOD 60*30 //  30 minutes
@@ -86,6 +86,41 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
     mDataAccess = new RsGxsDataAccess(gds);
 
 }
+
+#ifdef TO_BE_DELETED_IF_NOT_USEFUL
+// This class has been tested so as to see where the database gets modified.
+class RsDataBaseTester
+{
+public:
+    RsDataBaseTester(RsGeneralDataService *store,const RsGxsGroupId& grpId,const std::string& info)
+            :_grpId(grpId),_store(store),_info(info)
+    {
+        //std::cerr << "RsDataBaseTester: (" << _info << ") retrieving messages for group " << grpId << std::endl;
+        _store->retrieveMsgIds(_grpId, _msgIds1) ;
+    }
+
+    ~RsDataBaseTester()
+    {
+        //std::cerr << "RsDataBaseTester: (" << _info << ") testing messages for group " << _grpId << std::endl;
+        _store->retrieveMsgIds(_grpId, _msgIds2) ;
+
+        bool all_idendical = true ;
+    std::cerr << std::dec ;
+
+        if(_msgIds1.size() != _msgIds2.size())
+            std::cerr << "  " << _info << " (EE) The two arrays are different (size1=" << _msgIds1.size() << ", size2=" << _msgIds2.size() << ") !!" << std::endl;
+        else
+            for(uint32_t i=0;i<_msgIds1.size();++i)
+                if(_msgIds1[i] != _msgIds2[i])
+                    std::cerr << "  " << _info << " (EE) The two arrays are different for i=" << i << " !!" << std::endl;
+    }
+    RsGxsGroupId _grpId ;
+    RsGeneralDataService *_store ;
+    std::vector<RsGxsMessageId> _msgIds1 ;
+    std::vector<RsGxsMessageId> _msgIds2 ;
+    std::string _info ;
+};
+#endif
 
 RsGenExchange::~RsGenExchange()
 {
@@ -188,6 +223,13 @@ void RsGenExchange::tick()
 			mChecking = true;
 		}
 	}
+}
+
+bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
+{
+	time_t now = time(NULL) ;
+
+	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP || meta.mPublishTs + MESSAGE_STORE_PERIOD >= now ;
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
@@ -1889,7 +1931,6 @@ RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpI
 
 void RsGenExchange::processGroupUpdatePublish()
 {
-
 	RsStackMutex stack(mGenMtx);
 
 	// get keys for group update publish
@@ -1959,7 +2000,6 @@ void RsGenExchange::processGroupUpdatePublish()
 
 void RsGenExchange::processGroupDelete()
 {
-
 	RsStackMutex stack(mGenMtx);
 
 	// get keys for group delete publish
@@ -2478,14 +2518,15 @@ void RsGenExchange::processRecvdMessages()
     if(!msgIds.empty())
     {
 #ifdef GEN_EXCH_DEBUG
-		 std::cerr << "  removing existing messages." << std::endl;
+        std::cerr << "  removing existing and old messages from incoming list." << std::endl;
 #endif
-		 removeDeleteExistingMessages(msgs, msgIds);
+        removeDeleteExistingMessages(msgs, msgIds);
 
 #ifdef GEN_EXCH_DEBUG
-		 std::cerr << "  storing remaining messages" << std::endl;
+        std::cerr << "  storing remaining messages" << std::endl;
 #endif
         mDataStore->storeMessage(msgs);
+
         RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
         c->msgChangeMap = msgIds;
         mNotifications.push_back(c);
@@ -2604,7 +2645,6 @@ void RsGenExchange::processRecvdGroups()
 
 void RsGenExchange::performUpdateValidation()
 {
-
 	RsStackMutex stack(mGenMtx);
 
 	if(mGroupUpdates.empty())
@@ -2709,9 +2749,8 @@ void RsGenExchange::setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId
     mGrpLocMetaMap.insert(std::make_pair(token, g));
 }
 
-void RsGenExchange::removeDeleteExistingMessages(
-		RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify) {
-
+void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify) 
+{
 	// first get grp ids of messages to be stored
 
 	RsGxsGroupId::std_set mGrpIdsUnique;
@@ -2748,7 +2787,18 @@ void RsGenExchange::removeDeleteExistingMessages(
 
 		std::cerr << "    grpid=" << cit2->second->mGroupId << ", msgid=" << cit2->second->mMsgId ;
 
-		if(std::find(msgIds.begin(), msgIds.end(), cit2->second->mMsgId) != msgIds.end())
+		// Avoid storing messages that are already in the database, as well as messages that are too old (or generally do not pass the database storage test)
+		//
+		if(std::find(msgIds.begin(), msgIds.end(), cit2->second->mMsgId) == msgIds.end() && messagePublicationTest(*cit2->second))
+		{
+			// passes tests, so add to filtered list
+			//
+			filtered.insert(*cit2);
+#ifdef GEN_EXCH_DEBUG
+			std::cerr << "    keeping " << cit2->second->mMsgId << std::endl;
+#endif
+		}
+		else	// remove message from list
 		{
 			// msg exist in retrieved index
 			delete cit2->first;
@@ -2759,14 +2809,6 @@ void RsGenExchange::removeDeleteExistingMessages(
 				notifyIds.erase(it2);
 #ifdef GEN_EXCH_DEBUG
 			std::cerr << "    discarding " << cit2->second->mMsgId << std::endl;
-#endif
-		}
-		else
-		{
-			// does not exist so add to filtered list
-			filtered.insert(*cit2);
-#ifdef GEN_EXCH_DEBUG
-			std::cerr << "    keeping " << cit2->second->mMsgId << std::endl;
 #endif
 		}
 	}

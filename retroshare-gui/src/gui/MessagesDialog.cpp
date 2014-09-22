@@ -1110,7 +1110,7 @@ void MessagesDialog::insertMessages()
                         text = "RetroShare";
                     } else {
                         text = QString::fromUtf8(rsPeers->getPeerName(it->srcId).c_str());
-								std::cerr << "(messages) getting name for id " << it->srcId << " => \"" << text.toStdString() << "\"" << std::endl;
+								//std::cerr << "(messages) getting name for id " << it->srcId << " => \"" << text.toStdString() << "\"" << std::endl;
 								if(text == "") 
 								{
 									RsIdentityDetails details;
