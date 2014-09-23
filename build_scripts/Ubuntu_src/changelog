@@ -1,7 +1,9 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    * Improvements
-   * But fixes
+      - this version is the first unstable release of 0.6. It is incompatible with v0.5.5, but can be used simultaneously 
+        on the same computer. Please see release notes for v0.6 on https://retroshareteam.wordpress.com/
+   	 
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 09 Jan 2014 20:00:00 +0100
 
