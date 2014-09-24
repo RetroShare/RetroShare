@@ -105,45 +105,11 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     ui.minimumContrast->hide();
 #endif
 
-	 connect(ui._collected_contacts_LW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(collectedContacts_customPopupMenu(QPoint)));
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
-}
-
-void ChatPage::collectedContacts_customPopupMenu(QPoint p)
-{
-	// items: chat with this person, copy to clipboard, delete
-	std::cerr << "In custom popup menu" << std::endl;
-
-	QListWidgetItem *item = ui._collected_contacts_LW->itemAt(p) ;
-
-	if(item == NULL)
-		return  ;
-
-	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
-
-	QMenu contextMnu( this );
-
-	if(selected.size() == 1)
-		contextMnu.addAction( QIcon(IMAGE_CHAT_OPEN), tr("Open secured chat tunnel"), this, SLOT(collectedInvite_openDistantChat()) ) ;
-
-	contextMnu.exec(QCursor::pos());
-}
-
-void ChatPage::collectedInvite_openDistantChat()
-{
-	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
-
-	RsGxsId gxs_id( (*selected.begin())->data(Qt::UserRole).toString().toStdString() );
-
-	std::cerr << "Openning secured chat tunnel for virtual peer id " << gxs_id << ". Please wait..." << std::endl;
-	uint32_t error_code ;
-
-	if(!rsMsgs->initiateDistantChatConnexion(gxs_id,error_code))
-		QMessageBox::critical(NULL,tr("Can't open distant chat"),tr("Cannot open distant chat. Error code=")+QString::number(error_code)) ;
 }
 
 /** Saves the changes on this page */

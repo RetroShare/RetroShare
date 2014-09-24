@@ -90,7 +90,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-    connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
+    //connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
 
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
@@ -179,11 +179,11 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 //
 //    ui.menutoolButton->setMenu(menu);
 
-    QToolButton *addFriendButton = new QToolButton(this);
+    /*QToolButton *addFriendButton = new QToolButton(this);
     addFriendButton->setIcon(QIcon(":/images/user/add_user24.png"));
     addFriendButton->setToolTip(tr("Add friend node"));
     connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-    ui.friendList->addToolButton(addFriendButton);
+    ui.friendList->addToolButton(addFriendButton);*/
 
     setAcceptDrops(true);
     ui.lineEdit->setAcceptDrops(false);
