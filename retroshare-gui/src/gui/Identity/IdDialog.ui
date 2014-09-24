@@ -140,6 +140,9 @@
            <widget class="LineEditClear" name="filterLineEdit"/>
           </item>
           <item>
+           <widget class="QComboBox" name="filterComboBox"/>
+          </item>
+          <item>
            <widget class="QToolButton" name="toolButton_NewId">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -227,18 +230,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="filterLayout">
-         <item>
-          <widget class="QLabel" name="filterLabel">
-           <property name="text">
-            <string>Show:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="filterComboBox"/>
-         </item>
-        </layout>
+        <layout class="QHBoxLayout" name="filterLayout"/>
        </item>
        <item>
         <widget class="RSTreeWidget" name="treeWidget_IdList">
@@ -646,7 +638,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>todoPushButton</tabstop>
-  <tabstop>filterComboBox</tabstop>
   <tabstop>treeWidget_IdList</tabstop>
   <tabstop>toolButton_Delete</tabstop>
   <tabstop>toolButton_EditId</tabstop>
