@@ -122,7 +122,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QFrame" name="toolBarFrame">
@@ -253,24 +253,24 @@
          </property>
          <column>
           <property name="text">
-           <string>Nickname</string>
+           <string>Identity name</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>KeyId</string>
+           <string>Key ID</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Type</string>
+           <string>Linked to Retroshare node...</string>
           </property>
          </column>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="HeaderFrame" name="headerFrame">
@@ -386,6 +386,13 @@
             <property name="margin">
              <number>6</number>
             </property>
+            <item row="2" column="0">
+             <widget class="QLabel" name="PgpId_LB">
+              <property name="text">
+               <string>Owner node ID</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <widget class="QLineEdit" name="lineEdit_Nickname">
               <property name="enabled">
@@ -399,7 +406,7 @@
             <item row="0" column="0">
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>Nickname</string>
+               <string>Identity name</string>
               </property>
              </widget>
             </item>
@@ -416,19 +423,19 @@
             <item row="1" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
-               <string>Key ID</string>
+               <string>Identity ID</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_8">
+            <item row="3" column="0">
+             <widget class="QLabel" name="PgpName_LB">
               <property name="text">
-               <string>PGP Hash</string>
+               <string>Owner node name</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEdit_GpgHash">
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="lineEdit_GpgName">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -437,14 +444,7 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>PGP Id</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
+            <item row="2" column="1">
              <widget class="QLineEdit" name="lineEdit_GpgId">
               <property name="enabled">
                <bool>true</bool>
@@ -454,22 +454,18 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>PGP Name</string>
-              </property>
-             </widget>
-            </item>
             <item row="4" column="1">
-             <widget class="QLineEdit" name="lineEdit_GpgName">
-              <property name="enabled">
-               <bool>true</bool>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
-              <property name="readOnly">
-               <bool>true</bool>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
               </property>
-             </widget>
+             </spacer>
             </item>
            </layout>
           </item>
@@ -736,7 +732,6 @@
   <tabstop>toolButton_EditId</tabstop>
   <tabstop>lineEdit_Nickname</tabstop>
   <tabstop>lineEdit_KeyId</tabstop>
-  <tabstop>lineEdit_GpgHash</tabstop>
   <tabstop>lineEdit_GpgId</tabstop>
   <tabstop>lineEdit_GpgName</tabstop>
   <tabstop>radioButton_IdYourself</tabstop>

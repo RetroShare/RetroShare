@@ -83,7 +83,7 @@ IdDialog::IdDialog(QWidget *parent)
 
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
+//	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Reputation);
@@ -104,7 +104,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
+//	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
@@ -115,7 +115,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
+//	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
@@ -310,6 +310,19 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
+	 if(isOwnId)
+	 {
+		 QFont font = item->font(RSID_COL_NICKNAME) ;
+		 font.setWeight(QFont::Bold) ;
+		 item->setFont(RSID_COL_NICKNAME,font) ;
+		 item->setFont(RSID_COL_KEYID,font) ;
+		 item->setFont(RSID_COL_IDTYPE,font) ;
+
+		 item->setToolTip(RSID_COL_NICKNAME,tr("This identity is owned by you")) ;
+		 item->setToolTip(RSID_COL_KEYID   ,tr("This identity is owned by you")) ;
+		 item->setToolTip(RSID_COL_IDTYPE  ,tr("This identity is owned by you")) ;
+	 }
+
 	QPixmap pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
 	std::cerr << "Setting item image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 	item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
@@ -321,15 +334,18 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			RsPeerDetails details;
 			rsPeers->getGPGDetails(data.mPgpId, details);
 			item->setText(RSID_COL_IDTYPE, QString::fromUtf8(details.name.c_str()));
+			item->setToolTip(RSID_COL_IDTYPE,QString()) ;
 		}
 		else
 		{
-			item->setText(RSID_COL_IDTYPE, tr("PGP Linked Id"));
+			item->setText(RSID_COL_IDTYPE, tr("Unknown PGP key 0x")+QString::fromStdString(data.mPgpId.toStdString()));
+			item->setToolTip(RSID_COL_IDTYPE,tr("Unknown key ID")) ;
 		}
 	}
 	else
 	{
-		item->setText(RSID_COL_IDTYPE, tr("Anon Id"));
+		item->setText(RSID_COL_IDTYPE, QString()) ;
+		item->setToolTip(RSID_COL_IDTYPE,QString()) ;
 	}
 
 	return true;
@@ -481,7 +497,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
   ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
+	//ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
 	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
 	
 	ui.headerFrame->setHeaderText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
@@ -506,6 +522,21 @@ void IdDialog::insertIdDetails(uint32_t token)
 		{
 			ui.lineEdit_GpgName->setText(tr("Anonymous Id"));
 		}
+	}
+
+	if(data.mPgpId.isNull())
+	{
+		ui.lineEdit_GpgId->hide() ;
+		ui.lineEdit_GpgName->hide() ;
+		ui.PgpId_LB->hide() ;
+		ui.PgpName_LB->hide() ;
+	}
+	else
+	{
+		ui.lineEdit_GpgId->show() ;
+		ui.lineEdit_GpgName->show() ;
+		ui.PgpId_LB->show() ;
+		ui.PgpName_LB->show() ;
 	}
 
 	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
