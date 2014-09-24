@@ -312,17 +312,25 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
+		 QFont font("Courier New",10,50,false);
+		 font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+		 item->setFont(RSID_COL_KEYID,font) ;
+
 	 if(isOwnId)
 	 {
 		 QFont font = item->font(RSID_COL_NICKNAME) ;
 		 font.setWeight(QFont::Bold) ;
 		 item->setFont(RSID_COL_NICKNAME,font) ;
-		 item->setFont(RSID_COL_KEYID,font) ;
 		 item->setFont(RSID_COL_IDTYPE,font) ;
+
+		 font = item->font(RSID_COL_KEYID) ;
+		 font.setWeight(QFont::Bold) ;
+		 item->setFont(RSID_COL_KEYID,font) ;
 
 		 item->setToolTip(RSID_COL_NICKNAME,tr("This identity is owned by you")) ;
 		 item->setToolTip(RSID_COL_KEYID   ,tr("This identity is owned by you")) ;
 		 item->setToolTip(RSID_COL_IDTYPE  ,tr("This identity is owned by you")) ;
+
 	 }
 
 	QPixmap pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
