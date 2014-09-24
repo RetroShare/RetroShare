@@ -86,6 +86,7 @@ IdDialog::IdDialog(QWidget *parent)
 //	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_Type);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Reputation);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Delete);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_EditId);
@@ -106,6 +107,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
 //	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_Type);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
@@ -113,10 +115,10 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingPeers);
 
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
 //	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_Type);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
@@ -148,10 +150,10 @@ IdDialog::IdDialog(QWidget *parent)
 
 	/* Add filter types */
 	ui.filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
-	ui.filterComboBox->addItem(tr("Yourself"), RSID_FILTER_YOURSELF);
-	ui.filterComboBox->addItem(tr("Friends / Friends of Friends"), RSID_FILTER_FRIENDS);
-	ui.filterComboBox->addItem(tr("Others"), RSID_FILTER_OTHERS);
-	ui.filterComboBox->addItem(tr("Pseudonyms"), RSID_FILTER_PSEUDONYMS);
+	ui.filterComboBox->addItem(tr("Owned by you"), RSID_FILTER_YOURSELF);
+	ui.filterComboBox->addItem(tr("Owned by friend nodes / friends of friends"), RSID_FILTER_FRIENDS);
+	ui.filterComboBox->addItem(tr("Owned by distant nodes"), RSID_FILTER_OTHERS);
+	ui.filterComboBox->addItem(tr("Anonymous"), RSID_FILTER_PSEUDONYMS);
 	ui.filterComboBox->setCurrentIndex(0);
 
 	/* Add filter actions */
@@ -541,32 +543,50 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 
-	if (isOwnId)
-	{
-		ui.radioButton_IdYourself->setChecked(true);
-	}
+	if(isOwnId)
+		if (data.mPgpKnown)
+			ui.lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
+		else
+			ui.lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
 	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 	{
 		if (data.mPgpKnown)
-		{
 			if (rsPeers->isGPGAccepted(data.mPgpId))
-			{
-				ui.radioButton_IdFriend->setChecked(true);
-			}
+				ui.lineEdit_Type->setText(tr("Owned by a friend Retroshare node")) ;
 			else
-			{
-				ui.radioButton_IdFOF->setChecked(true);
-			}
-		}
+				ui.lineEdit_Type->setText(tr("Owned by 2-hops Retroshare node")) ;
 		else
-		{
-			ui.radioButton_IdOther->setChecked(true);
-		}
+			ui.lineEdit_Type->setText(tr("Owned by unknown Retroshare node")) ;
 	}
 	else
-	{
-		ui.radioButton_IdPseudo->setChecked(true);
-	}
+		ui.lineEdit_Type->setText(tr("Anonymous identity")) ;
+
+//	if (isOwnId)
+//	{
+//		ui.radioButton_IdYourself->setChecked(true);
+//	}
+//	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+//	{
+//		if (data.mPgpKnown)
+//		{
+//			if (rsPeers->isGPGAccepted(data.mPgpId))
+//			{
+//				ui.radioButton_IdFriend->setChecked(true);
+//			}
+//			else
+//			{
+//				ui.radioButton_IdFOF->setChecked(true);
+//			}
+//		}
+//		else
+//		{
+//			ui.radioButton_IdOther->setChecked(true);
+//		}
+//	}
+//	else
+//	{
+//		ui.radioButton_IdPseudo->setChecked(true);
+//	}
 
 	if (isOwnId)
 	{
