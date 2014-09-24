@@ -30,6 +30,7 @@
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsForums, parent)
 {
+	mCountChildMsgs = true;
 }
 
 GxsForumsDialog::~GxsForumsDialog()

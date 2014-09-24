@@ -74,6 +74,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	ui->setupUi(this);
 
 	mInitialized = false;
+	mCountChildMsgs = false;
 	mYourGroups = NULL;
 	mSubscribedGroups = NULL;
 	mPopularGroups = NULL;
@@ -897,7 +898,7 @@ void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
 		return;
 	}
 
-	ui->groupTreeWidget->setUnreadCount(item, stats.mNumMsgsUnread);
+	ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
 }
 
 /*********************** **** **** **** ***********************/

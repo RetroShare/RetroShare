@@ -169,6 +169,9 @@ private:
 //	void requestGroupSummary_CurrentGroup(const  RsGxsGroupId &groupId);
 //	void loadGroupSummary_CurrentGroup(const uint32_t &token);
 
+protected:
+	bool mCountChildMsgs; // Count unread child messages?
+
 private:
 	bool mInitialized;
 	QString mSettingsName;

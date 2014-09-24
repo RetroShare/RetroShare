@@ -1494,8 +1494,10 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     req->mGroupStatistic.mGrpId = req->mGrpId;
     req->mGroupStatistic.mNumMsgs = msgMetaV.size();
     req->mGroupStatistic.mTotalSizeOfMsgs = 0;
-    req->mGroupStatistic.mNumMsgsNew = 0;
-    req->mGroupStatistic.mNumMsgsUnread = 0;
+    req->mGroupStatistic.mNumThreadMsgsNew = 0;
+    req->mGroupStatistic.mNumThreadMsgsUnread = 0;
+    req->mGroupStatistic.mNumChildMsgsNew = 0;
+    req->mGroupStatistic.mNumChildMsgsUnread = 0;
 
     for(int i = 0; i < msgMetaV.size(); i++)
     {
@@ -1504,11 +1506,21 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
 
         if (IS_MSG_NEW(m->mMsgStatus))
         {
-            ++req->mGroupStatistic.mNumMsgsNew;
+            if (m->mParentId.isNull())
+            {
+                ++req->mGroupStatistic.mNumThreadMsgsNew;
+            } else {
+                ++req->mGroupStatistic.mNumChildMsgsNew;
+            }
         }
         if (IS_MSG_UNREAD(m->mMsgStatus))
         {
-            ++req->mGroupStatistic.mNumMsgsUnread;
+            if (m->mParentId.isNull())
+            {
+                ++req->mGroupStatistic.mNumThreadMsgsUnread;
+            } else {
+                ++req->mGroupStatistic.mNumChildMsgsUnread;
+            }
         }
     }
 
@@ -1526,24 +1538,35 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
     std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
 
     req->mServiceStatistic.mNumGrps = grpMeta.size();
+    req->mServiceStatistic.mNumMsgs = 0;
     req->mServiceStatistic.mSizeOfGrps = 0;
     req->mServiceStatistic.mSizeOfMsgs = 0;
     req->mServiceStatistic.mNumGrpsSubscribed = 0;
-    req->mServiceStatistic.mNumMsgsNew = 0;
-    req->mServiceStatistic.mNumMsgsUnread = 0;
+    req->mServiceStatistic.mNumThreadMsgsNew = 0;
+    req->mServiceStatistic.mNumThreadMsgsUnread = 0;
+    req->mServiceStatistic.mNumChildMsgsNew = 0;
+    req->mServiceStatistic.mNumChildMsgsUnread = 0;
 
     for(; mit != grpMeta.end(); mit++)
     {
         RsGxsGrpMetaData* m = mit->second;
         req->mServiceStatistic.mSizeOfGrps += m->mGrpSize + m->serial_size();
-        GroupStatisticRequest gr;
-        gr.mGrpId = m->mGroupId;
-        getGroupStatistic(&gr);
-        req->mServiceStatistic.mNumMsgs += gr.mGroupStatistic.mNumMsgs;
-        req->mServiceStatistic.mSizeOfMsgs += gr.mGroupStatistic.mTotalSizeOfMsgs;
-        req->mServiceStatistic.mNumGrpsSubscribed += m->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ? 1 : 0;
-        req->mServiceStatistic.mNumMsgsNew += gr.mGroupStatistic.mNumMsgsNew;
-        req->mServiceStatistic.mNumMsgsUnread += gr.mGroupStatistic.mNumMsgsUnread;
+
+        if (IS_GROUP_SUBSCRIBED(m->mSubscribeFlags))
+        {
+            ++req->mServiceStatistic.mNumGrpsSubscribed;
+
+            GroupStatisticRequest gr;
+            gr.mGrpId = m->mGroupId;
+            getGroupStatistic(&gr);
+
+            req->mServiceStatistic.mNumMsgs += gr.mGroupStatistic.mNumMsgs;
+            req->mServiceStatistic.mSizeOfMsgs += gr.mGroupStatistic.mTotalSizeOfMsgs;
+            req->mServiceStatistic.mNumThreadMsgsNew += gr.mGroupStatistic.mNumThreadMsgsNew;
+            req->mServiceStatistic.mNumThreadMsgsUnread += gr.mGroupStatistic.mNumThreadMsgsUnread;
+            req->mServiceStatistic.mNumChildMsgsNew += gr.mGroupStatistic.mNumChildMsgsNew;
+            req->mServiceStatistic.mNumChildMsgsUnread += gr.mGroupStatistic.mNumChildMsgsUnread;
+        }
 
         delete m;
     }

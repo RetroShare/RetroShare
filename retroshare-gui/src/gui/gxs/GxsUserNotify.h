@@ -44,14 +44,18 @@ protected:
 	virtual void startUpdate();
 
 private:
-	virtual unsigned int getNewCount() { return mNewMessageCount; }
+	virtual unsigned int getNewCount() { return mCountChildMsgs ? (mNewThreadMessageCount + mNewChildMessageCount) : mNewThreadMessageCount; }
+
+protected:
+	bool mCountChildMsgs; // Count new child messages?
 
 private:
 	RsGxsIfaceHelper *mInterface;
 	RsTokenService *mTokenService;
 	TokenQueue *mTokenQueue;
 	RsGxsUpdateBroadcastBase *mBase;
-	unsigned int mNewMessageCount;
+	unsigned int mNewThreadMessageCount;
+	unsigned int mNewChildMessageCount;
 };
 
 #endif // GXSUSERNOTIFY_H

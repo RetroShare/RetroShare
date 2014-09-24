@@ -29,7 +29,9 @@
 GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     UserNotify(parent), TokenResponse()
 {
-	mNewMessageCount = 0;
+	mNewThreadMessageCount = 0;
+	mNewChildMessageCount = 0;
+	mCountChildMsgs = false;
 
 	mInterface = ifaceImpl;
 	mTokenService = mInterface->getTokenService();
@@ -51,7 +53,8 @@ GxsUserNotify::~GxsUserNotify()
 
 void GxsUserNotify::startUpdate()
 {
-	mNewMessageCount = 0;
+	mNewThreadMessageCount = 0;
+	mNewChildMessageCount = 0;
 
 	uint32_t token;
 	mTokenService->requestServiceStatistic(token);
@@ -68,7 +71,8 @@ void GxsUserNotify::loadRequest(const TokenQueue *queue, const TokenRequest &req
 				GxsServiceStatistic stats;
 				mInterface->getServiceStatistic(req.mToken, stats);
 
-				mNewMessageCount = stats.mNumMsgsNew;
+				mNewThreadMessageCount = stats.mNumThreadMsgsNew;
+				mNewChildMessageCount = stats.mNumChildMsgsNew;
 
 				update();
 			}

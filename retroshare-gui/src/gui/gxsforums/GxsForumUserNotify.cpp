@@ -25,6 +25,7 @@
 GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     GxsUserNotify(ifaceImpl, parent)
 {
+	mCountChildMsgs = true;
 }
 
 bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
