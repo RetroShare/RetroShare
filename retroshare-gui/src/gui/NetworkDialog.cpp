@@ -34,6 +34,7 @@
 #include "common/RSTreeWidgetItem.h"
 #include <gui/common/FriendSelectionDialog.h>
 #include "gui/msgs/MessageComposer.h"
+#include "gui/profile/ProfileManager.h"
 #include "NetworkDialog.h"
 //#include "TrustView.h"
 #include "NetworkView.h"
@@ -218,11 +219,11 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 			contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend"), this, SLOT(makeFriend()));
 	}
 	if(peer_id == rsPeers->getGPGOwnId())
-		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export my certificate..."), this, SLOT(on_actionExportKey_activated()));
+		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export/create a new location"), this, SLOT(on_actionExportKey_activated()));
 
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
-    //contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
-	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+   //contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
+	//contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 	contextMnu->addSeparator() ;
 	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
 
@@ -690,42 +691,8 @@ void NetworkDialog::on_actionAddFriend_activated()
 
 void NetworkDialog::on_actionExportKey_activated()
 {
-//    qDebug() << "  exportcert";
-//
-//    std::string cert = rsPeers->GetRetroshareInvite();
-//    if (cert.empty()) {
-//        QMessageBox::information(this, tr("RetroShare"),
-//                         tr("Sorry, create certificate failed"),
-//                         QMessageBox::Ok, QMessageBox::Ok);
-//        return;
-//    }
-//
-// use misc::getSaveFileName
-//    QString qdir = QFileDialog::getSaveFileName(this,
-//                                                tr("Please choose a filename"),
-//                                                QDir::homePath(),
-//                                                tr("RetroShare Certificate (*.rsc );;All Files (*)"));
-//    //Todo: move save to file to p3Peers::SaveCertificateToFile
-//
-//    if (qdir.isEmpty() == false) {
-//        QFile CertFile (qdir);
-//        if (CertFile.open(QIODevice::WriteOnly/* | QIODevice::Text*/)) {
-//            if (CertFile.write(QByteArray(cert.c_str())) > 0) {
-//                QMessageBox::information(this, tr("RetroShare"),
-//                                 tr("Certificate file successfully created"),
-//                                 QMessageBox::Ok, QMessageBox::Ok);
-//            } else {
-//                QMessageBox::information(this, tr("RetroShare"),
-//                                 tr("Sorry, certificate file creation failed"),
-//                                 QMessageBox::Ok, QMessageBox::Ok);
-//            }
-//            CertFile.close();
-//        } else {
-//            QMessageBox::information(this, tr("RetroShare"),
-//                             tr("Sorry, certificate file creation failed"),
-//                             QMessageBox::Ok, QMessageBox::Ok);
-//        }
-//    }
+	ProfileManager prof ;
+	prof.exec() ;
 }
 
 void NetworkDialog::on_actionCreate_New_Profile_activated()

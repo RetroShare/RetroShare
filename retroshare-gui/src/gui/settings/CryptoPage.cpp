@@ -47,10 +47,6 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
   connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
-  connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
-
-  ui._useOldFormat_CB->setEnabled(false) ;
-  ui._useOldFormat_CB->setChecked(false) ;
 
   // hide profile manager as it causes bugs when generating a new profile.
   //ui.profile_Button->hide() ;
@@ -59,15 +55,14 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 #ifdef Q_WS_WIN
 
 #endif
-      connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
+  connect(ui.createNewLocation_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
     ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
 
 void CryptoPage::profilemanager()
 {
-    ProfileManager profilemanager;
-    profilemanager.exec();
+    ProfileManager().exec();
 }
 void CryptoPage::showEvent ( QShowEvent * /*event*/ )
 {

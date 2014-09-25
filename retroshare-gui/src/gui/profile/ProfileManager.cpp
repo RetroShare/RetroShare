@@ -48,22 +48,15 @@ ProfileManager::ProfileManager(QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-//	setAttribute ( Qt::WA_DeleteOnClose, true );
-
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
 	ui.headerFrame->setHeaderText(tr("Profile Manager"));
 
 	connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( identityTreeWidgetCostumPopupMenu(QPoint)));
 	connect(ui.identityTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(identityItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
-//	connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
-//	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
-//	ui.newIdentity_PB->hide() ;
-//	ui.importIdentity_PB->hide() ;
-
+//	ui.exportIdentity_PB->setEnabled(false);
 	fillIdentities();
-	ui.exportIdentity_PB->setEnabled(false);
 }
 
 void ProfileManager::identityTreeWidgetCostumPopupMenu(QPoint)
@@ -90,6 +83,8 @@ void ProfileManager::fillIdentities()
 	ui.identityTreeWidget->setColumnWidth(COLUMN_NAME, 200);
 	ui.identityTreeWidget->setColumnWidth(COLUMN_EMAIL, 200);
 
+	RsPgpId own_pgp_id = rsPeers->getGPGOwnId() ;
+
 	std::cerr << "Finding PGPUsers" << std::endl;
 
 	QTreeWidget *identityTreeWidget = ui.identityTreeWidget;
@@ -111,6 +106,12 @@ void ProfileManager::fillIdentities()
 			item -> setText(COLUMN_EMAIL, QString::fromUtf8(email.c_str()));
 			item -> setText(COLUMN_GID, gid);
 			identityTreeWidget->addTopLevelItem(item);
+
+			if(own_pgp_id == *it) 
+			{
+				item->setSelected(true) ;
+				ui.exportIdentity_PB->setEnabled(true);
+			}
 		}
 	}
 

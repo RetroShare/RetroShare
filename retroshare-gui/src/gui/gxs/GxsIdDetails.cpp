@@ -207,11 +207,12 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 			/* look up real name */
 			std::string authorName = rsPeers->getGPGName(details.mPgpId);
 			comment += QString::fromUtf8(authorName.c_str());
+			comment += " [";
+			comment += QString::fromStdString(details.mPgpId.toStdString()) ;
+			comment += "]";
 		}
-
-		comment += " [";
-		comment += QString::fromStdString(details.mPgpId.toStdString()) ;
-		comment += "]";
+		else
+			comment += QObject::tr("signed by unknown Key") ;
 	}
 	else
 		comment += "Authentication: anonymous" ;

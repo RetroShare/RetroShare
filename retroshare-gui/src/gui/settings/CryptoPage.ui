@@ -14,56 +14,13 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Profile</string>
+       <string>Node information</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QToolButton" name="profile_Button">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Profile Manager</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>22</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
        <item>
         <widget class="QFrame" name="frame_1">
          <property name="frameShape">
@@ -233,7 +190,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Identity ID</string>
+             <string>PGP Id :</string>
             </property>
            </widget>
           </item>
@@ -303,7 +260,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Number of Friends:</string>
+             <string>Friend nodes:</string>
             </property>
            </widget>
           </item>
@@ -493,16 +450,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="_useOldFormat_CB">
-           <property name="text">
-            <string>Use old key format</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -522,7 +469,7 @@
          <item>
           <widget class="QPushButton" name="_copyLink_PB">
            <property name="text">
-            <string>Copy link to clipboard</string>
+            <string>Copy certificate to clipboard</string>
            </property>
           </widget>
          </item>
@@ -532,7 +479,14 @@
             <string>Save Key into a file</string>
            </property>
            <property name="text">
-            <string>Save Key</string>
+            <string>Save certificate to file</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="createNewLocation_PB">
+           <property name="text">
+            <string>Create new location...</string>
            </property>
           </widget>
          </item>

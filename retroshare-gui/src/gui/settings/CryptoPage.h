@@ -40,7 +40,7 @@ class CryptoPage : public ConfigPage
       /** Loads the settings for this page */
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/encrypted32.png") ; }
-		virtual QString pageName() const { return tr("Profile") ; }
+		virtual QString pageName() const { return tr("Node") ; }
 		virtual QString helpText() const { return ""; }
 
   private slots:
