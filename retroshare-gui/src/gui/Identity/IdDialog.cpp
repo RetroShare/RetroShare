@@ -151,7 +151,7 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Add filter types */
 	ui.filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
 	ui.filterComboBox->addItem(tr("Owned by you"), RSID_FILTER_YOURSELF);
-	ui.filterComboBox->addItem(tr("Owned by friend nodes / friends of friends"), RSID_FILTER_FRIENDS);
+	ui.filterComboBox->addItem(tr("Owned by neighbor nodes"), RSID_FILTER_FRIENDS);
 	ui.filterComboBox->addItem(tr("Owned by distant nodes"), RSID_FILTER_OTHERS);
 	ui.filterComboBox->addItem(tr("Anonymous"), RSID_FILTER_PSEUDONYMS);
 	ui.filterComboBox->setCurrentIndex(0);
