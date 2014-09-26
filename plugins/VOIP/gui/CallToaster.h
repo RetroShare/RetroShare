@@ -27,18 +27,18 @@
  *
  *
  */
-class CAllToaster : public QWidget
+class CallToaster : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CallToaster(const std::string &peerId);
+	CallToaster(const RsPeerId &peerId);
 
 private slots:
 	void chatButtonSlot();
 
 private:
-	std::string peerId;
+    RsPeerId peerId;
 
 	/** Qt Designer generated object */
 	Ui::CallToaster ui;
