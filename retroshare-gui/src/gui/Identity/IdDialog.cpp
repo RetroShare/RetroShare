@@ -88,8 +88,6 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_Type);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Reputation);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Delete);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_EditId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
@@ -132,8 +130,8 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Connect signals */
 	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
-	connect(ui.toolButton_Delete, SIGNAL(clicked()), this, SLOT(removeIdentity()));
-	connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
+	//connect(ui.toolButton_Delete, SIGNAL(clicked()), this, SLOT(removeIdentity()));
+	//connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
 	connect(ui.removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui.editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
 	connect(ui.chatIdentity, SIGNAL(triggered()), this, SLOT(chatIdentity()));
@@ -599,8 +597,6 @@ void IdDialog::insertIdDetails(uint32_t token)
 	if (isOwnId)
 	{
 		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, false);
-		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, true);
-		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, true);
 		ui.editIdentity->setEnabled(true);
 		ui.removeIdentity->setEnabled(true);
 		ui.chatIdentity->setEnabled(false);
@@ -609,8 +605,6 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		// No Reputation yet!
 		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, /*true*/ false);
-		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, false);
-		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, false);
 		ui.editIdentity->setEnabled(false);
 		ui.removeIdentity->setEnabled(false);
 		ui.chatIdentity->setEnabled(true);

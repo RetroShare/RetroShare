@@ -174,58 +174,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_Delete">
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Delete Identity</string>
-            </property>
-            <property name="text">
-             <string>Delete ID</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/identity/identity_delete_32.png</normaloff>:/images/identity/identity_delete_32.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_EditId">
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Edit Identity</string>
-            </property>
-            <property name="text">
-             <string>Edit ID</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/identity/identity_edit_32.png</normaloff>:/images/identity/identity_edit_32.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -639,8 +587,6 @@
  <tabstops>
   <tabstop>todoPushButton</tabstop>
   <tabstop>treeWidget_IdList</tabstop>
-  <tabstop>toolButton_Delete</tabstop>
-  <tabstop>toolButton_EditId</tabstop>
   <tabstop>lineEdit_Nickname</tabstop>
   <tabstop>lineEdit_KeyId</tabstop>
   <tabstop>lineEdit_GpgId</tabstop>
