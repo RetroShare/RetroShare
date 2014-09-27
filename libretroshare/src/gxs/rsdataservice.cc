@@ -390,14 +390,31 @@ RsNxsGrp* RsDataService::locked_getGroup(RetroCursor &c)
         data_len = c.getInt32(COL_NXS_FILE_LEN);
         offset = c.getInt32(COL_NXS_FILE_OFFSET);
 
-        char grp_data[data_len];
-        std::ifstream istrm(grpFile.c_str(), std::ios::binary);
-        istrm.seekg(offset, std::ios::beg);
-        istrm.read(grp_data, data_len);
+        // first try to find the file in the service dir
+        if (RsDirUtil::fileExists(mServiceDir + "/" + grpFile)) {
+            grpFile.insert(0, mServiceDir + "/");
+        } else if (RsDirUtil::fileExists(grpFile)) {
+            // use old way for backward compatibility
+            //TODO: can be removed later
+        } else {
+            ok = false;
 
-        istrm.close();
-        offset = 0;
-        ok &= grp->grp.GetTlv(grp_data, data_len, &offset);
+//#ifdef RS_DATA_SERVICE_DEBUG
+            std::cerr << "RsDataService::locked_getGroup() cannot find group file " << grpFile;
+            std::cerr << std::endl;
+//#endif
+        }
+
+        if (ok) {
+            char grp_data[data_len];
+            std::ifstream istrm(grpFile.c_str(), std::ios::binary);
+            istrm.seekg(offset, std::ios::beg);
+            istrm.read(grp_data, data_len);
+
+            istrm.close();
+            offset = 0;
+            ok &= grp->grp.GetTlv(grp_data, data_len, &offset);
+        }
     }
 
     if(ok)
@@ -502,15 +519,32 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
 
     if(ok){
 
-        char* msg_data = new char[data_len];
-        std::ifstream istrm(msgFile.c_str(), std::ios::binary);
-        istrm.seekg(offset, std::ios::beg);
-        istrm.read(msg_data, data_len);
+        // first try to find the file in the service dir
+        if (RsDirUtil::fileExists(mServiceDir + "/" + msgFile)) {
+            msgFile.insert(0, mServiceDir + "/");
+        } else if (RsDirUtil::fileExists(msgFile)) {
+            // use old way for backward compatibility
+            //TODO: can be removed later
+        } else {
+            ok = false;
 
-        istrm.close();
-        offset = 0;
-        ok &= msg->msg.GetTlv(msg_data, data_len, &offset);
-        delete[] msg_data;
+//#ifdef RS_DATA_SERVICE_DEBUG
+            std::cerr << "RsDataService::locked_getMessage() cannot find message file " << msgFile;
+            std::cerr << std::endl;
+//#endif
+        }
+
+        if (ok) {
+            char* msg_data = new char[data_len];
+            std::ifstream istrm(msgFile.c_str(), std::ios::binary);
+            istrm.seekg(offset, std::ios::beg);
+            istrm.read(msg_data, data_len);
+
+            istrm.close();
+            offset = 0;
+            ok &= msg->msg.GetTlv(msg_data, data_len, &offset);
+            delete[] msg_data;
+        }
     }
 
     if(ok)
@@ -552,7 +586,8 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
 	}
 
         // create or access file in binary
-        std::string msgFile = mServiceDir + "/" + msgPtr->grpId.toStdString() + "-msgs";
+        std::string filename = msgPtr->grpId.toStdString() + "-msgs";
+        std::string msgFile = mServiceDir + "/" + filename;
         std::fstream ostrm(msgFile.c_str(), std::ios::binary | std::ios::app | std::ios::out);
         ostrm.seekg(0, std::ios::end); // go to end to append
         uint32_t offset = ostrm.tellg(); // get fill offset
@@ -560,7 +595,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         ContentValue cv;
 
         cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
-        cv.put(KEY_NXS_FILE, msgFile);
+        cv.put(KEY_NXS_FILE, filename);
         cv.put(KEY_NXS_FILE_LEN, (int32_t)msgPtr->msg.TlvSize());
         cv.put(KEY_MSG_ID, msgMetaPtr->mMsgId.toStdString());
         cv.put(KEY_GRP_ID, msgMetaPtr->mGroupId.toStdString());
@@ -661,7 +696,8 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 	std::cerr << std::endl;
 #endif
 
-        std::string grpFile = mServiceDir + "/" + grpPtr->grpId.toStdString();
+        std::string filename = grpPtr->grpId.toStdString();
+        std::string grpFile = mServiceDir + "/" + filename;
         std::fstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::app | std::ios::out);
         ostrm.seekg(0, std::ios::end); // go to end to append
         uint32_t offset = ostrm.tellg(); // get fill offset
@@ -675,7 +711,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         ContentValue cv;
         cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
         cv.put(KEY_NXS_FILE_LEN, (int32_t)grpPtr->grp.TlvSize());
-        cv.put(KEY_NXS_FILE, grpFile);
+        cv.put(KEY_NXS_FILE, filename);
         cv.put(KEY_GRP_ID, grpPtr->grpId.toStdString());
         cv.put(KEY_GRP_NAME, grpMetaPtr->mGroupName);
         cv.put(KEY_ORIG_GRP_ID, grpMetaPtr->mOrigGrpId.toStdString());
@@ -759,7 +795,8 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         // if data is larger than max item size do not add
         if(!validSize(grpPtr)) continue;
 
-        std::string grpFile = mServiceDir + "/" + grpPtr->grpId.toStdString();
+        std::string filename = grpPtr->grpId.toStdString();
+        std::string grpFile = mServiceDir + "/" + filename;
         std::ofstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::trunc);
         uint32_t offset = 0; // get file offset
 
@@ -772,7 +809,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         ContentValue cv;
         cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
         cv.put(KEY_NXS_FILE_LEN, (int32_t)grpPtr->grp.TlvSize());
-        cv.put(KEY_NXS_FILE, grpFile);
+        cv.put(KEY_NXS_FILE, filename);
         cv.put(KEY_GRP_ID, grpPtr->grpId.toStdString());
         cv.put(KEY_GRP_NAME, grpMetaPtr->mGroupName);
         cv.put(KEY_ORIG_GRP_ID, grpMetaPtr->mOrigGrpId.toStdString());
