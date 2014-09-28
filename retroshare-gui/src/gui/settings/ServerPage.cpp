@@ -30,7 +30,11 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
 
+#include <QTcpSocket>
 #include <QTimer>
+
+#define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
+#define ICON_STATUS_OK      ":/images/ledon1.png"
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags), mIsHiddenNode(false)
@@ -218,10 +222,22 @@ void ServerPage::load()
 
 	/* TOR PAGE SETTINGS - only Proxy (outgoing) */
 	std::string proxyaddr;
-	uint16_t proxyport;
-	rsPeers->getProxyServer(proxyaddr, proxyport);
+    uint16_t proxyport;
+    uint32_t status ;
+    rsPeers->getProxyServer(proxyaddr, proxyport, status);
 	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
-	ui.torpage_proxyPort -> setValue(proxyport);
+    ui.torpage_proxyPort -> setValue(proxyport);
+
+    if(status & RS_NET_PROXY_STATUS_OK)
+    {
+        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+    ui.iconlabel_tor_outgoing->setToolTip(tr("TOR proxy is working correctly")) ;
+    }
+    else
+    {
+        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+    ui.iconlabel_tor_outgoing->setToolTip(tr("TOR status unknown")) ;
+    }
 }
 
 void ServerPage::toggleTurtleRouting(bool b)
@@ -287,8 +303,27 @@ void ServerPage::updateStatus()
 	if (net_status.netExtAddressOk)
 		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
 	else
-		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+        ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
+    // check for TOR
+
+    QTcpSocket socket ;
+        socket.connectToHost(ui.torpage_proxyAddress->text(),ui.torpage_proxyPort->text().toInt());
+
+        if(socket.waitForConnected(500))
+    {
+        std::cerr << "connected !" << std::endl;
+
+        socket.disconnectFromHost();
+
+        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+        ui.iconlabel_tor_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+    }
+    else
+    {
+        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+        ui.iconlabel_tor_outgoing->setToolTip(tr("TOR proxy is not enabled")) ;
+    }
 }
 
 void ServerPage::toggleUPnP()
@@ -399,8 +434,9 @@ void ServerPage::saveAddresses()
 
 	// HANDLE PROXY SERVER.
 	std::string orig_proxyaddr;
-	uint16_t orig_proxyport;
-	rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport);
+    uint16_t orig_proxyport;
+    uint32_t status ;
+    rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport,status);
 
 	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
 	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
@@ -520,8 +556,9 @@ void ServerPage::loadHiddenNode()
 	ui.torpage_onionPort -> setValue(detail.hiddenNodePort);
 
 	std::string proxyaddr;
-	uint16_t proxyport;
-	rsPeers->getProxyServer(proxyaddr, proxyport);
+    uint16_t proxyport;
+    uint32_t proxy_state_flags;
+    rsPeers->getProxyServer(proxyaddr, proxyport, proxy_state_flags);
 	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
 	ui.torpage_proxyPort -> setValue(proxyport);
 
@@ -632,8 +669,9 @@ void ServerPage::saveAddressesHiddenNode()
 
 	// HANDLE PROXY SERVER.
 	std::string orig_proxyaddr;
-	uint16_t orig_proxyport;
-	rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport);
+    uint16_t orig_proxyport;
+    uint32_t state_flags ;
+    rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport,state_flags);
 
 	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
 	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
