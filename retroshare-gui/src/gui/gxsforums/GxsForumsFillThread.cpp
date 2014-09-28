@@ -99,7 +99,6 @@ void GxsForumsFillThread::run()
 	/* get all messages of the forum */
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
 	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(mForumId);
@@ -169,7 +168,7 @@ void GxsForumsFillThread::run()
 
 		const RsGxsForumMsg &msg = *msgIt;
 
-		if (!msg.mMeta.mParentId.isNull()) {
+		if (!mFlatView && !msg.mMeta.mParentId.isNull()) {
 			++msgIt;
 			continue;
 		}
@@ -179,7 +178,9 @@ void GxsForumsFillThread::run()
 #endif
 
 		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
-		threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
+		if (!mFlatView) {
+			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
+		}
 		calculateExpand(msg, item);
 
 		mItems.append(item);
@@ -219,11 +220,7 @@ void GxsForumsFillThread::run()
 #endif
 
 				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
-				if (mFlatView) {
-					mItems.append(item);
-				} else {
-					threadPair.second->addChild(item);
-				}
+				threadPair.second->addChild(item);
 
 				calculateExpand(msg, item);
 
