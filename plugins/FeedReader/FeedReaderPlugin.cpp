@@ -86,6 +86,13 @@ FeedReaderPlugin::FeedReaderPlugin()
 void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
 	mInterfaces = interfaces;
+
+	//Todo: Replace with gxs forums
+	mFeedReader = new p3FeedReader(mPlugInHandler, NULL /*mInterfaces.mForums*/);
+	rsFeedReader = mFeedReader;
+
+	mNotify = new FeedReaderNotify();
+	mFeedReader->setNotify(mNotify);
 }
 
 ConfigPage *FeedReaderPlugin::qt_config_page() const
@@ -108,20 +115,6 @@ FeedNotify *FeedReaderPlugin::qt_feedNotify()
 		mFeedNotify = new FeedReaderFeedNotify(mFeedReader, mNotify);
 	}
 	return mFeedNotify;
-}
-
-p3Service *FeedReaderPlugin::p3_service() const
-{
-	if (mFeedReader == NULL) {
-		//Todo: Replace with gxs forums
-		mFeedReader = new p3FeedReader(mPlugInHandler, NULL /*mInterfaces.mForums*/);
-		rsFeedReader = mFeedReader;
-
-		mNotify = new FeedReaderNotify();
-		mFeedReader->setNotify(mNotify);
-	}
-
-	return mFeedReader;
 }
 
 void FeedReaderPlugin::stop()

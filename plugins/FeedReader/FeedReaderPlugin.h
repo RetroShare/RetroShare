@@ -36,7 +36,8 @@ public:
 	FeedReaderPlugin();
 
 	virtual uint16_t rs_service_id() const { return RS_SERVICE_TYPE_PLUGIN_FEEDREADER; }
-	virtual p3Service *p3_service() const;
+	virtual p3Service *p3_service() const { return mFeedReader; }
+	virtual p3Config *p3_config() const { return mFeedReader; }
 	virtual void stop();
 
 	virtual MainPage *qt_page() const;
