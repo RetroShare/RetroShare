@@ -464,7 +464,7 @@ bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
 	tNail.save(&buffer, "PNG");
 	QPixmap img;
 	img.loadFromData(ba, "PNG");
-	img = img.scaled(thumbnail_label->width(), thumbnail_label->height(), Qt::KeepAspectRatio);
+	img = img.scaled(thumbnail_label->width(), thumbnail_label->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	thumbnail_label->setPixmap(img);
 
 	delete[] imageBuffer;
