@@ -159,6 +159,11 @@ const uint32_t RS_NET_CONN_TYPE_FRIEND			= 0x02000000;
 const uint32_t RS_NET_CONN_TYPE_SERVER			= 0x04000000;
 const uint32_t RS_NET_CONN_TYPE_CLIENT			= 0x08000000;
 
+// working state of proxy
+
+const uint32_t RS_NET_PROXY_STATUS_UNKNOWN  = 0x0000 ;
+const uint32_t RS_NET_PROXY_STATUS_OK  	    = 0x0001 ;
+
 // Potential certificate parsing errors.
 
 
@@ -340,7 +345,7 @@ class RsPeers
 		virtual	bool setNetworkMode(const RsPeerId &ssl_id, uint32_t netMode) 	= 0;
 		virtual bool setVisState(const RsPeerId &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
 
-		virtual bool getProxyServer(std::string &addr, uint16_t &port) = 0;
+        virtual bool getProxyServer(std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
 		virtual bool setProxyServer(const std::string &addr, const uint16_t port) = 0;
 
 		virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;

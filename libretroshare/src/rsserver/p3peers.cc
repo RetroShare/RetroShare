@@ -903,7 +903,7 @@ bool p3Peers::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 	return mPeerMgr->setVisState(id, vs_disc, vs_dht);
 }
 
-bool p3Peers::getProxyServer(std::string &addr, uint16_t &port)
+bool p3Peers::getProxyServer(std::string &addr, uint16_t &port, uint32_t &status)
 {
         std::cerr << "p3Peers::getProxyServer()" << std::endl;
 
@@ -911,7 +911,8 @@ bool p3Peers::getProxyServer(std::string &addr, uint16_t &port)
 	mPeerMgr->getProxyServerAddress(proxy_addr);
 	addr = sockaddr_storage_iptostring(proxy_addr);
 	port = sockaddr_storage_port(proxy_addr);
-	return true;
+    mPeerMgr->getProxyServerStatus(status);
+    return true;
 }
 
 bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)

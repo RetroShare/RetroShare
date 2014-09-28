@@ -133,7 +133,9 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 		sockaddr_storage_ipv4_aton(mProxyServerAddress,
 				kConfigDefaultProxyServerIpAddr.c_str());
 		sockaddr_storage_ipv4_setport(mProxyServerAddress, 
-				kConfigDefaultProxyServerPort);
+                kConfigDefaultProxyServerPort);
+
+        mProxyServerStatus = RS_NET_PROXY_STATUS_UNKNOWN ;
 	}
 	
 #ifdef PEER_DEBUG
@@ -215,12 +217,12 @@ bool p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-//#ifdef PEER_DEBUG
+#ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::setOwnNetworkMode() :";
 		std::cerr << " Existing netMode: " << mOwnState.netMode;
 		std::cerr << " Input netMode: " << netMode;
 		std::cerr << std::endl;
-//#endif
+#endif
 
 		if (mOwnState.netMode != (netMode & RS_NET_MODE_ACTUAL))
 		{
@@ -441,7 +443,13 @@ bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_storage &proxy_a
 	return true;
 }
 	
+bool p3PeerMgrIMPL::getProxyServerStatus(uint32_t& proxy_status)
+{
+    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+    proxy_status = mProxyServerStatus;
+    return true;
+}
 bool p3PeerMgrIMPL::getProxyServerAddress(struct sockaddr_storage &proxy_addr)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/

@@ -184,6 +184,7 @@ virtual uint32_t getConnectionType(const RsPeerId &sslId) = 0;
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr) = 0;
 virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr) = 0;
+virtual bool    getProxyServerStatus(uint32_t& status) = 0;
 virtual bool    isHidden() = 0;
 virtual bool    isHiddenPeer(const RsPeerId &ssl_id) = 0;
 virtual bool    getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
@@ -284,6 +285,7 @@ virtual uint32_t getConnectionType(const RsPeerId& sslId);
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr);
 virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr);
+virtual bool    getProxyServerStatus(uint32_t &proxy_status);
 virtual bool    isHidden();
 virtual bool    isHiddenPeer(const RsPeerId& ssl_id);
 virtual bool    getProxyAddress(const RsPeerId& ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
@@ -364,6 +366,7 @@ private:
 	std::map<RsPgpId, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
 
 	struct sockaddr_storage mProxyServerAddress;
+    uint32_t mProxyServerStatus ;
 };
 
 #endif // MRK_PQI_PEER_MANAGER_HEADER
