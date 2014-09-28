@@ -4,8 +4,8 @@ CONFIG += qt gui uic qrc resources idle bitdht
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.
 #
-# CONFIG += unfinished 
-# CONFIG += debug
+#CONFIG += unfinished
+#CONFIG += debug
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -474,6 +474,8 @@ HEADERS +=  rshare.h \
             gui/common/UIStateHelper.h \
             gui/common/FloatingHelpBrowser.h \
             gui/common/SubscribeToolButton.h \
+            gui/common/FlowLayout.h \
+            gui/common/PictureFlow.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -771,6 +773,8 @@ SOURCES +=  main.cpp \
             gui/common/UIStateHelper.cpp \
             gui/common/FloatingHelpBrowser.cpp \
             gui/common/SubscribeToolButton.cpp \
+            gui/common/FlowLayout.cpp \
+            gui/common/PictureFlow.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
@@ -1105,16 +1109,6 @@ gxsthewire {
 	
 }
 
-HEADERS += gui/People/PeopleDialog.h
-HEADERS += gui/People/IdentityItem.h
-HEADERS += gui/People/CircleItem.h
-HEADERS += gui/People/GroupListView.h 
-FORMS   += gui/People/PeopleDialog.ui 
-SOURCES += gui/People/PeopleDialog.cpp 
-SOURCES += gui/People/GroupListView.cpp 
-SOURCES += gui/People/IdentityItem.cpp
-SOURCES += gui/People/CircleItem.cpp
-
 identities {
 	
 	HEADERS +=  \
@@ -1143,7 +1137,27 @@ gxscircles {
 	SOURCES +=  \
 		gui/Circles/CirclesDialog.cpp \
 		gui/Circles/CreateCircleDialog.cpp \
-	
+
+	HEADERS += gui/People/PeopleDialog.h
+	HEADERS += gui/People/CircleWidget.h
+	HEADERS += gui/People/IdentityWidget.h
+
+	FORMS   += gui/People/PeopleDialog.ui 
+	FORMS   += gui/People/CircleWidget.ui
+	FORMS   += gui/People/IdentityWidget.ui
+
+	SOURCES += gui/People/PeopleDialog.cpp 
+	SOURCES += gui/People/CircleWidget.cpp
+	SOURCES += gui/People/IdentityWidget.cpp
+
+#HEADERS += gui/People/IdentityItem.h
+#HEADERS += gui/People/CircleItem.h
+#HEADERS += gui/People/GroupListView.h
+#SOURCES += gui/People/GroupListView.cpp
+#SOURCES += gui/People/IdentityItem.cpp
+#SOURCES += gui/People/CircleItem.cpp
+
+
 }
 	
 	

@@ -53,6 +53,52 @@
         this->mParentGrpId = rGxsMeta.mParentGrpId;
 	}
 
+	bool RsGroupMetaData::operator ==(const RsGroupMetaData& rGxsMeta)
+	{
+		return ( this->mGroupId == rGxsMeta.mGroupId
+		         && this->mGroupName == rGxsMeta.mGroupName
+		         && this->mGroupFlags == rGxsMeta.mGroupFlags
+		         && this->mSignFlags == rGxsMeta.mSignFlags
+		         && this->mPublishTs == rGxsMeta.mPublishTs
+		         && this->mAuthorId == rGxsMeta.mAuthorId
+		         && this->mCircleId == rGxsMeta.mCircleId
+		         && this->mCircleType == rGxsMeta.mCircleType
+		         && this->mAuthenFlags == rGxsMeta.mAuthenFlags
+		         && this->mParentGrpId == rGxsMeta.mParentGrpId
+		         && this->mSubscribeFlags == rGxsMeta.mSubscribeFlags
+		         && this->mPop == rGxsMeta.mPop
+		         && this->mMsgCount == rGxsMeta.mMsgCount
+		         && this->mLastPost == rGxsMeta.mLastPost
+		         && this->mGroupStatus == rGxsMeta.mGroupStatus
+		         && this->mServiceString == rGxsMeta.mServiceString
+		         && this->mOriginator == rGxsMeta.mOriginator
+		         && this->mInternalCircle == rGxsMeta.mInternalCircle
+		         );
+	}
+
+	bool RsGroupMetaData::operator !=(const RsGroupMetaData &rGxsMeta)
+	{
+		return ( this->mGroupId != rGxsMeta.mGroupId
+		    || this->mGroupName != rGxsMeta.mGroupName
+		    || this->mGroupFlags != rGxsMeta.mGroupFlags
+		    || this->mSignFlags != rGxsMeta.mSignFlags
+		    || this->mPublishTs != rGxsMeta.mPublishTs
+		    || this->mAuthorId != rGxsMeta.mAuthorId
+		    || this->mCircleId != rGxsMeta.mCircleId
+		    || this->mCircleType != rGxsMeta.mCircleType
+		    || this->mAuthenFlags != rGxsMeta.mAuthenFlags
+		    || this->mParentGrpId != rGxsMeta.mParentGrpId
+		    || this->mSubscribeFlags != rGxsMeta.mSubscribeFlags
+		    || this->mPop != rGxsMeta.mPop
+		    || this->mMsgCount != rGxsMeta.mMsgCount
+		    || this->mLastPost != rGxsMeta.mLastPost
+		    || this->mGroupStatus != rGxsMeta.mGroupStatus
+		    || this->mServiceString != rGxsMeta.mServiceString
+		    || this->mOriginator != rGxsMeta.mOriginator
+		    || this->mInternalCircle != rGxsMeta.mInternalCircle
+		    );
+	}
+
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
 {

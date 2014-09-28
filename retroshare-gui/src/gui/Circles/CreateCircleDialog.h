@@ -40,7 +40,10 @@ public:
 	~CreateCircleDialog();
 
 	void editNewId(bool isExternal);
-	void editExistingId(const RsGxsGroupId& circleId);
+	void editExistingId(const RsGxsGroupId &circleId, const bool &clearList = true);
+	void addMember(const QString &keyId, const QString &idtype, const QString &nickname );
+	void addMember(const RsGxsIdGroup &idGroup);
+	void addCircle(const RsGxsCircleDetails &cirDetails);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
@@ -58,7 +61,6 @@ private slots:
 private:
 
 	void updateCircleGUI();
-	void addMember(const QString& keyId, const QString& idtype, const QString& nickname );
 
 	void setupForPersonalCircle();
 	void setupForExternalCircle();
@@ -79,6 +81,7 @@ private:
 	TokenQueue *mIdQueue;
 
 	RsGxsCircleGroup mCircleGroup; // for editting existing Circles.
+	bool mClearList;
 
 	/** Qt Designer generated object */
 	Ui::CreateCircleDialog ui;

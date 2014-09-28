@@ -106,12 +106,29 @@ class RsGxsCircleDetails
 	uint32_t    mCircleType;
 	bool 	    mIsExternal;
 
+	bool operator ==(const RsGxsCircleDetails& rGxsDetails) {
+		return ( mCircleId == rGxsDetails.mCircleId
+		      && mCircleName == rGxsDetails.mCircleName
+		      && mCircleType == rGxsDetails.mCircleType
+		      && mIsExternal == rGxsDetails.mIsExternal
+		      && mUnknownPeers == rGxsDetails.mUnknownPeers
+		      && mAllowedPeers == rGxsDetails.mAllowedPeers
+		      );
+	}
+
+	bool operator !=(const RsGxsCircleDetails& rGxsDetails) {
+		return ( mCircleId != rGxsDetails.mCircleId
+		      || mCircleName != rGxsDetails.mCircleName
+		      || mCircleType != rGxsDetails.mCircleType
+		      || mIsExternal != rGxsDetails.mIsExternal
+		      || mUnknownPeers != rGxsDetails.mUnknownPeers
+		      || mAllowedPeers != rGxsDetails.mAllowedPeers
+		      );
+	}
+
         std::set<RsGxsId> mUnknownPeers;
         std::map<RsPgpId, std::list<RsGxsId> > mAllowedPeers;
 };
-
-
-
 
 class RsGxsCircles: public RsGxsIfaceHelper
 {

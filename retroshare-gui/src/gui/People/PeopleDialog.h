@@ -27,26 +27,70 @@
 
 #include <retroshare/rsidentity.h>
 
+#include "gui/People/CircleWidget.h"
+#include "gui/People/IdentityWidget.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "util/TokenQueue.h"
 
 #include "ui_PeopleDialog.h"
 
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
 
 class UIStateHelper;
+//class IdentityItem ;
+//class CircleItem ;
 
-class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog
+class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, public TokenResponse
 {
 	Q_OBJECT
 
 	public:
+	static const uint32_t PD_IDLIST    ;
+	static const uint32_t PD_IDDETAILS ;
+	static const uint32_t PD_REFRESH   ;
+	static const uint32_t PD_CIRCLES   ;
+
 		PeopleDialog(QWidget *parent = 0);
 
 		virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDENTITY) ; } //MainPage
 		virtual QString pageName() const { return tr("People") ; } //MainPage
 		virtual QString helpText() const { return ""; } //MainPage
 
+	// Derives from RsGxsUpdateBroadcastPage
+//	virtual void updateDisplay(bool) ;
+	void loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req) ;
+
+	void requestIdList() ;
+	void requestCirclesList() ;
+
+	void insertIdList(uint32_t token) ;
+	void insertCircles(uint32_t token) ;
+
 	protected:
 		virtual void updateDisplay(bool complete);
 
+private slots:
+	void cw_askForGXSIdentityWidget(RsGxsId gxs_id);
+	void cw_askForPGPIdentityWidget(RsPgpId pgp_id);
+	void fl_flowLayoutItemDropped(QList<FlowLayoutItem *> flListItem, bool &bAccept);
+	void pf_centerIndexChanged(int index);
+	void pf_mouseMoveOverSlideEvent(QMouseEvent* event, int slideIndex);
+	void pf_dragEnterEventOccurs(QDragEnterEvent *event);
+	void pf_dragMoveEventOccurs(QDragMoveEvent *event);
+	void pf_dropEventOccurs(QDropEvent *event);
+
+private:
+	void populatePictureFlow();
+
+	TokenQueue *mIdentityQueue;
+	TokenQueue *mCirclesQueue;
+	UIStateHelper *mStateHelper;
+
+	FlowLayout *_flowLayout;
+	std::map<RsPgpId,IdentityWidget *> _pgp_identity_widgets ;
+	std::map<RsGxsId,IdentityWidget *> _gxs_identity_widgets ;
+	std::map<RsGxsGroupId,CircleWidget *> _circles_widgets ;
+	//QList<IdentityWidget*> listId;
+	QList<CircleWidget*> _listCir;
 };
 
