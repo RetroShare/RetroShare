@@ -209,6 +209,27 @@ void RsGenExchange::tick()
 		{
 			if(mIntegrityCheck->isDone())
 			{
+				std::list<RsGxsGroupId> grpIds;
+				std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+				mIntegrityCheck->getDeletedIds(grpIds, msgIds);
+
+				if (!grpIds.empty())
+				{
+					RsStackMutex stack(mGenMtx);
+
+					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
+					gc->mGrpIdList = grpIds;
+					mNotifications.push_back(gc);
+				}
+
+				if (!msgIds.empty()) {
+					RsStackMutex stack(mGenMtx);
+
+					RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
+					c->msgChangeMap = msgIds;
+					mNotifications.push_back(c);
+				}
+
 				mIntegrityCheck->join();
 				delete mIntegrityCheck;
 				mIntegrityCheck = NULL;

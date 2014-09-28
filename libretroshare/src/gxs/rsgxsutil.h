@@ -120,13 +120,15 @@ public:
 
 	void run();
 
+	void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
+
 private:
 
 	RsGeneralDataService* const mDs;
-	std::vector<RsNxsItem*> mItems;
 	bool mDone;
 	RsMutex mIntegrityMutex;
-
+	std::list<RsGxsGroupId> mDeletedGrps;
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mDeletedMsgs;
 };
 
 class GroupUpdate

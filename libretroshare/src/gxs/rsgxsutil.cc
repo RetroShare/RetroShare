@@ -123,6 +123,8 @@ bool RsGxsIntegrityCheck::check()
 	std::map<RsGxsGroupId, RsNxsGrp*> grp;
 	mDs->retrieveNxsGrps(grp, true, true);
 	std::vector<RsGxsGroupId> grpsToDel;
+	GxsMsgReq msgIds;
+	GxsMsgReq grps;
 
 	// compute hash and compare to stored value, if it fails then simply add it
 	// to list
@@ -135,7 +137,24 @@ bool RsGxsIntegrityCheck::check()
 		pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
 		pHash.Complete(currHash);
 
-		if(currHash != grp->metaData->mHash) grpsToDel.push_back(grp->grpId);
+		if(currHash == grp->metaData->mHash)
+		{
+			// get all message ids of group
+			if (mDs->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
+			{
+				// store the group for retrieveNxsMsgs
+				grps[grp->grpId];
+			}
+			else
+			{
+				msgIds.erase(msgIds.find(grp->grpId));
+//				grpsToDel.push_back(grp->grpId);
+			}
+		}
+		else
+		{
+			grpsToDel.push_back(grp->grpId);
+		}
 		delete grp;
 	}
 
@@ -145,11 +164,41 @@ bool RsGxsIntegrityCheck::check()
 	GxsMsgReq msgsToDel;
 	GxsMsgResult msgs;
 
-	mDs->retrieveNxsMsgs(msgsToDel, msgs, false, true);
+	mDs->retrieveNxsMsgs(grps, msgs, false, true);
+
+	// check msg ids and messages
+	GxsMsgReq::iterator msgIdsIt;
+	for (msgIdsIt = msgIds.begin(); msgIdsIt != msgIds.end(); ++msgIdsIt)
+	{
+		const RsGxsGroupId& grpId = msgIdsIt->first;
+		std::vector<RsGxsMessageId> &msgIdV = msgIdsIt->second;
+
+		std::vector<RsGxsMessageId>::iterator msgIdIt;
+		for (msgIdIt = msgIdV.begin(); msgIdIt != msgIdV.end(); ++msgIdIt)
+		{
+			const RsGxsMessageId& msgId = *msgIdIt;
+			std::vector<RsNxsMsg*> &nxsMsgV = msgs[grpId];
+
+			std::vector<RsNxsMsg*>::iterator nxsMsgIt;
+			for (nxsMsgIt = nxsMsgV.begin(); nxsMsgIt != nxsMsgV.end(); ++nxsMsgIt)
+			{
+				RsNxsMsg *nxsMsg = *nxsMsgIt;
+				if (nxsMsg && msgId == nxsMsg->msgId)
+				{
+					break;
+				}
+			}
+
+			if (nxsMsgIt == nxsMsgV.end())
+			{
+				msgsToDel[grpId].push_back(msgId);
+			}
+		}
+	}
 
 	GxsMsgResult::iterator mit = msgs.begin();
 
-	for(; mit != msgs.begin(); mit++)
+	for(; mit != msgs.end(); mit++)
 	{
 		std::vector<RsNxsMsg*>& msgV = mit->second;
 		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
@@ -172,6 +221,13 @@ bool RsGxsIntegrityCheck::check()
 	RsStackMutex stack(mIntegrityMutex);
 	mDone = true;
 
+	std::vector<RsGxsGroupId>::iterator grpIt;
+	for(grpIt = grpsToDel.begin(); grpIt != grpsToDel.end(); ++grpIt)
+	{
+		mDeletedGrps.push_back(*grpIt);
+	}
+	mDeletedMsgs = msgsToDel;
+
 	return true;
 }
 
@@ -179,5 +235,13 @@ bool RsGxsIntegrityCheck::isDone()
 {
 	RsStackMutex stack(mIntegrityMutex);
 	return mDone;
+}
+
+void RsGxsIntegrityCheck::getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds)
+{
+	RsStackMutex stack(mIntegrityMutex);
+
+	grpIds = mDeletedGrps;
+	msgIds = mDeletedMsgs;
 }
 
