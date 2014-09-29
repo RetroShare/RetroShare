@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>IdentityWidget</class>
  <widget class="QWidget" name="IdentityWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>102</width>
+    <height>153</height>
+   </rect>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
@@ -56,6 +64,9 @@
      <property name="text">
       <string>Name</string>
      </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
@@ -63,6 +74,12 @@
    </item>
    <item>
     <widget class="QLabel" name="labelKeyId">
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
       <string>KeyId</string>
      </property>
