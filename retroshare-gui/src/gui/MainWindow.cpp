@@ -70,7 +70,9 @@
 #include "gui/GetStartedDialog.h"
 #endif
 
+#ifdef RS_USE_CIRCLES
 #include "gui/People/PeopleDialog.h"
+#endif
 #include "idle/idle.h"
 
 #include "statusbar/peerstatus.h"
