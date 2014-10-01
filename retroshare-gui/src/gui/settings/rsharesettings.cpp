@@ -458,7 +458,7 @@ void RshareSettings::setNotifyFlags(uint flags)
 
 uint RshareSettings::getMessageFlags()
 {
-	return value("MessageFlags").toUInt();
+  return value("MessageFlags", RS_MESSAGE_CONNECT_ATTEMPT).toUInt();
 }
 
 void RshareSettings::setMessageFlags(uint flags)
