@@ -13,7 +13,8 @@
 #include <gui/gxs/GxsIdDetails.h>
 #include "IdentityItem.h"
 
-#define IMAGE_MAKEFRIEND ""
+#define IMAGE_MAKEFRIEND ":/images/user/add_user16.png"
+#define IMAGE_CHAT       ":/images/chat_24.png"
 
 IdentityItem *IdentityItem::_selected_node = NULL ;
 
@@ -69,6 +70,8 @@ void IdentityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::lightGray);
 	//painter->drawEllipse(-7, -7, 20, 20);
+	
+	painter->setRenderHint(QPainter::Antialiasing);
 
 	QRadialGradient gradient(-10, -IMG_SIZE/3.0, IMG_SIZE*1.5);
 	gradient.setColorAt(0.0f,Qt::lightGray) ;
@@ -118,7 +121,7 @@ void IdentityItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 	QMenu contextMnu ;
 
 	contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Peer details" ), this, SLOT(peerDetails()) );
-	contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Chat this peer" ), this, SLOT(distantChat()) );
+	contextMnu.addAction(QIcon(IMAGE_CHAT), QObject::tr( "Chat this peer" ), this, SLOT(distantChat()) );
 	contextMnu.exec(event->screenPos());
 }
 
@@ -138,5 +141,4 @@ void IdentityItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 }
-
 

@@ -25,6 +25,8 @@ CircleWidget::CircleWidget(QString name/*=QString()*/
 	ui->graphicsView->setEnabled(false);
 
 	ui->graphicsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+	
+	ui->graphicsView->setRenderHints( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
 
 	setIsCurrent(false);
 	setIsSelected(false);

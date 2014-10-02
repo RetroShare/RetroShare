@@ -28,7 +28,7 @@
       </font>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Suggestions&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>People you may know on RetroShare</string>
      </property>
     </widget>
    </item>
