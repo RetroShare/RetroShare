@@ -44,15 +44,13 @@ win32 {
 	HEADERS += upnp/upnputil.h
 	SOURCES += upnp/upnputil.c
 
-	UPNPC_DIR = ../../../lib/miniupnpc-1.3
-	ZLIB_DIR = ../../../lib/zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1h
+	LIBS_DIR = $$PWD/../../../libs
 
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
+	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
 
 	PRE_TARGETDEPS += ../../retroshare-gui/src/lib/libretroshare-gui.a
 	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
 
-	LIBS += -L"$$PWD/../../../lib"
+	LIBS += -L"$$LIBS_DIR/lib"
 	LIBS += -lpthread
 }

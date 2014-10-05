@@ -23,11 +23,8 @@ linux-* {
 }
 
 win32 {
-	SPEEX_DIR = ../../../speex-1.2rc1
-	OPENCV_DIR = ../../../lib/opencv
-
-	INCLUDEPATH += $${SPEEX_DIR}/include $${OPENCV_DIR}/include
-	LIBS += -L"$$OPENCV_DIR/x86/mingw/staticlib"
+	LIBS_DIR = $$PWD/../../../libs
+	LIBS += -L"$$LIBS_DIR/lib/opencv"
 
 	LIBS += -lopencv_core249 -lopencv_highgui249 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32 -lz
 }

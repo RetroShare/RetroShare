@@ -181,7 +181,7 @@ Section $(Section_Main) Section_Main
   File "${MINGWDIR}\bin\libwinpthread-1.dll"
 
   ; External binaries
-  File "${SOURCEDIR}\..\lib\bin\miniupnpc.dll"
+  File "${SOURCEDIR}\..\libs\bin\miniupnpc.dll"
 
   ; Other files
   File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"

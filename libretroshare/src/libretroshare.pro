@@ -229,19 +229,10 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
-	UPNPC_DIR = ../../../miniupnpc-1.3
+	LIBS_DIR = $$PWD/../../../libs
+	OPENPGPSDK_DIR = $$PWD/../../openpgpsdk/src
 
-	ZLIB_DIR = ../../../zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1h
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
-
-	# SQLite include path is required to compile GXS.
-	gxs {
-		SQLITE_DIR = ../../../sqlcipher-2.2.0
-		INCLUDEPATH += $${SQLITE_DIR}
-	}
+	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
 }
 
 ################################# MacOSX ##########################################
