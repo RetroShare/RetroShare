@@ -175,6 +175,13 @@ public:
     bool validSize(RsNxsMsg* msg) const;
     bool validSize(RsNxsGrp* grp) const;
 
+    /*!
+     * Convenience function used to only update group keys. This is used when sending
+     * publish keys between peers.
+     * @return SQL error code
+     */
+
+    int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys, uint32_t subscribe_flags) ;
 
 private:
 

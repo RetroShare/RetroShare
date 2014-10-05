@@ -87,6 +87,14 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
 
 }
 
+void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
+{
+    if(mNetService != NULL)
+        std::cerr << "(EE) Cannot override existing network exchange service. Make sure it has been deleted otherwise." << std::endl;
+    else
+        mNetService = ns ;
+}
+
 #ifdef TO_BE_DELETED_IF_NOT_USEFUL
 // This class has been tested so as to see where the database gets modified.
 class RsDataBaseTester
@@ -1436,6 +1444,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 
 }
 
+
 void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 {
     RsStackMutex stack(mGenMtx);
@@ -2019,11 +2028,12 @@ void RsGenExchange::processGroupUpdatePublish()
 	mGroupUpdatePublish.clear();
 }
 
+
 void RsGenExchange::processGroupDelete()
 {
 	RsStackMutex stack(mGenMtx);
 
-	// get keys for group delete publish
+    // get keys for group delete publish
 	typedef std::pair<bool, RsGxsGroupId> GrpNote;
 	std::map<uint32_t, GrpNote> toNotify;
 
@@ -2349,6 +2359,14 @@ bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet 
     return true;
 }
 
+void RsGenExchange::shareGroupPublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)
+{
+    if(grpId.isNull())
+        return ;
+
+    mNetService->sharePublishKey(grpId,peers) ;
+}
+
 void RsGenExchange::processRecvdData()
 {
     processRecvdGroups();
@@ -2356,6 +2374,7 @@ void RsGenExchange::processRecvdData()
     processRecvdMessages();
 
     performUpdateValidation();
+
 }
 
 
@@ -2628,7 +2647,7 @@ void RsGenExchange::processRecvdGroups()
 
 #ifdef GEN_EXCH_DEBUG
 				std::cerr << "failed to validate incoming grp, trying again. grpId: "
-						<< grp->grpId << std::endl;
+                        << grp->grpId << std::endl;
 #endif
 
         		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)

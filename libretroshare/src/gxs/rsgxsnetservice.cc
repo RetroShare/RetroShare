@@ -51,7 +51,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                      : p3ThreadedService(), p3Config(), mTransactionN(0),
                                        mObserver(nxsObs), mDataStore(gds), mServType(servType),
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
-                                       mSyncTs(0), mSYNC_PERIOD(SYNC_PERIOD), mCircles(circles), mReputations(reputations), 
+                                       mSyncTs(0), mLastKeyPublishTs(0), mSYNC_PERIOD(SYNC_PERIOD), mCircles(circles), mReputations(reputations),
 					mPgpUtils(pgpUtils),
 					mGrpAutoSync(grpAutoSync), mGrpServerUpdateItem(NULL),
 					mServiceInfo(serviceInfo)
@@ -74,13 +74,19 @@ int RsGxsNetService::tick()
     if(receivedItems())
         recvNxsItemQueue();
 
-    uint32_t now = time(NULL);
-    uint32_t elapsed = mSYNC_PERIOD + mSyncTs;
+    time_t now = time(NULL);
+    time_t elapsed = mSYNC_PERIOD + mSyncTs;
 
     if((elapsed) < now)
     {
     	syncWithPeers();
     	mSyncTs = now;
+    }
+
+    if(now > 10 + mLastKeyPublishTs)
+    {
+        sharePublishKeysPending() ;
+        mLastKeyPublishTs = now ;
     }
 
     return 1;
@@ -754,7 +760,8 @@ void RsGxsNetService::recvNxsItemQueue(){
 			{
 				case RS_PKT_SUBTYPE_NXS_SYNC_GRP: handleRecvSyncGroup (dynamic_cast<RsNxsSyncGrp*>(ni)) ; break ;
 				case RS_PKT_SUBTYPE_NXS_SYNC_MSG: handleRecvSyncMessage (dynamic_cast<RsNxsSyncMsg*>(ni)) ; break ;
-				default:
+                case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY: handleRecvPublishKeys (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
+                default:
 					std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
 			}
 			delete item ;
@@ -2727,3 +2734,205 @@ void RsGxsNetService::processExplicitGroupRequests()
 
 	mExplicitRequest.clear();
 }
+
+#define NXS_NET_DEBUG
+int RsGxsNetService::sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)
+{
+	RsStackMutex stack(mNxsMutex);
+
+	mPendingPublishKeyRecipients[grpId] = peers ;
+
+    std::cerr << "RsGxsNetService::sharePublishKeys() " << (void*)this << " adding publish keys for grp " << grpId << " to sending list" << std::endl;
+
+    return true ;
+}
+
+void RsGxsNetService::sharePublishKeysPending()
+{
+    RsStackMutex stack(mNxsMutex);
+
+    if(mPendingPublishKeyRecipients.empty())
+        return ;
+
+#ifdef NXS_NET_DEBUG
+    std::cerr << "RsGxsNetService::sharePublishKeys()  " << (void*)this << std::endl;
+#endif
+    // get list of peers that are online
+
+    std::set<RsPeerId> peersOnline;
+    std::list<RsGxsGroupId> toDelete;
+    std::map<RsGxsGroupId,std::list<RsPeerId> >::iterator mit ;
+
+    mNetMgr->getOnlineList(mServiceInfo.mServiceType, peersOnline);
+
+#ifdef NXS_NET_DEBUG
+    std::cerr << "  " << peersOnline.size() << " peers online." << std::endl;
+#endif
+    /* send public key to peers online */
+
+    for(mit = mPendingPublishKeyRecipients.begin();  mit != mPendingPublishKeyRecipients.end(); ++mit)
+    {
+        // Compute the set of peers to send to. We start with this, to avoid retrieving the data for nothing.
+
+        std::list<RsPeerId> recipients ;
+        std::list<RsPeerId> offline_recipients ;
+
+        for(std::list<RsPeerId>::const_iterator it(mit->second.begin());it!=mit->second.end();++it)
+            if(peersOnline.find(*it) != peersOnline.end())
+            {
+#ifdef NXS_NET_DEBUG
+                std::cerr << "    " << *it << ": online. Adding." << std::endl;
+#endif
+                recipients.push_back(*it) ;
+            }
+            else
+            {
+#ifdef NXS_NET_DEBUG
+                std::cerr << "    " << *it << ": offline. Keeping for next try." << std::endl;
+#endif
+                offline_recipients.push_back(*it) ;
+            }
+
+        // If empty, skip
+
+        if(recipients.empty())
+        {
+            std::cerr << "  No recipients online. Skipping." << std::endl;
+            continue ;
+        }
+
+        // Get the meta data for this group Id
+        //
+        std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaMap;
+        grpMetaMap[mit->first] = NULL;
+        mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+
+        // Find the publish keys in the retrieved info
+
+        RsGxsGrpMetaData *grpMeta = grpMetaMap[mit->first] ;
+
+        if(grpMeta == NULL)
+        {
+            std::cerr << "(EE) RsGxsNetService::sharePublishKeys() Publish keys cannot be found for group " << mit->first << std::endl;
+            continue ;
+        }
+
+        const RsTlvSecurityKeySet& keys = grpMeta->keys;
+
+        std::map<RsGxsId, RsTlvSecurityKey>::const_iterator kit = keys.keys.begin(), kit_end = keys.keys.end();
+        bool publish_key_found = false;
+        RsTlvSecurityKey publishKey ;
+
+        for(; kit != kit_end && !publish_key_found; ++kit)
+        {
+            publish_key_found = (kit->second.keyFlags == (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL));
+            publishKey = kit->second ;
+        }
+
+        if(!publish_key_found)
+        {
+            std::cerr << "(EE) no publish key in group " << mit->first << ". Cannot share!" << std::endl;
+            continue ;
+        }
+
+
+#ifdef NXS_NET_DEBUG
+        std::cerr << "  using publish key ID=" << publishKey.keyId << ", flags=" << publishKey.keyFlags << std::endl;
+#endif
+        for(std::list<RsPeerId>::const_iterator it(recipients.begin());it!=recipients.end();++it)
+        {
+            /* Create publish key sharing item */
+            RsNxsGroupPublishKeyItem *publishKeyItem = new RsNxsGroupPublishKeyItem(mServType);
+
+            publishKeyItem->clear();
+            publishKeyItem->grpId = mit->first;
+
+            publishKeyItem->key = publishKey ;
+            publishKeyItem->PeerId(*it);
+
+            sendItem(publishKeyItem);
+#ifdef NXS_NET_DEBUG
+            std::cerr << "  sent key item to " << *it << std::endl;
+#endif
+        }
+
+        mit->second = offline_recipients ;
+
+        // If given peers have all received key(s) then stop sending for group
+        if(offline_recipients.empty())
+            toDelete.push_back(mit->first);
+    }
+
+    // delete pending peer list which are done with
+    for(std::list<RsGxsGroupId>::const_iterator lit = toDelete.begin(); lit != toDelete.end(); lit++)
+        mPendingPublishKeyRecipients.erase(*lit);
+}
+
+void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
+{
+#ifdef NXS_NET_DEBUG
+    std::cerr << "RsGxsNetService::sharePublishKeys() " << std::endl;
+#endif
+	 RsStackMutex stack(mNxsMutex);
+
+#ifdef NXS_NET_DEBUG
+	 std::cerr << "  PeerId : " << item->PeerId() << std::endl;
+	 std::cerr << "  GrpId: " << item->grpId << std::endl;
+     std::cerr << "  Got key Item: " << item->key.keyId << std::endl;
+#endif
+
+	 // Get the meta data for this group Id
+	 //
+	 std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaMap;
+	 grpMetaMap[item->grpId] = NULL;
+	 mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+
+	 // update the publish keys in this group meta info
+
+	 RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
+
+	 // Check that the keys correspond, and that FULL keys are supplied, etc.
+
+	 std::cerr << "  Key received: " << std::endl;
+
+	 bool admin = (item->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)   && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+	 bool publi = (item->key.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE) && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+
+     std::cerr << "    Key id = " << item->key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->key.endTS << std::endl;
+
+     if(!(!admin && publi))
+     {
+         std::cerr << "  Key is not a publish private key. Discarding!" << std::endl;
+         return ;
+     }
+	 // Also check that we don't already have full keys for that group.
+	 
+     std::map<RsGxsId,RsTlvSecurityKey>::iterator it = grpMeta->keys.keys.find(item->key.keyId) ;
+
+     if(it == grpMeta->keys.keys.end())
+     {
+         std::cerr << "   (EE) Key not found in known group keys. This is an inconsistency." << std::endl;
+         return ;
+     }
+
+     if((it->second.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE) && (it->second.keyFlags & RSTLV_KEY_TYPE_FULL))
+     {
+         std::cerr << "   (EE) Publish key already present in database. Discarding message." << std::endl;
+//         return ;
+     }
+
+	 // Store/update the info.
+
+     //std::cerr << "  (WW) Skipping key update, until fully debugged." << std::endl;
+
+     it->second = item->key ;
+     bool ret = mDataStore->updateGroupKeys(item->grpId,grpMeta->keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
+
+	 if(!ret)
+		 std::cerr << "(EE) could not update database. Something went wrong." << std::endl;
+#ifdef NXS_NET_DEBUG
+	 else
+		 std::cerr << "  updated database with new publish keys." << std::endl;
+#endif
+}
+

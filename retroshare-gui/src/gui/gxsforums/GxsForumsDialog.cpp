@@ -24,7 +24,7 @@
 #include "GxsForumThreadWidget.h"
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
-#include "gui/channels/ShareKey.h"
+#include "gui/gxschannels/GxsChannelShareKey.h"
 
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)

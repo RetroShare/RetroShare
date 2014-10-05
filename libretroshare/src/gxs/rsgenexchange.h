@@ -137,6 +137,7 @@ public:
     // and passes to network service.
     virtual RsServiceInfo getServiceInfo() = 0; 
 
+    void setNetworkExchangeService(RsNetworkExchangeService *ns) ;
 
     /** S: Observer implementation **/
 
@@ -631,6 +632,12 @@ public:
      * @param servString The service string to set msg to
      */
     void setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
+
+    /*!
+     * sets the message service string
+     */
+
+    void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers) ;
 
 protected:
 

@@ -1382,7 +1382,7 @@ int RsServer::StartupRetroShare()
 			mGxsIdService, mGxsCircles,
 			pgpAuxUtils);
 
-
+    mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
 
 #if 0 // PHOTO IS DISABLED FOR THE MOMENT
         /**** Photo service ****/

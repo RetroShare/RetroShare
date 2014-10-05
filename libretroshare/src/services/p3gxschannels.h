@@ -88,7 +88,7 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
 
 //virtual bool groupRestoreKeys(const std::string &groupId);
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
+    virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::list<RsPeerId>& peers) ;
 
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group);
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post);

@@ -23,7 +23,7 @@
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
 #include "GxsChannelUserNotify.h"
-#include "gui/channels/ShareKey.h"
+#include "GxsChannelShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
@@ -78,10 +78,9 @@ QString GxsChannelDialog::text(TextType type)
 		return tr("Create Channel");
 	case TEXT_TODO:
 		return "<b>Open points:</b><ul>"
-		        "<li>Share key"
 		        "<li>Restore channel keys"
 		        "<li>Navigate channel link"
-		        "<li>Don't show own posts as unread"
+                "<li>Don't show own posts as unread"
 		        "</ul>";
 
 	case TEXT_YOUR_GROUP:

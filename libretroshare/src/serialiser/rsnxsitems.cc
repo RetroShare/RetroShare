@@ -42,9 +42,13 @@ uint32_t RsNxsSerialiser::size(RsItem *item) {
     RsNxsSyncMsg* sgm;
     RsNxsSyncMsgItem* sgml;
     RsNxsTransac* ntx;
+    RsNxsGroupPublishKeyItem* npk;
 
 
-    if((sg = dynamic_cast<RsNxsSyncGrp*>(item))  != NULL)
+    if((npk = dynamic_cast<RsNxsGroupPublishKeyItem*>(item))  != NULL)
+    {
+        return sizeNxsGroupPublishKeyItem(npk);
+    } else if((sg = dynamic_cast<RsNxsSyncGrp*>(item))  != NULL)
     {
         return sizeNxsSyncGrp(sg);
 
@@ -109,6 +113,8 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
             return deserialNxsMsg(data, size);
         case RS_PKT_SUBTYPE_NXS_TRANS:
             return deserialNxsTrans(data, size);
+        case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY:
+            return deserialNxsGroupPublishKeyItem(data, size);
         default:
             {
 #ifdef RSSERIAL_DEBUG
@@ -132,6 +138,7 @@ bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size){
     RsNxsSyncMsg* sgm;
     RsNxsSyncMsgItem* sgml;
     RsNxsTransac* ntx;
+    RsNxsGroupPublishKeyItem* gpk;
 
     if((sg = dynamic_cast<RsNxsSyncGrp*>(item))  != NULL)
     {
@@ -157,6 +164,9 @@ bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size){
     }else if((nmg = dynamic_cast<RsNxsMsg*>(item)) != NULL)
     {
         return serialiseNxsMsg(nmg, data, size);
+    }else if((gpk = dynamic_cast<RsNxsGroupPublishKeyItem*>(item)) != NULL)
+    {
+        return serialiseNxsGroupPublishKeyItem(gpk, data, size);
     }
 
 #ifdef NXS_DEBUG
@@ -469,7 +479,6 @@ bool RsNxsSerialiser::serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data
     return ok;
 }
 
-
 bool RsNxsSerialiser::serialiseNxsSyncMsg(RsNxsSyncMsg *item, void *data, uint32_t *size){
 #ifdef RSSERIAL_DEBUG
     std::cerr << "RsNxsSerialiser::serialiseNxsSyncMsg()" << std::endl;
@@ -514,6 +523,46 @@ bool RsNxsSerialiser::serialiseNxsSyncMsg(RsNxsSyncMsg *item, void *data, uint32
         std::cerr << "RsNxsSerialiser::serialiseNxsSyncMsg( NOK" << std::endl;
     }
 #endif
+
+    return ok;
+}
+
+
+bool RsNxsSerialiser::serialiseNxsGroupPublishKeyItem(RsNxsGroupPublishKeyItem *item, void *data, uint32_t *size){
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsNxsSerialiser::serialiseNxsSyncMsg()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeNxsGroupPublishKeyItem(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsNxsSerialiser::serialiseNxsSyncMsg()" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= item->grpId.serialise(data, *size, offset) ;
+    ok &= item->key.SetTlv(data, *size, &offset) ;
+
+    if(offset != tlvsize)
+    {
+        std::cerr << "RsNxsSerialiser::serialiseGroupPublishKeyItem() FAIL Size Error! " << std::endl;
+        ok = false;
+    }
+
+    if (!ok)
+        std::cerr << "RsNxsSerialiser::serialiseGroupPublishKeyItem( NOK" << std::endl;
 
     return ok;
 }
@@ -1001,6 +1050,68 @@ RsNxsSyncMsg* RsNxsSerialiser::deserialNxsSyncMsg(void *data, uint32_t *size)
 
     return item;
 }
+RsNxsGroupPublishKeyItem* RsNxsSerialiser::deserialNxsGroupPublishKeyItem(void *data, uint32_t *size)
+{
+
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsNxsSerialiser::deserialNxsGroupPublishKeyItem()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (SERVICE_TYPE != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY != getRsItemSubType(rstype)))
+    {
+            std::cerr << "RsNxsSerialiser::deserialNxsGroupPublishKeyItem() FAIL wrong type" << std::endl;
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+            std::cerr << "RsNxsSerialiser::deserialNxsGroupPublishKeyItem() FAIL wrong size" << std::endl;
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsNxsGroupPublishKeyItem* item = new RsNxsGroupPublishKeyItem(getRsItemService(rstype));
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= item->grpId.deserialise(data, *size, offset);
+    ok &= item->key.GetTlv(data, *size, &offset) ;
+
+    if (offset != rssize)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsGroupPublishKeyItem() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsGroupPublishKeyItem() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+}
 
 
 /*** size functions ***/
@@ -1034,7 +1145,15 @@ uint32_t RsNxsSerialiser::sizeNxsGrp(RsNxsGrp *item)
     return s;
 }
 
+uint32_t RsNxsSerialiser::sizeNxsGroupPublishKeyItem(RsNxsGroupPublishKeyItem *item)
+{
+    uint32_t s = 8; // header size
 
+    s += item->grpId.serial_size() ;
+    s += item->key.TlvSize();
+
+    return s;
+}
 uint32_t RsNxsSerialiser::sizeNxsSyncGrp(RsNxsSyncGrp *item)
 {
     uint32_t s = 8; // header size
@@ -1129,7 +1248,10 @@ void RsNxsSyncGrp::clear()
     syncHash.clear();
     updateTS = 0;
 }
-
+void RsNxsGroupPublishKeyItem::clear()
+{
+    key.TlvClear();
+}
 void RsNxsSyncMsg::clear()
 {
     grpId.clear();
@@ -1162,7 +1284,6 @@ void RsNxsTransac::clear(){
     timestamp = 0;
     transactionNumber = 0;
 }
-
 std::ostream& RsNxsSyncGrp::print(std::ostream &out, uint16_t indent)
 {
 
@@ -1179,6 +1300,21 @@ std::ostream& RsNxsSyncGrp::print(std::ostream &out, uint16_t indent)
     out << "updateTS: " << updateTS << std::endl;
 
     printRsItemEnd(out ,"RsNxsSyncGrp", indent);
+
+    return out;
+}
+std::ostream& RsNxsGroupPublishKeyItem::print(std::ostream &out, uint16_t indent)
+{
+
+    printRsItemBase(out, "RsNxsGroupPublishKeyItem", indent);
+    uint16_t int_Indent = indent + 2;
+
+    printIndent(out , int_Indent);
+    out << "GroupId: " << grpId << std::endl;
+    printIndent(out , int_Indent);
+    out << "keyId: " << key.keyId << std::endl;
+
+    printRsItemEnd(out ,"RsNxsGroupPublishKeyItem", indent);
 
     return out;
 }

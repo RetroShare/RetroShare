@@ -19,18 +19,17 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "ShareKey.h"
+#include "GxsChannelShareKey.h"
 
 #include <QMessageBox>
 #include <algorithm>
 
-//#include <retroshare/rschannels.h>
-//#include <retroshare/rsforums.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsgxschannels.h>
 
 #include "gui/common/PeerDefs.h"
 
-ShareKey::ShareKey(QWidget *parent, std::string grpId, int grpType) :
+ChannelShareKey::ChannelShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grpType) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpId(grpId), mGrpType(grpType)
 {
 	ui = new Ui::ShareKey();
@@ -49,12 +48,12 @@ ShareKey::ShareKey(QWidget *parent, std::string grpId, int grpType) :
 	ui->keyShareList->start();
 }
 
-ShareKey::~ShareKey()
+ChannelShareKey::~ChannelShareKey()
 {
 	delete ui;
 }
 
-void ShareKey::changeEvent(QEvent *e)
+void ChannelShareKey::changeEvent(QEvent *e)
 {
 	QDialog::changeEvent(e);
 	switch (e->type()) {
@@ -66,7 +65,7 @@ void ShareKey::changeEvent(QEvent *e)
 	}
 }
 
-void ShareKey::shareKey()
+void ChannelShareKey::shareKey()
 {
 	std::list<RsPeerId> shareList;
 	ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
@@ -77,28 +76,26 @@ void ShareKey::shareKey()
 		return;
 	}
 
-#if 0
 	if (mGrpType & CHANNEL_KEY_SHARE) {
-		if (!rsChannels)
+        if (!rsGxsChannels)
 			return;
 
-		if (!rsChannels->channelShareKeys(mGrpId, shareList)) {
+        if (!rsGxsChannels->groupShareKeys(mGrpId, shareList)) {
 			std::cerr << "Failed to share keys!" << std::endl;
 			return;
 		}
 	} else if(mGrpType & FORUM_KEY_SHARE) {
-		if(!rsForums)
-			return;
 
-		if (!rsForums->forumShareKeys(mGrpId, shareList)) {
-			std::cerr << "Failed to share keys!" << std::endl;
-			return;
-		}
+        QMessageBox::warning(NULL,"Not implemented.","Not implemented") ;
+
+    //	if (!rsForums->forumShareKeys(mGrpId, shareList)) {
+        //	std::cerr << "Failed to share keys!" << std::endl;
+            //return;
+        //}
 	} else {
 		// incorrect type
 		return;
 	}
-#endif
 
 	close();
 }

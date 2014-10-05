@@ -230,6 +230,7 @@ public:
      */
     virtual int updateGroupMetaData(GrpLocMetaData& meta) = 0;
 
+    virtual int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys,uint32_t subscribed_flags) = 0 ;
 
     /*!
      * Completely clear out data stored in

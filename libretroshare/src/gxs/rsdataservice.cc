@@ -865,6 +865,31 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     return ret;
 }
 
+int RsDataService::updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys,uint32_t subscribe_flags)
+{
+    RsStackMutex stack(mDbMutex);
+
+    // begin transaction
+    mDb->execSQL("BEGIN;");
+
+    /*!
+     * STORE key set
+     **/
+
+    ContentValue cv;
+        //cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags); ?
+
+    uint32_t offset = 0;
+    char keySetData[keys.TlvSize()];
+    keys.SetTlv(keySetData, keys.TlvSize(), &offset);
+    cv.put(KEY_KEY_SET, keys.TlvSize(), keySetData);
+    cv.put(KEY_GRP_SUBCR_FLAG, (int32_t)subscribe_flags);
+
+    mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpId.toStdString() + "'", cv);
+
+    // finish transaction
+    return  mDb->execSQL("COMMIT;");
+}
 
 bool RsDataService::validSize(RsNxsGrp* grp) const
 {

@@ -122,8 +122,13 @@ public:
      */
     int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId);
 
-    /* p3Config methods */
+    /*!
+     * share publish keys for the specified group with the peers in the specified list.
+     */
 
+    int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers) ;
+
+    /* p3Config methods */
 public:
 
     bool	loadList(std::list<RsItem *>& load);
@@ -141,7 +146,6 @@ public:
      * Processes transactions and job queue
      */
     void run();
-
 private:
 
     /*!
@@ -296,6 +300,12 @@ private:
      */
     void handleRecvSyncMessage(RsNxsSyncMsg* item);
 
+    /*!
+     * Handles an nxs item for group publish key
+     * @param item contaims keys/grp info
+     */
+    void handleRecvPublishKeys(RsNxsGroupPublishKeyItem*) ;
+
     /** E: item handlers **/
 
 
@@ -331,7 +341,7 @@ private:
     bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const RsPeerId& peerId);
 
     void processExplicitGroupRequests();
-    
+
     void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
@@ -343,6 +353,11 @@ private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;
 	typedef std::vector<RsNxsMsg*> MsgFragments;
+
+    /*!
+     * Loops over pending publish key orders.
+     */
+    void sharePublishKeysPending() ;
 
     /*!
      * Fragment a message into individual fragments which are at most 150kb
@@ -421,6 +436,7 @@ private:
     // for an active transaction
     uint32_t mTransactionTimeOut;
 
+    std::map<RsGxsGroupId,std::list<RsPeerId> > mPendingPublishKeyRecipients ;
 
     RsPeerId mOwnId;
 
@@ -430,6 +446,7 @@ private:
     RsMutex mNxsMutex;
 
     uint32_t mSyncTs;
+    uint32_t mLastKeyPublishTs;
 
     const uint32_t mSYNC_PERIOD;
 

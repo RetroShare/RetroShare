@@ -515,7 +515,6 @@ HEADERS +=  rshare.h \
             gui/statistics/DhtWindow.h \
             gui/statistics/StatisticsWindow.h \
             gui/statistics/BwCtrlWindow.h \
-            gui/channels/ShareKey.h \
             gui/GetStartedDialog.h \
             gui/statistics/RttStatistics.h \
 
@@ -627,7 +626,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/DhtWindow.ui \
             gui/statistics/StatisticsWindow.ui \
             gui/statistics/BwCtrlWindow.ui \
-            gui/channels/ShareKey.ui \
             gui/GetStartedDialog.ui \
             gui/statistics/RttStatistics.ui \
 
@@ -845,7 +843,6 @@ SOURCES +=  main.cpp \
             gui/statistics/DhtWindow.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
-            gui/channels/ShareKey.cpp \
             gui/GetStartedDialog.cpp \
             gui/statistics/RttStatistics.cpp \
 
@@ -1192,6 +1189,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidget.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
+		gui/gxschannels/GxsChannelShareKey.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
@@ -1199,6 +1197,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
+		gui/gxschannels/GxsChannelShareKey.ui \
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
@@ -1206,6 +1205,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesWidget.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
+		gui/gxschannels/GxsChannelShareKey.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
 		gui/feeds/GxsChannelPostItem.cpp \
 		gui/gxschannels/GxsChannelUserNotify.cpp

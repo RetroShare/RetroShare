@@ -29,7 +29,7 @@
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
-#include "gui/channels/ShareKey.h"
+#include "gui/gxschannels/GxsChannelShareKey.h"
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
@@ -432,10 +432,10 @@ void GxsGroupFrameDialog::shareKey()
 		return;
 	}
 
-	QMessageBox::warning(this, "", "ToDo");
+//	QMessageBox::warning(this, "", "ToDo");
 
-//	ShareKey shareUi(this, mGroupId.toStdString(), shareKeyType());
-//	shareUi.exec();
+    ChannelShareKey shareUi(this, mGroupId, shareKeyType());
+    shareUi.exec();
 }
 
 void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)

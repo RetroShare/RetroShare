@@ -37,13 +37,14 @@
 #include "gxs/rsgxsdata.h"
 
 
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP      = 0x0001;
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM = 0x0002;
-const uint8_t RS_PKT_SUBTYPE_NXS_GRP     = 0x0004;
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM      = 0x0008;
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG = 0x0010;
-const uint8_t RS_PKT_SUBTYPE_NXS_MSG      = 0x0020;
-const uint8_t RS_PKT_SUBTYPE_NXS_TRANS      = 0x0040;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP             = 0x0001;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM        = 0x0002;
+const uint8_t RS_PKT_SUBTYPE_NXS_GRP                  = 0x0004;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM        = 0x0008;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG             = 0x0010;
+const uint8_t RS_PKT_SUBTYPE_NXS_MSG                  = 0x0020;
+const uint8_t RS_PKT_SUBTYPE_NXS_TRANS                = 0x0040;
+const uint8_t RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY      = 0x0080;
 
 
 // possibility create second service to deal with this functionality
@@ -104,6 +105,23 @@ public:
     std::string syncHash; // use to determine if changes that have occured since last hash
 
 
+};
+
+/*!
+ * Use to request grp list from peer
+ * Server may advise client peer to use sync file
+ * while serving his request. This results
+ */
+class RsNxsGroupPublishKeyItem : public RsNxsItem
+{
+public:
+    RsNxsGroupPublishKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY) { clear(); return;}
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    RsGxsGroupId grpId ;
+    RsTlvSecurityKey key ;
 };
 
 
@@ -461,6 +479,12 @@ private:
     virtual uint32_t sizeNxsTrans(RsNxsTransac* item);
     virtual bool serialiseNxsTrans(RsNxsTransac* item, void* data, uint32_t* size);
     virtual RsNxsTransac* deserialNxsTrans(void* data, uint32_t *size);
+
+    /* RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY */
+    virtual uint32_t sizeNxsGroupPublishKeyItem(RsNxsGroupPublishKeyItem* item);
+    virtual bool serialiseNxsGroupPublishKeyItem(RsNxsGroupPublishKeyItem* item, void* data, uint32_t* size);
+    virtual RsNxsGroupPublishKeyItem* deserialNxsGroupPublishKeyItem(void* data, uint32_t *size);
+
 
 private:
 

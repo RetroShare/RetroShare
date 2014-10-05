@@ -166,9 +166,9 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 
 		void    initStandardTagTypes();
 
-		p3ServiceControl *mServiceCtrl;
 		p3IdService *mIdService ;
-		p3GRouter *mGRouter ;
+        p3ServiceControl *mServiceCtrl;
+        p3GRouter *mGRouter ;
 
 		/* Mutex Required for stuff below */
 

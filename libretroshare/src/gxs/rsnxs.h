@@ -112,6 +112,12 @@ public:
     virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId) = 0;
 
 
+    /*!
+     * Request for this group is sent through to peers on your network
+     * and how many hops from them you've indicated
+     */
+    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)=0 ;
+
 };
 
 #endif // RSGNP_H

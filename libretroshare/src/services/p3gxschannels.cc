@@ -225,6 +225,13 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 	return ok;
 }
 
+bool p3GxsChannels::groupShareKeys(const RsGxsGroupId &groupId, std::list<RsPeerId>& peers)
+{
+    RsGenExchange::shareGroupPublishKey(groupId,peers) ;
+    return true ;
+}
+
+
 /* Okay - chris is not going to be happy with this...
  * but I can't be bothered with crazy data structures
  * at the moment - fix it up later
