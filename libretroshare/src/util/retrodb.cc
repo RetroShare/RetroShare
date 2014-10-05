@@ -66,6 +66,18 @@ RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) :
     }
 #endif
 
+    char *err = NULL;
+    rc = sqlite3_exec(mDb, "PRAGMA cipher_migrate;", NULL, NULL, &err);
+    if (rc != SQLITE_OK)
+    {
+        std::cerr << "RetroDb::RetroDb(): Error upgrading database, error code: " << rc;
+        if (err)
+        {
+            std::cerr << ", " << err;
+        }
+        std::cerr << std::endl;
+        sqlite3_free(err);
+    }
 }
 
 
@@ -78,7 +90,7 @@ RetroDb::~RetroDb(){
 void RetroDb::closeDb(){
 
     int rc= sqlite3_close(mDb);
-	 mDb = NULL ;
+	mDb = NULL ;
 
 #ifdef RETRODB_DEBUG
     std::cerr << "RetroDb::closeDb(): Error code on close: " << rc << std::endl;
