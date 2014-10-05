@@ -1,11 +1,40 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    * Improvements
+      - implemented publish key sharing between peers for channels.
+      - Added automatic upgrade (cipher_migrate) of the sqlite database.
+      - Setup common folders for libraries, includes and binaries of all external libraries for Windows compile.
+      - Enabled Antialiasing for QGraphicsView and channel images
+      - enabled by default to inform me via Message a Friend request from a known peer
+      - Fixed load/save config of FeedReader plugin
+      - Big progress for People dialog. Phenom work. (Not enabled in unstable version)
+      - restaured tunnel names in the gui
+      - added Qt socket test to update TOR led. This is a very basic test that does not prove the presence of TOR on the socket.
+      - Forums load all messages (not only latest), Fixed flat view
+      - RsGxsIntegrityCheck 
+         * Fixed message hash checking
+         * Added check for existing but not loadable messages
+         * Notify the gui when messages are deleted
+      - Removed Edit/Delete ID Buttons, for better look and feel and get more space for the search filter, use Edit/Delete from context menu.
+      - Removed the directory name of the message file name in the database column "nxsFile".
+      - removed "use old key format" from certificate export
+      - improved GXS Id display when unsigned, in Identities. 
+      - fixed fonts for IDs in Identities
+      - Fixed count of new and unread messages for Channels and Posted.
+      - improved naming and layout in Identities
+      - Removed Add Friend Button from Friends Dialog
+      - Removed Distant Chat page from Settings
+      - use ProfileManager to export own PGP key pair in keyring and profile.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 05 Oct 2014 20:00:00 +0100
+
+retroshare06 (0.6.0-0.7555~precise) precise; urgency=low
+
+   * Improvements
       - this version is the first unstable release of 0.6. It is incompatible with v0.5.5, but can be used simultaneously 
         on the same computer. Please see release notes for v0.6 on https://retroshareteam.wordpress.com/
    	 
-
- -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 09 Jan 2014 20:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 21 Sep 2014 20:00:00 +0100
 
 retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
