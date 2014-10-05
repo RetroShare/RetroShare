@@ -17,11 +17,6 @@ INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 
 #################################### Windows #####################################
 
-win32 {
-	# Speex
-	INCLUDEPATH += ../../../speex-1.2rc1/include
-}
-
 QMAKE_CXXFLAGS *= -Wall
 
 SOURCES = services/p3vors.cc \

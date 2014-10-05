@@ -154,9 +154,11 @@ win32 {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
+	LIBS_DIR = $$PWD/../../../libs
+
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"$$PWD/../../../lib"
+	LIBS += -L"$$LIBS_DIR/lib"
 
 	gxs {
 		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a

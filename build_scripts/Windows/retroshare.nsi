@@ -176,12 +176,12 @@ Section $(Section_Main) Section_Main
   File "${QTDIR}\bin\QtXml4.dll"
 
   ; MinGW binaries
-  File "${MINGWDIR}\bin\mingwm10.dll"
+  File "${MINGWDIR}\bin\libstdc++-6.dll"
   File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
-  File "${MINGWDIR}\bin\pthreadGC2.dll"
+  File "${MINGWDIR}\bin\libwinpthread-1.dll"
 
   ; External binaries
-  File "${SOURCEDIR}\..\lib\bin\miniupnpc.dll"
+  File "${SOURCEDIR}\..\libs\bin\miniupnpc.dll"
 
   ; Other files
   File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"

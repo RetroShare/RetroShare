@@ -76,24 +76,24 @@ win32 {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
+	LIBS_DIR = $$PWD/../../../libs
+
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"$$PWD/../../../lib"
+	LIBS += -L"$$LIBS_DIR/lib"
 	LIBS += -lssl -lcrypto -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lcrypto -lws2_32 -lgdi32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin
 	LIBS += -lole32 -lwinmm
 
-	PROTOCPATH=$$PWD/../../../lib/bin/
+	PROTOCPATH=$$LIBS_DIR/bin/
 
 	RC_FILE = resources/retroshare_win.rc
 
 	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
 
-	SSL_DIR = ../../../openssl-1.0.1h
-
-	INCLUDEPATH += . $${SSL_DIR}/include
+	INCLUDEPATH += . $$LIBS_DIR/include
 
 	gxs {
 		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
@@ -320,8 +320,7 @@ protorpc {
 	LIBS += -lprotobuf -lpthread
 	
 	win32 {
-		PROTOPATH = ../../../protobuf-2.4.1
-		INCLUDEPATH += . $${PROTOPATH}/src
+		INCLUDEPATH += $$LIBS_DIR/include/protobuf
 	}
 }
 win32 {
