@@ -284,12 +284,12 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 
 	if (shareKeyType()) {
 		action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share"), this, SLOT(shareKey()));
-		action->setEnabled(!mGroupId.isNull() && isAdmin);
+        action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
 
-	if (!mGroupId.isNull() && isPublisher && !isAdmin) {
-		contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights" ), this, SLOT(restoreGroupKeys()));
-	}
+    //if (!mGroupId.isNull() && isPublisher && !isAdmin) {
+    //	contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights" ), this, SLOT(restoreGroupKeys()));
+    //}
 
 	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
 		action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
@@ -656,7 +656,8 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupI
 	//groupItemInfo.description =
 	groupItemInfo.popularity = groupInfo.mPop;
 	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
-	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
+    groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
+    groupItemInfo.privatekey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
 
 #if TOGXS
 	if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
