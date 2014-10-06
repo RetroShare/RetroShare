@@ -2918,12 +2918,10 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
      if((it->second.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE) && (it->second.keyFlags & RSTLV_KEY_TYPE_FULL))
      {
          std::cerr << "   (EE) Publish key already present in database. Discarding message." << std::endl;
-//         return ;
+			return ;
      }
 
-	 // Store/update the info.
-
-     //std::cerr << "  (WW) Skipping key update, until fully debugged." << std::endl;
+	  // Store/update the info.
 
      it->second = item->key ;
      bool ret = mDataStore->updateGroupKeys(item->grpId,grpMeta->keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
