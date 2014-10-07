@@ -27,21 +27,21 @@ QIcon PopularityDefs::icon(int popularity)
 {
 	if (popularity == 0) {
 		return QIcon(":/images/hot_0.png");
-	} else if (popularity <= 7) {
-		/* 1-7 */
+    } else if (popularity <= 1) {
+        /* 1-1 */
 		return QIcon(":/images/hot_1.png");
-	} else if (popularity <= 15) {
-		/* 8-15 */
+    } else if (popularity <= 2) {
+        /* 2-2 */
 		return QIcon(":/images/hot_2.png");
-	} else if (popularity <= 24) {
-		/* 16-24 */
+    } else if (popularity <= 5) {
+        /* 3-5 */
 		return QIcon(":/images/hot_3.png");
-	} else if (popularity <= 34) {
-		/* 25-34 */
+    } else if (popularity <= 10) {
+        /* 6-10 */
 		return QIcon(":/images/hot_4.png");
 	}
 
-	/* >34 */
+    /* >10 */
 	return QIcon(":/images/hot_5.png");
 }
 

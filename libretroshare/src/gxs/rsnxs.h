@@ -118,6 +118,12 @@ public:
      */
     virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)=0 ;
 
+    /*!
+     * Request the number of peers who sent info about this group, as an indicator
+     * of group popularity.
+     */
+    virtual int getGroupPopularity(const RsGxsGroupId& id) = 0 ;
+
 };
 
 #endif // RSGNP_H

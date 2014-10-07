@@ -1216,6 +1216,18 @@ void RsGxsNetService::processTransactions(){
 	}
 }
 
+int RsGxsNetService::getGroupPopularity(const RsGxsGroupId& gid)
+{
+    RsStackMutex stack(mNxsMutex);
+
+    std::map<RsGxsGroupId,std::set<RsPeerId> >::const_iterator it = mGroupSuppliers.find(gid) ;
+
+    if(it == mGroupSuppliers.end())
+        return 0 ;
+    else
+        return it->second.size();
+}
+
 void RsGxsNetService::processCompletedTransactions()
 {
 	RsStackMutex stack(mNxsMutex);
@@ -1283,7 +1295,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 						if(grp)
 						{
 							tr->mItems.pop_front();
-							grps.push_back(grp);
+                            grps.push_back(grp);
+
 						}
 						else
 						{
@@ -2170,7 +2183,6 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	RsPeerId peer = item->PeerId();
 
 
-
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grp;
 	mDataStore->retrieveGxsGrpMetaData(grp);
 
@@ -2507,6 +2519,10 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 {
 	RsStackMutex stack(mNxsMutex);
 
+    // We do that early, so as to get info about who sends data about which group,
+    // even when the group doesn't need update.
+    mGroupSuppliers[item->grpId].insert(item->PeerId()) ;
+
         if(!locked_CanReceiveUpdate(item))
             return;
 
@@ -2523,7 +2539,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	if(grpMeta == NULL)
 		return;
 
-	req[item->grpId] = std::vector<RsGxsMessageId>();
+    req[item->grpId] = std::vector<RsGxsMessageId>();
 	mDataStore->retrieveGxsMsgMetaData(req, metaResult);
 	std::vector<RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
 

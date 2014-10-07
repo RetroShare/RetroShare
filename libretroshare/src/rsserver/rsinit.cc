@@ -1335,6 +1335,8 @@ int RsServer::StartupRetroShare()
 			mGxsIdService, mGxsCircles,
 			pgpAuxUtils);
 
+    mPosted->setNetworkExchangeService(posted_ns) ;
+
         /**** Wiki GXS service ****/
 
 
@@ -1351,6 +1353,7 @@ int RsServer::StartupRetroShare()
 			mGxsIdService, mGxsCircles,
 			pgpAuxUtils);
 
+    mWiki->setNetworkExchangeService(wiki_ns) ;
 
         /**** Forum GXS service ****/
 
@@ -1367,6 +1370,7 @@ int RsServer::StartupRetroShare()
 			mGxsIdService, mGxsCircles,
 			pgpAuxUtils);
 
+    mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
 
         /**** Channel GXS service ****/
 

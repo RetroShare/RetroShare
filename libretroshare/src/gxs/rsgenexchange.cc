@@ -1147,8 +1147,14 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 	for(; lit != metaL.end(); lit++)
 	{
 		RsGxsGrpMetaData& gMeta = *(*lit);
-		m = gMeta;
-		groupInfo.push_back(m);
+        m = gMeta;
+
+            if(mNetService != NULL)
+                m.mPop = mNetService->getGroupPopularity((*lit)->mGroupId) ;
+            else
+                m.mPop= 0 ;
+
+        groupInfo.push_back(m);
 		delete (*lit);
 	}
 
@@ -1245,7 +1251,12 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
 				if (gItem)
 				{
-					gItem->meta = *((*lit)->metaData);
+                    gItem->meta = *((*lit)->metaData);
+
+            if(mNetService != NULL)
+                gItem->meta.mPop = mNetService->getGroupPopularity(gItem->meta.mGroupId) ;
+            else
+                gItem->meta.mPop= 0 ;
 					grpItem.push_back(gItem);
 				}
 				else
@@ -1428,10 +1439,10 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
     	// TODO: move this to nxs layer to save bandwidth
     	if(received == mReceivedGrps.end())
     	{
-#ifdef GEN_EXCH_DEBUG
+//#ifdef GEN_EXCH_DEBUG
 		std::cerr << "RsGenExchange::notifyNewGroups() Received GrpId: " << grp->grpId;
 		std::cerr << std::endl;
-#endif
+//#endif
 
     		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
     		mReceivedGrps.push_back(gpsi);

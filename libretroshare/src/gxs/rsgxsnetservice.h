@@ -96,14 +96,14 @@ public:
      * Use this to set how far back synchronisation of messages should take place
      * @param age the max age a sync item can to be allowed in a synchronisation
      */
-    void setSyncAge(uint32_t age);
+    virtual void setSyncAge(uint32_t age);
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
      * from peers
      * @param enabled set to false to disable pause, and true otherwise
      */
-    void pauseSynchronisation(bool enabled);
+    virtual void pauseSynchronisation(bool enabled);
 
 
     /*!
@@ -112,7 +112,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    int requestMsg(const RsGxsGrpMsgIdPair& /* msgId */){ return 0;}
+    virtual int requestMsg(const RsGxsGrpMsgIdPair& /* msgId */){ return 0;}
 
     /*!
      * Request for this group is sent through to peers on your network
@@ -120,13 +120,15 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId);
+    virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId);
 
     /*!
      * share publish keys for the specified group with the peers in the specified list.
      */
 
-    int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers) ;
+    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers) ;
+
+    virtual int getGroupPopularity(const RsGxsGroupId& id) ;
 
     /* p3Config methods */
 public:
@@ -476,8 +478,11 @@ private:
     ServerMsgMap mServerMsgUpdateMap;
     ClientGrpMap mClientGrpUpdateMap;
 
+    std::map<RsGxsGroupId,std::set<RsPeerId> > mGroupSuppliers ;
+
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;
+
 };
 
 #endif // RSGXSNETSERVICE_H
