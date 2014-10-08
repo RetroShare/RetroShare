@@ -84,7 +84,7 @@ win32 {
 	LIBS += -lssl -lcrypto -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lcrypto -lws2_32 -lgdi32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32
 	LIBS += -lole32 -lwinmm
 
 	PROTOCPATH=$$LIBS_DIR/bin/
