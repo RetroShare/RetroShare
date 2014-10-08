@@ -112,7 +112,7 @@ win32 {
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 

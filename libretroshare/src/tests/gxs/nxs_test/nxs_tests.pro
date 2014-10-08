@@ -119,7 +119,7 @@ win32 {
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz -lbz2
 # added after bitdht
 #    LIBS += -lws2_32
-        LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+        LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
         LIBS += -lole32 -lwinmm
 
         # export symbols for the plugins
