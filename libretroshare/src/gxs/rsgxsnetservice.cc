@@ -38,8 +38,8 @@
 
 #define GIXS_CUT_OFF 0
 
-#define SYNC_PERIOD 12 // in microseconds every 10 seconds (1 second for testing)
-#define TRANSAC_TIMEOUT 10 // 10 seconds
+#define SYNC_PERIOD     60 // every 60 seconds (1 second for testing)
+#define TRANSAC_TIMEOUT 30 // 30 seconds. Has been increased to avoid epidemic transaction cancelling.
 
  const uint32_t RsGxsNetService::FRAGMENT_SIZE = 150000;
 
@@ -897,7 +897,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 		tr = new NxsTransaction();
 		transMap[transN] = tr;
 		tr->mTransaction = item;
-		tr->mTimeOut = item->timestamp + mTransactionTimeOut;
+        tr->mTimeOut = item->timestamp + mTransactionTimeOut;
 
 		// note state as receiving, commencement item
 		// is sent on next run() loop
@@ -1067,12 +1067,10 @@ void RsGxsNetService::processTransactions(){
 				// first check transaction has not expired
 				if(locked_checkTransacTimedOut(tr))
 				{
-
-#ifdef NXS_NET_DEBUG
-					std::cerr << "processTransactions() " << std::endl;
-					std::cerr << "Transaction has failed, tranN: " << transN << std::endl;
-					std::cerr << "Transaction has failed, Peer: " << mit->first << std::endl;
-#endif
+					std::cerr << std::dec ;
+					int total_transaction_time = (int)time(NULL) - (tr->mTimeOut - mTransactionTimeOut) ;
+					std::cerr << "Outgoing Transaction has failed, tranN: " << transN << ", Peer: " << mit->first ;
+					std::cerr << ", age: " << total_transaction_time << ", nItems=" << tr->mTransaction->nItems << ". tr->mTimeOut = " << tr->mTimeOut << ", now = " << (uint32_t) time(NULL) << std::endl;
 
 					tr->mFlag = NxsTransaction::FLAG_STATE_FAILED;
 					toRemove.push_back(transN);
@@ -1103,7 +1101,12 @@ void RsGxsNetService::processTransactions(){
 
 				}else if(flag & NxsTransaction::FLAG_STATE_COMPLETED){
 
-					// move to completed transactions
+#ifdef NXS_NET_DEBUG
+                    int total_transaction_time = (int)time(NULL) - (tr->mTimeOut - mTransactionTimeOut) ;
+
+                    std::cerr << "RsGxsNetService::processTransactions() outgoing completed " << tr->mTransaction->nItems << " items transaction in " << total_transaction_time << " seconds." << std::endl;
+#endif
+                    // move to completed transactions
 					toRemove.push_back(transN);
 					mComplTransactions.push_back(tr);
 				}else{
@@ -1143,10 +1146,10 @@ void RsGxsNetService::processTransactions(){
 				// first check transaction has not expired
 				if(locked_checkTransacTimedOut(tr))
 				{
-
-					std::cerr << "processTransactions() " << std::endl;
-					std::cerr << "Transaction has failed, tranN: " << transN << std::endl;
-					std::cerr << "Transaction has failed, Peer: " << mit->first << std::endl;
+					std::cerr << std::dec ;
+					int total_transaction_time = (int)time(NULL) - (tr->mTimeOut - mTransactionTimeOut) ;
+					std::cerr << "Incoming Transaction has failed, tranN: " << transN << ", Peer: " << mit->first ;
+					std::cerr << ", age: " << total_transaction_time << ", nItems=" << tr->mTransaction->nItems << ". tr->mTimeOut = " << tr->mTimeOut << ", now = " << (uint32_t) time(NULL) << std::endl;
 
 					tr->mFlag = NxsTransaction::FLAG_STATE_FAILED;
 					toRemove.push_back(transN);
@@ -1160,7 +1163,7 @@ void RsGxsNetService::processTransactions(){
 					// then transaction is marked as completed
 					// to be moved to complete transations
 					// check if done
-					if(tr->mItems.size() == tr->mTransaction->nItems)
+                    if(tr->mItems.size() == tr->mTransaction->nItems)
 						tr->mFlag = NxsTransaction::FLAG_STATE_COMPLETED;
 
 				}else if(flag & NxsTransaction::FLAG_STATE_COMPLETED)
@@ -1176,6 +1179,10 @@ void RsGxsNetService::processTransactions(){
 
 					// move to completed transactions
 					mComplTransactions.push_back(tr);
+#ifdef NXS_NET_DEBUG
+					int total_transaction_time = (int)time(NULL) - (tr->mTimeOut - mTransactionTimeOut) ;
+					std::cerr << "RsGxsNetService::processTransactions() incoming completed " << tr->mTransaction->nItems << " items transaction in " << total_transaction_time << " seconds." << std::endl;
+#endif
 
 					// transaction processing done
 					// for this id, add to removal list
@@ -1496,7 +1503,7 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(
 	NxsTransaction* newTrans = new NxsTransaction();
 	newTrans->mItems = reqList;
 	newTrans->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
-	newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
+    newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
 	// create transaction copy with your id to indicate
 	// its an outgoing transaction
         newTrans->mTransaction = new RsNxsTransac(*transac);
@@ -1676,7 +1683,7 @@ void RsGxsNetService::locked_pushGrpTransactionFromList(
 	NxsTransaction* newTrans = new NxsTransaction();
 	newTrans->mItems = reqList;
 	newTrans->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
-	newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
+    newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
 	newTrans->mTransaction = new RsNxsTransac(*transac);
 	newTrans->mTransaction->PeerId(mOwnId);
 	sendItem(transac);
@@ -2078,7 +2085,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 
 	newTr->mTransaction = new RsNxsTransac(*ntr);
 	newTr->mTransaction->PeerId(mOwnId);
-	newTr->mTimeOut = time(NULL) + mTransactionTimeOut;
+    newTr->mTimeOut = time(NULL) + mTransactionTimeOut;
 
 	ntr->PeerId(tr->mTransaction->PeerId());
 	sendItem(ntr);
@@ -2142,7 +2149,7 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
 	// also make a copy for the resident transaction
 	tr->mTransaction = new RsNxsTransac(*trItem);
 	tr->mTransaction->PeerId(mOwnId);
-	tr->mTimeOut = time(NULL) + mTransactionTimeOut;
+    tr->mTimeOut = time(NULL) + mTransactionTimeOut;
 	// signal peer to prepare for transaction
 	sendItem(trItem);
 	locked_addTransaction(tr);
@@ -2603,7 +2610,7 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 	// also make a copy for the resident transaction
 	tr->mTransaction = new RsNxsTransac(*trItem);
 	tr->mTransaction->PeerId(mOwnId);
-	tr->mTimeOut = time(NULL) + mTransactionTimeOut;
+    tr->mTimeOut = time(NULL) + mTransactionTimeOut;
 
 	// signal peer to prepare for transaction
 	sendItem(trItem);
