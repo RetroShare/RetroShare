@@ -29,6 +29,7 @@
 
 #define IMAGE_MESSAGES          ":/images/evolution.png"
 
+class RSTreeWidgetItemCompareRole;
 class MessageWidget;
 
 class MessagesDialog : public MainPage
@@ -66,16 +67,16 @@ public slots:
   
 private slots:
   /** Create the context popup menu and it's submenus */
-  void messageslistWidgetCustomPopupMenu( QPoint point );
+  void messageTreeWidgetCustomPopupMenu(QPoint point);
   void folderlistWidgetCustomPopupMenu(QPoint);
   void decryptSelectedMsg() ;
 
   void changeBox(int newrow);
   void changeQuickView(int newrow);
   void updateCurrentMessage();
-  void currentChanged(const QModelIndex&);
-  void clicked(const QModelIndex&);
-  void doubleClicked(const QModelIndex &);
+  void currentItemChanged(QTreeWidgetItem *item);
+  void clicked(QTreeWidgetItem *item, int column);
+  void doubleClicked(QTreeWidgetItem *item, int column);
 
   void newmessage();
   void openAsWindow();
@@ -103,8 +104,6 @@ private slots:
   void tabChanged(int tab);
   void tabCloseRequested(int tab);
 
-  void updateInterface();
-
 private:
   class LockUpdate
   {
@@ -119,21 +118,20 @@ private:
       bool m_bUpdate;
   };
 
-  class QStandardItemModel *MessagesModel;
-  QSortFilterProxyModel *proxyModel;
+  void updateInterface();
 
   void connectActions();
 
   void updateMessageSummaryList();
-  void insertMsgTxtAndFiles(QModelIndex index = QModelIndex(), bool bSetToRead = true);
+  void insertMsgTxtAndFiles(QTreeWidgetItem *item = NULL, bool bSetToRead = true);
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
-  void setMsgAsReadUnread(const QList<int> &Rows, bool read);
-  void setMsgStar(const QList<int> &Rows, bool mark);
+  void setMsgAsReadUnread(const QList<QTreeWidgetItem *> &items, bool read);
+  void setMsgStar(const QList<QTreeWidgetItem *> &items, bool mark);
 
-  int getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread, QList<int> *pRowsStar);
-  bool isMessageRead(int nRow);
-  bool hasMessageStar(int nRow);
+  int getSelectedMsgCount (QList<QTreeWidgetItem *> *items, QList<QTreeWidgetItem *> *itemsRead, QList<QTreeWidgetItem *> *itemsUnread, QList<QTreeWidgetItem *> *itemsStar);
+  bool isMessageRead(QTreeWidgetItem *item);
+  bool hasMessageStar(QTreeWidgetItem *item);
 
   void processSettings(bool load);
 
@@ -152,8 +150,9 @@ private:
 
   // timer and index for showing message
   QTimer *timer;
-  QModelIndex timerIndex;
+  int timerIndex;
 
+  RSTreeWidgetItemCompareRole *mMessageCompareRole;
   MessageWidget *msgWidget;
 
   /* Color definitions (for standard see qss.default) */

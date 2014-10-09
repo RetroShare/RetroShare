@@ -708,7 +708,7 @@
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <widget class="RSTreeView" name="messagestreeView">
+           <widget class="RSTreeWidget" name="messageTreeWidget">
             <property name="font">
              <font>
               <pointsize>9</pointsize>
@@ -720,12 +720,23 @@
             <property name="selectionMode">
              <enum>QAbstractItemView::ExtendedSelection</enum>
             </property>
+            <property name="rootIsDecorated">
+             <bool>false</bool>
+            </property>
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
             <property name="allColumnsShowFocus">
              <bool>true</bool>
             </property>
+            <property name="expandsOnDoubleClick">
+             <bool>false</bool>
+            </property>
+            <column>
+             <property name="text">
+              <string notr="true">1</string>
+             </property>
+            </column>
            </widget>
            <widget class="QWidget" name="layoutWidget">
             <layout class="QGridLayout" name="msgLayout"/>
@@ -822,9 +833,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>RSTreeView</class>
-   <extends>QTreeView</extends>
-   <header>gui/common/RSTreeView.h</header>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
