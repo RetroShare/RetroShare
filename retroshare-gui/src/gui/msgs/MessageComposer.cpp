@@ -214,9 +214,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
     ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
                                           | FriendSelectionWidget::SHOW_SSL
-                                          | FriendSelectionWidget::SHOW_GXS);
-                                          //| (ui.onlyTrustedKeys->isChecked()? FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_NON_FRIEND_GPG));
-    //ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL );
+                                          | (ui.onlyTrustedKeys->isChecked() ? FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_GXS));
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -696,13 +694,12 @@ void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
 
     for (row = 0; row < rowCount; row++) {
         enumType type;
-    destinationType dtype ;
+        destinationType dtype ;
         std::string id;
-        bool group;
 
         if (getRecipientFromRow(row, type,dtype, id) && !id.empty() ) {
             if (dtype == PEER_TYPE_SSL && QString::fromStdString(id) == peer_id)
-        {
+            {
                 QTableWidgetItem *item = ui.recipientWidget->item(row, COLUMN_RECIPIENT_ICON);
                 if (item)
                     item->setIcon(QIcon(StatusDefs::imageUser(status)));
@@ -1228,7 +1225,6 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         enumType type;
         destinationType dtype ;
         std::string id;
-        bool group;
 
         if (!getRecipientFromRow(row, type,dtype, id) || id.empty())
             continue ;
@@ -1688,6 +1684,7 @@ void MessageComposer::addRecipient(enumType type, const RsGxsId& gxs_id)
 
     setRecipientToRow(row, type, PEER_TYPE_GXS,gxs_id.toStdString());
 }
+
 void MessageComposer::addRecipient(enumType type, const std::string& id)
 {
     // search existing or empty row
@@ -1697,7 +1694,6 @@ void MessageComposer::addRecipient(enumType type, const std::string& id)
         enumType rowType;
         std::string rowId;
         destinationType dtype ;
-        bool rowGroup;
 
         if (getRecipientFromRow(row, rowType, dtype,rowId))
         {
