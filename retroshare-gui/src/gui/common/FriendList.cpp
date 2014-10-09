@@ -280,7 +280,7 @@ void FriendList::changeEvent(QEvent *e)
     }
 }
 
-void FriendList::initializeHeader(bool afterLoadSettings)
+void FriendList::initializeHeader(bool /*afterLoadSettings*/)
 {
     // set column size
     QHeaderView *header = ui->peerTreeWidget->header();
@@ -587,7 +587,6 @@ void  FriendList::insertPeers()
 
     bool isStatusColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_STATE);
     bool isAvatarColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR);
-    bool isIPColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_IP);
 
     std::list<StatusInfo> statusInfo;
     rsStatus->getStatusList(statusInfo);

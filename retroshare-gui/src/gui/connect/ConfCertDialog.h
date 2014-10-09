@@ -37,7 +37,7 @@ public:
 
     template<class ID_CLASS> static void showIt(const ID_CLASS& id, enumPage page)
     {
-        ConfCertDialog *confdialog = confdialog = instance(id);
+        ConfCertDialog *confdialog = instance(id);
 
         switch (page) {
         case PageDetails:

@@ -505,6 +505,7 @@ void RetroShareLink::check()
 	switch (_type) 
 	{
 		case TYPE_UNKNOWN:
+		case TYPE_PRIVATE_CHAT:
 			_valid = false;
 			break;
 		case TYPE_EXTRAFILE:
@@ -590,6 +591,7 @@ QString RetroShareLink::title() const
 
 	switch (_type) {
 		case TYPE_UNKNOWN:
+		case TYPE_PRIVATE_CHAT:
 			break;
 		case TYPE_PUBLIC_MSG:
 			{
@@ -664,6 +666,7 @@ QString RetroShareLink::toString() const
 
 	switch (_type) {
 		case TYPE_UNKNOWN:
+		case TYPE_PRIVATE_CHAT:
 			return "";
 
 		case TYPE_FILE:
@@ -971,6 +974,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_MESSAGE:
 				case TYPE_CERTIFICATE:
 				case TYPE_PUBLIC_MSG:
+				case TYPE_PRIVATE_CHAT:
 					// no need to ask
 					break;
 
