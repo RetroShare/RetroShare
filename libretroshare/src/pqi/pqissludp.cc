@@ -560,8 +560,8 @@ bool 	pqissludp::moretoread(uint32_t usec)
 
 	if (usec)
 	{
-		std::cerr << "pqissludp::moretoread() usec parameter: " << usec;
-		std::cerr << std::endl;
+		//std::cerr << "pqissludp::moretoread() usec parameter: " << usec;
+		//std::cerr << std::endl;
 
 		if (0 < tou_maxread(sockfd))
 		{
