@@ -1,6 +1,21 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    * Improvements
+      - Switched MessagesDialog from QTreeView to QTreeWidget and use GxsIdRSTreeWidgetItem to show the gxs id for a distant message.
+      - increased sync period in RsGxsNetService so as to reduce network load. Increased transaction timeout to 30 seconds 
+         to avoid wasting too many transactions
+      - Fixed initial fill of the contact list in message composer when only trusted people is checked.
+      - Replaced external library libcrypt32-cygwin.a by libcrypt32.a from MinGW for Windows compile.
+      - added a structure in GxsNetService to record who sends info about groups, so as to dynamically compute group 
+         popularity. The GUI needs to be improved to update regularly so as to reflect current values for
+        popularity. For now only subscribing/unsubscribing and new messages trigger the update
+      - fixed display of channels with publish key
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 11 Oct 2014 15:28:00 +0100
+
+retroshare06 (0.6.0-0.7584~precise) precise; urgency=low
+
+   * Improvements
       - implemented publish key sharing between peers for channels.
       - Added automatic upgrade (cipher_migrate) of the sqlite database.
       - Setup common folders for libraries, includes and binaries of all external libraries for Windows compile.
