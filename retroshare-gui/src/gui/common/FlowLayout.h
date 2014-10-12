@@ -122,6 +122,10 @@ signals:
 	///Signales when the widget is dropped.
 	void flowLayoutItemDropped(QList <FlowLayoutItem*> listItem, bool &bAccept);
 
+	/// \brief updated
+	///Signales when the image (getImage) is updated.
+	void imageUpdated();
+
 protected:
 	void keyPressEvent(QKeyEvent *event){event->ignore();}
 	void keyReleaseEvent(QKeyEvent *event){event->ignore();}

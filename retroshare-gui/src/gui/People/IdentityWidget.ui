@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>102</width>
-    <height>153</height>
+    <height>158</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -54,11 +54,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="labelName">
+    <widget class="ElidedLabel" name="labelName">
      <property name="minimumSize">
       <size>
        <width>0</width>
        <height>15</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
       </size>
      </property>
      <property name="text">
@@ -73,7 +79,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="labelKeyId">
+    <widget class="ElidedLabel" name="labelKeyId">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>15</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>100</width>
@@ -82,6 +94,28 @@
      </property>
      <property name="text">
       <string>KeyId</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ElidedLabel" name="labelGXSId">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>15</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>GXSId</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -98,5 +132,13 @@
   </layout>
  </widget>
  <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">gui/common/ElidedLabel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <connections/>
 </ui>

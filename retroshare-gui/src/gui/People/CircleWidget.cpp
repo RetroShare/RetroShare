@@ -13,12 +13,11 @@ CircleWidget::CircleWidget(QString name/*=QString()*/
   ui(new Ui::CircleWidget)
 {
 	ui->setupUi(this);
-	std::string desc_string = _group_info.mGroupName ;
-	QString cirName = QString::fromUtf8(desc_string.c_str());
-	if (name=="") m_myName = cirName;
+	m_myName = name;
 	ui->label->setText(m_myName);
+	ui->label->setToolTip(m_myName);
 	_scene = new QGraphicsScene(this);
-	_scene->addText(tr("Empty %1").arg(getName()));
+	_scene->addText(tr("Empty Circle"));
 	ui->graphicsView->setScene(_scene);
 
 	//To grab events
@@ -48,8 +47,9 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 		QString cirName = QString::fromUtf8(desc_string.c_str());
 		m_myName = cirName;
 		ui->label->setText(m_myName);
+		ui->label->setToolTip(m_myName);
 		update();
-	}//if (gxs_group_info!=_group_info)
+	}//if (_group_info != gxs_group_info)
 
 	if (_circle_details != details) {
 		_circle_details=details;
@@ -67,10 +67,9 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 		for (itAllowedPeers it = _circle_details.mAllowedPeers.begin()
 		     ; it != _circle_details.mAllowedPeers.end()
 		     ; ++it ) {
-			RsPgpId id = it->first;
-			emit askForPGPIdentityWidget(id);
+			RsPgpId pgp_id = it->first;
+			emit askForPGPIdentityWidget(pgp_id);
 
-			///** (TODO) Is it needed?
 			std::list<RsGxsId> gxs_id_list = it->second;
 			typedef std::list<RsGxsId>::const_iterator itGxsId;
 			for (itGxsId curs=gxs_id_list.begin()
@@ -81,7 +80,6 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 					emit askForGXSIdentityWidget(gxs_id);
 				}//if(!gxs_id.isNull())
 			}//for (itGxsId curs=gxs_id_list.begin()
-			//*//
 		}//for (itAllowedPeers it = _circle_details.mAllowedPeers.begin()
 
 		update();
@@ -122,12 +120,23 @@ const QPixmap CircleWidget::getDragImage()
 void CircleWidget::addIdent(IdentityWidget *item)
 {
 	if (item){
-		RsGxsId id = RsGxsId(item->groupInfo().mMeta.mGroupId);
+		std::string id;
+		if (item->haveGXSId()) {
+			id =item->groupInfo().mMeta.mGroupId.toStdString();
+		} else {//if (item->haveGXSId())
+			id =item->keyId().toStdString();
+		}//else (item->haveGXSId())
 		if (!_list.contains(id)){
 			_list[id] = item;
+			connect(item,SIGNAL(imageUpdated()), this, SLOT(updateIdImage()));
 			updateScene();
-		}//if (!list.contains(item))
+		}//if (!_list.contains(id))
 	}//if (item)
+}
+
+void CircleWidget::updateIdImage()
+{
+	updateScene();
 }
 
 void CircleWidget::updateScene()
@@ -151,7 +160,7 @@ void CircleWidget::updateScene()
 	qreal sizeY = topleftY*2;
 
 	int curs = 0;
-	typedef QMap<RsGxsId, IdentityWidget*>::const_iterator itList;
+	typedef QMap<std::string, IdentityWidget*>::const_iterator itList;
 	for (itList it=_list.constBegin(); it!=_list.constEnd(); ++it){
 		QPixmap pix = it.value()->getImage();
 		pix = pix.scaled(sizeX, sizeY);
@@ -159,6 +168,15 @@ void CircleWidget::updateScene()
 		qreal x = (qCos(curs*pitch)*radiusX)-(sizeX/2)+topleftX+radiusX;
 		qreal y = (qSin(curs*pitch)*radiusY)-(sizeY/2)+topleftY+radiusY;
 		item->setPos(QPointF(x, y));
+
+		QString name = it.value()->getName();
+		QString idKey = it.value()->keyId();
+		QString gxsId = it.value()->gxsId();
+		if (idKey == gxsId) gxsId.clear();
+		item->setToolTip(name.append("\n")
+		                 .append(idKey).append(gxsId.isEmpty()?"":"\n")
+		                 .append(gxsId));
 		++curs;
 	}//for (itList it=_list.constBegin(); it!=_list.constEnd(); ++it)
+	emit imageUpdated();
 }

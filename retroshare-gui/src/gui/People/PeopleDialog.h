@@ -36,10 +36,6 @@
 
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
 
-class UIStateHelper;
-//class IdentityItem ;
-//class CircleItem ;
-
 class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, public TokenResponse
 {
 	Q_OBJECT
@@ -57,8 +53,6 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, p
 		virtual QString pageName() const { return tr("People") ; } //MainPage
 		virtual QString helpText() const { return ""; } //MainPage
 
-	// Derives from RsGxsUpdateBroadcastPage
-//	virtual void updateDisplay(bool) ;
 	void loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req) ;
 
 	void requestIdList() ;
@@ -68,30 +62,44 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, p
 	void insertCircles(uint32_t token) ;
 
 	protected:
+	// Derives from RsGxsUpdateBroadcastPage
 		virtual void updateDisplay(bool complete);
+	//End RsGxsUpdateBroadcastPage
 
 private slots:
+	void iw_AddButtonClickedExt();
+	void iw_AddButtonClickedInt();
+	void addToCircleExt();
+	void addToCircleInt();
 	void cw_askForGXSIdentityWidget(RsGxsId gxs_id);
 	void cw_askForPGPIdentityWidget(RsPgpId pgp_id);
-	void fl_flowLayoutItemDropped(QList<FlowLayoutItem *> flListItem, bool &bAccept);
+	void cw_imageUpdatedExt();
+	void cw_imageUpdatedInt();
+	void fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem *> flListItem, bool &bAccept);
+	void fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem *> flListItem, bool &bAccept);
 	void pf_centerIndexChanged(int index);
 	void pf_mouseMoveOverSlideEvent(QMouseEvent* event, int slideIndex);
 	void pf_dragEnterEventOccurs(QDragEnterEvent *event);
 	void pf_dragMoveEventOccurs(QDragMoveEvent *event);
-	void pf_dropEventOccurs(QDropEvent *event);
+	void pf_dropEventOccursExt(QDropEvent *event);
+	void pf_dropEventOccursInt(QDropEvent *event);
 
 private:
-	void populatePictureFlow();
+	void reloadAll();
+	void populatePictureFlowExt();
+	void populatePictureFlowInt();
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
-	UIStateHelper *mStateHelper;
 
-	FlowLayout *_flowLayout;
-	std::map<RsPgpId,IdentityWidget *> _pgp_identity_widgets ;
+	FlowLayout *_flowLayoutExt;
 	std::map<RsGxsId,IdentityWidget *> _gxs_identity_widgets ;
-	std::map<RsGxsGroupId,CircleWidget *> _circles_widgets ;
-	//QList<IdentityWidget*> listId;
-	QList<CircleWidget*> _listCir;
+	std::map<RsGxsGroupId,CircleWidget *> _ext_circles_widgets ;
+	QList<CircleWidget*> _extListCir;
+
+	FlowLayout *_flowLayoutInt;
+	std::map<RsPgpId,IdentityWidget *> _pgp_identity_widgets ;
+	std::map<RsGxsGroupId,CircleWidget *> _int_circles_widgets ;
+	QList<CircleWidget*> _intListCir;
 };
 

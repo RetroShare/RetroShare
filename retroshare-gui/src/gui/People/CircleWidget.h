@@ -31,7 +31,7 @@ public:
 	//End Properties
 
 	void addIdent(IdentityWidget* item);
-	const QMap<RsGxsId, IdentityWidget*> idents() const {return _list;}
+	const QMap<std::string, IdentityWidget*> idents() const {return _list;}
 
 	const RsGroupMetaData& groupInfo() const { return _group_info;}
 	const RsGxsCircleDetails& circleDetails() const {return _circle_details;}
@@ -40,11 +40,14 @@ signals:
 	void askForGXSIdentityWidget(RsGxsId gxs_id);
 	void askForPGPIdentityWidget(RsPgpId pgp_id);
 
+private slots:
+	void updateIdImage();
+
 private:
 	void updateScene();
 
 	QGraphicsScene* _scene;
-	QMap<RsGxsId, IdentityWidget*> _list;
+	QMap<std::string, IdentityWidget*> _list;
 	RsGroupMetaData _group_info ;
 	RsGxsCircleDetails _circle_details ;
 

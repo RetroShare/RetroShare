@@ -101,11 +101,9 @@ CreateCircleDialog::~CreateCircleDialog()
 
 void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/)
 {
-	std::cerr << "CreateCircleDialog::editExistingId() : " << circleId;
-	std::cerr << std::endl;
-
 	/* load this circle */
 	mIsExistingCircle = true;
+
 	mClearList = clearList;
 	requestCircle(circleId);
 	
@@ -239,15 +237,6 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 			QString  keyId = QString::fromStdString(gxs_id.toStdString());
 			QString  nickname = QString::fromUtf8(gxs_details.mNickname.c_str());
 			QString  idtype = tr("Anon Id");
-
-			/** Can we have known peers on mUnknownPeers (TODO)
-			if (gxs_details.mPgpKnown) {
-				RsPeerDetails details;
-				rsPeers->getGPGDetails(gxs_details.mPgpId, details);
-				idtype = QString::fromUtf8(details.name.c_str());
-			}else{
-				idtype = tr("PGP Linked Id");
-			}//if (gxs_details.mPgpKnown)*/
 
 			addMember(keyId, idtype, nickname);
 
@@ -487,7 +476,7 @@ void CreateCircleDialog::loadCircle(uint32_t token)
 
 	QTreeWidget *tree = ui.treeWidget_membership;
 
-	if (!mClearList) tree->clear();
+	if (mClearList) tree->clear();
 
 	std::vector<RsGxsCircleGroup> groups;
 	if (!rsGxsCircles->getGroupData(token, groups)) {

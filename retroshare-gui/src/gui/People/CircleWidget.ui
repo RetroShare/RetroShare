@@ -54,11 +54,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="ElidedLabel" name="label">
      <property name="minimumSize">
       <size>
        <width>0</width>
        <height>15</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
       </size>
      </property>
      <property name="text">
@@ -71,6 +77,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">gui/common/ElidedLabel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

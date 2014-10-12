@@ -19,19 +19,7 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>People you may know on RetroShare</string>
-     </property>
-    </widget>
-   </item>
+  <layout class="QGridLayout" name="titleBarLayout">
    <item row="0" column="0">
     <widget class="QFrame" name="titleBarFrame">
      <property name="frameShape">
@@ -40,12 +28,12 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <layout class="QHBoxLayout">
       <property name="margin">
        <number>2</number>
       </property>
       <item>
-       <widget class="QLabel" name="titleBarPixmap_3">
+       <widget class="QLabel" name="titleBarPixmap">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -70,7 +58,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="titleBarLabel_3">
+       <widget class="QLabel" name="titleBarLabel">
         <property name="font">
          <font>
           <pointsize>10</pointsize>
@@ -84,7 +72,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="titleBarSpacer_3">
+       <spacer name="titleBarSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -99,12 +87,28 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QSplitter" name="splitter">
+   <item row="1" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabExternal">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>External</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QSplitter" name="splitterExternal">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QScrollArea" name="scrollArea">
+         <widget class="QScrollArea" name="scrollAreaExternal">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -114,22 +118,22 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="FlowLayoutWidget" name="id">
+          <widget class="FlowLayoutWidget" name="idExternal">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>707</width>
+             <width>685</width>
          <height>248</height>
         </rect>
        </property>
        <layout class="QVBoxLayout"/>
       </widget>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QGridLayout" name="gridLayout">
+         <widget class="QWidget" name="widgetExternal">
+          <layout class="QGridLayout" name="layoutExternal">
        <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="label_External">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -142,7 +146,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Drag people to your Circles</string>
+              <string>Drag your circles or people to each other.</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -150,10 +154,88 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="PictureFlow" name="pictureFlowWidget" native="true">
+            <widget class="PictureFlow" name="pictureFlowWidgetExternal" native="true">
          <property name="widgetResizable" stdset="0">
           <bool>true</bool>
          </property>
+        </widget>
+       </item>
+      </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabInternal">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>Internal</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QSplitter" name="splitterInternal">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QScrollArea" name="scrollAreaInternal">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>250</height>
+           </size>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="FlowLayoutWidget" name="idInternal">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>685</width>
+             <height>248</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout"/>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="widgetInternal">
+          <layout class="QGridLayout" name="layoutInternal">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_Internal">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Drag your circles or people to each other.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="PictureFlow" name="pictureFlowWidgetInternal" native="true">
+             <property name="widgetResizable" stdset="0">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>
