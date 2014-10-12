@@ -1905,7 +1905,7 @@ void RsGenExchange::publishMsgs()
 				bool s = msg->metaData->serialise(metaDataBuff, &size);
 				s &= msg->meta.setBinData(metaDataBuff, size);
 
-				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 				msgId = msg->msgId;
 				grpId = msg->grpId;
 				msg->metaData->recvTS = time(NULL);
@@ -2493,7 +2493,7 @@ void RsGenExchange::processRecvdMessages()
 
             if(validateReturn == VALIDATE_SUCCESS)
             {
-                meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+                meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
                 msgs.insert(std::make_pair(msg, meta));
                 msgIds[msg->grpId].push_back(msg->msgId);
 

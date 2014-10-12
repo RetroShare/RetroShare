@@ -99,9 +99,9 @@ namespace GXS_SERV {
 
     static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x00000001;
 
-    static const uint32_t GXS_MSG_STATUS_UNREAD = 0x00000002;
+    static const uint32_t GXS_MSG_STATUS_GUI_USER_UNREAD = 0x00000002;
 
-    static const uint32_t GXS_MSG_STATUS_READ = 0x00000004;
+    static const uint32_t GXS_MSG_STATUS_GUI_NEW = 0x00000004;
 
     static const uint32_t GXS_MSG_STATUS_KEEP = 0x00000008;
 
@@ -120,9 +120,9 @@ namespace GXS_SERV {
 
 
 // GENERIC GXS MACROS
-#define IS_MSG_NEW(status)                      (status & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
+#define IS_MSG_NEW(status)                      (status & GXS_SERV::GXS_MSG_STATUS_GUI_NEW)
+#define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD)
 
-#define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_UNREAD)
 #define IS_GROUP_ADMIN(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 #define IS_GROUP_PUBLISHER(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 #define IS_GROUP_SUBSCRIBED(subscribeFlags)     (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)

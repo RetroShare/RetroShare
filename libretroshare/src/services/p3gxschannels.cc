@@ -804,8 +804,8 @@ void p3GxsChannels::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPai
 	std::cerr << std::endl;
 
 	/* Always remove status unprocessed */
-	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
-	uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD;
+	uint32_t status = GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD;
 	if (read)
 	{
 		status = 0;
@@ -1133,7 +1133,7 @@ bool p3GxsChannels::generatePost(uint32_t &token, const RsGxsGroupId &grpId)
 	msg.mMeta.mThreadId.clear() ;
 	msg.mMeta.mParentId.clear() ;
 
-	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 
 	createPost(token, msg);
 
@@ -1156,7 +1156,7 @@ bool p3GxsChannels::generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
 	msg.mMeta.mThreadId = threadId;
 	msg.mMeta.mParentId = parentId;
 
-	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 
 	/* chose a random Id to sign with */
 	std::list<RsGxsId> ownIds;
@@ -1193,7 +1193,7 @@ bool p3GxsChannels::generateVote(uint32_t &token, const RsGxsGroupId &grpId, con
 	vote.mMeta.mGroupId = grpId;
 	vote.mMeta.mThreadId = threadId;
 	vote.mMeta.mParentId = parentId;
-	vote.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	vote.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 
 	/* chose a random Id to sign with */
 	std::list<RsGxsId> ownIds;

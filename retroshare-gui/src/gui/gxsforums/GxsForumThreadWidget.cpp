@@ -1390,9 +1390,9 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 
 		uint32_t status = (*row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
-		uint32_t statusNew = (status & ~(GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)); // orig status, without UNREAD and UNPROCESSED.
+		uint32_t statusNew = (status & ~(GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD)); // orig status, without UNREAD and UNPROCESSED.
 		if (!read) {
-			statusNew |= GXS_SERV::GXS_MSG_STATUS_UNREAD;
+			statusNew |= GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD;
 		}
 
 		if (status != statusNew) // is it different?
