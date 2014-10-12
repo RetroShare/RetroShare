@@ -314,7 +314,6 @@ HEADERS +=  rshare.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/graphframe.h \
-            gui/dhtgraph.h \
             gui/graphframetunnel.h \
             gui/linetypes.h \
             gui/mainpagestack.h \
@@ -344,6 +343,7 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/TransfersDialog.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
+            gui/statistics/dhtgraph.h \
             gui/FileTransfer/TransferUserNotify.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/ImHistoryBrowser.h \
@@ -434,6 +434,7 @@ HEADERS +=  rshare.h \
             gui/toaster/GroupChatToaster.h \
             gui/toaster/ChatLobbyToaster.h \
             gui/toaster/FriendRequestToaster.h \
+            gui/common/RSGraphWidget.h \
             gui/common/ElidedLabel.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
@@ -543,6 +544,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
             gui/statistics/TurtleRouterDialog.ui \
             gui/statistics/TurtleRouterStatistics.ui \
+            gui/statistics/GlobalRouterStatistics.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
@@ -592,7 +594,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/PostedPage.ui \
             gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
-            gui/statistics/GlobalRouterStatistics.ui \
             gui/settings/PluginItem.ui \
             gui/settings/GroupFrameSettingsWidget.ui \
             gui/toaster/MessageToaster.ui \
@@ -626,8 +627,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/DhtWindow.ui \
             gui/statistics/StatisticsWindow.ui \
             gui/statistics/BwCtrlWindow.ui \
-            gui/GetStartedDialog.ui \
             gui/statistics/RttStatistics.ui \
+            gui/GetStartedDialog.ui \
 
 #            gui/ForumsDialog.ui \
 #            gui/forums/CreateForum.ui \
@@ -653,7 +654,6 @@ SOURCES +=  main.cpp \
             gui/GenCertDialog.cpp \
             gui/NetworkDialog.cpp \
             gui/graphframe.cpp \
-            gui/dhtgraph.cpp \
             gui/graphframetunnel.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
@@ -684,6 +684,8 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/xprogressbar.cpp \
             gui/statistics/TurtleRouterDialog.cpp \
             gui/statistics/TurtleRouterStatistics.cpp \
+            gui/statistics/dhtgraph.cpp \
+            gui/statistics/GlobalRouterStatistics.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
             gui/MainPage.cpp \
@@ -731,6 +733,7 @@ SOURCES +=  main.cpp \
             gui/msgs/MessageWindow.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/msgs/MessageUserNotify.cpp \
+            gui/common/RSGraphWidget.cpp \
             gui/common/ElidedLabel.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/RsCollectionFile.cpp \
@@ -779,7 +782,6 @@ SOURCES +=  main.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
-            gui/statistics/GlobalRouterStatistics.cpp \
             gui/settings/rsettings.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \

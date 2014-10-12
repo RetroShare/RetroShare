@@ -73,7 +73,6 @@ void DhtWindow::updateDisplay()
 	updateNetPeers();
 	updateDhtPeers();
 	updateRelays();
-	getDHTStatus();
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 }
@@ -667,39 +666,39 @@ void DhtWindow::updateDhtPeers()
 void DhtWindow::getDHTStatus()
 {
 
-	RsConfigNetStatus config;
-	rsConfig->getConfigNetStatus(config);
-
-	if (!(config.DHTActive))
-	{
-		// GRAY.
-	}
-	else
-	{
-		if (config.netDhtOk)
-		{
-#define MIN_RS_NET_SIZE		10
-			// YELLOW or GREEN.
-			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
-			{
-        updateGraph(config.netDhtRsNetSize,config.netDhtNetSize);
-			}
-			else
-			{
-        updateGraph(config.netDhtRsNetSize,config.netDhtNetSize);
-			}
-		}
-		else
-		{
-			// RED - some issue.
-
-		}
-	}
+// 	RsConfigNetStatus config;
+// 	rsConfig->getConfigNetStatus(config);
+//
+// 	if (!(config.DHTActive))
+// 	{
+// 		// GRAY.
+// 	}
+// 	else
+// 	{
+// 		if (config.netDhtOk)
+// 		{
+// #define MIN_RS_NET_SIZE		10
+// 			// YELLOW or GREEN.
+// 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
+// 			{
+//         updateGraph(config.netDhtRsNetSize,config.netDhtNetSize);
+// 			}
+// 			else
+// 			{
+//         updateGraph(config.netDhtRsNetSize,config.netDhtNetSize);
+// 			}
+// 		}
+// 		else
+// 		{
+// 			// RED - some issue.
+//
+// 		}
+// 	}
 }
 
 /** Adds new data to the graph. */
 void DhtWindow::updateGraph(qreal rsDHT, qreal allDHT)
 {
-  ui.frmGraph->addPoints(rsDHT, allDHT);
+//  ui.frmGraph->addPoints(rsDHT, allDHT);
 }
 
