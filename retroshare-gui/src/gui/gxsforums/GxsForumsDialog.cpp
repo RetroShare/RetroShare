@@ -69,7 +69,6 @@ QString GxsForumsDialog::text(TextType type)
 		       "<li>Restore forum keys"
 		       "<li>Display AUTHD"
 		       "<li>Navigate forum link"
-		       "<li>Don't show own posts as unread"
 		       "<li>Remove messages"
 		       "</ul>";
 

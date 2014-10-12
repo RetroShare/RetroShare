@@ -80,7 +80,6 @@ QString GxsChannelDialog::text(TextType type)
 		return "<b>Open points:</b><ul>"
 		        "<li>Restore channel keys"
 		        "<li>Navigate channel link"
-                "<li>Don't show own posts as unread"
 		        "</ul>";
 
 	case TEXT_YOUR_GROUP:
