@@ -52,7 +52,7 @@
 #define IMAGE_VOTEDOWN   ":/images/vote_down.png"
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
-	:QTreeWidget(parent), mRsTokenService(NULL), mCommentService(NULL), mTokenQueue(NULL)
+	:QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
 {
 //	QTreeWidget* widget = this;
 
@@ -73,6 +73,13 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	return;
 }
 
+GxsCommentTreeWidget::~GxsCommentTreeWidget()
+{
+	if (mTokenQueue) {
+		delete(mTokenQueue);
+	}
+}
+
 void GxsCommentTreeWidget::setCurrentMsgId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
 
@@ -84,7 +91,7 @@ void GxsCommentTreeWidget::setCurrentMsgId(QTreeWidgetItem *current, QTreeWidget
 	}
 }
 
-void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
+void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 {
 	QMenu contextMnu( this );
 	QAction* action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Reply to Comment"), this, SLOT(replyToComment()));

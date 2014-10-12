@@ -203,6 +203,11 @@ IdDialog::IdDialog(QWidget *parent)
 	registerHelpButton(ui.helpButton, hlp_str) ;
 }
 
+IdDialog::~IdDialog()
+{
+	delete(mIdQueue);
+}
+
 void IdDialog::todo()
 {
 	QMessageBox::information(this, "Todo",

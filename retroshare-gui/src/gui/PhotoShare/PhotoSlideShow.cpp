@@ -51,14 +51,16 @@ PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
         //QTimer::singleShot(5000, this, SLOT(timerEvent()));
 }
 
-PhotoSlideShow::~PhotoSlideShow(){
-
+PhotoSlideShow::~PhotoSlideShow()
+{
     std::map<RsGxsMessageId, RsPhotoPhoto *>::iterator mit = mPhotos.begin();
 
     for(; mit != mPhotos.end(); mit++)
     {
         delete mit->second;
     }
+
+    delete(mPhotoQueue);
 }
 
 void PhotoSlideShow::showPhotoDetails()

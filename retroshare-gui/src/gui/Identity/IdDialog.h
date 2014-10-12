@@ -44,6 +44,7 @@ class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 
 public:
 	IdDialog(QWidget *parent = 0);
+	~IdDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
 	virtual QString pageName() const { return tr("Identities") ; } //MainPage

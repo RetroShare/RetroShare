@@ -122,6 +122,11 @@ WikiDialog::WikiDialog(QWidget *parent)
 	insertWikiGroups();
 }
 
+WikiDialog::~WikiDialog()
+{
+	delete(mWikiQueue);
+}
+
 void WikiDialog::checkUpdate()
 {
 	/* update */

@@ -29,6 +29,7 @@ class PhotoShare : public MainPage, public TokenResponse, public PhotoShareItemH
 
 public:
         PhotoShare(QWidget *parent = 0);
+        ~PhotoShare();
 
         void notifySelection(PhotoShareItem* selection);
 

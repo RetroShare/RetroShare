@@ -84,6 +84,15 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId)
 #endif
 }
 
+CreateGxsChannelMsg::~CreateGxsChannelMsg()
+{
+#ifdef CHANNELS_FRAME_CATCHER
+	delete fCatcher;
+#endif
+
+	delete(mChannelQueue);
+}
+
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {
 	QList<RetroShareLink> links ;
@@ -140,13 +149,6 @@ void CreateGxsChannelMsg::pasteLink()
 
 		QMessageBox::warning(NULL,tr("You can only post files that you do have"),msg) ;
 	}
-}
-
-CreateGxsChannelMsg::~CreateGxsChannelMsg()
-{
-#ifdef CHANNELS_FRAME_CATCHER
-	delete fCatcher;
-#endif
 }
 
 /* Dropping */

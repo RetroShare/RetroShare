@@ -53,6 +53,7 @@ GxsMessageFramePostWidget::~GxsMessageFramePostWidget()
 		delete(mFillThread);
 		mFillThread = NULL;
 	}
+	delete(mTokenQueue);
 }
 
 void GxsMessageFramePostWidget::setGroupId(const RsGxsGroupId &groupId)

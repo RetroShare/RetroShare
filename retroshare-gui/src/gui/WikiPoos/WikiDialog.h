@@ -46,6 +46,7 @@ class WikiDialog : public MainPage, public TokenResponse
 
 public:
 	WikiDialog(QWidget *parent = 0);
+	~WikiDialog();
 	
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIKI) ; } //MainPage
 	virtual QString pageName() const { return tr("Wiki Pages") ; } //MainPage

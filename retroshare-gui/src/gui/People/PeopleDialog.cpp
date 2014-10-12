@@ -196,6 +196,12 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 #endif
 }
 
+void PeopleDialog::~PeopleDialog()
+{
+	delete(mIdentityQueue);
+	delete(mCirclesQueue);
+}
+
 void PeopleDialog::updateDisplay(bool complete)
 {
 	Q_UNUSED(complete);

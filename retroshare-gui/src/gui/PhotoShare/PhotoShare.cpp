@@ -97,6 +97,11 @@ PhotoShare::PhotoShare(QWidget *parent)
         requestAlbumData();
 }
 
+void PhotoShare::~PhotoShare()
+{
+    delete(mPhotoQueue);
+}
+
 void PhotoShare::notifySelection(PhotoShareItem *selection)
 {
 

@@ -79,6 +79,13 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *t
 	init();
 }
 
+GxsGroupDialog::~GxsGroupDialog()
+{
+	if (mInternalTokenQueue) {
+		delete(mInternalTokenQueue);
+	}
+}
+
 void GxsGroupDialog::init()
 {
 	// connect up the buttons.

@@ -41,6 +41,7 @@ class IdEditDialog : public QDialog, public TokenResponse
 
 public:
 	IdEditDialog(QWidget *parent = 0);
+	~IdEditDialog();
 
 	void setupNewId(bool pseudo);
 	void setupExistingId(std::string keyId);

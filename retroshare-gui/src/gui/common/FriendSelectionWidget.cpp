@@ -119,6 +119,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 
 FriendSelectionWidget::~FriendSelectionWidget()
 {
+	delete(mIdQueue);
 	delete ui;
 }
 

@@ -97,6 +97,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 WikiEditDialog::~WikiEditDialog()
 {
         delete (mThreadCompareRole);
+	delete(mWikiQueue);
 }
 
 void WikiEditDialog::mergeModeToggle()

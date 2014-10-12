@@ -83,6 +83,11 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	ui.pushButton_Tag->setEnabled(false);
 }
 
+IdEditDialog::~IdEditDialog()
+{
+	delete(mIdQueue);
+}
+
 void IdEditDialog::setupNewId(bool pseudo)
 {
 	setWindowTitle(tr("New identity"));

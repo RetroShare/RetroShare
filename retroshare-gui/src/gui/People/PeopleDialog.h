@@ -51,6 +51,7 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, p
 	static const uint32_t PD_CIRCLES   ;
 
 		PeopleDialog(QWidget *parent = 0);
+		~PeopleDialog();
 
 		virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDENTITY) ; } //MainPage
 		virtual QString pageName() const { return tr("People") ; } //MainPage
