@@ -21,7 +21,9 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#ifndef WINDOWS_SYS
 #include <sys/times.h>
+#endif
 
 #include <iostream>
 #include <QtGlobal>
