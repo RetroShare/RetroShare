@@ -26,14 +26,16 @@
 
 #include <QMetaType>
 
-#include "ui_PostedItem.h"
-
 #include <retroshare/rsposted.h>
 #include "gui/gxs/GxsFeedItem.h"
 
+namespace Ui {
+class PostedItem;
+}
+
 class RsPostedPost;
 
-class PostedItem : public GxsFeedItem, private Ui::PostedItem
+class PostedItem : public GxsFeedItem
 {
 	Q_OBJECT
 
@@ -53,6 +55,7 @@ private slots:
 	void loadComments();
 	void makeUpVote();
 	void makeDownVote();
+	void readToggled(bool checked);
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
@@ -64,10 +67,16 @@ protected:
 
 private:
 	void setup();
+	void setReadStatus(bool isNew, bool isUnread);
+
+	bool mInSetContent;
 
 	uint32_t mType;
 	bool mSelected;
 	RsPostedPost mPost;
+
+	/** Qt Designer generated object */
+	Ui::PostedItem *ui;
 };
 
 Q_DECLARE_METATYPE(RsPostedPost)

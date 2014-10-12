@@ -65,7 +65,6 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	mMode = DATA_PROVIDED;
 	mGroupMeta.mSubscribeFlags = subFlags;
-	mInUpdateItemStatic = false;
 
 	setup();
 

@@ -23,12 +23,17 @@
 
 #include <QDateTime>
 
+#include "rshare.h"
 #include "PostedItem.h"
 #include "gui/feeds/FeedHolder.h"
+#include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
 
 #include <iostream>
+
+#define COLOR_NORMAL QColor(248, 248, 248)
+#define COLOR_NEW    QColor(220, 236, 253)
 
 /** Constructor */
 
@@ -49,12 +54,19 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPo
 
 void PostedItem::setup()
 {
-	setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui = new Ui::PostedItem;
+	ui->setupUi(this);
+
+	mInSetContent = false;
+
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	connect(commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
-	connect(voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-	connect(voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+	connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
+	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+
+	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 }
 
 void PostedItem::loadMessage(const uint32_t &token)
@@ -90,19 +102,21 @@ void PostedItem::setContent(const QVariant &content)
 
 void PostedItem::setContent(const RsPostedPost &post)
 {
+	mInSetContent = true;
+
 	mPost = post;
 
 	QDateTime qtime;
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-	dateLabel->setText(timestamp);
-	fromLabel->setId(post.mMeta.mAuthorId);
-	titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-					   "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-					   QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
-	siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-					   "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-					   QString::fromStdString(post.mLink) + "</span></a>");
+	ui->dateLabel->setText(timestamp);
+	ui->fromLabel->setId(post.mMeta.mAuthorId);
+	ui->titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+	                        "><span style=\" text-decoration: underline; color:#2255AA;\">" +
+	                        QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
+	ui->siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+	                       "><span style=\" text-decoration: underline; color:#2255AA;\">" +
+	                       QString::fromStdString(post.mLink) + "</span></a>");
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
 	//score += " Top" + QString::number(post.mTopScore); 
@@ -110,50 +124,55 @@ void PostedItem::setContent(const RsPostedPost &post)
 
 	QString score = QString::number(post.mTopScore);
 
-	scoreLabel->setText(score); 
+	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-	notes->setText(QString::fromUtf8(post.mNotes.c_str()));
+	ui->notes->setText(QString::fromUtf8(post.mNotes.c_str()));
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
 		// feed.
-		frame_notes->hide();
+		ui->frame_notes->hide();
 		//frame_comment->show();
-		commentButton->show();
+		ui->commentButton->show();
 
 		if (post.mComments)
 		{
 			QString commentText = QString::number(post.mComments);
 			commentText += " ";
 			commentText += tr("Comments");
-			commentButton->setText(commentText);
+			ui->commentButton->setText(commentText);
 		}
 		else
 		{
-			commentButton->setText(tr("Comment"));
+			ui->commentButton->setText(tr("Comment"));
 		}
+
+		setReadStatus(IS_MSG_NEW(post.mMeta.mMsgStatus), IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus));
 	}
 	else
 	{
 		// no feed.
-		if(notes->text().isEmpty())
-		{		
-      frame_notes->hide();
+		if(ui->notes->text().isEmpty())
+		{
+			ui->frame_notes->hide();
 		}
 		else
 		{
-      frame_notes->show();
+			ui->frame_notes->show();
 		}
 		//frame_comment->hide();
-		commentButton->hide();
+		ui->commentButton->hide();
+
+		ui->readButton->hide();
+		ui->newLabel->hide();
 	}
 
 	// disable voting buttons - if they have already voted.
 	if (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 	{
-		voteUpButton->setEnabled(false);
-		voteDownButton->setEnabled(false);
+		ui->voteUpButton->setEnabled(false);
+		ui->voteDownButton->setEnabled(false);
 	}
 
 	uint32_t up, down, nComments;
@@ -173,6 +192,8 @@ void PostedItem::setContent(const RsPostedPost &post)
 								  + QString::number(nComments) + "</span></p>");
 	}
 #endif
+
+	mInSetContent = false;
 }
 
 const RsPostedPost &PostedItem::getPost() const
@@ -196,8 +217,8 @@ void PostedItem::makeDownVote()
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	voteUpButton->setEnabled(false);
-	voteDownButton->setEnabled(false);
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
 	emit vote(msgId, false);
 }
@@ -208,8 +229,8 @@ void PostedItem::makeUpVote()
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	voteUpButton->setEnabled(false);
-	voteDownButton->setEnabled(false);
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
 	emit vote(msgId, true);
 }
@@ -224,4 +245,45 @@ void PostedItem::loadComments()
 		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, title);
 	}
+}
+
+void PostedItem::setReadStatus(bool isNew, bool isUnread)
+{
+	if (isUnread)
+	{
+		ui->readButton->setChecked(true);
+		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+	}
+	else
+	{
+		ui->readButton->setChecked(false);
+		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
+	}
+
+	ui->newLabel->setVisible(isNew);
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	ui->frame->style()->unpolish(ui->frame);
+
+	QPalette palette = ui->frame->palette();
+	palette.setColor(ui->frame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
+	palette.setColor(QPalette::Base, isNew ? COLOR_NEW : COLOR_NORMAL); // QTreeWidget
+	ui->frame->setPalette(palette);
+
+	ui->frame->setProperty("new", isNew);
+	Rshare::refreshStyleSheet(ui->frame, false);
+}
+
+void PostedItem::readToggled(bool checked)
+{
+	if (mInSetContent) {
+		return;
+	}
+
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+
+	uint32_t token;
+	rsPosted->setMessageReadStatus(token, msgPair, !checked);
+
+	setReadStatus(false, checked);
 }

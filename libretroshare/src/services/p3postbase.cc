@@ -86,7 +86,6 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << "p3PostBase::notifyChanges()";
 	std::cerr << std::endl;
 
-	std::vector<RsGxsNotify *> changesForGUI;
 	std::vector<RsGxsNotify *>::iterator it;
 
 	for(it = changes.begin(); it != changes.end(); it++)
@@ -109,7 +108,6 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				// It could be taken a step further and directly request these msgs for an update.
 				addGroupForProcessing(mit->first);
 			}
-			delete msgChange;
 	       }
 
 	       /* pass on Group Changes to GUI */
@@ -125,11 +123,9 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
 				std::cerr << std::endl;
 			}
-			changesForGUI.push_back(groupChange);
 		}
 	}
-	changes.clear();
-	receiveHelperChanges(changesForGUI);
+	receiveHelperChanges(changes);
 
 	std::cerr << "p3PostBase::notifyChanges() -> receiveChanges()";
 	std::cerr << std::endl;
@@ -514,12 +510,12 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 				std::cerr << std::endl;
 			}
 		
-			/* flag all messages as processed */
+			/* flag all messages as processed and new for the gui */
 			if ((*vit)->meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
 			{
 				uint32_t token_a;
 				RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, (*vit)->meta.mMsgId);
-				RsGenExchange::setMsgStatusFlags(token_a, msgId, 0, GXS_SERV::GXS_MSG_STATUS_UNPROCESSED);
+				RsGenExchange::setMsgStatusFlags(token_a, msgId, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
 			}
 			delete(*vit);
 		}
