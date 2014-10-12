@@ -268,8 +268,8 @@ bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)
 
 void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
 {
-	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD;
-	uint32_t status = GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD;
+	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+	uint32_t status = GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 	if (read)
 	{
 		status = 0;

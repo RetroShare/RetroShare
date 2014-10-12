@@ -2493,7 +2493,7 @@ void RsGenExchange::processRecvdMessages()
 
             if(validateReturn == VALIDATE_SUCCESS)
             {
-                meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
+                meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
                 msgs.insert(std::make_pair(msg, meta));
                 msgIds[msg->grpId].push_back(msg->msgId);
 

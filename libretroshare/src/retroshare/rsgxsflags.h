@@ -99,7 +99,7 @@ namespace GXS_SERV {
 
     static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x00000001;
 
-    static const uint32_t GXS_MSG_STATUS_GUI_USER_UNREAD = 0x00000002;
+    static const uint32_t GXS_MSG_STATUS_GUI_UNREAD = 0x00000002;
 
     static const uint32_t GXS_MSG_STATUS_GUI_NEW = 0x00000004;
 
@@ -121,7 +121,7 @@ namespace GXS_SERV {
 
 // GENERIC GXS MACROS
 #define IS_MSG_NEW(status)                      (status & GXS_SERV::GXS_MSG_STATUS_GUI_NEW)
-#define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_GUI_USER_UNREAD)
+#define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
 
 #define IS_GROUP_ADMIN(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 #define IS_GROUP_PUBLISHER(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
