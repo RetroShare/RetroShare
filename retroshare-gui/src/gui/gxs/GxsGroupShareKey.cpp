@@ -19,17 +19,19 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "GxsChannelShareKey.h"
+#include "GxsGroupShareKey.h"
 
 #include <QMessageBox>
 #include <algorithm>
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxschannels.h>
+#include <retroshare/rsgxsforums.h>
+#include <retroshare/rsposted.h>
 
 #include "gui/common/PeerDefs.h"
 
-ChannelShareKey::ChannelShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grpType) :
+GroupShareKey::GroupShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grpType) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpId(grpId), mGrpType(grpType)
 {
 	ui = new Ui::ShareKey();
@@ -48,12 +50,12 @@ ChannelShareKey::ChannelShareKey(QWidget *parent, const RsGxsGroupId &grpId, int
 	ui->keyShareList->start();
 }
 
-ChannelShareKey::~ChannelShareKey()
+GroupShareKey::~GroupShareKey()
 {
 	delete ui;
 }
 
-void ChannelShareKey::changeEvent(QEvent *e)
+void GroupShareKey::changeEvent(QEvent *e)
 {
 	QDialog::changeEvent(e);
 	switch (e->type()) {
@@ -65,7 +67,7 @@ void ChannelShareKey::changeEvent(QEvent *e)
 	}
 }
 
-void ChannelShareKey::shareKey()
+void GroupShareKey::shareKey()
 {
 	std::list<RsPeerId> shareList;
 	ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
@@ -76,23 +78,37 @@ void ChannelShareKey::shareKey()
 		return;
 	}
 
-	if (mGrpType & CHANNEL_KEY_SHARE) {
+    if (mGrpType == CHANNEL_KEY_SHARE)
+    {
         if (!rsGxsChannels)
-			return;
+            return;
 
         if (!rsGxsChannels->groupShareKeys(mGrpId, shareList)) {
-			std::cerr << "Failed to share keys!" << std::endl;
-			return;
-		}
-	} else if(mGrpType & FORUM_KEY_SHARE) {
-
+            std::cerr << "Failed to share keys!" << std::endl;
+            return;
+        }
+    }
+    else if(mGrpType == FORUM_KEY_SHARE)
+    {
         QMessageBox::warning(NULL,"Not implemented.","Not implemented") ;
 
-    //	if (!rsForums->forumShareKeys(mGrpId, shareList)) {
+        //	if (!rsForums->forumShareKeys(mGrpId, shareList)) {
         //	std::cerr << "Failed to share keys!" << std::endl;
-            //return;
+        //return;
         //}
-	} else {
+    }
+    else if (mGrpType == POSTED_KEY_SHARE)
+    {
+        if (!rsPosted)
+            return;
+
+        if (!rsPosted->groupShareKeys(mGrpId, shareList)) {
+            std::cerr << "Failed to share keys!" << std::endl;
+            return;
+        }
+    }
+    else
+    {
 		// incorrect type
 		return;
 	}

@@ -23,7 +23,7 @@
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
 #include "GxsChannelUserNotify.h"
-#include "GxsChannelShareKey.h"
+#include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"

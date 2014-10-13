@@ -1191,7 +1191,6 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidget.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
-		gui/gxschannels/GxsChannelShareKey.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
@@ -1199,7 +1198,6 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
-		gui/gxschannels/GxsChannelShareKey.ui \
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
@@ -1207,7 +1205,6 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesWidget.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
-		gui/gxschannels/GxsChannelShareKey.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
 		gui/feeds/GxsChannelPostItem.cpp \
 		gui/gxschannels/GxsChannelUserNotify.cpp
@@ -1270,6 +1267,7 @@ gxsgui {
 		gui/gxs/RsGxsUpdateBroadcastBase.h \
 		gui/gxs/RsGxsUpdateBroadcastWidget.h \
 		gui/gxs/RsGxsUpdateBroadcastPage.h \
+		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
@@ -1280,10 +1278,10 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.ui \
 		gui/gxs/GxsCommentDialog.ui \
 		gui/gxs/GxsCreateCommentDialog.ui \
-		gui/gxs/GxsGroupFrameDialog.ui
-	
+		gui/gxs/GxsGroupFrameDialog.ui\
+		gui/gxs/GxsGroupShareKey.ui 
 #		gui/gxs/GxsMsgDialog.ui \
-#		gui/gxs/GxsCommentTreeWidget.ui \
+#		gui/gxs/GxsCommentTreeWidget.ui 
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
 		gui/gxs/WikiGroupDialog.cpp \
@@ -1291,6 +1289,7 @@ gxsgui {
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \
 		gui/gxs/GxsCircleChooser.cpp \
+		gui/gxs/GxsGroupShareKey.cpp \
 		gui/gxs/GxsCircleLabel.cpp \
 		gui/gxs/GxsIdTreeWidget.cpp \
 		gui/gxs/GxsIdTreeWidgetItem.cpp \

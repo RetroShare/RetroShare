@@ -26,7 +26,7 @@
 #include "PostedGroupDialog.h"
 #include "PostedListWidget.h"
 #include "PostedUserNotify.h"
-//#include "gui/channels/ShareKey.h"
+#include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
 
 #include <retroshare/rsposted.h>
@@ -118,7 +118,7 @@ GxsGroupDialog *PostedDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenS
 
 int PostedDialog::shareKeyType()
 {
-	return 0; //POSTED_KEY_SHARE;
+    return POSTED_KEY_SHARE;
 }
 
 GxsMessageFrameWidget *PostedDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)

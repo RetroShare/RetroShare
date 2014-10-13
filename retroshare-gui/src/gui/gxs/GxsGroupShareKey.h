@@ -7,8 +7,9 @@
 
 #define CHANNEL_KEY_SHARE 0x00000001
 #define FORUM_KEY_SHARE	  0x00000002
+#define POSTED_KEY_SHARE  0x00000003
 
-class ChannelShareKey : public QDialog
+class GroupShareKey : public QDialog
 {
 	Q_OBJECT
 
@@ -16,8 +17,8 @@ public:
 	/*
 	 *@param chanId The channel id to send request for
 	 */
-    ChannelShareKey(QWidget *parent = 0, const RsGxsGroupId& grpId = RsGxsGroupId(), int grpType = 0);
-    ~ChannelShareKey();
+    GroupShareKey(QWidget *parent = 0, const RsGxsGroupId& grpId = RsGxsGroupId(), int grpType = 0);
+    ~GroupShareKey();
 
 protected:
 	void changeEvent(QEvent *e);

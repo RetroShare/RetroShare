@@ -62,7 +62,11 @@ RsServiceInfo p3Posted::getServiceInfo()
                 GXS_POSTED_MIN_MINOR_VERSION);
 }
 
-
+bool p3Posted::groupShareKeys(const RsGxsGroupId& groupId,const std::list<RsPeerId>& peers)
+{
+        RsGenExchange::shareGroupPublishKey(groupId,peers) ;
+        return true ;
+}
 
 bool p3Posted::getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups)
 {
