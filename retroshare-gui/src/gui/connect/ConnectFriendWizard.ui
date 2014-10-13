@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
+    <width>604</width>
     <height>623</height>
    </rect>
   </property>
@@ -30,6 +30,13 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QRadioButton" name="textRadioButton">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
       <property name="text">
        <string>&amp;Enter the certificate manually</string>
       </property>
@@ -37,6 +44,11 @@
     </item>
     <item>
      <widget class="QRadioButton" name="certRadioButton">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>&amp;You get a certificate file from your friend</string>
       </property>
@@ -44,6 +56,11 @@
     </item>
     <item>
      <widget class="QRadioButton" name="foffRadioButton">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>&amp;Make friend with selected friends of my friends</string>
       </property>
@@ -51,6 +68,11 @@
     </item>
     <item>
      <widget class="QRadioButton" name="rsidRadioButton">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>&amp;Enter RetroShare ID manually</string>
       </property>
@@ -58,6 +80,11 @@
     </item>
     <item>
      <widget class="QRadioButton" name="emailRadioButton">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>&amp;Send an Invitation by Email 
  (She/He receives an email with instructions how to to download RetroShare)</string>
@@ -66,6 +93,11 @@
     </item>
     <item>
      <widget class="QRadioButton" name="friendRecommendationsRadioButton">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>Recommend many friends to each others</string>
       </property>
@@ -86,6 +118,11 @@
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QLabel" name="userCertLabel">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>The text below is your PGP certificate. You have to provide it to your friend</string>
       </property>
@@ -253,6 +290,11 @@
     </item>
     <item>
      <widget class="QLabel" name="friendCertLabel">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>Please, paste your friends PGP certificate into the box below</string>
       </property>
