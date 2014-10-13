@@ -33,24 +33,26 @@ class DHTGraphSource: public RSGraphSource
 public:
     virtual int n_values() const
     {
-        return 2 ;
+        return 1 ;
     }
-    virtual void getValues(std::vector<float>& values) const
+    virtual void getValues(std::map<std::string,float>& values) const
     {
         RsConfigNetStatus config;
         rsConfig->getConfigNetStatus(config);
 
         if (config.DHTActive && config.netDhtOk)
         {
-            values.push_back(config.netDhtRsNetSize) ;
-            values.push_back(config.netDhtNetSize) ;
+            values.insert(std::make_pair(std::string("RS Net size"),(float)config.netDhtRsNetSize)) ;
+            //values.insert(std::make_pair(std::string("GLobal Net size"),(float)config.netDhtNetSize)) ;
         }
         else
         {
-            values.push_back(0.0f) ;
-            values.push_back(0.0f) ;
+            values.insert(std::make_pair(std::string("RS Net size"),0.0f)) ;
+            //values.insert(std::make_pair(std::string("GLobal Net size"),0.0f)) ;
         }
     }
+
+    virtual QString unitName() const { return tr("users"); }
 };
 
 /** Default contructor */
@@ -65,7 +67,8 @@ DhtGraph::DhtGraph(QWidget *parent)
 
     addSource(src) ;
 
-    setTimeScale(10.0f) ;
+    setTimeScale(1.0f) ; // 1 pixels per second of time.
+    resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 }
 
 

@@ -136,11 +136,8 @@ void StatisticsWindow::initStackedPage()
   ui->stackPages->add(grsdlg = new GlobalRouterStatistics(ui->stackPages),
                    action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Global Router"), grp)); 
                    
-#ifdef SHOW_RTT_STATISTICS
-
-           ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp)); 
-#endif                    
+  ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
+                      action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
                    
    /*std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
 	 for(int i = 0;i<rsPlugins->nbPlugins();++i)

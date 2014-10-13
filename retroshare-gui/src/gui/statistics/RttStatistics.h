@@ -25,10 +25,27 @@
 #include <retroshare/rsrtt.h>
 #include "ui_RttStatistics.h"
 #include "RsAutoUpdatePage.h"
+#include <gui/common/RSGraphWidget.h>
 
 class RttStatisticsWidget ;
 
-class RttStatistics: public RsAutoUpdatePage, public Ui::RttStatistics
+class RttGraphSource: public RSGraphSource
+{
+public:
+    RttGraphSource() ;
+
+    virtual void getValues(std::map<std::string,float>& vals) ;
+};
+
+class RttStatisticsGraph: public RSGraphWidget
+{
+    public:
+    RttStatisticsGraph()
+    {
+    }
+};
+
+class RttStatistics: public MainPage, public Ui::RttStatistics
 {
 	public:
 		RttStatistics(QWidget *parent = NULL) ;
@@ -42,9 +59,7 @@ class RttStatistics: public RsAutoUpdatePage, public Ui::RttStatistics
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
 
-		virtual void updateDisplay() ;
-
-		RttStatisticsWidget *_tst_CW ;
+        RttStatisticsGraph *_tst_CW ;
 } ;
 
 class RttStatisticsWidget:  public QWidget
@@ -65,4 +80,7 @@ class RttStatisticsWidget:  public QWidget
 		QPixmap pixmap ;
 		int maxWidth,maxHeight ;
 };
+
+
+
 

@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <map>
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QFrame>
@@ -57,7 +59,7 @@ public:
     void stop() ;
     void clear() ;
 
-    virtual int n_values() const =0; // Method to overload in your own class
+    virtual int n_values() const ;
 
     // Returns the n^th interpolated value at the given time in floating point seconds backward.
     virtual void getDataPoints(int index, std::vector<QPointF>& pts) const ;
@@ -68,16 +70,21 @@ public:
     // Sets the time period for collecting new values. Units=milliseconds.
     void setCollectionTimePeriod(qint64 msecs) ;
 
+    virtual QString unitName() const =0;// overload to give your own unit name (KB/s, Users, etc)
+
 protected slots:
-    // Calls the internal source for a new data points; called by the timer.
+    // Calls the internal source for a new data points; called by the timer. You might want to overload this
+    // if the collection system needs it. Otherwise, the default method will call getValues()
     void update() ;
 
 protected:
-    virtual void getValues(std::vector<float>& values) const = 0 ;	// overload this in your own class to fill in the values you want to display.
+    virtual void getValues(std::map<std::string,float>& values) const = 0 ;// overload this in your own class to fill in the values you want to display.
 
-    qint64 getTime() const ;						// returns time in ms since RS has started
+    qint64 getTime() const ;						   // returns time in ms since RS has started
 
-    std::list<std::pair<qint64,std::vector<float> > > _points ;
+    // Storage of collected events. The string is any string used to represent the collected data.
+
+    std::map<std::string, std::list<std::pair<qint64,float> > > _points ;
 
     QTimer *_timer ;
 
@@ -122,6 +129,8 @@ class RSGraphWidget: public QFrame
 		/** Sets the graph style used to display bandwidth data. */
 		void setGraphStyle(GraphStyle style) { _graphStyle = style; }
 
+        void setFlags(uint32_t flag) { _flags |= flag ; }
+        void resetFlags(uint32_t flag) { _flags &= ~flag ; }
     protected:
 		/** Overloaded QWidget::paintEvent() */
 		void paintEvent(QPaintEvent *event);
@@ -144,7 +153,7 @@ class RSGraphWidget: public QFrame
 		QString totalToStr(qreal total);
 		/** Returns a list of points on the bandwidth graph based on the supplied set
 		 * of rsdht or alldht values. */
-        void pointsFromData(QVector<QPointF> & ) ;
+        void pointsFromData(const std::vector<QPointF>& values, QVector<QPointF> &points ) ;
 
 		/** Paints a line with the data in <b>points</b>. */
         void paintLine(const QVector<QPointF>& points, QColor color,
@@ -160,8 +169,12 @@ class RSGraphWidget: public QFrame
 		QRect _rec;
 		/** The maximum data value plotted. */
 		qreal _maxValue;
-		/** The maximum number of points to store. */
-		int _maxPoints;
+        /** The maximum number of points to store. */
+        qreal _y_scale ;
+
+        qreal pixelsToValue(qreal) ;
+        qreal valueToPixels(qreal) ;
+        int _maxPoints;
 
         qreal _time_scale ; // horizontal scale in pixels per sec.
 
@@ -172,6 +185,6 @@ class RSGraphWidget: public QFrame
 		uint32_t _flags ;
 		QTimer *_timer ;
 
-		std::vector<RSGraphSource *> _sources ;
+        RSGraphSource *_source ;
 };
 

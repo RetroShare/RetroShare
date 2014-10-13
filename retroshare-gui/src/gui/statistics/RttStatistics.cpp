@@ -168,13 +168,12 @@ class RttPlot
 };
 
 RttStatistics::RttStatistics(QWidget *parent)
-	: RsAutoUpdatePage(2000,parent)
 {
 	setupUi(this) ;
 	
 	m_bProcessSettings = false;
 
-	_tunnel_statistics_F->setWidget( _tst_CW = new RttStatisticsWidget() ) ; 
+    _tunnel_statistics_F->setWidget( _tst_CW = new RttStatisticsGraph() ) ;
 	_tunnel_statistics_F->setWidgetResizable(true);
 	_tunnel_statistics_F->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	_tunnel_statistics_F->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -218,62 +217,77 @@ void RttStatistics::processSettings(bool bLoad)
 
 }
 
-
-void RttStatistics::updateDisplay()
+void RttGraphSource::getValues(std::map<std::string,float>& vals)
 {
-	std::map<RsPeerId, std::list<RsRttPongResult> > info;
+    std::list<RsPeerId> idList;
+    rsPeers->getOnlineList(idList);
 
-	if (!rsRtt)
-	{
-		return;
-	}
+    vals.clear() ;
+    std::list<RsRttPongResult> results ;
 
-	std::list<RsPeerId> idList;
-	std::list<RsPeerId>::iterator it;
+    for(std::list<RsPeerId>::const_iterator it(idList.begin());it!=idList.end();++it)
+    {
+        rsRtt->getPongResults(*it, 1, results);
 
-	rsPeers->getOnlineList(idList);
-
-	time_t now = time(NULL);
-	time_t minTS = now;
-	time_t maxTS = 0;
-	double maxRTT = 0;
-	
-	for(it = idList.begin(); it != idList.end(); it++)
-	{
-		std::list<RsRttPongResult> results;
-		std::list<RsRttPongResult>::iterator rit;
-
-#define MAX_RESULTS	60
-		rsRtt->getPongResults(*it, MAX_RESULTS, results);
-
-		for(rit = results.begin(); rit != results.end(); rit++)
-		{
-			/* only want maxRTT to include plotted bit */
-			double dt = now - rit->mTS;
-			if (dt < MAX_DISPLAY_PERIOD)
-			{
-				if (maxRTT < rit->mRTT)
-				{
-					maxRTT = rit->mRTT;
-				}
-			}
-			if (minTS > rit->mTS)
-			{
-				minTS = rit->mTS;
-			}
-			if (maxTS < rit->mTS)
-			{
-				maxTS = rit->mTS;
-			}
-		}
-
-		info[*it] = results;
-	}
-
-
-	_tst_CW->updateRttStatistics(info, maxRTT, minTS, maxTS);
-	_tst_CW->update();
+    vals[(*it).toStdString()] = results.front().mRTT ;
+    }
 }
+
+//void RttStatistics::updateDisplay()
+//{
+//	std::map<RsPeerId, std::list<RsRttPongResult> > info;
+//
+//	if (!rsRtt)
+//	{
+//		return;
+//	}
+//
+//	std::list<RsPeerId> idList;
+//	std::list<RsPeerId>::iterator it;
+//
+//	rsPeers->getOnlineList(idList);
+//
+//	time_t now = time(NULL);
+//	time_t minTS = now;
+//	time_t maxTS = 0;
+//	double maxRTT = 0;
+//
+//	for(it = idList.begin(); it != idList.end(); it++)
+//	{
+//        std::list<RsRttPongResult> results;
+//		std::list<RsRttPongResult>::iterator rit;
+//
+//#define MAX_RESULTS	60
+//		rsRtt->getPongResults(*it, MAX_RESULTS, results);
+//
+//		for(rit = results.begin(); rit != results.end(); rit++)
+//		{
+//			/* only want maxRTT to include plotted bit */
+//			double dt = now - rit->mTS;
+//			if (dt < MAX_DISPLAY_PERIOD)
+//			{
+//				if (maxRTT < rit->mRTT)
+//				{
+//					maxRTT = rit->mRTT;
+//				}
+//			}
+//			if (minTS > rit->mTS)
+//			{
+//				minTS = rit->mTS;
+//			}
+//			if (maxTS < rit->mTS)
+//			{
+//				maxTS = rit->mTS;
+//			}
+//		}
+//
+//		info[*it] = results;
+//	}
+//
+//
+//	_tst_CW->updateRttStatistics(info, maxRTT, minTS, maxTS);
+//	_tst_CW->update();
+//}
 
 QString RttStatistics::getPeerName(const RsPeerId& peer_id)
 {
