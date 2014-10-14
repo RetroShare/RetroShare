@@ -68,7 +68,10 @@ DhtGraph::DhtGraph(QWidget *parent)
     addSource(src) ;
 
     setTimeScale(1.0f) ; // 1 pixels per second of time.
+    setScaleParams(0) ;
+
     resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+    setFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
 }
 
 

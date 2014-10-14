@@ -173,7 +173,7 @@ RttStatistics::RttStatistics(QWidget *parent)
 	
 	m_bProcessSettings = false;
 
-    _tunnel_statistics_F->setWidget( _tst_CW = new RttStatisticsGraph() ) ;
+    _tunnel_statistics_F->setWidget( _tst_CW = new RttStatisticsGraph(this) ) ;
 	_tunnel_statistics_F->setWidgetResizable(true);
 	_tunnel_statistics_F->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	_tunnel_statistics_F->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -217,7 +217,11 @@ void RttStatistics::processSettings(bool bLoad)
 
 }
 
-void RttGraphSource::getValues(std::map<std::string,float>& vals)
+QString RttGraphSource::unitName() const
+{
+    return QObject::tr("secs") ;
+}
+void RttGraphSource::getValues(std::map<std::string,float>& vals) const
 {
     std::list<RsPeerId> idList;
     rsPeers->getOnlineList(idList);
@@ -229,8 +233,26 @@ void RttGraphSource::getValues(std::map<std::string,float>& vals)
     {
         rsRtt->getPongResults(*it, 1, results);
 
-    vals[(*it).toStdString()] = results.front().mRTT ;
+    vals[(*it).toStdString()] = results.back().mRTT ;
     }
+}
+
+RttStatisticsGraph::RttStatisticsGraph(QWidget *parent)
+        : RSGraphWidget(parent)
+{
+    RttGraphSource *src = new RttGraphSource() ;
+
+    src->setCollectionTimeLimit(10*60*1000) ; // 10 mins
+    src->setCollectionTimePeriod(1000) ;     // collect every second
+    src->start() ;
+
+    addSource(src) ;
+
+    setTimeScale(2.0f) ; // 1 pixels per second of time.
+    setScaleParams(2) ;
+
+    resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+    resetFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
 }
 
 //void RttStatistics::updateDisplay()

@@ -32,17 +32,16 @@ class RttStatisticsWidget ;
 class RttGraphSource: public RSGraphSource
 {
 public:
-    RttGraphSource() ;
+    RttGraphSource() {}
 
-    virtual void getValues(std::map<std::string,float>& vals) ;
+    virtual void getValues(std::map<std::string,float>& vals) const ;
+    virtual QString unitName() const ;
 };
 
 class RttStatisticsGraph: public RSGraphWidget
 {
-    public:
-    RttStatisticsGraph()
-    {
-    }
+public:
+    RttStatisticsGraph(QWidget *parent);
 };
 
 class RttStatistics: public MainPage, public Ui::RttStatistics

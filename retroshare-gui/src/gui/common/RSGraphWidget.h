@@ -38,7 +38,7 @@
 
 #define BACK_COLOR    Qt::white
 #define SCALE_COLOR   Qt::black
-#define GRID_COLOR    Qt::black
+#define GRID_COLOR    Qt::lightGray
 #define RSDHT_COLOR   Qt::magenta
 #define ALLDHT_COLOR  Qt::yellow
 
@@ -98,9 +98,10 @@ class RSGraphWidget: public QFrame
 	Q_OBJECT
 
 	public:
-		static const uint32_t RSGRAPH_FLAGS_AUTO_SCALE_Y    = 0x0001 ;		// automatically adjust Y scale
-		static const uint32_t RSGRAPH_FLAGS_LOG_SCALE_Y     = 0x0002 ;		// log scale in Y
-		static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  = 0x0004 ;		// keep collecting while not displayed
+        static const uint32_t RSGRAPH_FLAGS_AUTO_SCALE_Y    	= 0x0001 ;// automatically adjust Y scale
+        static const uint32_t RSGRAPH_FLAGS_LOG_SCALE_Y     	= 0x0002 ;// log scale in Y
+        static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  	= 0x0004 ;// keep collecting while not displayed
+        static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_PLAIN	= 0x0008 ;// use plain / line drawing style
 
 		/** Bandwidth graph style. */
 		enum GraphStyle 
@@ -126,8 +127,8 @@ class RSGraphWidget: public QFrame
 		void resetGraph();
 		/** Toggles display of data counters. */
 		//void setShowCounters(bool showRSDHT, bool showALLDHT);
-		/** Sets the graph style used to display bandwidth data. */
-		void setGraphStyle(GraphStyle style) { _graphStyle = style; }
+
+        void setScaleParams(int precision_digits)  { _precision_digits = precision_digits ; }
 
         void setFlags(uint32_t flag) { _flags |= flag ; }
         void resetFlags(uint32_t flag) { _flags &= ~flag ; }
@@ -148,7 +149,10 @@ class RSGraphWidget: public QFrame
 		/** Paints the rsdht/alldht totals. */
 		void paintTotals();
 		/** Paints the scale in the graph. */
-		void paintScale();
+        void paintScale();
+
+        QColor getColor(int i) ;
+
 		/** Returns a formatted string representation of total. */
 		QString totalToStr(qreal total);
 		/** Returns a list of points on the bandwidth graph based on the supplied set
@@ -161,8 +165,6 @@ class RSGraphWidget: public QFrame
 		/** Paints an integral using the supplied data. */
         void paintIntegral(const QVector<QPointF>& points, QColor color, qreal alpha = 1.0);
 
-		/** Style with which the bandwidth data will be graphed. */
-		GraphStyle _graphStyle;
 		/** A QPainter object that handles drawing the various graph elements. */
 		QPainter* _painter;
 		/** The current dimensions of the graph. */
@@ -175,6 +177,7 @@ class RSGraphWidget: public QFrame
         qreal pixelsToValue(qreal) ;
         qreal valueToPixels(qreal) ;
         int _maxPoints;
+    int _precision_digits ;
 
         qreal _time_scale ; // horizontal scale in pixels per sec.
 

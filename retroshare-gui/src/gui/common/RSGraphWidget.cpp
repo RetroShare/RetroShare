@@ -146,7 +146,6 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
 {
     _source =NULL;
   _painter = new QPainter();
-  _graphStyle = AreaGraph;
   
   /* Initialize graph values */
   _maxPoints = getNumPoints();  
@@ -157,6 +156,7 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _timer = new QTimer ;
   QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(update())) ;
 
+  _precision_digits = 1 ;
   _y_scale = 1.0f ;
   _timer->start(1000);
 }
@@ -226,6 +226,14 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   _painter->end();
 }
 
+QColor RSGraphWidget::getColor(int i)
+{
+    // shuffle the colors a little bit
+    int h = (i*44497)%359 ;
+
+    return QColor::fromHsv(h,128+127*(i&1),255) ;
+}
+
 /** Paints an integral and an outline of that integral for each data set (rsdht
  * and/or alldht) that is to be displayed. The integrals will be drawn first,
  * followed by the outlines, since we want the area of overlapping integrals
@@ -249,12 +257,12 @@ void RSGraphWidget::paintData()
       pointsFromData(values,points) ;
 
       /* Plot the bandwidth data as area graphs */
-      if (_graphStyle == AreaGraph)
-          paintIntegral(points, RSDHT_COLOR, 0.6);
+      if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
+          paintIntegral(points, getColor(i), 0.6);
 
       /* Plot the bandwidth as solid lines. If the graph style is currently an
    * area graph, we end up outlining the integrals. */
-      paintLine(points, RSDHT_COLOR);
+      paintLine(points, getColor(i));
   }
   if(_maxValue > 0.0f)
       if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
@@ -403,7 +411,6 @@ QString RSGraphWidget::totalToStr(qreal total)
 /** Paints the scale on the graph. */
 void RSGraphWidget::paintScale()
 {
-  qreal markStep = valueToPixels(_maxValue) * .25;	// in pixels
   int top = _rec.y();
   int bottom = _rec.height();
   qreal paintStep = (bottom - (bottom/10)) / 4;
@@ -421,10 +428,10 @@ void RSGraphWidget::paintScale()
   {
       pos = bottom - (i * paintStep);
 
-      scale = pixelsToValue(i * markStep);
+      scale = pixelsToValue(i * paintStep);
 
       _painter->setPen(SCALE_COLOR);
-      _painter->drawText(QPointF(5, pos+FONT_SIZE),  tr("%1 %2").arg(scale, 0, 'f', 0).arg(unit_name));
+      _painter->drawText(QPointF(5, pos+0.5*FONT_SIZE),  tr("%1 %2").arg(scale, 0, 'f', _precision_digits).arg(unit_name));
       _painter->setPen(GRID_COLOR);
       _painter->drawLine(QPointF(SCALE_WIDTH, pos),  QPointF(_rec.width(), pos));
   }
