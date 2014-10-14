@@ -46,39 +46,16 @@ public:
 
 class RttStatistics: public MainPage, public Ui::RttStatistics
 {
-	public:
-		RttStatistics(QWidget *parent = NULL) ;
-		~RttStatistics();
-		
-		// Cache for peer names.
-		static QString getPeerName(const RsPeerId& peer_id) ;
+public:
+    RttStatistics(QWidget *parent = NULL) ;
+    ~RttStatistics();
 
-	private:
-											
-		void processSettings(bool bLoad);
-		bool m_bProcessSettings;
+private:
+    void processSettings(bool bLoad);
+    bool m_bProcessSettings;
 
-        RttStatisticsGraph *_tst_CW ;
+    RttStatisticsGraph *_tst_CW ;
 } ;
-
-class RttStatisticsWidget:  public QWidget
-{
-	public:
-		RttStatisticsWidget(QWidget *parent = NULL) ;
-
-		virtual void paintEvent(QPaintEvent *event) ;
-		virtual void resizeEvent(QResizeEvent *event);
-
-
-		void updateRttStatistics(const std::map<RsPeerId, std::list<RsRttPongResult> >& info,
-                		double maxRTT, double minTS, double maxTS);
-
-	private:
-		static QString speedString(float f) ;
-
-		QPixmap pixmap ;
-		int maxWidth,maxHeight ;
-};
 
 
 
