@@ -65,6 +65,32 @@ void RSGraphSource::start()
 
 int RSGraphSource::n_values() const { return _points.size() ; }
 
+QString RSGraphSource::displayName(int i) const
+{
+    std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
+
+    int n=0;
+    for(it = _points.begin();it!=_points.end() && n<i;++it,++n) ;
+
+    if(n != i)
+        return QString("[error]");
+
+    return QString::fromStdString(it->first) ;
+}
+
+QString RSGraphSource::displayValue(float v) const
+{
+    return QString::number(v,'g',2) + " " + unitName() ;
+}
+
+void RSGraphSource::getCurrentValues(std::vector<float>& vals) const
+{
+    std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
+
+    for(it = _points.begin();it!=_points.end();++it)
+        vals.push_back(it->second.back().second) ;
+}
+
 void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts) const
 {
     pts.clear() ;
@@ -222,6 +248,9 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   /* Paint the rsDHT/allDHT totals */
   paintTotals();
 
+  if(_flags & RSGRAPH_FLAGS_SHOW_LEGEND)
+      paintLegend() ;
+
   /* Stop the painter */
   _painter->end();
 }
@@ -229,7 +258,7 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
 QColor RSGraphWidget::getColor(int i)
 {
     // shuffle the colors a little bit
-    int h = (i*44497)%359 ;
+    int h = (i*86243)%359 ;
 
     return QColor::fromHsv(h,128+127*(i&1),255) ;
 }
@@ -430,13 +459,38 @@ void RSGraphWidget::paintScale()
 
       scale = pixelsToValue(i * paintStep);
 
+      QString text = _source->displayValue(scale) ;
+
       _painter->setPen(SCALE_COLOR);
-      _painter->drawText(QPointF(5, pos+0.5*FONT_SIZE),  tr("%1 %2").arg(scale, 0, 'f', _precision_digits).arg(unit_name));
+      _painter->drawText(QPointF(5, pos+0.5*FONT_SIZE),  text);
       _painter->setPen(GRID_COLOR);
       _painter->drawLine(QPointF(SCALE_WIDTH, pos),  QPointF(_rec.width(), pos));
   }
   
   /* Draw vertical separator */
   _painter->drawLine(SCALE_WIDTH, top, SCALE_WIDTH, bottom);
+}
+
+void RSGraphWidget::paintLegend()
+{
+  int bottom = _rec.height();
+
+  std::vector<float> vals ;
+  _source->getCurrentValues(vals) ;
+
+    for(uint i=0;i<vals.size();++i)
+    {
+        qreal paintStep = 4+FONT_SIZE;
+        qreal pos = 20+i*paintStep;
+        QString text = _source->displayName(i) + " (" + _source->displayValue(vals[i]) + " )";
+
+        QPen oldPen = _painter->pen();
+        _painter->setPen(QPen(getColor(i), Qt::SolidLine));
+        _painter->drawLine(QPointF(SCALE_WIDTH+10.0, pos),  QPointF(SCALE_WIDTH+30.0, pos));
+        _painter->setPen(oldPen);
+
+    _painter->setPen(SCALE_COLOR);
+        _painter->drawText(QPointF(SCALE_WIDTH + 40,pos + 0.5*FONT_SIZE), text) ;
+    }
 }
 

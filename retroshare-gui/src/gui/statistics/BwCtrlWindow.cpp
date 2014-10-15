@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include "BwCtrlWindow.h"
+#include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
 #include <QTimer>
 #include <QDateTime>
@@ -37,14 +38,21 @@
 #include <QPainter>
 #include <limits>
 
+class BWListDelegate: public QAbstractItemDelegate
+{
+public:
+    BWListDelegate(QObject *parent=0);
+    virtual ~BWListDelegate();
+    void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;
+};
+
 BWListDelegate::BWListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
-	;
 }
 
 BWListDelegate::~BWListDelegate(void)
 {
-	;
 }
 
 void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -163,31 +171,25 @@ QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & /*option*/, const QM
 	return QSize(50,17);
 }
 
-
 BwCtrlWindow::BwCtrlWindow(QWidget *parent) 
 : RsAutoUpdatePage(1000,parent)
 {
     setupUi(this);
 
-
     BWDelegate = new BWListDelegate();
     bwTreeWidget->setItemDelegate(BWDelegate);
     
-    		/* Set header resize modes and initial section sizes Peer TreeView*/
+    /* Set header resize modes and initial section sizes Peer TreeView*/
     QHeaderView * _header = bwTreeWidget->header () ;
     _header->resizeSection ( COLUMN_RSNAME, 170 );
-	
-
 }
 
 BwCtrlWindow::~BwCtrlWindow()
 {
-
 }
 
 void BwCtrlWindow::updateDisplay()
 {
-
 	/* do nothing if locked, or not visible */
 	if (RsAutoUpdatePage::eventsLocked() == true) 
 	{
@@ -205,12 +207,7 @@ void BwCtrlWindow::updateDisplay()
 		return;
 	}
 
-	RsAutoUpdatePage::lockAllEvents();
-
-	//std::cerr << "BwCtrlWindow::update()" << std::endl;
 	updateBandwidth();
-
-	RsAutoUpdatePage::unlockAllEvents() ;
 }
 
 void BwCtrlWindow::updateBandwidth()
@@ -223,7 +220,7 @@ void BwCtrlWindow::updateBandwidth()
 	std::map<RsPeerId, RsConfigDataRates> rateMap;
 	std::map<RsPeerId, RsConfigDataRates>::iterator it;
 
-	rsConfig->getTotalBandwidthRates(totalRates);
+    rsConfig->getTotalBandwidthRates(totalRates);
 	rsConfig->getAllBandwidthRates(rateMap);
 
 			/* insert */
@@ -231,8 +228,6 @@ void BwCtrlWindow::updateBandwidth()
 	peerTreeWidget->addTopLevelItem(item);
 	peerTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 	
-	updateGraph(totalRates.mRateIn,totalRates.mRateOut);
-
 	/* do Totals */
 	item -> setData(COLUMN_PEERID, Qt::DisplayRole, tr("TOTALS"));
 	item -> setData(COLUMN_RSNAME, Qt::DisplayRole, tr("Totals"));
@@ -369,10 +364,4 @@ void BwCtrlWindow::updateBandwidth()
 	}
 }
 
-/** Adds new data to the graph. */
-void BwCtrlWindow::updateGraph(qreal bytesRead, qreal bytesWritten)
-{
-  /* Graph only cares about kilobytes */
-  frmGraph->addPoints(bytesRead/*/1024.0*/, bytesWritten/*/1024.0*/);
-}
 

@@ -695,10 +695,3 @@ void DhtWindow::getDHTStatus()
 // 		}
 // 	}
 }
-
-/** Adds new data to the graph. */
-void DhtWindow::updateGraph(qreal rsDHT, qreal allDHT)
-{
-//  ui.frmGraph->addPoints(rsDHT, allDHT);
-}
-

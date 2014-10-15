@@ -26,26 +26,56 @@
 #include <QApplication>
 #include <gui/common/RSGraphWidget.h>
 
-#define HOR_SPC       2   /** Space between data points */
-#define SCALE_WIDTH   75  /** Width of the scale */
-#define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */  
-#define SCROLL_STEP   4   /** Horizontal change on graph update */
+#include <retroshare/rsdht.h>
+#include <retroshare/rsconfig.h>
+#include "dhtgraph.h"
 
-#define BACK_COLOR    Qt::white
-#define SCALE_COLOR   Qt::black
-#define GRID_COLOR    Qt::black
-#define RSDHT_COLOR   Qt::magenta
-#define ALLDHT_COLOR  Qt::yellow
+class DHTGraphSource: public RSGraphSource
+{
+	public:
+		virtual int n_values() const
+		{
+			return 1 ;
+		}
+		virtual void getValues(std::map<std::string,float>& values) const
+		{
+			RsConfigNetStatus config;
+			rsConfig->getConfigNetStatus(config);
 
-#define FONT_SIZE     11
+			if (config.DHTActive && config.netDhtOk)
+			{
+				values.insert(std::make_pair(std::string("RS Net size"),(float)config.netDhtRsNetSize)) ;
+				//values.insert(std::make_pair(std::string("GLobal Net size"),(float)config.netDhtNetSize)) ;
+			}
+			else
+			{
+				values.insert(std::make_pair(std::string("RS Net size"),0.0f)) ;
+				//values.insert(std::make_pair(std::string("GLobal Net size"),0.0f)) ;
+			}
+		}
+
+		virtual QString unitName() const { return tr("users"); }
+};
+
 
 class DhtGraph : public RSGraphWidget
 {
-public:
-    DhtGraph(QWidget *parent = 0);
+	public:
+		DhtGraph(QWidget *parent = 0)
+			: RSGraphWidget(parent)
+		{
+			DHTGraphSource *src = new DHTGraphSource() ;
 
-    /** Show the respective lines and counters. */
-    bool _showRSDHT;
-    bool _showALLDHT;
+			src->setCollectionTimeLimit(30*60*1000) ; // 30  mins
+			src->setCollectionTimePeriod(1000) ;      // collect every second
+			src->start() ;
+
+			addSource(src) ;
+
+			setTimeScale(1.0f) ; // 1 pixels per second of time.
+			setScaleParams(0) ;
+
+			resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+			setFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
+		}
 };
-

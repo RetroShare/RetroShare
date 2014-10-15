@@ -22,6 +22,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#pragma once
+
 #include <QMainWindow>
 
 namespace Ui {

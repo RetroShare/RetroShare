@@ -242,7 +242,6 @@ void TurtleRouterStatistics::updateDisplay()
 	//updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	_tst_CW->updateTunnelStatistics(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	_tst_CW->update();
-	updateTunnelGraph();
 }
 
 QString TurtleRouterStatistics::getPeerName(const RsPeerId &peer_id)
@@ -354,18 +353,4 @@ void TurtleRouterStatisticsWidget::resizeEvent(QResizeEvent *event)
 
 	 QWidget::resizeEvent(event);
 	 update();
-}
-
-void TurtleRouterStatistics::updateTunnelGraph()
-{
-	TurtleTrafficStatisticsInfo info ;
-	rsTurtle->getTrafficStatistics(info) ;
-	
-	updateGraph(info.tr_up_Bps,info.tr_dn_Bps,info.data_dn_Bps,info.data_up_Bps,info.unknown_updn_Bps);
-}
-
-void TurtleRouterStatistics::updateGraph(qreal bytesTrup, qreal bytesTrdown, qreal bytesDatadown, qreal bytesDataup, qreal bytesunknownupdn)
-{
-  /* Graph only cares about kilobytes */
-  frmGraph->addPoints(bytesTrup/1024.0, bytesTrdown/1024.0, bytesDatadown/1024.0, bytesDataup/1024.0, bytesunknownupdn/1024.0 );
 }

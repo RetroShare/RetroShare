@@ -84,7 +84,7 @@
        </property>
       </column>
      </widget>
-     <widget class="GraphFrame" name="frmGraph">
+     <widget class="BWGraph" name="frmGraph" native="true">
       <property name="minimumSize">
        <size>
         <width>120</width>
@@ -99,12 +99,6 @@
       <property name="contextMenuPolicy">
        <enum>Qt::NoContextMenu</enum>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
-      </property>
      </widget>
     </widget>
    </item>
@@ -112,9 +106,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GraphFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/graphframe.h</header>
+   <class>BWGraph</class>
+   <extends>QWidget</extends>
+   <header>gui/statistics/bwgraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

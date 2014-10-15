@@ -47,8 +47,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>638</width>
-             <height>255</height>
+             <width>640</width>
+             <height>248</height>
             </rect>
            </property>
            <property name="autoFillBackground">
@@ -59,7 +59,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="GraphFrameTunnel" name="frmGraph">
+        <widget class="TurtleGraph" name="frmGraph" native="true">
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -74,12 +74,6 @@
          <property name="contextMenuPolicy">
           <enum>Qt::NoContextMenu</enum>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
         </widget>
        </item>
       </layout>
@@ -90,9 +84,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GraphFrameTunnel</class>
-   <extends>QFrame</extends>
-   <header>gui/graphframetunnel.h</header>
+   <class>TurtleGraph</class>
+   <extends>QWidget</extends>
+   <header>gui/statistics/turtlegraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

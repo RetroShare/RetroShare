@@ -1,6 +1,3 @@
-#ifndef RSBWCTRL_WINDOW_H
-#define RSBWCTRL_WINDOW_H
-
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
@@ -22,11 +19,14 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#pragma once
+
 #include <QMainWindow>
 
 #include <QAbstractItemDelegate>
 
 #include "RsAutoUpdatePage.h"
+#include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
 
 // Defines for download list list columns
@@ -48,47 +48,22 @@
 
 class QModelIndex;
 class QPainter;
+class BWListDelegate ;
 
-class BWListDelegate: public QAbstractItemDelegate {
-
-	Q_OBJECT
-
-public:
-	BWListDelegate(QObject *parent=0);
-	~BWListDelegate();
-	void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
-	QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;
-
-private:
-
-public slots:
-
-signals:
-};
-
-class BwCtrlWindow : public RsAutoUpdatePage,  public Ui::BwCtrlWindow {
+class BwCtrlWindow : public RsAutoUpdatePage,  public Ui::BwCtrlWindow
+{
     Q_OBJECT
 public:
 
     BwCtrlWindow(QWidget *parent = 0);
     ~BwCtrlWindow();
 
-	void updateBandwidth();
+    void updateBandwidth();
 
 public slots:
-		virtual void updateDisplay() ;
+    virtual void updateDisplay() ;
 
-	  /** Adds new data to the graph */
-    void updateGraph(qreal bytesRead, qreal bytesWritten);
-	
 protected:
-    
-private:
-
-
-	BWListDelegate *BWDelegate;
+    BWListDelegate *BWDelegate;
 
 };
-
-#endif // RSBWCTRL_WINDOW_H
-

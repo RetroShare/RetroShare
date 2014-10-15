@@ -344,6 +344,8 @@ HEADERS +=  rshare.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
             gui/statistics/dhtgraph.h \
+            gui/statistics/bwgraph.h \
+            gui/statistics/turtlegraph.h \
             gui/FileTransfer/TransferUserNotify.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/ImHistoryBrowser.h \
@@ -684,7 +686,6 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/xprogressbar.cpp \
             gui/statistics/TurtleRouterDialog.cpp \
             gui/statistics/TurtleRouterStatistics.cpp \
-            gui/statistics/dhtgraph.cpp \
             gui/statistics/GlobalRouterStatistics.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \

@@ -31,28 +31,23 @@ class TurtleRouterStatisticsWidget ;
 
 class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterStatistics
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		TurtleRouterStatistics(QWidget *parent = NULL) ;
-		~TurtleRouterStatistics();
-		
-		// Cache for peer names.
-        static QString getPeerName(const RsPeerId& peer_id) ;
-        
- public slots:       
-	void updateTunnelGraph();       
-	void updateGraph(qreal bytesTrup, qreal bytesTrdown, qreal bytesDatadown, qreal bytesDataup, qreal bytesunknownupdn);
+public:
+    TurtleRouterStatistics(QWidget *parent = NULL) ;
+    ~TurtleRouterStatistics();
 
+    // Cache for peer names.
+    static QString getPeerName(const RsPeerId& peer_id) ;
 
-	private:
-											
-		void processSettings(bool bLoad);
-		bool m_bProcessSettings;
+private:
 
-		virtual void updateDisplay() ;
+    void processSettings(bool bLoad);
+    bool m_bProcessSettings;
 
-		TurtleRouterStatisticsWidget *_tst_CW ;
+    virtual void updateDisplay() ;
+
+    TurtleRouterStatisticsWidget *_tst_CW ;
 } ;
 
 class TurtleRouterStatisticsWidget:  public QWidget

@@ -59,18 +59,28 @@ public:
     void stop() ;
     void clear() ;
 
-    virtual int n_values() const ;
+    virtual QString unitName() const { return "" ; }// overload to give your own unit name (KB/s, Users, etc)
+
+    int n_values() const ;
+
+    // Might be overloaded in order to show a fancy digit number with adaptive units.
+    // The default is to return v + unitName()
+    virtual QString displayValue(float v) const ;
+
+    // return the vector of last values up to date
+    virtual void getCurrentValues(std::vector<float>& vals) const ;
 
     // Returns the n^th interpolated value at the given time in floating point seconds backward.
     virtual void getDataPoints(int index, std::vector<QPointF>& pts) const ;
+
+    // returns the name to give to the nth entry in the graph
+    virtual QString displayName(int index) const ;
 
     // Sets the maximum time for keeping values. Units=seconds.
     void setCollectionTimeLimit(qint64 msecs) ;
 
     // Sets the time period for collecting new values. Units=milliseconds.
     void setCollectionTimePeriod(qint64 msecs) ;
-
-    virtual QString unitName() const =0;// overload to give your own unit name (KB/s, Users, etc)
 
 protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
@@ -102,6 +112,7 @@ class RSGraphWidget: public QFrame
         static const uint32_t RSGRAPH_FLAGS_LOG_SCALE_Y     	= 0x0002 ;// log scale in Y
         static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  	= 0x0004 ;// keep collecting while not displayed
         static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_PLAIN	= 0x0008 ;// use plain / line drawing style
+        static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND         = 0x0010 ;// show legend in the graph
 
 		/** Bandwidth graph style. */
 		enum GraphStyle 
@@ -149,6 +160,8 @@ class RSGraphWidget: public QFrame
 		/** Paints the rsdht/alldht totals. */
 		void paintTotals();
 		/** Paints the scale in the graph. */
+        void paintLegend();
+        /** Paints the scale in the graph. */
         void paintScale();
 
         QColor getColor(int i) ;

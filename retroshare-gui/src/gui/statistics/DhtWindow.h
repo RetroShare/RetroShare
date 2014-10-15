@@ -42,8 +42,6 @@ public:
 public slots:
 	virtual void updateDisplay() ;
 	
-	void updateGraph(qreal rsDHT, qreal allDHT);
-	
 protected:
     //void changeEvent(QEvent *e);
 
