@@ -21,11 +21,11 @@ class TurtleGraphSource: public RSGraphSource
     virtual QString displayValue(float v) const
     {
         if(v < 1000)
-            return QString::number(v,'g',2) + " B/s" ;
+            return QString::number(v,'f',2) + " B/s" ;
         else if(v < 1000*1024)
-            return QString::number(v/1024.0,'g',2) + " KB/s" ;
+            return QString::number(v/1024.0,'f',2) + " KB/s" ;
         else
-            return QString::number(v/(1024.0*1024),'g',2) + " MB/s" ;
+            return QString::number(v/(1024.0*1024),'f',2) + " MB/s" ;
     }
 };
 

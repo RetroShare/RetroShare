@@ -80,7 +80,7 @@ QString RSGraphSource::displayName(int i) const
 
 QString RSGraphSource::displayValue(float v) const
 {
-    return QString::number(v,'g',2) + " " + unitName() ;
+    return QString::number(v,'f',2) + " " + unitName() ;
 }
 
 void RSGraphSource::getCurrentValues(std::vector<float>& vals) const
