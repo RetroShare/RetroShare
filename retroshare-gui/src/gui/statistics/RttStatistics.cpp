@@ -88,6 +88,17 @@ QString RttGraphSource::unitName() const
 {
     return QObject::tr("secs") ;
 }
+
+QString RttGraphSource::displayName(int i) const
+{
+    int n=0 ;
+    for(std::map<std::string, std::list<std::pair<qint64,float> > >::const_iterator it=_points.begin();it!=_points.end();++it,++n)
+        if(n==i)
+            return QString::fromUtf8(rsPeers->getPeerName(RsPeerId(it->first)).c_str()) ;
+
+    return QString() ;
+}
+
 void RttGraphSource::getValues(std::map<std::string,float>& vals) const
 {
     std::list<RsPeerId> idList;
@@ -111,13 +122,14 @@ RttStatisticsGraph::RttStatisticsGraph(QWidget *parent)
 
     src->setCollectionTimeLimit(10*60*1000) ; // 10 mins
     src->setCollectionTimePeriod(1000) ;     // collect every second
+    src->setDigits(1) ;
     src->start() ;
 
     addSource(src) ;
 
     setTimeScale(2.0f) ; // 1 pixels per second of time.
-    setScaleParams(2) ;
 
     resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
     resetFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
+    setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;
 }

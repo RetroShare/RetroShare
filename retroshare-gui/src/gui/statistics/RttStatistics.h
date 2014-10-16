@@ -36,6 +36,7 @@ public:
 
     virtual void getValues(std::map<std::string,float>& vals) const ;
     virtual QString unitName() const ;
+    virtual QString displayName(int i) const ;
 };
 
 class RttStatisticsGraph: public RSGraphWidget

@@ -38,17 +38,18 @@ class TurtleGraph: public RSGraphWidget
             TurtleGraphSource *src = new TurtleGraphSource() ;
 
 			src->setCollectionTimeLimit(30*60*1000) ; // 30  mins
-			src->setCollectionTimePeriod(1000) ;      // collect every second
+            src->setCollectionTimePeriod(1000) ;      // collect every second
+            src->setDigits(2) ;
 			src->start() ;
 
 			addSource(src) ;
 
 			setTimeScale(1.0f) ; // 1 pixels per second of time.
-			setScaleParams(2) ;
 
 			resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 			resetFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
-		}
+            setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;
+        }
 };
 
 

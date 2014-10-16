@@ -40,6 +40,7 @@ RSGraphSource::RSGraphSource()
     _update_period_msecs =  1*1000 ;
     _time_orig_msecs     = QDateTime::currentMSecsSinceEpoch() ;
     _timer = new QTimer ;
+    _digits = 2 ;
 
     QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(update())) ;
 }
@@ -80,7 +81,7 @@ QString RSGraphSource::displayName(int i) const
 
 QString RSGraphSource::displayValue(float v) const
 {
-    return QString::number(v,'f',2) + " " + unitName() ;
+    return QString::number(v,'f',_digits) + " " + unitName() ;
 }
 
 void RSGraphSource::getCurrentValues(std::vector<float>& vals) const
@@ -89,6 +90,11 @@ void RSGraphSource::getCurrentValues(std::vector<float>& vals) const
 
     for(it = _points.begin();it!=_points.end();++it)
         vals.push_back(it->second.back().second) ;
+}
+
+QString RSGraphSource::legend(int i,float v) const
+{
+    return displayName(i) + " (" + displayValue(v) + " )";
 }
 
 void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts) const
@@ -182,7 +188,6 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _timer = new QTimer ;
   QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(update())) ;
 
-  _precision_digits = 1 ;
   _y_scale = 1.0f ;
   _timer->start(1000);
 }
@@ -482,7 +487,7 @@ void RSGraphWidget::paintLegend()
     {
         qreal paintStep = 4+FONT_SIZE;
         qreal pos = 20+i*paintStep;
-        QString text = _source->displayName(i) + " (" + _source->displayValue(vals[i]) + " )";
+        QString text = _source->legend(i,vals[i]) ;
 
         QPen oldPen = _painter->pen();
         _painter->setPen(QPen(getColor(i), Qt::SolidLine));

@@ -70,6 +70,9 @@ public:
     // return the vector of last values up to date
     virtual void getCurrentValues(std::vector<float>& vals) const ;
 
+    // returns what to display in the legend. Derive this to show additional info.
+    virtual QString legend(int i,float v) const ;
+
     // Returns the n^th interpolated value at the given time in floating point seconds backward.
     virtual void getDataPoints(int index, std::vector<QPointF>& pts) const ;
 
@@ -81,6 +84,8 @@ public:
 
     // Sets the time period for collecting new values. Units=milliseconds.
     void setCollectionTimePeriod(qint64 msecs) ;
+
+    void setDigits(int d) { _digits = d ;}
 
 protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
@@ -101,6 +106,7 @@ protected:
     qint64 _time_limit_msecs ;
     qint64 _update_period_msecs ;
     qint64 _time_orig_msecs ;
+    int _digits ;
 };
 
 class RSGraphWidget: public QFrame
@@ -138,8 +144,6 @@ class RSGraphWidget: public QFrame
 		void resetGraph();
 		/** Toggles display of data counters. */
 		//void setShowCounters(bool showRSDHT, bool showALLDHT);
-
-        void setScaleParams(int precision_digits)  { _precision_digits = precision_digits ; }
 
         void setFlags(uint32_t flag) { _flags |= flag ; }
         void resetFlags(uint32_t flag) { _flags &= ~flag ; }
@@ -190,7 +194,6 @@ class RSGraphWidget: public QFrame
         qreal pixelsToValue(qreal) ;
         qreal valueToPixels(qreal) ;
         int _maxPoints;
-    int _precision_digits ;
 
         qreal _time_scale ; // horizontal scale in pixels per sec.
 

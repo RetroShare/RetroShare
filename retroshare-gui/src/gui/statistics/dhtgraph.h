@@ -33,10 +33,6 @@
 class DHTGraphSource: public RSGraphSource
 {
 	public:
-		virtual int n_values() const
-		{
-			return 1 ;
-		}
 		virtual void getValues(std::map<std::string,float>& values) const
 		{
 			RsConfigNetStatus config;
@@ -67,13 +63,13 @@ class DhtGraph : public RSGraphWidget
 			DHTGraphSource *src = new DHTGraphSource() ;
 
 			src->setCollectionTimeLimit(30*60*1000) ; // 30  mins
-			src->setCollectionTimePeriod(1000) ;      // collect every second
+            src->setCollectionTimePeriod(1000) ;      // collect every second
+            src->setDigits(0) ;
 			src->start() ;
 
 			addSource(src) ;
 
 			setTimeScale(1.0f) ; // 1 pixels per second of time.
-			setScaleParams(0) ;
 
 			resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 			setFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
