@@ -199,8 +199,20 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 	TcpOnUdp *tous = tou_streams[sockfd];
 	
 
-	if (addrlen != sizeof(struct sockaddr_in))
+	if (addrlen < sizeof(struct sockaddr_in))
 	{
+		std::cerr << "tou_connect() ERROR invalid size of sockaddr";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+	// only IPv4 for the moment.
+	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
+	if (ss_addr->ss_family != AF_INET)
+	{
+		std::cerr << "tou_connect() ERROR not ipv4";
+		std::cerr << std::endl;
 		tous -> lasterrno = EINVAL;
 		return -1;
 	}
@@ -259,11 +271,24 @@ int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr,
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 	
-	if (addrlen != sizeof(struct sockaddr_in))
+	if (addrlen < sizeof(struct sockaddr_in))
 	{
+		std::cerr << "tou_listenfor() ERROR invalid size of sockaddr";
+		std::cerr << std::endl;
 		tous -> lasterrno = EINVAL;
 		return -1;
 	}
+
+	// only IPv4 for the moment.
+	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
+	if (ss_addr->ss_family != AF_INET)
+	{
+		std::cerr << "tou_listenfor() ERROR not ipv4";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
 
 	/* enforce that the udptype is correct */
 	if (tous -> udptype != TOU_RECEIVER_TYPE_UDPPEER)
@@ -397,8 +422,20 @@ int     tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 	
-	if (*addrlen != sizeof(struct sockaddr_in))
+	if (*addrlen < sizeof(struct sockaddr_in))
 	{
+		std::cerr << "tou_accept() ERROR invalid size of sockaddr";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+	// only IPv4 for the moment.
+	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) addr;
+	if (ss_addr->ss_family != AF_INET)
+	{
+		std::cerr << "tou_accept() ERROR not ipv4";
+		std::cerr << std::endl;
 		tous -> lasterrno = EINVAL;
 		return -1;
 	}
