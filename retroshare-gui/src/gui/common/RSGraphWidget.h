@@ -24,6 +24,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -58,6 +59,7 @@ public:
     void start() ;
     void stop() ;
     void clear() ;
+    void reset() ;
 
     virtual QString unitName() const { return "" ; }// overload to give your own unit name (KB/s, Users, etc)
 
@@ -119,7 +121,6 @@ class RSGraphWidget: public QFrame
         static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  	= 0x0004 ;// keep collecting while not displayed
         static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_PLAIN	= 0x0008 ;// use plain / line drawing style
         static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND         = 0x0010 ;// show legend in the graph
-
 		/** Bandwidth graph style. */
 		enum GraphStyle 
 		{
@@ -143,7 +144,10 @@ class RSGraphWidget: public QFrame
 		/** Clears the graph. */
 		void resetGraph();
 		/** Toggles display of data counters. */
-		//void setShowCounters(bool showRSDHT, bool showALLDHT);
+        //void setShowCounters(bool showRSDHT, bool showALLDHT);
+
+        void setShowEntry(uint32_t entry, bool show) ;
+    void setCurvesOpacity(float f) ;
 
         void setFlags(uint32_t flag) { _flags |= flag ; }
         void resetFlags(uint32_t flag) { _flags &= ~flag ; }
@@ -190,10 +194,13 @@ class RSGraphWidget: public QFrame
 		qreal _maxValue;
         /** The maximum number of points to store. */
         qreal _y_scale ;
+    qreal _opacity ;
 
         qreal pixelsToValue(qreal) ;
         qreal valueToPixels(qreal) ;
         int _maxPoints;
+
+    std::set<std::string> _masked_entries ;
 
         qreal _time_scale ; // horizontal scale in pixels per sec.
 

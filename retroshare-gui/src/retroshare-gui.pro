@@ -313,8 +313,6 @@ HEADERS +=  rshare.h \
             gui/StartDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
-            gui/graphframe.h \
-            gui/graphframetunnel.h \
             gui/linetypes.h \
             gui/mainpagestack.h \
             gui/MainWindow.h \
@@ -379,7 +377,7 @@ HEADERS +=  rshare.h \
             util/ObjectPainter.h \
             util/QtVersion.h \
             util/RsFile.h \
-            gui/bwgraph/bwgraph.h \
+            gui/bwgraph/BandwidthGraphWindow.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -560,7 +558,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/ServicePermissionDialog.ui \
-            gui/bwgraph/bwgraph.ui \
+            gui/bwgraph/BandwidthGraphWindow.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
             gui/profile/ProfileManager.ui \
@@ -655,8 +653,6 @@ SOURCES +=  main.cpp \
             gui/StartDialog.cpp \
             gui/GenCertDialog.cpp \
             gui/NetworkDialog.cpp \
-            gui/graphframe.cpp \
-            gui/graphframetunnel.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
             gui/NetworkView.cpp \
@@ -713,7 +709,7 @@ SOURCES +=  main.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
-            gui/bwgraph/bwgraph.cpp \
+            gui/bwgraph/BandwidthGraphWindow.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \

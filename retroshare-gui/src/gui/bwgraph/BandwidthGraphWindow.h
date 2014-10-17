@@ -20,15 +20,14 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#ifndef _BWGRAPH_H
-#define _BWGRAPH_H
+#pragma once
 
 #include <QDateTime>
 #include <QEvent>
 #include <QTimer>
 
 #include <gui/common/rwindow.h>
+#include <gui/statistics/bwgraph.h>
 
 #include "ui_bwgraph.h"
 
@@ -41,6 +40,8 @@ class BandwidthGraph : public RWindow
   Q_OBJECT
 
 public:
+    enum { AreaGraph=0,LineGraph=1 } ;
+
   /** Default constructor */
   BandwidthGraph(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
@@ -48,14 +49,7 @@ public slots:
   /** Overloaded QWidget.show */
   void showWindow();
 
-protected:
-  /** Called to deliver a bandwidth update event from Tor. */
-  void customEvent(QEvent *event);
-  void timerEvent(QTimerEvent*);
-  
 private slots:
-  /** Adds new data to the graph */
-  void updateGraph(qreal bytesRead, qreal bytesWritten);
   /** Called when settings button is toggled */
   void showSettingsFrame(bool show);
   /** Called when the settings button is toggled */
@@ -67,9 +61,6 @@ private slots:
   /** Called when the reset button is pressed */
   void reset();
 
-  void updategraphstatus();
-
-  
 private:
   /** Create and bind actions to events **/
   void createActions();
@@ -80,5 +71,4 @@ private:
   Ui::BandwidthGraph ui;
 };
 
-#endif
 

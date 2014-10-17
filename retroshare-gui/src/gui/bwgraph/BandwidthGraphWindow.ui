@@ -19,30 +19,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="GraphFrame" name="frmGraph">
-      <property name="minimumSize">
-       <size>
-        <width>120</width>
-        <height>80</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="contextMenuPolicy">
-       <enum>Qt::NoContextMenu</enum>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="_8">
       <property name="spacing">
@@ -466,15 +442,33 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="BWGraph" name="frmGraph" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>120</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::NoContextMenu</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GraphFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/graphframe.h</header>
+   <class>BWGraph</class>
+   <extends>QWidget</extends>
+   <header location="global">gui/statistics/bwgraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

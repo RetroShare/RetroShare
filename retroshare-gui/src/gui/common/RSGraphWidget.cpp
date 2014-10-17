@@ -68,6 +68,9 @@ int RSGraphSource::n_values() const { return _points.size() ; }
 
 QString RSGraphSource::displayName(int i) const
 {
+    if(_points.empty())
+        return QString() ;
+
     std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
 
     int n=0;
@@ -112,6 +115,18 @@ void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts) const
 
     for(std::list<std::pair<qint64,float> >::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
         pts.push_back(QPointF( (now - (*it2).first)/1000.0f,(*it2).second)) ;
+}
+
+void RSGraphWidget::setShowEntry(uint32_t entry,bool b)
+{
+    if(b)
+    {
+        std::set<std::string>::iterator it = _masked_entries.find(_source->displayName(entry).toStdString()) ;
+        if(it != _masked_entries.end())
+            _masked_entries.erase(it) ;
+    }
+    else
+        _masked_entries.insert(_source->displayName(entry).toStdString()) ;
 }
 
 void RSGraphWidget::addSource(RSGraphSource *gs)
@@ -163,6 +178,10 @@ void RSGraphSource::update()
         else
             ++it ;
 }
+void RSGraphSource::reset()
+{
+    _points.clear() ;
+}
 
 void RSGraphSource::setCollectionTimeLimit(qint64 s) { _time_limit_msecs = s ; }
 void RSGraphSource::setCollectionTimePeriod(qint64 s) { _update_period_msecs = s ; }
@@ -183,6 +202,7 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _maxPoints = getNumPoints();  
   _maxValue = MINUSER_SCALE;
 
+  _opacity = 0.6 ;
   _flags = 0;
   _time_scale = 5.0f ; // in pixels per second.
   _timer = new QTimer ;
@@ -213,6 +233,7 @@ RSGraphWidget::getNumPoints()
 void
 RSGraphWidget::resetGraph()
 {
+    _source->reset() ;
   _maxValue = MINUSER_SCALE;
   update();
 }
@@ -268,6 +289,10 @@ QColor RSGraphWidget::getColor(int i)
     return QColor::fromHsv(h,128+127*(i&1),255) ;
 }
 
+void RSGraphWidget::setCurvesOpacity(float f)
+{
+    _opacity = f ;
+}
 /** Paints an integral and an outline of that integral for each data set (rsdht
  * and/or alldht) that is to be displayed. The integrals will be drawn first,
  * followed by the outlines, since we want the area of overlapping integrals
@@ -283,21 +308,22 @@ void RSGraphWidget::paintData()
   _maxValue = 0.0f ;
 
   for(int i=0;i<source.n_values();++i)
-  {
-      std::vector<QPointF> values ;
-      source.getDataPoints(i,values) ;
+      if( _masked_entries.find(source.displayName(i).toStdString()) == _masked_entries.end() )
+      {
+          std::vector<QPointF> values ;
+          source.getDataPoints(i,values) ;
 
-      QVector<QPointF> points ;
-      pointsFromData(values,points) ;
+          QVector<QPointF> points ;
+          pointsFromData(values,points) ;
 
-      /* Plot the bandwidth data as area graphs */
-      if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
-          paintIntegral(points, getColor(i), 0.6);
+          /* Plot the bandwidth data as area graphs */
+          if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
+              paintIntegral(points, getColor(i), _opacity);
 
-      /* Plot the bandwidth as solid lines. If the graph style is currently an
+          /* Plot the bandwidth as solid lines. If the graph style is currently an
    * area graph, we end up outlining the integrals. */
-      paintLine(points, getColor(i));
-  }
+          paintLine(points, getColor(i));
+      }
   if(_maxValue > 0.0f)
       if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
           _y_scale = _rec.height()*0.8 / log(_maxValue) ;
@@ -334,8 +360,6 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
         qreal px = x - (values[i].x()-last)*_time_scale ;
     qreal py = y -  valueToPixels(values[i].y()) ;
 
-    _maxValue = std::max(_maxValue,values[i].y()) ;
-
         if(px >= SCALE_WIDTH && last_px < SCALE_WIDTH)
         {
             float alpha = (SCALE_WIDTH - last_px)/(px - last_px) ;
@@ -354,6 +378,8 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
         if(px < SCALE_WIDTH)
             continue ;
 
+    _maxValue = std::max(_maxValue,values[i].y()) ;
+
         // remove midle point when 3 consecutive points have the same value.
 
         if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
@@ -364,7 +390,6 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
         if(i==values.size()-1)
             points << QPointF(px,y) ;
     }
-
 }
 
 qreal RSGraphWidget::valueToPixels(qreal val)

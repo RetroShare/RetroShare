@@ -23,7 +23,7 @@
 
 #include <rshare.h>
 #include <control/bandwidthevent.h>
-#include "bwgraph.h"
+#include <gui/bwgraph/BandwidthGraphWindow.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <retroshare/rsconfig.h>
 
@@ -39,7 +39,7 @@
 #define DEFAULT_FILTER          (BWGRAPH_LINE_SEND|BWGRAPH_LINE_RECV)
 #define DEFAULT_ALWAYS_ON_TOP   false
 #define DEFAULT_OPACITY         100
-#define DEFAULT_STYLE           GraphFrame::AreaGraph
+#define DEFAULT_STYLE           LineGraph
 
 #define ADD_TO_FILTER(f,v,b)  (f = ((b) ? ((f) | (v)) : ((f) & ~(v))))
 
@@ -77,86 +77,27 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
   /* Load the previously saved settings */
   loadSettings();
 
-  /* Turn off opacity group on unsupported platforms */
-#if defined(Q_WS_WIN)
-  if(!(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion && QSysInfo::WindowsVersion <= QSysInfo::WV_2003)) {
-    ui.frmOpacity->setVisible(false);
-  }
-#endif
-  
-#if defined(Q_WS_X11)
-  ui.frmOpacity->setVisible(false);
-#endif
+   /* Turn off opacity group on unsupported platforms */
+ #if defined(Q_WS_WIN)
+   if(!(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion && QSysInfo::WindowsVersion <= QSysInfo::WV_2003)) {
+     ui.frmOpacity->setVisible(false);
+   }
+ #endif
 
-    QTimer *timer = new QTimer(this);
-    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updategraphstatus()));
-    timer->start(BWGRAPH_REFRESH_RATE);
-}
-
-/** Custom event handler. Checks if the event is a bandwidth update event. If it
- * is, it will add the data point to the history and updates the graph. */
-void
-BandwidthGraph::customEvent(QEvent *event)
-{
-  if (event->type() == CustomEventType::BandwidthEvent) {
-    BandwidthEvent *bw = (BandwidthEvent *)event;
-    updateGraph(bw->bytesRead(), bw->bytesWritten());
-  }
-}
-
-void 
-BandwidthGraph::timerEvent( QTimerEvent * )
-{
- 	/* set users/friends/network */
-	/*float downKb = 0;
-	float upKb = 0;
-	rsConfig->GetCurrentDataRates(downKb, upKb);
-
-  updateGraph(downKb,upKb);*/
-
-}
-
-void 
-BandwidthGraph::updategraphstatus( )
-{
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
-
- 	/* set users/friends/network */
-	float downKb = 0;
-	float upKb = 0;
-	rsConfig->GetCurrentDataRates(downKb, upKb);
-
-        updateGraph(downKb,upKb);
-
+ #if defined(Q_WS_X11)
+   ui.frmOpacity->setVisible(false);
+ #endif
 }
 
 /** Binds events to actions. */
 void
 BandwidthGraph::createActions()
 {
-  connect(ui.btnToggleSettings, SIGNAL(toggled(bool)),
-      this, SLOT(showSettingsFrame(bool)));
-
-  connect(ui.btnReset, SIGNAL(clicked()),
-      this, SLOT(reset()));
-
-  connect(ui.btnSaveSettings, SIGNAL(clicked()),
-      this, SLOT(saveChanges()));
-
-  connect(ui.btnCancelSettings, SIGNAL(clicked()),
-      this, SLOT(cancelChanges()));
-  
-  connect(ui.sldrOpacity, SIGNAL(valueChanged(int)),
-      this, SLOT(setOpacity(int)));
-}
-
-/** Adds new data to the graph. */
-void
-BandwidthGraph::updateGraph(qreal bytesRead, qreal bytesWritten)
-{
-  /* Graph only cares about kilobytes */
-  ui.frmGraph->addPoints(bytesRead/*/1024.0*/, bytesWritten/*/1024.0*/);
+    connect(ui.btnToggleSettings, SIGNAL(toggled(bool)), this, SLOT(showSettingsFrame(bool)));
+    connect(ui.btnReset, SIGNAL(clicked()), this, SLOT(reset()));
+    connect(ui.btnSaveSettings, SIGNAL(clicked()), this, SLOT(saveChanges()));
+    connect(ui.btnCancelSettings, SIGNAL(clicked()), this, SLOT(cancelChanges()));
+    connect(ui.sldrOpacity, SIGNAL(valueChanged(int)), this, SLOT(setOpacity(int)));
 }
 
 /** Loads the saved Bandwidth Graph settings. */
@@ -168,8 +109,8 @@ BandwidthGraph::loadSettings()
   setOpacity(ui.sldrOpacity->value());
 
   /* Set whether the window appears on top. */
-  ui.chkAlwaysOnTop->setChecked(getSetting(SETTING_ALWAYS_ON_TOP,
-                                           DEFAULT_ALWAYS_ON_TOP).toBool());
+  ui.chkAlwaysOnTop->setChecked(getSetting(SETTING_ALWAYS_ON_TOP, DEFAULT_ALWAYS_ON_TOP).toBool());
+
   if (ui.chkAlwaysOnTop->isChecked()) {
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
   } else {
@@ -183,32 +124,35 @@ BandwidthGraph::loadSettings()
 
   /* Set whether we are plotting bandwidth as area graphs or not */
   int graphStyle = getSetting(SETTING_STYLE, DEFAULT_STYLE).toInt();
+
   if (graphStyle < 0 || graphStyle >= ui.cmbGraphStyle->count()) {
     graphStyle = DEFAULT_STYLE;
   }
   ui.cmbGraphStyle->setCurrentIndex(graphStyle);
-  ui.frmGraph->setGraphStyle((GraphFrame::GraphStyle)graphStyle);
+
+  if(graphStyle==0)
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+  else
+      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
 
   /* Set graph frame settings */
-  ui.frmGraph->setShowCounters(ui.chkReceiveRate->isChecked(),
-                               ui.chkSendRate->isChecked());
+  ui.frmGraph->setShowEntry(0,ui.chkReceiveRate->isChecked()) ;
+  ui.frmGraph->setShowEntry(1,ui.chkSendRate->isChecked()) ;
 }
 
+
+
 /** Resets the log start time. */
-void
-BandwidthGraph::reset()
+void BandwidthGraph::reset()
 {
   /* Set to current time */
-  ui.statusbar->showMessage(tr("Since:") + " " + 
-			    QDateTime::currentDateTime()
-			    .toString(DATETIME_FMT));
+  ui.statusbar->showMessage(tr("Since:") + " " +  QDateTime::currentDateTime() .toString(DATETIME_FMT));
   /* Reset the graph */
   ui.frmGraph->resetGraph();
 }
 
 /** Saves the Bandwidth Graph settings and adjusts the graph if necessary. */
-void
-BandwidthGraph::saveChanges()
+void BandwidthGraph::saveChanges()
 {
   /* Hide the settings frame and reset toggle button */
   showSettingsFrame(false);
@@ -234,10 +178,14 @@ BandwidthGraph::saveChanges()
 
 
   /* Update the graph frame settings */
-  ui.frmGraph->setShowCounters(ui.chkReceiveRate->isChecked(),
-                               ui.chkSendRate->isChecked());
-  ui.frmGraph->setGraphStyle((GraphFrame::GraphStyle)ui.cmbGraphStyle->currentIndex());
-  
+  ui.frmGraph->setShowEntry(0,ui.chkReceiveRate->isChecked()) ;
+  ui.frmGraph->setShowEntry(1,ui.chkSendRate->isChecked()) ;
+
+  if(ui.cmbGraphStyle->currentIndex()==0)
+      ui.frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+  else
+      ui.frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN);
+
   /* A change in window flags causes the window to disappear, so make sure
    * it's still visible. */
   showNormal();
@@ -283,8 +231,7 @@ BandwidthGraph::showSettingsFrame(bool show)
 }
 
 /** Sets the opacity of the Bandwidth Graph window. */
-void
-BandwidthGraph::setOpacity(int value)
+void BandwidthGraph::setOpacity(int value)
 {
   qreal newValue = value / 100.0;
   

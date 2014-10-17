@@ -52,7 +52,7 @@
 #include "ChatLobbyWidget.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
-#include "bwgraph/bwgraph.h"
+#include "bwgraph/BandwidthGraphWindow.h"
 #include "help/browser/helpbrowser.h"
 #include "chat/ChatDialog.h"
 #include "RetroShareLink.h"
