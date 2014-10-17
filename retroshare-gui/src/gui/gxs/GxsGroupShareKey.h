@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "ui_GxsChannelShareKey.h"
+#include "ui_GxsGroupShareKey.h"
 
 #define CHANNEL_KEY_SHARE 0x00000001
 #define FORUM_KEY_SHARE	  0x00000002
