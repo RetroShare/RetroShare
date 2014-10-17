@@ -29,7 +29,7 @@
 #include <gui/common/rwindow.h>
 #include <gui/statistics/bwgraph.h>
 
-#include "ui_bwgraph.h"
+#include "ui_BandwidthGraphWindow.h"
 
 /** Redraw graph every BWGRAPH_REFRESH_RATE ms **/
 #define BWGRAPH_REFRESH_RATE    5113
