@@ -526,15 +526,19 @@ int bdNodeManager::QueryRandomLocalNet()
 		}
 
 		/* do standard find_peer message */
-
 		mQueryMgr->addWorthyPeerSource(&id); /* Tell BitDHT that we really want to ping their peers */
-		send_query(&id, &targetNodeId);
+		send_query(&id, &targetNodeId, true);
 			
 #ifdef DEBUG_MGR
 		std::cerr << "bdNodeManager::QueryRandomLocalNet() Querying : ";
 		mFns->bdPrintId(std::cerr, &id);
 		std::cerr << " searching for : ";
 		mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+
+		bdMetric dist;
+		mFns->bdDistance(&targetNodeId, &(mOwnId), &dist);
+		int bucket = mFns->bdBucketDistance(&dist);
+		std::cerr << " in Bucket: " << bucket;
 		std::cerr << std::endl;
 #endif
 

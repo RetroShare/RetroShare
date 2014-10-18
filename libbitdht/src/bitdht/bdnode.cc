@@ -442,13 +442,13 @@ void bdNode::send_ping(bdId *id)
 }
 
 
-void bdNode::send_query(bdId *id, bdNodeId *targetNodeId)
+void bdNode::send_query(bdId *id, bdNodeId *targetNodeId, bool localnet)
 {
 	/* push out query */
 	bdToken transId;
 	genNewTransId(&transId);
 
-	msgout_find_node(id, &transId, targetNodeId);
+	msgout_find_node(id, &transId, targetNodeId, localnet);
 
 #ifdef DEBUG_NODE_MSGS 
 	std::cerr << "bdNode::send_query() Find Node Req for : ";
@@ -681,6 +681,7 @@ void bdNode::processRemoteQuery()
 			switch(query.mQueryType)
 			{
 				case BD_QUERY_NEIGHBOURS:
+				case BD_QUERY_LOCALNET:
 				{
 					/* search bdSpace for neighbours */
 					
@@ -688,17 +689,26 @@ void bdNode::processRemoteQuery()
         				std::multimap<bdMetric, bdId> nearest;
         				std::multimap<bdMetric, bdId>::iterator it;
 
-
-					if (mRelayMode == BITDHT_RELAYS_SERVER)
+					if (query.mQueryType == BD_QUERY_LOCALNET)
 					{
 						std::list<bdId> excludeList;
 						mNodeSpace.find_nearest_nodes_with_flags(&(query.mQuery), 
 							BITDHT_QUERY_NEIGHBOUR_PEERS, 
-							excludeList, nearest, BITDHT_PEER_STATUS_DHT_RELAY_SERVER);
+							excludeList, nearest, BITDHT_PEER_STATUS_DHT_APPL);
 					}
 					else
 					{
-						mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, nearest);
+						if (mRelayMode == BITDHT_RELAYS_SERVER)
+						{
+							std::list<bdId> excludeList;
+							mNodeSpace.find_nearest_nodes_with_flags(&(query.mQuery), 
+								BITDHT_QUERY_NEIGHBOUR_PEERS, 
+								excludeList, nearest, BITDHT_PEER_STATUS_DHT_RELAY_SERVER);
+						}
+						else
+						{
+							mNodeSpace.find_nearest_nodes(&(query.mQuery), BITDHT_QUERY_NEIGHBOUR_PEERS, nearest);
+						}
 					}
 
         				for(it = nearest.begin(); it != nearest.end(); it++)
@@ -852,11 +862,21 @@ void bdNode::msgout_ping(bdId *id, bdToken *transId)
 	bdId dupId(*id);
 	registerOutgoingMsg(&dupId, transId, BITDHT_MSG_TYPE_PING, NULL);
 	
+	/* generate message, send to udp */
+	bdToken vid;
+	uint32_t vlen = BITDHT_TOKEN_MAX_LEN;
+	if (mDhtVersion.size() < vlen)
+	{
+		vlen = mDhtVersion.size();
+	}
+	memcpy(vid.data, mDhtVersion.c_str(), vlen);	
+	vid.len = vlen;
+
         /* create string */
         char msg[10240];
         int avail = 10240;
 
-        int blen = bitdht_create_ping_msg(transId, &(mOwnId), msg, avail-1);
+        int blen = bitdht_create_ping_msg(transId, &(mOwnId), &vid, msg, avail-1);
         sendPkt(msg, blen, id->addr);
 
 	mAccount.incCounter(BDACCOUNT_MSG_PING, true);
@@ -899,7 +919,7 @@ void bdNode::msgout_pong(bdId *id, bdToken *transId)
 }
 
 
-void bdNode::msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query)
+void bdNode::msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query, bool localnet)
 {
 #ifdef DEBUG_NODE_MSGOUT
 	std::cerr << "bdNode::msgout_find_node() TransId: ";
@@ -918,7 +938,7 @@ void bdNode::msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query)
         char msg[10240];
         int avail = 10240;
 
-        int blen = bitdht_find_node_msg(transId, &(mOwnId), query, msg, avail-1);
+        int blen = bitdht_find_node_msg(transId, &(mOwnId), query, localnet, msg, avail-1);
 
         sendPkt(msg, blen, id->addr);
 
@@ -1253,7 +1273,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	/************************ handle version (optional:pong) **************/
         be_node *be_version = NULL;
         bdToken versionId;
-	if (beType == BITDHT_MSG_TYPE_PONG)
+	if ((beType == BITDHT_MSG_TYPE_PONG) || (beType == BITDHT_MSG_TYPE_PING))
 	{
 		be_version = beMsgGetDictNode(node, "v");
 		if (!be_version)
@@ -1268,6 +1288,18 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	if (be_version)
 	{
 		beMsgGetToken(be_version, versionId);
+	}
+
+	/************************ handle options (optional:bitdht extension) **************/
+	be_node  *be_options = beMsgGetDictNode(node, "o");
+	bool localnet = false;
+	if (be_options)
+	{
+#ifdef DEBUG_NODE_PARSE
+		std::cerr << "bdNode::recvPkt() Found Options Node, localnet";
+		std::cerr << std::endl;
+#endif
+		localnet = true;
 	}
 
 	/*********** handle target (query) or info_hash (get_hash) ************/
@@ -1285,6 +1317,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 			be_free(node);
 			return;
 		}
+
 	}
 	else if ((beType == BITDHT_MSG_TYPE_GET_HASH) ||
 			(beType == BITDHT_MSG_TYPE_POST_HASH))
@@ -1540,7 +1573,14 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 			mFns->bdPrintId(std::cerr, &srcId);
 			std::cerr << std::endl;
 #endif
-			msgin_ping(&srcId, &transId);
+			if (be_version)
+			{
+				msgin_ping(&srcId, &transId, &versionId);
+			}
+			else
+			{
+				msgin_ping(&srcId, &transId, NULL);
+			}
 			break;
 		}
 		case BITDHT_MSG_TYPE_PONG:  /* r: id, transId */          
@@ -1570,7 +1610,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 			mFns->bdPrintNodeId(std::cerr, &target_info_hash);
 			std::cerr << std::endl;
 #endif
-			msgin_find_node(&srcId, &transId, &target_info_hash);
+			msgin_find_node(&srcId, &transId, &target_info_hash, localnet);
 			break;
 		}
 		case BITDHT_MSG_TYPE_REPLY_NODE: /* r: id, transId, nodes  */    
@@ -1669,7 +1709,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
  * Response: pong(id, token)
  */
 
-void bdNode::msgin_ping(bdId *id, bdToken *transId)
+void bdNode::msgin_ping(bdId *id, bdToken *transId, bdToken *versionId)
 {
 #ifdef DEBUG_NODE_MSGIN
 	std::cerr << "bdNode::msgin_ping() TransId: ";
@@ -1683,6 +1723,7 @@ void bdNode::msgin_ping(bdId *id, bdToken *transId)
 	
 	/* peer is alive */
 	uint32_t peerflags = BITDHT_PEER_STATUS_RECV_PING; /* no id typically, so cant get version */
+	peerflags |= parseVersion(versionId);
 	addPeer(id, peerflags);
 
 	/* reply */
@@ -1707,8 +1748,16 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	(void) transId;
 #endif
 
-	mAccount.incCounter(BDACCOUNT_MSG_PONG, false);
+	uint32_t peerflags = BITDHT_PEER_STATUS_RECV_PONG; 
+	peerflags |= parseVersion(versionId);
 
+	mAccount.incCounter(BDACCOUNT_MSG_PONG, false);
+	addPeer(id, peerflags);
+}
+
+
+uint32_t bdNode::parseVersion(bdToken *versionId)
+{
 	/* recv pong, and peer is alive. add to DHT */
 	//uint32_t vId = 0; // TODO XXX convertBdVersionToVID(versionId);
 
@@ -1722,7 +1771,7 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	{
 		
 #ifdef DEBUG_NODE_MSGIN
-		std::cerr << "bdNode::msgin_pong() Peer Version: ";
+		std::cerr << "bdNode::parseVersion() Peer Version: ";
 		for(int i = 0; i < versionId->len; i++)
 		{
 			std::cerr << versionId->data[i];
@@ -1771,7 +1820,7 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 		{
 			sameDhtVersion = false;
 #ifdef DEBUG_NODE_MSGIN
-			std::cerr << "bdNode::msgin_pong() STRANGE Peer Version: ";
+			std::cerr << "bdNode::parseVersion() STRANGE Peer Version: ";
 			for(uint32_t i = 0; i < versionId->len; i++)
 			{
 				std::cerr << versionId->data[i];
@@ -1802,12 +1851,11 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	{
 		
 #ifdef DEBUG_NODE_MSGIN
-		std::cerr << "bdNode::msgin_pong() No Version";
+		std::cerr << "bdNode::parseVersion() No Version";
 		std::cerr << std::endl;
 #endif
 	}
 	
-
 	uint32_t peerflags = BITDHT_PEER_STATUS_RECV_PONG; /* should have id too */
 	if (sameDhtEngine)
 	{
@@ -1825,13 +1873,14 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	{
 		peerflags |= BITDHT_PEER_STATUS_DHT_APPL_VERSION; 
 	}
-
-	addPeer(id, peerflags);
+	return peerflags;
 }
+
+
 
 /* Input: id, token, queryId */
 
-void bdNode::msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query)
+void bdNode::msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query, bool localnet)
 {
 #ifdef DEBUG_NODE_MSGIN
 	std::cerr << "bdNode::msgin_find_node() TransId: ";
@@ -1847,7 +1896,12 @@ void bdNode::msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query)
 
 
 	/* store query... */
-	queueQuery(id, query, transId, BD_QUERY_NEIGHBOURS);
+	uint32_t query_type = BD_QUERY_NEIGHBOURS;
+	if (localnet)
+	{
+		query_type = BD_QUERY_LOCALNET;
+	}
+	queueQuery(id, query, transId, query_type);
 
 
 	uint32_t peerflags = 0; /* no id, and no help! */

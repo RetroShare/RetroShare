@@ -73,9 +73,9 @@
 #define BITDHT_VID_UT	2
 
 
-int bitdht_create_ping_msg(bdToken *tid, bdNodeId *id, char *msg, int avail);
+int bitdht_create_ping_msg(bdToken *tid, bdNodeId *id, bdToken *vid, char *msg, int avail);
 int bitdht_response_ping_msg(bdToken *tid, bdNodeId *id, bdToken *vid, char *msg, int avail); 
-int bitdht_find_node_msg(bdToken *tid, bdNodeId *id, bdNodeId *target, char *msg, int avail);
+int bitdht_find_node_msg(bdToken *tid, bdNodeId *id, bdNodeId *target, bool localnet, char *msg, int avail);
 int bitdht_resp_node_msg(bdToken *tid, bdNodeId *id, std::list<bdId> &nodes,
                                         char *msg, int avail);
 int bitdht_get_peers_msg(bdToken *tid, bdNodeId *id, bdNodeId *info_hash,

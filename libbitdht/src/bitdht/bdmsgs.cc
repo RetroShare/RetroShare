@@ -52,7 +52,7 @@ bencoded = d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe
  ****/
 
 
-int bitdht_create_ping_msg(bdToken *tid, bdNodeId *id, char *msg, int avail)
+int bitdht_create_ping_msg(bdToken *tid, bdNodeId *id, bdToken *vid, char *msg, int avail)
 {
 #ifdef DEBUG_MSGS 
 	fprintf(stderr, "bitdht_create_ping_msg()\n");
@@ -73,6 +73,13 @@ int bitdht_create_ping_msg(bdToken *tid, bdNodeId *id, char *msg, int avail)
 	be_add_keypair(dict, "q", pingnode);
 	be_add_keypair(dict, "t", tidnode);
 	be_add_keypair(dict, "y", qynode);
+
+	if (vid)
+	{
+        	be_node *vnode = be_create_str_wlen((char *) vid->data, vid->len);
+        	be_add_keypair(dict, "v", vnode);
+	}
+
 
 #ifdef DEBUG_MSG_DUMP
 	/* dump answer */
@@ -135,7 +142,7 @@ bencoded = d1:ad2:id20:abcdefghij01234567896:target20:mnopqrstuvwxyz123456e1:q9:
 	*/
 
 
-int bitdht_find_node_msg(bdToken *tid, bdNodeId *id, bdNodeId *target, 
+int bitdht_find_node_msg(bdToken *tid, bdNodeId *id, bdNodeId *target, bool localoption,
 					char *msg, int avail)
 {
 #ifdef DEBUG_MSGS 
@@ -159,6 +166,12 @@ int bitdht_find_node_msg(bdToken *tid, bdNodeId *id, bdNodeId *target,
         be_add_keypair(dict, "t", tidnode);
         be_add_keypair(dict, "y", yqrnode);
         be_add_keypair(dict, "q", findnode);
+
+	if (localoption)
+	{
+        	be_node *optionnode = be_create_str("l");
+        	be_add_keypair(dict, "o", optionnode);
+	}
 
 #ifdef DEBUG_MSG_DUMP
         /* dump answer */

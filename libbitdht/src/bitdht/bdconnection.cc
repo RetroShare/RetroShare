@@ -524,7 +524,7 @@ int bdConnectManager::requestConnection_proxy(struct sockaddr_in *laddr, bdNodeI
 			std::cerr << std::endl;
 #endif
 			//connreq.mGoodProxies.push_back(it->second);
-			mPub->send_query(&(it->second), target);
+			mPub->send_query(&(it->second), target, true);
 		}
 	}
 

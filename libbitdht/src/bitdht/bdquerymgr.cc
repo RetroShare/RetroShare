@@ -119,7 +119,7 @@ int bdQueryManager::iterateQueries(int maxQueries)
 			std::cerr << ")";
 			std::cerr << std::endl;
 #endif
-			mPub->send_query(&id, &targetNodeId);
+			mPub->send_query(&id, &targetNodeId, false);
 			sentQueries++;
 		}
 		i++;

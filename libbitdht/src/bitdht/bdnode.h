@@ -43,7 +43,8 @@ class bdFilter;
 
 
 #define BD_QUERY_NEIGHBOURS		1
-#define BD_QUERY_HASH			2
+#define BD_QUERY_LOCALNET		2
+#define BD_QUERY_HASH			3
 
 /**********************************
  * Running a node....
@@ -102,7 +103,7 @@ class bdNodePublisher
 	public:
 	/* simplified outgoing msg functions (for the managers) */
 	virtual void send_ping(bdId *id) = 0; /* message out */
-	virtual void send_query(bdId *id, bdNodeId *targetNodeId) = 0; /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId, bool localnet) = 0; /* message out */
 	virtual void send_connect_msg(bdId *id, int msgtype, 
 				bdId *srcAddr, bdId *destAddr, int mode, int param, int status) = 0;
 
@@ -146,7 +147,7 @@ class bdNode: public bdNodePublisher
 
 	/* simplified outgoing msg functions (for the managers) */
 	virtual void send_ping(bdId *id); /* message out */
-	virtual void send_query(bdId *id, bdNodeId *targetNodeId); /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId, bool localnet); /* message out */
 	virtual void send_connect_msg(bdId *id, int msgtype, 
 				bdId *srcAddr, bdId *destAddr, int mode, int param, int status);
 
@@ -173,7 +174,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	/* output functions (send msg) */
 	void msgout_ping(bdId *id, bdToken *transId);
 	void msgout_pong(bdId *id, bdToken *transId);
-	void msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query);
+	void msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query, bool localnet);
 	void msgout_reply_find_node(bdId *id, bdToken *transId, 
 						std::list<bdId> &peers);
 	void msgout_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash);
@@ -188,10 +189,11 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 
 	/* input functions (once mesg is parsed) */
-	void msgin_ping(bdId *id, bdToken *token);
+	uint32_t parseVersion(bdToken *versionId);
+	void msgin_ping(bdId *id, bdToken *token, bdToken *versionId);
 	void msgin_pong(bdId *id, bdToken *transId, bdToken *versionId);
 
-	void msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query);
+	void msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query, bool localnet);
 	void msgin_reply_find_node(bdId *id, bdToken *transId, 
 						std::list<bdId> &entries);
 
