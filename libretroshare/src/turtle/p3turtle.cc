@@ -1094,14 +1094,18 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 
 			sendItem(item) ;
 			return ;
-		}
-	}
+        }
+
+        // item is for us. Use the locked region to record the data.
+
+        _traffic_info_buffer.data_dn_Bps += item->serial_size() ;
+    }
 
 	// The packet was not forwarded, so it is for us. Let's treat it.
 	// This is done off-mutex, to avoid various deadlocks
 	//
 	
-	handleRecvGenericTunnelItem(item) ;
+    handleRecvGenericTunnelItem(item) ;
 
 	delete item ;
 }
@@ -1116,7 +1120,7 @@ void p3turtle::handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 	RsPeerId vpid ;
 	RsTurtleClientService *service ;
 
-	if(!getTunnelServiceInfo(item->tunnelId(),vpid,hash,service))
+    if(!getTunnelServiceInfo(item->tunnelId(),vpid,hash,service))
 		return ;
 
 	service->receiveTurtleData(item,hash,vpid,item->travelingDirection()) ;
