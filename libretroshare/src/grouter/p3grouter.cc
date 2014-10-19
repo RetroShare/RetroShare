@@ -438,7 +438,7 @@ void p3GRouter::routePendingObjects()
 
 				// send
 				new_item->PeerId(pids[*its]) ;
-				new_item->randomized_distance += computeRandomDistanceIncrement(pids[*its],new_item->destination_key) ;
+                new_item->randomized_distance += routing_friend_indices.size() * computeRandomDistanceIncrement(pids[*its],new_item->destination_key) ;
 
 				sendItem(new_item) ;
 			}
@@ -1190,7 +1190,8 @@ void p3GRouter::debugDump()
 
 	grouter_debug() << "  Routing matrix: " << std::endl;
 
-	_routing_matrix.debugDump() ;
+    if(_debug_enabled)
+        _routing_matrix.debugDump() ;
 }
 
 
