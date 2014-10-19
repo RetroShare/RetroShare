@@ -53,10 +53,10 @@ bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& so
 	//  1 - a user restarts RS very often => keys get republished for some reason
 	//  2 - a user intentionnaly floods a key 
 	//
-	if(!lst.empty() && lst.front().time_stamp + RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS > now)
+    if(!lst.empty() && lst.front().friend_id == fid && lst.front().time_stamp + RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS > now)
 	{
-		std::cerr << "GRouterMatrix::addRoutingClue(): too clues for key " << key_id.toStdString() << " in a small interval of " << now - lst.front().time_stamp << " seconds. Flooding?" << std::endl;
-		return false ;
+        std::cerr << "GRouterMatrix::addRoutingClue(): too many clues for key " << key_id.toStdString() << " from friend " << source_friend << " in a small interval of " << now - lst.front().time_stamp << " seconds. Flooding?" << std::endl;
+        return false ;
 	}
 
 	lst.push_front(rc) ;								// create it if necessary
