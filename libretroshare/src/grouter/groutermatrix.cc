@@ -52,12 +52,16 @@ bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& so
 	// Prevent flooding. Happens in two scenarii:
 	//  1 - a user restarts RS very often => keys get republished for some reason
 	//  2 - a user intentionnaly floods a key 
-	//
-    if(!lst.empty() && lst.front().friend_id == fid && lst.front().time_stamp + RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS > now)
-	{
-        std::cerr << "GRouterMatrix::addRoutingClue(): too many clues for key " << key_id.toStdString() << " from friend " << source_friend << " in a small interval of " << now - lst.front().time_stamp << " seconds. Flooding?" << std::endl;
-        return false ;
-	}
+    //
+    // Solution is to look for all recorded events, and not add any new event if an event came from the same friend
+    // too close in the past. Going through the list is not costly since it is bounded to RS_GROUTER_MATRIX_MAX_HIT_ENTRIES elemts.
+
+    for(std::list<RoutingMatrixHitEntry>::const_iterator mit(lst.begin());mit!=lst.end();++mit)
+        if((*mit).friend_id == fid && (*mit).time_stamp + RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS > now)
+        {
+            std::cerr << "GRouterMatrix::addRoutingClue(): too many clues for key " << key_id.toStdString() << " from friend " << source_friend << " in a small interval of " << now - lst.front().time_stamp << " seconds. Flooding?" << std::endl;
+            return false ;
+        }
 
 	lst.push_front(rc) ;								// create it if necessary
 
