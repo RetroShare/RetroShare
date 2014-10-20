@@ -56,7 +56,7 @@ IdentityWidget::~IdentityWidget()
 
 void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 {
-	if (_group_info.mMeta.mGroupId != gxs_group_info.mMeta.mGroupId) {
+	//if (_group_info != gxs_group_info) {
 		_group_info = gxs_group_info;
 		_haveGXSId = true;
 
@@ -94,13 +94,12 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 			}//if (_avatar != image)
 		}//if (!_havePGPDetail)
 
-	}//if (_group_info != gxs_group_info)
+	//}//if (_group_info != gxs_group_info)
 }
 
 void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 {
-	if (_details.id != pgp_details.id)
-	{
+	//if (_details != pgp_details) {
 		_details = pgp_details;
 		_havePGPDetail = true;
 
@@ -131,7 +130,7 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 			emit imageUpdated();
 		}//if (_avatar != avatar.toImage())
 
-	}//if (_details != gpg_details)
+	//}//if (_details != gpg_details)
 }
 
 void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info, const RsPeerDetails &pgp_details)
