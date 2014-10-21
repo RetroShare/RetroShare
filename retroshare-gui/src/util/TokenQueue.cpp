@@ -169,7 +169,7 @@ bool TokenQueue::activeRequestExist(const uint32_t& userType) const
 {
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
-	for(; lit != mRequests.end(); lit++)
+	for(; lit != mRequests.end(); ++lit)
 	{
 		const TokenRequest& req = *lit;
 
@@ -186,7 +186,7 @@ void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_
 {
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
-	for(; lit != mRequests.end(); lit++)
+	for(; lit != mRequests.end(); ++lit)
 	{
 		const TokenRequest& req = *lit;
 
@@ -224,7 +224,7 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 
 	std::list<TokenRequest>::iterator it;
 
-	for(it = mRequests.begin(); it != mRequests.end(); it++)
+	for(it = mRequests.begin(); it != mRequests.end(); ++it)
 	{
 		if (it->mToken == token)
 		{

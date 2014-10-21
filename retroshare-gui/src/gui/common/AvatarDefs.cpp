@@ -76,7 +76,7 @@ void AvatarDefs::getAvatarFromGpgId(const std::string& gpgId, QPixmap &avatar, c
         std::list<RsPeerId> sslIds;
         if (rsPeers->getAssociatedSSLIds(RsPgpId(gpgId), sslIds)) {
             std::list<RsPeerId>::iterator sslId;
-			for (sslId = sslIds.begin(); sslId != sslIds.end(); sslId++) {
+			for (sslId = sslIds.begin(); sslId != sslIds.end(); ++sslId) {
 				rsMsgs->getAvatarData(*sslId, data, size);
 				if (size) {
 					break;

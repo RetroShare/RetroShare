@@ -211,7 +211,7 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 	}//if (mFirstLoad)
 
 	if (!mFirstLoad) {
-		for (int idx=0; idx < count(); idx++) {
+		for (int idx=0; idx < count(); ++idx) {
 			QVariant type = itemData(idx,ROLE_TYPE);
 			switch (type.toInt()) {
 				case TYPE_NO_ID:
@@ -228,7 +228,7 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 					}//if (lit == ids.end())
 				}//default:
 			}//switch (type.toInt())
-		}//for (int idx=0; idx < count(); idx++)
+		}//for (int idx=0; idx < count(); ++idx)
 	}//if (!mFirstLoad)
 
 	if (ids.empty()) {
@@ -238,7 +238,7 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		return;
 	}//if (ids.empty())
 
-	for(std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); it++) {
+	for(std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); ++it) {
 		/* add to Chooser */
 		addPrivateId(*it, !mFirstLoad);
 	}//for(std::list<RsGxsId>::iterator it

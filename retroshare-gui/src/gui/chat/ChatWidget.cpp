@@ -299,7 +299,7 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 			rsHistory->getMessages(peerId, historyMsgs, messageCount);
 
 			std::list<HistoryMsg>::iterator historyIt;
-			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); historyIt++) 
+			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
 				addChatMsg(historyIt->incoming, QString::fromUtf8(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
 		}
 	}
@@ -537,7 +537,7 @@ void ChatWidget::completeNickname(bool reverse)
 		std::list<QString> participants;
 		for (	std::map<std::string,time_t>::const_iterator it = lobby->nick_names.begin();
 				it != lobby->nick_names.end();
-				it++) {
+				++it) {
 			participants.push_front(QString::fromUtf8(it->first.c_str()));
 		}
 		participants.sort(caseInsensitiveCompare);
@@ -616,7 +616,7 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
 	 QStringList participants;
 	for (	std::map<std::string,time_t>::const_iterator it = lobby->nick_names.begin();
 			it != lobby->nick_names.end();
-			it++) {
+			++it) {
 		participants.push_front(QString::fromUtf8(it->first.c_str()));
 	}
 

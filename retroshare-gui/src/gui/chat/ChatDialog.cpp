@@ -151,7 +151,7 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 	std::list<ChatDialog*> list;
 
     std::map<RsPeerId, ChatDialog*>::iterator it;
-	for (it = chatDialogs.begin(); it != chatDialogs.end(); it++) {
+	for (it = chatDialogs.begin(); it != chatDialogs.end(); ++it) {
 		if (it->second) {
 			list.push_back(it->second);
 		}
@@ -160,7 +160,7 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 	chatDialogs.clear();
 
 	std::list<ChatDialog*>::iterator it1;
-	for (it1 = list.begin(); it1 != list.end(); it1++) {
+	for (it1 = list.begin(); it1 != list.end(); ++it1) {
 		delete (*it1);
 	}
 }
@@ -176,7 +176,7 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 			uint chatflags = Settings->getChatFlags();
 
             std::list<RsPeerId>::iterator id;
-			for (id = ids.begin(); id != ids.end(); id++) {
+			for (id = ids.begin(); id != ids.end(); ++id) {
 				ChatDialog *cd = getChat(*id, chatflags);
 
 				if (cd) {
@@ -188,7 +188,7 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 
 	/* now notify all open priavate chat windows */
     std::map<RsPeerId, ChatDialog *>::iterator it;
-	for (it = chatDialogs.begin (); it != chatDialogs.end(); it++) {
+	for (it = chatDialogs.begin (); it != chatDialogs.end(); ++it) {
 		if (it->second) {
 			it->second->onChatChanged(list, type);
 		}
@@ -376,7 +376,7 @@ void ChatDialog::insertChatMsgs()
 	}
 
 	std::list<ChatInfo>::iterator it;
-	for(it = newchat.begin(); it != newchat.end(); it++)
+	for(it = newchat.begin(); it != newchat.end(); ++it)
 	 {
 		/* are they public? */
 		if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {

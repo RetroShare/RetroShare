@@ -671,7 +671,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 		QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
 
 		//Look for all selected items
-		for (int i = 0; i < lst.count(); i++) {
+		for (int i = 0; i < lst.count(); ++i) {
 			//Look only for first column == File  List
 			if ( lst[i].column() == 0) {
 				//Get Info for current  item
@@ -718,7 +718,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 
 				}// if (rsFiles->FileDetails(lst[i].data(COLUMN_ID), RS_FILE_HINTS_DOWNLOAD, info))
 			}// if (lst[i].column() == 0)
-		}// for (int i = 0; i < lst.count(); i++)
+		}// for (int i = 0; i < lst.count(); ++i)
 	}// if (!items.empty())
 
 	if (atLeastOne_Downloading) {
@@ -1063,7 +1063,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 
 			/* get the sources (number of online peers) */
 			if (transferInfo.tfRate > 0 && fileInfo.downloadStatus == FT_STATE_DOWNLOADING)
-				active++;
+				++active;
 		}
 	}
 
@@ -1318,7 +1318,7 @@ void TransfersDialog::insertTransfers()
 
     std::set<std::string> used_hashes ;
 
-	for(it = upHashes.begin(); it != upHashes.end(); it++) 
+	for(it = upHashes.begin(); it != upHashes.end(); ++it)
 	{
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) 
@@ -1328,7 +1328,7 @@ void TransfersDialog::insertTransfers()
 			continue ;
 
 		std::list<TransferInfo>::iterator pit;
-		for(pit = info.peers.begin(); pit != info.peers.end(); pit++) 
+		for(pit = info.peers.begin(); pit != info.peers.end(); ++pit)
 		{
 			if (pit->peerId == ownId) //don't display transfer to ourselves
 				continue ;
@@ -1401,7 +1401,7 @@ void TransfersDialog::insertTransfers()
 			ULListModel->removeRow(removeIndex);
 			rowCount = ULListModel->rowCount();
 		} else
-			removeIndex++;
+			++removeIndex;
 	}
 
 	ui.uploadsList->setSortingEnabled(true);
@@ -1433,7 +1433,7 @@ void TransfersDialog::cancel()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (first) {
 			first = false;
 			QString queryWrn2;
@@ -1481,7 +1481,7 @@ void TransfersDialog::copyLink ()
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) {
 			continue;
@@ -1504,7 +1504,7 @@ void TransfersDialog::ulCopyLink ()
     std::set<RsFileHash>::iterator it;
     getULSelectedItems(&items, NULL);
 
-    for (it = items.begin(); it != items.end(); it ++) {
+    for (it = items.begin(); it != items.end(); ++it) {
         FileInfo info;
         if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) {
             continue;
@@ -1564,7 +1564,7 @@ void TransfersDialog::getSelectedItems(std::set<RsFileHash> *ids, std::set<int> 
 	if (rows) rows->clear();
 
 	int i, imax = DLListModel->rowCount();
-	for (i = 0; i < imax; i++) {
+	for (i = 0; i < imax; ++i) {
 		bool isParentSelected = false;
 		bool isChildSelected = false;
 
@@ -1575,7 +1575,7 @@ void TransfersDialog::getSelectedItems(std::set<RsFileHash> *ids, std::set<int> 
 			isParentSelected = true;
 		} else {
 			int j, jmax = parent->rowCount();
-			for (j = 0; j < jmax && !isChildSelected; j++) {
+			for (j = 0; j < jmax && !isChildSelected; ++j) {
 				QStandardItem *child = parent->child(j);
 				if (!child) continue;
 				QModelIndex cindex = child->index();
@@ -1631,7 +1631,7 @@ bool TransfersDialog::controlTransferFile(uint32_t flags)
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		result &= rsFiles->FileControl(*it, flags);
 	}
 
@@ -1661,7 +1661,7 @@ void TransfersDialog::openFolderTransfer()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 		break;
 	}
@@ -1691,7 +1691,7 @@ void TransfersDialog::ulOpenFolder()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
     getULSelectedItems(&items, NULL);
-    for (it = items.begin(); it != items.end(); it ++) {
+    for (it = items.begin(); it != items.end(); ++it) {
         if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) continue;
         break;
     }
@@ -1718,7 +1718,7 @@ void TransfersDialog::previewTransfer()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 		break;
 	}
@@ -1788,7 +1788,7 @@ void TransfersDialog::openTransfer()
 	std::set<RsFileHash> items ;
 	std::set<RsFileHash>::iterator it ;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 		break;
 	}
@@ -1820,7 +1820,7 @@ void TransfersDialog::openTransfer()
 //	std::set<QStandardItem *>::iterator it;
 //	getSelectedItems(&items, NULL);
 //
-//	for (it = items.begin(); it != items.end(); it ++) {
+//	for (it = items.begin(); it != items.end(); ++it) {
 //		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
 //		rsFiles->clearDownload(hash);
 //	}
@@ -1848,7 +1848,7 @@ void TransfersDialog::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		rsFiles->setChunkStrategy(*it, s);
 	}
 }
@@ -1889,7 +1889,7 @@ void TransfersDialog::changeSpeed(int speed)
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) 
+	for (it = items.begin(); it != items.end(); ++it) 
 	{
 		rsFiles->changeDownloadSpeed(*it, speed);
 	}
@@ -1954,7 +1954,7 @@ void TransfersDialog::changeQueuePosition(QueueMove mv)
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) 
+	for (it = items.begin(); it != items.end(); ++it) 
 	{
 		rsFiles->changeQueuePosition(*it, mv);
 	}
@@ -1971,7 +1971,7 @@ void TransfersDialog::showFileDetails()
     RsFileHash file_hash ;
 	int nb_select = 0 ;
 
-	for(int i = 0; i <= DLListModel->rowCount(); i++) 
+	for(int i = 0; i <= DLListModel->rowCount(); ++i)
 		if(selection->isRowSelected(i, QModelIndex())) 
 		{
 	        file_hash = RsFileHash(getID(i, DLListModel).toStdString());
@@ -2065,7 +2065,7 @@ void TransfersDialog::collCreate()
 	std::set<RsFileHash>::iterator it ;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 

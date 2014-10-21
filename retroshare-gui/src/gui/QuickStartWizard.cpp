@@ -279,7 +279,7 @@ void QuickStartWizard::loadShare()
 	connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(updateFlags(QTableWidgetItem*))) ;
 
 	int row=0 ;
-	for(it = dirs.begin(); it != dirs.end(); it++,++row)
+	for(it = dirs.begin(); it != dirs.end(); ++it,++row)
 	{
 		listWidget->insertRow(row) ;
 		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromStdString((*it).filename)));
@@ -345,7 +345,7 @@ void QuickStartWizard::updateFlags(bool b)
 	rsFiles->getSharedDirectories(dirs);
 
 	int row=0 ;
-	for(it = dirs.begin(); it != dirs.end(); it++,++row)
+	for(it = dirs.begin(); it != dirs.end(); ++it,++row)
 	{
 		std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
 		FileStorageFlags current_flags(0u) ;

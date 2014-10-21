@@ -84,13 +84,13 @@ class TRHistogram
 
 				if(_infos[i].age < h.size())
 				{
-					h[_infos[i].age]++ ;
+					++h[_infos[i].age] ;
 					if(h[_infos[i].age] > max_hits)
 						max_hits = h[_infos[i].age] ;
 				}
 				if(_infos[i].depth < g.size())
 				{
-					g[_infos[i].depth]++ ;
+					++g[_infos[i].depth] ;
 
 					if(g[_infos[i].depth] > max_depth)
 						max_depth = g[_infos[i].depth] ;
@@ -133,7 +133,7 @@ class TRHistogram
 
 			for(int i=0;i<MaxTime;i+=5)
 				painter->drawText(ox+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
-			for(int i=0;i<MaxDepth;i++)
+			for(int i=0;i<MaxDepth;++i)
 				painter->drawText(ox+MaxTime*cellx+20+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
 			painter->setPen(QColor::fromRgb(255,130,80)) ;
 			painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+(p+1)*celly+4,"("+QString::number(great_total)+")");

@@ -1077,7 +1077,7 @@ void RsCollectionDialog::download()
 	QTreeWidgetItemIterator itemIterator(ui._fileEntriesTW);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (item->checkState(COLUMN_FILE) == Qt::Checked) {
 			std::cerr << item->data(COLUMN_HASH,ROLE_NAME).toString().toStdString()
@@ -1144,7 +1144,7 @@ void RsCollectionDialog::saveChild(QTreeWidgetItem *parentItem, ColFileInfo *par
 	parentInfo->type = parentItem->data(COLUMN_HASH,ROLE_TYPE).toUInt();
 	parentInfo->size = parentItem->data(COLUMN_SIZE,ROLE_SELSIZE).toULongLong();
 
-	for (int i=0; i<parentItem->childCount(); i++) {
+	for (int i=0; i<parentItem->childCount(); ++i) {
 		ColFileInfo child;
 		saveChild(parentItem->child(i), &child);
 		if (parentInfo->name != "") {

@@ -920,7 +920,7 @@ bool RetroShareLink::checkHash(const QString& hash)
 
 static void processList(const QStringList &list, const QString &textSingular, const QString &textPlural, QString &result)
 {
-	if (list.size() == 0) {
+	if (list.isEmpty()) {
 		return;
 	}
 	if (list.size() == 1) {
@@ -946,7 +946,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	/* filter dublicate links */
 	QList<RetroShareLink> links;
-	for (linkIt = linksIn.begin(); linkIt != linksIn.end(); linkIt++) {
+	for (linkIt = linksIn.begin(); linkIt != linksIn.end(); ++linkIt) {
 		if (links.contains(*linkIt)) {
 			continue;
 		}
@@ -959,7 +959,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 		QStringList fileAdd;
 		QStringList personAdd;
 
-		for (linkIt = links.begin(); linkIt != links.end(); linkIt++) {
+		for (linkIt = links.begin(); linkIt != links.end(); ++linkIt) {
 			const RetroShareLink &link = *linkIt;
 
 			if (link.valid() == false) {
@@ -1060,19 +1060,19 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown;
 	// not needed: forumFound, channelFound, messageStarted
 
-	for (linkIt = links.begin(); linkIt != links.end(); linkIt++) {
+	for (linkIt = links.begin(); linkIt != links.end(); ++linkIt) {
 		const RetroShareLink &link = *linkIt;
 
 		if (link.valid() == false) {
 			std::cerr << " RetroShareLink::process invalid request" << std::endl;
-			countInvalid++;
+			++countInvalid;
 			continue;
 		}
 
 		switch (link.type()) 
 		{
 			case TYPE_UNKNOWN:
-				countUnknown++;
+				++countUnknown;
 				break;
 
 			case TYPE_CERTIFICATE:
@@ -1345,7 +1345,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 			default:
 				std::cerr << " RetroShareLink::process unknown type: " << link.type() << std::endl;
-				countUnknown++;
+				++countUnknown;
 		}
 	}
 
@@ -1459,7 +1459,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 {
 	QList<RetroShareLink> links;
 
-	for (QStringList::const_iterator it = urls.begin(); it != urls.end(); it++) {
+	for (QStringList::const_iterator it = urls.begin(); it != urls.end(); ++it) {
 		RetroShareLink link(*it);
 		if (link.valid() && (type == RetroShareLink::TYPE_UNKNOWN || link.type() == type)) {
 			links.append(link);
@@ -1562,7 +1562,7 @@ bool RSLinkClipboard::empty(RetroShareLink::enumType type /* = RetroShareLink::T
 		return links.empty();
 	}
 
-	for (QList<RetroShareLink>::iterator link = links.begin(); link != links.end(); link++) {
+	for (QList<RetroShareLink>::iterator link = links.begin(); link != links.end(); ++link) {
 		if (link->type() == type) {
 			return false;
 		}
@@ -1577,13 +1577,13 @@ bool RSLinkClipboard::empty(RetroShareLink::enumType type /* = RetroShareLink::T
 	pasteLinks(links);
 
 	QList<RetroShareLink> linksToProcess;
-	for (int i = 0; i < links.size(); i++) {
+	for (int i = 0; i < links.size(); ++i) {
 		if (links[i].valid() && (type == RetroShareLink::TYPE_UNKNOWN || links[i].type() == type)) {
 			linksToProcess.append(links[i]);
 		}
 	}
 
-	if (linksToProcess.size() == 0) {
+	if (linksToProcess.isEmpty()) {
 		return 0;
 	}
 

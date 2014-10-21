@@ -55,7 +55,7 @@ ImHistoryBrowserCreateItemsThread::~ImHistoryBrowserCreateItemsThread()
 {
     // remove all items (when items are available, the thread was terminated)
     QList<QListWidgetItem*>::iterator it;
-    for (it = m_items.begin(); it != m_items.end(); it++) {
+    for (it = m_items.begin(); it != m_items.end(); ++it) {
         delete(*it);
     }
 
@@ -78,7 +78,7 @@ void ImHistoryBrowserCreateItemsThread::run()
     int current = 0;
 
     std::list<HistoryMsg>::iterator it;
-    for (it = historyMsgs.begin(); it != historyMsgs.end(); it++) {
+    for (it = historyMsgs.begin(); it != historyMsgs.end(); ++it) {
         if (stopped) {
             break;
         }
@@ -162,7 +162,7 @@ void ImHistoryBrowser::createThreadFinished()
         if (!m_createThread->wasStopped()) {
             // append created items
             QList<QListWidgetItem*>::iterator it;
-            for (it = m_createThread->m_items.begin(); it != m_createThread->m_items.end(); it++) {
+            for (it = m_createThread->m_items.begin(); it != m_createThread->m_items.end(); ++it) {
                 ui.listWidget->addItem(*it);
             }
 
@@ -178,7 +178,7 @@ void ImHistoryBrowser::createThreadFinished()
             m_createThread = NULL;
 
             QList<HistoryMsg>::iterator histIt;
-            for (histIt = itemsAddedOnLoad.begin(); histIt != itemsAddedOnLoad.end(); histIt++) {
+            for (histIt = itemsAddedOnLoad.begin(); histIt != itemsAddedOnLoad.end(); ++histIt) {
                 historyAdd(*histIt);
             }
             itemsAddedOnLoad.clear();
@@ -241,7 +241,7 @@ void ImHistoryBrowser::historyChanged(uint msgId, int type)
     if (type == NOTIFY_TYPE_DEL) {
         /* history message removed */
         int count = ui.listWidget->count();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
             QListWidgetItem *itemWidget = ui.listWidget->item(i);
             if (itemWidget->data(ROLE_MSGID).toString().toUInt() == msgId) {
                 delete(ui.listWidget->takeItem(i));
@@ -302,7 +302,7 @@ void ImHistoryBrowser::filterItems(const QString &text, QListWidgetItem *item)
 {
     if (item == NULL) {
         int count = ui.listWidget->count();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
             item = ui.listWidget->item(i);
             if (text.isEmpty()) {
                 item->setHidden(false);
@@ -332,7 +332,7 @@ void ImHistoryBrowser::getSelectedItems(std::list<uint32_t> &items)
     QList<QListWidgetItem*> itemWidgets = ui.listWidget->selectedItems();
 
     QList<QListWidgetItem*>::iterator it;
-    for (it = itemWidgets.begin(); it != itemWidgets.end(); it++) {
+    for (it = itemWidgets.begin(); it != itemWidgets.end(); ++it) {
         QListWidgetItem *item = *it;
         if (item->isHidden()) {
             continue;

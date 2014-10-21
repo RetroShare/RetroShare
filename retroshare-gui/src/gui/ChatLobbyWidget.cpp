@@ -377,7 +377,7 @@ void ChatLobbyWidget::updateDisplay()
 					}
 				}
 			}
-			childIndex++;
+			++childIndex;
 		}
 	}
 
@@ -431,7 +431,7 @@ void ChatLobbyWidget::updateDisplay()
 		// Search existing item
 		//
 		int childCnt = lobby_other_item->childCount();
-		for (int childIndex = 0; childIndex < childCnt; childIndex++)
+		for (int childIndex = 0; childIndex < childCnt; ++childIndex)
 		{
 			QTreeWidgetItem *itemLoop = lobby_other_item->child(childIndex);
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
@@ -441,7 +441,7 @@ void ChatLobbyWidget::updateDisplay()
 			}
 		}
 		childCnt = lobby_item->childCount();
-		for (int childIndex = 0; childIndex < childCnt; childIndex++) 
+		for (int childIndex = 0; childIndex < childCnt; ++childIndex)
 		{
 			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
@@ -509,7 +509,7 @@ void ChatLobbyWidget::updateDisplay()
 
 		// search existing item
 		int childCount = itemParent->childCount();
-		for (int childIndex = 0; childIndex < childCount; childIndex++) {
+		for (int childIndex = 0; childIndex < childCount; ++childIndex) {
 			QTreeWidgetItem *itemLoop = itemParent->child(childIndex);
 			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
 				item = itemLoop;
@@ -853,7 +853,7 @@ void ChatLobbyWidget::filterItems(const QString &text)
 	int filterColumn = ui.filterLineEdit->currentFilter();
 
 	int count = ui.lobbyTreeWidget->topLevelItemCount ();
-	for (int index = 0; index < count; index++) {
+	for (int index = 0; index < count; ++index) {
 		filterItem(ui.lobbyTreeWidget->topLevelItem(index), text, filterColumn);
 	}
 }
@@ -870,9 +870,9 @@ bool ChatLobbyWidget::filterItem(QTreeWidgetItem *item, const QString &text, int
 
     int visibleChildCount = 0;
     int count = item->childCount();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         if (filterItem(item->child(index), text, filterColumn)) {
-            visibleChildCount++;
+            ++visibleChildCount;
         }
     }
 

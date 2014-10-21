@@ -777,24 +777,24 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
             initRsMIS(mit->second, mis);
 
             if (mis.msgflags & RS_MSG_TRASH) {
-                if (pnTrashbox) (*pnTrashbox)++;
+                if (pnTrashbox) ++(*pnTrashbox);
                 continue;
             }
             switch (mis.msgflags & RS_MSG_BOXMASK) {
             case RS_MSG_INBOX:
-                    if (pnInbox) (*pnInbox)++;
+                    if (pnInbox) ++(*pnInbox);
                     if ((mis.msgflags & RS_MSG_NEW) == RS_MSG_NEW) {
-                        if (pnInboxNew) (*pnInboxNew)++;
+                        if (pnInboxNew) ++(*pnInboxNew);
                     }
                     break;
             case RS_MSG_OUTBOX:
-                    if (pnOutbox) (*pnOutbox)++;
+                    if (pnOutbox) ++(*pnOutbox);
                     break;
             case RS_MSG_DRAFTBOX:
-                    if (pnDraftbox) (*pnDraftbox)++;
+                    if (pnDraftbox) ++(*pnDraftbox);
                     break;
             case RS_MSG_SENTBOX:
-                    if (pnSentbox) (*pnSentbox)++;
+                    if (pnSentbox) ++(*pnSentbox);
                     break;
             }
         }
@@ -1248,7 +1248,7 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 			if (lit != tag->tagIds.end()) {
 				tag->tagIds.erase(lit);
 
-				if (tag->tagIds.size() == 0) {
+				if (tag->tagIds.empty()) {
 					/* remove empty tag */
 					delete(tag);
 
@@ -1360,7 +1360,7 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 						tag->tagIds.erase(lit);
 						nNotifyType = NOTIFY_TYPE_DEL;
 
-						if (tag->tagIds.size() == 0) {
+						if (tag->tagIds.empty()) {
 							/* remove empty tag */
 							delete(tag);
 							mMsgTags.erase(mit);

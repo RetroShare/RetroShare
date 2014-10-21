@@ -82,7 +82,7 @@ CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
 	rsPeers->getGroupInfoList(groupInfoList);
 
 	std::list<RsGroupInfo>::iterator groupIt;
-	for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+	for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
 		if (mGroupId.empty() || groupIt->id != mGroupId) {
 			mUsedGroupNames.append(GroupDefs::name(*groupIt));
 		}

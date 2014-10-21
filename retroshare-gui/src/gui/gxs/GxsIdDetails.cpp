@@ -186,7 +186,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 	str = QString::fromUtf8(details.mNickname.c_str());
 
 	std::list<RsRecognTag>::iterator it;
-	for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); it++)
+	for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
 	{
 		str += " (";
 		str += QString::number(it->tag_class);
@@ -240,7 +240,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 
 	icons.push_back(baseIcon);
 	// Add In RecognTags Icons.
-	for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); it++)
+	for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
 	{
 		QIcon tagIcon;
 		if (findTagIcon(it->tag_class, it->tag_type, tagIcon))
@@ -270,7 +270,7 @@ bool GxsIdDetails::GenerateCombinedIcon(QIcon &outIcon, std::list<QIcon> &icons)
 	painter.fillRect(0, 0, IconSize * count, IconSize, Qt::transparent);
 	std::list<QIcon>::iterator it;
 	int i = 0;
-	for(it = icons.begin(); it != icons.end(); it++, i++)
+	for(it = icons.begin(); it != icons.end(); ++it, ++i)
 	{
         	it->paint(&painter, IconSize * i, 0, IconSize, IconSize);
 	}

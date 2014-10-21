@@ -110,7 +110,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 
     if (expandedPeers != NULL) {
-        for (std::set<std::string>::iterator peerIt = expandedPeers->begin(); peerIt != expandedPeers->end(); peerIt++) {
+        for (std::set<std::string>::iterator peerIt = expandedPeers->begin(); peerIt != expandedPeers->end(); ++peerIt) {
             ui.friendList->addPeerToExpand(*peerIt);
         }
         delete expandedPeers;
@@ -118,7 +118,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     }
 
     if (expandedGroups != NULL) {
-        for (std::set<std::string>::iterator groupIt = expandedGroups->begin(); groupIt != expandedGroups->end(); groupIt++) {
+        for (std::set<std::string>::iterator groupIt = expandedGroups->begin(); groupIt != expandedGroups->end(); ++groupIt) {
             ui.friendList->addGroupToExpand(*groupIt);
         }
         delete expandedGroups;

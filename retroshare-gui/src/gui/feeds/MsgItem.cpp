@@ -135,7 +135,7 @@ void MsgItem::updateItemStatic()
 		msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mi.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	std::list<FileInfo>::iterator it;
-	for(it = mi.files.begin(); it != mi.files.end(); it++)
+	for(it = mi.files.begin(); it != mi.files.end(); ++it)
 	{
 		/* add file */
         SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size, SFI_STATE_REMOTE, mi.rspeerid_srcId);
@@ -177,7 +177,7 @@ void MsgItem::updateItem()
 
 	/* Very slow Tick to check when all files are downloaded */
 	std::list<SubFileItem *>::iterator it;
-	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
+	for(it = mFileItems.begin(); it != mFileItems.end(); ++it)
 	{
 		if (!(*it)->done())
 		{

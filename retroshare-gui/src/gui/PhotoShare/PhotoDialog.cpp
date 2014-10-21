@@ -170,12 +170,12 @@ void PhotoDialog::loadComment(uint32_t token)
 
     PhotoRelatedCommentResult::iterator mit = results.begin();
 
-    for(; mit != results.end(); mit++)
+    for(; mit != results.end(); ++mit)
     {
         const std::vector<RsPhotoComment>& commentV = mit->second;
         std::vector<RsPhotoComment>::const_iterator vit = commentV.begin();
 
-        for(; vit != commentV.end(); vit++)
+        for(; vit != commentV.end(); ++vit)
         {
             addComment(*vit);
         }

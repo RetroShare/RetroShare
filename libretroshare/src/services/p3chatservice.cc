@@ -141,7 +141,7 @@ int	p3ChatService::tick()
 		std::vector<VisibleChatLobbyRecord> visible_lobbies_tmp ;
 		getListOfNearbyChatLobbies(visible_lobbies_tmp) ;
 
-		if (visible_lobbies_tmp.size()==0){
+		if (visible_lobbies_tmp.empty()){
 			last_req_chat_lobby_list = now-LOBBY_LIST_AUTO_UPDATE_TIME+MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ;
 		} else {
 			last_req_chat_lobby_list = now ;
@@ -1467,7 +1467,7 @@ bool p3ChatService::getPublicChatQueue(std::list<ChatInfo> &chats)
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
 		// get the items from the public list.
-		if (publicList.size() == 0) {
+		if (publicList.empty()) {
 			return false;
 		}
 

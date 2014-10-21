@@ -141,7 +141,7 @@ void ShareManager::load()
     listWidget->setRowCount(dirs.size());
 
     int row=0 ;
-    for(it = dirs.begin(); it != dirs.end(); it++,++row)
+    for(it = dirs.begin(); it != dirs.end(); ++it,++row)
     {
         listWidget->setItem(row, COLUMN_PATH, new QTableWidgetItem(QString::fromUtf8((*it).filename.c_str())));
         listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8((*it).virtualname.c_str())));
@@ -243,7 +243,7 @@ void ShareManager::updateGroups()
     rsFiles->getSharedDirectories(dirs);
 
     int row=0 ;
-    for(it = dirs.begin(); it != dirs.end(); it++,++row)
+    for(it = dirs.begin(); it != dirs.end(); ++it,++row)
     {
         QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_GROUPS);
 
@@ -276,7 +276,7 @@ void ShareManager::editShareDirectory()
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::const_iterator it;
-        for (it = dirs.begin(); it != dirs.end(); it++) {
+        for (it = dirs.begin(); it != dirs.end(); ++it) {
             if (it->filename == filename) {
                 /* file name found, show dialog */
                 ShareDialog sharedlg (it->filename, this);
@@ -357,7 +357,7 @@ void ShareManager::dropEvent(QDropEvent *event)
 	if (event->mimeData()->hasUrls()) {
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator it;
-		for (it = urls.begin(); it != urls.end(); it++) {
+		for (it = urls.begin(); it != urls.end(); ++it) {
 			QString localpath = it->toLocalFile();
 
 			if (localpath.isEmpty() == false) {

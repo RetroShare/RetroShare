@@ -155,7 +155,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
             rsHistory->getMessages(RsPeerId(), historyMsgs, messageCount);
 
             std::list<HistoryMsg>::iterator it;
-            for (it = historyMsgs.begin(); it != historyMsgs.end(); it++) {
+            for (it = historyMsgs.begin(); it != historyMsgs.end(); ++it) {
                 addChatMsg(it->incoming, true, QString::fromUtf8(it->peerName.c_str()), QDateTime::fromTime_t(it->sendTime), QDateTime::fromTime_t(it->recvTime), QString::fromUtf8(it->message.c_str()));
             }
         }
@@ -501,7 +501,7 @@ void FriendsDialog::insertChat()
     std::list<ChatInfo>::iterator it;
 
     /* add in lines at the bottom */
-    for(it = newchat.begin(); it != newchat.end(); it++)
+    for(it = newchat.begin(); it != newchat.end(); ++it)
     {
         /* are they private? */
         if (it->chatflags & RS_CHAT_PRIVATE)
@@ -623,7 +623,7 @@ void  FriendsDialog::insertSendList()
         //QTreeWidget *sendWidget = ui.msgSendList;
     QList<QTreeWidgetItem *> items;
 
-	for(it = peers.begin(); it != peers.end(); it++)
+	for(it = peers.begin(); it != peers.end(); ++it)
 	{
 
 		RsPeerDetails details;

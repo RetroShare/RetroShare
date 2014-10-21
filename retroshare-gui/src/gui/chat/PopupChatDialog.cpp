@@ -154,7 +154,7 @@ void PopupChatDialog::onChatChanged(int list, int type)
 					ui.actionClearOfflineMessages->setEnabled(true);
 
 					std::list<ChatInfo>::iterator it;
-					for(it = offlineChat.begin(); it != offlineChat.end(); it++) {
+					for(it = offlineChat.begin(); it != offlineChat.end(); ++it) {
 						/* are they public? */
 						if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
 							/* this should not happen */

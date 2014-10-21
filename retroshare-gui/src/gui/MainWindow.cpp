@@ -701,7 +701,7 @@ void MainWindow::updateTrayCombine()
         QList<QAction*> actions = notifyMenu->actions();
         int count = 0;
         QList<QAction*>::iterator actionIt;
-        for (actionIt = actions.begin(); actionIt != actions.end(); actionIt++) {
+        for (actionIt = actions.begin(); actionIt != actions.end(); ++actionIt) {
             if ((*actionIt)->isVisible()) {
                 visible = true;
 
@@ -1264,7 +1264,7 @@ void MainWindow::loadOwnStatus()
     StatusInfo statusInfo;
     if (rsStatus->getOwnStatus(statusInfo)) {
         /* send status to all added objects */
-        for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); it++) {
+        for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); ++it) {
             setStatusObject(*it, statusInfo.status);
         }
     }
@@ -1374,7 +1374,7 @@ void MainWindow::setStatus(QObject *pObject, int nStatus)
     rsStatus->sendStatus(RsPeerId(), nStatus);
 
     /* set status in all status objects, but the calling one */
-    for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); it++) {
+    for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); ++it) {
         if (*it != pObject) {
             setStatusObject(*it, nStatus);
         }
@@ -1408,7 +1408,7 @@ void MainWindow::settingsChanged()
 	ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
 	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
-	for(int i = 0; i < ui->listWidget->count(); i++) {
+	for(int i = 0; i < ui->listWidget->count(); ++i) {
 		if (ui->listWidget->item(i)->data(Qt::UserRole).toString() == "") {
 			ui->listWidget->item(i)->setHidden(Settings->getPageButtonLoc());
 		} else {

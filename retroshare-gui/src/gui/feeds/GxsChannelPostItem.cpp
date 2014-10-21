@@ -289,7 +289,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 
 	if (mFileItems.empty() == false) {
 		std::list<SubFileItem *>::iterator it;
-		for(it = mFileItems.begin(); it != mFileItems.end(); it++)
+		for(it = mFileItems.begin(); it != mFileItems.end(); ++it)
 		{
 			delete(*it);
 		}
@@ -297,7 +297,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	}
 
 	std::list<RsGxsFile>::const_iterator it;
-	for(it = post.mFiles.begin(); it != post.mFiles.end(); it++)
+	for(it = post.mFiles.begin(); it != post.mFiles.end(); ++it)
 	{
 		/* add file */
 		std::string path;
@@ -390,20 +390,20 @@ void GxsChannelPostItem::updateItem()
 
 	/* Very slow Tick to check when all files are downloaded */
 	std::list<SubFileItem *>::iterator it;
-	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
+	for(it = mFileItems.begin(); it != mFileItems.end(); ++it)
 	{
 		SubFileItem *item = *it;
 
 		if (item->isDownloadable(startable)) {
-			downloadCount++;
+			++downloadCount;
 			if (startable) {
-				downloadStartable++;
+				++downloadStartable;
 			}
 		}
 		if (item->isPlayable(startable)) {
-			playCount++;
+			++playCount;
 			if (startable) {
-				playStartable++;
+				++playStartable;
 			}
 		}
 
@@ -509,7 +509,7 @@ void GxsChannelPostItem::unsubscribeChannel()
 void GxsChannelPostItem::download()
 {
 	std::list<SubFileItem *>::iterator it;
-	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
+	for(it = mFileItems.begin(); it != mFileItems.end(); ++it)
 	{
 		(*it)->download();
 	}
@@ -520,7 +520,7 @@ void GxsChannelPostItem::download()
 void GxsChannelPostItem::play()
 {
 	std::list<SubFileItem *>::iterator it;
-	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
+	for(it = mFileItems.begin(); it != mFileItems.end(); ++it)
 	{
 		bool startable;
 		if ((*it)->isPlayable(startable) && startable) {

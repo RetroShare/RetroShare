@@ -370,7 +370,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		ui->feedWidget->setSortingEnabled(false);
 	}
 
-	for (it = posts.begin(); it != posts.end(); it++)
+	for (it = posts.begin(); it != posts.end(); ++it)
 	{
 		if (thread && thread->stopped()) {
 			break;

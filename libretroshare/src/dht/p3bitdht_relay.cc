@@ -274,7 +274,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 	std::cerr << "p3BitDht::loadList()";
 	std::cerr << std::endl;
 
-	if ((load.size() == 0) || (load.size() > 1))
+	if (load.empty() || (load.size() > 1))
 	{
 		/* error */
 		std::cerr << "p3BitDht::loadList() Error only expecting 1 item";

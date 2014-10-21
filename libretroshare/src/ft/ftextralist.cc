@@ -114,7 +114,7 @@ void ftExtraList::hashAFile()
 	{
 		RsStackMutex stack(extMutex);
 
-		if (mToHash.size() == 0)
+		if (mToHash.empty())
 			return;
 
 		details = mToHash.front();

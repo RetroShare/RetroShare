@@ -350,7 +350,7 @@ void MessageWidget::getallrecommended()
 	std::list<FileInfo>::const_iterator it;
 
 	/* do the requests */
-	for(it = recList.begin(); it != recList.end(); it++) {
+	for(it = recList.begin(); it != recList.end(); ++it) {
 		std::cerr << "MessageWidget::getallrecommended() Calling File Request" << std::endl;
         std::list<RsPeerId> srcIds;
         srcIds.push_back(msgInfo.rspeerid_srcId);
@@ -414,7 +414,7 @@ void MessageWidget::showTagLabels()
 		rsMsgs->getMessageTagTypes(Tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-		for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
+		for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
 			Tag = Tags.types.find(*tagId);
 			if (Tag != Tags.types.end()) {
 				QLabel *tagLabel = new QLabel(TagDefs::name(Tag->first, Tag->second.first), this);
@@ -490,7 +490,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.msgList->clear();
 
 	QList<QTreeWidgetItem*> items;
-	for (it = recList.begin(); it != recList.end(); it++) {
+	for (it = recList.begin(); it != recList.end(); ++it) {
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, QString::number(it->size));
@@ -507,8 +507,8 @@ void MessageWidget::fill(const std::string &msgId)
 	RetroShareLink link;
 	QString text;
 
-    for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-    for(std::list<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+    for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+    for(std::list<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
 
 	ui.toText->setText(text);
 
@@ -518,8 +518,8 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.ccText->setVisible(true);
 
 		text.clear();
-        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
 
 		ui.ccText->setText(text);
 	} else {
@@ -534,8 +534,8 @@ void MessageWidget::fill(const std::string &msgId)
         ui.bccText->setVisible(true);
 
         text.clear();
-        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
 
 		ui.bccText->setText(text);
 	} else {

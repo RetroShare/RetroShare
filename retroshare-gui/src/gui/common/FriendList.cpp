@@ -227,7 +227,7 @@ void FriendList::processSettings(bool bLoad)
 
         // open groups
         int arrayIndex = Settings->beginReadArray("Groups");
-        for (int index = 0; index < arrayIndex; index++) {
+        for (int index = 0; index < arrayIndex; ++index) {
             Settings->setArrayIndex(index);
             addGroupToExpand(Settings->value("open").toString().toStdString());
         }
@@ -435,7 +435,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
                      bool foundGroup = false;
                      // add action for all groups, except the own group
-                     for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+                     for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
                          if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpgId) == groupIt->peerIds.end()) {
                              if (parent) {
                                  if (addToGroupMenu == NULL) {
@@ -625,7 +625,7 @@ void  FriendList::insertPeers()
     QTreeWidgetItemIterator itemIterator(peerTreeWidget);
     QTreeWidgetItem *item;
     while ((item = *itemIterator) != NULL) {
-        itemIterator++;
+        ++itemIterator;
         switch (item->type()) {
         case TYPE_GPG:
         {
@@ -648,7 +648,7 @@ void  FriendList::insertPeers()
                         std::string groupId = getRsId(parent);
 
                         // the parent is a group, check if the gpg id is assigned to the group
-                        for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+                        for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
                             if (groupIt->id == groupId) {
                                 if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpg_widget_id) == groupIt->peerIds.end()) {
                                     delete(parent->takeChild(parent->indexOfChild(item)));
@@ -659,7 +659,7 @@ void  FriendList::insertPeers()
                     }
                 } else {
                     // gpg item without group, check if the gpg id is assigned to a group
-                    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+                    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
                         if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpg_widget_id) != groupIt->peerIds.end()) {
                             delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
                             break;
@@ -680,12 +680,12 @@ void  FriendList::insertPeers()
             } else if (groupsHasChanged) {
                 // remove deleted groups
                 std::string groupId = getRsId(item);
-                for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+                for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
                     if (groupIt->id == groupId) {
                         break;
                     }
                 }
-                if (groupIt == groupInfoList.end() || groupIt->peerIds.size() == 0) {
+                if (groupIt == groupInfoList.end() || groupIt->peerIds.empty()) {
                     if (item->parent()) {
                         delete(item->parent()->takeChild(item->parent()->indexOfChild(item)));
                     } else {
@@ -710,15 +710,15 @@ void  FriendList::insertPeers()
         if (mShowGroups && groupIt != groupInfoList.end()) {
             groupInfo = &(*groupIt);
 
-            if ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) && groupInfo->peerIds.size() == 0) {
+            if ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) && groupInfo->peerIds.empty()) {
                 // don't show empty standard groups
-                groupIt++;
+                ++groupIt;
                 continue;
             }
 
             // search existing group item
             int itemCount = peerTreeWidget->topLevelItemCount();
-            for (int index = 0; index < itemCount; index++) {
+            for (int index = 0; index < itemCount; ++index) {
                 QTreeWidgetItem *groupItemLoop = peerTreeWidget->topLevelItem(index);
                 if (groupItemLoop->type() == TYPE_GROUP && getRsId(groupItemLoop) == groupInfo->id) {
                     groupItem = groupItemLoop;
@@ -756,7 +756,7 @@ void  FriendList::insertPeers()
                             continue;
                         }
                     }
-                    childIndex++;
+                    ++childIndex;
                 }
             }
 
@@ -768,7 +768,7 @@ void  FriendList::insertPeers()
         }
 
         // iterate through gpg friends
-        for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); gpgIt++) {
+        for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); ++gpgIt) {
             RsPgpId gpgId = *gpgIt;
 
             if (mShowGroups) {
@@ -799,7 +799,7 @@ void  FriendList::insertPeers()
 
             // search existing gpg item
             int itemCount = groupItem ? groupItem->childCount() : peerTreeWidget->topLevelItemCount();
-            for (int index = 0; index < itemCount; index++) {
+            for (int index = 0; index < itemCount; ++index) {
                 gpgItemLoop = groupItem ? groupItem->child(index) : peerTreeWidget->topLevelItem(index);
                 if (gpgItemLoop->type() == TYPE_GPG && getRsId(gpgItemLoop) == gpgId.toStdString()) {
                     gpgItem = gpgItemLoop;
@@ -844,7 +844,7 @@ void  FriendList::insertPeers()
                 gpgItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
             }
 
-            availableCount++;
+            ++availableCount;
 
             QString gpgItemText = QString::fromUtf8(detail.name.c_str());
 
@@ -858,7 +858,7 @@ void  FriendList::insertPeers()
                     // count again
                     childCount = gpgItem->childCount();
                 } else {
-                    childIndex++;
+                    ++childIndex;
                 }
             }
 
@@ -875,14 +875,14 @@ void  FriendList::insertPeers()
             QString itemIP;
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
-            for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
+            for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); ++sslIt) {
                 QTreeWidgetItem *sslItem = NULL;
                 RsPeerId sslId = *sslIt;
 
                 //find the corresponding sslItem child item of the gpg item
                 bool newChild = true;
                 childCount = gpgItem->childCount();
-                for (int childIndex = 0; childIndex < childCount; childIndex++) {
+                for (int childIndex = 0; childIndex < childCount; ++childIndex) {
                     // we assume, that only ssl items are child of the gpg item, so we don't need to test the type
                     if (getRsId(gpgItem->child(childIndex)) == sslId.toStdString()) {
                         sslItem = gpgItem->child(childIndex);
@@ -972,7 +972,7 @@ void  FriendList::insertPeers()
                     int peerState = 0;
                     int rsState = 0;
                     std::list<StatusInfo>::iterator it;
-                    for(it = statusInfo.begin(); it != statusInfo.end(); it++) {
+                    for(it = statusInfo.begin(); it != statusInfo.end(); ++it) {
                         if(it->id == sslId){
                             rsState = it->status;
                             switch (rsState) {
@@ -1058,7 +1058,7 @@ void  FriendList::insertPeers()
                 }
                 sslItem -> setIcon(COLUMN_NAME, sslIcon);
 
-                for (int i = 0; i < COLUMN_COUNT; i++) {
+                for (int i = 0; i < COLUMN_COUNT; ++i) {
                     sslItem -> setTextColor(i, sslColor);
                     sslItem -> setFont(i, sslFont);
                 }
@@ -1068,7 +1068,7 @@ void  FriendList::insertPeers()
             if (gpg_connected) {
                 gpgItem->setHidden(false);
 
-                onlineCount++;
+                ++onlineCount;
 
                 if (bestPeerState == 0) {
                     // show as online
@@ -1078,7 +1078,7 @@ void  FriendList::insertPeers()
 
                 QColor textColor = mTextColorStatus[bestRSState];
                 QFont font = StatusDefs::font(bestRSState);
-                for(int i = 0; i < COLUMN_COUNT; i++) {
+                for(int i = 0; i < COLUMN_COUNT; ++i) {
                     gpgItem->setTextColor(i, textColor);
                     gpgItem->setFont(i, font);
                 }
@@ -1106,14 +1106,14 @@ void  FriendList::insertPeers()
                 }
 
                 bestPeerState = PEER_STATE_AVAILABLE;
-                onlineCount++;
+                ++onlineCount;
                 gpgItem->setHidden(mHideUnconnected);
                 gpgIcon = QIcon(IMAGE_AVAILABLE);
 
                 QFont font;
                 font.setBold(true);
                 QColor textColor = mTextColorStatus[RS_STATUS_ONLINE];
-                for(int i = 0; i < COLUMN_COUNT; i++) {
+                for(int i = 0; i < COLUMN_COUNT; ++i) {
                     gpgItem->setTextColor(i, textColor);
                     gpgItem->setFont(i,font);
                 }
@@ -1130,7 +1130,7 @@ void  FriendList::insertPeers()
 
                 QColor textColor = mTextColorStatus[RS_STATUS_OFFLINE];
                 QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
-                for(int i = 0; i < COLUMN_COUNT; i++) {
+                for(int i = 0; i < COLUMN_COUNT; ++i) {
                     gpgItem->setTextColor(i, textColor);
                     gpgItem->setFont(i, font);
                 }
@@ -1177,7 +1177,7 @@ void  FriendList::insertPeers()
         }
 
         if (mShowGroups && groupIt != groupInfoList.end()) {
-            groupIt++;
+            ++groupIt;
         } else {
             // all done
             break;
@@ -1211,7 +1211,7 @@ void  FriendList::insertPeers()
 bool FriendList::getExpandedGroups(std::set<std::string> &groups) const
 {
     int itemCount = ui->peerTreeWidget->topLevelItemCount();
-    for (int index = 0; index < itemCount; index++) {
+    for (int index = 0; index < itemCount; ++index) {
         QTreeWidgetItem *item = ui->peerTreeWidget->topLevelItem(index);
         if (item->type() == TYPE_GROUP && item->isExpanded()) {
             groups.insert(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString());
@@ -1405,7 +1405,7 @@ QTreeWidgetItem *FriendList::getCurrentPeer() const
     /* Display the columns of this item. */
     QString out = "CurrentPeerItem: \n";
 
-    for(int i = 1; i < COLUMN_COUNT; i++)
+    for(int i = 1; i < COLUMN_COUNT; ++i)
     {
         QString txt = item -> text(i);
         out += QString("\t%1:%2\n").arg(i).arg(txt);
@@ -1493,7 +1493,7 @@ void FriendList::connectfriend()
     {
         if (c->type() == TYPE_GPG) {
             int childCount = c->childCount();
-            for (int childIndex = 0; childIndex < childCount; childIndex++) {
+            for (int childIndex = 0; childIndex < childCount; ++childIndex) {
                 QTreeWidgetItem *item = c->child(childIndex);
                 if (item->type() == TYPE_SSL) {
                     rsPeers->connectAttempt(RsPeerId(getRsId(item)));
@@ -1840,7 +1840,7 @@ void FriendList::setShowGroups(bool show)
                     childCount = ui->peerTreeWidget->topLevelItemCount();
                     continue;
                 }
-                childIndex++;
+                ++childIndex;
             }
         }
         insertPeers();
@@ -1871,7 +1871,7 @@ void FriendList::setBigName(bool bigName)
             if ((*it)->type() == TYPE_GPG) {
                 (*it)->setSizeHint(COLUMN_NAME, newSize);
             }
-            it++;
+            ++it;
         }
     }
 }
@@ -1883,7 +1883,7 @@ void FriendList::filterItems(const QString &text)
 {
     filterText = text;
     int count = ui->peerTreeWidget->topLevelItemCount();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         FriendList::filterItem(ui->peerTreeWidget->topLevelItem(index), filterText);
     }
 
@@ -1906,9 +1906,9 @@ bool FriendList::filterItem(QTreeWidgetItem *item, const QString &text)
 
     int visibleChildCount = 0;
     int count = item->childCount();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         if (FriendList::filterItem(item->child(index), text)) {
-            visibleChildCount++;
+            ++visibleChildCount;
         }
     }
 

@@ -410,7 +410,7 @@ void ChatLobbyDialog::updateParticipantsList()
 void ChatLobbyDialog::changePartipationState()
 {
 	QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
-	if (selectedItems.size() == 0) {
+	if (selectedItems.isEmpty()) {
 		return;
 	}
 

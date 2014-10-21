@@ -109,7 +109,7 @@ bool SoundPage::save(QString &/*errmsg*/)
 	QTreeWidgetItemIterator itemIterator(ui.eventTreeWidget);
 	QTreeWidgetItem *item = NULL;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (item->type() == TYPE_ITEM) {
 			const QString event = item->data(COLUMN_DATA, ROLE_EVENT).toString();

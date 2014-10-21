@@ -102,7 +102,7 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 
 	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
 		if((*it).type() == RetroShareLink::TYPE_FILE)
-			n_file++ ;
+			++n_file ;
 
 	QMenu contextMnu(this) ;
 
@@ -160,7 +160,7 @@ void CreateGxsChannelMsg::dragEnterEvent(QDragEnterEvent *event)
 	std::cerr << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
+	for(it = formats.begin(); it != formats.end(); ++it)
 	{
 		std::cerr << "Format: " << (*it).toStdString();
 		std::cerr << std::endl;
@@ -205,7 +205,7 @@ void CreateGxsChannelMsg::dropEvent(QDropEvent *event)
 	std::cerr << "CreateGxsChannelMsg::dropEvent() Formats" << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
+	for(it = formats.begin(); it != formats.end(); ++it)
 	{
 		std::cerr << "Format: " << (*it).toStdString();
 		std::cerr << std::endl;
@@ -225,7 +225,7 @@ void CreateGxsChannelMsg::dropEvent(QDropEvent *event)
 
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator uit;
-		for(uit = urls.begin(); uit != urls.end(); uit++)
+		for(uit = urls.begin(); uit != urls.end(); ++uit)
 		{
 			QString localpath = uit->toLocalFile();
 			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
@@ -277,7 +277,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 	QStringList::iterator it;
 	QStringList::iterator it2;
 
-	for(it = attachItems.begin(); it != attachItems.end(); it++)
+	for(it = attachItems.begin(); it != attachItems.end(); ++it)
 	{
 		std::cerr << "CreateGxsChannelMsg::parseRsFileListAttachments() Entry: ";
 
@@ -292,7 +292,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 		RsPeerId source;
 
 		int i = 0;
-		for(it2 = parts.begin(); it2 != parts.end(); it2++, i++)
+		for(it2 = parts.begin(); it2 != parts.end(); ++it2, ++i)
 		{
 			std::cerr << "\"" << it2->toStdString() << "\" ";
 			switch(i)
@@ -374,7 +374,7 @@ void CreateGxsChannelMsg::addExtraFile()
 
 	QStringList files;
 	if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-		for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+		for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
 			addAttachment((*fileIt).toUtf8().constData());
 		}
 	}
@@ -395,7 +395,7 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	// check attachment if hash exists already
 	std::list<SubFileItem* >::iterator  it;
 
-	for(it= mAttachments.begin(); it != mAttachments.end(); it++){
+	for(it= mAttachments.begin(); it != mAttachments.end(); ++it){
 
 		if((*it)->FilePath() == path){
 			QMessageBox::warning(this, tr("RetroShare"), tr("File already Added and Hashed"), QMessageBox::Ok, QMessageBox::Ok);
@@ -489,7 +489,7 @@ void CreateGxsChannelMsg::checkAttachmentReady()
 
 	mCheckAttachment = false;
 
-	for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
+	for(fit = mAttachments.begin(); fit != mAttachments.end(); ++fit)
 	{
 		if (!(*fit)->isHidden())
 		{
@@ -526,7 +526,7 @@ void CreateGxsChannelMsg::cancelMsg()
 
 	std::list<SubFileItem* >::const_iterator it;
 
-	for(it = mAttachments.begin(); it != mAttachments.end(); it++)
+	for(it = mAttachments.begin(); it != mAttachments.end(); ++it)
 		rsGxsChannels->ExtraFileRemove((*it)->FileHash());
 
 	reject();
@@ -577,7 +577,7 @@ void CreateGxsChannelMsg::sendMsg()
 
 	std::list<SubFileItem *>::iterator fit;
 
-	for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
+	for(fit = mAttachments.begin(); fit != mAttachments.end(); ++fit)
 	{
 		if (!(*fit)->isHidden())
 		{

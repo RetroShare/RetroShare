@@ -210,12 +210,12 @@ void  NetworkView::updateDisplay()
 	std::cerr << "NetworkView::insertSignatures()" << std::endl;
 #endif
 
-    for(std::map<RsPgpId,GraphWidget::NodeId>::const_iterator it(_node_ids.begin()); it != _node_ids.end(); it++)
+    for(std::map<RsPgpId,GraphWidget::NodeId>::const_iterator it(_node_ids.begin()); it != _node_ids.end(); ++it)
 	{
         std::list<RsPgpId> friendList ;
 
 		if(rsDisc->getDiscPgpFriends(it->first,friendList)) 
-            for(std::list<RsPgpId>::const_iterator sit(friendList.begin()); sit != friendList.end(); sit++)
+            for(std::list<RsPgpId>::const_iterator sit(friendList.begin()); sit != friendList.end(); ++sit)
 			{
 #ifdef DEBUG_NETWORKVIEW
 					std::cerr << "NetworkView: Adding Edge: ";

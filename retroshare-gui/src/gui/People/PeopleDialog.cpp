@@ -164,7 +164,7 @@ void PeopleDialog::reloadAll()
 		}//if(rsPeers->getGPGDetails(*it, details))
 	}//for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it)
 
-	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); it++) {
+	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it) {
 		if(friend_set.end() != friend_set.find(*it)) {
 			// already added as a friend.
 			continue;
@@ -187,7 +187,7 @@ void PeopleDialog::reloadAll()
 				idWidget->updateData(details) ;
 			}//else ((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
 		}//if(rsPeers->getGPGDetails(*it, details))
-	}//for(it = all_pgpIds.begin(); it != all_pgpIds.end(); it++)
+	}//for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it)
 }
 
 void PeopleDialog::insertIdList(uint32_t token)
@@ -262,7 +262,7 @@ void PeopleDialog::insertCircles(uint32_t token)
 		return;
 	}//if (!rsGxsCircles->getGroupSummary(token,gSummaryList))
 
-	for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); gsIt++) {
+	for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt) {
 		RsGroupMetaData gsItem = (*gsIt);
 
 		RsGxsCircleDetails details ;
@@ -336,7 +336,7 @@ void PeopleDialog::insertCircles(uint32_t token)
 				//pictureFlowWidgetExternal->setSlide(index, pixmap);
 		}//if((item=_circles_items.find(gsItem.mGroupId)) == _circles_items.end())
 		}//else (!details.mIsExternal)
-	}//for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); gsIt++)
+	}//for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt)
 }
 
 void PeopleDialog::requestIdList()

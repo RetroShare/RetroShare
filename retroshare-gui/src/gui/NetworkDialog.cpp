@@ -414,12 +414,12 @@ void NetworkDialog::insertConnect()
 		if ( (!rsPeers->getGPGDetails(gpg_widget_id, detail)) || (ui.onlyTrustedKeys->isChecked() && (detail.validLvl < RS_TRUST_LVL_MARGINAL && !detail.accept_connection))) 
 			delete (connectWidget->takeTopLevelItem(index));
 		else 
-			index++;
+			++index;
 	}
     //QList<QTreeWidgetItem *> validItems;
     //QList<QTreeWidgetItem *> unvalidItems;
 
-	for(it = neighs.begin(); it != neighs.end(); it++)
+	for(it = neighs.begin(); it != neighs.end(); ++it)
 	{
 #ifdef NET_DEBUG
 		std::cerr << "NetworkDialog::insertConnect() inserting gpg key : " << *it << std::endl;
@@ -537,7 +537,7 @@ void NetworkDialog::insertConnect()
 
 		// Color each Background column in the Network Tab except the first one => 1-9
 		// whith the determinated color
-        for(int i = 0; i <COLUMN_COUNT; i++)
+        for(int i = 0; i <COLUMN_COUNT; ++i)
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		if( (detail.accept_connection || detail.validLvl >= RS_TRUST_LVL_MARGINAL) || !ui.onlyTrustedKeys->isChecked()) 
@@ -780,7 +780,7 @@ void NetworkDialog::filterItems(const QString &text)
     int filterColumn = ui.filterLineEdit->currentFilter();
 
     int count = ui.connectTreeWidget->topLevelItemCount ();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         filterItem(ui.connectTreeWidget->topLevelItem(index), text, filterColumn);
     }
 }
@@ -797,9 +797,9 @@ bool NetworkDialog::filterItem(QTreeWidgetItem *item, const QString &text, int f
 
     int visibleChildCount = 0;
     int count = item->childCount();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         if (filterItem(item->child(index), text, filterColumn)) {
-            visibleChildCount++;
+            ++visibleChildCount;
         }
     }
 

@@ -460,7 +460,7 @@ void PostedListWidget::applyRanking()
 			std::cerr << std::endl;
 			item->hide();
 		}
-		counter++;
+		++counter;
 	}
 
 	std::cerr << "PostedListWidget::applyRanking() Loaded New Order";
@@ -489,7 +489,7 @@ void PostedListWidget::shallowClearPosts()
 
 	QLayout *alayout = ui->scrollAreaWidgetContents->layout();
 	int count = alayout->count();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QLayoutItem *litem = alayout->itemAt(i);
 		if (!litem)
@@ -514,7 +514,7 @@ void PostedListWidget::shallowClearPosts()
 		}
 	}
 
-	for(pit = postedItems.begin(); pit != postedItems.end(); pit++)
+	for(pit = postedItems.begin(); pit != postedItems.end(); ++pit)
 	{
 		PostedItem *item = *pit;
 		alayout->removeWidget(item);
@@ -542,7 +542,7 @@ void PostedListWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThr
 	rsPosted->getPostData(token, posts);
 
 	std::vector<RsPostedPost>::iterator vit;
-	for(vit = posts.begin(); vit != posts.end(); vit++)
+	for(vit = posts.begin(); vit != posts.end(); ++vit)
 	{
 		RsPostedPost& p = *vit;
 		loadPost(p);
@@ -557,7 +557,7 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 	rsPosted->getRelatedPosts(token, posts);
 
 	std::vector<RsPostedPost>::iterator vit;
-	for(vit = posts.begin(); vit != posts.end(); vit++)
+	for(vit = posts.begin(); vit != posts.end(); ++vit)
 	{
 		RsPostedPost& p = *vit;
 
@@ -580,7 +580,7 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 
 	time_t now = time(NULL);
 	QMap<RsGxsMessageId, PostedItem*>::iterator pit;
-	for(pit = mPosts.begin(); pit != mPosts.end(); pit++)
+	for(pit = mPosts.begin(); pit != mPosts.end(); ++pit)
 	{
 		(*pit)->post().calculateScores(now);
 	}

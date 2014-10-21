@@ -914,7 +914,7 @@ bool 	TcpStream::widle()
 		return false;
 	}
 
-	if ((lastWriteTF == int_wbytes()) && (inSize + inQueue.size() == 0))
+	if ((lastWriteTF == int_wbytes()) && (inSize == 0) && inQueue.empty())
 	{
 		wcount++;
 		if (wcount > ilevel)
@@ -2438,7 +2438,7 @@ int TcpStream::send()
 	}
 
 	/* if inqueue empty, and enough window space, send partial stuff */
-	if ((!sent) && (inQueue.size() == 0) && (maxsend >= inSize) && (inSize))
+	if ((!sent) && (inQueue.empty()) && (maxsend >= inSize) && (inSize))
 	{
 		TcpPacket *pkt = new TcpPacket(inData, inSize);
 #ifdef DEBUG_TCP_STREAM

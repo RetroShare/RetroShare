@@ -70,7 +70,7 @@ void NewTag::OnOK()
         // calculate new id
         m_nId = RS_MSGTAGTYPE_USER;
         std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-        for (Tag = m_Tags.types.begin(); Tag != m_Tags.types.end(); Tag++) {
+        for (Tag = m_Tags.types.begin(); Tag != m_Tags.types.end(); ++Tag) {
             if (Tag->first + 1 > m_nId) {
                 m_nId = Tag->first + 1;
             }
@@ -100,7 +100,7 @@ void NewTag::textChanged(const QString &text)
     } else {
         // check for existing text
         std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-        for (Tag = m_Tags.types.begin(); Tag != m_Tags.types.end(); Tag++) {
+        for (Tag = m_Tags.types.begin(); Tag != m_Tags.types.end(); ++Tag) {
             if (m_nId && Tag->first == m_nId) {
                 // its me
                 continue;

@@ -1213,7 +1213,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 					setPeerState(dit->second->mTransfer, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceId, *it));
 				}
 
-			if (srcIds.size() == 0)
+			if (srcIds.empty())
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << "ftController::FileRequest() WARNING: No Src Peers";

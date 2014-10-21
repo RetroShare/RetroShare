@@ -432,7 +432,7 @@ void WikiDialog::loadPages(const uint32_t &token)
 		return;
 	}
 
-	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
+	for(vit = snapshots.begin(); vit != snapshots.end(); ++vit)
 	{
 		RsWikiSnapshot page = *vit;
 
@@ -649,7 +649,7 @@ void WikiDialog::insertGroupsData(const std::list<RsGroupMetaData> &wikiList)
 	QList<GroupItemInfo> otherList;
 	std::multimap<uint32_t, GroupItemInfo> popMap;
 
-	for (it = wikiList.begin(); it != wikiList.end(); it++) {
+	for (it = wikiList.begin(); it != wikiList.end(); ++it) {
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
 		uint32_t flags = it->mSubscribeFlags;
 
@@ -677,12 +677,12 @@ void WikiDialog::insertGroupsData(const std::list<RsGroupMetaData> &wikiList)
 	uint32_t i = 0;
 	uint32_t popLimit = 0;
 	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
+	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); ++rit, i++) ;
 	if (rit != popMap.rend()) {
 		popLimit = rit->first;
 	}
 
-	for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit) {
 		if (rit->second.popularity < (int) popLimit) {
 			otherList.append(rit->second);
 		} else {

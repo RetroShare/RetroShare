@@ -135,7 +135,7 @@ bool RSTreeWidgetItem::operator<(const QTreeWidgetItem &other) const
     }
 
     QList<int>::iterator role;
-    for (role = roles.begin(); role != roles.end(); role++) {
+    for (role = roles.begin(); role != roles.end(); ++role) {
         // taken from "bool QTreeWidgetItem::operator<(const QTreeWidgetItem &other) const"
         const QVariant v1 = data(column, *role);
         const QVariant v2 = other.data(column, *role);

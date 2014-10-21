@@ -245,14 +245,14 @@ void BwCtrlWindow::updateBandwidth()
 	item -> setData(COLUMN_OUT_ALLOC_SENT, Qt::DisplayRole, std::numeric_limits<qint64>::max());
 
 	time_t now = time(NULL);
-	for(it = rateMap.begin(); it != rateMap.end(); it++)
+	for(it = rateMap.begin(); it != rateMap.end(); ++it)
 	{
 		/* find the entry */
 		QTreeWidgetItem *peer_item = NULL;
 #if 0
 		QString qpeerid = QString::fromStdString(*it);
 		int itemCount = peerTreeWidget->topLevelItemCount();
-		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
+		for (int nIndex = 0; nIndex < itemCount; ++nIndex)
 		{
 			QTreeWidgetItem *tmp_item = peerTreeWidget->topLevelItem(nIndex);
 			if (tmp_item->data(COLUMN_PEERID, Qt::DisplayRole).toString() == qpeerid)

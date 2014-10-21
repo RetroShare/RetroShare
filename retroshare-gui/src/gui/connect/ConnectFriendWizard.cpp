@@ -581,7 +581,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 			}
 
 			std::list<RsPeerId>::iterator toId;
-			for (toId = toIds.begin(); toId != toIds.end(); toId++) {
+			for (toId = toIds.begin(); toId != toIds.end(); ++toId) {
 				MessageComposer::recommendFriend(recommendIds, *toId, ui->frec_messageEdit->toHtml(), true);
 			}
 		}

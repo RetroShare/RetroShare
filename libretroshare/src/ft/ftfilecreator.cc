@@ -376,7 +376,7 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 				//         all parts are obtained.
 				//       - new parts arriving in the second part cannot interfere since they should come in order.
 
-				(*chunk.ref_cnt)++ ;
+				++(*chunk.ref_cnt) ;
 
 #ifdef FILE_DEBUG
 				std::cerr << "Created two sub chunks. Ref_cnt = " << *chunk.ref_cnt << std::endl;

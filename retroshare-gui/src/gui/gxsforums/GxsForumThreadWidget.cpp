@@ -379,17 +379,17 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		QList<QTreeWidgetItem*> rowsUnread;
 		int nCount = getSelectedMsgCount(&rows, &rowsRead, &rowsUnread);
 
-		if (rowsUnread.size() == 0) {
+		if (rowsUnread.isEmpty()) {
 			markMsgAsRead->setDisabled(true);
 		}
-		if (rowsRead.size() == 0) {
+		if (rowsRead.isEmpty()) {
 			markMsgAsUnread->setDisabled(true);
 		}
 
 		bool hasUnreadChildren = false;
 		bool hasReadChildren = false;
 		int rowCount = rows.count();
-		for (int i = 0; i < rowCount; i++) {
+		for (int i = 0; i < rowCount; ++i) {
 			if (hasUnreadChildren || rows[i]->data(COLUMN_THREAD_DATA, ROLE_THREAD_UNREADCHILDREN).toBool()) {
 				hasUnreadChildren = true;
 			}
@@ -523,7 +523,7 @@ void GxsForumThreadWidget::forumMsgReadStatusChanged(const QString &forumId, con
 		QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
 		QTreeWidgetItem *item = NULL;
 		while ((item = *itemIterator) != NULL) {
-			itemIterator++;
+			++itemIterator;
 
 			if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString() == msgId) {
 				// update status
@@ -616,7 +616,7 @@ void GxsForumThreadWidget::calculateUnreadCount()
 	QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
 	QTreeWidgetItem *item = NULL;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		uint32_t status = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 		if (IS_MSG_UNREAD(status)) {
@@ -665,7 +665,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item /*= NULL
 static void cleanupItems (QList<QTreeWidgetItem *> &items)
 {
 	QList<QTreeWidgetItem *>::iterator item;
-	for (item = items.begin (); item != items.end (); item++) {
+	for (item = items.begin (); item != items.end (); ++item) {
 		if (*item) {
 			delete (*item);
 		}
@@ -727,7 +727,7 @@ void GxsForumThreadWidget::fillThreadFinished()
 				QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
 				QTreeWidgetItem *item = NULL;
 				while ((item = *itemIterator) != NULL) {
-					itemIterator++;
+					++itemIterator;
 
 					if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == thread->mFocusMsgId) {
 						ui->threadTreeWidget->setCurrentItem(item);
@@ -1003,7 +1003,7 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 			}
 		}
 		if (found >= 0) {
-			index++;
+			++index;
 		} else {
 			delete(ui->threadTreeWidget->takeTopLevelItem(index));
 		}
@@ -1083,7 +1083,7 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 			}
 		}
 		if (found >= 0) {
-			index++;
+			++index;
 		} else {
 			delete(parentItem->takeChild (index));
 		}
@@ -1312,7 +1312,7 @@ void GxsForumThreadWidget::nextUnreadMessage()
 
 		QTreeWidgetItem *item;
 		while ((item = *itemIterator) != NULL) {
-			itemIterator++;
+			++itemIterator;
 
 			if (item == currentItem) {
 				continue;
@@ -1360,7 +1360,7 @@ int GxsForumThreadWidget::getSelectedMsgCount(QList<QTreeWidgetItem*> *rows, QLi
 	if (rowsUnread) rowsUnread->clear();
 
 	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
-	for(QList<QTreeWidgetItem*>::iterator it = selectedItems.begin(); it != selectedItems.end(); it++) {
+	for(QList<QTreeWidgetItem*>::iterator it = selectedItems.begin(); it != selectedItems.end(); ++it) {
 		if (rows) rows->append(*it);
 		if (rowsRead || rowsUnread) {
 			uint32_t status = (*it)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
@@ -1423,7 +1423,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 	mInMsgAsReadUnread = false;
 
 	if (changedItems.size()) {
-		for (std::list<QTreeWidgetItem*>::iterator it = changedItems.begin(); it != changedItems.end(); it++) {
+		for (std::list<QTreeWidgetItem*>::iterator it = changedItems.begin(); it != changedItems.end(); ++it) {
 			calculateIconsAndFonts(*it);
 		}
 //#TODO		updateMessageSummaryList(mForumId);
@@ -1441,7 +1441,7 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
 	QList<QTreeWidgetItem*> rows;
 	if (forum) {
 		int itemCount = ui->threadTreeWidget->topLevelItemCount();
-		for (int item = 0; item < itemCount; item++) {
+		for (int item = 0; item < itemCount; ++item) {
 			rows.push_back(ui->threadTreeWidget->topLevelItem(item));
 		}
 	} else {
@@ -1462,7 +1462,7 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
 				allRows.append(row);
 			}
 
-			for (int i = 0; i < row->childCount(); i++) {
+			for (int i = 0; i < row->childCount(); ++i) {
 				/* add child to main list and let the main loop do the work */
 				rows.append(row->child(i));
 			}
@@ -1680,7 +1680,7 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 	int count = item->childCount();
 	for (int nIndex = 0; nIndex < count; ++nIndex) {
 		if (filterItem(item->child(nIndex), text, filterColumn)) {
-			visibleChildCount++;
+			++visibleChildCount;
 		}
 	}
 

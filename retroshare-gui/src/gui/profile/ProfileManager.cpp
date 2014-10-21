@@ -95,7 +95,7 @@ void ProfileManager::fillIdentities()
     std::list<RsPgpId>::iterator it;
 
 	if (RsAccounts::GetPGPLogins(pgpIds)) {
-		for (it = pgpIds.begin(); it != pgpIds.end(); it++) {
+		for (it = pgpIds.begin(); it != pgpIds.end(); ++it) {
 			std::string name, email;
 			RsAccounts::GetPGPLoginDetails(*it, name, email);
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;

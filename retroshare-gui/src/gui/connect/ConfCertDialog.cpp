@@ -150,8 +150,8 @@ void ConfCertDialog::setServiceFlags()
 
 void ConfCertDialog::loadAll()
 {
-    for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); it++)  it.value()->load();
-    for(QMap<RsPgpId , ConfCertDialog*>::iterator it = instances_pgp.begin(); it != instances_pgp.end(); it++)  it.value()->load();
+    for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); ++it)  it.value()->load();
+    for(QMap<RsPgpId , ConfCertDialog*>::iterator it = instances_pgp.begin(); it != instances_pgp.end(); ++it)  it.value()->load();
 }
 
 void ConfCertDialog::load()

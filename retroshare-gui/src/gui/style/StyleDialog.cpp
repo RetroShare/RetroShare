@@ -68,7 +68,7 @@ StyleDialog::StyleDialog(RSStyle &style, QWidget *parent)
 	showButtons();
 
 	/* Init colors */
-	for (int i = 0; i < pushButtons.size(); i++) {
+	for (int i = 0; i < pushButtons.size(); ++i) {
 		if (i < style.colors.size()) {
 			colors[pushButtons[i]] = style.colors[i];
 		} else {
@@ -99,7 +99,7 @@ void StyleDialog::getStyle(RSStyle &style)
 	style.colors.clear();
 
 	int count = qMin(neededColors(), pushButtons.size());
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < count; ++i) {
 		style.colors.append(colors[pushButtons[i]]);
 	}
 }
@@ -107,7 +107,7 @@ void StyleDialog::getStyle(RSStyle &style)
 void StyleDialog::showButtons()
 {
 	int count = neededColors();
-	for (int i = 0; i < pushButtons.size(); i++) {
+	for (int i = 0; i < pushButtons.size(); ++i) {
 		pushButtons[i]->setVisible(i < count);
 		labels[i]->setVisible(i < count);
 	}
@@ -120,7 +120,7 @@ void StyleDialog::drawButtons()
 	QPixmap pxm(16,14);
 
 	QMap<QPushButton*, QColor>::iterator it;
-	for (it = colors.begin(); it != colors.end(); it++) {
+	for (it = colors.begin(); it != colors.end(); ++it) {
 		pxm.fill(it.value());
 		it.key()->setIcon(pxm);
 	}

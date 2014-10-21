@@ -206,14 +206,14 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	QTreeWidget *tree = ui.treeWidget_membership;
 
 	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; i++){
+	for(int i = 0; i < count; ++i){
 		QTreeWidgetItem *item = tree->topLevelItem(i);
 		if (keyId == item->text(RSCIRCLEID_COL_KEYID)) {
 			std::cerr << "CreateCircleDialog::addMember() Already is a Member: " << keyId.toStdString();
 			std::cerr << std::endl;
 			return;
 		}//if (keyId == item->text(RSCIRCLEID_COL_KEYID))
-	}//for(int i = 0; i < count; i++)
+	}//for(int i = 0; i < count; ++i)
 
 	QTreeWidgetItem *member = new QTreeWidgetItem();
 	member->setText(RSCIRCLEID_COL_NICKNAME, nickname);
@@ -308,7 +308,7 @@ void CreateCircleDialog::createCircle()
 	/* copy Ids from GUI */
 	QTreeWidget *tree = ui.treeWidget_membership;
 	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; i++) {
+	for(int i = 0; i < count; ++i) {
 		QTreeWidgetItem *item = tree->topLevelItem(i);
 		QString keyId = item->text(RSCIRCLEID_COL_KEYID);
 
@@ -323,7 +323,7 @@ void CreateCircleDialog::createCircle()
 			std::cerr << std::endl;
 		}//else (mIsExternalCircle)
 
-	}//for(int i = 0; i < count; i++)
+	}//for(int i = 0; i < count; ++i)
 
 	if (mIsExistingCircle) {
 		std::cerr << "CreateCircleDialog::createCircle() Existing Circle TODO";
@@ -510,7 +510,7 @@ void CreateCircleDialog::getPgpIdentities()
 	std::list<RsPgpId>::iterator it;
 
 	rsPeers->getGPGAcceptedList(ids);
-	for(it = ids.begin(); it != ids.end(); it++) {
+	for(it = ids.begin(); it != ids.end(); ++it) {
 		RsPeerDetails details;
 
 		rsPeers->getGPGDetails(*it, details);
@@ -535,7 +535,7 @@ void CreateCircleDialog::getPgpIdentities()
 				addMember(keyId, idtype, nickname);
 			}//if (it != mCircleGroup.mLocalFriends.end())
 		}//if (mIsExistingCircle)
-	}//for(it = ids.begin(); it != ids.end(); it++)
+	}//for(it = ids.begin(); it != ids.end(); ++it)
 	
 	filterIds();
 }
@@ -575,7 +575,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 		return;
 	}//if (!rsIdentity->getGroupData(token, datavector))
 
-	for(vit = datavector.begin(); vit != datavector.end(); vit++) {
+	for(vit = datavector.begin(); vit != datavector.end(); ++vit) {
 		data = (*vit);
 
 		/* do filtering */
@@ -628,7 +628,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 				addMember(keyId, idtype, nickname);
 			}//if (it != mCircleGroup.mInvitedMembers.end())
 		}//if (mIsExistingCircle)
-	}//for(vit = datavector.begin(); vit != datavector.end(); vit++)
+	}//for(vit = datavector.begin(); vit != datavector.end(); ++vit)
 }
 
 void CreateCircleDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)

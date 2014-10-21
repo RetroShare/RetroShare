@@ -86,7 +86,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::const_iterator it;
-        for (it = dirs.begin(); it != dirs.end(); it++) {
+        for (it = dirs.begin(); it != dirs.end(); ++it) {
             if (it->filename == filename) 
 				{
                 /* fill dialog */
@@ -156,7 +156,7 @@ void ShareDialog::addDirectory()
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::iterator it;
-        for (it = dirs.begin(); it != dirs.end(); it++) {
+        for (it = dirs.begin(); it != dirs.end(); ++it) {
             if (it->filename == sdi.filename) {
                 found = true;
 

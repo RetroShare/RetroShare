@@ -483,7 +483,7 @@ void PhotoShare::loadAlbumList(const uint32_t &token)
         requestAlbumData(albumIds);
 
         std::list<RsGxsGroupId>::iterator it;
-        for(it = albumIds.begin(); it != albumIds.end(); it++)
+        for(it = albumIds.begin(); it != albumIds.end(); ++it)
         {
                 requestPhotoList(*it);
         }
@@ -516,7 +516,7 @@ bool PhotoShare::loadAlbumData(const uint32_t &token)
 
     std::vector<RsPhotoAlbum>::iterator vit = albums.begin();
 
-    for(; vit != albums.end(); vit++)
+    for(; vit != albums.end(); ++vit)
     {
         RsPhotoAlbum& album = *vit;
 
@@ -623,12 +623,12 @@ void PhotoShare::loadPhotoData(const uint32_t &token)
         PhotoResult::iterator mit = res.begin();
 
 
-        for(; mit != res.end(); mit++)
+        for(; mit != res.end(); ++mit)
         {
             std::vector<RsPhotoPhoto>& photoV = mit->second;
             std::vector<RsPhotoPhoto>::iterator vit = photoV.begin();
 
-            for(; vit != photoV.end(); vit++)
+            for(; vit != photoV.end(); ++vit)
             {
                 RsPhotoPhoto& photo = *vit;
                 addPhoto(photo);

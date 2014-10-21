@@ -112,7 +112,7 @@ void TagsMenu::fillTags()
 
 		addSeparator();
 
-		for (tag = tags.types.begin(); tag != tags.types.end(); tag++) {
+		for (tag = tags.types.begin(); tag != tags.types.end(); ++tag) {
 			text = TagDefs::name(tag->first, tag->second.first);
 
 			action = new QAction(text, this);

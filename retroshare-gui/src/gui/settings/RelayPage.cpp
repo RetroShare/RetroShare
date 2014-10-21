@@ -166,7 +166,7 @@ void RelayPage::loadServers()
 	rsDht->getRelayServerList(servers);
 
 	ui.serverTreeWidget->clear();
-	for(it = servers.begin(); it != servers.end(); it++)
+	for(it = servers.begin(); it != servers.end(); ++it)
 	{
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		item->setData(0, Qt::DisplayRole, QString::fromStdString(*it));	

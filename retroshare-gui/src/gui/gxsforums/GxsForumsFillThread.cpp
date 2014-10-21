@@ -60,7 +60,7 @@ GxsForumsFillThread::~GxsForumsFillThread()
 
 	// remove all items (when items are available, the thread was terminated)
 	QList<QTreeWidgetItem *>::iterator item;
-	for (item = mItems.begin (); item != mItems.end (); item++) {
+	for (item = mItems.begin (); item != mItems.end (); ++item) {
 		if (*item) {
 			delete (*item);
 		}

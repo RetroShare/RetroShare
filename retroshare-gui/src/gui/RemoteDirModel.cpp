@@ -578,7 +578,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 //		return;
 //	} else if (details.type == DIR_TYPE_DIR && ret.isEmpty()) {
 //		std::list<DirStub>::const_iterator it;
-//		for (it = details.children.begin(); it != details.children.end(); it++) {
+//		for (it = details.children.begin(); it != details.children.end(); ++it) {
 //			void *ref = it->ref;
 //			const DirDetails *childDetails = requestDirDetails(ref, RemoteMode);
 
@@ -868,7 +868,7 @@ void RetroshareDirModel::postMods()
 
 //	QModelIndexList piList = persistentIndexList();
 //	QModelIndexList empty;
-//	for (int i = 0; i < piList.size(); i++) {
+//	for (int i = 0; i < piList.size(); ++i) {
 //		empty.append(QModelIndex());
 //	}
 //	changePersistentIndexList(piList, empty);
@@ -994,7 +994,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 
 		if (!dwlDir.mkpath(cleanPath)) return;
 
-		for (it = dirDetails.children.begin(); it != dirDetails.children.end(); it++)
+		for (it = dirDetails.children.begin(); it != dirDetails.children.end(); ++it)
 		{
 			if (!it->ref) continue;
 
@@ -1013,7 +1013,7 @@ void RetroshareDirModel::getDirDetailsFromSelect (const QModelIndexList &list, s
 
     /* Fire off requests */
     QModelIndexList::const_iterator it;
-    for(it = list.begin(); it != list.end(); it++)
+    for(it = list.begin(); it != list.end(); ++it)
     {
         if(it->column()==1)
         {
@@ -1108,7 +1108,7 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 	std::list<DirDetails>::iterator it;
 	getFileInfoFromIndexList(qmil, files_info);
 
-	for (it = files_info.begin(); it != files_info.end(); it++) 
+	for (it = files_info.begin(); it != files_info.end(); ++it)
 	{
 		if ((*it).type & DIR_TYPE_PERSON) continue;
 
@@ -1147,7 +1147,7 @@ void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std
 	}
 	/* translate */
 	QModelIndexList::const_iterator it;
-	for(it = list.begin(); it != list.end(); it++)
+	for(it = list.begin(); it != list.end(); ++it)
 	{
 		void *ref = it -> internalPointer();
 
@@ -1202,7 +1202,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
     std::map<RsFileHash, uint64_t> drags;
     std::map<RsFileHash, uint64_t>::iterator dit;
 
-	for(it = indexes.begin(); it != indexes.end(); it++)
+	for(it = indexes.begin(); it != indexes.end(); ++it)
 	{
 		void *ref = it -> internalPointer();
 
@@ -1341,7 +1341,7 @@ void FlatStyle_RDM::updateRefs()
 #ifdef RDM_DEBUG
 			std::cerr << "FlatStyle_RDM::postMods(): addign ref " << ref << std::endl;
 #endif
-			for(std::list<DirStub>::const_iterator it = details->children.begin(); it != details->children.end(); it++)
+			for(std::list<DirStub>::const_iterator it = details->children.begin(); it != details->children.end(); ++it)
 				_ref_stack.push_back(it->ref) ;
 		}
 		if(++nb_treated_refs > MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to 

@@ -487,13 +487,13 @@ int     pqihandler::UpdateRates()
 		float crate_in = mod -> pqi -> getRate(true);
 		if (crate_in > 0.01 * avail_in || crate_in > 0.1)
 		{
-		    effectiveDownloadsSm ++;
+			++effectiveDownloadsSm;
 		}
 
 		float crate_out = mod -> pqi -> getRate(false);
 		if (crate_out > 0.01 * avail_out || crate_out > 0.1)
 		{
-		    effectiveUploadsSm ++;
+			++effectiveUploadsSm;
 		}
 
 		used_bw_in += crate_in;

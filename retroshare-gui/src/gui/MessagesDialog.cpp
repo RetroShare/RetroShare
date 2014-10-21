@@ -95,7 +95,7 @@ MessagesDialog::LockUpdate::LockUpdate (MessagesDialog *pDialog, bool bUpdate)
     m_pDialog = pDialog;
     m_bUpdate = bUpdate;
 
-    m_pDialog->lockUpdate++;
+    ++m_pDialog->lockUpdate;
 }
 
 MessagesDialog::LockUpdate::~LockUpdate ()
@@ -446,7 +446,7 @@ void MessagesDialog::fillQuickView()
 		itemToSelect = item;
 	}
 
-	for (tag = tags.types.begin(); tag != tags.types.end(); tag++) {
+	for (tag = tags.types.begin(); tag != tags.types.end(); ++tag) {
 		text = TagDefs::name(tag->first, tag->second.first);
 
 		item = new QListWidgetItem (text, ui.quickViewWidget);
@@ -574,12 +574,12 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     contextMnu.addSeparator();
 
     action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), this, SLOT(markAsRead()));
-    if (itemsUnread.size() == 0) {
+    if (itemsUnread.isEmpty()) {
         action->setDisabled(true);
     }
 
     action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), this, SLOT(markAsUnread()));
-    if (itemsRead.size() == 0) {
+    if (itemsRead.isEmpty()) {
         action->setDisabled(true);
     }
 
@@ -822,7 +822,7 @@ static void InitIconAndFont(QTreeWidgetItem *item)
     }
 
     // set font
-    for (int i = 0; i < COLUMN_COUNT; i++) {
+    for (int i = 0; i < COLUMN_COUNT; ++i) {
         QFont qf = item->font(i);
         qf.setBold(isNew);
         item->setFont(i, qf);
@@ -960,7 +960,7 @@ void MessagesDialog::insertMessages()
 
         /* search messages */
         std::list<MsgInfoSummary> msgToShow;
-        for(it = msgList.begin(); it != msgList.end(); it++) {
+        for(it = msgList.begin(); it != msgList.end(); ++it) {
             if (listMode == LIST_BOX) {
                 if (isTrash) {
                     if ((it->msgflags & RS_MSG_TRASH) == 0) {
@@ -1000,7 +1000,7 @@ void MessagesDialog::insertMessages()
         while ((treeItem = *itemIterator) != NULL) {
             ++itemIterator;
             std::string msgIdFromRow = treeItem->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
-            for(it = msgToShow.begin(); it != msgToShow.end(); it++) {
+            for(it = msgToShow.begin(); it != msgToShow.end(); ++it) {
                 if (it->msgId == msgIdFromRow) {
                     break;
                 }
@@ -1011,7 +1011,7 @@ void MessagesDialog::insertMessages()
             }
         }
 
-        for(it = msgToShow.begin(); it != msgToShow.end(); it++)
+        for(it = msgToShow.begin(); it != msgToShow.end(); ++it)
         {
             /* check the message flags, to decide which
              * group it should go in...
@@ -1116,7 +1116,7 @@ void MessagesDialog::insertMessages()
 
                         text.clear();
 
-                        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); pit++)
+                        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit)
                         {
                             if (!text.isEmpty())
                                 text += ", ";
@@ -1127,7 +1127,7 @@ void MessagesDialog::insertMessages()
                              else
                                 text += QString::fromUtf8(peerName.c_str());
                         }
-                        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); pit++)
+                        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit)
                         {
                             if (!text.isEmpty())
                                 text += ", ";
@@ -1174,7 +1174,7 @@ void MessagesDialog::insertMessages()
 
             // build tag names
             std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-            for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
+            for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
                 if (text.isEmpty() == false) {
                     text += ",";
                 }
@@ -1204,7 +1204,7 @@ void MessagesDialog::insertMessages()
                 color = ui.messageTreeWidget->palette().color(QPalette::Text);
             }
             QBrush brush = QBrush(color);
-            for (int i = 0; i < COLUMN_COUNT; i++) {
+            for (int i = 0; i < COLUMN_COUNT; ++i) {
                 item->setForeground(i, brush);
             }
 
@@ -1658,45 +1658,45 @@ void MessagesDialog::updateMessageSummaryList()
     QMap<int, int> tagCount;
 
     /* calculating the new messages */
-    for (it = msgList.begin(); it != msgList.end(); it++) {
+    for (it = msgList.begin(); it != msgList.end(); ++it) {
         /* calcluate tag count */
         MsgTagInfo tagInfo;
         rsMsgs->getMessageTag(it->msgId, tagInfo);
-        for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
+        for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
             int nCount = tagCount [*tagId];
-            nCount++;
+            ++nCount;
             tagCount [*tagId] = nCount;
         }
 
         if (it->msgflags & RS_MSG_STAR) {
-            starredCount++;
+            ++starredCount;
         }
 
         if (it->msgflags & RS_MSG_SYSTEM) {
-            systemCount++;
+            ++systemCount;
         }
 
         /* calculate box */
         if (it->msgflags & RS_MSG_TRASH) {
-            trashboxCount++;
+            ++trashboxCount;
             continue;
         }
 
         switch (it->msgflags & RS_MSG_BOXMASK) {
         case RS_MSG_INBOX:
-                inboxCount++;
+                ++inboxCount;
                 if (it->msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER)) {
-                    newInboxCount++;
+                    ++newInboxCount;
                 }
                 break;
         case RS_MSG_OUTBOX:
-                newOutboxCount++;
+                ++newOutboxCount;
                 break;
         case RS_MSG_DRAFTBOX:
-                newDraftCount++;
+                ++newDraftCount;
                 break;
         case RS_MSG_SENTBOX:
-                newSentboxCount++;
+                ++newSentboxCount;
                 break;
         }
     }
@@ -1810,7 +1810,7 @@ void MessagesDialog::updateMessageSummaryList()
 
     /* set tag counts */
     int rowCount = ui.quickViewWidget->count();
-    for (int row = 0; row < rowCount; row++) {
+    for (int row = 0; row < rowCount; ++row) {
         QListWidgetItem *item = ui.quickViewWidget->item(row);
         switch (item->data(ROLE_QUICKVIEW_TYPE).toInt()) {
         case QUICKVIEW_TYPE_TAG:
@@ -1911,7 +1911,7 @@ void MessagesDialog::emptyTrash()
     rsMsgs->getMessageSummaries(msgList);
 
     std::list<MsgInfoSummary>::const_iterator it;
-    for (it = msgList.begin(); it != msgList.end(); it++) {
+    for (it = msgList.begin(); it != msgList.end(); ++it) {
         if (it->msgflags & RS_MSG_TRASH) {
             rsMsgs->MessageDelete(it->msgId);
         }
@@ -1943,7 +1943,7 @@ void MessagesDialog::closeTab(const std::string &msgId)
 {
     QList<MessageWidget*> msgWidgets;
 
-    for (int tab = 1; tab < ui.tabWidget->count(); tab++) {
+    for (int tab = 1; tab < ui.tabWidget->count(); ++tab) {
         MessageWidget *msgWidget = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
         if (msgWidget && msgWidget->msgId() == msgId) {
             msgWidgets.append(msgWidget);

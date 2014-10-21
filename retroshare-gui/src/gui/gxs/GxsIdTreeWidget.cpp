@@ -52,7 +52,7 @@ static void paintGxsId( QPainter * painter,
 	std::list<QIcon>::iterator it;
 	const int IconSize = 15;
 	int i = 0;
-	for(it = icons.begin(); it != icons.end(); it++, i++)
+	for(it = icons.begin(); it != icons.end(); ++it, ++i)
 	{
 		it->paint(painter, x, y, IconSize, IconSize);
 		x += IconSize;

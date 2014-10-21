@@ -475,7 +475,7 @@ int p3ZeroConf::checkLocationResults()
 		RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
 
 		/* check the results Queue  */
-		if (mLocationResults.size() == 0)
+		if (mLocationResults.empty())
 		{
 			return 0;
 		}
@@ -538,7 +538,7 @@ int p3ZeroConf::checkQueryResults()
 		RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
 
 		/* check the results Queue  */
-		if (mQueryResults.size() == 0)
+		if (mQueryResults.empty())
 		{
 			return 0;
 		}

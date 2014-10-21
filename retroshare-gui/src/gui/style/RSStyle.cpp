@@ -61,7 +61,7 @@ QString RSStyle::getStyleSheet() const
 
 	if (sheet.isEmpty() == false) {
 		/* Replace colors */
-		for (int i = 0; i < colors.size(); i++) {
+		for (int i = 0; i < colors.size(); ++i) {
 			sheet.replace(QString("<color%1>").arg(i + 1), colors[i].name());
 		}
 	}
@@ -93,7 +93,7 @@ void RSStyle::readSetting (QSettings &settings)
 	colors.empty();
 
 	int size = settings.beginReadArray("colors");
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; ++i) {
 		settings.setArrayIndex(i);
 		colors.append(QColor(settings.value("value").toString()));
 	}
@@ -106,7 +106,7 @@ void RSStyle::writeSetting (QSettings &settings)
 
 	settings.beginWriteArray("colors");
 	int size = colors.size();
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; ++i) {
 		settings.setArrayIndex(i);
 		settings.setValue("value", colors[i].name());
 	}

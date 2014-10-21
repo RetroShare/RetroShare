@@ -191,7 +191,7 @@ void ServicePermissionsPage::load()
 	QStringList columnHeaders;
 	QStringList rowHeaders;
 	columnHeaders.push_back(tr("Default"));
-	for(pit = peerList.begin(); pit != peerList.end(); pit++)
+	for(pit = peerList.begin(); pit != peerList.end(); ++pit)
 	{
 		columnHeaders.push_back(QString::fromStdString( rsPeers->getPeerName(*pit)));
 	}
@@ -199,7 +199,7 @@ void ServicePermissionsPage::load()
 	// Fill in CheckBoxes.
 	size_t row;
 	size_t column;
-	for(row = 0, sit = ownServices.mServiceList.begin(); sit != ownServices.mServiceList.end(); sit++, row++)
+	for(row = 0, sit = ownServices.mServiceList.begin(); sit != ownServices.mServiceList.end(); ++sit, ++row)
 	{
 		rowHeaders.push_back(QString::fromStdString(sit->second.mServiceName));
 		RsServicePermissions permissions;
@@ -229,7 +229,7 @@ void ServicePermissionsPage::load()
 		}
 
 		for(column = 1, pit = peerList.begin(); 
-				pit != peerList.end(); pit++, column++)
+				pit != peerList.end(); ++pit, ++column)
 		{
      			QTableWidgetItem *item = new QTableWidgetItem();
 			Qt::ItemFlags flags(Qt::ItemIsUserCheckable);
@@ -264,7 +264,7 @@ void ServicePermissionsPage::load()
 	// Now Get a List of Services Provided by Peers - and add text.
 	int maxRowCount = mStdRowCount;
 	for(column = 1, pit = peerList.begin(); 
-			pit != peerList.end(); pit++, column++)
+			pit != peerList.end(); ++pit, ++column)
 	{
 		RsPeerServiceInfo peerInfo;
 		if (rsServiceControl->getServicesProvided(*pit, peerInfo))
@@ -354,7 +354,7 @@ void ServicePermissionsPage::load()
 		}
 		else
 		{
-			for(row = 0; row < mStdRowCount; row++)
+			for(row = 0; row < mStdRowCount; ++row)
 			{
 				QTableWidgetItem *item = ui.tableWidget->item(row, column);
 				item->setText(tr("N/A"));
@@ -380,7 +380,7 @@ void ServicePermissionsPage::tableItemChanged ( QTableWidgetItem * item )
 		/* update the row */
 		bool defaultOn = (Qt::Checked == item->checkState());
 		item->setBackground(getColor(defaultOn, Qt::PartiallyChecked));
-		for(int column = 1; column < ui.tableWidget->columnCount(); column++)
+		for(int column = 1; column < ui.tableWidget->columnCount(); ++column)
 		{
 			QTableWidgetItem *rowitem = ui.tableWidget->item (item->row(), column);
 			if (rowitem)

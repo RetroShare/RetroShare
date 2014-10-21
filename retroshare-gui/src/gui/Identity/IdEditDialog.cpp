@@ -314,7 +314,7 @@ void IdEditDialog::rmTag(int idx)
 {
 	std::list<std::string>::iterator it;
 	int i = 0;
-	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end() && (idx < i); it++, i++) ;
+	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end() && (idx < i); ++it, ++i) ;
 
 	if (it != mEditGroup.mRecognTags.end())
 	{
@@ -384,7 +384,7 @@ void IdEditDialog::loadRecognTags()
 
 	int i = 0;
 	std::list<std::string>::const_iterator it;
-	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end(); it++, i++)
+	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end(); ++it, ++i)
 	{
 		QString recognTag;
         tagDetails(mEditGroup.mMeta.mAuthorId, mEditGroup.mMeta.mGroupName, *it, recognTag);

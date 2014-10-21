@@ -72,7 +72,7 @@ void RsharePeerSettings::cleanDeadIds()
     if (lastClean.addDays(DAYS_TO_CLEAN) < currentDate) {
         /* clean */
         QStringList groups = childGroups();
-        for (QStringList::iterator group = groups.begin(); group != groups.end(); group++) {
+        for (QStringList::iterator group = groups.begin(); group != groups.end(); ++group) {
             if (*group == GROUP_GENERAL) {
                 continue;
             }

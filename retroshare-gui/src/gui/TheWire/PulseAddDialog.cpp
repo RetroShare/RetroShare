@@ -161,7 +161,7 @@ void PulseAddDialog::postPulse()
 		/* now have path and album id */
 		int photoCount = ui.scrollAreaWidgetContents->getPhotoCount();
 
-		for(int i = 0; i < photoCount; i++)
+		for(int i = 0; i < photoCount; ++i)
 		{
 			RsPhotoPhoto photo;
 			RsPhotoThumbnail thumbnail;

@@ -317,7 +317,7 @@ void SearchDialog::initialiseFileTypeMappings()
 void SearchDialog::searchResultWidgetCustomPopupMenu( QPoint /*point*/ )
 {
 	// Block the popup if no results available
-	if ((ui.searchResultWidget->selectedItems()).size() == 0) return ;
+	if ((ui.searchResultWidget->selectedItems()).isEmpty()) return ;
 
 	bool add_CollActions = false ;
 
@@ -595,7 +595,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 		}
 
 		// recursive call for every child - file or folder
-		for (int i = 0, cnt = item->childCount(); i < cnt; i++) {
+		for (int i = 0, cnt = item->childCount(); i < cnt; ++i) {
 			QTreeWidgetItem *child = item->child(i);
 			downloadDirectory(child, path);
 		}
@@ -620,7 +620,7 @@ void SearchDialog::recommendtofriends()
 void SearchDialog::searchSummaryWidgetCustomPopupMenu( QPoint /*point*/ )
 {
     // block the popup if no results available
-    if ((ui.searchSummaryWidget->selectedItems()).size() == 0) return;
+    if ((ui.searchSummaryWidget->selectedItems()).isEmpty()) return;
 
     QMenu contextMnu(this);
 
@@ -669,7 +669,7 @@ void SearchDialog::searchRemove()
                 else
                 {
 			/* step to the next */
-			i++;
+			++i;
                 }
         }
 	int sii = ui.searchSummaryWidget->indexOfTopLevelItem(ci);
@@ -877,7 +877,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 			/* which extensions do we use? */
 			DirDetails dd;
 
-			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
+			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); ++resultsIter)
 			{
 				dd = *resultsIter;
 				finalResults.push_back(dd);
@@ -893,7 +893,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 			/* which extensions do we use? */
 			DirDetails dd;
 
-			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
+			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); ++resultsIter)
 			{
 				dd = *resultsIter;
 				finalResults.push_back(dd);
@@ -1010,7 +1010,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 			int items = ui.searchSummaryWidget->topLevelItemCount();
 			bool found = false ;
 
-			for(int i = 0; i < items; i++)
+			for(int i = 0; i < items; ++i)
 			{
 				if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa)
 				{
@@ -1041,7 +1041,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		}
 
 		/* go through all children directories/files for a recursive call */
-		for (std::list<DirStub>::const_iterator it(dir.children.begin()); it != dir.children.end(); it ++) {
+		for (std::list<DirStub>::const_iterator it(dir.children.begin()); it != dir.children.end(); ++it) {
 			DirDetails details;
 			rsFiles->RequestDirDetails(it->ref, details, FileSearchFlags(0u));
 			insertDirectory(txt, searchId, details, child);
@@ -1077,7 +1077,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
     int items = ui.searchSummaryWidget->topLevelItemCount();
     bool found = false ;
 
-    for(int i = 0; i < items; i++)
+    for(int i = 0; i < items; ++i)
     {
             if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa)
             {
@@ -1124,7 +1124,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	// the user, so nothing has to be done here
 	int summaryItemCount = ui.searchSummaryWidget->topLevelItemCount();
 	int summaryItemIndex = -1 ;
-	for (int i = 0; i < summaryItemCount; i++) {
+	for (int i = 0; i < summaryItemCount; ++i) {
 		if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa) {
 			summaryItemIndex = i ;
 			break ;
@@ -1214,7 +1214,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 				}
 
 				QBrush brush(foreground);
-				for (int i = 0; i < item->columnCount(); i++)
+				for (int i = 0; i < item->columnCount(); ++i)
 				{
 					item->setForeground(i, brush);
 				}
@@ -1282,7 +1282,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 
 		if (setForeground) {
 			QBrush brush(foreground);
-			for (int i = 0; i < item->columnCount(); i++)
+			for (int i = 0; i < item->columnCount(); ++i)
 			{
 				item->setForeground(i, brush);
 			}
@@ -1310,7 +1310,7 @@ void SearchDialog::resultsToTree(const QString& txt,qulonglong searchId, const s
 	/* translate search results */
 
 	std::list<DirDetails>::const_iterator it;
-	for(it = results.begin(); it != results.end(); it++)
+	for(it = results.begin(); it != results.end(); ++it)
 		if (it->type == DIR_TYPE_FILE) {
 			FileDetail fd;
 			fd.id	= it->id;
@@ -1348,7 +1348,7 @@ void SearchDialog::selectSearchResults(int index)
 
 	/* show only matching searchIds in main window */
 	int items = ui.searchResultWidget->topLevelItemCount();
-	for(int i = 0; i < items; i++)
+	for(int i = 0; i < items; ++i)
 	{
 		hideOrShowSearchResult(ui.searchResultWidget->topLevelItem(i), searchId, index);
 	}
@@ -1465,7 +1465,7 @@ void SearchDialog::selectFileType(int index)
 
 	/* show only matching file types in main window */
 	int items = ui.searchResultWidget->topLevelItemCount();
-	for(int i = 0; i < items; i++)
+	for(int i = 0; i < items; ++i)
 	{
 		hideOrShowSearchResult(ui.searchResultWidget->topLevelItem(i), searchId, index);
 	}
@@ -1474,7 +1474,7 @@ void SearchDialog::selectFileType(int index)
 void SearchDialog::filterItems()
 {
     int count = ui.searchResultWidget->topLevelItemCount ();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         hideOrShowSearchResult(ui.searchResultWidget->topLevelItem(index));
     }
 }
@@ -1491,9 +1491,9 @@ bool SearchDialog::filterItem(QTreeWidgetItem *item, const QString &text, int fi
 
     int visibleChildCount = 0;
     int count = item->childCount();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         if (filterItem(item->child(index), text, filterColumn)) {
-            visibleChildCount++;
+            ++visibleChildCount;
         }
     }
 

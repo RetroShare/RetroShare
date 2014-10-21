@@ -266,7 +266,7 @@ Rshare::parseArguments(QStringList args)
   QString arg, value;
 
   /* Loop through all command-line args/values and put them in a map */
-  for (int i = 0; i < args.size(); i++) {
+  for (int i = 0; i < args.size(); ++i) {
     /* Get the argument name and set a blank value */
     arg   = args.at(i).toLower();
     value = "";
@@ -514,7 +514,7 @@ void Rshare::refreshStyleSheet(QWidget *widget, bool processChildren)
 		if (processChildren == true) {
 			// process children recursively
 			QObjectList childList =	widget->children ();
-			for (QObjectList::Iterator it = childList.begin(); it != childList.end(); it++) {
+			for (QObjectList::Iterator it = childList.begin(); it != childList.end(); ++it) {
 				QWidget *child = qobject_cast<QWidget*>(*it);
 				if (child != NULL) {
 					refreshStyleSheet(child, processChildren);

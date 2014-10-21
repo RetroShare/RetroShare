@@ -262,7 +262,7 @@ pascal void IdlePlatform::Private::IdleTimerAction(EventLoopTimerRef, EventLoopI
 			break;
 		case kEventLoopIdleTimerIdling:
 			// Called every time the timer fires (i.e. every second).
-		   ((IdlePlatform::Private*)inUserData)->mSecondsIdle++;
+		   ++((IdlePlatform::Private*)inUserData)->mSecondsIdle;
 			break;
 	}
 }

@@ -68,7 +68,7 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWid
     }
 
     ChatStyle::getAvailableStyles(type, styles);
-    for (style = styles.begin(); style != styles.end(); style++) {
+    for (style = styles.begin(); style != styles.end(); ++style) {
         item = new QListWidgetItem(style->styleName);
         item->setData(Qt::UserRole, qVariantFromValue(*style));
         listWidget->addItem(item);

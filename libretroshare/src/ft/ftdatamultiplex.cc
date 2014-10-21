@@ -315,7 +315,7 @@ bool 	ftDataMultiplex::doWork()
 
 		{
 			RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-			if (mRequestQueue.size() == 0)
+			if (mRequestQueue.empty())
 			{
 				doRequests = false;
 				continue;
@@ -385,7 +385,7 @@ bool 	ftDataMultiplex::doWork()
 
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-		if (mSearchQueue.size() == 0)
+		if (mSearchQueue.empty())
 		{
 			/* Finished */
 			return true;

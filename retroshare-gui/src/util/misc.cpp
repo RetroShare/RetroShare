@@ -215,7 +215,7 @@ QString misc::userFriendlyUnit(double count, unsigned int decimal, double factor
     QString output;
 
     int i;
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < 5; ++i) {
         if (count < factor) {
             break;
         }
@@ -337,7 +337,7 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 #ifdef WINDOWS_SYS
     // fix bug in Qt for Windows Vista and higher, convert path from native separators
     if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based))
-        for (QStringList::iterator file = files.begin(); file != files.end(); file++) {
+        for (QStringList::iterator file = files.begin(); file != files.end(); ++file) {
             (*file) = QDir::fromNativeSeparators(*file);
         }
 #endif

@@ -54,7 +54,7 @@ StartDialog::StartDialog(QWidget *parent)
 
 	if (RsAccounts::GetAccountIds(accountIds))
 	{
-		for(it = accountIds.begin(), i = 0; it != accountIds.end(); it++, i++)
+		for(it = accountIds.begin(), i = 0; it != accountIds.end(); ++it, ++i)
 		{
 			const QVariant & userData = QVariant(QString::fromStdString((*it).toStdString()));
 			RsPgpId gpgid ;

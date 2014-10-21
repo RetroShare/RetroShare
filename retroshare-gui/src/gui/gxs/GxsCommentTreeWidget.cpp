@@ -282,7 +282,7 @@ void GxsCommentTreeWidget::completeItems()
 	std::cerr << " PendingItems";
 	std::cerr << std::endl;
 
-	for(pit = mPendingInsertMap.begin(); pit != mPendingInsertMap.end(); pit++)
+	for(pit = mPendingInsertMap.begin(); pit != mPendingInsertMap.end(); ++pit)
 	{
 		std::cerr << "GxsCommentTreeWidget::completeItems() item->parent: " << pit->first;
 		std::cerr << std::endl;
@@ -408,7 +408,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 	std::vector<RsGxsComment>::iterator vit;
 
-	for(vit = comments.begin(); vit != comments.end(); vit++)
+	for(vit = comments.begin(); vit != comments.end(); ++vit)
 	{
 		RsGxsComment &comment = *vit;
 		/* convert to a QTreeWidgetItem */

@@ -398,7 +398,7 @@ void IdDialog::insertIdList(uint32_t token)
 	QTreeWidgetItemIterator itemIterator(ui.treeWidget_IdList);
 	QTreeWidgetItem *item = NULL;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		for (vit = datavector.begin(); vit != datavector.end(); ++vit)
 		{
@@ -815,7 +815,7 @@ void IdDialog::insertRepList(uint32_t token)
 		return;
 	}
 
-	for(vit = opinions.begin(); vit != opinions.end(); vit++)
+	for(vit = opinions.begin(); vit != opinions.end(); ++vit)
 	{
 		RsGxsIdOpinion &op = (*vit);
 		GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem();

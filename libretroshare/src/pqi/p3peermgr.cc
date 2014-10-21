@@ -1633,7 +1633,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	std::string proxyIpAddress = kConfigDefaultProxyServerIpAddr;
 	uint16_t    proxyPort = kConfigDefaultProxyServerPort;
 
-        if (load.size() == 0) {
+        if (load.empty()) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
             return false;
         }

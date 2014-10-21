@@ -225,7 +225,7 @@ void GroupTreeWidget::updateColors()
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		int color = item->data(COLUMN_DATA, ROLE_COLOR).toInt();
 		if (color >= 0) {
@@ -320,14 +320,14 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 	/* Iterate all items */
 	QList<GroupItemInfo>::const_iterator it;
-	for (it = itemList.begin(); it != itemList.end(); it++) {
+	for (it = itemList.begin(); it != itemList.end(); ++it) {
 		const GroupItemInfo &itemInfo = *it;
 
 		QTreeWidgetItem *item = NULL;
 
 		/* Search exisiting item */
 		int childCount = categoryItem->childCount();
-		for (int child = 0; child < childCount; child++) {
+		for (int child = 0; child < childCount; ++child) {
 			QTreeWidgetItem *childItem = categoryItem->child(child);
 			if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
 				/* Found child */
@@ -388,7 +388,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 	while (child < childCount) {
 		QString id = categoryItem->child(child)->data(COLUMN_DATA, ROLE_ID).toString();
 
-		for (it = itemList.begin(); it != itemList.end(); it++) {
+		for (it = itemList.begin(); it != itemList.end(); ++it) {
 			if (it->id == id) {
 				break;
 			}
@@ -398,7 +398,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 			delete(categoryItem->takeChild(child));
 			childCount = categoryItem->childCount();
 		} else {
-			child++;
+			++child;
 		}
 	}
 
@@ -435,7 +435,7 @@ QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (item->parent() == NULL) {
 			continue;
@@ -526,7 +526,7 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *tmpItem;
 	while ((tmpItem = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (tmpItem->data(COLUMN_DATA, ROLE_ID).toString().isEmpty()) {
 			continue;
@@ -563,7 +563,7 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 		categoryItem->sortChildren(COLUMN_DATA, order);
 	} else {
 		int count = ui->treeWidget->topLevelItemCount();
-		for (int child = 0; child < count; child++) {
+		for (int child = 0; child < count; ++child) {
 			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
 		}
 	}

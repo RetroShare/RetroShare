@@ -202,7 +202,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	int state = RS_STATUS_OFFLINE;
 	if (detail.state & RS_PEER_STATE_CONNECTED) {
 		std::list<StatusInfo>::const_iterator it;
-		for (it = statusInfo.begin(); it != statusInfo.end() ; it++) {
+		for (it = statusInfo.begin(); it != statusInfo.end() ; ++it) {
 			if (it->id == detail.id) {
 				state = it->status;
 				break;
@@ -325,9 +325,9 @@ void FriendSelectionWidget::secured_fillList()
 		{
 			groupInfo = &(*groupIt);
 
-			if (groupInfo->peerIds.size() == 0) {
+			if (groupInfo->peerIds.empty()) {
 				// don't show empty groups
-				groupIt++;
+				++groupIt;
 				continue;
 			}
 
@@ -364,7 +364,7 @@ void FriendSelectionWidget::secured_fillList()
 		if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) 
 		{
 			// iterate through gpg ids
-			for (gpgIt = gpgIds.begin(); gpgIt != gpgIds.end(); gpgIt++) {
+			for (gpgIt = gpgIds.begin(); gpgIt != gpgIds.end(); ++gpgIt) {
 				if (groupInfo) {
 					// we fill a group, check if gpg id is assigned
 					if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), *gpgIt) == groupInfo->peerIds.end()) {
@@ -395,7 +395,7 @@ void FriendSelectionWidget::secured_fillList()
 				rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
 
 				int state = RS_STATUS_OFFLINE;
-				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; statusIt++) {
+				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; ++statusIt) {
 					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
 						if (statusIt->status != RS_STATUS_OFFLINE) {
 							state = RS_STATUS_ONLINE;
@@ -430,7 +430,7 @@ void FriendSelectionWidget::secured_fillList()
 
 				if (mShowTypes & SHOW_SSL) {
 					// iterate through associated ssl ids
-					for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+					for (sslIt = sslIds.begin(); sslIt != sslIds.end(); ++sslIt) {
 						RsPeerDetails detail;
 						if (!rsPeers->getPeerDetails(*sslIt, detail)) {
 							continue; /* BAD */
@@ -465,7 +465,7 @@ void FriendSelectionWidget::secured_fillList()
 		else 
 		{
 			// iterate through ssl ids
-			for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+			for (sslIt = sslIds.begin(); sslIt != sslIds.end(); ++sslIt) {
 				RsPeerDetails detail;
 				if (!rsPeers->getPeerDetails(*sslIt, detail)) {
 					continue; /* BAD */
@@ -514,7 +514,7 @@ void FriendSelectionWidget::secured_fillList()
 		if(mShowTypes & SHOW_GXS)
 		{
 			// iterate through gpg ids
-			for (std::vector<RsGxsGroupId>::const_iterator gxsIt = gxsIds.begin(); gxsIt != gxsIds.end(); gxsIt++) 
+			for (std::vector<RsGxsGroupId>::const_iterator gxsIt = gxsIds.begin(); gxsIt != gxsIds.end(); ++gxsIt)
 			{
 					// we fill the not assigned gpg ids
 				if (std::find(filledIds.begin(), filledIds.end(), (*gxsIt).toStdString()) != filledIds.end()) 
@@ -553,7 +553,7 @@ void FriendSelectionWidget::secured_fillList()
 			}
 		}
 		if (groupIt != groupInfoList.end()) {
-			groupIt++;
+			++groupIt;
 		} else {
 			// all done
 			break;
@@ -628,7 +628,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 				std::list<StatusInfo>::iterator statusIt;
 				rsStatus->getStatusList(statusInfo);
 
-				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; statusIt++) {
+				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; ++statusIt) {
 					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
 						if (statusIt->status != RS_STATUS_OFFLINE) {
 							gpgStatus = RS_STATUS_ONLINE;
@@ -645,7 +645,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		bool bFoundGPG = false;
 		bool bFoundSSL = false;
@@ -827,7 +827,7 @@ void FriendSelectionWidget::itemChanged(QTreeWidgetItem *item, int column)
 void FriendSelectionWidget::filterItems(const QString& text)
 {
 	int count = ui->friendList->topLevelItemCount();
-	for (int index = 0; index < count; index++) {
+	for (int index = 0; index < count; ++index) {
 		filterItem(ui->friendList->topLevelItem(index), text);
 	}
 }
@@ -844,9 +844,9 @@ bool FriendSelectionWidget::filterItem(QTreeWidgetItem *item, const QString &tex
 
 	int visibleChildCount = 0;
 	int count = item->childCount();
-	for (int index = 0; index < count; index++) {
+	for (int index = 0; index < count; ++index) {
 		if (filterItem(item->child(index), text)) {
-			visibleChildCount++;
+			++visibleChildCount;
 		}
 	}
 
@@ -881,7 +881,7 @@ void FriendSelectionWidget::selectedIds(IdType idType, std::list<std::string> &i
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		std::string id;
 
@@ -955,7 +955,7 @@ void FriendSelectionWidget::setSelectedIds(IdType idType, const std::list<std::s
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		std::string id = idFromItem(item);
 		IdType itemType = idTypeFromItem(item);
@@ -986,7 +986,7 @@ void FriendSelectionWidget::itemsFromId(IdType idType, const std::string &id, QL
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (idType == idTypeFromItem(item) && idFromItem(item) == id) {
 			items.push_back(item);
@@ -999,7 +999,7 @@ void FriendSelectionWidget::items(QList<QTreeWidgetItem*> &_items, IdType idType
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (idType == IDTYPE_NONE || idType == idTypeFromItem(item)) {
 			_items.push_back(item);

@@ -183,7 +183,7 @@ void GenCertDialog::init()
 	bool foundGPGKeys = false;
 	if (!mOnlyGenerateIdentity) {
 		if (RsAccounts::GetPGPLogins(pgpIds)) {
-			for(it = pgpIds.begin(); it != pgpIds.end(); it++)
+			for(it = pgpIds.begin(); it != pgpIds.end(); ++it)
 			{
 				QVariant userData(QString::fromStdString( (*it).toStdString() ));
 				std::string name, email;

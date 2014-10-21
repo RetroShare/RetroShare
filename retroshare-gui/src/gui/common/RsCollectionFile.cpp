@@ -157,7 +157,7 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const DirDetails& det
 
 		d.setAttribute(QString("name"),QString::fromUtf8(details.name.c_str())) ;
 
-		for (std::list<DirStub>::const_iterator it = details.children.begin(); it != details.children.end(); it++)
+		for (std::list<DirStub>::const_iterator it = details.children.begin(); it != details.children.end(); ++it)
 		{
 			if (!it->ref) 
 				continue;
@@ -193,7 +193,7 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const ColFileInfo& co
 
 		d.setAttribute(QString("name"),colFileInfo.name) ;
 
-		for (std::vector<ColFileInfo>::const_iterator it = colFileInfo.children.begin(); it != colFileInfo.children.end(); it++)
+		for (std::vector<ColFileInfo>::const_iterator it = colFileInfo.children.begin(); it != colFileInfo.children.end(); ++it)
 {
 			recursAddElements(doc,(*it),d) ;
 		}
@@ -298,7 +298,7 @@ bool RsCollectionFile::checkFile(const QString& fileName, bool showError)
 			if(file.atEnd())
 			n-- ;
 		else if(n < max_size)
-			n++ ;
+			++n ;
 	}
 	file.close();
 		return true;

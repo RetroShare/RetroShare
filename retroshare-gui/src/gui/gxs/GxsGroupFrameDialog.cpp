@@ -499,7 +499,7 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId groupId, const RsGxsMessag
 //        QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
 //        QTreeWidgetItem *item = NULL;
 //        while ((item = *itemIterator) != NULL) {
-//                itemIterator++;
+//                ++itemIterator;
 //
 //                if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == msgId) {
 //                        ui->threadTreeWidget->setCurrentItem(item);
@@ -685,7 +685,7 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 	QList<GroupItemInfo> otherList;
 	std::multimap<uint32_t, GroupItemInfo> popMap;
 
-	for (it = groupList.begin(); it != groupList.end(); it++) {
+	for (it = groupList.begin(); it != groupList.end(); ++it) {
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
 		uint32_t flags = it->mSubscribeFlags;
 
@@ -721,12 +721,12 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 	uint32_t i = 0;
 	uint32_t popLimit = 0;
 	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
+	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); ++rit, ++i) ;
 	if (rit != popMap.rend()) {
 		popLimit = rit->first;
 	}
 
-	for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit) {
 		if (rit->second.popularity < (int) popLimit) {
 			otherList.append(rit->second);
 		} else {
@@ -756,10 +756,10 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 
 	if (groupId.isNull()) {
 		QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
-		for (int item = 0; item < 2; item++) {
+		for (int item = 0; item < 2; ++item) {
 			int child;
 			int childCount = items[item]->childCount();
-			for (child = 0; child < childCount; child++) {
+			for (child = 0; child < childCount; ++child) {
 				QTreeWidgetItem *childItem = items[item]->child(child);
 				QString childId = ui->groupTreeWidget->itemId(childItem);
 				if (childId.isEmpty()) {

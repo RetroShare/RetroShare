@@ -197,7 +197,7 @@ bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
     m_styleType = styleType;
 
     // reset cache
-    for (int i = 0; i < FORMATMSG_COUNT; i++) {
+    for (int i = 0; i < FORMATMSG_COUNT; ++i) {
         m_style[i].clear();
     }
 
@@ -489,7 +489,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     QFileInfoList dirList = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot, QDir::Name);
 
     // iterate style directories and get info
-    for (QFileInfoList::iterator it = dirList.begin(); it != dirList.end(); it++) {
+    for (QFileInfoList::iterator it = dirList.begin(); it != dirList.end(); ++it) {
         QDir styleDir = QDir(it->absoluteFilePath());
         if (styleDir.cd(stylePath) == false) {
             // no user styles available
@@ -530,7 +530,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files, QDir::Name);
 
     // iterate variants
-    for (QFileInfoList::iterator file = fileList.begin(); file != fileList.end(); file++) {
+    for (QFileInfoList::iterator file = fileList.begin(); file != fileList.end(); ++file) {
 #ifndef COLORED_NICKNAMES
         if (file->baseName().toLower() == "colored") {
             continue;

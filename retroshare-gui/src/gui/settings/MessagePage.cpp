@@ -71,10 +71,10 @@ MessagePage::save(QString &/*errmsg*/)
     Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
         // check for changed tags
         std::list<uint32_t>::iterator changedTagId;
-        for (changedTagId = m_changedTagIds.begin(); changedTagId != m_changedTagIds.end(); changedTagId++) {
+        for (changedTagId = m_changedTagIds.begin(); changedTagId != m_changedTagIds.end(); ++changedTagId) {
             if (*changedTagId == Tag->first) {
                 if (Tag->second.first.empty()) {
                     // delete tag
@@ -111,7 +111,7 @@ void MessagePage::fillTags()
     ui.tags_listWidget->clear();
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
         QString text = TagDefs::name(Tag->first, Tag->second.first);
 
         QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
@@ -206,7 +206,7 @@ void MessagePage::defaultTag()
 
     // add all standard items to changed list
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
         if (Tag->first < RS_MSGTAGTYPE_USER) {
             if (std::find(m_changedTagIds.begin(), m_changedTagIds.end(), Tag->first) == m_changedTagIds.end()) {
                 m_changedTagIds.push_back(Tag->first);

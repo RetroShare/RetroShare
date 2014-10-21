@@ -42,7 +42,7 @@ RsItem *p3Service::recvItem()
 {
 	RsStackMutex stack(srvMtx);  /*****   LOCK MUTEX *****/
 
-	if (recv_queue.size() == 0)
+	if (recv_queue.empty())
 	{
 		return NULL; /* nothing there! */
 	}

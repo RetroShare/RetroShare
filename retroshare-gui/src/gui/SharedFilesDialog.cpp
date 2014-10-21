@@ -497,7 +497,7 @@ QModelIndexList SharedFilesDialog::getSelected()
 {
 	QModelIndexList list = ui.dirTreeView->selectionModel()->selectedIndexes() ;
 	QModelIndexList proxyList ;
-	for (QModelIndexList::iterator index = list.begin(); index != list.end(); index++ ) {
+	for (QModelIndexList::iterator index = list.begin(); index != list.end(); ++index ) {
 		proxyList.append(proxyModel->mapToSource(*index)) ;
 	}//for (QModelIndexList::iterator index
 
@@ -521,7 +521,7 @@ void LocalSharedFilesDialog::editSharePermissions()
 	rsFiles->getSharedDirectories(dirs);
 
 	std::list<SharedDirInfo>::const_iterator it;
-	for (it = dirs.begin(); it != dirs.end(); it++) {
+	for (it = dirs.begin(); it != dirs.end(); ++it) {
 		if (currentFile == currentFile) {
 			/* file name found, show dialog */
 			ShareDialog sharedlg (it->filename, this);
@@ -756,7 +756,7 @@ void LocalSharedFilesDialog::playselectedfiles()
 
   std::list<std::string>::iterator it;
   QStringList fullpaths;
-  for(it = paths.begin(); it != paths.end(); it++)
+  for(it = paths.begin(); it != paths.end(); ++it)
   {
 	  std::string fullpath;
 	  rsFiles->ConvertSharedFilePath(*it, fullpath);
@@ -1023,7 +1023,7 @@ void SharedFilesDialog::FilterItems()
 	 QCoreApplication::processEvents() ;
 
     int rowCount = ui.dirTreeView->model()->rowCount();
-    for (int row = 0; row < rowCount; row++)
+    for (int row = 0; row < rowCount; ++row)
 		 if(proxyModel == tree_proxyModel)
 			 tree_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
 		 else
@@ -1063,9 +1063,9 @@ bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString 
 
     int visibleChildCount = 0;
     int rowCount = ui.dirTreeView->model()->rowCount(index);
-    for (int row = 0; row < rowCount; row++) {
+    for (int row = 0; row < rowCount; ++row) {
         if (tree_FilterItem(ui.dirTreeView->model()->index(row, index.column(), index), text, level + 1)) {
-            visibleChildCount++;
+            ++visibleChildCount;
         }
     }
 

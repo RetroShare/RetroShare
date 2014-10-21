@@ -87,7 +87,7 @@ void GxsCircleChooser::loadGxsCircles()
 	std::list<RsGxsCircleId>::iterator it;
 	int i = 0; 
 	int def = -1;
-	for(it = ids.begin(); it != ids.end(); it++, i++)
+	for(it = ids.begin(); it != ids.end(); ++it, ++i)
 	{
 		/* add to Chooser */
 		QString str;

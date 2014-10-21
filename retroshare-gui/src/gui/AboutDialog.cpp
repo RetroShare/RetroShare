@@ -265,7 +265,7 @@ void AWidget::calcWater(int npage, int density) {
     }
 
     for (int y = (h-1)*w; count < y; count += 2) {
-        for (int x = count+w-2; count < x; count++) {
+        for (int x = count+w-2; count < x; ++count) {
             // This does the eight-pixel method.  It looks much better.
             int newh  = ((oldptr[count + w]
             + oldptr[count - w]
@@ -308,9 +308,9 @@ void AWidget::addBlob(int x, int y, int radius, int height) {
     if (x + radius > w-1) right -= (x+radius-w+1);
     if (y + radius > h-1) bottom-= (y+radius-h+1);
 
-    for(int cy = top; cy < bottom; cy++) {
+    for(int cy = top; cy < bottom; ++cy) {
         int cyq = cy*cy;
-        for(int cx = left; cx < right; cx++) {
+        for(int cx = left; cx < right; ++cx) {
             if (cx*cx + cyq < rquad) {
                 newptr[w*(cy+y) + (cx+x)] += height;
             }
@@ -330,7 +330,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
     int *ptr = &heightField1.front();
 
     for (int y = (h-1)*w; offset < y; offset += 2) {
-        for (int x = offset+w-2; offset < x; offset++) {
+        for (int x = offset+w-2; offset < x; ++offset) {
             int dx = ptr[offset] - ptr[offset+1];
             int dy = ptr[offset] - ptr[offset+w];
 
@@ -340,7 +340,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
                 c = shiftColor(c, dx);
                 dstImage[offset] = c;
             }
-            offset++;
+            ++offset;
             dx = ptr[offset] - ptr[offset+1];
             dy = ptr[offset] - ptr[offset+w];
 
@@ -509,7 +509,7 @@ void TBoard::dropDown() {
             break;
         }
         newY--;
-        dropHeight++;
+        ++dropHeight;
     }
     pieceDropped(dropHeight);
 }

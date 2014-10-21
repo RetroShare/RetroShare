@@ -291,20 +291,20 @@ void DhtWindow::updateNetPeers()
 		}
 		else
 		{
-			nIndex++;
+			++nIndex;
 		}
 	}
 #endif
 	ui.peerTreeWidget->clear();
 
-	for(it = peerIds.begin(); it != peerIds.end(); it++)
+	for(it = peerIds.begin(); it != peerIds.end(); ++it)
 	{
 		/* find the entry */
 		QTreeWidgetItem *peer_item = NULL;
 #if 0
 		QString qpeerid = QString::fromStdString(*it);
 		int itemCount = ui.peerTreeWidget->topLevelItemCount();
-		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
+		for (int nIndex = 0; nIndex < itemCount; ++nIndex)
 		{
 			QTreeWidgetItem *tmp_item = ui.peerTreeWidget->topLevelItem(nIndex);
 			if (tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString() == qpeerid) 
@@ -352,15 +352,15 @@ void DhtWindow::updateNetPeers()
 				break;
 			case RSDHT_PEERDHT_OFFLINE:
 				dhtstate = tr("offline");
-				nOfflinePeers++;
+				++nOfflinePeers;
 				break;
 			case RSDHT_PEERDHT_UNREACHABLE:
 				dhtstate = tr("Unreachable");
-				nUnreachablePeers++;
+				++nUnreachablePeers;
 				break;
 			case RSDHT_PEERDHT_ONLINE:
 				dhtstate = tr("ONLINE");
-				nOnlinePeers++;
+				++nOnlinePeers;
 				break;
 		}
 			
@@ -392,7 +392,7 @@ void DhtWindow::updateNetPeers()
 			default:
 			case RSDHT_PEERCONN_DISCONNECTED:
 				cpsstr = tr("Disconnected");
-				nDisconnPeers++;
+				++nDisconnPeers;
 				break;
 			case RSDHT_PEERCONN_UDP_STARTED:
 				cpsstr = tr("Udp Started");
@@ -405,13 +405,13 @@ void DhtWindow::updateNetPeers()
 				{
 					default:
 					case RSDHT_TOU_MODE_DIRECT:
-						nDirectPeers++;
+						++nDirectPeers;
 						break;
 					case RSDHT_TOU_MODE_PROXY:
-						nProxyPeers++;
+						++nProxyPeers;
 						break;
 					case RSDHT_TOU_MODE_RELAY:
-						nRelayPeers++;
+						++nRelayPeers;
 						break;
 				}
 			}
@@ -508,7 +508,7 @@ void DhtWindow::updateRelays()
 	relayTreeWidget->clear();
 	time_t now = time(NULL);
 
-	for(reit = relayEnds.begin(); reit != relayEnds.end(); reit++)
+	for(reit = relayEnds.begin(); reit != relayEnds.end(); ++reit)
 	{
 		/* find the entry */
 		QTreeWidgetItem *item = new QTreeWidgetItem();
@@ -538,7 +538,7 @@ void DhtWindow::updateRelays()
 	}
 
 
-	for(rpit = relayProxies.begin(); rpit != relayProxies.end(); rpit++)
+	for(rpit = relayProxies.begin(); rpit != relayProxies.end(); ++rpit)
 	{
 		/* find the entry */
 		QTreeWidgetItem *item = new QTreeWidgetItem();
@@ -607,12 +607,12 @@ void DhtWindow::updateDhtPeers()
 	std::list<RsDhtPeer> allpeers;
 	std::list<RsDhtPeer>::iterator it;
 	int i;
-	for(i = 0; i < 160; i++)
+	for(i = 0; i < 160; ++i)
 	{
 		std::list<RsDhtPeer> peers;
         	rsDht->getDhtPeers(i, peers);
 
-		for(it = peers.begin(); it != peers.end(); it++)
+		for(it = peers.begin(); it != peers.end(); ++it)
 		{
 			allpeers.push_back(*it);
 		}
@@ -623,7 +623,7 @@ void DhtWindow::updateDhtPeers()
 	ui.dhtTreeWidget->clear();
 
 	time_t now = time(NULL);
-	for(it = allpeers.begin(); it != allpeers.end(); it++)
+	for(it = allpeers.begin(); it != allpeers.end(); ++it)
 	{
 		/* find the entry */
 		QTreeWidgetItem *dht_item = NULL;

@@ -293,7 +293,7 @@ PictureFlowState::PictureFlowState():
 
 PictureFlowState::~PictureFlowState()
 {
-	for(int i = 0; i < (int)slideImages.count(); i++)
+	for(int i = 0; i < (int)slideImages.count(); ++i)
 		delete slideImages[i];
 }
 
@@ -317,7 +317,7 @@ void PictureFlowState::reset()
 	centerSlide.slideIndex = centerIndex;
 	centerSlide.blend = 256;
 
-	for(int i = 0; i < (int)leftSlides.count(); i++) {
+	for(int i = 0; i < (int)leftSlides.count(); ++i) {
 		SlideInfo& si = leftSlides[i];
 		si.angle = angle;
 		si.cx = -(offsetX + spacing*i*PFREAL_ONE);
@@ -326,14 +326,14 @@ void PictureFlowState::reset()
 		si.blend = 256 * (((int)leftSlides.count()-i)/(float)leftSlides.count());
 	}//for(int i = 0; i < (int)leftSlides.count(); i++)
 
-	for(int i = 0; i < (int)rightSlides.count(); i++) {
+	for(int i = 0; i < (int)rightSlides.count(); ++i) {
 		SlideInfo& si = rightSlides[i];
 		si.angle = -angle;
 		si.cx = offsetX + spacing*i*PFREAL_ONE;
 		si.cy = offsetY;
 		si.slideIndex = centerIndex+1+i;
 		si.blend = 256 * (((int)rightSlides.count()-i)/(float)rightSlides.count());
-	}//for(int i = 0; i < (int)rightSlides.count(); i++
+	}//for(int i = 0; i < (int)rightSlides.count(); ++i
 }
 
 // ------------- PictureFlowAnimator  ---------------------------------------
@@ -394,15 +394,15 @@ void PictureFlowAnimator::update()
 	PFreal ftick = (tick * PFREAL_ONE) >> 16;
 
 	if(step < 0)
-		index++;
+		++index;
 
 	if(state->centerIndex != index) {
 		state->centerIndex = index;
 		frame = index << 16;
 		state->centerSlide.slideIndex = state->centerIndex;
-		for(int i = 0; i < (int)state->leftSlides.count(); i++)
+		for(int i = 0; i < (int)state->leftSlides.count(); ++i)
 			state->leftSlides[i].slideIndex = state->centerIndex-1-i;
-		for(int i = 0; i < (int)state->rightSlides.count(); i++)
+		for(int i = 0; i < (int)state->rightSlides.count(); ++i)
 			state->rightSlides[i].slideIndex = state->centerIndex+1+i;
 	}//if(state->centerIndex != index)
 
@@ -416,19 +416,19 @@ void PictureFlowAnimator::update()
 		return;
 	}//if(state->centerIndex == target)
 
-	for(int i = 0; i < (int)state->leftSlides.count(); i++) {
+	for(int i = 0; i < (int)state->leftSlides.count(); ++i) {
 		SlideInfo& si = state->leftSlides[i];
 		si.angle = state->angle;
 		si.cx = -(state->offsetX + state->spacing*i*PFREAL_ONE + step*state->spacing*ftick);
 		si.cy = state->offsetY;
-	}//for(int i = 0; i < (int)state->leftSlides.count(); i++)
+	}//for(int i = 0; i < (int)state->leftSlides.count(); ++i)
 
-	for(int i = 0; i < (int)state->rightSlides.count(); i++) {
+	for(int i = 0; i < (int)state->rightSlides.count(); ++i) {
 		SlideInfo& si = state->rightSlides[i];
 		si.angle = -state->angle;
 		si.cx = state->offsetX + state->spacing*i*PFREAL_ONE - step*state->spacing*ftick;
 		si.cy = state->offsetY;
-	}//for(int i = 0; i < (int)state->rightSlides.count(); i++)
+	}//for(int i = 0; i < (int)state->rightSlides.count(); ++i)
 
 	if(step > 0) {
 		PFreal ftick = (neg * PFREAL_ONE) >> 16;
@@ -452,20 +452,20 @@ void PictureFlowAnimator::update()
 	int nleft = state->leftSlides.count();
 	int nright = state->rightSlides.count();
 
-	for(int index = 0; index < nleft; index++) {
+	for(int index = 0; index < nleft; ++index) {
 		int startBlend = 256 * ((nleft-index)/(float)nleft);
 		int stopBlend = 256 * ((nleft-index-step)/(float)nleft);
 		int blend = startBlend + ((stopBlend-startBlend) * (tick/65535.0)) ;
 		if ((index==0) && (step<0)) blend = 256;//Is center
 		state->leftSlides[index].blend = blend;
-	}//for(int index = 0; index < nleft; index++)
-	for(int index = 0; index < nright; index++) {
+	}//for(int index = 0; index < nleft; ++index)
+	for(int index = 0; index < nright; ++index) {
 		int startBlend = 256 * ((nright-index)/(float)nright);
 		int stopBlend = 256 * ((nright-index+step)/(float)nright);
 		int blend = startBlend + ((stopBlend-startBlend) * (tick/65535.0)) ;
 		if ((index==0) && (step>0)) blend = 256;//Is center
 		state->rightSlides[index].blend = blend;
-	}//for(int index = 0; index < nright; index++)
+	}//for(int index = 0; index < nright; ++index)
 }
 
 // ------------- PictureFlowSoftwareRenderer ---------------------------------------
@@ -533,11 +533,11 @@ void PictureFlowSoftwareRenderer::init()
 	buffer.fill(bgcolor);
 
 	rays.resize(w*2);
-	for(int i = 0; i < w; i++) {
+	for(int i = 0; i < w; ++i) {
 		PFreal gg = ((PFREAL_ONE >> 1) + i * PFREAL_ONE) / (2*h);
 		rays[w-i-1] = -gg;
 		rays[w+i] = gg;
-	}//for(int i = 0; i < w; i++)
+	}//for(int i = 0; i < w; ++i)
 
 	dirty = true;
 }
@@ -580,19 +580,19 @@ static QImage* prepareSurface(const QImage* slideImage, int w, int h, QRgb bgcol
 	// transpose the image, this is to speed-up the rendering
 	// because we process one column at a time
 	// (and much better and faster to work row-wise, i.e in one scanline)
-	for(int x = 0; x < w; x++)
-		for(int y = 0; y < h; y++)
+	for(int x = 0; x < w; ++x)
+		for(int y = 0; y < h; ++y)
 			result->setPixel(hofs + y, x, img.pixel(x, y));
 
 	if(reflectionEffect != PictureFlow::NoReflection) {
 		// create the reflection
 		int ht = hs - h - hofs;
 		int hte = ht;
-		for(int x = 0; x < w; x++)
-			for(int y = 0; y < ht; y++) {
+		for(int x = 0; x < w; ++x)
+			for(int y = 0; y < ht; ++y) {
 				QRgb color = img.pixel(x, img.height()-y-1);
 				result->setPixel(h+hofs+y, x, blendColor(color,bgcolor,128*(hte-y)/hte));
-			}//for(int y = 0; y < ht; y++)
+			}//for(int y = 0; y < ht; ++y)
 
 		if(reflectionEffect == PictureFlow::BlurredReflection) {
 			// blur the reflection everything first
@@ -611,55 +611,55 @@ static QImage* prepareSurface(const QImage* slideImage, int w, int h, QRgb bgcol
 
 			// how many times blur is applied?
 			// for low-end system, limit this to only 1 loop
-			for(int loop = 0; loop < 2; loop++) {
-				for(int col = c1; col <= c2; col++) {
+			for(int loop = 0; loop < 2; ++loop) {
+				for(int col = c1; col <= c2; ++col) {
 					p = result->scanLine(r1) + col*4;
-					for(int i = 0; i < 3; i++)
+					for(int i = 0; i < 3; ++i)
 						rgba[i] = p[i] << 4;
 
 					p += bpl;
-					for(int j = r1; j < r2; j++, p += bpl)
-						for(int i = 0; i < 3; i++)
+					for(int j = r1; j < r2; ++j, p += bpl)
+						for(int i = 0; i < 3; ++i)
 							p[i] = (rgba[i] += (((p[i]<<4)-rgba[i])) >> 1) >> 4;
-				}//for(int col = c1; col <= c2; col++)
+				}//for(int col = c1; col <= c2; ++col)
 
-				for(int row = r1; row <= r2; row++) {
+				for(int row = r1; row <= r2; ++row) {
 					p = result->scanLine(row) + c1*4;
-					for(int i = 0; i < 3; i++)
+					for(int i = 0; i < 3; ++i)
 						rgba[i] = p[i] << 4;
 
 					p += 4;
-					for(int j = c1; j < c2; j++, p+=4)
-						for(int i = 0; i < 3; i++)
+					for(int j = c1; j < c2; ++j, p+=4)
+						for(int i = 0; i < 3; ++i)
 							p[i] = (rgba[i] += (((p[i]<<4)-rgba[i])) >> 1) >> 4;
-				}//for(int row = r1; row <= r2; row++)
+				}//for(int row = r1; row <= r2; ++row)
 
-				for(int col = c1; col <= c2; col++) {
+				for(int col = c1; col <= c2; ++col) {
 					p = result->scanLine(r2) + col*4;
-					for(int i = 0; i < 3; i++)
+					for(int i = 0; i < 3; ++i)
 						rgba[i] = p[i] << 4;
 
 					p -= bpl;
-					for(int j = r1; j < r2; j++, p -= bpl)
-						for(int i = 0; i < 3; i++)
+					for(int j = r1; j < r2; ++j, p -= bpl)
+						for(int i = 0; i < 3; ++i)
 							p[i] = (rgba[i] += (((p[i]<<4)-rgba[i])) >> 1) >> 4;
-				}//for(int col = c1; col <= c2; col++)
+				}//for(int col = c1; col <= c2; ++col)
 
-				for(int row = r1; row <= r2; row++) {
+				for(int row = r1; row <= r2; ++row) {
 					p = result->scanLine(row) + c2*4;
-					for(int i = 0; i < 3; i++)
+					for(int i = 0; i < 3; ++i)
 						rgba[i] = p[i] << 4;
 
 					p -= 4;
-					for(int j = c1; j < c2; j++, p-=4)
-						for(int i = 0; i < 3; i++)
+					for(int j = c1; j < c2; ++j, p-=4)
+						for(int i = 0; i < 3; ++i)
 							p[i] = (rgba[i] += (((p[i]<<4)-rgba[i])) >> 1) >> 4;
-				}//for(int row = r1; row <= r2; row++)
-			}//for(int loop = 0; loop < 2; loop++)
+				}//for(int row = r1; row <= r2; ++row)
+			}//for(int loop = 0; loop < 2; ++loop)
 
 			// overdraw to leave only the reflection blurred (but not the actual image)
-			for(int x = 0; x < w; x++)
-				for(int y = 0; y < h; y++)
+			for(int x = 0; x < w; ++x)
+				for(int y = 0; y < h; ++y)
 					result->setPixel(hofs + y, x, img.pixel(x, y));
 		}//if(reflectionEffect == PictureFlow::BlurredReflection)
 	}//if(reflectionEffect != PictureFlow::NoReflection)
@@ -790,7 +790,7 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 
 	bool flag = false;
 	rect.setLeft(xi);
-	for(int x = qMax(xi, col1); x <= col2; x++) {
+	for(int x = qMax(xi, col1); x <= col2; ++x) {
 		PFreal hity = 0;
 		PFreal fk = rays[x];
 		if(sdy) {
@@ -834,8 +834,8 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 				*pixel2 = ptr[p2 >> PFREAL_SHIFT];
 				p1 -= dy;
 				p2 += dy;
-				y1--;
-				y2++;
+				--y1;
+				++y2;
 				pixel1 -= pixelstep;
 				pixel2 += pixelstep;
 			}//while((y1 >= 0) && (y2 < h) && (p1 >= 0))
@@ -847,12 +847,12 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 				*pixel2 = blendColor(c2, bgcolor, blend);
 				p1 -= dy;
 				p2 += dy;
-				y1--;
-				y2++;
+				--y1;
+				++y2;
 				pixel1 -= pixelstep;
 				pixel2 += pixelstep;
 			}//while((y1 >= 0) && (y2 < h) && (p1 >= 0))
-	}//for(int x = qMax(xi, col1); x <= col2; x++)
+	}//for(int x = qMax(xi, col1); x <= col2; ++x)
 
 	rect.setTop(0);
 	rect.setBottom(h-1);
@@ -870,23 +870,23 @@ void PictureFlowSoftwareRenderer::renderSlides()
 	state->centerSlide.left=c1;
 	state->centerSlide.right=c2;
 
-	for(int index = 0; index < nleft; index++) {
+	for(int index = 0; index < nleft; ++index) {
 		QRect rs = renderSlide(state->leftSlides[index], 0, c1-1);
 		if(!rs.isEmpty()) {
 			state->leftSlides[index].left=rs.left();
 			state->leftSlides[index].right=rs.right();
 			c1 = rs.left();
 		}//if(!rs.isEmpty())
-	}//for(int index = 0; index < nleft; index++)
+	}//for(int index = 0; index < nleft; ++index)
 
-	for(int index = 0; index < nright; index++) {
+	for(int index = 0; index < nright; ++index) {
 		QRect rs = renderSlide(state->rightSlides[index], c2+1, buffer.width());
 		if(!rs.isEmpty()){
 			state->rightSlides[index].left=rs.left();
 			state->rightSlides[index].right=rs.right();
 			c2 = rs.right();
 		}//if(!rs.isEmpty())
-	}//for(int index = 0; index < nright; index++)
+	}//for(int index = 0; index < nright; ++index)
 }
 
 // Render the slides. Updates only the offscreen buffer.
@@ -1101,7 +1101,7 @@ void PictureFlow::setCenterIndex(int index)
 void PictureFlow::clear()
 {
 	int c = d->state->slideImages.count();
-	for(int i = 0; i < c; i++)
+	for(int i = 0; i < c; ++i)
 		delete d->state->slideImages[i];
 	d->state->slideImages.resize(0);
 

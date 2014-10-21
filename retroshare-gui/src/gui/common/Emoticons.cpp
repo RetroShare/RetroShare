@@ -75,7 +75,7 @@ void Emoticons::load()
     QString smfile;
     while(sm_codes[i] != '{')
     {
-        i++;
+        ++i;
     }
     while (i < sm_codes.length()-2)
     {
@@ -84,27 +84,27 @@ void Emoticons::load()
 
         while(sm_codes[i] != '\"')
         {
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
         while (sm_codes[i] != '\"')
         {
             smcode += sm_codes[i];
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
 
         while(sm_codes[i] != '\"')
         {
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
         while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
         {
             smfile += sm_codes[i];
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
         if(!smcode.isEmpty() && !smfile.isEmpty()) {
             while (smcode.right(1) == "|") {
                 smcode.remove(smcode.length() - 1, 1);
@@ -189,7 +189,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
         if(x >= countPerLine)
         {
             x = 0;
-            y++;
+            ++y;
         }
         QObject::connect(smButton, SIGNAL(clicked()), parent, slotAddMethod);
         QObject::connect(smButton, SIGNAL(clicked()), smWidget, SLOT(close()));

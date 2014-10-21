@@ -480,8 +480,8 @@ int UdpRelayReceiver::installRelayClass_relayLocked(int &classIdx, uint32_t &ban
 	std::cerr << std::endl;
 
 	/* if we get here we can add one */
-	mClassCount[UDP_RELAY_CLASS_ALL]++;
-	mClassCount[classIdx]++;
+	++mClassCount[UDP_RELAY_CLASS_ALL];
+	++mClassCount[classIdx];
 	bandwidth = mClassBandwidth[classIdx];
 
 	return 1;

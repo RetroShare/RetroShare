@@ -433,7 +433,7 @@ static QString buildRecommendHtml(const std::list<RsPeerId> &sslIds, const RsPee
 
     /* process ssl ids */
     std::list <RsPeerId>::const_iterator sslIt;
-    for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+    for (sslIt = sslIds.begin(); sslIt != sslIds.end(); ++sslIt) {
         if (*sslIt == excludeId) {
             continue;
         }
@@ -455,7 +455,7 @@ void MessageComposer::recommendFriend(const std::list <RsPeerId> &sslIds, const 
 {
 //    std::cerr << "MessageComposer::recommendFriend()" << std::endl;
 
-    if (sslIds.size() == 0) {
+    if (sslIds.empty()) {
         return;
     }
 
@@ -486,7 +486,7 @@ void MessageComposer::recommendFriend(const std::list <RsPeerId> &sslIds, const 
     composer->setMsgText(sMsgText);
 
     std::list <RsPeerId>::const_iterator peerIt;
-    for (peerIt = sslIds.begin(); peerIt != sslIds.end(); peerIt++) {
+    for (peerIt = sslIds.begin(); peerIt != sslIds.end(); ++peerIt) {
         if (*peerIt == to) {
             continue;
         }
@@ -523,7 +523,7 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
     std::list<MsgInfoSummary>::const_iterator it;
 
     rsMsgs->getMessageSummaries(msgList);
-    for(it = msgList.begin(); it != msgList.end(); it++) {
+    for(it = msgList.begin(); it != msgList.end(); ++it) {
         if (it->msgflags & RS_MSG_TRASH) {
             continue;
         }
@@ -620,7 +620,7 @@ void MessageComposer::pasteRecommended()
     QList<RetroShareLink> links;
     RSLinkClipboard::pasteLinks(links);
 
-    for (int i = 0; i < links.size(); i++) {
+    for (int i = 0; i < links.size(); ++i) {
         if (links[i].valid() && links[i].type() == RetroShareLink::TYPE_FILE) {
             FileInfo fileInfo;
             fileInfo.fname = links[i].name().toStdString();
@@ -637,7 +637,7 @@ static void setNewCompleter(QTableWidget *tableWidget, QCompleter *completer)
     int rowCount = tableWidget->rowCount();
     int row;
 
-    for (row = 0; row < rowCount; row++) {
+    for (row = 0; row < rowCount; ++row) {
         QLineEdit *lineEdit = dynamic_cast<QLineEdit*>(tableWidget->cellWidget(row, COLUMN_RECIPIENT_NAME));
         if (lineEdit) {
             lineEdit->setCompleter(completer);
@@ -660,7 +660,7 @@ void MessageComposer::buildCompleter()
     QStringList completerList;
     QStringList completerGroupList;
 
-    for (peerIt = peers.begin(); peerIt != peers.end(); peerIt++) {
+    for (peerIt = peers.begin(); peerIt != peers.end(); ++peerIt) {
         RsPeerDetails detail;
         if (!rsPeers->getPeerDetails(*peerIt, detail)) {
             continue; /* BAD */
@@ -675,7 +675,7 @@ void MessageComposer::buildCompleter()
     completerList.sort();
 
     // create completer list for groups
-    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
         completerGroupList.append(GroupDefs::name(*groupIt));
     }
 
@@ -692,7 +692,7 @@ void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
     int rowCount = ui.recipientWidget->rowCount();
     int row;
 
-    for (row = 0; row < rowCount; row++) {
+    for (row = 0; row < rowCount; ++row) {
         enumType type;
         destinationType dtype ;
         std::string id;
@@ -714,7 +714,7 @@ void MessageComposer::setFileList(const std::list<DirDetails>& dir_info)
     std::list<DirDetails>::const_iterator it;
 
     /* convert dir_info to files_info */
-    for(it = dir_info.begin(); it != dir_info.end(); it++)
+    for(it = dir_info.begin(); it != dir_info.end(); ++it)
     {
         FileInfo info ;
         info.fname = it->name ;
@@ -733,7 +733,7 @@ void MessageComposer::setFileList(const std::list<FileInfo>& files_info)
     ui.msgFileList->clear();
 
     std::list<FileInfo>::const_iterator it;
-    for(it = files_info.begin(); it != files_info.end(); it++) {
+    for(it = files_info.begin(); it != files_info.end(); ++it) {
         addFile(*it);
     }
 
@@ -742,7 +742,7 @@ void MessageComposer::setFileList(const std::list<FileInfo>& files_info)
 
 void MessageComposer::addFile(const FileInfo &fileInfo)
 {
-    for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); it++) {
+    for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); ++it) {
         if (it->hash == fileInfo.hash) {
             /* File already added */
             return;
@@ -792,14 +792,14 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
 
     // iterate all groups
     std::list<RsGroupInfo>::const_iterator groupInfoIt;
-    for (groupInfoIt = existingGroupInfos.begin(); groupInfoIt != existingGroupInfos.end(); groupInfoIt++) {
+    for (groupInfoIt = existingGroupInfos.begin(); groupInfoIt != existingGroupInfos.end(); ++groupInfoIt) {
         if (groupInfoIt->peerIds.empty()) {
             continue;
         }
 
         // iterate all assigned peers (gpg id's)
         std::list<RsPgpId>::const_iterator peerIt;
-        for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); peerIt++) {
+        for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); ++peerIt) {
             std::list<RsPeerId> sslIds;
 
             std::map<RsPgpId, std::list<RsPeerId> >::const_iterator it = gpgToSslIds.find(*peerIt);
@@ -813,7 +813,7 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
 
             // iterate all ssl id's
             std::list<RsPeerId>::const_iterator sslIt;
-            for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+            for (sslIt = sslIds.begin(); sslIt != sslIds.end(); ++sslIt) {
                 // search in ssl list
                 if (std::find(checkSslIds.begin(), checkSslIds.end(), *sslIt) == checkSslIds.end()) {
                     // not found
@@ -833,10 +833,10 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
     }
 
     // remove all ssl id's of all found groups from the list
-    for (groupInfoIt = groupInfos.begin(); groupInfoIt != groupInfos.end(); groupInfoIt++) {
+    for (groupInfoIt = groupInfos.begin(); groupInfoIt != groupInfos.end(); ++groupInfoIt) {
         // iterate all assigned peers (gpg id's)
         std::list<RsPgpId>::const_iterator peerIt;
-        for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); peerIt++) {
+        for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); ++peerIt) {
             std::list<RsPeerId> sslIds;
 
             std::map<RsPgpId, std::list<RsPeerId> >::iterator it = gpgToSslIds.find(*peerIt);
@@ -850,7 +850,7 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
 
             // iterate all ssl id's
             std::list<RsPeerId>::const_iterator sslIt;
-            for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+            for (sslIt = sslIds.begin(); sslIt != sslIds.end(); ++sslIt) {
                 // search in ssl list
                 std::list<RsPeerId>::iterator it = std::find(checkSslIds.begin(), checkSslIds.end(), *sslIt);
                 if (it != checkSslIds.end()) {
@@ -905,26 +905,26 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         std::list<std::string>::iterator groupIt;
 
     //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
-    //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+    //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
     //           msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
     //       }
 
     //     calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
-    //     for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+    //     for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
     //         msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
     //     }
 
     //        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
-    //        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+    //        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); ++groupIt ) {
     //            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
     //        }
 
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); it++ )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgto.begin();   it != msgInfo.rsgxsid_msgto.end(); it++ )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin();   it != msgInfo.rsgxsid_msgcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); it++ )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
+        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
+        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
+        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
+        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgto.begin();   it != msgInfo.rsgxsid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
+        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin();   it != msgInfo.rsgxsid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
+        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
 
         MsgTagInfo tagInfo;
         rsMsgs->getMessageTag(msgId, tagInfo);
@@ -946,7 +946,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
     QString from = link.toHtml();
 
     QString to;
-    for ( std::list<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); it++)
+    for ( std::list<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); ++it)
         if (link.createMessage(*it, ""))
         {
             if (!to.isEmpty())
@@ -954,7 +954,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 
             to += link.toHtml();
         }
-    for ( std::list<RsGxsId>::const_iterator  it = msgInfo.rsgxsid_msgto.begin(); it != msgInfo.rsgxsid_msgto.end(); it++)
+    for ( std::list<RsGxsId>::const_iterator  it = msgInfo.rsgxsid_msgto.begin(); it != msgInfo.rsgxsid_msgto.end(); ++it)
         if (link.createMessage(*it, ""))
         {
             if (!to.isEmpty())
@@ -965,14 +965,14 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 
 
     QString cc;
-    for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); it++)
+    for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); ++it)
         if (link.createMessage(*it, "")) {
             if (!cc.isEmpty()) {
                 cc += ", ";
             }
             cc += link.toHtml();
         }
-    for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); it++)
+    for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); ++it)
         if (link.createMessage(*it, "")) {
             if (!cc.isEmpty()) {
                 cc += ", ";
@@ -1059,19 +1059,19 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     {
         RsPeerId ownId = rsPeers->getOwnId();
 
-        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgto.begin(); tli != msgInfo.rspeerid_msgto.end(); tli++)
+        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgto.begin(); tli != msgInfo.rspeerid_msgto.end(); ++tli)
             if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgcc.begin(); tli != msgInfo.rspeerid_msgcc.end(); tli++)
+        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgcc.begin(); tli != msgInfo.rspeerid_msgcc.end(); ++tli)
             if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgto.begin(); tli != msgInfo.rsgxsid_msgto.end(); tli++)
+        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgto.begin(); tli != msgInfo.rsgxsid_msgto.end(); ++tli)
             //if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgcc.begin(); tli != msgInfo.rsgxsid_msgcc.end(); tli++)
+        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgcc.begin(); tli != msgInfo.rsgxsid_msgcc.end(); ++tli)
             //if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
     }
@@ -1197,11 +1197,11 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     }
 
     int filesCount = ui.msgFileList->topLevelItemCount();
-    for (int i = 0; i < filesCount; i++) {
+    for (int i = 0; i < filesCount; ++i) {
         QTreeWidgetItem *item = ui.msgFileList->topLevelItem(i);
         if (item->checkState(COLUMN_FILE_CHECKED)) {
             RsFileHash hash ( item->text(COLUMN_FILE_HASH).toStdString() );
-            for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); it++) {
+            for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); ++it) {
                 if (it->hash == hash) {
                     mi.files.push_back(*it);
                     break;
@@ -1220,7 +1220,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     int rowCount = ui.recipientWidget->rowCount();
     int row;
 
-    for (row = 0; row < rowCount; row++)
+    for (row = 0; row < rowCount; ++row)
     {
         enumType type;
         destinationType dtype ;
@@ -1239,12 +1239,12 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             }
 
             std::list<RsPgpId>::const_iterator groupIt;
-            for (groupIt = groupInfo.peerIds.begin(); groupIt != groupInfo.peerIds.end(); groupIt++) {
+            for (groupIt = groupInfo.peerIds.begin(); groupIt != groupInfo.peerIds.end(); ++groupIt) {
                 std::list<RsPeerId> sslIds;
                 rsPeers->getAssociatedSSLIds(*groupIt, sslIds);
 
                 std::list<RsPeerId>::const_iterator sslIt;
-                for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+                for (sslIt = sslIds.begin(); sslIt != sslIds.end(); ++sslIt) {
                     if (std::find(peers.begin(), peers.end(), *sslIt) == peers.end()) {
                         // no friend
                         continue;
@@ -1356,7 +1356,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
         /* insert new tags */
         std::list<uint32_t>::iterator tag;
-        for (tag = m_tagIds.begin(); tag != m_tagIds.end(); tag++) {
+        for (tag = m_tagIds.begin(); tag != m_tagIds.end(); ++tag) {
             if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), *tag) == tagInfo.tagIds.end()) {
                 rsMsgs->setMessageTag(mi.msgId, *tag, true);
             } else {
@@ -1365,7 +1365,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         }
 
         /* remove deleted tags */
-        for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); tag++) {
+        for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); ++tag) {
             rsMsgs->setMessageTag(mi.msgId, *tag, false);
         }
     }
@@ -1531,7 +1531,7 @@ bool MessageComposer::eventFilter(QObject *obj, QEvent *event)
         if (lineEdit) {
             int rowCount = ui.recipientWidget->rowCount();
             int row;
-            for (row = 0; row < rowCount; row++) {
+            for (row = 0; row < rowCount; ++row) {
                 if (ui.recipientWidget->cellWidget(row, COLUMN_RECIPIENT_NAME) == lineEdit) {
                     break;
                 }
@@ -1545,7 +1545,7 @@ bool MessageComposer::eventFilter(QObject *obj, QEvent *event)
             if (comboBox) {
                 int rowCount = ui.recipientWidget->rowCount();
                 int row;
-                for (row = 0; row < rowCount; row++) {
+                for (row = 0; row < rowCount; ++row) {
                     if (ui.recipientWidget->cellWidget(row, COLUMN_RECIPIENT_TYPE) == comboBox) {
                         break;
                     }
@@ -1574,7 +1574,7 @@ void MessageComposer::editingRecipientFinished()
     // find row of the widget
     int rowCount = ui.recipientWidget->rowCount();
     int row;
-    for (row = 0; row < rowCount; row++) {
+    for (row = 0; row < rowCount; ++row) {
         if (ui.recipientWidget->cellWidget(row, COLUMN_RECIPIENT_NAME) == lineEdit) {
             break;
         }
@@ -1602,7 +1602,7 @@ void MessageComposer::editingRecipientFinished()
     rsPeers->getFriendList(peers);
 
     std::list<RsPeerId>::iterator peerIt;
-    for (peerIt = peers.begin(); peerIt != peers.end(); peerIt++) {
+    for (peerIt = peers.begin(); peerIt != peers.end(); ++peerIt) {
         RsPeerDetails details;
         if (!rsPeers->getPeerDetails(*peerIt, details)) {
             continue; /* BAD */
@@ -1621,7 +1621,7 @@ void MessageComposer::editingRecipientFinished()
     rsPeers->getGroupInfoList(groupInfoList);
 
     std::list<RsGroupInfo>::iterator groupIt;
-    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
         QString groupName = GroupDefs::name(*groupIt);
         if (text.compare(groupName, Qt::CaseSensitive) == 0) {
             // found it
@@ -1638,7 +1638,7 @@ void MessageComposer::addRecipient(enumType type, const RsPeerId& pid)
 {
     int rowCount = ui.recipientWidget->rowCount();
     int row;
-    for (row = 0; row < rowCount; row++)
+    for (row = 0; row < rowCount; ++row)
     {
         enumType rowType;
         std::string rowId;
@@ -1664,7 +1664,7 @@ void MessageComposer::addRecipient(enumType type, const RsGxsId& gxs_id)
 
     int rowCount = ui.recipientWidget->rowCount();
     int row;
-    for (row = 0; row < rowCount; row++)
+    for (row = 0; row < rowCount; ++row)
     {
         enumType rowType;
         std::string rowId;
@@ -1690,7 +1690,7 @@ void MessageComposer::addRecipient(enumType type, const std::string& id)
     // search existing or empty row
     int rowCount = ui.recipientWidget->rowCount();
     int row;
-    for (row = 0; row < rowCount; row++) {
+    for (row = 0; row < rowCount; ++row) {
         enumType rowType;
         std::string rowId;
         destinationType dtype ;
@@ -2352,19 +2352,19 @@ void MessageComposer::addContact(enumType type)
 	//  ui.friendSelectionWidget->selectedIds<std::string,FriendSelectionWidget::IDTYPE_GROUP>(ids,false);
 	//
 	//  std::list<std::string>::iterator idIt;
-	//  for (idIt = ids.begin(); idIt != ids.end(); idIt++) {
+	//  for (idIt = ids.begin(); idIt != ids.end(); ++idIt) {
 	//      addRecipient(type, *idIt, true);
 	//  }
 
 	std::list<RsPeerId> ids ;
 	ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(ids, true);
-	for (std::list<RsPeerId>::const_iterator idIt = ids.begin(); idIt != ids.end(); idIt++) {
+	for (std::list<RsPeerId>::const_iterator idIt = ids.begin(); idIt != ids.end(); ++idIt) {
         addRecipient(type, *idIt);
 	}
 
 	std::list<RsGxsId> id2 ;
 	ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(id2, true);
-	for (std::list<RsGxsId>::const_iterator idIt = id2.begin(); idIt != id2.end(); idIt++)
+	for (std::list<RsGxsId>::const_iterator idIt = id2.begin(); idIt != id2.end(); ++idIt)
 		addRecipient(type, *idIt);
 }
 
@@ -2403,9 +2403,9 @@ void MessageComposer::addRecommend()
 	if (sslIds.empty() && gxsIds.empty()) 
 		return;
 
-	for(std::list <RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); it++) 
+	for(std::list <RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it)
         addRecipient(CC, *it);
-	for (std::list<RsGxsId>::const_iterator it = gxsIds.begin(); it != gxsIds.end(); it++)
+	for (std::list<RsGxsId>::const_iterator it = gxsIds.begin(); it != gxsIds.end(); ++it)
         addRecipient(TO, *it);
 
 	QString text = buildRecommendHtml(sslIds);
@@ -2485,7 +2485,7 @@ void MessageComposer::showTagLabels()
 		rsMsgs->getMessageTagTypes(tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
-		for (std::list<uint32_t>::iterator tagId = m_tagIds.begin(); tagId != m_tagIds.end(); tagId++) {
+		for (std::list<uint32_t>::iterator tagId = m_tagIds.begin(); tagId != m_tagIds.end(); ++tagId) {
 			tag = tags.types.find(*tagId);
 			if (tag != tags.types.end()) {
 				QLabel *tagLabel = new QLabel(TagDefs::name(tag->first, tag->second.first), this);
