@@ -35,9 +35,12 @@ class RsGRouterGenericDataItem ;
 
 static const uint32_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
-static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 5;
+static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 10;	// max number of clues to store
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS = 60;	// can be set to up to half the publish time interval. Prevents flooding routes.
 static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD =  5;	// at most save config every 5 seconds
+
+static const float RS_GROUTER_BASE_WEIGHT_ROUTED_MSG  = 1.0f ; 		// base contribution of routed message clue to routing matrix
+static const float RS_GROUTER_BASE_WEIGHT_GXS_PACKET  = 0.1f ; 		// base contribution of GXS message to routing matrix
 
 static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD         =       10 ; // Output everything
 static const time_t RS_GROUTER_AUTOWASH_PERIOD             =       10 ; // Autowash every minute. Not a costly operation.

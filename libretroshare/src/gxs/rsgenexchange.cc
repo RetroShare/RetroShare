@@ -32,6 +32,7 @@
 #include "util/contentvalue.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
+#include "retroshare/rsgrouter.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
 
@@ -165,7 +166,7 @@ void RsGenExchange::tick()
 	// Meta Changes should happen first.
 	// This is important, as services want to change Meta, then get results.
 	// Services shouldn't rely on this ordering - but some do.
-	processGrpMetaChanges();
+    processGrpMetaChanges();
 	processMsgMetaChanges();
 
 	mDataAccess->processRequests();
@@ -178,7 +179,9 @@ void RsGenExchange::tick()
 
 	processGroupDelete();
 
-	processRecvdData();
+    processRecvdData();
+
+    processRoutingClues() ;
 
 	if(!mNotifications.empty())
 	{
@@ -2040,6 +2043,16 @@ void RsGenExchange::processGroupUpdatePublish()
 }
 
 
+void RsGenExchange::processRoutingClues()
+{
+    RsStackMutex stack(mGenMtx);
+
+    for(std::map<RsGxsId,std::set<RsPeerId> >::const_iterator it = mRoutingClues.begin();it!=mRoutingClues.end();++it)
+        for(std::set<RsPeerId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
+            rsGRouter->addRoutingClue(GRouterKeyId(it->first),(*it2)) ;
+
+    mRoutingClues.clear() ;
+}
 void RsGenExchange::processGroupDelete()
 {
 	RsStackMutex stack(mGenMtx);
@@ -2478,7 +2491,7 @@ void RsGenExchange::processRecvdMessages()
             std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
+    std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
 #endif
 
             // validate msg
@@ -2492,23 +2505,27 @@ void RsGenExchange::processRecvdMessages()
             }
 
             if(validateReturn == VALIDATE_SUCCESS)
-            {
-                meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-                msgs.insert(std::make_pair(msg, meta));
-                msgIds[msg->grpId].push_back(msg->msgId);
+        {
+            meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+            msgs.insert(std::make_pair(msg, meta));
+            msgIds[msg->grpId].push_back(msg->msgId);
 
-                NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
-                		getMsgIdPair(*msg));
+            NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+                                                                    getMsgIdPair(*msg));
 
-                if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
+            if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
 
-                computeHash(msg->msg, meta->mHash);
-                meta->recvTS = time(NULL);
+            computeHash(msg->msg, meta->mHash);
+            meta->recvTS = time(NULL);
 #ifdef GEN_EXCH_DEBUG
-					 std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
-					 std::cerr << "    computed hash: " << meta->mHash << std::endl;
+            std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
+            std::cerr << "    computed hash: " << meta->mHash << std::endl;
+            std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
 #endif
-            }
+
+            if(!msg->metaData->mAuthorId.isNull())
+                mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
+        }
         }
         else
         {
@@ -2625,6 +2642,15 @@ void RsGenExchange::processRecvdGroups()
 				meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
 
 				computeHash(grp->grp, meta->mHash);
+
+                // group has been validated. Let's notify the global router for the clue
+
+#ifdef GEN_EXCH_DEBUG
+                    std::cerr << "Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
+#endif
+
+            if(!meta->mAuthorId.isNull())
+                mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
 
 				// now check if group already existss
 				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())

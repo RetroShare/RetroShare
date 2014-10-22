@@ -760,7 +760,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 				//
 				// The time should also be set so that the routing clue has less importance.
 				//
-				float base = (item->state == RS_GROUTER_ACK_STATE_RCVD)?1.0f : 0.5 ;
+                float base = ((item->state == RS_GROUTER_ACK_STATE_RCVD)?1.0f : 0.5) * RS_GROUTER_BASE_WEIGHT_ROUTED_MSG ;
 				uint32_t time_shift = now - (*it2).time_stamp ;
 				float probability = (*it2).probability;
 
@@ -830,6 +830,15 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 		delete it->second.data_item ;
 		_pending_messages.erase(it) ;
 	}
+}
+
+void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
+{
+    RsStackMutex mtx(grMtx) ;
+#ifdef GROUTER_DEBUG
+    grouter_debug() << "Received new routing clue for key " << id << " from peer " << peer_id << std::endl;
+#endif
+    _routing_matrix.addRoutingClue(id,peer_id,RS_GROUTER_BASE_WEIGHT_GXS_PACKET) ;
 }
 
 void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)

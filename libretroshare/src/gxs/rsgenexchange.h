@@ -671,7 +671,8 @@ private:
 
     void processGroupUpdatePublish();
 
-		void processGroupDelete();
+    void processGroupDelete();
+    void processRoutingClues();
 
     void publishMsgs();
 
@@ -884,8 +885,9 @@ private:
     std::vector<GroupUpdate> mGroupUpdates, mPeersGroupUpdate;
 
     std::vector<GroupUpdatePublish> mGroupUpdatePublish;
+    std::vector<GroupDeletePublish> mGroupDeletePublish;
 
-		std::vector<GroupDeletePublish> mGroupDeletePublish;
+    std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
 
 };
 

@@ -57,12 +57,12 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//         Router clients business                   //
 		//===================================================//
 
-		// This method allows to associate client ids (that are saved to disk) to client objects deriving 
+        // This method allows to associate client ids (that are saved to disk) to client objects deriving
 		// from GRouterClientService. The various services are responsible for regstering themselves to the
 		// global router, with consistent ids. The services are stored in a map, and arriving objects are
 		// passed on the correct service depending on the client id of the key they are reaching.
 		//
-		bool registerClientService(const GRouterServiceId& id,GRouterClientService *service) ;
+        virtual bool registerClientService(const GRouterServiceId& id,GRouterClientService *service) ;
 
 		// Use this method to register/unregister a key that the global router will
 		// forward in the network, so that is can be a possible destination for
@@ -77,10 +77,16 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Unregistering a key might not have an instantaneous effect, so the client is responsible for 
 		// discarding traffic that might later come for this key.
 		//
-		bool   registerKey(const GRouterKeyId& key, const GRouterServiceId& client_id,const std::string& description_string) ;
-		bool unregisterKey(const GRouterKeyId& key) ;
+        virtual bool   registerKey(const GRouterKeyId& key, const GRouterServiceId& client_id,const std::string& description_string) ;
+        virtual bool unregisterKey(const GRouterKeyId& key) ;
 
-		//===================================================//
+        //===================================================//
+        //         Routing clue collection methods           //
+        //===================================================//
+
+        virtual void addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id) ;
+
+        //===================================================//
 		//         Client/server request services            //
 		//===================================================//
 
@@ -89,12 +95,12 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// remembered by the client, so that he knows when the data has been received.
 		// The client id is supplied so that the client can be notified when the data has been received.
 		//
-		void sendData(const GRouterKeyId& destination,const GRouterServiceId& client_id, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) ;
+        virtual void sendData(const GRouterKeyId& destination,const GRouterServiceId& client_id, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) ;
 
 		// Sends an ACK to the origin of the msg. This is used to notify for 
 		// unfound route, or message correctly received, depending on the particular situation.
 		//
-		void sendACK(const RsPeerId& peer,GRouterMsgPropagationId mid, uint32_t flags) ;
+        virtual void sendACK(const RsPeerId& peer,GRouterMsgPropagationId mid, uint32_t flags) ;
 
 		//===================================================//
 		//                  Interface with RsGRouter         //
@@ -131,7 +137,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 										SERVICE_INFO_MIN_MINOR_VERSION) ; 
 		}
 
-		void setDebugEnabled(bool b) { _debug_enabled = b ; }
+        virtual void setDebugEnabled(bool b) { _debug_enabled = b ; }
 	protected:
 		//===================================================//
 		//         Routing method handling                   //
