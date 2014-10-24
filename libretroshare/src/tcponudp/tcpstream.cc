@@ -1596,7 +1596,7 @@ int TcpStream::check_InPkts()
 			}
 			else
 			{
-				it++;
+				++it;
 			}
 		}
 		if (found)

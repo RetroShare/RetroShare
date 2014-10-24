@@ -282,7 +282,7 @@ bool PGPHandler::printKeys() const
 	std::cerr << "Printing details of all " << std::dec << _public_keyring_map.size() << " keys: " << std::endl;
 #endif
 
-	for(std::map<RsPgpId,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); it++)
+	for(std::map<RsPgpId,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); ++it)
 	{
 		std::cerr << "PGP Key: " << it->first.toStdString() << std::endl;
 
@@ -297,7 +297,7 @@ bool PGPHandler::printKeys() const
 		std::cerr << "\tSigners       : " << it->second.signers.size() <<  std::endl;
 
 		std::set<RsPgpId>::const_iterator sit;
-		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); sit++)
+		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); ++sit)
 		{
 			std::cerr << "\t\tSigner ID:" << (*sit).toStdString() << ", Name: " ;
 			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(*sit) ;

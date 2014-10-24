@@ -563,7 +563,7 @@ std::ostream &RsTlvKeySignatureSet::print(std::ostream &out, uint16_t indent) co
 
     std::map<SignType, RsTlvKeySignature>::const_iterator mit = keySignSet.begin();
 
-    for(; mit != keySignSet.end(); mit++)
+    for(; mit != keySignSet.end(); ++mit)
     {
         out << "SignType: " << mit->first << std::endl;
         const RsTlvKeySignature& sign = mit->second;

@@ -1585,7 +1585,7 @@ std::ostream& RsMsgTags::print(std::ostream &out, uint16_t indent)
 
 	std::list<uint32_t>::iterator it;
 
-	for(it=tagIds.begin(); it != tagIds.end(); it++)
+	for(it=tagIds.begin(); it != tagIds.end(); ++it)
 	{
 		printIndent(out, int_Indent);
 		out << "tagId : " << *it << std::endl;
@@ -1982,7 +1982,7 @@ bool RsMsgTags::serialise(void *data, uint32_t& pktsize,bool config)
 	ok &= setRawUInt32(data,tlvsize,&offset, msgId);
 
 	std::list<uint32_t>::iterator mit = tagIds.begin();
-	for(;mit != tagIds.end(); mit++)
+	for(;mit != tagIds.end(); ++mit)
 		ok &= setRawUInt32(data, tlvsize, &offset, *mit);
 
 	if (offset != tlvsize)

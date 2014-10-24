@@ -272,7 +272,7 @@ void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 
 	/* iterate through, only worry about the friends */
 	std::list<pqipeer>::const_iterator it;
-	for(it = plist.begin(); it != plist.end(); it++)
+	for(it = plist.begin(); it != plist.end(); ++it)
 	{
 	  if (it->state & RS_PEER_S_FRIEND)
 	  {
@@ -339,7 +339,7 @@ void pqipersongrp::statusChanged()
 
 		/* count connection attempts */
 		std::list<RsPeerId>::iterator peer;
-		for (peer = peers.begin(); peer != peers.end(); peer++) {
+		for (peer = peers.begin(); peer != peers.end(); ++peer) {
 			peerConnectState state;
 			if (mLinkMgr->getFriendNetStatus(*peer, state) == false) {
 				continue;
@@ -383,7 +383,7 @@ void pqipersongrp::statusChanged()
 	} /* UNLOCKED */
 
 	std::list<RsPeerId>::iterator cit;
-	for(cit = toConnect.begin(); cit != toConnect.end(); cit++)
+	for(cit = toConnect.begin(); cit != toConnect.end(); ++cit)
 	{
 		connectPeer(*cit, true);
 	}

@@ -244,7 +244,7 @@ RsSerialiser::~RsSerialiser()
 {
 	/* clean up the map */
 	std::map<uint32_t, RsSerialType *>::iterator it;
-	for(it = serialisers.begin(); it != serialisers.end(); it++)
+	for(it = serialisers.begin(); it != serialisers.end(); ++it)
 	{
 		delete (it->second);
 	}

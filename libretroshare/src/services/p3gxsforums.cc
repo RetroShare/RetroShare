@@ -117,7 +117,7 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsForumGroupItem* item = dynamic_cast<RsGxsForumGroupItem*>(*vit);
 			if (item)
@@ -152,13 +152,13 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
 
@@ -191,12 +191,12 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 	{
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
 		
@@ -456,7 +456,7 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
 	int i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); ++it, i++) ;
 
 	if (it != ownIds.end())
 	{

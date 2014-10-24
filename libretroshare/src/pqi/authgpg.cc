@@ -213,7 +213,7 @@ void AuthGPG::processServices()
         RsStackMutex stack(gpgMtxService); /******* LOCKED ******/
 
         std::list<AuthGPGService*>::iterator serviceIt;
-        for (serviceIt = services.begin(); serviceIt != services.end(); serviceIt++) {
+        for (serviceIt = services.begin(); serviceIt != services.end(); ++serviceIt) {
             operation = (*serviceIt)->getGPGOperation();
             if (operation) {
                 service = *serviceIt;
@@ -695,7 +695,7 @@ bool AuthGPG::loadList(std::list<RsItem*>& load)
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 	/* load the list of accepted gpg keys */
 	std::list<RsItem *>::iterator it;
-	for(it = load.begin(); it != load.end(); it++) 
+	for(it = load.begin(); it != load.end(); ++it)
 	{
 		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
 		if(vitem) 
@@ -707,7 +707,7 @@ bool AuthGPG::loadList(std::list<RsItem*>& load)
 #endif
 
 			std::list<RsTlvKeyValue>::iterator kit;
-			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
+			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
 				if (kit->key != mOwnGpgId.toStdString()) 
 					PGPHandler::setAcceptConnexion(RsPgpId(kit->key), (kit->value == "TRUE"));
 		}

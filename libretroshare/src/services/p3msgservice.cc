@@ -277,7 +277,7 @@ void    p3MsgService::statusChange(const std::list<pqiServicePeer> &plist)
 	/* only do this when a new peer is connected */
 	bool newPeers = false;
 	std::list<pqiServicePeer>::const_iterator it;
-	for(it = plist.begin(); it != plist.end(); it++)
+	for(it = plist.begin(); it != plist.end(); ++it)
 	{
 		if (it->actions & RS_SERVICE_PEER_CONNECTED)
 		{
@@ -349,7 +349,7 @@ int     p3MsgService::checkOutgoingMessages()
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 		std::map<uint32_t, RsMsgItem *>::iterator mit;
-		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
+		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit)
 		{
 			if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH) 
 				continue;
@@ -392,7 +392,7 @@ int     p3MsgService::checkOutgoingMessages()
 		}
 
 		/* clean up */
-		for(it = toErase.begin(); it != toErase.end(); it++)
+		for(it = toErase.begin(); it != toErase.end(); ++it)
 		{
 			mit = msgOutgoing.find(*it);
 			if (mit != msgOutgoing.end())
@@ -437,23 +437,23 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 
 	mMsgMtx.lock();
 
-	for(mit = imsg.begin(); mit != imsg.end(); mit++)
+	for(mit = imsg.begin(); mit != imsg.end(); ++mit)
 		itemList.push_back(mit->second);
 
-	for(lit = mSrcIds.begin(); lit != mSrcIds.end(); lit++)
+	for(lit = mSrcIds.begin(); lit != mSrcIds.end(); ++lit)
 		itemList.push_back(lit->second);
 
 
-	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
+	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit)
 		itemList.push_back(mit->second) ;
 
-	for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
+	for(mit2 = mTags.begin();  mit2 != mTags.end(); ++mit2)
 		itemList.push_back(mit2->second);
 
-	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); mit3++)
+	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); ++mit3)
 		itemList.push_back(mit3->second);
 
-	for(mit4 = mParentId.begin();  mit4 != mParentId.end(); mit4++)
+	for(mit4 = mParentId.begin();  mit4 != mParentId.end(); ++mit4)
 		itemList.push_back(mit4->second);
 
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
@@ -504,7 +504,7 @@ void p3MsgService::initStandardTagTypes()
 	getStandardTagTypes(tags);
 
 	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tit;
-	for (tit = tags.types.begin(); tit != tags.types.end(); tit++) {
+	for (tit = tags.types.begin(); tit != tags.types.end(); ++tit) {
 		std::map<uint32_t, RsMsgTagType*>::iterator mit = mTags.find(tit->first);
 		if (mit == mTags.end()) {
 			RsMsgTagType* tagType = new RsMsgTagType();
@@ -542,7 +542,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	bool distant_messaging_set = false ;
 
 	// load items and calculate next unique msgId
-	for(it = load.begin(); it != load.end(); it++)
+	for(it = load.begin(); it != load.end(); ++it)
 	{
 
 		if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
@@ -606,7 +606,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 
         // sort items into lists
 	std::list<RsMsgItem*>::iterator msgIt;
-	for (msgIt = items.begin(); msgIt != items.end(); msgIt++)
+	for (msgIt = items.begin(); msgIt != items.end(); ++msgIt)
 	{
 		mitem = *msgIt;
 
@@ -644,7 +644,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	/* remove missing msgId in mSrcIds */
-	for (srcIt = srcIdMsgMap.begin(); srcIt != srcIdMsgMap.end(); srcIt++) {
+	for (srcIt = srcIdMsgMap.begin(); srcIt != srcIdMsgMap.end(); ++srcIt) {
 		std::map<uint32_t, RsMsgSrcId*>::iterator it = mSrcIds.find(srcIt->first);
 		if (it != mSrcIds.end()) {
 			delete(it->second);
@@ -663,7 +663,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 			}
 		}
 	
-		mit++;
+		++mit;
 	}
 	
 	return true;
@@ -714,14 +714,14 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
-	for(mit = imsg.begin(); mit != imsg.end(); mit++)
+	for(mit = imsg.begin(); mit != imsg.end(); ++mit)
 	{
 		MsgInfoSummary mis;
 		initRsMIS(mit->second, mis);
 		msgList.push_back(mis);
 	}
 
-	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
+	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit)
 	{
 		MsgInfoSummary mis;
 		initRsMIS(mit->second, mis);
@@ -772,7 +772,7 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
     std::map<uint32_t, RsMsgItem *> *apMsg [2] = { &imsg, &msgOutgoing };
 
     for (int i = 0; i < 2; i++) {
-        for (mit = apMsg [i]->begin(); mit != apMsg [i]->end(); mit++) {
+        for (mit = apMsg [i]->begin(); mit != apMsg [i]->end(); ++mit) {
             MsgInfoSummary mis;
             initRsMIS(mit->second, mis);
 
@@ -1034,13 +1034,13 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 
 bool 	p3MsgService::MessageSend(MessageInfo &info)
 {
-	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgto.begin();  pit != info.rspeerid_msgto.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
-	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgcc.begin();  pit != info.rspeerid_msgcc.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
-	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); pit++) sendMessage(initMIRsMsg(info, *pit));
+	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgto.begin();  pit != info.rspeerid_msgto.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
+	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgcc.begin();  pit != info.rspeerid_msgcc.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
+	for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); ++pit) sendMessage(initMIRsMsg(info, *pit));
 
-	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgto.begin();  pit != info.rsgxsid_msgto.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
-	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgcc.begin();  pit != info.rsgxsid_msgcc.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
-	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgbcc.begin(); pit != info.rsgxsid_msgbcc.end(); pit++) sendMessage(initMIRsMsg(info, *pit));
+	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgto.begin();  pit != info.rsgxsid_msgto.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
+	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgcc.begin();  pit != info.rsgxsid_msgcc.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
+	for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgbcc.begin(); pit != info.rsgxsid_msgbcc.end(); ++pit) sendMessage(initMIRsMsg(info, *pit));
 
 	/* send to ourselves as well */
 	RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
@@ -1155,7 +1155,7 @@ bool 	p3MsgService::getMessageTagTypes(MsgTagType& tags)
 
 	std::map<uint32_t, RsMsgTagType*>::iterator mit;
 
-	for(mit = mTags.begin(); mit != mTags.end(); mit++) {
+	for(mit = mTags.begin(); mit != mTags.end(); ++mit) {
 		std::pair<std::string, uint32_t> p(mit->second->text, mit->second->rgb_color);
 		tags.types.insert(std::pair<uint32_t, std::pair<std::string, uint32_t> >(mit->first, p));
 	}
@@ -1256,7 +1256,7 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 					continue;
 				}
 			}
-			mit1++;
+			++mit1;
 		}
 
 		/* remove tag type */
@@ -1389,7 +1389,7 @@ bool    p3MsgService::resetMessageStandardTagTypes(MsgTagType& tags)
         getStandardTagTypes(standardTags);
 
 	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator mit;
-	for (mit = standardTags.types.begin(); mit != standardTags.types.end(); mit++) {
+	for (mit = standardTags.types.begin(); mit != standardTags.types.end(); ++mit) {
 		tags.types[mit->first] = mit->second;
 	}
 
@@ -1504,7 +1504,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	mi.count = 0;
 	mi.size = 0;
 
-	for(std::list<RsTlvFileItem>::iterator it = msg->attachment.items.begin(); it != msg->attachment.items.end(); it++)
+	for(std::list<RsTlvFileItem>::iterator it = msg->attachment.items.begin(); it != msg->attachment.items.end(); ++it)
 	{
 		FileInfo fi;
 		fi.fname = RsDirUtil::getTopDir(it->name);
@@ -1622,7 +1622,7 @@ void p3MsgService::initMIRsMsg(RsMsgItem *msg,const MessageInfo& info)
 	msg -> attachment.title   = info.attach_title;
 	msg -> attachment.comment = info.attach_comment;
 
-	for(std::list<FileInfo>::const_iterator it = info.files.begin(); it != info.files.end(); it++)
+	for(std::list<FileInfo>::const_iterator it = info.files.begin(); it != info.files.end(); ++it)
 	{
 		RsTlvFileItem mfi;
 		mfi.hash = it -> hash;

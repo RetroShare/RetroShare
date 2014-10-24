@@ -124,7 +124,7 @@ bool    ftDataMultiplex::FileUploads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
     std::map<RsFileHash, ftFileProvider *>::iterator sit;
-	for(sit = mServers.begin(); sit != mServers.end(); sit++)
+	for(sit = mServers.begin(); sit != mServers.end(); ++sit)
 	{
 		hashs.push_back(sit->first);
 	}
@@ -135,7 +135,7 @@ bool    ftDataMultiplex::FileDownloads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
     std::map<RsFileHash, ftClient>::iterator cit;
-	for(cit = mClients.begin(); cit != mClients.end(); cit++)
+	for(cit = mClients.begin(); cit != mClients.end(); ++cit)
 	{
 		hashs.push_back(cit->first);
 	}

@@ -689,7 +689,7 @@ static int	tou_passall()
 	 * check if idle are still idle.
 	 */
 	std::vector<TcpOnUdp *>::iterator it;
-	for(it = tou_streams.begin(); it != tou_streams.end(); it++)
+	for(it = tou_streams.begin(); it != tou_streams.end(); ++it)
 	{
 		if ((*it) && ((*it)->tcp))
 		{

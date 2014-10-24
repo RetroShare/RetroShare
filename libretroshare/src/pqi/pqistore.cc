@@ -389,12 +389,12 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 	uint32_t offset = 0;
 	char* data = NULL;
 
-	for(it = rsItemList.begin(); it != rsItemList.end(); it++)
+	for(it = rsItemList.begin(); it != rsItemList.end(); ++it)
 		sizeItems += rsSerialiser->size(*it);
 
 	data = new char[sizeItems];
 
-	for(it = rsItemList.begin(); it != rsItemList.end(); it++)
+	for(it = rsItemList.begin(); it != rsItemList.end(); ++it)
 	{
 		sizeItem = rsSerialiser->size(*it);
 

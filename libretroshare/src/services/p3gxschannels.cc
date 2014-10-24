@@ -132,7 +132,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::list<RsGxsGroupId> unprocessedGroups;
 
 	std::vector<RsGxsNotify *>::iterator it;
-	for(it = changes.begin(); it != changes.end(); it++)
+	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		if (msgChange && !msgChange->metaChange())
@@ -142,7 +142,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
+			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 			{
 				std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
 				std::cerr << std::endl;
@@ -198,7 +198,7 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsChannelGroupItem* item = dynamic_cast<RsGxsChannelGroupItem*>(*vit);
 			if (item)
@@ -249,13 +249,13 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsChannelPostItem* item = dynamic_cast<RsGxsChannelPostItem*>(*vit);
 
@@ -296,12 +296,12 @@ bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChan
 	{
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsChannelPostItem* item = dynamic_cast<RsGxsChannelPostItem*>(*vit);
 		
@@ -413,7 +413,7 @@ void p3GxsChannels::load_SubscribedGroups(const uint32_t &token)
 	getGroupMeta(token, groups);
 
 	std::list<RsGroupMetaData>::iterator it;
-	for(it = groups.begin(); it != groups.end(); it++)
+	for(it = groups.begin(); it != groups.end(); ++it)
 	{
 		if (it->mSubscribeFlags & 
 			(GXS_SERV::GROUP_SUBSCRIBE_ADMIN |
@@ -508,7 +508,7 @@ void p3GxsChannels::request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGr
 	/* organise Ids how they want them */
 	GxsMsgReq msgIds;
 	std::list<std::pair<RsGxsGroupId, RsGxsMessageId> >::iterator it;
-	for(it = ids.begin(); it != ids.end(); it++)
+	for(it = ids.begin(); it != ids.end(); ++it)
 	{
 		std::vector<RsGxsMessageId> &vect_msgIds = msgIds[it->first];
 		vect_msgIds.push_back(it->second);
@@ -556,7 +556,7 @@ void p3GxsChannels::load_SpecificUnprocessedPosts(const uint32_t &token)
 
 
 	std::vector<RsGxsChannelPost>::iterator it;
-	for(it = posts.begin(); it != posts.end(); it++)
+	for(it = posts.begin(); it != posts.end(); ++it)
 	{
 		/* autodownload the files */
 		handleUnprocessedPost(*it);
@@ -579,7 +579,7 @@ void p3GxsChannels::load_GroupUnprocessedPosts(const uint32_t &token)
 
 
 	std::vector<RsGxsChannelPost>::iterator it;
-	for(it = posts.begin(); it != posts.end(); it++)
+	for(it = posts.begin(); it != posts.end(); ++it)
 	{
 		handleUnprocessedPost(*it);
 	}
@@ -620,7 +620,7 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 			std::cerr << std::endl;
 
 			std::list<RsGxsFile>::const_iterator fit;
-			for(fit = msg.mFiles.begin(); fit != msg.mFiles.end(); fit++)
+			for(fit = msg.mFiles.begin(); fit != msg.mFiles.end(); ++fit)
 			{
 				std::string fname = fit->mName;
 				Sha1CheckSum hash  = Sha1CheckSum(fit->mHash);
@@ -1166,7 +1166,7 @@ bool p3GxsChannels::generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
 	uint32_t i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); ++it, ++i);
 
 	if (it != ownIds.end())
 	{
@@ -1203,7 +1203,7 @@ bool p3GxsChannels::generateVote(uint32_t &token, const RsGxsGroupId &grpId, con
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
 	uint32_t i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); ++it, ++i) ;
 
 	if (it != ownIds.end())
 	{

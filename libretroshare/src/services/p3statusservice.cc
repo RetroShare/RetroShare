@@ -119,7 +119,7 @@ bool p3StatusService::getStatusList(std::list<StatusInfo>& statusInfo)
 
 	// fill up statusInfo list with this information
 	std::map<RsPeerId, StatusInfo>::iterator mit;
-	for(mit = mStatusInfoMap.begin(); mit != mStatusInfoMap.end(); mit++){
+	for(mit = mStatusInfoMap.begin(); mit != mStatusInfoMap.end(); ++mit){
 		statusInfo.push_back(mit->second);
 	}
 	
@@ -193,7 +193,7 @@ bool p3StatusService::sendStatus(const RsPeerId &id, uint32_t status)
 #endif
 
 	// send to all peers online
-	for(it = onlineList.begin(); it != onlineList.end(); it++){
+	for(it = onlineList.begin(); it != onlineList.end(); ++it){
 		RsStatusItem* statusItem = new RsStatusItem();
 		statusItem->sendTime = time(NULL);
 		statusItem->status = statusInfo.status;
@@ -260,7 +260,7 @@ void p3StatusService::receiveStatusQueue()
 
 	if (changed.size()) {
 		std::map<RsPeerId, uint32_t>::iterator it;
-		for (it = changed.begin(); it != changed.end(); it++) {
+		for (it = changed.begin(); it != changed.end(); ++it) {
 			RsServer::notify()->notifyPeerStatusChanged(it->first.toStdString(), it->second);
 		}
 		RsServer::notify()->notifyPeerStatusChangedSummary();
@@ -320,7 +320,7 @@ bool p3StatusService::loadList(std::list<RsItem*>& load){
 		return false;
 	}
 
-	for(; it != load.end(); it++){
+	for(; it != load.end(); ++it){
 	RsStatusItem* own_status = dynamic_cast<RsStatusItem* >(*it);
 
 
@@ -369,7 +369,7 @@ void p3StatusService::statusChange(const std::list<pqiServicePeer> &plist)
 
 	StatusInfo statusInfo;
 	std::list<pqiServicePeer>::const_iterator it;
-	for (it = plist.begin(); it != plist.end(); it++)
+	for (it = plist.begin(); it != plist.end(); ++it)
  	{
 		if (it->actions & RS_SERVICE_PEER_DISCONNECTED)
 		{

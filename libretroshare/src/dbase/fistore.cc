@@ -148,7 +148,7 @@ int FileIndexStore::loadCache(const RsCacheData &data)
 
 	/* need to correct indices(row) for the roots of the FileIndex */
 	int i = 0;
-	for(it = indices.begin(); it != indices.end(); it++)
+	for(it = indices.begin(); it != indices.end(); ++it)
 	{
 		(it->second)->root->row = i++;
 		it->second->FileIndex::updateMaxModTime() ;
@@ -232,7 +232,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, FileSearch
 
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::RequestDirDetails() CHKS" << std::endl;
-	for(pit = indices.begin(); pit != indices.end(); pit++)
+	for(pit = indices.begin(); pit != indices.end(); ++pit)
 	{
 		(pit->second)->root->checkParentPointers();
 	}
@@ -245,7 +245,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, FileSearch
 #endif
 
 		/* get remote root entries */
-		for(pit = indices.begin(); pit != indices.end(); pit++)
+		for(pit = indices.begin(); pit != indices.end(); ++pit)
 		{
 			/*
 			 */
@@ -301,7 +301,7 @@ int FileIndexStore::SearchHash(const RsFileHash& hash, std::list<FileDetail> &re
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::SearchHash()" << std::endl;
 #endif
-	for(pit = indices.begin(); pit != indices.end(); pit++)
+	for(pit = indices.begin(); pit != indices.end(); ++pit)
 	{
 #ifdef FIS_DEBUG
 		std::cerr << "FileIndexStore::SearchHash() Searching: Peer ";
@@ -311,7 +311,7 @@ int FileIndexStore::SearchHash(const RsFileHash& hash, std::list<FileDetail> &re
 
 		(pit->second)->searchHash(hash, firesults);
 		/* translate results */
-		for(rit = firesults.begin(); rit != firesults.end(); rit++)
+		for(rit = firesults.begin(); rit != firesults.end(); ++rit)
 		{
 			FileDetail fd;
 			fd.id = pit->first;
@@ -351,13 +351,13 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 	std::cerr << "FileIndexStore::SearchKeywords()" << std::endl;
 #endif
 	if(flags & RS_FILE_HINTS_REMOTE)
-		for(pit = indices.begin(); pit != indices.end(); pit++)
+		for(pit = indices.begin(); pit != indices.end(); ++pit)
 		{
 			firesults.clear();
 
 			(pit->second)->searchTerms(keywords, firesults);
 			/* translate results */
-			for(rit = firesults.begin(); rit != firesults.end(); rit++)
+			for(rit = firesults.begin(); rit != firesults.end(); ++rit)
 			{
 				DirDetails dd;
 
@@ -375,7 +375,7 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 
 			localindex->searchTerms(keywords, firesults);
 			/* translate results */
-			for(rit = firesults.begin(); rit != firesults.end(); rit++)
+			for(rit = firesults.begin(); rit != firesults.end(); ++rit)
 			{
 				DirDetails dd;
 
@@ -403,14 +403,14 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &resul
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::searchBoolExp()" << std::endl;
 #endif
-	for(pit = indices.begin(); pit != indices.end(); pit++)
+	for(pit = indices.begin(); pit != indices.end(); ++pit)
 	{
 		firesults.clear();
 
 		(pit->second)->searchBoolExp(exp, firesults);
 
 		/* translate results */
-		for(rit = firesults.begin(); rit != firesults.end(); rit++)
+		for(rit = firesults.begin(); rit != firesults.end(); ++rit)
 		{
 			DirDetails dd;
 			FileIndex::extractData(*rit, dd);
@@ -427,7 +427,7 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &resul
 		localindex->searchBoolExp(exp, firesults);
 
 		/* translate results */
-		for(rit = firesults.begin(); rit != firesults.end(); rit++)
+		for(rit = firesults.begin(); rit != firesults.end(); ++rit)
 		{
 			DirDetails dd;
 			FileIndex::extractData(*rit, dd);

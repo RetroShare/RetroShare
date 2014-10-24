@@ -333,7 +333,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	
 		std::list<pqiIpAddress>::iterator it;
 		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
-				it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
+				it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "L:";
@@ -342,7 +342,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			d.ipAddressList.push_back(toto);
 		}
 		for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
-				it != ps.ipAddrs.mExt.mAddrs.end(); it++)
+				it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "E:";
@@ -1310,7 +1310,7 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 
 	std::list<RsPgpId>::const_iterator it;
         for(it = detail.gpgSigners.begin();
-                it != detail.gpgSigners.end(); it++)
+                it != detail.gpgSigners.end(); ++it)
 	{
 		out << "\t" << *it;
 		out << std::endl;

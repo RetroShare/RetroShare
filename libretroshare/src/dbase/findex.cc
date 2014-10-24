@@ -77,14 +77,14 @@ DirEntry::~DirEntry()
 	std::map<std::string, DirEntry *>::iterator dit;
 	std::map<std::string, FileEntry *>::iterator fit;
 
-	for(dit = subdirs.begin(); dit != subdirs.end(); dit++)
+	for(dit = subdirs.begin(); dit != subdirs.end(); ++dit)
 	{
 		FileIndex::unregisterEntry((void*)dit->second) ;
 		delete (dit->second);
 	}
 	subdirs.clear();
 
-	for(fit = files.begin(); fit != files.end(); fit++)
+	for(fit = files.begin(); fit != files.end(); ++fit)
 	{
 		FileIndex::unregisterEntry((void*)fit->second) ;
 		delete (fit->second);
@@ -98,7 +98,7 @@ int  DirEntry::checkParentPointers()
 #ifdef FI_DEBUG
 	updateChildRows();
 	std::map<std::string, DirEntry *>::iterator  dit;
-	for(dit = subdirs.begin(); dit != subdirs.end(); dit++)
+	for(dit = subdirs.begin(); dit != subdirs.end(); ++dit)
 	{
 		/* debug check */
 		(dit->second)->checkParentPointers();
@@ -115,7 +115,7 @@ int  DirEntry::updateChildRows()
 	std::map<std::string, DirEntry *>::iterator  dit;
 	std::map<std::string, FileEntry *>::iterator fit;
 	int i = 0;
-	for(dit = subdirs.begin(); dit != subdirs.end(); dit++)
+	for(dit = subdirs.begin(); dit != subdirs.end(); ++dit)
 	{
 #ifdef FI_DEBUG
 		/* debug check */
@@ -130,7 +130,7 @@ int  DirEntry::updateChildRows()
 		(dit->second)->row = i++;
 	}
 
-	for(fit = files.begin(); fit != files.end(); fit++)
+	for(fit = files.begin(); fit != files.end(); ++fit)
 	{
 #ifdef FI_DEBUG
 		/* debug check */
@@ -254,7 +254,7 @@ int  DirEntry::removeOldEntries(time_t old, bool recursive)
 	/* get all dirs with old time */
 	std::list<DirEntry *> removeList;
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = subdirs.begin(); it != subdirs.end(); it++)
+	for(it = subdirs.begin(); it != subdirs.end(); ++it)
 	{
 		if ((it->second)->updtime < old)
 		{
@@ -266,7 +266,7 @@ int  DirEntry::removeOldEntries(time_t old, bool recursive)
 
 	/* now remove the old entries */
 	std::list<DirEntry *>::iterator rit;
-	for(rit = removeList.begin(); rit != removeList.end(); rit++)
+	for(rit = removeList.begin(); rit != removeList.end(); ++rit)
 	{
 		removeDir((*rit)->name);
 	}
@@ -274,7 +274,7 @@ int  DirEntry::removeOldEntries(time_t old, bool recursive)
 	if (recursive)
 	{
 		/* now handle children */
-		for(it = subdirs.begin(); it != subdirs.end(); it++)
+		for(it = subdirs.begin(); it != subdirs.end(); ++it)
 		{
 			count += (it->second)->removeOldEntries(old, recursive);
 		}
@@ -283,7 +283,7 @@ int  DirEntry::removeOldEntries(time_t old, bool recursive)
 	/* now handle files similarly */
 	std::list<FileEntry *> removeFileList;
 	std::map<std::string, FileEntry *>::iterator fit;
-	for(fit = files.begin(); fit != files.end(); fit++)
+	for(fit = files.begin(); fit != files.end(); ++fit)
 	{
 		if ((fit->second)->updtime < old)
 		{
@@ -295,7 +295,7 @@ int  DirEntry::removeOldEntries(time_t old, bool recursive)
 
 	/* now remove the old entries */
 	std::list<FileEntry *>::iterator rfit;
-	for(rfit = removeFileList.begin(); rfit != removeFileList.end(); rfit++)
+	for(rfit = removeFileList.begin(); rfit != removeFileList.end(); ++rfit)
 	{
 		removeFile((*rfit)->name);
 	}
@@ -311,7 +311,7 @@ DirEntry *DirEntry::findOldDirectory(time_t old)
 
 	/* get all dirs with old time */
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = subdirs.begin(); it != subdirs.end(); it++)
+	for(it = subdirs.begin(); it != subdirs.end(); ++it)
 	{
 		if ((it->second)->updtime < old)
 		{
@@ -323,7 +323,7 @@ DirEntry *DirEntry::findOldDirectory(time_t old)
 	 * else check chlidren.
 	 */
 
-	for(it = subdirs.begin(); it != subdirs.end(); it++)
+	for(it = subdirs.begin(); it != subdirs.end(); ++it)
 	{
 		DirEntry *olddir = (it->second)->findOldDirectory(old);
 		if (olddir)
@@ -512,12 +512,12 @@ int DirEntry::print(std::string &out)
 	rs_sprintf_append(out, "dir  %03d [%ld] : %s\n", row, updtime, path.c_str());
 
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = subdirs.begin(); it != subdirs.end(); it++)
+	for(it = subdirs.begin(); it != subdirs.end(); ++it)
 	{
 		(it->second)->print(out);
 	}
 	std::map<std::string, FileEntry *>::iterator fit;
-	for(fit = files.begin(); fit != files.end(); fit++)
+	for(fit = files.begin(); fit != files.end(); ++fit)
 	{
 		(fit->second)->print(out);
 	}
@@ -541,7 +541,7 @@ int	FileIndex::setRootDirectories(const std::list<std::string> &inlist, time_t u
 {
 	/* set update time to zero */
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
+	for(it = root->subdirs.begin(); it != root->subdirs.end(); ++it)
 	{
 		(it->second)->updtime = 0;
 	}
@@ -549,7 +549,7 @@ int	FileIndex::setRootDirectories(const std::list<std::string> &inlist, time_t u
 	std::list<std::string>::const_iterator ait;
 	FileEntry fe;
 	time_t utime = 1;
-	for(ait = inlist.begin(); ait != inlist.end(); ait++)
+	for(ait = inlist.begin(); ait != inlist.end(); ++ait)
 	{
 		fe.name = (*ait);
 
@@ -561,7 +561,7 @@ int	FileIndex::setRootDirectories(const std::list<std::string> &inlist, time_t u
 	int cleanedCount = root->removeOldEntries(utime, false);
 
 	/* now flag remaining directories with correct update time */
-	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
+	for(it = root->subdirs.begin(); it != root->subdirs.end(); ++it)
 	{
 		(it->second)->updtime = updtime;
 	}
@@ -611,7 +611,7 @@ int	FileIndex::getRootDirectories(std::list<std::string> &outlist)
 {
 	/* set update time to zero */
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
+	for(it = root->subdirs.begin(); it != root->subdirs.end(); ++it)
 	{
 		outlist.push_back(it->first);
 	}
@@ -730,7 +730,7 @@ int	FileIndex::cleanOldEntries(time_t old)  /* removes entries older than old */
 	int count = 0;
 
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
+	for(it = root->subdirs.begin(); it != root->subdirs.end(); ++it)
 	{
 		count += (it->second)->removeOldEntries(old, true);
 	}
@@ -796,7 +796,7 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 //	delete sha_ctx;
 //
 //	std::string tmpout;
-//	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+//	for(int i = 0; i < SHA_DIGEST_LENGTH; ++i)
 //	{
 //		rs_sprintf_append(tmpout, "%02x", (unsigned int) (sha_buf[i]));
 //	}
@@ -885,7 +885,7 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 					/* must reset parent pointers now */
 					std::map<std::string, DirEntry *>::iterator it;
 					for(it = root->subdirs.begin();
-						it != root->subdirs.end(); it++)
+						it != root->subdirs.end(); ++it)
 					{
 						(it->second)->parent = root;
 					}
@@ -931,7 +931,7 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 					std::cerr << "loadIndex error parsing saved file: " << filename;
 					std::cerr << " File token count wrong: " << tokens.size();
 					std::cerr << std::endl;
-					for(unsigned int i = 0; i < tokens.size(); i++)
+					for(unsigned int i = 0; i < tokens.size(); ++i)
 					{
 						std::cerr << "\tToken[" << i << "]:" << tokens[i];
 						std::cerr << std::endl;
@@ -1015,7 +1015,7 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 	root->writeDirInfo(s) ;
 
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
+	for(it = root->subdirs.begin(); it != root->subdirs.end(); ++it)
 	{
 #ifdef FI_DEBUG
 		std::cout << "writting root directory: name=" << it->second->name << ", path=" << it->second->path << std::endl ;
@@ -1067,7 +1067,7 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 //	SHA1_Final(&sha_buf[0], sha_ctx);
 //	delete sha_ctx;
 //
-//	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+//	for(int i = 0; i < SHA_DIGEST_LENGTH; ++i)
 //	{
 //		rs_sprintf_append(fileHash, "%02x", (unsigned int) (sha_buf[i]));
 //	}
@@ -1115,7 +1115,7 @@ std::string FixName(const std::string& _in)
 {
 	/* replace any , with _ */
 	std::string in(_in) ;
-	for(unsigned int i = 0; i < in.length(); i++)
+	for(unsigned int i = 0; i < in.length(); ++i)
 	{
 		if (in[i] == FILE_CACHE_SEPARATOR_CHAR)
 		{
@@ -1141,7 +1141,7 @@ void DirEntry::writeFileInfo(std::string& s)
 {
 	/* print file info */
 	std::map<std::string, FileEntry *>::iterator fit;
-	for(fit = files.begin(); fit != files.end(); fit++)
+	for(fit = files.begin(); fit != files.end(); ++fit)
 	{
 		rs_sprintf_append(s, "f%s%c%s%c%lld%c%ld%c%d%c%ld%c\n",
 						  FixName((fit->second)->name).c_str(), FILE_CACHE_SEPARATOR_CHAR,
@@ -1159,7 +1159,7 @@ int DirEntry::saveEntry(std::string &s)
 	writeDirInfo(s) ;
 
 	std::map<std::string, DirEntry *>::iterator it;
-	for(it = subdirs.begin(); it != subdirs.end(); it++)
+	for(it = subdirs.begin(); it != subdirs.end(); ++it)
 	{
 		(it->second)->saveEntry(s);
 	}
@@ -1195,14 +1195,14 @@ int FileIndex::searchHash(const RsFileHash& hash, std::list<FileEntry *> &result
 		dirlist.pop_back();
 		/* add subdirs to stack */
 		std::map<std::string, DirEntry *>::iterator it;
-		for(it = ndir->subdirs.begin(); it != ndir->subdirs.end(); it++)
+		for(it = ndir->subdirs.begin(); it != ndir->subdirs.end(); ++it)
 		{
 			dirlist.push_back(it->second);
 		}
 
 		std::map<std::string, FileEntry *>::iterator fit;
 		/* search in current dir */
-		for(fit = ndir->files.begin(); fit != ndir->files.end(); fit++)
+		for(fit = ndir->files.begin(); fit != ndir->files.end(); ++fit)
 		{
 			if (hash == (fit->second)->hash)
 			{
@@ -1236,12 +1236,12 @@ int FileIndex::searchTerms(const std::list<std::string>& terms, std::list<FileEn
 	{
 		ndir = dirlist.back();
 		dirlist.pop_back();
-		for(it = ndir->subdirs.begin(); it != ndir->subdirs.end(); it++)
+		for(it = ndir->subdirs.begin(); it != ndir->subdirs.end(); ++it)
 		{
 			dirlist.push_back(it->second);
 		}
 
-		for (iter = terms.begin(); iter != terms.end(); iter ++) {
+		for (iter = terms.begin(); iter != terms.end(); ++iter) {
 			std::string::const_iterator it2;
 			const std::string &str1 = ndir->name;
 			const std::string &str2 = *iter;
@@ -1249,7 +1249,7 @@ int FileIndex::searchTerms(const std::list<std::string>& terms, std::list<FileEn
 			if (it2 != str1.end()) {
 				/* first search to see if its parent is in the results list */
 				bool addDir = true;
-				for (std::list<FileEntry *>::iterator rit(results.begin()); rit != results.end() && addDir; rit ++) {
+				for (std::list<FileEntry *>::iterator rit(results.begin()); rit != results.end() && addDir; ++rit) {
 					DirEntry *de = dynamic_cast<DirEntry *>(*rit);
 					if (de && (de == root))
 						continue;
@@ -1263,10 +1263,10 @@ int FileIndex::searchTerms(const std::list<std::string>& terms, std::list<FileEn
 			}
 		}
 
-		for(fit = ndir->files.begin(); fit != ndir->files.end(); fit++)
+		for(fit = ndir->files.begin(); fit != ndir->files.end(); ++fit)
 		{
 			/* cycle through terms */
-			for(iter = terms.begin(); iter != terms.end(); iter++)
+			for(iter = terms.begin(); iter != terms.end(); ++iter)
 			{
 				/* always ignore case */
         			std::string::const_iterator it2 ;
@@ -1309,12 +1309,12 @@ int FileIndex::searchBoolExp(Expression * exp, std::list<FileEntry *> &results) 
 	{
 		ndir = dirlist.back();
 		dirlist.pop_back();
-		for(it = ndir->subdirs.begin(); it != ndir->subdirs.end(); it++)
+		for(it = ndir->subdirs.begin(); it != ndir->subdirs.end(); ++it)
 		{
 			dirlist.push_back(it->second);
 		}
 
-		for(fit = ndir->files.begin(); fit != ndir->files.end(); fit++)
+		for(fit = ndir->files.begin(); fit != ndir->files.end(); ++fit)
 		{
 			/*Evaluate the boolean expression and add it to the results if its true*/
 			bool ret = exp->eval(fit->second);

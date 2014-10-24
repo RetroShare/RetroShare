@@ -563,7 +563,7 @@ int	pqissllistenbase::continueaccepts()
 			incoming_ssl.erase(itd);
 		}
 		else
-			it++;
+			++it;
 	}
 	return 1;
 }
@@ -614,7 +614,7 @@ int	pqissllistenbase::finaliseAccepts()
 		{
           		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
 		  		"pqissllistenbase::finaliseAccepts() SSL Connection Status Unknown");
-			it++;
+			++it;
 		}
 	}
 	return 1;
@@ -695,7 +695,7 @@ int 	pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
 	std::map<RsPeerId, pqissl *>::iterator it;
 
 	std::string out = "Adding to Cert Listening Addresses Id: " + id.toStdString() + "\nCurrent Certs:\n";
-	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
+	for(it = listenaddr.begin(); it != listenaddr.end(); ++it)
 	{
 		out += id.toStdString() + "\n";
 		if (it -> first == id)
@@ -722,7 +722,7 @@ int	pqissllistener::removeListenPort(const RsPeerId& id)
 	//
 	// check if in list.
 	std::map<RsPeerId, pqissl *>::iterator it;
-	for(it = listenaddr.begin();it!=listenaddr.end();it++)
+	for(it = listenaddr.begin();it!=listenaddr.end(); ++it)
 	{
 		if (it->first == id)
 		{
@@ -750,7 +750,7 @@ int 	pqissllistener::status()
 	std::string out = "pqissllistener::status(): Listening (";
 	out += sockaddr_storage_tostring(laddr);
 	out += ") for Certs:";
-	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
+	for(it = listenaddr.begin(); it != listenaddr.end(); ++it)
 	{
 		out += "\n" + it -> first.toStdString() ;
 	}
@@ -816,7 +816,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 			}
 			else
 			{
-				it++;
+				++it;
 			}
 		}
 

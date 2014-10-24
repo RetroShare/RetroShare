@@ -152,7 +152,7 @@ void p3ServiceControl::getServiceChanges(std::set<RsPeerId> &updateSet)
 #endif
 
 	std::set<RsPeerId>::iterator it;
-	for (it = mUpdatedSet.begin(); it != mUpdatedSet.end(); it++)
+	for (it = mUpdatedSet.begin(); it != mUpdatedSet.end(); ++it)
 	{
 		updateSet.insert(*it);
 	}
@@ -189,7 +189,7 @@ bool p3ServiceControl::getServicesAllowed(const RsPeerId &peerId, RsPeerServiceI
 
 	// For each registered Service.. check if peer has permissions.
 	std::map<uint32_t, RsServiceInfo>::iterator it;
-	for(it = mOwnServices.begin(); it != mOwnServices.end(); it++)
+	for(it = mOwnServices.begin(); it != mOwnServices.end(); ++it)
 	{
 		if (peerHasPermissionForService_locked(peerId, it->first))
 		{
@@ -317,7 +317,7 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 	std::list<RsPeerId>::const_iterator pit;
 	if (it != mServicePermissionMap.end())
 	{
-		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); pit++)
+		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); ++pit)
 		{
 			if (it->second.peerHasPermission(*pit) != 
 				permissions.peerHasPermission(*pit))
@@ -526,18 +526,18 @@ bool	p3ServiceControl::updateAllFilters_locked()
 	std::set<RsPeerId>::const_iterator pit;
 
 	std::map<RsPeerId, RsPeerServiceInfo>::const_iterator it;
-	for(it = mServicesProvided.begin(); it != mServicesProvided.end(); it++)
+	for(it = mServicesProvided.begin(); it != mServicesProvided.end(); ++it)
 	{
 		peerSet.insert(it->first);
 	}
 
 	std::map<RsPeerId, ServicePeerFilter>::const_iterator fit;
-	for(fit = mPeerFilterMap.begin(); fit != mPeerFilterMap.end(); fit++)
+	for(fit = mPeerFilterMap.begin(); fit != mPeerFilterMap.end(); ++fit)
 	{
 		peerSet.insert(fit->first);
 	}
 
-	for(pit = peerSet.begin(); pit != peerSet.end(); pit++)
+	for(pit = peerSet.begin(); pit != peerSet.end(); ++pit)
 	{
 		updateFilterByPeer_locked(*pit);
 	}
@@ -618,8 +618,8 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 					peerFilter.mAllowedServices.insert(oit->first);
 				}
 			}
-			oit++;
-			tit++;
+			++oit;
+			++tit;
 		}
 		else
 		{
@@ -629,7 +629,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 				std::cerr << "\tSkipping Only Own Service ID: " << oit->first;
 				std::cerr << std::endl;
 #endif
-				oit++;
+				++oit;
 			}
 			else
 			{
@@ -637,7 +637,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 				std::cerr << "\tSkipping Only Peer Service ID: " << tit->first;
 				std::cerr << std::endl;
 #endif
-				tit++;
+				++tit;
 			}
 		}
 	}
@@ -735,7 +735,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 	}
 
 	// Handle the unfinished Set.
-	for(; it1 != eit1; it1++)
+	for(; it1 != eit1; ++it1)
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "Removed Service: " << *it1;
@@ -746,7 +746,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		filterChangeRemoved_locked(peerId, *it1);
 	}
 
-	for(; it2 != eit2; it2++)
+	for(; it2 != eit2; ++it2)
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "Added Service: " << *it2;
@@ -761,7 +761,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 #if 0
 	// now we to store for later notifications.
 	std::map<uint32_t, bool>::const_iterator cit;
-	for(cit = changes.begin(); cit != changes.end(); cit++)
+	for(cit = changes.begin(); cit != changes.end(); ++cit)
 	{
 		ServiceNotifications &notes = mNotifications[cit->first];
 		if (cit->second)
@@ -988,7 +988,7 @@ void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 #endif
 
 	std::list<pqipeer>::const_iterator pit;
-	for(pit =  plist.begin(); pit != plist.end(); pit++)
+	for(pit =  plist.begin(); pit != plist.end(); ++pit)
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::statusChange() for peer: ";
@@ -1111,7 +1111,7 @@ void	p3ServiceControl::notifyAboutFriends()
 		RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
 		std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit;
-		for(sit = mMonitors.begin(); sit != mMonitors.end(); sit++)
+		for(sit = mMonitors.begin(); sit != mMonitors.end(); ++sit)
 		{
 			sit->second->statusChange(friendNotifications);
 		}
@@ -1143,7 +1143,7 @@ void	p3ServiceControl::notifyServices()
 
 		std::map<uint32_t, ServiceNotifications>::const_iterator it;
 		std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit, eit;
-		for(it = notifications.begin(); it != notifications.end(); it++)
+		for(it = notifications.begin(); it != notifications.end(); ++it)
 		{
 #ifdef SERVICECONTROL_DEBUG
 			std::cerr << "p3ServiceControl::notifyServices(): Notifications for Service: " << it->first;
@@ -1166,7 +1166,7 @@ void	p3ServiceControl::notifyServices()
 			std::list<pqiServicePeer> peers;
 			std::set<RsPeerId>::const_iterator pit;
 			for(pit = it->second.mAdded.begin(); 
-				pit != it->second.mAdded.end(); pit++)
+				pit != it->second.mAdded.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
@@ -1181,7 +1181,7 @@ void	p3ServiceControl::notifyServices()
 			}
 	
 			for(pit = it->second.mRemoved.begin(); 
-				pit != it->second.mRemoved.end(); pit++)
+				pit != it->second.mRemoved.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
@@ -1195,7 +1195,7 @@ void	p3ServiceControl::notifyServices()
 #endif
 			}
 	
-			for(; sit != eit; sit++)
+			for(; sit != eit; ++sit)
 			{
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Sending to Monitoring Service";
@@ -1273,7 +1273,7 @@ std::ostream &operator<<(std::ostream &out, const RsPeerServiceInfo &info)
 	out << "RsPeerServiceInfo(" << info.mPeerId << ")";
 	out << std::endl;
 	std::map<uint32_t, RsServiceInfo>::const_iterator it;
-	for(it = info.mServiceList.begin(); it != info.mServiceList.end(); it++)
+	for(it = info.mServiceList.begin(); it != info.mServiceList.end(); ++it)
 	{
 		out << "\t Service:" << it->first << " : ";
 		out << it->second;
@@ -1297,7 +1297,7 @@ std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter)
 	out << " AllowAll: " << filter.mAllowAll;
 	out << " Matched Services: ";
 	std::set<uint32_t>::const_iterator it;
-	for(it = filter.mAllowedServices.begin(); it != filter.mAllowedServices.end(); it++)
+	for(it = filter.mAllowedServices.begin(); it != filter.mAllowedServices.end(); ++it)
 	{
 	 	out << *it << " ";
 	}

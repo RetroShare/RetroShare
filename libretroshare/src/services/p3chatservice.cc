@@ -182,7 +182,7 @@ int     p3ChatService::sendPublicChat(const std::string &msg)
 	std::cerr << std::endl;
 #endif
 
-	for(it = ids.begin(); it != ids.end(); it++)
+	for(it = ids.begin(); it != ids.end(); ++it)
 	{
 		RsChatMsgItem *ci = new RsChatMsgItem();
 
@@ -967,7 +967,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 	}
 
     std::list<ChatLobbyId>::iterator it;
-    for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); it++) 
+    for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); ++it)
         joinVisibleChatLobby(*it);
 
 	 for(std::list<ChatLobbyId>::const_iterator it = invitationNeeded.begin();it!=invitationNeeded.end();++it)
@@ -1524,7 +1524,7 @@ bool p3ChatService::getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &i
 	}
 
 	std::list<RsChatMsgItem *>::iterator it;
-	for (it = list->begin(); it != list->end(); it++) {
+	for (it = list->begin(); it != list->end(); ++it) {
 		RsChatMsgItem *c = *it;
 
 		if (std::find(ids.begin(), ids.end(), c->PeerId()) == ids.end()) {
@@ -1553,7 +1553,7 @@ bool p3ChatService::getPrivateChatQueue(bool incoming, const RsPeerId &id, std::
 	}
 
 	std::list<RsChatMsgItem *>::iterator it;
-	for (it = list->begin(); it != list->end(); it++) {
+	for (it = list->begin(); it != list->end(); ++it) {
 		RsChatMsgItem *c = *it;
 
 		if (c->PeerId() == id) {
@@ -1603,7 +1603,7 @@ bool p3ChatService::clearPrivateChatQueue(bool incoming, const RsPeerId &id)
 				continue;
 			}
 
-			it++;
+			++it;
 		}
 	} /* UNLOCKED */
 
@@ -1656,7 +1656,7 @@ void p3ChatService::setOwnCustomStateString(const std::string& s)
 
 	// alert your online peers to your newly set status
 	std::set<RsPeerId>::iterator it(onlineList.begin());
-	for(; it != onlineList.end(); it++){
+	for(; it != onlineList.end(); ++it){
 
 		RsChatStatusItem *cs = new RsChatStatusItem();
 		cs->flags = RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE;
@@ -2095,7 +2095,7 @@ RsSerialiser *p3ChatService::setupSerialiser()
 void p3ChatService::statusChange(const std::list<pqiServicePeer> &plist)
 {
 	std::list<pqiServicePeer>::const_iterator it;
-	for (it = plist.begin(); it != plist.end(); it++) {
+	for (it = plist.begin(); it != plist.end(); ++it) {
 		if (it->actions & RS_SERVICE_PEER_CONNECTED) 
 		{
 			/* send the saved outgoing messages */
@@ -2125,7 +2125,7 @@ void p3ChatService::statusChange(const std::list<pqiServicePeer> &plist)
 						continue;
 					}
 
-					cit++;
+					++cit;
 				}
 			} /* UNLOCKED */
 

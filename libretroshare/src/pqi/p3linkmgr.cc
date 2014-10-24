@@ -221,7 +221,7 @@ void    p3LinkMgrIMPL::getOnlineList(std::list<RsPeerId> &ssl_peers)
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
         std::map<RsPeerId, peerConnectState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
 		if (it->second.state & RS_PEER_S_CONNECTED)
 		{
@@ -236,7 +236,7 @@ void    p3LinkMgrIMPL::getFriendList(std::list<RsPeerId> &ssl_peers)
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
 	std::map<RsPeerId, peerConnectState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
 		ssl_peers.push_back(it->first);
 	}
@@ -332,7 +332,7 @@ void    p3LinkMgrIMPL::statusTick()
 
       	RsStackMutex stack(mLinkMtx);  /******   LOCK MUTEX ******/
         std::map<RsPeerId, peerConnectState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
 		if (it->second.state & RS_PEER_S_CONNECTED)
 		{
@@ -359,7 +359,7 @@ void    p3LinkMgrIMPL::statusTick()
 
 #ifndef P3CONNMGR_NO_AUTO_CONNECTION 
 
-        for(it2 = retryIds.begin(); it2 != retryIds.end(); it2++)
+        for(it2 = retryIds.begin(); it2 != retryIds.end(); ++it2)
 	{
 #ifdef LINKMGR_DEBUG_TICK
 		std::cerr << "p3LinkMgrIMPL::statusTick() RETRY TIMEOUT for: ";
@@ -426,7 +426,7 @@ void p3LinkMgrIMPL::tickMonitors()
 		std::cerr << "p3LinkMgrIMPL::tickMonitors() StatusChanged! List:" << std::endl;
 #endif
 		/* assemble list */
-		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
 			if (it->second.actions)
 			{
@@ -479,7 +479,7 @@ void p3LinkMgrIMPL::tickMonitors()
 		}
 
 		/* do the Others as well! */
-		for(it = mOthersList.begin(); it != mOthersList.end(); it++)
+		for(it = mOthersList.begin(); it != mOthersList.end(); ++it)
 		{
 			if (it->second.actions)
 			{
@@ -541,7 +541,7 @@ void p3LinkMgrIMPL::tickMonitors()
 	
 		/* send to all monitors */
 		std::list<pqiMonitor *>::iterator mit;
-		for(mit = clients.begin(); mit != clients.end(); mit++)
+		for(mit = clients.begin(); mit != clients.end(); ++mit)
 		{
 			(*mit)->statusChange(actionList);
 		}
@@ -553,7 +553,7 @@ void p3LinkMgrIMPL::tickMonitors()
 
 	/* notify all monitors */
 	std::list<pqiMonitor *>::iterator mit;
-	for(mit = clients.begin(); mit != clients.end(); mit++) {
+	for(mit = clients.begin(); mit != clients.end(); ++mit) {
 		(*mit)->statusChanged();
 	}
 
@@ -1723,7 +1723,7 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 	/* checks - is it the dreaded 1.0.0.0 */
 
 	std::list<struct sockaddr_storage>::const_iterator it;
-	for(it = mBannedIpList.begin(); it != mBannedIpList.end(); it++)
+	for(it = mBannedIpList.begin(); it != mBannedIpList.end(); ++it)
 	{
 		if (sockaddr_storage_sameip(*it, addr))
 		{
@@ -1886,7 +1886,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	std::cerr << std::endl;
 #endif
 	for(ait = ipAddrs.mLocal.mAddrs.begin(); 
-		ait != ipAddrs.mLocal.mAddrs.end(); ait++)
+		ait != ipAddrs.mLocal.mAddrs.end(); ++ait)
 	{
 		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
 		{
@@ -1913,7 +1913,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	}
 
 	for(ait = ipAddrs.mExt.mAddrs.begin(); 
-		ait != ipAddrs.mExt.mAddrs.end(); ait++)
+		ait != ipAddrs.mExt.mAddrs.end(); ++ait)
 	{
 		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
 		{
@@ -2036,7 +2036,7 @@ bool  p3LinkMgrIMPL::addAddressIfUnique(std::list<peerConnectAddress> &addrList,
 #endif
 
 	std::list<peerConnectAddress>::iterator it;
-	for(it = addrList.begin(); it != addrList.end(); it++)
+	for(it = addrList.begin(); it != addrList.end(); ++it)
 	{
 		if (sockaddr_storage_same(pca.addr, it->addr) &&
 			(pca.type == it->type))
@@ -2213,7 +2213,7 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
 
 
                 std::map<RsPeerId, peerConnectState>::iterator it;
-                for(it = mFriendList.begin(); it != mFriendList.end(); it++) 
+                for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
                 {
                         out << "\t SSL ID: " << it->second.id.toStdString();
                         out << "\t State: " << it->second.state;
@@ -2222,7 +2222,7 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
 
                 out << "p3LinkMgrIMPL::printPeerLists() Others List";
                 out << std::endl;
-                for(it = mOthersList.begin(); it != mOthersList.end(); it++)
+                for(it = mOthersList.begin(); it != mOthersList.end(); ++it)
                 {
                         out << "\t SSL ID: " << it->second.id.toStdString();
                         out << "\t State: " << it->second.state;

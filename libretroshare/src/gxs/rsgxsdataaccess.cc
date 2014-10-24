@@ -184,7 +184,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         GxsMsgReq::const_iterator mit = msgIds.begin();
         std::vector<RsGxsGroupId> toRemove;
 
-        for(; mit != msgIds.end(); mit++)
+        for(; mit != msgIds.end(); ++mit)
         {
             if(mit->second.empty())
                 toRemove.push_back(mit->first);
@@ -194,7 +194,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 
         GxsMsgReq filteredMsgIds = msgIds;
 
-        for(; vit != toRemove.end(); vit++)
+        for(; vit != toRemove.end(); ++vit)
             filteredMsgIds.erase(*vit);
 
         if(reqType & GXS_REQUEST_TYPE_MSG_META)
@@ -247,7 +247,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         {
                 MsgMetaReq* mmr = new MsgMetaReq();
 
-                for(; lit != grpIds.end(); lit++)
+                for(; lit != grpIds.end(); ++lit)
                     mmr->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
 
                 req = mmr;
@@ -255,7 +255,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         {
                 MsgDataReq* mdr = new MsgDataReq();
 
-                for(; lit != grpIds.end(); lit++)
+                for(; lit != grpIds.end(); ++lit)
                     mdr->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
 
                 req = mdr;
@@ -263,7 +263,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         {
                 MsgIdReq* mir = new MsgIdReq();
 
-                for(; lit != grpIds.end(); lit++)
+                for(; lit != grpIds.end(); ++lit)
                     mir->mMsgIds[*lit] = std::vector<RsGxsMessageId>();
 
                 req = mir;
@@ -733,7 +733,7 @@ void RsGxsDataAccess::processRequests()
         GroupStatisticRequest* gsr;
         ServiceStatisticRequest* ssr;
 
-		for(it = mRequests.begin(); it != mRequests.end(); it++)
+		for(it = mRequests.begin(); it != mRequests.end(); ++it)
 		{
 
 			GxsRequest* req = it->second;
@@ -818,7 +818,7 @@ void RsGxsDataAccess::processRequests()
 
 	} // END OF MUTEX.
 
-	for(cit = toClear.begin(); cit != toClear.end(); cit++)
+	for(cit = toClear.begin(); cit != toClear.end(); ++cit)
 	{
 		clearRequest(*cit);
 	}
@@ -902,7 +902,7 @@ bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
         std::list<RsGxsGroupId>::iterator lit = grpIdsOut.begin(),
         lit_end = grpIdsOut.end();
 
-        for(; lit != lit_end; lit++)
+        for(; lit != lit_end; ++lit)
         {
             grpData[*lit] = NULL;
         }
@@ -910,7 +910,7 @@ bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
         bool ok = mDataStore->retrieveNxsGrps(grpData, true, true);
 
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grpData.begin();
-	for(; mit != grpData.end(); mit++)
+	for(; mit != grpData.end(); ++mit)
 		req->mGroupData.push_back(mit->second);
 
         return ok;
@@ -930,14 +930,14 @@ bool RsGxsDataAccess::getGroupSummary(GroupMetaReq* req)
 
         std::list<RsGxsGroupId>::const_iterator lit = grpIdsOut.begin();
 
-        for(; lit != grpIdsOut.end(); lit++)
+        for(; lit != grpIdsOut.end(); ++lit)
 		grpMeta[*lit] = NULL;
 
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
 
-	for(; mit != grpMeta.end(); mit++)
+	for(; mit != grpMeta.end(); ++mit)
 		req->mGroupMetaData.push_back(mit->second);
 
 	return true;
@@ -956,21 +956,21 @@ bool RsGxsDataAccess::getGroupList(const std::list<RsGxsGroupId>& grpIdsIn, cons
 
     std::list<RsGxsGroupId>::const_iterator lit = grpIdsIn.begin();
 
-    for(; lit != grpIdsIn.end(); lit++)
+    for(; lit != grpIdsIn.end(); ++lit)
             grpMeta[*lit] = NULL;
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
     std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
 
-    for(; mit != grpMeta.end(); mit++)
+    for(; mit != grpMeta.end(); ++mit)
     {
             grpIdsOut.push_back(mit->first);
     }
 
     filterGrpList(grpIdsOut, opts, grpMeta);
 
-    for(mit = grpMeta.begin(); mit != grpMeta.end(); mit++)
+    for(mit = grpMeta.begin(); mit != grpMeta.end(); ++mit)
     {
             delete mit->second; // so wasteful!!
     }
@@ -1053,7 +1053,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
     GxsMsgMetaResult::iterator meta_it;
     MsgMetaFilter metaFilter;
 
-    for(meta_it = result.begin(); meta_it != result.end(); meta_it++)
+    for(meta_it = result.begin(); meta_it != result.end(); ++meta_it)
     {
             const RsGxsGroupId& grpId = meta_it->first;
 
@@ -1068,7 +1068,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                     std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
                     std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
 
-                    for(; vit != metaV.end(); vit++)
+                    for(; vit != metaV.end(); ++vit)
                     {
                         RsGxsMsgMetaData* msgMeta = *vit;
 
@@ -1118,7 +1118,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                     }
 
                     // Add the discovered Latest Msgs.
-                    for(oit = origMsgTs.begin(); oit != origMsgTs.end(); oit++)
+                    for(oit = origMsgTs.begin(); oit != origMsgTs.end(); ++oit)
                     {
                             msgIdsOut[grpId].push_back(oit->second.first);
                     }
@@ -1128,7 +1128,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
             {
                 std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
 
-                for(; vit != metaV.end(); vit++)
+                for(; vit != metaV.end(); ++vit)
                 {
                     RsGxsMsgMetaData* msgMeta = *vit;
                     bool add = false;
@@ -1292,7 +1292,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
     std::vector<RsGxsGrpMsgIdPair>::iterator vit_msgIds = req->mMsgIds.begin();
 
-    for(; vit_msgIds != req->mMsgIds.end(); vit_msgIds++)
+    for(; vit_msgIds != req->mMsgIds.end(); ++vit_msgIds)
     {
         MsgMetaFilter filterMap;
 
@@ -1314,7 +1314,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         std::vector<RsGxsMessageId> outMsgIds;
 
         RsGxsMsgMetaData* origMeta = NULL;
-        for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+        for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
         {
             RsGxsMsgMetaData* meta = *vit_meta;
 
@@ -1345,7 +1345,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 // RUN THROUGH ALL MSGS... in map origId -> TS.
                 std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
                 std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
-                for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+                for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
                 {
 
                     RsGxsMsgMetaData* meta = *vit_meta;
@@ -1404,7 +1404,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 }
 
                 // Add the discovered Latest Msgs.
-                for(oit = origMsgTs.begin(); oit != origMsgTs.end(); oit++)
+                for(oit = origMsgTs.begin(); oit != origMsgTs.end(); ++oit)
                 {
                     outMsgIds.push_back(oit->second.first);
                 }
@@ -1417,7 +1417,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 RsGxsMessageId latestMsgId;
                 RsGxsMsgMetaData* latestMeta;
 
-                for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+                for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
                 {
                     RsGxsMsgMetaData* meta = *vit_meta;
 
@@ -1437,7 +1437,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         }
         else if (onlyAllVersions)
         {
-            for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
+            for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
             {
                 RsGxsMsgMetaData* meta = *vit_meta;
 
@@ -1499,7 +1499,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     req->mGroupStatistic.mNumChildMsgsNew = 0;
     req->mGroupStatistic.mNumChildMsgsUnread = 0;
 
-    for(int i = 0; i < msgMetaV.size(); i++)
+    for(int i = 0; i < msgMetaV.size(); ++i)
     {
         RsGxsMsgMetaData* m = msgMetaV[i];
         req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();
@@ -1547,7 +1547,7 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
     req->mServiceStatistic.mNumChildMsgsNew = 0;
     req->mServiceStatistic.mNumChildMsgsUnread = 0;
 
-    for(; mit != grpMeta.end(); mit++)
+    for(; mit != grpMeta.end(); ++mit)
     {
         RsGxsGrpMetaData* m = mit->second;
         req->mServiceStatistic.mSizeOfGrps += m->mGrpSize + m->serial_size();
@@ -1586,14 +1586,14 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
 
     GxsMsgMetaResult::iterator mit = result.begin(), mit_end = result.end();
 
-    for(; mit != mit_end; mit++)
+    for(; mit != mit_end; ++mit)
     {
         const RsGxsGroupId grpId = mit->first;
         std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
         std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin(),
         vit_end = metaV.end();
 
-        for(; vit != vit_end; vit++)
+        for(; vit != vit_end; ++vit)
         {
             RsGxsMsgMetaData* meta = *vit;
             req->mMsgIdResult[grpId].push_back(meta->mMsgId);
@@ -1614,12 +1614,12 @@ void RsGxsDataAccess::cleanseMsgMetaMap(GxsMsgMetaResult& result)
 {
     GxsMsgMetaResult::iterator mit = result.begin();
 
-        for(; mit !=result.end(); mit++)
+        for(; mit !=result.end(); ++mit)
 	{
 
             std::vector<RsGxsMsgMetaData*>& msgMetaV = mit->second;
             std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetaV.begin();
-                for(; vit != msgMetaV.end(); vit++)
+                for(; vit != msgMetaV.end(); ++vit)
 		{
                         delete *vit;
 		}
@@ -1634,7 +1634,7 @@ void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOption
 {
 
 	GxsMsgIdResult::iterator mit = msgIds.begin();
-	for(;mit != msgIds.end(); mit++)
+	for(;mit != msgIds.end(); ++mit)
 	{
 
 		MsgMetaFilter::const_iterator cit = msgMetas.find(mit->first);
@@ -1658,7 +1658,7 @@ void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOption
 
 			if(keep)
 			{
-				vit++;
+				++vit;
 			}else
 			{
 				vit = msgs.erase(vit);
@@ -1684,7 +1684,7 @@ void RsGxsDataAccess::filterGrpList(std::list<RsGxsGroupId> &grpIds, const RsTok
 
         if(keep)
         {
-            lit++;
+            ++lit;
         }else
         {
             lit = grpIds.erase(lit);
@@ -1749,7 +1749,7 @@ void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens)
 
 	std::map<uint32_t, GxsRequest*>::iterator mit = mRequests.begin();
 
-	for(; mit != mRequests.end(); mit++)
+	for(; mit != mRequests.end(); ++mit)
 	{
 		tokens.push_back(mit->first);
 	}

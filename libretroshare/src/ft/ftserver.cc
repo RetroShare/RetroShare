@@ -737,7 +737,7 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	mFiMon->getSharedDirectories(dirList);
 
 #ifdef SERVER_DEBUG
-	for(it = dirList.begin(); it != dirList.end(); it++)
+	for(it = dirList.begin(); it != dirList.end(); ++it)
 	{
 		std::cerr << "ftServer::removeSharedDirectory()";
 		std::cerr << " existing: " << (*it).filename;
@@ -1246,7 +1246,7 @@ bool ftServer::handleCacheData()
 	std::cerr << "handleCacheData() " << std::endl;
 #endif
 	mCacheStrapper->getCacheUpdates(cacheUpdates);
-	for(it = cacheUpdates.begin(); it != cacheUpdates.end(); it++)
+	for(it = cacheUpdates.begin(); it != cacheUpdates.end(); ++it)
 	{
 		/* construct reply */
 		RsFileTransferCacheItem *ci = new RsFileTransferCacheItem();

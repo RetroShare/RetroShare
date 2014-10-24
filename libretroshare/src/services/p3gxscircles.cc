@@ -180,7 +180,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
 	std::vector<RsGxsNotify *>::iterator it;
-	for(it = changes.begin(); it != changes.end(); it++)
+	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
@@ -193,7 +193,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
+			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 			{
 #ifdef DEBUG_CIRCLES
 				std::cerr << "p3GxsCircles::notifyChanges() Msgs for Group: " << mit->first;
@@ -212,7 +212,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
 			std::list<RsGxsGroupId>::iterator git;
-			for(git = groupList.begin(); git != groupList.end(); git++)
+			for(git = groupList.begin(); git != groupList.end(); ++git)
 			{
 #ifdef DEBUG_CIRCLES
 				std::cerr << "p3GxsCircles::notifyChanges() Incoming Group: " << *git;
@@ -290,7 +290,7 @@ bool p3GxsCircles:: getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds)
 	else
 	{
 		std::list<RsGxsCircleId>::const_iterator it;
-		for(it = mCirclePersonalIdList.begin(); it != mCirclePersonalIdList.begin(); it++)
+		for(it = mCirclePersonalIdList.begin(); it != mCirclePersonalIdList.begin(); ++it)
 		{
 			circleIds.push_back(*it);
 		}
@@ -315,7 +315,7 @@ bool p3GxsCircles:: getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds)
 	else
 	{
 		std::list<RsGxsCircleId>::const_iterator it;
-		for(it = mCircleExternalIdList.begin(); it != mCircleExternalIdList.begin(); it++)
+		for(it = mCircleExternalIdList.begin(); it != mCircleExternalIdList.begin(); ++it)
 		{
 			circleIds.push_back(*it);
 		}
@@ -396,7 +396,7 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsCircleGroupItem* item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
 			if (item)
@@ -536,7 +536,7 @@ bool RsGxsCircleCache::loadSubCircle(const RsGxsCircleCache &subcircle)
 bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId> &friendlist)
 {
 	std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
-	for(it = mAllowedPeers.begin(); it != mAllowedPeers.end(); it++)
+	for(it = mAllowedPeers.begin(); it != mAllowedPeers.end(); ++it)
 	{
 		friendlist.push_back(it->first);
 	}
@@ -613,7 +613,7 @@ bool p3GxsCircles::load_CircleIdList(uint32_t token)
             mCircleExternalIdList.clear();
         }
 
-        for(std::list<RsGroupMetaData>::iterator it = groups.begin(); it != groups.end(); it++)
+        for(std::list<RsGroupMetaData>::iterator it = groups.begin(); it != groups.end(); ++it)
 		{
             addCircleIdToList(RsGxsCircleId(it->mGroupId), it->mCircleType);
 		}
@@ -667,7 +667,7 @@ bool p3GxsCircles::cachetest_handlerequest(uint32_t token)
 	if(ok)
 	{
 		std::list<RsGxsId>::iterator vit = grpIds.begin();
-		for(; vit != grpIds.end(); vit++)
+		for(; vit != grpIds.end(); ++vit)
 		{
 			/* 5% chance of checking it! */
 			if (RSRandom::random_f32() < 0.25)
@@ -816,7 +816,7 @@ bool p3GxsCircles::cache_start_load()
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
 		std::list<RsGxsCircleId>::iterator it;
-		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
+		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); ++it)
 		{
 #ifdef DEBUG_CIRCLES
 			std::cerr << "p3GxsCircles::cache_start_load() GroupId: " << *it;
@@ -862,7 +862,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsCircleGroupItem *item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
 			if (!item)
@@ -917,7 +917,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 				std::list<RsGxsId>::const_iterator pit;
 	
 				// need to trigger the searches.
-				for(pit = peers.begin(); pit != peers.end(); pit++)
+				for(pit = peers.begin(); pit != peers.end(); ++pit)
 				{
 #ifdef DEBUG_CIRCLES
 					std::cerr << "p3GxsCircles::cache_load_for_token() Invited Member: " << *pit;
@@ -978,7 +978,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 #if 0
 				std::list<RsGxsCircleId> &circles = group.mSubCircles;
 				std::list<RsGxsCircleId>::const_iterator cit;
-				for(cit = circles.begin(); cit != circles.end(); cit++)
+				for(cit = circles.begin(); cit != circles.end(); ++cit)
 				{
 					/* if its cached already -> then its complete. */
 					if (mCircleCache.is_loaded(*cit))
@@ -1022,7 +1022,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 				std::list<RsPgpId>::const_iterator pit;
 	
 				// need to trigger the searches.
-				for(pit = peers.begin(); pit != peers.end(); pit++)
+				for(pit = peers.begin(); pit != peers.end(); ++pit)
 				{
 #ifdef DEBUG_CIRCLES
 					std::cerr << "p3GxsCircles::cache_load_for_token() Local Friend: " << *pit;
@@ -1105,7 +1105,7 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 	/* try reload Ids */
 	std::set<RsGxsId>::const_iterator pit;
 	for(pit = cache.mUnprocessedPeers.begin();
-		pit != cache.mUnprocessedPeers.end(); pit++)
+		pit != cache.mUnprocessedPeers.end(); ++pit)
 	{
 		/* check cache */
 		if (mIdentities->haveKey(*pit))
@@ -1294,7 +1294,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 
@@ -1337,7 +1337,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 			std::list<RsGxsId>::const_iterator pit;
 
 			// need to trigger the searches.
-			for(pit = peers.begin(); pit != peers.end(); pit++)
+			for(pit = peers.begin(); pit != peers.end(); ++pit)
 			{
 				/* check cache */
 				if (mIdentities->is_cached(*pit))
@@ -1352,7 +1352,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 							// TODO.
 							//cache.mAllowedPeers[details.mPgpId] = *pit;
 
-							for(uit = updateCaches.begin(); uit != updateCaches.end(); uit++)
+							for(uit = updateCaches.begin(); uit != updateCaches.end(); ++uit)
 							{
 								/* fetch the cache - and update */
 								mLoadingCache[id] = RsGxsCircleCache();
@@ -1387,7 +1387,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 
 			std::list<RsGxsCircleId> &circles = group.circles;
 			std::list<RsGxsCircleId>::const_iterator cit;
-			for(cit = circles.begin(); cit != circles.end(); cit++)
+			for(cit = circles.begin(); cit != circles.end(); ++cit)
 			{
 				/* if its cached already -> then its complete. */
 				if (mCircleCache.is_loaded(*cit))
@@ -1514,7 +1514,7 @@ void p3GxsCircles::checkDummyIdData()
 		}
 
 		std::vector<RsGxsIdGroup>::iterator it;
-		for(it = ids.begin(); it != ids.end(); it++)
+		for(it = ids.begin(); it != ids.end(); ++it)
 		{
                         if (it->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 			{
@@ -1580,7 +1580,7 @@ void p3GxsCircles::generateDummyCircle()
 
 		int selection = (RSRandom::random_u32() % npgps);
 		std::list<RsGxsId>::iterator it = mDummyPgpLinkedIds.begin();
-		for(int j = 0; (it != mDummyPgpLinkedIds.end()) && (j < selection); j++, it++) ;
+		for(int j = 0; (it != mDummyPgpLinkedIds.end()) && (j < selection); j++, ++it) ;
 		if (it != mDummyPgpLinkedIds.end())
 		{
 			idset.insert(*it);
@@ -1594,7 +1594,7 @@ void p3GxsCircles::generateDummyCircle()
 		int selection = (RSRandom::random_u32() % mDummyOwnIds.size());
 		std::list<RsGxsId>::iterator it = mDummyOwnIds.begin();
 					mDummyOwnIds.push_back(*it);
-		for(int j = 0; (it != mDummyOwnIds.end()) && (j < selection); j++, it++) ;
+		for(int j = 0; (it != mDummyOwnIds.end()) && (j < selection); j++, ++it) ;
 		if (it != mDummyOwnIds.end())
 		{
 			idset.insert(*it);
@@ -1608,7 +1608,7 @@ void p3GxsCircles::generateDummyCircle()
 #endif // DEBUG_CIRCLES
 
 	std::set<RsGxsId>::iterator it;
-	for(it = idset.begin(); it != idset.end(); it++)
+	for(it = idset.begin(); it != idset.end(); ++it)
 	{
 		group.mInvitedMembers.push_back(*it);
 #ifdef DEBUG_CIRCLES
@@ -1637,14 +1637,14 @@ std::ostream &operator<<(std::ostream &out, const RsGxsCircleGroup &grp)
         std::list<RsGxsId>::const_iterator it;
         std::list<RsGxsCircleId>::const_iterator sit;
 	for(it = grp.mInvitedMembers.begin();
-		it != grp.mInvitedMembers.begin(); it++)
+		it != grp.mInvitedMembers.begin(); ++it)
 	{
 		out << "\t" << *it;
 		out << std::endl;
 	}
 
 	for(sit = grp.mSubCircles.begin();
-		sit != grp.mSubCircles.begin(); sit++)
+		sit != grp.mSubCircles.begin(); ++sit)
 	{
 		out << "\t" << *it;
 		out << std::endl;

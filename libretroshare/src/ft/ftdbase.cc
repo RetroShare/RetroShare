@@ -61,7 +61,7 @@ bool ftFiStore::search(const RsFileHash &hash, FileSearchFlags hintflags, FileIn
 	if (SearchHash(hash, results))
 	{
 		bool first = true;
-		for(it = results.begin(); it != results.end(); it++)
+		for(it = results.begin(); it != results.end(); ++it)
 		{
 #ifdef DB_DEBUG
 			std::cerr << "ftFiStore::search() found: ";
@@ -235,7 +235,7 @@ bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 
 	getSharedDirectories(dirList);
 
-	for(it = dirList.begin(); it != dirList.end(); it++)
+	for(it = dirList.begin(); it != dirList.end(); ++it)
 	{
 		RsFileConfigItem *fi = new RsFileConfigItem();
 		fi->file.path = (*it).filename ;
@@ -267,7 +267,7 @@ bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
 	/* Convert to TLV */
-	for(std::map<std::string,std::string>::const_iterator mit = configMap.begin(); mit != configMap.end(); mit++)
+	for(std::map<std::string,std::string>::const_iterator mit = configMap.begin(); mit != configMap.end(); ++mit)
 	{
 		RsTlvKeyValue kv;
 		kv.key = mit->first;
@@ -298,7 +298,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 	std::list<SharedDirInfo> dirList;
 
 	std::list<RsItem *>::iterator it;
-	for(it = load.begin(); it != load.end(); it++)
+	for(it = load.begin(); it != load.end(); ++it)
 	{
 		RsConfigKeyValueSet *rskv ;
 				/* switch on type */
@@ -308,7 +308,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 			std::map<std::string, std::string> configMap;
 			std::map<std::string, std::string>::const_iterator mit ;
 
-			for(std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); kit++)
+			for(std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); ++kit)
 			{
 				configMap[kit->key] = kit->value;
 			}

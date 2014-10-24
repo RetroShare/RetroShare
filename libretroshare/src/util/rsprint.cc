@@ -59,7 +59,7 @@ std::string RsUtil::HashId(const std::string &id, bool reverse)
 	if (reverse)
 	{	
 		std::string::const_reverse_iterator rit;
-		for(rit = id.rbegin(); rit != id.rend(); rit++)
+		for(rit = id.rbegin(); rit != id.rend(); ++rit)
 		{
 			tohash += (*rit);
 		}

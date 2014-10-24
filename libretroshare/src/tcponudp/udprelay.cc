@@ -139,7 +139,7 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 		RsStackMutex stack(udppeerMtx);   /********** LOCK MUTEX *********/
 		
 		std::map<struct sockaddr_in, UdpPeer *>::iterator it;
-		for(it = mPeers.begin(); it != mPeers.end(); it++)
+		for(it = mPeers.begin(); it != mPeers.end(); ++it)
 		{
 			if (it->second == peer)
 			{
@@ -190,7 +190,7 @@ int UdpRelayReceiver::getRelayEnds(std::list<UdpRelayEnd> &relayEnds)
 
 	std::map<struct sockaddr_in, UdpRelayEnd>::iterator rit;
 	
-	for(rit = mStreams.begin(); rit != mStreams.end(); rit++)
+	for(rit = mStreams.begin(); rit != mStreams.end(); ++rit)
 	{
 		relayEnds.push_back(rit->second);
 	}
@@ -205,7 +205,7 @@ int UdpRelayReceiver::getRelayProxies(std::list<UdpRelayProxy> &relayProxies)
 
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
 	
-	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
+	for(rit = mRelays.begin(); rit != mRelays.end(); ++rit)
 	{
 		relayProxies.push_back(rit->second);
 	}
@@ -239,7 +239,7 @@ int UdpRelayReceiver::checkRelays()
 
 #define BANDWIDTH_FILTER_K	(0.8)
 	
-	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
+	for(rit = mRelays.begin(); rit != mRelays.end(); ++rit)
 	{
 		/* calc bandwidth */
 		//rit->second.mBandwidth = rit->second.mDataSize / (float) (now - rit->second.mLastBandwidthTS);
@@ -327,7 +327,7 @@ int UdpRelayReceiver::checkRelays()
 	}
 
 	std::list<UdpRelayAddrSet>::iterator it;
-	for(it = eraseList.begin(); it != eraseList.end(); it++)
+	for(it = eraseList.begin(); it != eraseList.end(); ++it)
 	{
 		removeUdpRelay_relayLocked(&(*it));
 	}
@@ -611,7 +611,7 @@ int UdpRelayReceiver::RelayStatus(std::ostream &out)
 	out << std::endl;
 
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
-	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
+	for(rit = mRelays.begin(); rit != mRelays.end(); ++rit)
 	{
 		out << "Relay for: " << rit->first;
 		out << std::endl;
@@ -649,7 +649,7 @@ int     UdpRelayReceiver::status(std::ostream &out)
 		out << "UdpRelayReceiver::Connections:" << std::endl;
 
 		std::map<struct sockaddr_in, UdpRelayEnd>::iterator pit;
-		for(pit = mStreams.begin(); pit != mStreams.end(); pit++)
+		for(pit = mStreams.begin(); pit != mStreams.end(); ++pit)
 		{
 			out << "\t" << pit->first << " : " << pit->second;
 			out << std::endl;
@@ -670,7 +670,7 @@ int UdpRelayReceiver::UdpPeersStatus(std::ostream &out)
 	out << std::endl;
 
         std::map<struct sockaddr_in, UdpPeer *>::iterator pit;
-	for(pit = mPeers.begin(); pit != mPeers.end(); pit++)
+	for(pit = mPeers.begin(); pit != mPeers.end(); ++pit)
 	{
 		out << "UdpPeer for: " << pit->first;
 		out << " is: " << pit->second;

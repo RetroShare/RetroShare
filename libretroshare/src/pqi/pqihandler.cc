@@ -70,7 +70,7 @@ int	pqihandler::tick()
 
 		// tick all interfaces...
 		std::map<RsPeerId, SearchModule *>::iterator it;
-		for(it = mods.begin(); it != mods.end(); it++)
+		for(it = mods.begin(); it != mods.end(); ++it)
 		{
 			if (0 < ((it -> second) -> pqi) -> tick())
 			{
@@ -120,7 +120,7 @@ int	pqihandler::status()
 		std::string out = "pqihandler::status() Active Modules:\n";
 
 		// display all interfaces...
-		for(it = mods.begin(); it != mods.end(); it++)
+		for(it = mods.begin(); it != mods.end(); ++it)
 		{
 			rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.toStdString().c_str(), (void *) ((it -> second) -> pqi));
 		}
@@ -131,7 +131,7 @@ int	pqihandler::status()
 
 
 	// status all interfaces...
-	for(it = mods.begin(); it != mods.end(); it++)
+	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		((it -> second) -> pqi) -> status();
 	}
@@ -183,7 +183,7 @@ bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	std::map<RsPeerId, SearchModule *>::iterator it;
-	for(it = mods.begin(); it != mods.end(); it++)
+	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		if (mod == it -> second)
 		{
@@ -314,7 +314,7 @@ int pqihandler::locked_GetItems()
 	int count = 0;
 
 	// loop through modules....
-	for(it = mods.begin(); it != mods.end(); it++)
+	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
 
@@ -441,7 +441,7 @@ int     pqihandler::ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRat
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	std::map<RsPeerId, SearchModule *>::iterator it;
-	for(it = mods.begin(); it != mods.end(); it++)
+	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
 
@@ -481,7 +481,7 @@ int     pqihandler::UpdateRates()
 	int effectiveDownloadsSm = 0;
 	// loop through modules to get the used bandwith and the number of modules that are affectively transfering
 	//std::cerr << " Looping through modules" << std::endl;
-	for(it = mods.begin(); it != mods.end(); it++)
+	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
 		float crate_in = mod -> pqi -> getRate(true);
@@ -528,7 +528,7 @@ int     pqihandler::UpdateRates()
 	    rate_out_modifier = - 0.001 * avail_out;
 	}
 	if (rate_out_modifier != 0) {
-	    for(it = mods.begin(); it != mods.end(); it++)
+	    for(it = mods.begin(); it != mods.end(); ++it)
 	    {
 		    SearchModule *mod = (it -> second);
 			mod -> pqi -> setMaxRate(false, mod -> pqi -> getMaxRate(false) + rate_out_modifier);
@@ -543,7 +543,7 @@ int     pqihandler::UpdateRates()
 	    rate_in_modifier = - 0.001 * avail_in;
 	}
 	if (rate_in_modifier != 0) {
-	    for(it = mods.begin(); it != mods.end(); it++)
+	    for(it = mods.begin(); it != mods.end(); ++it)
 	    {
 		    SearchModule *mod = (it -> second);
 			mod -> pqi -> setMaxRate(true, mod -> pqi -> getMaxRate(true) + rate_in_modifier);
@@ -551,7 +551,7 @@ int     pqihandler::UpdateRates()
 	}
 
 	//cap the rates
-	for(it = mods.begin(); it != mods.end(); it++)
+	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
 		if (mod -> pqi -> getMaxRate(false) < max_out_effective) {

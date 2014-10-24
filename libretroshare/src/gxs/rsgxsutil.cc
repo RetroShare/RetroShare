@@ -39,7 +39,7 @@ RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService
 
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator cit = grpMeta.begin();
 
-	for(;cit != grpMeta.end(); cit++)
+	for(;cit != grpMeta.end(); ++cit)
 	{
 		mGrpMeta.push_back(cit->second);
 	}
@@ -67,7 +67,7 @@ bool RsGxsMessageCleanUp::clean()
 
 		req.clear();
 
-		for(; mit != result.end(); mit++)
+		for(; mit != result.end(); ++mit)
 		{
 			std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
 			std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
@@ -129,7 +129,7 @@ bool RsGxsIntegrityCheck::check()
 	// compute hash and compare to stored value, if it fails then simply add it
 	// to list
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin();
-	for(; git != grp.end(); git++)
+	for(; git != grp.end(); ++git)
 	{
 		RsNxsGrp* grp = git->second;
         RsFileHash currHash;
@@ -198,12 +198,12 @@ bool RsGxsIntegrityCheck::check()
 
 	GxsMsgResult::iterator mit = msgs.begin();
 
-	for(; mit != msgs.end(); mit++)
+	for(; mit != msgs.end(); ++mit)
 	{
 		std::vector<RsNxsMsg*>& msgV = mit->second;
 		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
 
-		for(; vit != msgV.end(); vit++)
+		for(; vit != msgV.end(); ++vit)
 		{
 			RsNxsMsg* msg = *vit;
             RsFileHash currHash;

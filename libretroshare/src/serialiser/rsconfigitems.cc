@@ -1179,7 +1179,7 @@ std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
 	out << "groupFlag: " << flag << std::endl;
 
 	std::list<RsPgpId>::iterator it;
-	for (it = pgpList.ids.begin(); it != pgpList.ids.end(); it++) {
+	for (it = pgpList.ids.begin(); it != pgpList.ids.end(); ++it) {
 		printIndent(out, int_Indent);
 		out << "peerId: " << it->toStdString() << std::endl;
 	}

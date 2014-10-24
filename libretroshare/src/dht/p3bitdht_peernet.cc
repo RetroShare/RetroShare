@@ -2145,7 +2145,7 @@ void p3BitDht::monitorConnections()
 
 	std::map<bdNodeId, DhtPeerDetails>::iterator it;
 
-	for(it = mPeers.begin(); it != mPeers.end(); it++)
+	for(it = mPeers.begin(); it != mPeers.end(); ++it)
 	{
 		/* ignore ones which aren't friends */
 		if (it->second.mPeerType != RSDHT_PEERTYPE_FRIEND)

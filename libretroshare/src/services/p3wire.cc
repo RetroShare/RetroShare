@@ -109,7 +109,7 @@ bool p3Wire::getGroupData(const uint32_t &token, std::vector<RsWireGroup> &group
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsWireGroupItem* item = dynamic_cast<RsGxsWireGroupItem*>(*vit);
 
@@ -146,13 +146,13 @@ bool p3Wire::getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulse
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsWirePulseItem* item = dynamic_cast<RsGxsWirePulseItem*>(*vit);
 				

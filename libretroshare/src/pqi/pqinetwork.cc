@@ -171,7 +171,7 @@ bool getLocalInterfaces_ipv4(struct in_addr &/*routeAddr*/, std::list<struct in_
 	}
 
 	// loop through the interfaces.
-	for(; ifptr->if_index != 0; ifptr++)
+	for(; ifptr->if_index != 0; ++ifptr)
 	{
 		//copy in the interface name to look up address of
 		strncpy(ifreq.ifr_name, ifptr->if_name, IF_NAMESIZE);
@@ -598,7 +598,7 @@ bool 	getPreferredInterface_ipv4(in_addr &routeAddr, struct in_addr &prefAddr) /
 	std::cerr << "getPreferredInterface() " << addrs.size() << " interfaces." << std::endl;
 #endif
 
-	for(it = addrs.begin(); it != addrs.end(); it++)
+	for(it = addrs.begin(); it != addrs.end(); ++it)
 	{
 		struct in_addr addr = *it;
 
@@ -741,7 +741,7 @@ bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct soc
 	if (getLocalInterfaces_ipv4(existing_addr, local_addrs))
 	{
 		std::list<struct in_addr>::iterator it;
-		for(it = local_addrs.begin(); it != local_addrs.end(); it++)
+		for(it = local_addrs.begin(); it != local_addrs.end(); ++it)
 		{
 			/* store into prefAddr */
 			

@@ -179,13 +179,13 @@ RetroCursor* RetroDb::sqlQuery(const std::string& tableName, const std::list<std
     sqlite3_stmt* stmt = NULL;
     std::list<std::string>::const_iterator it = columns.begin();
 
-    for(; it != columns.end(); it++){
+    for(; it != columns.end(); ++it){
         columnSelection += *it;
 
-        it++;
+        ++it;
         if(it != columns.end())
             columnSelection += ",";
-        it--;
+        --it;
     }
 
     // construct query
@@ -225,11 +225,11 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& /* nullColu
     // build columns part of insertion
     std::string qColumns = table + "(";
 
-    for(; mit != keyTypeMap.end(); mit++){
+    for(; mit != keyTypeMap.end(); ++mit){
 
         qColumns += mit->first;
 
-        mit++;
+        ++mit;
 
         // add comma if more columns left
         if(mit == keyTypeMap.end())
@@ -237,7 +237,7 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& /* nullColu
         else
             qColumns += ",";
 
-        mit--;
+        --mit;
     }
 
     // build values part of insertion
@@ -283,7 +283,7 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
 
     std::list<RetroBind*>::iterator lit = paramBindings.begin();
 
-    for(; lit != paramBindings.end(); lit++){
+    for(; lit != paramBindings.end(); ++lit){
         RetroBind* rb = *lit;
 
         if(!rb->bind(stm))
@@ -351,7 +351,7 @@ void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyType
 
 	parameter = "VALUES(";
 	int index = 0;
-    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++)
+    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); ++mit)
     {
 
         uint8_t type = mit->second;
@@ -400,14 +400,14 @@ void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyType
         {
         	paramBindings.push_back(rb);
 
-        	mit++;
+        	++mit;
 
         	if(mit == keyTypeMap.end())
         		parameter += "?";
         	else
         		parameter += "?,";
 
-        	mit--;
+        	--mit;
         }
     }
 
@@ -423,7 +423,7 @@ void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> keyType
 	std::map<std::string, uint8_t>::const_iterator mit = keyTypeMap.begin();
 
 	int index = 0;
-    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++)
+    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); ++mit)
     {
 
         uint8_t type = mit->second;
@@ -472,14 +472,14 @@ void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> keyType
         {
         	paramBindings.push_back(rb);
 
-        	mit++;
+        	++mit;
 
         	if(mit == keyTypeMap.end())
         		parameter += key + "=?";
         	else
         		parameter += key + "=?,";
 
-        	mit--;
+        	--mit;
         }
     }
 

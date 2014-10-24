@@ -601,7 +601,7 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 
 	/* check for existing */
         std::map<RsPeerId, peerState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
 		if (it->second.lastcontact > 0)
 		{
@@ -771,7 +771,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 		bool success = false;
 		std::map<RsPeerId, peerState>::iterator it;
 		//remove ssl and gpg_ids
-		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
 			if (find(sslid_toRemove.begin(),sslid_toRemove.end(),it->second.id) != sslid_toRemove.end())
 			{
@@ -789,7 +789,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 			}
 		}
 
-		for(std::list<RsPeerId>::iterator rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
+		for(std::list<RsPeerId>::iterator rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); ++rit)
 			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
 				mFriendList.erase(it);
 
@@ -804,7 +804,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 	}
 
 	std::list<RsPeerId>::iterator rit;
-	for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
+	for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); ++rit)
 	{
 		mLinkMgr->removeFriend(*rit);
 	}
@@ -844,7 +844,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 		bool success = false;
 		std::map<RsPeerId, peerState>::iterator it;
 		//remove ssl and gpg_ids
-		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
 			if (it->second.id == id)
 			{
@@ -864,13 +864,13 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 			}
 		}
 
-		for(std::list<RsPeerId>::iterator rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
+		for(std::list<RsPeerId>::iterator rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); ++rit)
 			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
 				mFriendList.erase(it);
 
 		std::map<RsPgpId,ServicePermissionFlags>::iterator it2 ;
 
-		for(std::list<RsPgpId>::iterator rit = pgpid_toRemove.begin(); rit != pgpid_toRemove.end(); rit++) 
+		for(std::list<RsPgpId>::iterator rit = pgpid_toRemove.begin(); rit != pgpid_toRemove.end(); ++rit)
 			if (mFriendsPermissionFlags.end() != (it2 = mFriendsPermissionFlags.find(*rit))) 
 				mFriendsPermissionFlags.erase(it2);
 
@@ -880,7 +880,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 	}
 
 	std::list<RsPeerId>::iterator rit;
-	for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
+	for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); ++rit)
 	{
 		mLinkMgr->removeFriend(*rit);
 	}
@@ -910,7 +910,7 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
 
 
 		std::map<RsPeerId, peerState>::iterator it;
-		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
 			out << "\t SSL ID: " << it->second.id;
 			out << "\t GPG ID: " << it->second.gpg_id;
@@ -919,7 +919,7 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
 
 		out << "p3PeerMgrIMPL::printPeerLists() Others List";
 		out << std::endl;
-		for(it = mOthersList.begin(); it != mOthersList.end(); it++)
+		for(it = mOthersList.begin(); it != mOthersList.end(); ++it)
 		{
 			out << "\t SSL ID: " << it->second.id;
 			out << "\t GPG ID: " << it->second.gpg_id;
@@ -1529,7 +1529,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 	/* iterate through all friends and save */
         std::map<RsPeerId, peerState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
 		item = new RsPeerNetItem();
 		item->clear();
@@ -1603,7 +1603,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	/* save groups */
 
 	std::list<RsPeerGroupItem *>::iterator groupIt;
-	for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+	for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
 		saveData.push_back(*groupIt); // no delete
 	}
 
@@ -1614,7 +1614,7 @@ void    p3PeerMgrIMPL::saveDone()
 {
 	/* clean up the save List */
 	std::list<RsItem *>::iterator it;
-	for(it = saveCleanupList.begin(); it != saveCleanupList.end(); it++)
+	for(it = saveCleanupList.begin(); it != saveCleanupList.end(); ++it)
 	{
 		delete (*it);
 	}
@@ -1646,7 +1646,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 	/* load the list of peers */
 	std::list<RsItem *>::iterator it;
-	for(it = load.begin(); it != load.end(); it++)
+	for(it = load.begin(); it != load.end(); ++it)
 	{
 		RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
 		if (pitem)
@@ -1717,7 +1717,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			std::cerr << std::endl;
 #endif
 			std::list<RsTlvKeyValue>::iterator kit;
-			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
+			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
 			{
 				if (kit->key == kConfigKeyExtIpFinder)
 				{
@@ -1799,10 +1799,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		bool foundStandardGroup[standardGroupCount] = { false, false, false, false, false };
 
 		std::list<RsPeerGroupItem *>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
 			if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
 				int i;
-				for (i = 0; i < standardGroupCount; i++) {
+				for (i = 0; i < standardGroupCount; ++i) {
 					if ((*groupIt)->id == standardGroup[i]) {
 						foundStandardGroup[i] = true;
 						break;
@@ -1822,7 +1822,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		}
 		
 		/* Initialize standard groups */
-		for (int i = 0; i < standardGroupCount; i++) {
+		for (int i = 0; i < standardGroupCount; ++i) {
 			if (foundStandardGroup[i] == false) {
 				RsPeerGroupItem *gitem = new RsPeerGroupItem;
 				gitem->id = standardGroup[i];
@@ -1932,7 +1932,7 @@ bool p3PeerMgrIMPL::editGroup(const std::string &groupId, RsGroupInfo &groupInfo
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		std::list<RsPeerGroupItem*>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
 			if ((*groupIt)->id == groupId) {
 				break;
 			}
@@ -1969,7 +1969,7 @@ bool p3PeerMgrIMPL::removeGroup(const std::string &groupId)
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		std::list<RsPeerGroupItem*>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
 			if ((*groupIt)->id == groupId) {
 				break;
 			}
@@ -2004,7 +2004,7 @@ bool p3PeerMgrIMPL::getGroupInfo(const std::string &groupId, RsGroupInfo &groupI
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	std::list<RsPeerGroupItem*>::iterator groupIt;
-	for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+	for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
 		if ((*groupIt)->id == groupId) {
 			(*groupIt)->get(groupInfo);
 
@@ -2020,7 +2020,7 @@ bool p3PeerMgrIMPL::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	std::list<RsPeerGroupItem*>::iterator groupIt;
-	for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+	for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
 		RsGroupInfo groupInfo;
 		(*groupIt)->get(groupInfo);
 		groupInfoList.push_back(groupInfo);
@@ -2046,12 +2046,12 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		std::list<RsPeerGroupItem*>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
 			if (groupId.empty() || (*groupIt)->id == groupId) {
 				RsPeerGroupItem *groupItem = *groupIt;
 
 				std::list<RsPgpId>::const_iterator peerIt;
-				for (peerIt = peerIds.begin(); peerIt != peerIds.end(); peerIt++) {
+				for (peerIt = peerIds.begin(); peerIt != peerIds.end(); ++peerIt) {
 					std::list<RsPgpId>::iterator peerIt1 = std::find(groupItem->pgpList.ids.begin(), groupItem->pgpList.ids.end(), *peerIt);
 					if (assign) {
 						if (peerIt1 == groupItem->pgpList.ids.end()) {
@@ -2148,7 +2148,7 @@ bool p3PeerMgrIMPL::removeAllFriendLocations(const RsPgpId &gpgid)
 	}
 	
 	std::list<RsPeerId>::iterator it;
-	for(it = sslIds.begin(); it != sslIds.end(); it++)
+	for(it = sslIds.begin(); it != sslIds.end(); ++it)
 	{
 		removeFriend(*it, true);
 	}
@@ -2167,7 +2167,7 @@ bool	p3PeerMgrIMPL::getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId
 	
 	int count = 0;
 	std::map<RsPeerId, peerState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
 		if (it->second.gpg_id == gpg_id)
 		{
@@ -2212,7 +2212,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 		time_t now = time(NULL);
 		
 		std::map<RsPeerId, peerState>::iterator it;
-		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
 			if (now - it->second.lastcontact > VERY_OLD_PEER)
 			{
@@ -2238,7 +2238,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 	}
 	std::list<RsPeerId>::iterator it;
 	
-	for(it = toRemove.begin(); it != toRemove.end(); it++)
+	for(it = toRemove.begin(); it != toRemove.end(); ++it)
 	{
 		removeFriend(*it,false);
 	}

@@ -77,7 +77,7 @@ bool p3Posted::getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &g
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsPostedGroupItem* item = dynamic_cast<RsGxsPostedGroupItem*>(*vit);
 			if (item)
@@ -108,13 +108,13 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 		
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsPostedPostItem* item = dynamic_cast<RsGxsPostedPostItem*>(*vit);
 
@@ -150,12 +150,12 @@ bool p3Posted::getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> 
 	{
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsPostedPostItem* item = dynamic_cast<RsGxsPostedPostItem*>(*vit);
 		

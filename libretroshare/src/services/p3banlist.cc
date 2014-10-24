@@ -151,8 +151,8 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 	bool updated = false;
 
 	std::list<RsTlvBanListEntry>::const_iterator it;
-	//for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); it++)
-	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); it++)
+	//for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); ++it)
+	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); ++it)
 	{
 		// Order is important!.	
 		updated = (addBanEntry(item->PeerId(), it->addr.addr, it->level, 
@@ -274,7 +274,7 @@ int p3BanList::condenseBanSources_locked()
 #endif
 
 	std::map<RsPeerId, BanList>::const_iterator it;
-	for(it = mBanSources.begin(); it != mBanSources.end(); it++)
+	for(it = mBanSources.begin(); it != mBanSources.end(); ++it)
 	{
 		if (now - it->second.mLastUpdate > RSBANLIST_ENTRY_MAX_AGE)
 		{
@@ -294,7 +294,7 @@ int p3BanList::condenseBanSources_locked()
 		
 		std::map<struct sockaddr_storage, BanListPeer>::const_iterator lit;
 		for(lit = it->second.mBanPeers.begin();
-			lit != it->second.mBanPeers.end(); lit++)
+			lit != it->second.mBanPeers.end(); ++lit)
 		{
 			/* check timestamp */
 			if (now - lit->second.mTs > RSBANLIST_ENTRY_MAX_AGE)
@@ -415,7 +415,7 @@ void p3BanList::sendBanLists()
 
 	/* prepare packets */
 	std::set<RsPeerId>::iterator it;
-	for(it = idList.begin(); it != idList.end(); it++)
+	for(it = idList.begin(); it != idList.end(); ++it)
 	{
 #ifdef DEBUG_BANLIST
 		std::cerr << "p3VoRS::sendBanList() To: " << *it;
@@ -438,7 +438,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 	{
 		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 		std::map<struct sockaddr_storage, BanListPeer>::iterator it;
-		for(it = mBanSet.begin(); it != mBanSet.end(); it++)
+		for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
 		{
 			if (it->second.level >= RSBANLIST_SOURCE_FRIEND)
 			{
@@ -469,7 +469,7 @@ int p3BanList::printBanSet_locked(std::ostream &out)
 	time_t now = time(NULL);
 
 	std::map<struct sockaddr_storage, BanListPeer>::iterator it;
-	for(it = mBanSet.begin(); it != mBanSet.end(); it++)
+	for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
 	{
 		out << "Ban: " << sockaddr_storage_iptostring(it->second.addr);
 		out << " Reason: " << it->second.reason;
@@ -492,7 +492,7 @@ int p3BanList::printBanSources_locked(std::ostream &out)
 	time_t now = time(NULL);
 	
 	std::map<RsPeerId, BanList>::const_iterator it;
-	for(it = mBanSources.begin(); it != mBanSources.end(); it++)
+	for(it = mBanSources.begin(); it != mBanSources.end(); ++it)
 	{
 		out << "BanList from: " << it->first;
 		out << " LastUpdate: " << now - it->second.mLastUpdate;
@@ -500,7 +500,7 @@ int p3BanList::printBanSources_locked(std::ostream &out)
 
 		std::map<struct sockaddr_storage, BanListPeer>::const_iterator lit;
 		for(lit = it->second.mBanPeers.begin();
-			lit != it->second.mBanPeers.end(); lit++)
+			lit != it->second.mBanPeers.end(); ++lit)
 		{
 			out << "\t";
 			out << "Ban: " << sockaddr_storage_iptostring(lit->second.addr);

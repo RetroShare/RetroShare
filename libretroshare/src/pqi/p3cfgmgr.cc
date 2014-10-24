@@ -58,7 +58,7 @@ void	p3ConfigMgr::tick()
 
 	/* iterate through and check if any have changed */
 	std::list<pqiConfig *>::iterator it;
-	for(it = mConfigs.begin(); it != mConfigs.end(); it++)
+	for(it = mConfigs.begin(); it != mConfigs.end(); ++it)
 	{
 		if ((*it)->HasConfigChanged(0))
 		{
@@ -105,7 +105,7 @@ void p3ConfigMgr::saveConfig()
 	RsStackMutex stack(cfgMtx);  /***** LOCK STACK MUTEX ****/
 
 	std::list<pqiConfig *>::iterator it;
-	for(it = mConfigs.begin(); it != mConfigs.end(); it++)
+	for(it = mConfigs.begin(); it != mConfigs.end(); ++it)
 	{
 		if ((*it)->HasConfigChanged(1))
 		{
@@ -133,7 +133,7 @@ void p3ConfigMgr::loadConfig()
 {
 	std::list<pqiConfig *>::iterator cit;
 	RsFileHash dummyHash ;
-	for (cit = mConfigs.begin(); cit != mConfigs.end(); cit++)
+	for (cit = mConfigs.begin(); cit != mConfigs.end(); ++cit)
 	{
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3ConfigMgr::loadConfig() Element: ";
@@ -230,7 +230,7 @@ bool p3Config::loadConfig()
 #endif
 
 		/* bad load */
-		for(it = load.begin(); it != load.end(); it++)
+		for(it = load.begin(); it != load.end(); ++it)
 		{
 			delete (*it);
 		}
@@ -250,7 +250,7 @@ bool p3Config::loadConfig()
 #endif
 
 			/* bad load */
-			for(it = load.begin(); it != load.end(); it++)
+			for(it = load.begin(); it != load.end(); ++it)
 			{
 				delete (*it);
 			}
@@ -484,7 +484,7 @@ bool p3GeneralConfig::saveList(bool &cleanup, std::list<RsItem *>& savelist)
 
 	RsConfigKeyValueSet *item = new RsConfigKeyValueSet();
 	std::map<std::string, std::string>::iterator it;
-	for(it = settings.begin(); it != settings.end(); it++)
+	for(it = settings.begin(); it != settings.end(); ++it)
 	{
 		RsTlvKeyValue kv;
 		kv.key = it->first;
@@ -528,7 +528,7 @@ bool    p3GeneralConfig::loadList(std::list<RsItem *>& load)
 		if (item)
 		{
 			for(kit = item->tlvkvs.pairs.begin();
-				kit != item->tlvkvs.pairs.end(); kit++)
+				kit != item->tlvkvs.pairs.end(); ++kit)
 			{
 				settings[kit->key] = kit->value;
 			}

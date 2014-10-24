@@ -109,7 +109,7 @@ void RsGxsNetService::syncWithPeers()
 	if(mGrpAutoSync)
 	{
 		// for now just grps
-		for(; sit != peers.end(); sit++)
+		for(; sit != peers.end(); ++sit)
 		{
 
                     const RsPeerId peerId = *sit;
@@ -141,7 +141,7 @@ void RsGxsNetService::syncWithPeers()
 
         GrpMetaMap toRequest;
 
-        for(; mit != grpMeta.end(); mit++)
+        for(; mit != grpMeta.end(); ++mit)
         {
             RsGxsGrpMetaData* meta = mit->second;
 
@@ -157,7 +157,7 @@ void RsGxsNetService::syncWithPeers()
         sit = peers.begin();
 
         // synchronise group msg for groups which we're subscribed to
-        for(; sit != peers.end(); sit++)
+        for(; sit != peers.end(); ++sit)
         {
             const RsPeerId& peerId = *sit;
 
@@ -174,7 +174,7 @@ void RsGxsNetService::syncWithPeers()
             }
 
             GrpMetaMap::const_iterator mmit = toRequest.begin();
-            for(; mmit != toRequest.end(); mmit++)
+            for(; mmit != toRequest.end(); ++mmit)
             {
             	const RsGxsGrpMetaData* meta = mmit->second;
             	const RsGxsGroupId& grpId = mmit->first;
@@ -204,7 +204,7 @@ void RsGxsNetService::syncWithPeers()
         }
 
         GrpMetaMap::iterator mmit = toRequest.begin();
-        for(; mmit != toRequest.end(); mmit++)
+        for(; mmit != toRequest.end(); ++mmit)
         {
         	delete mmit->second;
         }
@@ -222,7 +222,7 @@ bool RsGxsNetService::fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) con
 	int currPos = 0;
 
 
-	for(uint8_t i=0; i < nFragments; i++)
+	for(uint8_t i=0; i < nFragments; ++i)
 	{
 		RsNxsMsg* msgFrag = new RsNxsMsg(mServType);
 		msgFrag->grpId = msg.grpId;
@@ -255,7 +255,7 @@ bool RsGxsNetService::fragmentGrp(RsNxsGrp& grp, GrpFragments& grpFragments) con
 	int currPos = 0;
 
 
-	for(uint8_t i=0; i < nFragments; i++)
+	for(uint8_t i=0; i < nFragments; ++i)
 	{
 		RsNxsGrp* grpFrag = new RsNxsGrp(mServType);
 		grpFrag->grpId = grp.grpId;
@@ -294,13 +294,13 @@ RsNxsMsg* RsGxsNetService::deFragmentMsg(MsgFragments& msgFragments) const
 	MsgFragments::iterator mit = msgFragments.begin();
 	uint32_t datSize = 0;
 
-	for(; mit != msgFragments.end(); mit++)
+	for(; mit != msgFragments.end(); ++mit)
 		datSize += (*mit)->msg.bin_len;
 
 	char* data = new char[datSize];
 	uint32_t currPos = 0;
 
-	for(mit = msgFragments.begin(); mit != msgFragments.end(); mit++)
+	for(mit = msgFragments.begin(); mit != msgFragments.end(); ++mit)
 	{
 		RsNxsMsg* msg = *mit;
 		memcpy(data + (currPos), msg->msg.bin_data, msg->msg.bin_len);
@@ -327,13 +327,13 @@ RsNxsGrp* RsGxsNetService::deFragmentGrp(GrpFragments& grpFragments) const
 	GrpFragments::iterator mit = grpFragments.begin();
 	uint32_t datSize = 0;
 
-	for(; mit != grpFragments.end(); mit++)
+	for(; mit != grpFragments.end(); ++mit)
 		datSize += (*mit)->grp.bin_len;
 
 	char* data = new char[datSize];
 	uint32_t currPos = 0;
 
-	for(mit = grpFragments.begin(); mit != grpFragments.end(); mit++)
+	for(mit = grpFragments.begin(); mit != grpFragments.end(); ++mit)
 	{
 		RsNxsGrp* grp = *mit;
 		memcpy(data + (currPos), grp->grp.bin_data, grp->grp.bin_len);
@@ -365,7 +365,7 @@ void RsGxsNetService::locked_createTransactionFromPending(
 	MsgAuthorV::const_iterator cit = msgPend->mMsgAuthV.begin();
 	std::list<RsNxsItem*> reqList;
 	uint32_t transN = locked_getTransactionId();
-	for(; cit != msgPend->mMsgAuthV.end(); cit++)
+	for(; cit != msgPend->mMsgAuthV.end(); ++cit)
 	{
 		const MsgAuthEntry& entry = *cit;
 
@@ -392,7 +392,7 @@ void RsGxsNetService::locked_createTransactionFromPending(
 	GrpAuthorV::const_iterator cit = grpPend->mGrpAuthV.begin();
 	std::list<RsNxsItem*> reqList;
 	uint32_t transN = locked_getTransactionId();
-	for(; cit != grpPend->mGrpAuthV.end(); cit++)
+	for(; cit != grpPend->mGrpAuthV.end(); ++cit)
 	{
 		const GrpAuthEntry& entry = *cit;
 
@@ -429,7 +429,7 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 	std::vector<GrpIdCircleVet>::iterator cit = grpPend->mGrpCircleV.begin();
 	uint32_t transN = locked_getTransactionId();
 	std::list<RsNxsItem*> itemL;
-	for(; cit != grpPend->mGrpCircleV.end(); cit++)
+	for(; cit != grpPend->mGrpCircleV.end(); ++cit)
 	{
 		const GrpIdCircleVet& entry = *cit;
 		if(entry.mCleared)
@@ -469,7 +469,7 @@ void RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVet
 
 	uint32_t transN = locked_getTransactionId();
 
-	for(; vit != msgPend->mMsgs.end(); vit++)
+	for(; vit != msgPend->mMsgs.end(); ++vit)
 	{
 		MsgIdCircleVet& mic = *vit;
 		RsNxsSyncMsgItem* mItem = new
@@ -524,12 +524,12 @@ void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
 	GrpFragments::iterator vit = fragments.begin();
 	std::set<RsGxsGroupId> grpIds;
 
-	for(; vit != fragments.end(); vit++)
+	for(; vit != fragments.end(); ++vit)
 		grpIds.insert( (*vit)->grpId );
 
 	std::set<RsGxsGroupId>::iterator sit = grpIds.begin();
 
-	for(; sit != grpIds.end(); sit++)
+	for(; sit != grpIds.end(); ++sit)
 	{
 		const RsGxsGroupId& grpId = *sit;
 		GrpFragments::iterator bound = std::partition(
@@ -552,7 +552,7 @@ void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
 		{
 			GrpFragments::iterator vit2 = f.begin();
 
-			for(; vit2 != f.end(); vit2++)
+			for(; vit2 != f.end(); ++vit2)
 				delete *vit2;
 
 			partFragments.erase(grpId);
@@ -575,13 +575,13 @@ void RsGxsNetService::collateMsgFragments(MsgFragments fragments, std::map<RsGxs
 	MsgFragments::iterator vit = fragments.begin();
 	std::set<RsGxsMessageId> msgIds;
 
-	for(; vit != fragments.end(); vit++)
+	for(; vit != fragments.end(); ++vit)
 		msgIds.insert( (*vit)->msgId );
 
 
 	std::set<RsGxsMessageId>::iterator sit = msgIds.begin();
 
-	for(; sit != msgIds.end(); sit++)
+	for(; sit != msgIds.end(); ++sit)
 	{
 		const RsGxsMessageId& msgId = *sit;
 		MsgFragments::iterator bound = std::partition(
@@ -589,7 +589,7 @@ void RsGxsNetService::collateMsgFragments(MsgFragments fragments, std::map<RsGxs
 					MsgFragCollate(msgId));
 
 		// something will always be found for a group id
-		for(vit = fragments.begin(); vit != bound; vit++ )
+		for(vit = fragments.begin(); vit != bound; ++vit )
 		{
 			partFragments[msgId].push_back(*vit);
 		}
@@ -604,7 +604,7 @@ void RsGxsNetService::collateMsgFragments(MsgFragments fragments, std::map<RsGxs
 		{
 			MsgFragments::iterator vit2 = f.begin();
 
-			for(; vit2 != f.end(); vit2++)
+			for(; vit2 != f.end(); ++vit2)
 				delete *vit2;
 
 			partFragments.erase(msgId);
@@ -974,7 +974,7 @@ void RsGxsNetService::updateServerSyncTS()
 
 	bool change = false;
 
-	for(; mit != gxsMap.end(); mit++)
+	for(; mit != gxsMap.end(); ++mit)
 	{
 		const RsGxsGroupId& grpId = mit->first;
 		RsGxsGrpMetaData* grpMeta = mit->second;
@@ -1024,7 +1024,7 @@ void RsGxsNetService::processTransactions(){
 
 	TransactionsPeerMap::iterator mit = mTransactions.begin();
 
-	for(; mit != mTransactions.end(); mit++){
+	for(; mit != mTransactions.end(); ++mit){
 
 		TransactionIdMap& transMap = mit->second;
 		TransactionIdMap::iterator mmit = transMap.begin(),
@@ -1039,7 +1039,7 @@ void RsGxsNetService::processTransactions(){
 		 */
 		if(mit->first == mOwnId){
 
-			for(; mmit != mmit_end; mmit++){
+			for(; mmit != mmit_end; ++mmit){
 
 				NxsTransaction* tr = mmit->second;
 				uint16_t flag = tr->mFlag;
@@ -1071,7 +1071,7 @@ void RsGxsNetService::processTransactions(){
 					lit = tr->mItems.begin();
 					lit_end = tr->mItems.end();
 
-					for(; lit != lit_end; lit++){
+					for(; lit != lit_end; ++lit){
 						sendItem(*lit);
 					}
 
@@ -1119,7 +1119,7 @@ void RsGxsNetService::processTransactions(){
 			 * involved in transaction
 			 */
 
-			for(; mmit != mmit_end; mmit++){
+			for(; mmit != mmit_end; ++mmit){
 
 				NxsTransaction* tr = mmit->second;
 				uint16_t flag = tr->mFlag;
@@ -1197,7 +1197,7 @@ void RsGxsNetService::processTransactions(){
 
 		std::list<uint32_t>::iterator lit = toRemove.begin();
 
-		for(; lit != toRemove.end(); lit++)
+		for(; lit != toRemove.end(); ++lit)
 		{
 			transMap.erase(*lit);
 		}
@@ -1356,7 +1356,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 					msgs.clear();
 
 					std::map<RsGxsGroupId, MsgFragments >::iterator mit = collatedMsgs.begin();
-					for(; mit != collatedMsgs.end(); mit++)
+					for(; mit != collatedMsgs.end(); ++mit)
 					{
 						MsgFragments& f = mit->second;
 						RsNxsMsg* msg = deFragmentMsg(f);
@@ -1509,7 +1509,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
 	// first get item list sent from transaction
-	for(; lit != tr->mItems.end(); lit++)
+	for(; lit != tr->mItems.end(); ++lit)
 	{
 		RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
 		if(item)
@@ -1569,7 +1569,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	std::set<RsGxsMessageId> msgIdSet;
 
 	// put ids in set for each searching
-	for(; vit != msgMetaV.end(); vit++)
+	for(; vit != msgMetaV.end(); ++vit)
 	{
 		msgIdSet.insert((*vit)->mMsgId);
 		delete(*vit);
@@ -1590,7 +1590,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	std::list<RsPeerId> peers;
 	peers.push_back(tr->mTransaction->PeerId());
 
-	for(; llit != msgItemL.end(); llit++)
+	for(; llit != msgItemL.end(); ++llit)
 	{
 		RsNxsSyncMsgItem*& syncItem = *llit;
 		const RsGxsMessageId& msgId = syncItem->msgId;
@@ -1700,7 +1700,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
-	for(; lit != tr->mItems.end(); lit++)
+	for(; lit != tr->mItems.end(); ++lit)
 	{
 		RsNxsSyncGrpItem* item = dynamic_cast<RsNxsSyncGrpItem*>(*lit);
 		if(item)
@@ -1729,7 +1729,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	std::list<RsPeerId> peers;
 	peers.push_back(tr->mTransaction->PeerId());
 
-	for(; llit != grpItemL.end(); llit++)
+	for(; llit != grpItemL.end(); ++llit)
 	{
 		RsNxsSyncGrpItem*& grpSyncItem = *llit;
 		const RsGxsGroupId& grpId = grpSyncItem->grpId;
@@ -1795,7 +1795,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	// clean up meta data
     std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetaMap.begin();
 
-	for(; mit != grpMetaMap.end(); mit++)
+	for(; mit != grpMetaMap.end(); ++mit)
 		delete mit->second;
 }
 
@@ -1814,7 +1814,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 
 	std::map<RsGxsGroupId, RsNxsGrp*> grps;
 
-	for(;lit != tr->mItems.end(); lit++)
+	for(;lit != tr->mItems.end(); ++lit)
 	{
 		RsNxsSyncGrpItem* item = dynamic_cast<RsNxsSyncGrpItem*>(*lit);
 		if (item)
@@ -1845,7 +1845,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	// store grp items to send in transaction
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grps.begin();
 	RsPeerId peerId = tr->mTransaction->PeerId();
-	for(;mit != grps.end(); mit++)
+	for(;mit != grps.end(); ++mit)
 	{
 		mit->second->PeerId(peerId); // set so it gets sent to right peer
 		mit->second->transactionNumber = transN;
@@ -1916,7 +1916,7 @@ void RsGxsNetService::runVetting()
 		}
 		else
 		{
-			vit++;
+			++vit;
 		}
 
 	}
@@ -1957,7 +1957,7 @@ void RsGxsNetService::runVetting()
 		}
 		else
 		{
-			vit2++;
+			++vit2;
 		}
 	}
 }
@@ -1985,7 +1985,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 	// hacky assumes a transaction only consist of a single grpId
 	RsGxsGroupId grpId;
 
-	for(;lit != tr->mItems.end(); lit++)
+	for(;lit != tr->mItems.end(); ++lit)
 	{
 		RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
 		if (item)
@@ -2016,12 +2016,12 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 	RsPeerId peerId = tr->mTransaction->PeerId();
 	uint32_t msgSize = 0;
 
-	for(;mit != msgs.end(); mit++)
+	for(;mit != msgs.end(); ++mit)
 	{
 		std::vector<RsNxsMsg*>& msgV = mit->second;
 		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
 
-		for(; vit != msgV.end(); vit++)
+		for(; vit != msgV.end(); ++vit)
 		{
 			RsNxsMsg* msg = *vit;
 			msg->PeerId(peerId);
@@ -2036,7 +2036,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 
 			MsgFragments::iterator mit = fragments.begin();
 
-			for(; mit != fragments.end(); mit++)
+			for(; mit != fragments.end(); ++mit)
 			{
 				newTr->mItems.push_back(*mit);
 				msgSize++;
@@ -2106,7 +2106,7 @@ void RsGxsNetService::cleanTransactionItems(NxsTransaction* tr) const
 {
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
-	for(; lit != tr->mItems.end(); lit++)
+	for(; lit != tr->mItems.end(); ++lit)
 	{
 		delete *lit;
 	}
@@ -2196,7 +2196,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	std::cerr << "RsGxsNetService::handleRecvSyncGroup() \nService: " << mServType << "\nGroup list beings being sent: " << std::endl;
 #endif
 
-	for(; mit != grp.end(); mit++)
+	for(; mit != grp.end(); ++mit)
 	{
 		RsGxsGrpMetaData* grpMeta = mit->second;
 
@@ -2546,7 +2546,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	{
 		std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();
 
-		for(; vit != msgMetas.end(); vit++)
+		for(; vit != msgMetas.end(); ++vit)
 		{
 			RsGxsMsgMetaData* m = *vit;
 
@@ -2567,7 +2567,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 
 	std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();
 	// release meta resource
-	for(vit = msgMetas.begin(); vit != msgMetas.end(); vit++)
+	for(vit = msgMetas.begin(); vit != msgMetas.end(); ++vit)
 		delete *vit;
 
 	delete(grpMeta);
@@ -2630,7 +2630,7 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 		std::vector<MsgIdCircleVet> toVet;
 		std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetas.begin();
 
-		for(; vit != msgMetas.end(); vit++)
+		for(; vit != msgMetas.end(); ++vit)
 		{
 			const RsGxsMsgMetaData* const& meta = *vit;
 
@@ -2661,7 +2661,7 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 			std::vector<MsgIdCircleVet> toVet;
 			std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetas.begin();
 
-			for(; vit != msgMetas.end(); vit++)
+			for(; vit != msgMetas.end(); ++vit)
 			{
 				const RsGxsMsgMetaData* const& meta = *vit;
 
@@ -2715,7 +2715,7 @@ void RsGxsNetService::processExplicitGroupRequests()
 
 	std::map<RsPeerId, std::list<RsGxsGroupId> >::const_iterator cit = mExplicitRequest.begin();
 
-	for(; cit != mExplicitRequest.end(); cit++)
+	for(; cit != mExplicitRequest.end(); ++cit)
 	{
 		const RsPeerId& peerId = cit->first;
 		const std::list<RsGxsGroupId>& groupIdList = cit->second;
@@ -2723,7 +2723,7 @@ void RsGxsNetService::processExplicitGroupRequests()
 		std::list<RsNxsItem*> grpSyncItems;
 		std::list<RsGxsGroupId>::const_iterator git = groupIdList.begin();
 		uint32_t transN = locked_getTransactionId();
-		for(; git != groupIdList.end(); git++)
+		for(; git != groupIdList.end(); ++git)
 		{
 			RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
 			item->grpId = *git;
@@ -2869,7 +2869,7 @@ void RsGxsNetService::sharePublishKeysPending()
     }
 
     // delete pending peer list which are done with
-    for(std::list<RsGxsGroupId>::const_iterator lit = toDelete.begin(); lit != toDelete.end(); lit++)
+    for(std::list<RsGxsGroupId>::const_iterator lit = toDelete.begin(); lit != toDelete.end(); ++lit)
         mPendingPublishKeyRecipients.erase(*lit);
 }
 

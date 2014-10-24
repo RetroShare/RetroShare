@@ -218,8 +218,8 @@ bool p3HistoryMgr::saveList(bool& cleanup, std::list<RsItem*>& saveData)
 
 	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit;
 	std::map<uint32_t, RsHistoryMsgItem*>::iterator lit;
-	for (mit = mMessages.begin(); mit != mMessages.end(); mit++) {
-		for (lit = mit->second.begin(); lit != mit->second.end(); lit++) {
+	for (mit = mMessages.begin(); mit != mMessages.end(); ++mit) {
+		for (lit = mit->second.begin(); lit != mit->second.end(); ++lit) {
 			if (lit->second->saveToDisc) {
 				saveData.push_back(lit->second);
 			}
@@ -284,7 +284,7 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 	RsHistoryMsgItem *msgItem;
 	std::list<RsItem*>::iterator it;
 
-	for (it = load.begin(); it != load.end(); it++) {
+	for (it = load.begin(); it != load.end(); ++it) {
 		if (NULL != (msgItem = dynamic_cast<RsHistoryMsgItem*>(*it))) {
 
 			std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(msgItem->chatPeerId);
@@ -307,7 +307,7 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 
 		RsConfigKeyValueSet *rskv ;
 		if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet*>(*it))) {
-			for (std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); kit++) {
+			for (std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); ++kit) {
 				if (kit->key == "PUBLIC_ENABLE") {
 					mPublicEnable = (kit->value == "TRUE") ? true : false;
 					continue;
@@ -398,7 +398,7 @@ bool p3HistoryMgr::getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg>
 	{
 		std::map<uint32_t, RsHistoryMsgItem*>::reverse_iterator lit;
 
-		for (lit = mit->second.rbegin(); lit != mit->second.rend(); lit++) 
+		for (lit = mit->second.rbegin(); lit != mit->second.rend(); ++lit)
 		{
 			HistoryMsg msg;
 			convertMsg(lit->second, msg);
@@ -419,7 +419,7 @@ bool p3HistoryMgr::getMessage(uint32_t msgId, HistoryMsg &msg)
 	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit;
-	for (mit = mMessages.begin(); mit != mMessages.end(); mit++) {
+	for (mit = mMessages.begin(); mit != mMessages.end(); ++mit) {
 		std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.find(msgId);
 		if (lit != mit->second.end()) {
 			convertMsg(lit->second, msg);
@@ -443,7 +443,7 @@ void p3HistoryMgr::clear(const RsPeerId &chatPeerId)
 		}
 
 		std::map<uint32_t, RsHistoryMsgItem*>::iterator lit;
-		for (lit = mit->second.begin(); lit != mit->second.end(); lit++) {
+		for (lit = mit->second.begin(); lit != mit->second.end(); ++lit) {
 			delete(lit->second);
 		}
 		mit->second.clear();

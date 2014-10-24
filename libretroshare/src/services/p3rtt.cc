@@ -199,7 +199,7 @@ void p3rtt::sendPingMeasurements()
 
 	/* prepare packets */
 	std::set<RsPeerId>::iterator it;
-	for(it = idList.begin(); it != idList.end(); it++)
+	for(it = idList.begin(); it != idList.end(); ++it)
 	{
 #ifdef DEBUG_RTT
 		std::cerr << "p3rtt::sendPingMeasurements() Pinging: " << *it;
@@ -389,7 +389,7 @@ uint32_t p3rtt::getPongResults(const RsPeerId& id, int n, std::list<RsRttPongRes
 
 	std::list<RsRttPongResult>::reverse_iterator it;
 	int i = 0;
-	for(it = peer->mPongResults.rbegin(); (it != peer->mPongResults.rend()) && (i < n); it++, i++)
+	for(it = peer->mPongResults.rbegin(); (it != peer->mPongResults.rend()) && (i < n); ++it, i++)
 	{
 		/* reversing order - so its easy to trim later */
 		results.push_back(*it);

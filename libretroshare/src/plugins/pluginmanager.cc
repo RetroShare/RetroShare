@@ -444,7 +444,7 @@ bool RsPluginManager::loadList(std::list<RsItem*>& list)
     RsFileHash reference_executable_hash ;
 
 	std::list<RsItem *>::iterator it;
-	for(it = list.begin(); it != list.end(); it++) 
+	for(it = list.begin(); it != list.end(); ++it)
 	{
 		RsConfigKeyValueSet *witem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
 

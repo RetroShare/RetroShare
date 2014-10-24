@@ -64,7 +64,7 @@ ContentValue::ContentValue(const ContentValue &from){
     char *src = NULL;
     uint32_t data_len = 0;
 
-    for(; cit != keyTypeMap.end(); cit++){
+    for(; cit != keyTypeMap.end(); ++cit){
 
         type = cit->second;
         currKey = cit->first;
@@ -303,7 +303,7 @@ void ContentValue::clearData(){
     std::map<std::string, std::pair<uint32_t, char*> >::iterator
             mit = mKvData.begin();
 
-    for(; mit != mKvData.end(); mit++){
+    for(; mit != mKvData.end(); ++mit){
 
         if(mit->second.first != 0)
             delete[] (mit->second.second);

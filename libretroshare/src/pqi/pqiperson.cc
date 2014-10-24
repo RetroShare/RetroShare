@@ -56,7 +56,7 @@ pqiperson::~pqiperson()
 
 	// clean up the children.
 	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
+	for(it = kids.begin(); it != kids.end(); ++it)
 	{
 		pqiconnect *pc = (it->second);
 		delete pc;
@@ -180,7 +180,7 @@ int	pqiperson::tick()
 	
 			// tick the children.
 			std::map<uint32_t, pqiconnect *>::iterator it;
-			for(it = kids.begin(); it != kids.end(); it++)
+			for(it = kids.begin(); it != kids.end(); ++it)
 			{
 				if (0 < (it->second) -> tick())
 				{
@@ -271,7 +271,7 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 		
 	/* start again */
 	int i = 0;
-	for(it = kids.begin(); it != kids.end(); it++)
+	for(it = kids.begin(); it != kids.end(); ++it)
 	{
 		std::string out;
 		rs_sprintf(out, "pqiperson::connectattempt() Kid# %d of %u\n", i, kids.size());
@@ -328,7 +328,7 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 			activepqi->start();  // STARTUP THREAD.
 
 			/* reset all other children? (clear up long UDP attempt) */
-			for(it = kids.begin(); it != kids.end(); it++)
+			for(it = kids.begin(); it != kids.end(); ++it)
 			{
 				if (!(it->second)->thisNetInterface(ni))
 				{
@@ -397,7 +397,7 @@ int 	pqiperson::reset_locked()
 	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::reset() resetting all pqiconnect for Id: " + PeerId().toStdString());
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
+	for(it = kids.begin(); it != kids.end(); ++it)
 	{
 		(it->second) -> stop(); // STOP THREAD.
 		(it->second) -> reset();
@@ -417,7 +417,7 @@ int 	pqiperson::fullstopthreads()
 	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::fullstopthreads() for Id: " + PeerId().toStdString());
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
+	for(it = kids.begin(); it != kids.end(); ++it)
 	{
 		(it->second) -> fullstop(); // WAIT FOR THREAD TO STOP.
 	}		
@@ -456,7 +456,7 @@ int 	pqiperson::listen()
 	if (!active)
 	{
 		std::map<uint32_t, pqiconnect *>::iterator it;
-		for(it = kids.begin(); it != kids.end(); it++)
+		for(it = kids.begin(); it != kids.end(); ++it)
 		{
 			// set them all listening.
 			(it->second) -> listen();
@@ -473,7 +473,7 @@ int 	pqiperson::stoplistening()
 	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, "pqiperson::stoplistening() Id: " + PeerId().toStdString());
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
+	for(it = kids.begin(); it != kids.end(); ++it)
 	{
 		// set them all listening.
 		(it->second) -> stoplistening();
@@ -640,7 +640,7 @@ void    pqiperson::setMaxRate(bool in, float val)
 	PQInterface::setMaxRate(in, val);
 	// clean up the children.
 	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
+	for(it = kids.begin(); it != kids.end(); ++it)
 	{
 		(it->second) -> setMaxRate(in, val);
 	}
@@ -675,7 +675,7 @@ void    pqiperson::setRateCap_locked(float val_in, float val_out)
 	PQInterface::setRateCap(val_in, val_out);
 	// clean up the children.
 	std::map<uint32_t, pqiconnect *>::iterator it;
-	for(it = kids.begin(); it != kids.end(); it++)
+	for(it = kids.begin(); it != kids.end(); ++it)
 	{
 		(it->second) -> setRateCap(val_in, val_out);
 	}

@@ -135,7 +135,7 @@ bool StringExpression :: evalStr ( const std::string &str ){
 	std::list<std::string>::iterator iter;
 	switch (Op) {
 		case ContainsAllStrings:
-			for ( iter = terms.begin(); iter != terms.end(); iter++ ) {	
+			for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
 				if ( StrContains (str, *iter, IgnoreCase) == false ){
 					return false;	
 				}
@@ -143,14 +143,14 @@ bool StringExpression :: evalStr ( const std::string &str ){
 			return true;
 		break;
 		case ContainsAnyStrings:
-			for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
+			for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
 				if ( StrContains (str,*iter, IgnoreCase) == true ) {
 					return true;	
 				}
 			}
 		break;
 		case EqualsString:
-			for ( iter = terms.begin(); iter != terms.end(); iter++ ) {
+			for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
 				if ( StrEquals (str,*iter, IgnoreCase) == true ) {
 					return true;	
 				}

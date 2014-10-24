@@ -90,7 +90,7 @@ bool MsgRespPending::accepted()
 {
 	MsgAuthorV::iterator cit = mMsgAuthV.begin();
 	MsgAuthorV::size_type count = 0;
-	for(; cit != mMsgAuthV.end(); cit++)
+	for(; cit != mMsgAuthV.end(); ++cit)
 	{
 		MsgAuthEntry& entry = *cit;
 
@@ -124,7 +124,7 @@ bool GrpRespPending::accepted()
 {
 	GrpAuthorV::iterator cit = mGrpAuthV.begin();
 	GrpAuthorV::size_type count = 0;
-	for(; cit != mGrpAuthV.end(); cit++)
+	for(; cit != mGrpAuthV.end(); ++cit)
 	{
 		GrpAuthEntry& entry = *cit;
 
@@ -171,7 +171,7 @@ NxsTransaction::~NxsTransaction(){
 
 	std::list<RsNxsItem*>::iterator lit = mItems.begin();
 
-	for(; lit != mItems.end(); lit++)
+	for(; lit != mItems.end(); ++lit)
 	{
 		delete *lit;
 		*lit = NULL;
@@ -244,7 +244,7 @@ GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
 bool GrpCircleIdRequestVetting::cleared()
 {
 	std::vector<GrpIdCircleVet>::size_type i, count;
-	for(i = 0; i < mGrpCircleV.size(); i++)
+	for(i = 0; i < mGrpCircleV.size(); ++i)
 	{
 		GrpIdCircleVet& gic = mGrpCircleV[i];
 

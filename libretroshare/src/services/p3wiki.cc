@@ -123,7 +123,7 @@ bool p3Wiki::getCollections(const uint32_t &token, std::vector<RsWikiCollection>
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsWikiCollectionItem* item = dynamic_cast<RsGxsWikiCollectionItem*>(*vit);
 
@@ -160,13 +160,13 @@ bool p3Wiki::getSnapshots(const uint32_t &token, std::vector<RsWikiSnapshot> &sn
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsWikiSnapshotItem* item = dynamic_cast<RsGxsWikiSnapshotItem*>(*vit);
 				
@@ -199,12 +199,12 @@ bool p3Wiki::getRelatedSnapshots(const uint32_t &token, std::vector<RsWikiSnapsh
 	{
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsWikiSnapshotItem* item = dynamic_cast<RsGxsWikiSnapshotItem*>(*vit);
 				
@@ -237,7 +237,7 @@ bool p3Wiki::getComments(const uint32_t &token, std::vector<RsWikiComment> &comm
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
@@ -522,7 +522,7 @@ RsGxsId chooseRandomAuthorId()
 
 	uint32_t idx = (uint32_t) (RSRandom::random_u32() % (int)ownIds.size()) ;
 	int i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); ++it, i++) ;
 
 	return *it ;
 }

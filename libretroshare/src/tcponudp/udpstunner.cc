@@ -649,7 +649,7 @@ bool    UdpStunner::storeStunPeer(const struct sockaddr_in &remote, const char *
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
 	std::list<TouStunPeer>::iterator it;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	for(it = mStunList.begin(); it != mStunList.end(); ++it)
 	{
 		if ((remote.sin_addr.s_addr == it->remote.sin_addr.s_addr) &&
 		    (remote.sin_port == it->remote.sin_port))
@@ -719,7 +719,7 @@ bool    UdpStunner::dropStunPeer(const struct sockaddr_in &remote)
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
 
@@ -956,7 +956,7 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 
 	bool found = true;
 	std::list<TouStunPeer>::iterator it;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	for(it = mStunList.begin(); it != mStunList.end(); ++it)
 	{
 		if ((remote.sin_addr.s_addr == it->remote.sin_addr.s_addr) &&
 		    (remote.sin_port == it->remote.sin_port))
@@ -1038,7 +1038,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 	std::list<TouStunPeer>::reverse_iterator it;
 	std::list<TouStunPeer>::reverse_iterator p1;
 	std::list<TouStunPeer>::reverse_iterator p2;
-	for(it = mStunList.rbegin(); it != mStunList.rend(); it++)
+	for(it = mStunList.rbegin(); it != mStunList.rend(); ++it)
 	{
 		/* check:
 		   1) have response.
@@ -1138,7 +1138,7 @@ bool    UdpStunner::locked_printStunList()
 	rs_sprintf_append(out, "\tLastRecvAny: %ld\n", now - mStunLastRecvAny);
 
 	std::list<TouStunPeer>::iterator it;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	for(it = mStunList.begin(); it != mStunList.end(); ++it)
 	{
 		out += "id:" + RsUtil::BinToHex(it->id);
 		rs_sprintf_append(out, " addr: %s:%u", rs_inet_ntoa(it->remote.sin_addr).c_str(), htons(it->remote.sin_port));
@@ -1162,7 +1162,7 @@ bool    UdpStunner::getStunPeer(int idx, std::string &id,
 
 	std::list<TouStunPeer>::iterator it;
 	int i;
-	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); it++, i++) ;
+	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); ++it, i++) ;
 
 	if (it != mStunList.end())
 	{

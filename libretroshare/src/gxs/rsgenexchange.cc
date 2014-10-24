@@ -378,7 +378,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
     std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = privateKeySet.keys.begin();
 
     bool privKeyFound = false; // private admin key
-    for(; mit != privateKeySet.keys.end(); mit++)
+    for(; mit != privateKeySet.keys.end(); ++mit)
     {
         RsTlvSecurityKey& key = mit->second;
 
@@ -591,7 +591,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
         std::map<RsGxsId, RsTlvSecurityKey>::iterator mit =
                         keys.keys.begin(), mit_end = keys.keys.end();
         bool pub_key_found = false;
-        for(; mit != mit_end; mit++)
+        for(; mit != mit_end; ++mit)
         {
 
                 pub_key_found = mit->second.keyFlags == (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL);
@@ -802,7 +802,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
         std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keys.begin();
 
         RsGxsId keyId;
-        for(; mit != keys.end() ; mit++)
+        for(; mit != keys.end() ; ++mit)
         {
             RsTlvSecurityKey& key = mit->second;
 
@@ -991,7 +991,7 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 #endif
 	std::vector<RsGxsNotify*>::iterator vit = changes.begin();
 
-	for(; vit != changes.end(); vit++)
+	for(; vit != changes.end(); ++vit)
 	{
 		RsGxsNotify* n = *vit;
 		RsGxsGroupChange* gc;
@@ -1045,7 +1045,7 @@ void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds, std::list<RsG
 			RsGxsGroupChange* gc = mGroupChange.back();
 			std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
 			std::list<RsGxsGroupId>::iterator lit = gList.begin();
-			for(; lit != gList.end(); lit++)
+			for(; lit != gList.end(); ++lit)
 				if (gc->metaChange())
 				{
 					grpIdsMeta.push_back(*lit);
@@ -1142,7 +1142,7 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 
 	std::list<RsGxsGrpMetaData*>::iterator lit = metaL.begin();
 	RsGroupMetaData m;
-	for(; lit != metaL.end(); lit++)
+	for(; lit != metaL.end(); ++lit)
 	{
 		RsGxsGrpMetaData& gMeta = *(*lit);
         m = gMeta;
@@ -1172,7 +1172,7 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 
 	GxsMsgMetaResult::iterator mit = result.begin();
 
-	for(; mit != result.end(); mit++)
+	for(; mit != result.end(); ++mit)
 	{
 		std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
 
@@ -1181,7 +1181,7 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 
 		std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
 		RsMsgMetaData meta;
-		for(; vit != metaV.end(); vit++)
+		for(; vit != metaV.end(); ++vit)
 		{
 			RsGxsMsgMetaData& m = *(*vit);
 			meta = m;
@@ -1201,7 +1201,7 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
 
         MsgRelatedMetaResult::iterator mit = result.begin();
 
-        for(; mit != result.end(); mit++)
+        for(; mit != result.end(); ++mit)
         {
                 std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
 
@@ -1210,7 +1210,7 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
 
                 std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
                 RsMsgMetaData meta;
-                for(; vit != metaV.end(); vit++)
+                for(; vit != metaV.end(); ++vit)
                 {
                         RsGxsMsgMetaData& m = *(*vit);
                         meta = m;
@@ -1236,7 +1236,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 
 	if(ok)
 	{
-		for(; lit != nxsGrps.end(); lit++)
+		for(; lit != nxsGrps.end(); ++lit)
 		{
 			RsTlvBinaryData& data = (*lit)->grp;
 			RsItem* item = NULL;
@@ -1284,13 +1284,13 @@ bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 
 	if(ok)
 	{
-		for(; mit != msgResult.end(); mit++)
+		for(; mit != msgResult.end(); ++mit)
 		{
 			std::vector<RsGxsMsgItem*> gxsMsgItems;
 			const RsGxsGroupId& grpId = mit->first;
 			std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
 			std::vector<RsNxsMsg*>::iterator vit = nxsMsgsV.begin();
-			for(; vit != nxsMsgsV.end(); vit++)
+			for(; vit != nxsMsgsV.end(); ++vit)
 			{
 				RsNxsMsg*& msg = *vit;
 				RsItem* item = NULL;
@@ -1336,14 +1336,14 @@ bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMa
     if(ok)
     {
     	NxsMsgRelatedDataResult::iterator mit = msgResult.begin();
-        for(; mit != msgResult.end(); mit++)
+        for(; mit != msgResult.end(); ++mit)
         {
             std::vector<RsGxsMsgItem*> gxsMsgItems;
             const RsGxsGrpMsgIdPair& msgId = mit->first;
             std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
             std::vector<RsNxsMsg*>::iterator vit
             = nxsMsgsV.begin();
-            for(; vit != nxsMsgsV.end(); vit++)
+            for(; vit != nxsMsgsV.end(); ++vit)
             {
                 RsNxsMsg*& msg = *vit;
                 RsItem* item = NULL;
@@ -1427,7 +1427,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
     std::vector<RsNxsGrp*>::iterator vit = groups.begin();
 
     // store these for tick() to pick them up
-    for(; vit != groups.end(); vit++)
+    for(; vit != groups.end(); ++vit)
     {
     	RsNxsGrp* grp = *vit;
     	NxsGrpPendValidVect::iterator received = std::find(mReceivedGrps.begin(),
@@ -1461,7 +1461,7 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
     std::vector<RsNxsMsg*>::iterator vit = messages.begin();
 
     // store these for tick() to pick them up
-    for(; vit != messages.end(); vit++)
+    for(; vit != messages.end(); ++vit)
     {
     	RsNxsMsg* msg = *vit;
 
@@ -1613,7 +1613,7 @@ void RsGenExchange::processMsgMetaChanges()
     std::map<uint32_t, MsgLocMetaData>::iterator mit = mMsgLocMetaMap.begin(),
     mit_end = mMsgLocMetaMap.end();
 
-    for(; mit != mit_end; mit++)
+    for(; mit != mit_end; ++mit)
     {
         MsgLocMetaData& m = mit->second;
 
@@ -1689,7 +1689,7 @@ void RsGenExchange::processGrpMetaChanges()
     std::map<uint32_t, GrpLocMetaData>::iterator mit = mGrpLocMetaMap.begin(),
     mit_end = mGrpLocMetaMap.end();
 
-    for(; mit != mit_end; mit++)
+    for(; mit != mit_end; ++mit)
     {
         GrpLocMetaData& g = mit->second;
         uint32_t token = mit->first;
@@ -1782,7 +1782,7 @@ void RsGenExchange::publishMsgs()
 
 	PendSignMap::iterator sign_it = mMsgPendingSign.begin();
 
-	for(; sign_it != mMsgPendingSign.end(); sign_it++)
+	for(; sign_it != mMsgPendingSign.end(); ++sign_it)
 	{
 		GxsPendingItem<RsGxsMsgItem*, uint32_t>& item = sign_it->second;
 		mMsgsToPublish.insert(std::make_pair(sign_it->first, item.mItem));
@@ -1791,7 +1791,7 @@ void RsGenExchange::publishMsgs()
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;
 	std::map<uint32_t, RsGxsMsgItem*>::iterator mit = mMsgsToPublish.begin();
 
-	for(; mit != mMsgsToPublish.end(); mit++)
+	for(; mit != mMsgsToPublish.end(); ++mit)
 	{
 #ifdef GEN_EXCH_DEBUG
 		std::cerr << "RsGenExchange::publishMsgs() Publishing a Message";
@@ -1858,7 +1858,7 @@ void RsGenExchange::publishMsgs()
 					}
 					else
 					{
-						pit->second.mAttempts++;
+						++pit->second.mAttempts;
 					}
 				}
 
@@ -1978,7 +1978,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
 	std::vector<GroupUpdatePublish>::iterator vit = mGroupUpdatePublish.begin();
 
-	for(; vit != mGroupUpdatePublish.end(); vit++)
+	for(; vit != mGroupUpdatePublish.end(); ++vit)
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
@@ -1992,7 +1992,7 @@ void RsGenExchange::processGroupUpdatePublish()
 
 	// now
 	vit = mGroupUpdatePublish.begin();
-	for(; vit != mGroupUpdatePublish.end(); vit++)
+	for(; vit != mGroupUpdatePublish.end(); ++vit)
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
@@ -2057,7 +2057,7 @@ void RsGenExchange::processGroupDelete()
 	std::map<uint32_t, GrpNote> toNotify;
 
 	std::vector<GroupDeletePublish>::iterator vit = mGroupDeletePublish.begin();
-	for(; vit != mGroupDeletePublish.end(); vit++)
+	for(; vit != mGroupDeletePublish.end(); ++vit)
 	{
 		GroupDeletePublish& gdp = *vit;
 		uint32_t token = gdp.mToken;
@@ -2072,7 +2072,7 @@ void RsGenExchange::processGroupDelete()
 
 	std::list<RsGxsGroupId> grpDeleted;
 	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
-	for(; mit != toNotify.end(); mit++)
+	for(; mit != toNotify.end(); ++mit)
 	{
 		GrpNote& note = mit->second;
 		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
@@ -2102,7 +2102,7 @@ bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 	const keyMap& allKeys = keySet.keys;
 	keyMap::const_iterator cit = allKeys.begin();
         bool adminFound = false, publishFound = false;
-	for(; cit != allKeys.end(); cit++)
+	for(; cit != allKeys.end(); ++cit)
 	{
                 const RsTlvSecurityKey& key = cit->second;
                 if(key.keyFlags & RSTLV_KEY_TYPE_FULL)
@@ -2172,7 +2172,7 @@ void RsGenExchange::publishGrps()
         std::map<RsGxsId, RsTlvSecurityKey>::iterator mit_keys = privatekeySet.keys.begin();
 
         bool privKeyFound = false;
-        for(; mit_keys != privatekeySet.keys.end(); mit_keys++)
+        for(; mit_keys != privatekeySet.keys.end(); ++mit_keys)
         {
             RsTlvSecurityKey& key = mit_keys->second;
 
@@ -2290,7 +2290,7 @@ void RsGenExchange::publishGrps()
         	std::cerr << "RsGenExchange::publishGrps() failed grp, trying again " << std::endl;
 #endif
         	ggps.mLastAttemptTS = time(NULL);
-        	vit++;
+        	++vit;
         }
         else if(create == CREATE_SUCCESS)
         {
@@ -2311,7 +2311,7 @@ void RsGenExchange::publishGrps()
     std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
 
     std::list<RsGxsGroupId> grpChanged;
-    for(; mit != toNotify.end(); mit++)
+    for(; mit != toNotify.end(); ++mit)
     {
     	GrpNote& note = mit->second;
     	uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
@@ -2439,7 +2439,7 @@ void RsGenExchange::processRecvdMessages()
 			std::cerr << " movign to recvd." << std::endl;
 #endif
     		mReceivedMsgs.push_back(gpsi.mItem);
-    		pend_it++;
+    		++pend_it;
     	}
     }
 
@@ -2453,7 +2453,7 @@ void RsGenExchange::processRecvdMessages()
     std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
 
     // coalesce group meta retrieval for performance
-    for(; vit != mReceivedMsgs.end(); vit++)
+    for(; vit != mReceivedMsgs.end(); ++vit)
     {
         RsNxsMsg* msg = *vit;
         grpMetas.insert(std::make_pair(msg->grpId, (RsGxsGrpMetaData*)NULL));
@@ -2464,7 +2464,7 @@ void RsGenExchange::processRecvdMessages()
 #ifdef GEN_EXCH_DEBUG
 	 std::cerr << "  updating received messages:" << std::endl;
 #endif
-    for(vit = mReceivedMsgs.begin(); vit != mReceivedMsgs.end(); vit++)
+    for(vit = mReceivedMsgs.begin(); vit != mReceivedMsgs.end(); ++vit)
     {
         RsNxsMsg* msg = *vit;
         RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
@@ -2703,7 +2703,7 @@ void RsGenExchange::processRecvdGroups()
         if(erase)
         	vit = mReceivedGrps.erase(vit);
         else
-        	vit++;
+        	++vit;
     }
 
     if(!grpIds.empty())
@@ -2729,7 +2729,7 @@ void RsGenExchange::performUpdateValidation()
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
 
 	std::vector<GroupUpdate>::iterator vit = mGroupUpdates.begin();
-	for(; vit != mGroupUpdates.end(); vit++)
+	for(; vit != mGroupUpdates.end(); ++vit)
 		grpMetas.insert(std::make_pair(vit->newGrp->grpId, (RsGxsGrpMetaData*)NULL));
 
 	if(!grpMetas.empty())
@@ -2738,7 +2738,7 @@ void RsGenExchange::performUpdateValidation()
 		return;
 
 	vit = mGroupUpdates.begin();
-	for(; vit != mGroupUpdates.end(); vit++)
+	for(; vit != mGroupUpdates.end(); ++vit)
 	{
 		GroupUpdate& gu = *vit;
 		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit =
@@ -2753,7 +2753,7 @@ void RsGenExchange::performUpdateValidation()
 
 	vit = mGroupUpdates.begin();
 	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
-	for(; vit != mGroupUpdates.end(); vit++)
+	for(; vit != mGroupUpdates.end(); ++vit)
 	{
 		GroupUpdate& gu = *vit;
 
@@ -2827,7 +2827,7 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 
 	RsGxsGroupId::std_set mGrpIdsUnique;
 
-	for(RsGeneralDataService::MsgStoreMap::const_iterator cit = msgs.begin(); cit != msgs.end(); cit++)
+	for(RsGeneralDataService::MsgStoreMap::const_iterator cit = msgs.begin(); cit != msgs.end(); ++cit)
 		mGrpIdsUnique.insert(cit->second->mGroupId);
 
 	//RsGxsGroupId::std_list grpIds(mGrpIdsUnique.begin(), mGrpIdsUnique.end());
@@ -2836,7 +2836,7 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 	MsgIdReq msgIdReq;
 
 	// now get a list of all msgs ids for each group
-	for(RsGxsGroupId::std_set::const_iterator it(mGrpIdsUnique.begin()); it != mGrpIdsUnique.end(); it++)
+	for(RsGxsGroupId::std_set::const_iterator it(mGrpIdsUnique.begin()); it != mGrpIdsUnique.end(); ++it)
 	{
 		mDataStore->retrieveMsgIds(*it, msgIdReq[*it]);
 
@@ -2853,7 +2853,7 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 	RsGeneralDataService::MsgStoreMap filtered;
 
 	// now for each msg to be stored that exist in the retrieved msg/grp "index" delete and erase from map
-	for(RsGeneralDataService::MsgStoreMap::iterator cit2 = msgs.begin(); cit2 != msgs.end(); cit2++)
+	for(RsGeneralDataService::MsgStoreMap::iterator cit2 = msgs.begin(); cit2 != msgs.end(); ++cit2)
 	{
 		const RsGxsMessageId::std_vector& msgIds = msgIdReq[cit2->second->mGroupId];
 

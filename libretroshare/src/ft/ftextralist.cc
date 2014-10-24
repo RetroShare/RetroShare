@@ -250,7 +250,7 @@ bool	ftExtraList::cleanupOldFiles()
     std::list<RsFileHash>::iterator rit;
 
     std::map<RsFileHash, FileDetails>::iterator it;
-	for(it = mFiles.begin(); it != mFiles.end(); it++)
+	for(it = mFiles.begin(); it != mFiles.end(); ++it)
 	{
 		/* check timestamps */
 		if ((time_t)it->second.info.age < now)
@@ -262,7 +262,7 @@ bool	ftExtraList::cleanupOldFiles()
 	if (toRemove.size() > 0)
 	{
 		/* remove items */
-		for(rit = toRemove.begin(); rit != toRemove.end(); rit++)
+		for(rit = toRemove.begin(); rit != toRemove.end(); ++rit)
 		{
 			if (mFiles.end() != (it = mFiles.find(*rit)))
 			{
@@ -398,7 +398,7 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 
 
     std::map<RsFileHash, FileDetails>::const_iterator it;
-	for(it = mFiles.begin(); it != mFiles.end(); it++)
+	for(it = mFiles.begin(); it != mFiles.end(); ++it)
 	{
 		RsFileConfigItem *fi = new RsFileConfigItem();
 		fi->file.path        = (it->second).info.path;
@@ -430,7 +430,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 
 
 	std::list<RsItem *>::iterator it;
-	for(it = load.begin(); it != load.end(); it++)
+	for(it = load.begin(); it != load.end(); ++it)
 	{
 
 		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);

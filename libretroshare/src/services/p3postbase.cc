@@ -88,7 +88,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 	std::vector<RsGxsNotify *>::iterator it;
 
-	for(it = changes.begin(); it != changes.end(); it++)
+	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
@@ -99,7 +99,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
+			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 			{
 				std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
 				std::cerr << std::endl;
@@ -118,7 +118,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
 			std::list<RsGxsGroupId>::iterator git;
-			for(git = groupList.begin(); git != groupList.end(); git++)
+			for(git = groupList.begin(); git != groupList.end(); ++git)
 			{
 				std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
 				std::cerr << std::endl;
@@ -243,7 +243,7 @@ void p3PostBase::background_loadGroups(const uint32_t &token)
 	}
 
 	std::list<RsGxsGroupId>::iterator it;
-	for(it = groupList.begin(); it != groupList.end(); it++)
+	for(it = groupList.begin(); it != groupList.end(); ++it)
 	{
 		addGroupForProcessing(*it);
 	}
@@ -390,10 +390,10 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 	RsGxsGroupId groupId;
 	std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> >::iterator mit;
 	std::vector<RsGxsMsgItem*>::iterator vit;
-	for (mit = msgData.begin(); mit != msgData.end(); mit++)
+	for (mit = msgData.begin(); mit != msgData.end(); ++mit)
 	{
 		  groupId = mit->first;
-		  for (vit = mit->second.begin(); vit != mit->second.end(); vit++)
+		  for (vit = mit->second.begin(); vit != mit->second.end(); ++vit)
 		  {
 			RsGxsMessageId parentId = (*vit)->meta.mParentId;
 			RsGxsMessageId threadId = (*vit)->meta.mThreadId;
@@ -596,9 +596,9 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 	std::vector<RsGxsNotify *> changes;
 	RsGxsMsgChange *msgChanges = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
 
-	for(mit = parentMsgList.begin(); mit != parentMsgList.end(); mit++)
+	for(mit = parentMsgList.begin(); mit != parentMsgList.end(); ++mit)
 	{
-		for(vit = mit->second.begin(); vit != mit->second.end(); vit++)
+		for(vit = mit->second.begin(); vit != mit->second.end(); ++vit)
 		{
 			std::cerr << "p3PostBase::background_updateVoteCounts() Processing Msg(" << mit->first;
 			std::cerr << ", " << vit->mMsgId << ")";

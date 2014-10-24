@@ -115,7 +115,7 @@ bool ftTransferModule::setFileSources(const std::list<RsPeerId>& peerIds)
 #endif
 
   std::list<RsPeerId>::const_iterator it;
-  for(it = peerIds.begin(); it != peerIds.end(); it++)
+  for(it = peerIds.begin(); it != peerIds.end(); ++it)
   {
 
 #ifdef FT_DEBUG
@@ -137,7 +137,7 @@ bool ftTransferModule::getFileSources(std::list<RsPeerId> &peerIds)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
     std::map<RsPeerId,peerInfo>::iterator it;
-    for(it = mFileSources.begin(); it != mFileSources.end(); it++)
+    for(it = mFileSources.begin(); it != mFileSources.end(); ++it)
     {
 	peerIds.push_back(it->first);
     }
@@ -428,7 +428,7 @@ bool ftTransferModule::queryInactive()
 		return false ;
 
 	std::map<RsPeerId,peerInfo>::iterator mit;
-	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+	for(mit = mFileSources.begin(); mit != mFileSources.end(); ++mit)
 	{
 		locked_tickPeerTransfer(mit->second);
 	}
@@ -497,7 +497,7 @@ int ftTransferModule::tick()
 
 	std::cerr << "Peers: ";
   	std::map<RsPeerId,peerInfo>::iterator it;
-  	for(it = mFileSources.begin(); it != mFileSources.end(); it++)
+  	for(it = mFileSources.begin(); it != mFileSources.end(); ++it)
 	{
 		std::cerr << " " << it->first;
 	}
@@ -649,7 +649,7 @@ void ftTransferModule::adjustSpeed()
 
 
   actualRate = 0;
-  for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+  for(mit = mFileSources.begin(); mit != mFileSources.end(); ++mit)
   {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::adjustSpeed()";

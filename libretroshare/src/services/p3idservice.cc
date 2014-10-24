@@ -220,7 +220,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::list<RsGxsGroupId> unprocessedGroups;
 
 	std::vector<RsGxsNotify *>::iterator it;
-	for(it = changes.begin(); it != changes.end(); it++)
+	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
@@ -233,7 +233,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
+			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 			{
 #ifdef DEBUG_IDS
 				std::cerr << "p3IdService::notifyChanges() Msgs for Group: " << mit->first;
@@ -252,7 +252,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
 			std::list<RsGxsGroupId>::iterator git;
-			for(git = groupList.begin(); git != groupList.end(); git++)
+			for(git = groupList.begin(); git != groupList.end(); ++git)
 			{
 #ifdef DEBUG_IDS
 				std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
@@ -715,7 +715,7 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 			if (item)
@@ -1309,7 +1309,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 			{
 				std::list<RsRecognTag>::iterator it;
 				int i = 0;
-				for(it = mRecognTags.begin(); it != mRecognTags.end(); it++, i++)
+				for(it = mRecognTags.begin(); it != mRecognTags.end(); ++it, i++)
 				{
 					if (ssdata.recogntags.tagValid(i) && it->valid)
 					{
@@ -1369,7 +1369,7 @@ bool p3IdService::recogn_extract_taginfo(const RsGxsIdGroupItem *item, std::list
 
 	std::list<std::string>::const_iterator rit;
 	int count = 0;
-	for(rit = item->group.mRecognTags.begin(); rit != item->group.mRecognTags.end(); rit++)
+	for(rit = item->group.mRecognTags.begin(); rit != item->group.mRecognTags.end(); ++rit)
 	{
 		if (++count > RSRECOGN_MAX_TAGINFO)
 		{
@@ -1453,7 +1453,7 @@ bool p3IdService::cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std:
 	recogn_extract_taginfo(item, tagItems);
 
     //time_t now = time(NULL);
-	for(it = tagItems.begin(); it != tagItems.end(); it++)
+	for(it = tagItems.begin(); it != tagItems.end(); ++it)
 	{
 		RsRecognTag info((*it)->tag_class, (*it)->tag_type, false);
 		bool isPending = false;
@@ -1522,7 +1522,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	//std::cerr << "p3IdService::cache_store() KeySet is:";
 	//keySet.print(std::cerr, 10);
 
-	for (kit = keySet.keys.begin(); kit != keySet.keys.end(); kit++)
+	for (kit = keySet.keys.begin(); kit != keySet.keys.end(); ++kit)
 	{
 		if (kit->second.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
 		{
@@ -1624,7 +1624,7 @@ bool p3IdService::cache_start_load()
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
 		std::map<RsGxsId, std::list<RsPeerId> >::iterator it;
-		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
+		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); ++it)
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::cache_start_load() GroupId: " << it->first;
@@ -1670,7 +1670,7 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 			if (!item)
@@ -1728,7 +1728,7 @@ void p3IdService::requestIdsFromNet()
 	std::map<RsPeerId, std::list<RsGxsId> > requests;
 
 	// transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes
-	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end(); cit++)
+	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end(); ++cit)
 	{
 		{
 #ifdef DEBUG_IDS
@@ -1741,20 +1741,20 @@ void p3IdService::requestIdsFromNet()
 
 		const std::list<RsPeerId>& peers = cit->second;
 		std::list<RsPeerId>::const_iterator cit2;
-		for(cit2 = peers.begin(); cit2 != peers.end(); cit2++)
+		for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
 			requests[*cit2].push_back(cit->first);
 	}
 
 	std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2;
 
-	for(cit2 = requests.begin(); cit2 != requests.end(); cit2++)
+	for(cit2 = requests.begin(); cit2 != requests.end(); ++cit2)
         {
 
             if(mNes)
             {
         		std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
         		std::list<RsGxsGroupId> grpIds;
-        		for(; gxs_id_it != cit2->second.end(); gxs_id_it++)
+        		for(; gxs_id_it != cit2->second.end(); ++gxs_id_it)
         			grpIds.push_back(RsGxsGroupId(gxs_id_it->toStdString()));
 
             	mNes->requestGrp(grpIds, cit2->first);
@@ -1847,7 +1847,7 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 			mOwnIds.clear();
-			for(vit = grpData.begin(); vit != grpData.end(); vit++)
+			for(vit = grpData.begin(); vit != grpData.end(); ++vit)
 			{
 				RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 				if (!item)
@@ -1869,7 +1869,7 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 		// as it just causes the cache to be flushed.
 #if 0
 		// Cache Items too.
-		for(vit = grpData.begin(); vit != grpData.end(); vit++)
+		for(vit = grpData.begin(); vit != grpData.end(); ++vit)
 		{
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 			if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
@@ -1932,13 +1932,13 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
        	bool ok = RsGenExchange::getGroupList(token, grpIdsC);
 
        	std::list<RsGxsGroupId>::const_iterator cit = grpIdsC.begin();
-       	for(; cit != grpIdsC.end(); cit++)
+       	for(; cit != grpIdsC.end(); ++cit)
        		grpIds.push_back(RsGxsId(cit->toStdString()));
 
 	if(ok)
 	{
 		std::list<RsGxsId>::iterator vit = grpIds.begin();
-		for(; vit != grpIds.end(); vit++)
+		for(; vit != grpIds.end(); ++vit)
 		{
 			/* 5% chance of checking it! */
 			if (RSRandom::random_f32() < 0.25)
@@ -2136,7 +2136,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 	// find private admin key
 	std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
-	for(; mit != keySet.keys.end(); mit++)
+	for(; mit != keySet.keys.end(); ++mit)
 	{
 		RsTlvSecurityKey& pk = mit->second;
 	
@@ -2369,7 +2369,7 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 #endif // DEBUG_IDS
 
 		std::vector<RsGxsIdGroup>::iterator vit;
-		for(vit = groups.begin(); vit != groups.end(); vit++)
+		for(vit = groups.begin(); vit != groups.end(); ++vit)
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::pgphash_request() Group Id: " << vit->mMeta.mGroupId;
@@ -2562,7 +2562,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<RsPgpId, PGPFingerprintType>::iterator mit;
-	for(mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); mit++)
+	for(mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); ++mit)
 	{
 		Sha1CheckSum hash;
 		calcPGPHash(RsGxsId(grp.mMeta.mGroupId.toStdString()), mit->second, hash);
@@ -2636,7 +2636,7 @@ void p3IdService::getPgpIdList()
 	mPgpFingerprintMap.clear();
 
  	std::list<RsPgpId>::iterator it;
-	for(it = list.begin(); it != list.end(); it++)
+	for(it = list.begin(); it != list.end(); ++it)
 	{
  		RsPgpId pgpId(*it);
 		PGPFingerprintType fp;
@@ -2803,7 +2803,7 @@ bool p3IdService::recogn_handlerequest(uint32_t token)
 		
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 			if (item)
@@ -2879,7 +2879,7 @@ bool p3IdService::recogn_process()
 	bool isPending = false;
 	int i = 1;
 	uint32_t tagValidFlags = 0;
-	for(it = tagItems.begin(); it != tagItems.end(); it++)
+	for(it = tagItems.begin(); it != tagItems.end(); ++it)
 	{
 		bool isTagPending = false;
 		bool isTagOk = recogn_checktag(RsGxsId(item->meta.mGroupId.toStdString()), item->meta.mGroupName, *it, true, isPending);
@@ -3134,7 +3134,7 @@ void p3IdService::generateDummy_FriendPGP()
 
 	int idx = RSRandom::random_f32() * (gpgids.size() - 1);
 	it = gpgids.begin();
-	for(int j = 0; j < idx; j++, it++) ;
+	for(int j = 0; j < idx; j++, ++it) ;
 
 #if 0
 	// HACK FOR DUMMY GENERATION.

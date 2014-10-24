@@ -280,7 +280,7 @@ void p3NetMgrIMPL::netReset()
 		std::cerr << "p3NetMgrIMPL::netReset() resetting listeners" << std::endl;
 #endif
 		std::list<pqiNetListener *>::const_iterator it;
-		for(it = mNetListeners.begin(); it != mNetListeners.end(); it++)
+		for(it = mNetListeners.begin(); it != mNetListeners.end(); ++it)
 		{
 			(*it)->resetListener(iaddr);
 #ifdef NETMGR_DEBUG_RESET
@@ -1194,7 +1194,7 @@ void p3NetMgrIMPL::addNetAssistFirewall(uint32_t id, pqiNetAssistFirewall *fwAge
 bool p3NetMgrIMPL::enableNetAssistFirewall(bool on)
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
-	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); ++it)
 	{
 		(it->second)->enable(on);
 	}
@@ -1205,7 +1205,7 @@ bool p3NetMgrIMPL::enableNetAssistFirewall(bool on)
 bool p3NetMgrIMPL::netAssistFirewallEnabled()
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
-	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); ++it)
 	{
 		if ((it->second)->getEnabled())
 		{
@@ -1218,7 +1218,7 @@ bool p3NetMgrIMPL::netAssistFirewallEnabled()
 bool p3NetMgrIMPL::netAssistFirewallActive()
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
-	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); ++it)
 	{
 		if ((it->second)->getActive())
 		{
@@ -1231,7 +1231,7 @@ bool p3NetMgrIMPL::netAssistFirewallActive()
 bool p3NetMgrIMPL::netAssistFirewallShutdown()
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
-	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); ++it)
 	{
 		(it->second)->shutdown();
 	}
@@ -1241,7 +1241,7 @@ bool p3NetMgrIMPL::netAssistFirewallShutdown()
 bool p3NetMgrIMPL::netAssistFirewallPorts(uint16_t iport, uint16_t eport)
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
-	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); ++it)
 	{
 		(it->second)->setInternalPort(iport);
 		(it->second)->setExternalPort(eport);
@@ -1253,7 +1253,7 @@ bool p3NetMgrIMPL::netAssistFirewallPorts(uint16_t iport, uint16_t eport)
 bool p3NetMgrIMPL::netAssistExtAddress(struct sockaddr_storage &extAddr)
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
-	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
+	for(it = mFwAgents.begin(); it != mFwAgents.end(); ++it)
 	{
 		if ((it->second)->getActive())
 		{
@@ -1281,7 +1281,7 @@ bool p3NetMgrIMPL::enableNetAssistConnect(bool on)
 #endif
 
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->enable(on);
 	}
@@ -1291,7 +1291,7 @@ bool p3NetMgrIMPL::enableNetAssistConnect(bool on)
 bool p3NetMgrIMPL::netAssistConnectEnabled()
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		if ((it->second)->getEnabled())
 		{
@@ -1315,7 +1315,7 @@ bool p3NetMgrIMPL::netAssistConnectEnabled()
 bool p3NetMgrIMPL::netAssistConnectActive()
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		if ((it->second)->getActive())
 
@@ -1340,7 +1340,7 @@ bool p3NetMgrIMPL::netAssistConnectActive()
 bool p3NetMgrIMPL::netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		if (((it->second)->getActive()) && ((it->second)->getNetworkStats(netsize, localnetsize)))
 
@@ -1371,7 +1371,7 @@ bool p3NetMgrIMPL::netAssistConnectShutdown()
 #endif
 
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->shutdown();
 	}
@@ -1387,7 +1387,7 @@ bool p3NetMgrIMPL::netAssistFriend(const RsPeerId &id, bool on)
 	std::cerr << std::endl;
 #endif
 
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		if (on)
 			(it->second)->findPeer(id);
@@ -1407,7 +1407,7 @@ bool p3NetMgrIMPL::netAssistKnownPeer(const RsPeerId &id, const struct sockaddr_
 	std::cerr << std::endl;
 #endif
 
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->addKnownPeer(id, addr, flags);
 	}
@@ -1423,7 +1423,7 @@ bool p3NetMgrIMPL::netAssistBadPeer(const struct sockaddr_storage &addr, uint32_
 	std::cerr << std::endl;
 #endif
 
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->addBadPeer(addr, reason, flags, age);
 	}
@@ -1440,7 +1440,7 @@ bool p3NetMgrIMPL::netAssistAttach(bool on)
 	std::cerr << std::endl;
 #endif
 
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->setAttachMode(on);
 	}
@@ -1458,7 +1458,7 @@ bool p3NetMgrIMPL::netAssistStatusUpdate(const RsPeerId &id, int state)
 	std::cerr << std::endl;
 #endif
 
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->ConnectionFeedback(id, state);
 	}
@@ -1472,7 +1472,7 @@ bool p3NetMgrIMPL::netAssistSetAddress( const struct sockaddr_storage & /*laddr*
 {
 #if 0
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->setExternalInterface(laddr, eaddr, mode);
 	}
@@ -1483,13 +1483,13 @@ bool p3NetMgrIMPL::netAssistSetAddress( const struct sockaddr_storage & /*laddr*
 void p3NetMgrIMPL::netAssistTick()
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		(it->second)->tick();
 	}
 
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator fit;
-	for(fit = mFwAgents.begin(); fit != mFwAgents.end(); fit++)
+	for(fit = mFwAgents.begin(); fit != mFwAgents.end(); ++fit)
 	{
 		(fit->second)->tick();
 	}

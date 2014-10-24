@@ -116,7 +116,7 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 	
 	bool pgpNameFound = false;
 	std::map<RsPeerId, AccountDetails>::const_iterator it;
-	for(it = mAccounts.begin() ; it!= mAccounts.end() ; it++)
+	for(it = mAccounts.begin() ; it!= mAccounts.end() ; ++it)
 	{
 		std::cerr << "\tChecking account (pgpid = " << it->second.mPgpId;
 		std::cerr << ", name=" << it->second.mPgpName << ", sslId="; 
@@ -417,7 +417,7 @@ bool     RsAccountsDetail::getAccountIds(std::list<RsPeerId> &ids)
 	std::map<RsPeerId, AccountDetails>::iterator it;
 	std::cerr << "getAccountIds:" << std::endl;
 
-	for(it = mAccounts.begin(); it != mAccounts.end(); it++)
+	for(it = mAccounts.begin(); it != mAccounts.end(); ++it)
 	{
 		std::cerr << "SSL Id: " << it->second.mSslId << " PGP Id " << it->second.mPgpId;
 		std::cerr << " PGP Name: " << it->second.mPgpName;
@@ -533,7 +533,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 	/* close directory */
 	dirIt.closedir();
 
-	for(it = directories.begin(); it != directories.end(); it++)
+	for(it = directories.begin(); it != directories.end(); ++it)
 	{
 		// For V0.6 Accounts we expect format:
 		// LOC06_xxxhexaxxx or

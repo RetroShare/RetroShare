@@ -100,7 +100,7 @@ int p3BitDht::pushRelayServers()
 	}
 
 	std::list<std::string>::iterator it;
-	for(it = servers.begin(); it != servers.end(); it++)
+	for(it = servers.begin(); it != servers.end(); ++it)
 	{
 		/* push it to dht */
 		uint32_t bdflags = BITDHT_PEER_STATUS_DHT_RELAY_SERVER;
@@ -227,7 +227,7 @@ bool p3BitDht::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 
 	/* Push Relay Class Stuff */
 	int i;
-	for(i = 0; i < RSDHT_RELAY_NUM_CLASS; i++)
+	for(i = 0; i < RSDHT_RELAY_NUM_CLASS; ++i)
 	{
 		rs_sprintf(kv.key, "RELAY_CLASS%d_COUNT", i);
 		rs_sprintf(kv.value, "%d", mRelay->getRelayClassMax(i));
@@ -247,7 +247,7 @@ bool p3BitDht::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 
 	/* add Servers */
 	std::list<std::string>::iterator it;
-	for(i = 0, it = mRelayServerList.begin(); it != mRelayServerList.end(); it++, i++)
+	for(i = 0, it = mRelayServerList.begin(); it != mRelayServerList.end(); ++it, ++i)
 	{
 		rs_sprintf(kv.key, "RELAY_SERVER%d", i);
 		kv.value = *it;
@@ -306,7 +306,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 	int mode = 0;
 
 	std::list<RsTlvKeyValue>::iterator it;
-	for(it = config->tlvkvs.pairs.begin(); it != config->tlvkvs.pairs.end(); it++)
+	for(it = config->tlvkvs.pairs.begin(); it != config->tlvkvs.pairs.end(); ++it)
 	{
 		std::string key = it->key;
 		std::string value = it->value;
@@ -383,7 +383,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 	}
 	
 	int i;
-	for(i = 0; i < RSDHT_RELAY_NUM_CLASS; i++)
+	for(i = 0; i < RSDHT_RELAY_NUM_CLASS; ++i)
 	{
 		mRelay->setRelayClassMax(i, peers[i], bandwidth[i]);
 	}

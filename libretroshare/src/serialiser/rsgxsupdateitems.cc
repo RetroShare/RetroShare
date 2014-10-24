@@ -68,7 +68,7 @@ std::ostream& RsGxsMsgUpdateItem::print(std::ostream& out, uint16_t indent)
     std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
     out << "msgUpdateTS map:" << std::endl;
     int_Indent += 2;
-    for(; cit != msgUpdateTS.end(); cit++)
+    for(; cit != msgUpdateTS.end(); ++cit)
     {
     	out << "grpId: " << cit->first << std::endl;
 		printIndent(out, int_Indent);
@@ -459,7 +459,7 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
     const std::map<RsGxsGroupId, uint32_t>& msgUpdateTS = item->msgUpdateTS;
     std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
 
-	for(; cit != msgUpdateTS.end(); cit++)
+	for(; cit != msgUpdateTS.end(); ++cit)
 	{
 		s += cit->first.serial_size();
         s += 4;
@@ -516,7 +516,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
     uint32_t numItems = msgUpdateTS.size();
     ok &= setRawUInt32(data, *size, &offset, numItems);
 
-    for(; cit != msgUpdateTS.end(); cit++)
+    for(; cit != msgUpdateTS.end(); ++cit)
     {
     	ok &= cit->first.serialise(data, *size, offset);
         ok &= setRawUInt32(data, *size, &offset, cit->second);

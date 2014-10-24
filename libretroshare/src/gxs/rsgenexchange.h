@@ -323,7 +323,7 @@ protected:
     	bool ok = getGroupData(token, items);
     	std::vector<RsGxsGrpItem*>::iterator vit = items.begin();
 
-    	for(; vit != items.end(); vit++)
+    	for(; vit != items.end(); ++vit)
     	{
     		RsGxsGrpItem* gi = *vit;
 
@@ -363,12 +363,12 @@ public:
 
     	GxsMsgDataMap::iterator mit = msgData.begin();
 
-    	for(; mit != msgData.end(); mit++)
+    	for(; mit != msgData.end(); ++mit)
     	{
     		const RsGxsGroupId& grpId = mit->first;
     		std::vector<RsGxsMsgItem*>& mv = mit->second;
     		std::vector<RsGxsMsgItem*>::iterator vit = mv.begin();
-    		for(; vit != mv.end(); vit++)
+    		for(; vit != mv.end(); ++vit)
     		{
     			RsGxsMsgItem* mi = *vit;
     			MsgType* mt = dynamic_cast<MsgType*>(mi);
@@ -415,14 +415,14 @@ protected:
 
         if(ok)
         {
-            for(; mit != msgResult.end(); mit++)
+            for(; mit != msgResult.end(); ++mit)
             {
                 std::vector<MsgType> gxsMsgItems;
                 const RsGxsGrpMsgIdPair& msgId = mit->first;
                 std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
                 std::vector<RsNxsMsg*>::iterator vit
                 = nxsMsgsV.begin();
-                for(; vit != nxsMsgsV.end(); vit++)
+                for(; vit != nxsMsgsV.end(); ++vit)
                 {
                     RsNxsMsg*& msg = *vit;
                     RsItem* item = NULL;

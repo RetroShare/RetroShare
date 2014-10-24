@@ -218,7 +218,7 @@ bool p3Notify::ClearFeedItems(uint32_t type)
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
 	return true;

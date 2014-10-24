@@ -253,7 +253,7 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 	int totalcount = 0;
 	RsGxsReputationUpdateItem *pkt = new RsGxsReputationUpdateItem();
 	pkt->PeerId(peerId);
-	for(;tit != mUpdated.end(); tit++)
+	for(;tit != mUpdated.end(); ++tit)
 	{
 		/* find */
 		std::map<RsGxsId, Reputation>::iterator rit;
@@ -326,7 +326,7 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 	RsPeerId peerid = item->PeerId();
 
 	std::map<RsGxsId, uint32_t>::iterator it;
-	for(it = item->mOpinions.begin(); it != item->mOpinions.end(); it++)
+	for(it = item->mOpinions.begin(); it != item->mOpinions.end(); ++it)
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -406,7 +406,7 @@ bool p3GxsReputation::updateOpinion(const RsGxsId& gxsid, int opinion)
 		std::multimap<time_t, RsGxsId>::iterator uit, euit;
 		uit = mUpdated.lower_bound(reputation.mOwnOpinionTs);
 		euit = mUpdated.upper_bound(reputation.mOwnOpinionTs);
-		for(; uit != euit; uit++)
+		for(; uit != euit; ++uit)
 		{
 			if (uit->second == gxsid)
 			{
@@ -449,7 +449,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 
 	/* save */
 	std::map<RsPeerId, ReputationConfig>::iterator it;
-	for(it = mConfig.begin(); it != mConfig.end(); it++)
+	for(it = mConfig.begin(); it != mConfig.end(); ++it)
 	{
 		if (!rsPeers->isFriend(it->first))
 		{
@@ -466,7 +466,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 
 	int count = 0;
  	std::map<RsGxsId, Reputation>::iterator rit;
-	for(rit = mReputations.begin(); rit != mReputations.end(); rit++, count++)
+	for(rit = mReputations.begin(); rit != mReputations.end(); ++rit, count++)
 	{
 		RsGxsReputationSetItem *item = new RsGxsReputationSetItem();
 		item->mGxsId = rit->first.toStdString();
@@ -497,7 +497,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	std::list<RsItem *>::iterator it;
 	std::set<RsPeerId> peerSet;
 
-	for(it = loadList.begin(); it != loadList.end(); it++)
+	for(it = loadList.begin(); it != loadList.end(); ++it)
 	{
 		RsGxsReputationConfigItem *item = dynamic_cast<RsGxsReputationConfigItem *>(*it);
 		// Configurations are loaded first. (to establish peerSet).
@@ -542,7 +542,7 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 
 	// install opinions.
 	std::map<std::string, uint32_t>::const_iterator oit;
-	for(oit = item->mOpinions.begin(); oit != item->mOpinions.end(); oit++)
+	for(oit = item->mOpinions.begin(); oit != item->mOpinions.end(); ++oit)
 	{
 		// expensive ... but necessary.
 		RsPeerId peerId(oit->first);
@@ -635,7 +635,7 @@ void p3GxsReputation::sendReputationRequests()
 
 	/* prepare packets */
 	std::list<RsPeerId>::iterator it;
-	for(it = idList.begin(); it != idList.end(); it++)
+	for(it = idList.begin(); it != idList.end(); ++it)
 	{
 #ifdef DEBUG_REPUTATION
 		std::cerr << "p3GxsReputation::sendReputationRequest() To: " << *it;

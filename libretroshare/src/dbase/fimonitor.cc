@@ -627,7 +627,7 @@ void 	FileIndexMonitor::run()
 	while(isRunning())
 	{
 		int i=0 ;
-		for(;;i++)
+		for(;;++i)
 		{
 			if(!isRunning()) 
 				return;
@@ -781,7 +781,7 @@ void 	FileIndexMonitor::updateCycle()
 		std::map<std::string, FileEntry *>::iterator fit;
 
 		/* flag existing subdirs as old */
-		for(dit = olddir->subdirs.begin(); dit != olddir->subdirs.end(); dit++)
+		for(dit = olddir->subdirs.begin(); dit != olddir->subdirs.end(); ++dit)
 		{
 			fe.name = (dit->second)->name;
 			/* set the age as out-of-date so that it gets checked */
@@ -1409,7 +1409,7 @@ void    FileIndexMonitor::setSharedDirectories(const std::list<SharedDirInfo>& d
 	std::cerr << "FileIndexMonitor::setSharedDirectories() :\n";
 #endif
 
-	for(it = dirs.begin(); it != dirs.end(); it++)
+	for(it = dirs.begin(); it != dirs.end(); ++it)
 	{
 
 #ifdef FIM_DEBUG
@@ -1462,7 +1462,7 @@ void    FileIndexMonitor::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 		/* get actual list (not pending stuff) */
 		std::map<std::string, SharedDirInfo>::const_iterator it;
 
-		for(it = directoryMap.begin(); it != directoryMap.end(); it++)
+		for(it = directoryMap.begin(); it != directoryMap.end(); ++it)
 			dirs.push_back(it->second) ;
 	}
 }
@@ -1522,7 +1522,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 		/* iterate through the directories */
 		std::list<SharedDirInfo>::iterator it;
 		std::map<std::string, SharedDirInfo>::const_iterator cit;
-		for(it = pendingDirList.begin(); it != pendingDirList.end(); it++)
+		for(it = pendingDirList.begin(); it != pendingDirList.end(); ++it)
 		{
 			/* get the head directory */
 			std::string root_dir = (*it).filename;
@@ -1533,7 +1533,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 
 			/* if unique -> add, else add modifier  */
 			bool unique = false;
-			for(i = 0; !unique; i++)
+			for(i = 0; !unique; ++i)
 			{
 				std::string tst_dir = top_dir;
 				if (i > 0)
@@ -1560,7 +1560,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 		 * fileIndex
 		 */
 		std::list<std::string> topdirs;
-		for(cit = directoryMap.begin(); cit != directoryMap.end(); cit++)
+		for(cit = directoryMap.begin(); cit != directoryMap.end(); ++cit)
 		{
 			topdirs.push_back(cit->first);
 		}

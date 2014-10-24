@@ -1633,7 +1633,7 @@ bool AuthSSLimpl::saveList(bool& cleanup, std::list<RsItem*>& lst)
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
         std::map<RsPeerId, sslcert*>::iterator mapIt;
-        for (mapIt = mCerts.begin(); mapIt != mCerts.end(); mapIt++) {
+        for (mapIt = mCerts.begin(); mapIt != mCerts.end(); ++mapIt) {
             if (mapIt->first == mOwnId) {
                 continue;
             }
@@ -1658,7 +1658,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
 
         /* load the list of accepted gpg keys */
         std::list<RsItem *>::iterator it;
-        for(it = load.begin(); it != load.end(); it++) {
+        for(it = load.begin(); it != load.end(); ++it) {
                 RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
 
                 if(vitem) {
@@ -1669,7 +1669,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
                         #endif
 
                         std::list<RsTlvKeyValue>::iterator kit;
-                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) {
                             if (RsPeerId(kit->key) == mOwnId) {
                                 continue;
                             }

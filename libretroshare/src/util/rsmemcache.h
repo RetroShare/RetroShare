@@ -317,7 +317,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::update_lrumap(cons
 	typename std::multimap<time_t, Key>::iterator sit = mLruMap.lower_bound(old_ts);
 	typename std::multimap<time_t, Key>::iterator eit = mLruMap.upper_bound(old_ts);
 
-        for(mit = sit; mit != eit; mit++)
+        for(mit = sit; mit != eit; ++mit)
 	{
 		if (mit->second == key)
 		{

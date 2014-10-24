@@ -178,7 +178,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *> voteMap;
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
@@ -186,7 +186,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 
 			/* now split into Comments and Votes */
 		
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsCommentItem* item = dynamic_cast<RsGxsCommentItem*>(*vit);
 		
@@ -216,9 +216,9 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		/* now iterate through comments - and set the vote counts */
 		std::vector<RsGxsComment>::iterator cit;
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *>::iterator it;
-		for(cit = comments.begin(); cit != comments.end(); cit++)
+		for(cit = comments.begin(); cit != comments.end(); ++cit)
 		{
-			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); it++)
+			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); ++it)
 			{
 				if (it->second->mMsg.mVoteType == GXS_VOTE_UP)
 				{
@@ -255,7 +255,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		std::cerr << std::endl;
 
 		/* delete the votes */
-		for (it = voteMap.begin(); it != voteMap.end(); it++)
+		for (it = voteMap.begin(); it != voteMap.end(); ++it)
 		{
 			delete it->second;
 		}
@@ -283,12 +283,12 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *> voteMap;
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsCommentItem* item = dynamic_cast<RsGxsCommentItem*>(*vit);
 		
@@ -318,9 +318,9 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 		/* now iterate through comments - and set the vote counts */
 		std::vector<RsGxsComment>::iterator cit;
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *>::iterator it;
-		for(cit = comments.begin(); cit != comments.end(); cit++)
+		for(cit = comments.begin(); cit != comments.end(); ++cit)
 		{
-			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); it++)
+			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); ++it)
 			{
 				if (it->second->mMsg.mVoteType == GXS_VOTE_UP)
 				{
@@ -357,7 +357,7 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 		std::cerr << std::endl;
 
 		/* delete the votes */
-		for (it = voteMap.begin(); it != voteMap.end(); it++)
+		for (it = voteMap.begin(); it != voteMap.end(); ++it)
 		{
 			delete it->second;
 		}
@@ -497,10 +497,10 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
         }
 
 	GxsMsgMetaMap::iterator it;
-	for(it = msginfo.begin(); it != msginfo.end(); it++)
+	for(it = msginfo.begin(); it != msginfo.end(); ++it)
 	{
 		std::vector<RsMsgMetaData>::iterator mit;
-		for(mit = it->second.begin(); mit != it->second.end(); mit++)
+		for(mit = it->second.begin(); mit != it->second.end(); ++mit)
 		{
 			/* find the matching Pending Vote */
 			RsMsgMetaData &meta = *mit;
@@ -567,7 +567,7 @@ void p3GxsCommentService::completeInternalVote(uint32_t &token)
 	std::cerr << "p3GxsCommentService::completeInternalVote() token: " << token;
 	std::cerr << std::endl;
 	std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator it;
-	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); it++)
+	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); ++it)
 	{
 		if (it->second.mVoteToken == token)
 		{
@@ -596,7 +596,7 @@ bool p3GxsCommentService::acknowledgeVote(const uint32_t& token, RsGxsGrpMsgIdPa
 	std::cerr << std::endl;
 
 	std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator it;
-	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); it++)
+	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); ++it)
 	{
 		if (it->second.mReqToken == token)
 		{

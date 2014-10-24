@@ -54,7 +54,7 @@ int      p3BitDht::getDhtPeers(int lvl, std::list<RsDhtPeer> &peers)
 	std::list<bdPeer>::iterator it;
         mUdpBitDht->getDhtBucket(lvl, int_peers);
 
-	for(it = int_peers.entries.begin(); it != int_peers.entries.end(); it++)
+	for(it = int_peers.entries.begin(); it != int_peers.entries.end(); ++it)
 	{
 		RsDhtPeer peer;
 
@@ -70,7 +70,7 @@ int      p3BitDht::getNetPeerList(std::list<RsPeerId> &peerIds)
 {
 	RsStackMutex stack(dhtMtx); /*********** LOCKED **********/
 	std::map<bdNodeId, DhtPeerDetails>::iterator it;
-	for(it = mPeers.begin(); it != mPeers.end(); it++)
+	for(it = mPeers.begin(); it != mPeers.end(); ++it)
 	{
 		peerIds.push_back(it->second.mRsId);
 	}
@@ -106,7 +106,7 @@ int     p3BitDht::getRelayEnds(std::list<RsDhtRelayEnd> &relayEnds)
 	std::list<UdpRelayEnd>::iterator it;
         mRelay->getRelayEnds(int_relayEnds);
 
-	for(it = int_relayEnds.begin(); it != int_relayEnds.end(); it++)
+	for(it = int_relayEnds.begin(); it != int_relayEnds.end(); ++it)
 	{
 		RsDhtRelayEnd end;
 		convertUdpRelayEndtoRsDhtRelayEnd(end, *it);
@@ -129,7 +129,7 @@ int     p3BitDht::getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies)
 	std::list<UdpRelayProxy>::iterator it;
         mRelay->getRelayProxies(int_relayProxies);
 
-	for(it = int_relayProxies.begin(); it != int_relayProxies.end(); it++)
+	for(it = int_relayProxies.begin(); it != int_relayProxies.end(); ++it)
 	{
 		RsDhtRelayProxy proxy;
 		convertUdpRelayProxytoRsDhtRelayProxy(proxy, *it);

@@ -555,7 +555,7 @@ bool ftFileCreator::locked_printChunkMap()
 
 	std::map<uint64_t, ftChunk>::iterator it;
 	
-	for(it = mChunks.begin(); it != mChunks.end(); it++)
+	for(it = mChunks.begin(); it != mChunks.end(); ++it)
 		std::cerr << "  " << it->second << std::endl ;
 
 	std::cerr << "Active chunks per peer:" << std::endl ;

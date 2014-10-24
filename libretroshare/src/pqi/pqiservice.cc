@@ -182,7 +182,7 @@ int	p3ServiceServer::tick()
 	std::map<uint32_t, pqiService *>::iterator it;
 
 	// from the beginning to where we started.
-	for(it = services.begin();it != services.end(); it++)
+	for(it = services.begin();it != services.end(); ++it)
 	{
 
 #ifdef  SERVICE_DEBUG

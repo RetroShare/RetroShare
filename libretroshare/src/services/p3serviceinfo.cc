@@ -184,7 +184,7 @@ bool	p3ServiceInfo::sendPackets()
 
 	RsStackMutex stack(mInfoMtx); /****** LOCKED MUTEX *******/
 	std::set<RsPeerId>::iterator it;
-	for(it = updateSet.begin(); it != updateSet.end(); it++)
+	for(it = updateSet.begin(); it != updateSet.end(); ++it)
 	{
 		sendServiceInfoList(*it);
 	}
@@ -232,7 +232,7 @@ void p3ServiceInfo::statusChange(const std::list<pqipeer> &plist)
 	std::cerr << std::endl;
 
 	std::list<pqipeer>::const_iterator it;
-	for (it = plist.begin(); it != plist.end(); it++) 
+	for (it = plist.begin(); it != plist.end(); ++it)
 	{
 		if (it->state & RS_PEER_S_FRIEND) 
 		{

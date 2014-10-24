@@ -565,7 +565,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     // start a transaction
     mDb->execSQL("BEGIN;");
 
-    for(; mit != msg.end(); mit++){
+    for(; mit != msg.end(); ++mit){
 
         RsNxsMsg* msgPtr = mit->first;
         RsGxsMsgMetaData* msgMetaPtr = mit->second;
@@ -649,7 +649,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     // finish transaction
     bool ret = mDb->execSQL("COMMIT;");
 
-    for(mit = msg.begin(); mit != msg.end(); mit++)
+    for(mit = msg.begin(); mit != msg.end(); ++mit)
     {
     	//TODO: API encourages aliasing, remove this abomination
     	if(mit->second != mit->first->metaData)
@@ -680,7 +680,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     // begin transaction
     mDb->execSQL("BEGIN;");
 
-    for(; sit != grp.end(); sit++)
+    for(; sit != grp.end(); ++sit)
     {
 
         RsNxsGrp* grpPtr = sit->first;
@@ -764,7 +764,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     // finish transaction
     bool ret = mDb->execSQL("COMMIT;");
 
-    for(sit = grp.begin(); sit != grp.end(); sit++)
+    for(sit = grp.begin(); sit != grp.end(); ++sit)
     {
 	//TODO: API encourages aliasing, remove this abomination
 			if(sit->second != sit->first->metaData)
@@ -786,7 +786,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     // begin transaction
     mDb->execSQL("BEGIN;");
 
-    for(; sit != grp.end(); sit++)
+    for(; sit != grp.end(); ++sit)
     {
 
         RsNxsGrp* grpPtr = sit->first;
@@ -853,7 +853,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     // finish transaction
     bool ret = mDb->execSQL("COMMIT;");
 
-    for(sit = grp.begin(); sit != grp.end(); sit++)
+    for(sit = grp.begin(); sit != grp.end(); ++sit)
     {
 	//TODO: API encourages aliasing, remove this abomination
 			if(sit->second != sit->first->metaData)
@@ -911,7 +911,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
                 locked_retrieveGroups(c, grps);
                 std::vector<RsNxsGrp*>::iterator vit = grps.begin();
 
-                for(; vit != grps.end(); vit++)
+                for(; vit != grps.end(); ++vit)
                 {
                         grp[(*vit)->grpId] = *vit;
                 }
@@ -926,7 +926,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
 
         std::list<RsGxsGroupId> toRemove;
 
-        for(; mit != grp.end(); mit++)
+        for(; mit != grp.end(); ++mit)
         {
             const RsGxsGroupId& grpId = mit->first;
             RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "grpId='" + grpId.toStdString() + "'", "");
@@ -959,13 +959,13 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
     {
         std::map<RsGxsGroupId, RsGxsGrpMetaData*> metaMap;
         std::map<RsGxsGroupId, RsNxsGrp *>::iterator mit = grp.begin();
-        for(; mit != grp.end(); mit++)
+        for(; mit != grp.end(); ++mit)
             metaMap.insert(std::make_pair(mit->first, (RsGxsGrpMetaData*)(NULL)));
 
         retrieveGxsGrpMetaData(metaMap);
 
         mit = grp.begin();
-        for(; mit != grp.end(); mit++)
+        for(; mit != grp.end(); ++mit)
         {
             RsNxsGrp* grpPtr = grp[mit->first];
             grpPtr->metaData = metaMap[mit->first];
@@ -1007,7 +1007,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
     GxsMsgReq metaReqIds;// collects metaReqIds if needed
 
-    for(; mit != reqIds.end(); mit++)
+    for(; mit != reqIds.end(); ++mit)
     {
 
         const RsGxsGroupId& grpId = mit->first;
@@ -1031,7 +1031,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             // request each grp
             std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
 
-            for(; sit!=msgIdV.end();sit++){
+            for(; sit!=msgIdV.end();++sit){
                 const RsGxsMessageId& msgId = *sit;
 
                 RsStackMutex stack(mDbMutex);
@@ -1055,7 +1055,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             std::vector<RsNxsMsg*>::iterator lit = msgSet.begin(),
             lit_end = msgSet.end();
 
-            for(; lit != lit_end; lit++)
+            for(; lit != lit_end; ++lit)
                 msgIds.push_back( (*lit)->msgId );
 
             metaReqIds[grpId] = msgIds;
@@ -1075,7 +1075,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
         GxsMsgResult::iterator mit2 = msg.begin(), mit2_end = msg.end();
 
-        for(; mit2 != mit2_end; mit2++)
+        for(; mit2 != mit2_end; ++mit2)
         {
             const RsGxsGroupId& grpId = mit2->first;
             std::vector<RsNxsMsg*>& msgV = msg[grpId];
@@ -1084,7 +1084,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
             // as retrieval only attempts to retrieve what was found this elimiates chance
             // of a memory fault as all are assigned
-            for(; lit != lit_end; lit++)
+            for(; lit != lit_end; ++lit)
             {
                 std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[grpId];
                 std::vector<RsGxsMsgMetaData*>::iterator meta_lit = msgMetaV.begin();
@@ -1097,7 +1097,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
                         msgPtr->metaData = meta;
                         meta_lit = msgMetaV.erase(meta_lit);
                     }else{
-                        meta_lit++;
+                        ++meta_lit;
                     }
                 }
             }
@@ -1141,7 +1141,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
 
     GxsMsgReq::const_iterator mit = reqIds.begin();
 
-    for(; mit != reqIds.end(); mit++)
+    for(; mit != reqIds.end(); ++mit)
     {
 
         const RsGxsGroupId& grpId = mit->first;
@@ -1160,7 +1160,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
             // request each grp
             std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
 
-            for(; sit!=msgIdV.end();sit++){
+            for(; sit!=msgIdV.end(); ++sit){
                 const RsGxsMessageId& msgId = *sit;
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
@@ -1231,7 +1231,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
     {
         std::map<RsGxsGroupId, RsGxsGrpMetaData *>::iterator mit = grp.begin();
 
-          for(; mit != grp.end(); mit++)
+          for(; mit != grp.end(); ++mit)
           {
               const RsGxsGroupId& grpId = mit->first;
               RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
@@ -1278,7 +1278,7 @@ int RsDataService::resetDataStore()
         RsStackMutex stack(mDbMutex);
 
         // remove all grp msgs files from service dir
-        for(; mit != grps.end(); mit++){
+        for(; mit != grps.end(); ++mit){
             std::string file = mServiceDir + "/" + mit->first.toStdString();
             std::string msgFile = file + "-msgs";
             remove(file.c_str()); // remove group file
@@ -1337,7 +1337,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 	GxsMsgReq::const_iterator mit = msgIds.begin();
 
 
-	for(; mit != msgIds.end(); mit++)
+	for(; mit != msgIds.end(); ++mit)
 	{
 		MsgUpdates updates;
 		const std::vector<RsGxsMessageId>& msgIdV = mit->second;
@@ -1358,7 +1358,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 		std::vector<MsgOffset>::iterator vit = msgOffsets.begin();
 
         uint32_t maxSize = 0;// größe aller msgs, newbuf könnte aber kleiner sein, weil msgs weggehen
-		for(; vit != msgOffsets.end(); vit++)
+		for(; vit != msgOffsets.end(); ++vit)
 			maxSize += vit->msgLen;
 
 		// may be preferable to determine file len reality
@@ -1372,7 +1372,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
 		in.close();
         uint32_t newOffset = 0;// am anfang der liste ist offset=0, jetzt gehen wir die msgs liste durch
-		for(std::vector<MsgOffset>::size_type i = 0; i < msgOffsets.size(); i++)
+		for(std::vector<MsgOffset>::size_type i = 0; i < msgOffsets.size(); ++i)
 		{
 			const MsgOffset& m = msgOffsets[i];
 
@@ -1431,7 +1431,7 @@ int RsDataService::removeGroups(const std::vector<RsGxsGroupId> &grpIds)
 	// from db
 
 	std::vector<RsGxsGroupId>::const_iterator vit = grpIds.begin();
-	for(; vit != grpIds.end(); vit++)
+	for(; vit != grpIds.end(); ++vit)
 	{
 		const std::string grpFileName = mServiceDir + "/" + (*vit).toStdString();
 		remove(grpFileName.c_str());
@@ -1505,14 +1505,14 @@ bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)
 
     MsgUpdates::const_iterator mit = updates.begin();
 
-    for(; mit != updates.end(); mit++)
+    for(; mit != updates.end(); ++mit)
     {
 
     	const RsGxsGroupId& grpId = mit->first;
     	const std::vector<MsgUpdate>& updateV = mit->second;
     	std::vector<MsgUpdate>::const_iterator vit = updateV.begin();
 
-    	for(; vit != updateV.end(); vit++)
+    	for(; vit != updateV.end(); ++vit)
     	{
     		const MsgUpdate& update = *vit;
     		mDb->sqlUpdate(MSG_TABLE_NAME, KEY_GRP_ID+ "='" + grpId.toStdString()
@@ -1532,13 +1532,13 @@ bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
 
     GxsMsgReq::const_iterator mit = msgIds.begin();
 
-    for(; mit != msgIds.end(); mit++)
+    for(; mit != msgIds.end(); ++mit)
     {
     	const RsGxsGroupId& grpId = mit->first;
     	const std::vector<RsGxsMessageId>& msgsV = mit->second;
     	std::vector<RsGxsMessageId>::const_iterator vit = msgsV.begin();
 
-    	for(; vit != msgsV.end(); vit++)
+    	for(; vit != msgsV.end(); ++vit)
     	{
     		const RsGxsMessageId& msgId = *vit;
     		mDb->sqlDelete(MSG_TABLE_NAME, KEY_GRP_ID+ "='" + grpId.toStdString()
@@ -1558,7 +1558,7 @@ bool RsDataService::locked_removeGroupEntries(const std::vector<RsGxsGroupId>& g
 
     std::vector<RsGxsGroupId>::const_iterator vit = grpIds.begin();
 
-    for(; vit != grpIds.end(); vit++)
+    for(; vit != grpIds.end(); ++vit)
     {
 
 		const RsGxsGroupId& grpId = *vit;
