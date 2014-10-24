@@ -26,17 +26,13 @@
 
 
 #include "rsthreads.h"
-#include <unistd.h>    /* for usleep() */
-#include <errno.h>    /* for usleep() */
+#include <unistd.h>    // for usleep()
+#include <errno.h>    // for errno
 #include <iostream>
 #include <time.h>
 
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>
-#endif
-
-#if defined(WINDOWS_SYS) && defined(__MINGW64_VERSION_MAJOR)
-#include <windows.h> // for Sleep
 #endif
 
 /*******
@@ -176,11 +172,7 @@ void RsQueueThread::run()
 			std::cerr << std::endl;
 #endif
 		}
-#ifdef WIN32
-		Sleep(mLastSleep);
-#else
-		usleep(1000 * mLastSleep);
-#endif
+		usleep(mLastSleep * 1000); // mLastSleep msec
 	}
 }
 

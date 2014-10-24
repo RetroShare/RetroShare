@@ -3422,7 +3422,7 @@ void p3ChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 #ifdef DEBUG_DISTANT_CHAT
 			std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-			usleep(500000) ;	// sleep for 500 msec.
+			usleep(500 * 1000) ;	// sleep for 500 msec.
 		}
 		else
 			break ;
@@ -3529,7 +3529,7 @@ bool p3ChatService::locked_sendDHPublicKey(const DistantChatPeerInfo& pinfo)
 		if(!mIdService->getPrivateKey(pinfo.own_gxs_id,signature_key) || signature_key.keyData.bin_data == NULL)
 		{
 			std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
-			usleep(500000) ;	// sleep for 500 msec.
+			usleep(500 * 1000) ;	// sleep for 500 msec.
 		}
 		else
 			break ;

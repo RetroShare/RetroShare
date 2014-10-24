@@ -632,13 +632,7 @@ void 	FileIndexMonitor::run()
 			if(!isRunning()) 
 				return;
 
-			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-			sleep(1);
-#else
-			Sleep(1000);
-#endif
-			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+			usleep(1*1000*1000); // 1 sec
 
 			/* check dirs if they've changed */
 			if (internal_setSharedDirectories())
@@ -698,16 +692,10 @@ void 	FileIndexMonitor::updateCycle()
 	while(isRunning() && moretodo)
 	{
 		/* sleep a bit for each loop */
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 // csoler: I'm disabling this since it causes a very long update cycle when the number
 // 		 of directories to go through is very large.
 //
-// #ifndef WINDOWS_SYS
-// 		usleep(100000); /* 1/10 sec */
-// #else
-// 		Sleep(100);
-// #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+// 		usleep(100*1000); /* 100 msec */
 
 		/* check if directories have been updated */
 
@@ -1127,14 +1115,8 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 			size += to_hash[i].fentries[j].size ;
 
-			/* don't hit the disk too hard! */
-#ifndef WINDOWS_SYS
-			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-			usleep(10000); /* 10 msec */
-#else
-
-			Sleep(10);
-#endif
+			// don't hit the disk too hard!
+			usleep(10*1000); // 10 msec
 
 			// Save the hashing result every 60 seconds, so has to save what is already hashed.
 #ifdef FIM_DEBUG
@@ -1144,11 +1126,10 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			if(hashed_size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
 			{
 				RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_SAVE_FILE_INDEX, "") ;
-#ifdef WINDOWS_SYS
-				Sleep(1000) ;
-#else
-				sleep(1) ;
-#endif
+
+				//Waiting 1 sec before pass to other hash ??is it really needed??
+				usleep(1*1000*1000); // 1 sec
+
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 				fi.updateHashIndex() ;
 				FileIndexMonitor::locked_saveFileIndexes(true) ;

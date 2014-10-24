@@ -487,46 +487,35 @@ void RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVet
 		locked_pushMsgRespFromList(itemL, msgPend->mPeerId, transN);
 }
 
-bool RsGxsNetService::locked_canReceive(const RsGxsGrpMetaData * const grpMeta,
-		const RsPeerId& peerId)
+/*bool RsGxsNetService::locked_canReceive(const RsGxsGrpMetaData * const grpMeta
+                                      , const RsPeerId& peerId )
 {
 
 	double timeDelta = 0.2;
 
-	if(grpMeta->mCircleType == GXS_CIRCLE_TYPE_EXTERNAL)
-	{
+	if(grpMeta->mCircleType == GXS_CIRCLE_TYPE_EXTERNAL) {
 		int i=0;
 		mCircles->loadCircle(grpMeta->mCircleId);
 
 		// check 5 times at most
 		// spin for 1 second at most
-		while(i < 5)
-		{
-#ifndef WINDOWS_SYS
-	usleep((int) (timeDelta * 1000000));
-#else
-	Sleep((int) (timeDelta * 1000));
-#endif
+		while(i < 5) {
 
-			if(mCircles->isLoaded(grpMeta->mCircleId))
-			{
+			if(mCircles->isLoaded(grpMeta->mCircleId)) {
 				const RsPgpId& pgpId = mPgpUtils->getPGPId(peerId);
 				return mCircles->canSend(grpMeta->mCircleId, pgpId);
-			}
+			}//if(mCircles->isLoaded(grpMeta->mCircleId))
 
-
+			usleep((int) (timeDelta * 1000 * 1000));// timeDelta sec
 			i++;
-		}
+		}//while(i < 5)
 
-	}
-	else
-	{
+	} else {//if(grpMeta->mCircleType == GXS_CIRCLE_TYPE_EXTERNAL)
 		return true;
-	}
-
+	}//else (grpMeta->mCircleType == GXS_CIRCLE_TYPE_EXTERNAL)
 
 	return false;
-}
+}*/
 
 void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
 		std::map<RsGxsGroupId, GrpFragments>& partFragments) const
@@ -939,26 +928,19 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 }
 
 void RsGxsNetService::run(){
-
-
     double timeDelta = 0.5;
     int updateCounter = 0;
 
     while(isRunning()){
+        //Start waiting as nothing to do in runup
+        usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
 
-#ifndef WINDOWS_SYS
-        usleep((int) (timeDelta * 1000000));
-#else
-        Sleep((int) (timeDelta * 1000));
-#endif
-
-        if(updateCounter == 20)
-        {
+        if(updateCounter >= 20) {
         	updateServerSyncTS();
         	updateCounter = 0;
-        }
-        else
+        } else {//if(updateCounter >= 20)
         	updateCounter++;
+        }//else (updateCounter >= 20)
 
         // process active transactions
         processTransactions();
@@ -971,7 +953,7 @@ void RsGxsNetService::run(){
 
         processExplicitGroupRequests();
 
-    }
+    }//while(isRunning())
 }
 
 void RsGxsNetService::updateServerSyncTS()

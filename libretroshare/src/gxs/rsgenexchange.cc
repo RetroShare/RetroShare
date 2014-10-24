@@ -147,18 +147,13 @@ RsGenExchange::~RsGenExchange()
 void RsGenExchange::run()
 {
 
-    double timeDelta = 0.1; // slow tick
+	double timeDelta = 0.1; // slow tick in sec
 
-    while(isRunning())
-    {
+	while(isRunning()) {
         tick();
 
-#ifndef WINDOWS_SYS
-        usleep((int) (timeDelta * 1000000));
-#else
-        Sleep((int) (timeDelta * 1000));
-#endif
-    }
+		usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
+	}//while(isRunning())
 }
 
 void RsGenExchange::tick()

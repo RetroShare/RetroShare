@@ -182,32 +182,26 @@ void AuthGPG::run()
 {
     int count = 0;
 
-    while (isRunning())
-    {
-#ifdef WIN32
-        Sleep(100);
-#else
-        usleep(100000);
-#endif
+	while (isRunning()) {
+		usleep(100 * 1000); //100 msec
 
-        /* every 100 milliseconds */
+		/// every 100 milliseconds
         processServices();
 
-        /* every ten seconds */
-        if (++count >= 100 || _force_sync_database) 
-		  {
-			  RsStackMutex stack(gpgMtxService); /******* LOCKED ******/
-			  
-			  // The call does multiple things at once:
-			  // 	- checks whether the keyring has changed in memory
-			  // 	- checks whether the keyring has changed on disk.
-			  // 	- merges/updates according to status.
-			  //
+		/// every ten seconds
+		if (++count >= 100 || _force_sync_database) {
+			RsStackMutex stack(gpgMtxService); ///******* LOCKED ******
+
+			/// The call does multiple things at once:
+			/// 	- checks whether the keyring has changed in memory
+			/// 	- checks whether the keyring has changed on disk.
+			/// 	- merges/updates according to status.
+			///
 			  PGPHandler::syncDatabase() ;
 			  count = 0;
 			  _force_sync_database = false ;
-        }
-    }
+		}//if (++count >= 100 || _force_sync_database)
+	}//while (isRunning())
 }
 
 void AuthGPG::processServices()

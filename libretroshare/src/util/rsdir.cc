@@ -746,11 +746,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 #endif
 			/* set errno? */
 			return false ;
-#ifdef WIN32
-		Sleep(200);				/* 200 milliseconds */
-#else
-		usleep(100000);		/* 100000 microseconds */
-#endif
+		usleep(100 * 1000);		// 100 msec
 
 		if (loops >= 30)
 			return false ;
@@ -956,11 +952,7 @@ RsStackFileLock::RsStackFileLock(const std::string& file_path)
 	while(RsDirUtil::createLockFile(file_path,_file_handle))
 	{
 		std::cerr << "Cannot acquire file lock " << file_path << ", waiting 1 sec." << std::endl;
-#ifdef WINDOWS_SYS
-		Sleep(1000) ;
-#else
-		sleep(1) ;
-#endif
+		sleep(1 * 1000 * 1000) ; // 1 sec
 	}
 #ifdef RSDIR_DEBUG 
 	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
@@ -1364,11 +1356,7 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 #endif
 			/* set errno? */
 			return false ;
-#ifdef WIN32
-		Sleep(100000);				/* us */
-#else
-		usleep(100000);				/* us */
-#endif
+		usleep(100 * 1000); //100 msec
 
 		if (loops >= 30)
 			return false ;

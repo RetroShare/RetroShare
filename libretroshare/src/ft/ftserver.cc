@@ -23,7 +23,6 @@
  *
  */
 
-#include <unistd.h>		/* for (u)sleep() */
 #include <iostream>
 #include <time.h>
 #include "util/rsdebug.h"

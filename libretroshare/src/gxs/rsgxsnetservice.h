@@ -340,7 +340,7 @@ private:
     		const RsGxsGroupId& grpId, uint32_t& transN,
     		std::list<RsNxsItem*>& reqList);
 
-    bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const RsPeerId& peerId);
+    //bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const RsPeerId& peerId);
 
     void processExplicitGroupRequests();
 

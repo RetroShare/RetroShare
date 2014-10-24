@@ -2005,7 +2005,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 				  if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
 				  {
 					  std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
-					  usleep(500000) ;	// sleep for 500 msec.
+					  usleep(500 * 1000) ;	// sleep for 500 msec.
 				  }
 				  else
 					  break ;

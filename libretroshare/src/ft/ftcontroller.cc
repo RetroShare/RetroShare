@@ -217,11 +217,8 @@ void ftController::run()
 
 	while(isRunning())
 	{
-#ifdef WIN32
-		Sleep(1000);
-#else
-		sleep(1);
-#endif
+		//Waiting 1 sec before start
+		usleep(1*1000*1000); // 1 sec
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::run()";
