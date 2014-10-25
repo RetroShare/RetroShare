@@ -337,7 +337,9 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	 }
 
 	QPixmap pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+#ifdef ID_DEBUG
 	std::cerr << "Setting item image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
+#endif
 	item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
@@ -347,11 +349,11 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			RsPeerDetails details;
 			rsPeers->getGPGDetails(data.mPgpId, details);
 			item->setText(RSID_COL_IDTYPE, QString::fromUtf8(details.name.c_str()));
-			item->setToolTip(RSID_COL_IDTYPE,QString()) ;
+			item->setToolTip(RSID_COL_IDTYPE,QString::fromStdString(data.mPgpId.toStdString())) ;
 		}
 		else
 		{
-			item->setText(RSID_COL_IDTYPE, tr("Unknown PGP key 0x")+QString::fromStdString(data.mPgpId.toStdString()));
+			item->setText(RSID_COL_IDTYPE, tr("Unknown PGP key"));
 			item->setToolTip(RSID_COL_IDTYPE,tr("Unknown key ID")) ;
 		}
 	}
@@ -375,8 +377,10 @@ void IdDialog::insertIdList(uint32_t token)
 	std::vector<RsGxsIdGroup>::iterator vit;
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
+#ifdef ID_DEBUG
 		std::cerr << "IdDialog::insertIdList() Error getting GroupData";
 		std::cerr << std::endl;
+#endif
 
 		mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
 		mStateHelper->setLoading(IDDIALOG_REPLIST, false);
@@ -488,7 +492,9 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 	if (datavector.size() != 1)
 	{
+#ifdef ID_DEBUG
 		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
+#endif
 
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->setActive(IDDIALOG_REPLIST, false);
@@ -516,7 +522,9 @@ void IdDialog::insertIdDetails(uint32_t token)
 	ui.headerFrame->setHeaderText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 
 	QPixmap pix = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+#ifdef ID_DEBUG
     std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
+#endif
 	ui.headerFrame->setHeaderImage(pix);
 
 	if (data.mPgpKnown)
@@ -659,8 +667,10 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 void IdDialog::modifyReputation()
 {
+#ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation()";
 	std::cerr << std::endl;
+#endif
 
 	RsGxsId id(ui.lineEdit_KeyId->text().toStdString());
 
@@ -691,19 +701,24 @@ void IdDialog::modifyReputation()
 		return;
 	}
 
+#ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
 	std::cerr << std::endl;
+#endif
 
 	uint32_t token;
 	if (!rsIdentity->submitOpinion(token, id, false, mod))
 	{
+#ifdef ID_DEBUG
 		std::cerr << "IdDialog::modifyReputation() Error submitting Opinion";
 		std::cerr << std::endl;
-
+#endif
 	}
 
+#ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
 	std::cerr << std::endl;
+#endif
 
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
@@ -730,8 +745,10 @@ void IdDialog::removeIdentity()
 	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
 	if (!item)
 	{
+#ifdef ID_DEBUG
 		std::cerr << "IdDialog::editIdentity() Invalid item";
 		std::cerr << std::endl;
+#endif
 		return;
 	}
 	
@@ -760,8 +777,10 @@ void IdDialog::editIdentity()
 	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
 	if (!item)
 	{
+#ifdef ID_DEBUG
 		std::cerr << "IdDialog::editIdentity() Invalid item";
 		std::cerr << std::endl;
+#endif
 		return;
 	}
 
@@ -806,8 +825,10 @@ void IdDialog::insertRepList(uint32_t token)
 	std::vector<RsGxsIdOpinion>::iterator vit;
 	if (!rsIdentity->getMsgData(token, opinions))
 	{
+#ifdef ID_DEBUG
 		std::cerr << "IdDialog::insertRepList() Error getting Opinions";
 		std::cerr << std::endl;
+#endif
 
 		mStateHelper->setActive(IDDIALOG_REPLIST, false);
 		mStateHelper->clear(IDDIALOG_REPLIST);
@@ -842,8 +863,10 @@ void IdDialog::insertRepList(uint32_t token)
 
 void IdDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req)
 {
+#ifdef ID_DEBUG
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
+#endif
 
 	switch(req.mUserType)
 	{
