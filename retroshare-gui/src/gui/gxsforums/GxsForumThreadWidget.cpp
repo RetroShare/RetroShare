@@ -107,12 +107,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mStateHelper->addClear(TOKEN_TYPE_CURRENTFORUM, ui->threadTreeWidget);
 	mStateHelper->addClear(TOKEN_TYPE_CURRENTFORUM, ui->forumName);
+	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->nextUnreadButton);
 
 	mStateHelper->addWidget(TOKEN_TYPE_INSERT_POST, ui->previousButton);
 	mStateHelper->addWidget(TOKEN_TYPE_INSERT_POST, ui->nextButton);
 	mStateHelper->addWidget(TOKEN_TYPE_INSERT_POST, ui->newmessageButton);
 	mStateHelper->addWidget(TOKEN_TYPE_INSERT_POST, ui->postText);
-	mStateHelper->addWidget(TOKEN_TYPE_INSERT_POST, ui->nextUnreadButton);
 	mStateHelper->addWidget(TOKEN_TYPE_INSERT_POST, ui->downloadButton);
 
 	mStateHelper->addLoadPlaceholder(TOKEN_TYPE_INSERT_POST, ui->postText);
