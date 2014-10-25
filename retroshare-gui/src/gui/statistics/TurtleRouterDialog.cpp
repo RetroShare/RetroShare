@@ -171,7 +171,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 
 	top_level_t_requests->setText(0, tr("Tunnel requests") + "("+QString::number(tunnel_reqs_info.size()) + ")") ;
 
-	QTreeWidgetItem *unknown_hashs_item = findParentHashItem("") ;
+	QTreeWidgetItem *unknown_hashs_item = findParentHashItem(RsFileHash().toStdString()) ;
 	unknown_hashs_item->setText(0,tr("Unknown hashes") + " (" + QString::number(unknown_hashs_item->childCount())+QString(")")) ;
 
 	// Ok, this is a N2 search, but there are very few elements in the list.
@@ -198,14 +198,16 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 	
 QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 {
+	static const std::string null_hash = RsFileHash().toStdString() ;
+
 	// look for the hash, and insert a new element if necessary.
 	//
-	QList<QTreeWidgetItem*> items = _f2f_TW->findItems((hash=="")?tr("Unknown hashes"):QString::fromStdString(hash),Qt::MatchStartsWith) ;
+	QList<QTreeWidgetItem*> items = _f2f_TW->findItems((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash),Qt::MatchStartsWith) ;
 
 	if(items.empty())
 	{	
 		QStringList stl ;
-		stl.push_back((hash=="")?tr("Unknown hashes"):QString::fromStdString(hash)) ;
+		stl.push_back((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash)) ;
 		QTreeWidgetItem *item = new QTreeWidgetItem(_f2f_TW,stl) ;
 		_f2f_TW->insertTopLevelItem(0,item) ;
 
