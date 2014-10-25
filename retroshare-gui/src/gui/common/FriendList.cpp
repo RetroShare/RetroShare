@@ -1278,14 +1278,22 @@ void FriendList::chatfriendproxy()
  *
  * @param pPeer the gpg or ssl QTreeWidgetItem to chat with
  */
-void FriendList::chatfriend(QTreeWidgetItem *pPeer)
+void FriendList::chatfriend(QTreeWidgetItem *item)
 {
-    if (pPeer == NULL) {
+    if (item == NULL) {
         return;
     }
 
-    std::string id = getRsId(pPeer);
-    ChatDialog::chatFriend(RsPeerId(id));
+    switch (item->type()) {
+    case TYPE_GROUP:
+        break;
+    case TYPE_GPG:
+        ChatDialog::chatFriend(RsPgpId(getRsId(item)));
+        break;
+    case TYPE_SSL:
+        ChatDialog::chatFriend(RsPeerId(getRsId(item)));
+        break;
+    }
 }
 
 void FriendList::addFriend()

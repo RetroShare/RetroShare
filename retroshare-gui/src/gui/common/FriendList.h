@@ -138,7 +138,7 @@ private slots:
 
     void connectfriend();
     void configurefriend();
-    void chatfriend(QTreeWidgetItem *);
+    void chatfriend(QTreeWidgetItem *item);
     void chatfriendproxy();
     //void copyLink();
     void copyFullCertificate();

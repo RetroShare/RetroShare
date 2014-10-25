@@ -206,22 +206,22 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 
 /*static*/ void ChatDialog::chatFriend(const RsPeerId &peerId, const bool forceFocus)
 {
-    if (peerId.isNull()){
+	if (peerId.isNull()){
 		return;
 	}
 
-    RsGxsId distant_chat_gxs_id ;
+	RsGxsId distant_chat_gxs_id ;
 	uint32_t distant_peer_status ;
 
-	if(rsMsgs->getDistantChatStatus(peerId,distant_chat_gxs_id,distant_peer_status)) 
+	if(rsMsgs->getDistantChatStatus(peerId,distant_chat_gxs_id,distant_peer_status))
 	{
-        getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN ); // use own flags
+		getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN ); // use own flags
 		return ;
 	}
 
 	ChatLobbyId lid;
 	if (rsMsgs->isLobbyId(peerId, lid)) {
-        getChat(peerId, (forceFocus ? (RS_CHAT_OPEN | RS_CHAT_FOCUS) : RS_CHAT_OPEN));
+		getChat(peerId, (forceFocus ? (RS_CHAT_OPEN | RS_CHAT_FOCUS) : RS_CHAT_OPEN));
 	}
 
 	RsPeerDetails detail;
@@ -229,37 +229,55 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 		return;
 
 	if (detail.isOnlyGPGdetail) {
-        std::list<RsPeerId> onlineIds;
-
-		//let's get the ssl child details
-        std::list<RsPeerId> sslIds;
-		rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
-
-		if (sslIds.size() == 1) {
-			// chat with the one ssl id (online or offline)
-            getChat(sslIds.front(), forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
-			return;
-		}
-
-		// more than one ssl ids available, check for online
-        for (std::list<RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it) {
-			if (rsPeers->isOnline(*it)) {
-				onlineIds.push_back(*it);
-			}
-		}
-
-		if (onlineIds.size() == 1) {
-			// chat with the online ssl id
-            getChat(onlineIds.front(), forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
-			return;
-		}
-
-		// more than one ssl ids online or all offline
-		QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one locations.\nPlease choose one of it to chat with."), QMessageBox::Ok);
-		mb.exec();
-	} else {
-        getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
+		/* Should not happen */
+		//chatFriend(detail.gpg_id, forceFocus);
+		return;
 	}
+
+	getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
+}
+
+/*static*/ void ChatDialog::chatFriend(const RsPgpId &gpgId, const bool forceFocus)
+{
+	if (gpgId.isNull()){
+		return;
+	}
+
+	RsPeerDetails detail;
+	if (!rsPeers->getGPGDetails(gpgId, detail))
+		return;
+
+	if (!detail.isOnlyGPGdetail) {
+		return;
+	}
+
+	//let's get the ssl child details
+	std::list<RsPeerId> sslIds;
+	rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
+
+	if (sslIds.size() == 1) {
+		// chat with the one ssl id (online or offline)
+		chatFriend(sslIds.front(), forceFocus);
+		return;
+	}
+
+	// more than one ssl ids available, check for online
+	std::list<RsPeerId> onlineIds;
+	for (std::list<RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it) {
+		if (rsPeers->isOnline(*it)) {
+			onlineIds.push_back(*it);
+		}
+	}
+
+	if (onlineIds.size() == 1) {
+		// chat with the online ssl id
+		chatFriend(onlineIds.front(), forceFocus);
+		return;
+	}
+
+	// more than one ssl ids online or all offline
+	QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one locations.\nPlease choose one of it to chat with."), QMessageBox::Ok);
+	mb.exec();
 }
 
 void ChatDialog::addToParent(QWidget *newParent)
