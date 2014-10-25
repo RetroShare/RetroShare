@@ -41,17 +41,19 @@ public:
 	void setTextColorNotSubscribed(QColor color) { mTextColorNotSubscribed = color; }
 	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
+	/* GxsMessageFrameWidget */
 	virtual RsGxsGroupId groupId() { return mForumId; }
 	virtual void setGroupId(const RsGxsGroupId &forumId);
 	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
+	virtual void setAllMessagesRead(bool read);
+	virtual bool navigate(const RsGxsMessageId& msgId);
+
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
 
 	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn);
 	QTreeWidgetItem *generateMissingItem(const RsGxsMessageId &msgId);
-
-	virtual void setAllMessagesRead(bool read);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -158,6 +160,8 @@ private:
 	QColor mTextColorMissing;
 
 	UIStateHelper *mStateHelper;
+
+	RsGxsMessageId mNavigatePendingMsgId;
 
 	Ui::GxsForumThreadWidget *ui;
 };

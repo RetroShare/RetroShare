@@ -22,7 +22,6 @@
 #include <QApplication>
 
 #include "GxsMessageFramePostWidget.h"
-#include "GxsFeedItem.h"
 #include "gui/common/UIStateHelper.h"
 
 #include "retroshare/rsgxsifacehelper.h"
@@ -89,6 +88,22 @@ QString GxsMessageFramePostWidget::groupName(bool withUnreadCount)
 	return name;
 }
 
+bool GxsMessageFramePostWidget::navigate(const RsGxsMessageId &msgId)
+{
+	if (msgId.isNull()) {
+		return false;
+	}
+
+	if (mStateHelper->isLoading(mTokenTypePosts) || mStateHelper->isLoading(mTokenTypeRelatedPosts)) {
+		mNavigatePendingMsgId = msgId;
+
+		/* No information if group is available */
+		return true;
+	}
+
+	return navigatePostItem(msgId);
+}
+
 void GxsMessageFramePostWidget::updateDisplay(bool complete)
 {
 	if (complete) {
@@ -151,6 +166,12 @@ void GxsMessageFramePostWidget::fillThreadFinished()
 
 			mStateHelper->setLoading(mTokenTypePosts, false);
 			emit groupChanged(this);
+
+			if (!mNavigatePendingMsgId.isNull()) {
+				navigate(mNavigatePendingMsgId);
+
+				mNavigatePendingMsgId.clear();
+			}
 		}
 
 #ifdef ENABLE_DEBUG
@@ -253,6 +274,8 @@ void GxsMessageFramePostWidget::requestPosts()
 	std::cerr << std::endl;
 #endif
 
+	mNavigatePendingMsgId.clear();
+
 	/* Request all posts */
 
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypePosts);
@@ -316,6 +339,12 @@ void GxsMessageFramePostWidget::loadPosts(const uint32_t &token)
 		insertPosts(token, NULL);
 
 		mStateHelper->setLoading(mTokenTypePosts, false);
+
+		if (!mNavigatePendingMsgId.isNull()) {
+			navigate(mNavigatePendingMsgId);
+
+			mNavigatePendingMsgId.clear();
+		}
 	}
 
 	emit groupChanged(this);
@@ -327,6 +356,8 @@ void GxsMessageFramePostWidget::requestRelatedPosts(const std::vector<RsGxsMessa
 	std::cerr << "GxsMessageFramePostWidget::requestRelatedPosts()";
 	std::cerr << std::endl;
 #endif
+
+	mNavigatePendingMsgId.clear();
 
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypeRelatedPosts);
 
@@ -370,6 +401,12 @@ void GxsMessageFramePostWidget::loadRelatedPosts(const uint32_t &token)
 
 	mStateHelper->setLoading(mTokenTypeRelatedPosts, false);
 	emit groupChanged(this);
+
+	if (!mNavigatePendingMsgId.isNull()) {
+		navigate(mNavigatePendingMsgId);
+
+		mNavigatePendingMsgId.clear();
+	}
 }
 
 void GxsMessageFramePostWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)

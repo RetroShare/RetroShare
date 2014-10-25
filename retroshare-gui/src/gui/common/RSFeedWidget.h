@@ -67,6 +67,8 @@ public:
 	void enableRemove(bool enable);
 	void setSelectionMode(QAbstractItemView::SelectionMode mode);
 
+	bool scrollTo(FeedItem *feedItem, bool focus);
+
 	void withAll(RSFeedWidgetCallbackFunction callback, const QVariant &data);
 	FeedItem *findFeedItem(RSFeedWidgetFindCallbackFunction callback, const QVariant &data1, const QVariant &data2);
 

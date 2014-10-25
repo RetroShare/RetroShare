@@ -67,9 +67,10 @@ QString PostedDialog::text(TextType type)
 		return tr("Create Topic");
 	case TEXT_TODO:
 		return "<b>Open points:</b><ul>"
-			   "<li>Subreddits/tag to posts support"
-			   "<li>Picture Support"
-			   "</ul>";
+		       "<li>Subreddits/tag to posts support"
+		       "<li>Picture Support"
+		       "<li>Navigate channel link"
+		       "</ul>";
 
 	case TEXT_YOUR_GROUP:
 		return tr("My Topics");

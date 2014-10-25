@@ -27,7 +27,6 @@
 #include "GxsMessageFrameWidget.h"
 #include "util/TokenQueue.h"
 
-class GxsFeedItem;
 class UIStateHelper;
 class GxsMessageFramePostThread;
 
@@ -46,6 +45,7 @@ public:
 	virtual void setGroupId(const RsGxsGroupId &groupId);
 	virtual QString groupName(bool withUnreadCount);
 //	virtual QIcon groupIcon() = 0;
+	virtual bool navigate(const RsGxsMessageId& msgId);
 
 	/* GXS functions */
 	uint32_t nextTokenType() { return ++mNextTokenType; }
@@ -58,6 +58,7 @@ protected:
 	virtual void groupNameChanged(const QString &/*name*/) {}
 
 	virtual void clearPosts() = 0;
+	virtual bool navigatePostItem(const RsGxsMessageId& msgId) = 0;
 
 	/* Thread functions */
 	virtual bool useThread() { return false; }
@@ -86,6 +87,7 @@ protected:
 	uint32_t mTokenTypePosts;
 	uint32_t mTokenTypeRelatedPosts;
 	UIStateHelper *mStateHelper;
+	RsGxsMessageId mNavigatePendingMsgId;
 
 private:
 	RsGxsGroupId mGroupId; /* current group */

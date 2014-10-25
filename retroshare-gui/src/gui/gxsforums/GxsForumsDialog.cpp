@@ -68,7 +68,6 @@ QString GxsForumsDialog::text(TextType type)
 		return "<b>Open points:</b><ul>"
 		       "<li>Restore forum keys"
 		       "<li>Display AUTHD"
-		       "<li>Navigate forum link"
 		       "<li>Remove messages"
 		       "</ul>";
 

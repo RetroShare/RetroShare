@@ -79,7 +79,6 @@ QString GxsChannelDialog::text(TextType type)
 	case TEXT_TODO:
 		return "<b>Open points:</b><ul>"
 		        "<li>Restore channel keys"
-		        "<li>Navigate channel link"
 		        "</ul>";
 
 	case TEXT_YOUR_GROUP:

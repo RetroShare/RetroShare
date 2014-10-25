@@ -752,6 +752,11 @@ void GxsForumThreadWidget::fillThreadFinished()
 			calculateIconsAndFonts();
 			calculateUnreadCount();
 			emit groupChanged(this);
+
+			if (!mNavigatePendingMsgId.isNull()) {
+				navigate(mNavigatePendingMsgId);
+				mNavigatePendingMsgId.clear();
+			}
 		}
 
 #ifdef DEBUG_FORUMS
@@ -1506,29 +1511,45 @@ void GxsForumThreadWidget::setAllMessagesRead(bool read)
 	markMsgAsReadUnread(read, true, true);
 }
 
+bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
+{
+	if (mStateHelper->isLoading(TOKEN_TYPE_CURRENTFORUM)) {
+		mNavigatePendingMsgId = msgId;
+
+		/* No information if message is available */
+		return true;
+	}
+
+	QString msgIdString = QString::fromStdString(msgId.toStdString());
+
+	/* Search exisiting item */
+	QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
+	QTreeWidgetItem *item = NULL;
+	while ((item = *itemIterator) != NULL) {
+		++itemIterator;
+
+		if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString() == msgIdString) {
+			ui->threadTreeWidget->setCurrentItem(item);
+			ui->threadTreeWidget->setFocus();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void GxsForumThreadWidget::copyMessageLink()
 {
 	if (mForumId.isNull() || mThreadId.isNull()) {
 		return;
 	}
 
-// THIS CODE CALLS getForumInfo() to verify that the Ids are valid.
-// As we are switching to Request/Response this is now harder to do...
-// So not bothering any more - shouldn't be necessary.
-// IF we get errors - fix them, rather than patching here.
-#if 0
-	ForumInfo fi;
-	if (rsGxsForums->getForumInfo(mForumId, fi)) {
-		RetroShareLink link;
-		if (link.createForum(mForumId, mThreadId)) {
-			QList<RetroShareLink> urls;
-			urls.push_back(link);
-			RSLinkClipboard::copyLinks(urls);
-		}
+	RetroShareLink link;
+	if (link.createGxsMessageLink(RetroShareLink::TYPE_FORUM, mForumId, mThreadId, ui->threadTitle->text())) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
 	}
-#endif
-
-	QMessageBox::warning(this, "RetroShare", "ToDo");
 }
 
 void GxsForumThreadWidget::subscribeGroup(bool subscribe)
@@ -1703,6 +1724,8 @@ void GxsForumThreadWidget::requestGroup_CurrentForum()
 	mStateHelper->setLoading(TOKEN_TYPE_CURRENTFORUM, true);
 	mStateHelper->setLoading(TOKEN_TYPE_INSERT_POST, true);
 	emit groupChanged(this);
+
+	mNavigatePendingMsgId.clear();
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;

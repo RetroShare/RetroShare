@@ -64,6 +64,7 @@ protected:
 	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
 	virtual void insertRelatedPosts(const uint32_t &token);
 	virtual void clearPosts();
+	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
 
 private slots:
 	void createNewGxsId();

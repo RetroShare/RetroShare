@@ -480,6 +480,12 @@ void PostedListWidget::clearPosts()
 	mPosts.clear();
 }
 
+bool PostedListWidget::navigatePostItem(const RsGxsMessageId &msgId)
+{
+	//TODO
+	return false;
+}
+
 void PostedListWidget::shallowClearPosts()
 {
 	std::cerr << "PostedListWidget::shallowClearPosts()" << std::endl;

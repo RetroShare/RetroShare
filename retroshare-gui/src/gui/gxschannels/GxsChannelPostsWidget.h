@@ -73,6 +73,7 @@ protected:
 	virtual void clearPosts();
 	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
+	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
 
 private slots:
 	void createMsg();

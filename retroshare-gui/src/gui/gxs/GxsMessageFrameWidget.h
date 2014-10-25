@@ -38,6 +38,7 @@ public:
 	virtual QString groupName(bool withUnreadCount) = 0;
 	virtual QIcon groupIcon() = 0;
 	virtual void setAllMessagesRead(bool read) = 0;
+	virtual bool navigate(const RsGxsMessageId& msgId) = 0;
 
 signals:
 	void groupChanged(QWidget *widget);

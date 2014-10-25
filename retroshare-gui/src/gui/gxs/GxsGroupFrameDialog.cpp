@@ -502,26 +502,7 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessa
 		return true;
 	}
 
-//#TODO
-//        if (mThreadLoading) {
-//                mThreadLoad.FocusMsgId = msgId;
-//                return true;
-//        }
-
-        /* Search exisiting item */
-//        QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
-//        QTreeWidgetItem *item = NULL;
-//        while ((item = *itemIterator) != NULL) {
-//                ++itemIterator;
-//
-//                if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == msgId) {
-//                        ui->threadTreeWidget->setCurrentItem(item);
-//                        ui->threadTreeWidget->setFocus();
-//                        return true;
-//                }
-//        }
-
-	return true;
+	return msgWidget->navigate(msgId);
 }
 
 GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &groupId, bool ownTab)

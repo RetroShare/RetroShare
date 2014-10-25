@@ -316,6 +316,23 @@ QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(FeedItem *feedItem)
 	return NULL;
 }
 
+bool RSFeedWidget::scrollTo(FeedItem *feedItem, bool focus)
+{
+	QTreeWidgetItem *item = findTreeWidgetItem(feedItem);
+	if (!feedItem) {
+		return false;
+	}
+
+	ui->treeWidget->scrollToItem(item);
+	ui->treeWidget->setCurrentItem(item);
+
+	if (focus) {
+		ui->treeWidget->setFocus();
+	}
+
+	return true;
+}
+
 class RSFeedWidgetCallback
 {
 public:

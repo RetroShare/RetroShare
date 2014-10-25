@@ -394,6 +394,16 @@ void GxsChannelPostsWidget::clearPosts()
 	ui->fileWidget->clear();
 }
 
+bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
+{
+	FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(groupId(), msgId);
+	if (!feedItem) {
+		return false;
+	}
+
+	return ui->feedWidget->scrollTo(feedItem, true);
+}
+
 void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
 {
 	if (groupId().isNull()) {
