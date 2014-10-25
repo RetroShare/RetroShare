@@ -232,7 +232,8 @@ bool upnphandler::shutdown_upnp()
 
 		//destroy the upnp object
 		cUPnPControlPoint->~CUPnPControlPoint();
-	} else {
+        cUPnPControlPoint=NULL ;
+    } else {
     	    #ifdef UPNP_DEBUG
 		    std::cerr << "upnphandler::shutdown_upnp() : avoid upnp connection for shutdonws because probably a net flag went down." << std::endl;
 	    #endif
