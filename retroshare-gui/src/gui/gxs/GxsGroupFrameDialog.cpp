@@ -471,23 +471,36 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMess
 	ui->messageTabWidget->setCurrentWidget(commentDialog);
 }
 
-bool GxsGroupFrameDialog::navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId)
+bool GxsGroupFrameDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId)
 {
 	if (groupId.isNull()) {
 		return false;
 	}
 
-        if (ui->groupTreeWidget->activateId(QString::fromStdString(groupId.toStdString()), msgId.isNull()) == NULL) {
-		return false;
-            }
-//        if (mGroupId == groupId) {
-//		return false;
-//	}
-//
-//        if (msgId.isNull()) {
-//		return true;
-//	}
+	if (mStateHelper->isLoading(TOKEN_TYPE_GROUP_SUMMARY)) {
+		mNavigatePendingGroupId = groupId;
+		mNavigatePendingMsgId = msgId;
 
+		/* No information if group is available */
+		return true;
+	}
+
+	QString groupIdString = QString::fromStdString(groupId.toStdString());
+	if (ui->groupTreeWidget->activateId(groupIdString, msgId.isNull()) == NULL) {
+		return false;
+	}
+
+	changedGroup(groupIdString);
+
+	/* search exisiting tab */
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
+	if (!msgWidget) {
+		return false;
+	}
+
+	if (msgId.isNull()) {
+		return true;
+	}
 
 //#TODO
 //        if (mThreadLoading) {
@@ -508,7 +521,7 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId groupId, const RsGxsMessag
 //                }
 //        }
 
-        return true;
+	return true;
 }
 
 GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &groupId, bool ownTab)
@@ -819,6 +832,14 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 
 	if (userdata) {
 		delete(userdata);
+	}
+
+	if (!mNavigatePendingGroupId.isNull()) {
+		/* Navigate pending */
+		navigate(mNavigatePendingGroupId, mNavigatePendingMsgId);
+
+		mNavigatePendingGroupId.clear();
+		mNavigatePendingMsgId.clear();
 	}
 }
 

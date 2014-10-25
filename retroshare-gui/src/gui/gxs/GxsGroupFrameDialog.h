@@ -74,7 +74,7 @@ public:
 	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0);
 	virtual ~GxsGroupFrameDialog();
 
-	bool navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId);
+	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -185,6 +185,9 @@ private:
 	QTreeWidgetItem *mSubscribedGroups;
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
+
+	RsGxsGroupId mNavigatePendingGroupId;
+	RsGxsMessageId mNavigatePendingMsgId;
 
 	UIStateHelper *mStateHelper;
 

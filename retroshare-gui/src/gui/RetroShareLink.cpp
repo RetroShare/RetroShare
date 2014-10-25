@@ -37,6 +37,7 @@
 #include "RetroShareLink.h"
 #include "MainWindow.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
+#include "gui/gxschannels/GxsChannelDialog.h"
 #include "SearchDialog.h"
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
@@ -1205,14 +1206,13 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << " RetroShareLink::process ForumRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
 #endif
 
-
-                                        MainWindow::showWindow(MainWindow::Forums);
-                                        GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+					MainWindow::showWindow(MainWindow::Forums);
+					GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
 					if (!forumsDialog) {
 						return false;
 					}
 
-                                        if (forumsDialog->navigate(RsGxsGroupId(link.id().toStdString()), RsGxsMessageId(link.msgId().toStdString()))) {
+					if (forumsDialog->navigate(RsGxsGroupId(link.id().toStdString()), RsGxsMessageId(link.msgId().toStdString()))) {
 						if (link.msgId().isEmpty()) {
 							forumFound.append(link.name());
 						} else {
@@ -1227,38 +1227,19 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					}
 					break;
 				}
-#if 0
 			case TYPE_CHANNEL:
 				{
 #ifdef DEBUG_RSLINK
 					std::cerr << " RetroShareLink::process ChannelRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
 #endif
 
-					ChannelInfo ci;
-					if (!rsChannels->getChannelInfo(link.id().toStdString(), ci)) {
-						if (link.msgId().isEmpty()) {
-							channelUnknown.append(link.name());
-						} else {
-							channelMsgUnknown.append(link.name());
-						}
-						break;
-					}
-
-					ChannelMsgInfo msg;
-					if (!link.msgId().isEmpty()) {
-						if (!rsChannels->getChannelMessage(ci.channelId, link.msgId().toStdString(), msg)) {
-							channelMsgUnknown.append(link.name());
-							break;
-						}
-					}
-
 					MainWindow::showWindow(MainWindow::Channels);
-					ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
-					if (!channelFeed) {
+					GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
+					if (!channelDialog) {
 						return false;
 					}
 
-					if (channelFeed->navigate(ci.channelId, msg.msgId)) {
+					if (channelDialog->navigate(RsGxsGroupId(link.id().toStdString()), RsGxsMessageId(link.msgId().toStdString()))) {
 						if (link.msgId().isEmpty()) {
 							channelFound.append(link.name());
 						} else {
@@ -1273,7 +1254,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					}
 					break;
 				}
-#endif
 
 			case TYPE_SEARCH:
 				{
