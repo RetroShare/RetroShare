@@ -607,12 +607,12 @@ void RshareSettings::setChatScreenFont(const QString &font)
 
 void RshareSettings::getPublicChatStyle(QString &stylePath, QString &styleVariant)
 {
-	stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/standard/public").toString();
+	stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/compact/public").toString();
 	// Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
 	if (stylePath == ":/qss/chat/public") {
 		stylePath = ":/qss/chat/standard/public";
 	}
-	styleVariant = valueFromGroup("Chat", "StylePublicVariant", "").toString();
+	styleVariant = valueFromGroup("Chat", "StylePublicVariant", "Colored").toString();
 }
 
 void RshareSettings::setPublicChatStyle(const QString &stylePath, const QString &styleVariant)
