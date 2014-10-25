@@ -235,28 +235,28 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     setupFormatActions();
 
-	 std::list<RsGxsId> own_ids ;
-	 rsIdentity->getOwnIds(own_ids) ;
-
-	 ui.respond_to_CB->addItem(tr("[no identity]"), QVariant(QString::fromStdString(RsGxsId().toStdString()))) ;
-
-	 for(std::list<RsGxsId>::const_iterator it(own_ids.begin());it!=own_ids.end();++it)
-	 {
-		 RsIdentityDetails details ;
-		 rsIdentity->getIdDetails(*it,details) ;
-
-		 std::cerr << "Adding identity: id=" << (*it) << ", name=" << details.mNickname << std::endl;
-
-		 if(details.mNickname.empty()) // I don't know why, but that happens
-			 ui.respond_to_CB->addItem(QString::fromStdString((*it).toStdString()), QString::fromStdString((*it).toStdString())) ;
-		 else
-			 ui.respond_to_CB->addItem(QString::fromUtf8(details.mNickname.c_str()), QString::fromStdString((*it).toStdString())) ;
-	 }
+//	 std::list<RsGxsId> own_ids ;
+//	 rsIdentity->getOwnIds(own_ids) ;
+//
+//	 ui.respond_to_CB->addItem(tr("[no identity]"), QVariant(QString::fromStdString(RsGxsId().toStdString()))) ;
+//
+//	 for(std::list<RsGxsId>::const_iterator it(own_ids.begin());it!=own_ids.end();++it)
+//	 {
+//		 RsIdentityDetails details ;
+//		 rsIdentity->getIdDetails(*it,details) ;
+//
+//		 std::cerr << "Adding identity: id=" << (*it) << ", name=" << details.mNickname << std::endl;
+//
+//		 if(details.mNickname.empty()) // I don't know why, but that happens
+//			 ui.respond_to_CB->addItem(QString::fromStdString((*it).toStdString()), QString::fromStdString((*it).toStdString())) ;
+//		 else
+//			 ui.respond_to_CB->addItem(QString::fromUtf8(details.mNickname.c_str()), QString::fromStdString((*it).toStdString())) ;
+//	 }
 
 	 QObject::connect(ui.respond_to_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSigningButton(int))) ;
 
-	 if(!own_ids.empty())
-		 ui.respond_to_CB->setCurrentIndex(1) ;
+//	 if(!own_ids.empty())
+//		 ui.respond_to_CB->setCurrentIndex(1) ;
 
     /*ui.comboStyle->addItem("Standard");
     ui.comboStyle->addItem("Bullet List (Disc)");

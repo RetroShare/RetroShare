@@ -768,7 +768,7 @@
             </spacer>
            </item>
            <item row="1" column="5">
-            <widget class="QComboBox" name="respond_to_CB"/>
+            <widget class="GxsIdChooser" name="respond_to_CB"/>
            </item>
            <item row="1" column="6">
             <widget class="QPushButton" name="signMessage_CB">
@@ -991,6 +991,11 @@
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
