@@ -118,7 +118,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void peerStatusChangedSummary() const;
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int list, int type) const ;
-		void raiseChatWindow(const RsPeerId&) const ;
+		void raiseChatWindow(const QString&) const ;
 		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
 		void downloadComplete(const QString& /* fileHash */);
@@ -143,7 +143,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void runningTick();
 		void handleSignatureEvent() ;
 		void handleChatLobbyTimeShift(int) ;
-		void raiseChatWindow_slot(const RsPeerId&) ;
+		void raiseChatWindow_slot(const QString&) ;
 
 	private:
 		NotifyQt();

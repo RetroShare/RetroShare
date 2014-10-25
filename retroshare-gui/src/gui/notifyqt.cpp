@@ -510,7 +510,7 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 
 void NotifyQt::notifyChatShow(const std::string& peer_id)
 {
-	emit raiseChatWindow(RsPeerId(peer_id)) ;
+	emit raiseChatWindow(QString::fromStdString(peer_id)) ;
 }
 
 void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
@@ -527,9 +527,9 @@ void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& st
 	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromUtf8(status_string.c_str()),is_private) ;
 }
 
-void NotifyQt::raiseChatWindow_slot(const RsPeerId& peer_str)
+void NotifyQt::raiseChatWindow_slot(const QString& peer_str)
 {
-	ChatDialog::chatFriend(peer_str) ;
+	ChatDialog::chatFriend(RsPeerId(peer_str.toStdString())) ;
 }
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
