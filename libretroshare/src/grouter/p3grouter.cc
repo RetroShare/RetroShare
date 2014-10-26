@@ -306,7 +306,8 @@ void p3GRouter::autoWash()
 	time_t now = time(NULL) ;
 
 	for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();)
-		if(it->second.received_time + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)	// is the item too old for cache
+		if( (it->second.status_flags == RS_GROUTER_ROUTING_STATE_DEAD && it->second.received_time + GROUTER_ITEM_MAX_CACHE_KEEP_TIME_DEAD < now)	// is the item too old for cache
+		 || (it->second.received_time + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now))	// is the item too old for cache
 		{
 #ifdef GROUTER_DEBUG
 			grouter_debug() << "  Removing cache item " << std::hex << it->first << std::dec << std::endl;
