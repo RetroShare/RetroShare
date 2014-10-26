@@ -432,25 +432,39 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		}
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
-	{
-		if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
-		}
-		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
-		}
-		else
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
-		}
-	}
+    {
+        if(isProxyAddress(pcs.connectaddr))
+            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+        else if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
+        {
+            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
+        }
+        else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
+        {
+            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
+        }
+        else
+        {
+            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+        }
+    }
 
 	d.wasDeniedConnection = pcs.wasDeniedConnection;
 	d.deniedTS = pcs.deniedTS;
 
 	return true;
+}
+
+bool p3Peers::isProxyAddress(const sockaddr_storage& addr)
+{
+    uint16_t port ;
+    std::string string_addr;
+   uint32_t status ;
+
+    if(!getProxyServer(string_addr, port, status))
+        return false ;
+
+    return sockaddr_storage_iptostring(addr)==string_addr && sockaddr_storage_port(addr)==port ;
 }
 
 bool p3Peers::isKeySupported(const RsPgpId& id)

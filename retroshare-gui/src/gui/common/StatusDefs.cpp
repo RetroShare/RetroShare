@@ -156,6 +156,9 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
 		stateString = qApp->translate("StatusDefs", "Connected: UDP");
 		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+		stateString = qApp->translate("StatusDefs", "Connected: TOR");
+		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
 		stateString = qApp->translate("StatusDefs", "Connected: Unknown");
 		break;

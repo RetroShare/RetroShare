@@ -30,6 +30,7 @@
 class p3LinkMgr;
 class p3PeerMgr;
 class p3NetMgr;
+struct sockaddr_storage;
 
 
 class p3Peers: public RsPeers 
@@ -95,6 +96,7 @@ virtual bool setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht);
 
 virtual bool getProxyServer(std::string &addr, uint16_t &port,uint32_t& status);
 virtual bool setProxyServer(const std::string &addr, const uint16_t port);
+virtual bool isProxyAddress(const sockaddr_storage&);
 
 virtual void getIPServersList(std::list<std::string>& ip_servers) ;
 virtual void allowServerIPDetermination(bool) ;
