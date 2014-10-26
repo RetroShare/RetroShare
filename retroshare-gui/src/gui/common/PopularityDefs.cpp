@@ -25,24 +25,18 @@
 
 QIcon PopularityDefs::icon(int popularity)
 {
-	if (popularity == 0) {
+	if (popularity <= 1) 
 		return QIcon(":/images/hot_0.png");
-    } else if (popularity <= 1) {
-        /* 1-1 */
+	else if (popularity <= 2) /* 1-1 */
 		return QIcon(":/images/hot_1.png");
-    } else if (popularity <= 2) {
-        /* 2-2 */
+	else if (popularity <= 5) /* 2-2 */
 		return QIcon(":/images/hot_2.png");
-    } else if (popularity <= 5) {
-        /* 3-5 */
+	else if (popularity <= 10) /* 3-5 */
 		return QIcon(":/images/hot_3.png");
-    } else if (popularity <= 10) {
-        /* 6-10 */
+	else if (popularity <= 20) /* 6-10 */
 		return QIcon(":/images/hot_4.png");
-	}
-
-    /* >10 */
-	return QIcon(":/images/hot_5.png");
+	else /* >10 */
+		return QIcon(":/images/hot_5.png");
 }
 
 QString PopularityDefs::tooltip(int popularity)
