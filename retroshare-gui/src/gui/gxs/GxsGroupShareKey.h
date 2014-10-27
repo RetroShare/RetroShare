@@ -25,7 +25,7 @@ protected:
 
 private slots:
 	void shareKey();
-
+  void setTyp();
 private:
     RsGxsGroupId mGrpId;
 	int mGrpType;

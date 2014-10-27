@@ -38,7 +38,7 @@ GroupShareKey::GroupShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grp
 	ui->setupUi(this);
 
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
-	ui->headerFrame->setHeaderText(tr("Share Channel"));
+	ui->headerFrame->setHeaderText(tr("Share"));
 
 	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(shareKey()));
 	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
@@ -48,6 +48,8 @@ GroupShareKey::GroupShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grp
 	ui->keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
 	ui->keyShareList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
 	ui->keyShareList->start();
+	
+	setTyp();
 }
 
 GroupShareKey::~GroupShareKey()
@@ -65,6 +67,44 @@ void GroupShareKey::changeEvent(QEvent *e)
 	default:
 		break;
 	}
+}
+
+void GroupShareKey::setTyp()
+{
+
+    if (mGrpType == CHANNEL_KEY_SHARE)
+    {
+        if (!rsGxsChannels)
+            return;
+            
+        ui->headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
+        ui->headerFrame->setHeaderText(tr("Share Channel"));    
+
+
+    }
+    else if(mGrpType == FORUM_KEY_SHARE)
+    {
+        
+        ui->headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
+        ui->headerFrame->setHeaderText(tr("Share Forum")); 
+
+    }
+    else if (mGrpType == POSTED_KEY_SHARE)
+    {
+        if (!rsPosted)
+            return;
+        
+        ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));    
+        ui->headerFrame->setHeaderText(tr("Share Posted"));     
+
+    }
+    else
+    {
+		// incorrect type
+		return;
+	}
+
+
 }
 
 void GroupShareKey::shareKey()
