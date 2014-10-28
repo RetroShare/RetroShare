@@ -33,6 +33,7 @@
 
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>
+#include <sys/time.h>
 #endif
 
 /*******
@@ -176,10 +177,32 @@ void RsQueueThread::run()
 	}
 }
 
+void RsMutex::unlock()
+{ 
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+	if(--_cnt == 0)
+	{
+#endif
+#ifndef WIN32
+		_thread_id = 0 ;
+#endif
+#ifdef RSMUTEX_DEBUG
+		double ts = getCurrentTS() ;
+
+		if(ts - _time_stamp > 1.0)	// locked for more than 0.5 seconds => somthing fishy is happenning
+			std::cerr << "Mutex " << (void*)this << " got locked for " << ts - _time_stamp << " seconds in thread " << pthread_self() << std::endl;
+#endif
+		pthread_mutex_unlock(&realMutex); 
+
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
+	}
+#endif
+}
+
 void RsMutex::lock()
 {
 #ifdef RSMUTEX_DEBUG
-	clock_t t1 = clock();
+	_time_stamp = getCurrentTS() ;
 #endif
 
 	int retval = 0;
@@ -189,6 +212,12 @@ void RsMutex::lock()
 #endif
 			retval = pthread_mutex_lock(&realMutex);
 
+#ifdef RSMUTEX_DEBUG
+	double ts = getCurrentTS() ;
+
+	if(ts - _time_stamp > 1.0)
+		std::cerr << "Mutex " << (void*)this << " waited for " << ts - _time_stamp << " seconds in thread " << pthread_self() << std::endl;
+#endif
 	switch(retval)
 	{
 		case 0:
@@ -246,13 +275,22 @@ void RsMutex::lock()
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 	++_cnt ;
 #endif
+}
 
 #ifdef RSMUTEX_DEBUG
-	clock_t t2 = clock();
-	double duration = (double) (t2 - t1) / CLOCKS_PER_SEC;
-	if (duration * 1000 > RSMUTEX_DEBUG) {
-		fprintf(stderr, "RsMutex::lock() %s --> %.3fs\n", name.c_str(), duration);
-		fflush(stderr);
-	}
+double RsMutex::getCurrentTS()
+{
+
+#ifndef WINDOWS_SYS
+        struct timeval cts_tmp;
+        gettimeofday(&cts_tmp, NULL);
+        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+#else
+        struct _timeb timebuf;
+        _ftime( &timebuf);
+        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
 #endif
+        return cts;
 }
+#endif
+

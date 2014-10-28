@@ -35,6 +35,7 @@
 
 #undef RSTHREAD_SELF_LOCKING_GUARD
 //#define RSMUTEX_DEBUG 300 // Milliseconds for print in the stderr
+//#define RSMUTEX_DEBUG 
 
 class RsMutex
 {
@@ -67,20 +68,7 @@ class RsMutex
 #endif
 
 	void	lock();
-	void	unlock() 
-	{ 
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-		if(--_cnt == 0)
-		{
-#endif
-#ifndef WIN32
-			_thread_id = 0 ;
-#endif
-			pthread_mutex_unlock(&realMutex); 
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-		}
-#endif
-	}
+	void	unlock();
 	bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
 
 	private:
@@ -90,7 +78,10 @@ class RsMutex
 		uint32_t _cnt ;
 #endif
 #ifdef RSMUTEX_DEBUG
+		static double getCurrentTS() ;
+
 		std::string name;
+		double _time_stamp ;
 #endif
 };
 
