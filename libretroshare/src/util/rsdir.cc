@@ -952,7 +952,7 @@ RsStackFileLock::RsStackFileLock(const std::string& file_path)
 	while(RsDirUtil::createLockFile(file_path,_file_handle))
 	{
 		std::cerr << "Cannot acquire file lock " << file_path << ", waiting 1 sec." << std::endl;
-		sleep(1 * 1000 * 1000) ; // 1 sec
+		usleep(1 * 1000 * 1000) ; // 1 sec
 	}
 #ifdef RSDIR_DEBUG 
 	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
