@@ -1512,6 +1512,11 @@ int 	pqissl::senddata(void *data, int len)
 
 	int tmppktlen ;
 
+	// safety check.  Apparently this avoids some SIGSEGV.
+	//
+	if(ssl_connection == NULL)
+		return -1;
+
 #ifdef PQISSL_DEBUG
 	std::cout << "Sending data thread=" << pthread_self() << ", ssl=" << (void*)this << ", size=" << len << std::endl ;
 #endif
