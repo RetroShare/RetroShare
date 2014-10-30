@@ -888,8 +888,7 @@ bool	ftServer::sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, u
 		mTurtleRouter->sendTurtleData(peerId,item) ;
 	}
 	else
-	{
-		std::cerr << "ftServer::sendDataRequest() " <<std::endl;
+    {
 		/* create a packet */
 		/* push to networking part */
 		RsFileTransferDataRequestItem *rfi = new RsFileTransferDataRequestItem();
