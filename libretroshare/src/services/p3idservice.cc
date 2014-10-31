@@ -721,28 +721,28 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 			if (item)
 			{
 #ifdef DEBUG_IDS
-				std::cerr << "p3IdService::getGroupData() Item is:";
-				std::cerr << std::endl;
-				item->print(std::cerr);
-				std::cerr << std::endl;
+        std::cerr << "p3IdService::getGroupData() Item is:";
+        std::cerr << std::endl;
+        item->print(std::cerr);
+        std::cerr << std::endl;
 #endif // DEBUG_IDS
-				RsGxsIdGroup group = item->group;
-				group.mMeta = item->meta;
+        RsGxsIdGroup group = item->group;
+        group.mMeta = item->meta;
 
-				// Decode information from serviceString.
-				SSGxsIdGroup ssdata;
-				if (ssdata.load(group.mMeta.mServiceString))
-				{
-					group.mPgpKnown = ssdata.pgp.idKnown;
-					group.mPgpId    = ssdata.pgp.pgpId;
-					group.mReputation = ssdata.score.rep;
+        // Decode information from serviceString.
+        SSGxsIdGroup ssdata;
+        if (ssdata.load(group.mMeta.mServiceString))
+        {
+            group.mPgpKnown = ssdata.pgp.idKnown;
+            group.mPgpId    = ssdata.pgp.pgpId;
+            group.mReputation = ssdata.score.rep;
 #ifdef DEBUG_IDS
-					std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
-					std::cerr << std::endl;
-					std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
-					std::cerr << std::endl;
-					std::cerr << "\t mGpgId: " << group.mPgpId;
-					std::cerr << std::endl;
+            std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
+            std::cerr << std::endl;
+            std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
+            std::cerr << std::endl;
+            std::cerr << "\t mGpgId: " << group.mPgpId;
+            std::cerr << std::endl;
 #endif // DEBUG_IDS
 				}
 				else
@@ -1859,7 +1859,7 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 
 				if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				{
-					mOwnIds.push_back(RsGxsId(item->meta.mGroupId.toStdString()));
+                    mOwnIds.push_back(RsGxsId(item->meta.mGroupId));
 				}
 				delete item ;
 			}
