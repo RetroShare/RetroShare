@@ -32,6 +32,7 @@
 
 #include "util/rsthreads.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rsconfig.h"
 
 #include <map>
 #include <list>
@@ -77,6 +78,7 @@ class pqihandler: public P3Interface, public pqiPublisher
 
 		// TESTING INTERFACE.
 		int     ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &totals);
+        int     ExtractOutQueueStatistics(OutQueueStatistics& stats) ;
 
 	protected:
 		/* check to be overloaded by those that can

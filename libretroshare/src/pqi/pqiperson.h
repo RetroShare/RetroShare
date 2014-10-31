@@ -170,6 +170,8 @@ virtual void    getRates(RsBwRates &rates);
 virtual float   getRate(bool in);
 virtual void    setMaxRate(bool in, float val);
 virtual void    setRateCap(float val_in, float val_out);
+virtual int     gatherOutQueueStatistics(std::vector<uint32_t>& per_service,std::vector<uint32_t>& per_priority);
+
 
 
 	private:

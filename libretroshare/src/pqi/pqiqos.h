@@ -46,26 +46,35 @@ class pqiQoS
 
 		class ItemQueue 
 		{
-			public:
+            public:
+            ItemQueue()
+            {
+                _item_count =0 ;
+            }
 				void *pop() 
 				{
 					if(_items.empty())
 						return NULL ;
 
 					void *item = _items.front() ;
-					_items.pop_front() ;
+                    _items.pop_front() ;
+                    --_item_count ;
 
 					return item ;
 				}
 
 				void push(void *item) 
 				{
-					_items.push_back(item) ;
-				}
+                    _items.push_back(item) ;
+                    ++_item_count ;
+                }
+
+                uint32_t size() const { return _item_count ; }
 
 				float _threshold ;
 				float _counter ;
-				float _inc ;
+                float _inc ;
+                uint32_t _item_count ;
 				std::list<void*> _items ;
 		};
 
@@ -82,6 +91,11 @@ class pqiQoS
 
 		// kills all waiting items.
 		void clear() ;
+
+        // get some stats about what's going on. service_packets will contain the number of
+        // packets per service, and queue_sizes will contain the size of the different priority queues.
+
+                int gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const ;
 
 		void computeTotalItemSize() const ;
 		int debug_computeTotalItemSize() const ;

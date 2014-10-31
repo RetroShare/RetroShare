@@ -61,7 +61,8 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-	mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
+    mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
+    mIncomingSize = 0 ;
 
 	/* allocated once */
 	mPkt_rpend_size = getRsPktMaxSize();
@@ -123,12 +124,16 @@ pqistreamer::~pqistreamer()
 	free(mPkt_rpending);
 
 	// clean up incoming.
-	while(mIncoming.size() > 0)
+    while(!mIncoming.empty())
 	{
 		RsItem *i = mIncoming.front();
-		mIncoming.pop_front();
+        mIncoming.pop_front();
+        --mIncomingSize ;
 		delete i;
-	}
+    }
+
+    if(mIncomingSize != 0)
+        std::cerr << "(EE) inconsistency after deleting pqistreamer queue. Remaining items: " << mIncomingSize << std::endl;
 	return;
 }
 
@@ -162,7 +167,8 @@ RsItem *pqistreamer::GetItem()
 		return NULL; 
 
 	RsItem *osr = mIncoming.front() ;
-	mIncoming.pop_front() ;
+    mIncoming.pop_front() ;
+    --mIncomingSize;
 
 	return osr;
 }
@@ -211,7 +217,7 @@ int	pqistreamer::tick()
 			int total = locked_compute_out_pkt_size() ;
 
 			rs_sprintf_append(out, "\t Out Packets [%d] => %d bytes\n", locked_out_queue_size(), total);
-			rs_sprintf_append(out, "\t Incoming    [%d]\n", mIncoming.size());
+            rs_sprintf_append(out, "\t Incoming    [%d]\n", mIncomingSize);
 		}
 
 		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
@@ -219,7 +225,7 @@ int	pqistreamer::tick()
 #endif
 
 	/* if there is more stuff in the queues */
-	if ((mIncoming.size() > 0) || (locked_out_queue_size() > 0))
+    if ((!mIncoming.empty()) || (locked_out_queue_size() > 0))
 	{
 		return 1;
 	}
@@ -349,7 +355,8 @@ int 	pqistreamer::handleincomingitem_locked(RsItem *pqi)
 
 	// Use overloaded Contact function 
 	pqi -> PeerId(PeerId());
-	mIncoming.push_back(pqi);
+    mIncoming.push_back(pqi);
+    ++mIncomingSize ;
 	return 1;
 }
 
@@ -953,13 +960,21 @@ void    pqistreamer::inReadBytes_locked(int inb)
 	return;
 }
 
+int     pqistreamer::gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count)
+{
+    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+    return locked_gatherStatistics(per_service_count,per_priority_count);
+}
+
 int     pqistreamer::getQueueSize(bool in)
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
 	if (in)
-		return mIncoming.size();
-	return locked_out_queue_size();
+        return mIncomingSize;
+    else
+        return locked_out_queue_size();
 }
 
 void    pqistreamer::getRates(RsBwRates &rates)
@@ -968,7 +983,7 @@ void    pqistreamer::getRates(RsBwRates &rates)
 
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-	rates.mQueueIn = mIncoming.size();	
+    rates.mQueueIn = mIncomingSize;
 	rates.mQueueOut = locked_out_queue_size();
 }
 
@@ -1003,6 +1018,12 @@ int pqistreamer::locked_compute_out_pkt_size() const
 		total += getRsItemSize(*it);
 
 	return total ;
+}
+
+int pqistreamer::locked_gatherStatistics(std::vector<uint32_t>&,std::vector<uint32_t>&) const
+{
+    std::cerr << "(II) called overloaded function locked_gatherStatistics(). This is probably an error" << std::endl;
+    return 1 ;
 }
 
 void *pqistreamer::locked_pop_out_data() 

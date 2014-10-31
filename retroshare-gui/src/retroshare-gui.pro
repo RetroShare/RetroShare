@@ -401,7 +401,6 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageUserNotify.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
-            gui/statistics/GlobalRouterStatistics.h \
             gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
@@ -513,11 +512,13 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectFriendWizard.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
+            gui/GetStartedDialog.h \
             gui/statistics/DhtWindow.h \
+            gui/statistics/GlobalRouterStatistics.h \
             gui/statistics/StatisticsWindow.h \
             gui/statistics/BwCtrlWindow.h \
-            gui/GetStartedDialog.h \
             gui/statistics/RttStatistics.h \
+            gui/statistics/OutQueueStatistics.h \
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -542,9 +543,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
-            gui/statistics/TurtleRouterDialog.ui \
-            gui/statistics/TurtleRouterStatistics.ui \
-            gui/statistics/GlobalRouterStatistics.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
@@ -625,6 +623,9 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/RSFeedWidget.ui \
             gui/style/StyleDialog.ui \
             gui/statistics/DhtWindow.ui \
+            gui/statistics/TurtleRouterDialog.ui \
+            gui/statistics/TurtleRouterStatistics.ui \
+            gui/statistics/GlobalRouterStatistics.ui \
             gui/statistics/StatisticsWindow.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
@@ -680,9 +681,6 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/DLListDelegate.cpp \
             gui/FileTransfer/ULListDelegate.cpp \
             gui/FileTransfer/xprogressbar.cpp \
-            gui/statistics/TurtleRouterDialog.cpp \
-            gui/statistics/TurtleRouterStatistics.cpp \
-            gui/statistics/GlobalRouterStatistics.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
             gui/MainPage.cpp \
@@ -839,10 +837,14 @@ SOURCES +=  main.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/connect/ConnectProgressDialog.cpp \
             gui/groups/CreateGroup.cpp \
+            gui/GetStartedDialog.cpp \
             gui/statistics/DhtWindow.cpp \
+            gui/statistics/TurtleRouterDialog.cpp \
+            gui/statistics/TurtleRouterStatistics.cpp \
+            gui/statistics/GlobalRouterStatistics.cpp \
+            gui/statistics/OutQueueStatistics.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
-            gui/GetStartedDialog.cpp \
             gui/statistics/RttStatistics.cpp \
 
 #            gui/ForumsDialog.cpp \

@@ -62,7 +62,8 @@ class pqistreamer: public PQInterface
 		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
-	protected:
+        virtual int     gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count); // extracting data.
+    protected:
 
 		int tick_bio();
 		int tick_send(uint32_t timeout);
@@ -77,6 +78,7 @@ class pqistreamer: public PQInterface
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const ;
 		virtual void *locked_pop_out_data() ;
+        virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
 
 
 	protected:
@@ -122,6 +124,8 @@ class pqistreamer: public PQInterface
 		// Temp Storage for transient data.....
 		std::list<void *> mOutPkts; // Cntrl / Search / Results queue
 		std::list<RsItem *> mIncoming;
+
+        uint32_t mIncomingSize; // size of mIncoming. To avoid calling linear cost std::list::size()
 
 		// data for network stats.
 		int mTotalRead;

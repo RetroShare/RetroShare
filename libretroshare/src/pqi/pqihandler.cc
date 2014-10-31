@@ -88,7 +88,27 @@ int	pqihandler::tick()
 #endif
 			moreToTick = 1;
 		}
-	}
+    }
+
+//     static time_t last_print_time = 0 ;
+//     time_t now = time(NULL) ;
+//     if(now > last_print_time + 3)
+//     {
+//         std::map<uint16_t,uint32_t> per_service_count ;
+//         std::vector<uint32_t> per_priority_count ;
+//
+//         ExtractOutQueueStatistics(per_service_count,per_priority_count) ;
+//
+//         std::cerr << "PQIHandler outqueues: " << std::endl;
+//
+//         for(std::map<uint16_t,uint32_t>::const_iterator it=per_service_count.begin();it!=per_service_count.end();++it)
+//             std::cerr << "  " << std::hex << it->first << std::dec << "  " << it->second << std::endl;
+//
+//         for(int i=0;i<per_priority_count.size();++i)
+//             std::cerr << "  " << i << " : " << per_priority_count[i] << std::endl;
+//
+//         last_print_time = now ;
+//     }
 
 	UpdateRates();
 	return moreToTick;
@@ -326,9 +346,13 @@ int pqihandler::locked_GetItems()
 			while((item = (mod -> pqi) -> GetItem()) != NULL)
 			{
 
+				static int ntimes =0 ;
+				if(++ntimes < 20)
+				{
 		std::cerr << "pqihandler::locked_GetItems() pqi->GetItem()";
 		std::cerr << " should never happen anymore!";
 		std::cerr << std::endl;
+				}
 
 #ifdef RSITEM_DEBUG 
 				std::string out;
@@ -426,6 +450,26 @@ RsRawItem *pqihandler::GetRsRawItem()
 
 
 static const float MIN_RATE = 0.01; // 10 B/s
+
+int     pqihandler::ExtractOutQueueStatistics(OutQueueStatistics& stats)
+{
+    stats.per_service_item_count.clear() ;
+
+    std::vector<uint32_t> item_counts(65536,0) ;
+    stats.per_priority_item_count.clear() ;
+    stats.per_priority_item_count.resize(10,0) ;
+
+    std::map<RsPeerId, SearchModule *>::iterator it;
+
+    for(it = mods.begin(); it != mods.end(); ++it)
+        (it -> second)->pqi->gatherOutQueueStatistics(item_counts,stats.per_priority_item_count) ;
+
+    for(int i=0;i<65536;++i)
+        if(item_counts[i] > 0)
+            stats.per_service_item_count[i] = item_counts[i] ;
+
+    return 1 ;
+}
 
 // NEW extern fn to extract rates.
 int     pqihandler::ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &total)

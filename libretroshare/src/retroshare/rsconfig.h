@@ -171,6 +171,12 @@ class RsConfigDataRates
 	int	mQueueOut;
 };
 
+class OutQueueStatistics
+{
+    public:
+        std::map<uint16_t,uint32_t> per_service_item_count ;
+        std::vector<uint32_t> per_priority_item_count ;
+};
 
 class RsConfigNetStatus
 {
@@ -240,7 +246,7 @@ virtual int 	getConfigNetStatus(RsConfigNetStatus &status) = 0;
 
 virtual int 	getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
 virtual int 	getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap) = 0;
-
+virtual int	getOutQueueStatistics(OutQueueStatistics& stats) = 0 ;
 	/* From RsInit */
 
 // NOT IMPLEMENTED YET!

@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QSplitter" name="splitter">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -84,21 +84,27 @@
        </property>
       </column>
      </widget>
-     <widget class="BWGraph" name="frmGraph" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>120</width>
-        <height>80</height>
-       </size>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="contextMenuPolicy">
-       <enum>Qt::NoContextMenu</enum>
-      </property>
+      <widget class="OutQueueStatisticsWidget" name="_outqueue_stats_W" native="true"/>
+      <widget class="BWGraph" name="frmGraph" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::NoContextMenu</enum>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>
@@ -109,6 +115,12 @@
    <class>BWGraph</class>
    <extends>QWidget</extends>
    <header>gui/statistics/bwgraph.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>OutQueueStatisticsWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/statistics/OutQueueStatistics.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -280,6 +280,11 @@ int p3BandwidthControl::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRate
 
 }
 
+int     p3BandwidthControl::ExtractOutQueueStatistics(OutQueueStatistics& stats)
+{
+    return mPg->ExtractOutQueueStatistics(stats) ;
+}
+
 
 
 

@@ -94,6 +94,7 @@ class p3BandwidthControl: public p3Service, public pqiServiceMonitor
 		virtual int getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap);
 
 
+        virtual int ExtractOutQueueStatistics(OutQueueStatistics& stats) ;
 
 		/*!
 		 * Interface stuff.
