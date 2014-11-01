@@ -209,7 +209,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/logo/logo_16.png")));
+    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/logo/logo_32.png")));
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
