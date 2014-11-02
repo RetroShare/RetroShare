@@ -45,6 +45,7 @@ class RatesStatus;
 class OpModeStatus;
 class SoundStatus;
 class ToasterDisable;
+class SysTrayStatus;
 //class ForumsDialog;
 class GxsChannelDialog ;
 class GxsForumsDialog ;
@@ -169,6 +170,7 @@ public:
 
     SoundStatus *soundStatusInstance();
     ToasterDisable *toasterDisableInstance();
+    SysTrayStatus *sysTrayStatusInstance();
 
 public slots:
     void displayErrorMessage(int,int,const QString&) ;
@@ -268,6 +270,7 @@ private:
     OpModeStatus *opModeStatus;
     SoundStatus *soundStatus;
     ToasterDisable *toasterDisable;
+    SysTrayStatus *sysTrayStatus;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

@@ -84,6 +84,7 @@
 #include "statusbar/OpModeStatus.h"
 #include "statusbar/SoundStatus.h"
 #include "statusbar/ToasterDisable.h"
+#include "statusbar/SysTrayStatus.h"
 #include <retroshare/rsstatus.h>
 
 #include <retroshare/rsiface.h>
@@ -274,6 +275,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     toasterDisable->setHidden(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
     statusBar()->addPermanentWidget(toasterDisable);
 
+    sysTrayStatus = new SysTrayStatus();
+    sysTrayStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
+    statusBar()->addPermanentWidget(sysTrayStatus);
+
+
     setCompactStatusMode(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
 
     /** Status Bar end ******/
@@ -322,6 +328,7 @@ MainWindow::~MainWindow()
     delete opModeStatus;
     delete soundStatus;
     delete toasterDisable;
+    delete sysTrayStatus;
     MessengerWindow::releaseInstance();
 #ifdef UNFINISHED
     delete applicationWindow;
@@ -596,8 +603,10 @@ void MainWindow::createTrayIcon()
 {
     /** Tray icon Menu **/
     QMenu *trayMenu = new QMenu(this);
+    if (sysTrayStatus) sysTrayStatus->trayMenu = trayMenu;
     QObject::connect(trayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
     toggleVisibilityAction = trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
+    if (sysTrayStatus) sysTrayStatus->toggleVisibilityAction = toggleVisibilityAction;
 
     /* Create status menu */
     QMenu *statusMenu = trayMenu->addMenu(tr("Status"));
@@ -802,6 +811,7 @@ void MainWindow::updateFriends()
     }
 
     if (trayIcon) trayIcon->setIcon(icon);
+    if (sysTrayStatus) sysTrayStatus->setIcon(icon);
 }
 
 void MainWindow::postModDirectories(bool update_local)
@@ -1481,6 +1491,11 @@ SoundStatus *MainWindow::soundStatusInstance()
 ToasterDisable *MainWindow::toasterDisableInstance()
 {
 	return toasterDisable;
+}
+
+SysTrayStatus *MainWindow::sysTrayStatusInstance()
+{
+	return sysTrayStatus;
 }
 
 void MainWindow::setCompactStatusMode(bool compact)

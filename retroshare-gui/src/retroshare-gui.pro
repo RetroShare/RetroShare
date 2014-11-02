@@ -492,6 +492,7 @@ HEADERS +=  rshare.h \
             gui/statusbar/SoundStatus.h \
             gui/statusbar/OpModeStatus.h \
             gui/statusbar/ToasterDisable.h \
+            gui/statusbar/SysTrayStatus.h \
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
             gui/advsearch/guiexprelement.h \
@@ -810,6 +811,7 @@ SOURCES +=  main.cpp \
             gui/statusbar/SoundStatus.cpp \
             gui/statusbar/OpModeStatus.cpp \
             gui/statusbar/ToasterDisable.cpp \
+            gui/statusbar/SysTrayStatus.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/DownloadToaster.cpp \
             gui/toaster/OnlineToaster.cpp \

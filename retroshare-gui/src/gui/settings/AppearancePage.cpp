@@ -30,6 +30,7 @@
 #include "gui/MainWindow.h"
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
+#include "gui/statusbar/SysTrayStatus.h"
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -43,6 +44,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.checkBoxStatusCompactMode, SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
 	connect(ui.checkBoxHideSoundStatus, SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(), SLOT(setHidden(bool)));
 	connect(ui.checkBoxHideToasterDisable, SIGNAL(toggled(bool)), pMainWindow->toasterDisableInstance(), SLOT(setHidden(bool)));
+	connect(ui.checkBoxShowSystrayOnStatus, SIGNAL(toggled(bool)), pMainWindow->sysTrayStatusInstance(), SLOT(setVisible(bool)));
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
@@ -131,6 +133,7 @@ bool AppearancePage::save(QString &errmsg)
 	Settings->setValueToGroup("StatusBar", "CompactMode", QVariant(ui.checkBoxStatusCompactMode->isChecked()));
 	Settings->setValueToGroup("StatusBar", "HideSound", QVariant(ui.checkBoxHideSoundStatus->isChecked()));
 	Settings->setValueToGroup("StatusBar", "HideToaster", QVariant(ui.checkBoxHideToasterDisable->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(ui.checkBoxShowSystrayOnStatus->isChecked()));
 
 	return true;
 }
@@ -204,6 +207,7 @@ void AppearancePage::load()
 	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
 	ui.checkBoxHideSoundStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
 	ui.checkBoxHideToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
+	ui.checkBoxShowSystrayOnStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
 }
 
