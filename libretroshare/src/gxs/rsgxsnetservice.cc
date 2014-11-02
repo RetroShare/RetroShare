@@ -101,6 +101,9 @@ int RsGxsNetService::tick()
 class NxsBandwidthRecorder
 {
 public:
+    static const int OUTQUEUE_CUTOFF_VALUE = 500 ;
+        static const int BANDWIDTH_ESTIMATE_DELAY = 20 ;
+
     static void recordEvent(uint16_t service_type, RsItem *item)
     {
         RsStackMutex m(mtx) ;
@@ -116,10 +119,11 @@ public:
         total_record += bw ;
         ++total_events ;
 
+#ifdef NXS_NET_DEBUG
         std::cerr << "bandwidthRecorder::recordEvent() Recording event time=" << now << ". bw=" << bw << std::endl;
+#endif
 
         // Every 20 seconds at min, compute a new estimate of the required bandwidth.
-        static const int BANDWIDTH_ESTIMATE_DELAY = 20 ;
 
         if(now > last_event_record + BANDWIDTH_ESTIMATE_DELAY*1000)
         {
@@ -152,14 +156,30 @@ public:
         rsConfig->GetMaxDataRates(maxIn,maxOut) ;
         rsConfig->GetCurrentDataRates(currIn,currOut) ;
 
-        float accepted_bandwidth = std::max(0.0f,maxOut - currOut) ;
-        float sending_probability = std::min( accepted_bandwidth / estimated_required_bandwidth,1.0f ) ;
+    RsConfigDataRates rates ;
+    rsConfig->getTotalBandwidthRates(rates) ;
+
+    std::cerr << std::dec << std::endl;
+
+    float outqueue_factor     = 1.0f/pow( std::max(0.02f,rates.mQueueOut / (float)OUTQUEUE_CUTOFF_VALUE),5.0f) ;
+    float accepted_bandwidth  = std::max( 0.0f, maxOut - currOut) ;
+    float max_bandwidth_factor = std::min( accepted_bandwidth / estimated_required_bandwidth,1.0f ) ;
+
+    // We account for two things here:
+    //   1 - the required max bandwidth
+    //   2 - the current network overload, measured from the size of the outqueues.
+    //
+    // Only the later can limit the traffic if the internet connexion speed is responsible for outqueue overloading.
+
+    float sending_probability = std::min(outqueue_factor,max_bandwidth_factor) ;
 
 #ifdef NXS_NET_DEBUG
         std::cerr << "bandwidthRecorder::computeCurrentSendingProbability()" << std::endl;
-        std::cerr << "  current required bandwidth: " << estimated_required_bandwidth << " KB/s" << std::endl;
-        std::cerr << "  max out = " << maxOut << ", currOut=" << currOut << std::endl;
-        std::cerr << "  computed probability:        " << sending_probability << std::endl;
+        std::cerr << "  current required bandwidth : " << estimated_required_bandwidth << " KB/s" << std::endl;
+    std::cerr << "  max_bandwidth_factor       : " << max_bandwidth_factor << std::endl;
+    std::cerr << "  outqueue size              : " << rates.mQueueOut << ", factor=" << outqueue_factor << std::endl;
+        std::cerr << "  max out                    : " << maxOut << ", currOut=" << currOut << std::endl;
+        std::cerr << "  computed probability       : " << sending_probability << std::endl;
 #endif
 
         return sending_probability ;
