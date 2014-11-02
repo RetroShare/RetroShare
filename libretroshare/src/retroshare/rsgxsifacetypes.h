@@ -55,8 +55,6 @@ public:
     }
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);
-    bool operator ==(const RsGroupMetaData& rGxsMeta);
-    bool operator !=(const RsGroupMetaData& rGxsMeta);
 
     RsGxsGroupId mGroupId;
     std::string mGroupName;

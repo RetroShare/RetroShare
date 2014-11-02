@@ -41,7 +41,7 @@ CircleWidget::~CircleWidget()
 void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
                             , const RsGxsCircleDetails& details)
 {
-	if (_group_info != gxs_group_info) {
+	//if (_group_info != gxs_group_info) {
 		_group_info=gxs_group_info;
 		std::string desc_string = _group_info.mGroupName ;
 		QString cirName = QString::fromUtf8(desc_string.c_str());
@@ -49,7 +49,7 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 		ui->label->setText(m_myName);
 		ui->label->setToolTip(m_myName);
 		update();
-	}//if (_group_info != gxs_group_info)
+	//}//if (_group_info != gxs_group_info)
 
 	if (_circle_details != details) {
 		_circle_details=details;
