@@ -1,14 +1,104 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   Improvements:
+      GUI 
+         * Added systray menu in status bar. Helps people without a systray (Patch form Phenom)
+         * Saving tool button position (patch from Phenom)
+         * Changed the chat bubbles when typing/chat on the private chat, which displays on the Taskbar & window icon
+         * Changed the MainWindow icon to a higher resolution for better look & feel, when the logo is displayed on the 
+             taskbar, same for the im status icons.
+         * Added very basic display of outqueue statistics in BwCtrlWindow. Removed unnecessary list::size() calls in pqistreamer
+         * Added to change header image and text on Share Key Dialog.
+         * Improved display of popularity in forums/posted/channels
+         * Fixed display of TOR connexions in the friend list
+         * Fixed the frame margins
+         * Fixed navigate to channel post when clicking a channel post link.
+         * Fixed navigate to forum message when clicking a forum message link.
+         * Fixed copy of forum message link to clipboard
+         * Set standard style of public/lobby chat to compact colored.
+         * Fixed navigate to forum and channel group when clicking a forum/channel link.
+         * Navigate to post/message is still a todo.
+         * Fixed display of unknown PGP keys in IDDialog. Removed debug output
+         * Using GxsIdChooser in message composition dialog
+         * Fixed bad connect in notifyQt for chat window
+         * Fixed start of chat with right or double click on a friend item (not location) in friend list.
+         * Fixed display of unknown hash in turtle router dialog
+         * Enable "Next unread" button in forum without an active post.
+         * Fixed up DHT Stats window so you can maximise any section with splitters.
+
+      DHT:
+         * Fixed saving of bdboot.txt on windows (patch from electron)
+         * Add peer version to Ping Message (improves finding RS peers)
+         * Add local flag to search query - to only find bitdht peers.
+
+      Links:
+         * Fixed check if address has changed - was preventing resetting of local port.
+         * Tweaked TOU so it can accept Generic Sized Ip Addresses, even though it will only accept IPv4 addresses
+
+      GXS:
+         * Added tempering system for GXS, so as to not send more in the outqueues than what the current bandwidth can handle
+      
+      GRouter:
+         * Limited storage of DEAD items in grouter cache to 1 hour to favor re-explore dead routes and limit cache size
+         * Added feedback from rsgenexchange into Global router to add routing information
+         * Weighted maximum length of a msg in grouter inversely to how much it has spread
+         * Improved anti-flooding stategy in g-router
+         * Fixed bug in global router making the routing matrix too sparse
+
+      Diverse
+         * Fixed compilation after removing operators!= (patch from phenom)
+         * Removed unused comparison operators in some GxsItems
+         * Removed unnecessary string to string conversion in pqipersongrp
+         * Removed ifdef for the different sleep methods. Now only usleep is used, on all systems (Patch from Phenom)
+
+      Utils:
+         * added more time measurements in RsMutex, so as to measure locking time and waiting time. Only enabled with RS_MUTEX_DEBUG
+
+   Bug fixes:
+      * Added security check in pqissl::senddata() to avoid SIGSEGV when quitting
+      * Changed sleep to usleep in RsStackFileLock::RsStackFileLock(). Caused a very long lock. 
+      * Fixed SIGSEGV when quitting due to deletion of UPnP handler during callback
+      * Added missing record of Dn traffic in turtle router
+
+   Optimisations:
+      * Changed post fixed operator++ into prefixed. More efficient on some systems. Patch from Phenom.
+      * Replaced tests on std::list::size() by std::list::empty() (Patch from Phenom, modified)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 02 Nov 2014 18:00:00 +0100
+
+retroshare06 (0.6.0-0.7621~precise) precise; urgency=low
+
    * Improvements
-      - Switched MessagesDialog from QTreeView to QTreeWidget and use GxsIdRSTreeWidgetItem to show the gxs id for a distant message.
-      - increased sync period in RsGxsNetService so as to reduce network load. Increased transaction timeout to 30 seconds 
+      - GUI: Factored all classes used to draw graphs into a consistent common class. Reworked the look 
+         of existing graphs.
+      - UDP: Tweaked TOU so it can accept Generic Sized Ip Addresses,even though it will only accept IPv4 
+         addresses.
+      - extended group share keys to Posted
+      - Improvements of People dialog. Patch from Phenom (slightly modified). Not enabled in this built.
+      - GXS: Added read status to posted messages
+      - GXS: Set new messages to unread
+      - GXS: Fixed missuse of message flag UNPROCESSED as indicator for a NEW message
+      - GXS: Added the delete of the TokenQueue in some destructors to fix crashes.
+      - DHT: Fixed up DHT Stats window so you can maximise any section with splitters.
+      - DHT: Add peer version to Ping Message. (improves finding RS peers)
+      - DHT: Add local flag to search query - to only find bitdht peers.
+      - Fixed check if address has changed - was preventing resetting of local port
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 18 Oct 2014 21:25:00 +0100
+
+retroshare06 (0.6.0-0.7596~precise) precise; urgency=low
+
+      - Switched MessagesDialog from QTreeView to QTreeWidget and use GxsIdRSTreeWidgetItem to 
+         show the gxs id for a distant message.
+      - increased sync period in RsGxsNetService so as to reduce network load. Increased transaction 
+         timeout to 30 seconds 
          to avoid wasting too many transactions
       - Fixed initial fill of the contact list in message composer when only trusted people is checked.
       - Replaced external library libcrypt32-cygwin.a by libcrypt32.a from MinGW for Windows compile.
-      - added a structure in GxsNetService to record who sends info about groups, so as to dynamically compute group 
-         popularity. The GUI needs to be improved to update regularly so as to reflect current values for
-        popularity. For now only subscribing/unsubscribing and new messages trigger the update
+      - added a structure in GxsNetService to record who sends info about groups, so as to dynamically 
+         compute group popularity. The GUI needs to be improved to update
+         regularly so as to reflect current values for popularity. For now only
+         subscribing/unsubscribing and new messages trigger the update
       - fixed display of channels with publish key
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 11 Oct 2014 15:28:00 +0100
@@ -46,8 +136,9 @@ retroshare06 (0.6.0-0.7584~precise) precise; urgency=low
 retroshare06 (0.6.0-0.7555~precise) precise; urgency=low
 
    * Improvements
-      - this version is the first unstable release of 0.6. It is incompatible with v0.5.5, but can be used simultaneously 
-        on the same computer. Please see release notes for v0.6 on https://retroshareteam.wordpress.com/
+      - this version is the first unstable release of 0.6. It is incompatible with v0.5.5, but can be 
+         used simultaneously on the same computer. Please see release notes for v0.6 
+         on https://retroshareteam.wordpress.com/
    	 
  -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 21 Sep 2014 20:00:00 +0100
 
