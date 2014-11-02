@@ -36,8 +36,8 @@
 #include <retroshare/rsnotify.h>
 
 
-#define IMAGE_TYPING         ":/images/typing.png"
-#define IMAGE_CHAT           ":/images/chat.png"
+#define IMAGE_TYPING         ":/images/white-bubble-64.png"
+#define IMAGE_CHAT           ":/images/orange-bubble-64.png"
 
 static PopupChatWindow *instance = NULL;
 
