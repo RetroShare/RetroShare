@@ -2348,23 +2348,15 @@ void MessageComposer::fileHashingFinished(QList<HashedFile> hashedFiles)
 
 void MessageComposer::addContact(enumType type)
 {
-	//  std::list<std::string> ids;
-	//  ui.friendSelectionWidget->selectedIds<std::string,FriendSelectionWidget::IDTYPE_GROUP>(ids,false);
-	//
-	//  std::list<std::string>::iterator idIt;
-	//  for (idIt = ids.begin(); idIt != ids.end(); ++idIt) {
-	//      addRecipient(type, *idIt, true);
-	//  }
+	std::list<RsPeerId> peerIds ;
+	ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peerIds, false);
 
-	std::list<RsPeerId> ids ;
-	ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(ids, true);
-	for (std::list<RsPeerId>::const_iterator idIt = ids.begin(); idIt != ids.end(); ++idIt) {
-        addRecipient(type, *idIt);
-	}
+	for (std::list<RsPeerId>::const_iterator idIt = peerIds.begin(); idIt != peerIds.end(); ++idIt) 
+		addRecipient(type, *idIt);
 
-	std::list<RsGxsId> id2 ;
-	ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(id2, true);
-	for (std::list<RsGxsId>::const_iterator idIt = id2.begin(); idIt != id2.end(); ++idIt)
+	std::list<RsGxsId> gxsIds ;
+	ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, false);
+	for (std::list<RsGxsId>::const_iterator idIt = gxsIds.begin(); idIt != gxsIds.end(); ++idIt) 
 		addRecipient(type, *idIt);
 }
 
