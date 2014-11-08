@@ -625,33 +625,39 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 		return 3; // invalid PreferredAccount.
 	}
 
+	int retVal = 0;
+
 	// Logic that used to be external to RsInit...
 	RsPeerId accountId;
 	if (!rsAccounts->getPreferredAccountId(accountId))
 	{
-		return 3; // invalid PreferredAccount;
+		retVal = 3; // invalid PreferredAccount;
 	}
 	
 	RsPgpId pgpId;
 	std::string pgpName, pgpEmail, location;
 
-	if (!rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
-		return 3; // invalid PreferredAccount;
+	if (retVal == 0 && !rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
+		retVal = 3; // invalid PreferredAccount;
 		
-	if (!rsAccounts->SelectPGPAccount(pgpId))
-		return 3; // PGP Error.
+	if (retVal == 0 && !rsAccounts->SelectPGPAccount(pgpId))
+		retVal = 3; // PGP Error.
 	
-	int retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
-	if(retVal != 0)
-		return retVal;
+	if(retVal == 0)
+		retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
 
-	retVal = LoadCertificates(autoLoginNT);
-	if(retVal != 1) {
+	if(retVal == 0 && LoadCertificates(autoLoginNT) != 1)
+	{
 		UnlockConfigDirectory();
-		return 3;
+		retVal = 3;
 	}
 
-	return 0;
+	if(retVal != 0)
+	{
+		rsAccounts->unlockPreferredAccount();
+	}
+
+	return retVal;
 }
 
 

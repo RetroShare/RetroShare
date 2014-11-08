@@ -70,6 +70,7 @@ class RsAccountsDetail
 		bool	setupBaseDirectory(std::string alt_basedir);
 		bool 	loadAccounts();
 		bool	lockPreferredAccount();
+		void	unlockPreferredAccount();
 
 		// Paths.
 		std::string 	PathDataDirectory();
@@ -126,8 +127,6 @@ class RsAccountsDetail
 		bool checkPreferredId();
 
 		bool defaultBaseDirectory();
-
-		std::string getHomePath() ;
 
 		bool getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts, 
 			int& failing_accounts,

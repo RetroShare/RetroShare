@@ -96,6 +96,11 @@ bool RsAccountsDetail::lockPreferredAccount()
 	
 	return false;
 }
+
+void RsAccountsDetail::unlockPreferredAccount()
+{
+	mAccountsLocked = false;
+}
 	
 
 bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
@@ -1195,45 +1200,6 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
 	return true;
 }
 #endif
-
-
-
-std::string RsAccountsDetail::getHomePath()
-{
-	std::string home;
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS /* UNIX */
-
-	home = getenv("HOME");
-
-#else /* Windows */
-
-	char *h2 = getenv("HOMEDRIVE");
-	char *h3 = getenv("HOMEPATH");
-
-	if(!h2)
-	{
-		// Might be Win95/98
-		// generate default.
-		home = "C:\\Retro";
-	}
-	else
-	{
-		home = h2;
-		home += h3;
-		home += "\\Desktop";
-	}
-
-	std::cerr << "fltkserver::getHomePath() -> " << home << std::endl;
-
-	// convert to desired format.
-	home = RsDirUtil::convertPathToUnix(home);
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	return home;
-}
-
-
 
 /*********************************************************************************
  * PUBLIC INTERFACE FUNCTIONS 
