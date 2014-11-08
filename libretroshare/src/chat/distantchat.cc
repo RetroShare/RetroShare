@@ -24,6 +24,8 @@
  */
 
 
+#include <unistd.h>
+
 #include "openssl/rand.h"
 #include "openssl/dh.h"
 #include "openssl/err.h"
