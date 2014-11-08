@@ -34,18 +34,14 @@
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
 #include "pqi/pqiservicemonitor.h"
-#include "pgp/pgphandler.h"
-#include "turtle/turtleclientservice.h"
+#include "chat/distantchat.h"
 #include "retroshare/rsmsgs.h"
 
 class p3ServiceControl;
 class p3LinkMgr;
 class p3HistoryMgr;
-class p3turtle ;
 
 typedef RsPeerId ChatLobbyVirtualPeerId ;
-
-static const uint32_t DISTANT_CHAT_AES_KEY_SIZE = 16 ;
 
 //!The basic Chat service.
  /**
@@ -54,7 +50,7 @@ static const uint32_t DISTANT_CHAT_AES_KEY_SIZE = 16 ;
   * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
   * @see NotifyBase
   */
-class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor, public RsTurtleClientService
+class p3ChatService: public p3Service, public DistantChatService, public p3Config, public pqiServiceMonitor
 {
 	public:
 		p3ChatService(p3ServiceControl *cs, p3IdService *pids,p3LinkMgr *cm, p3HistoryMgr *historyMgr);
@@ -218,6 +214,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 		void receiveChatQueue();
 		void handleIncomingItem(RsItem *);	// called by the former, and turtle handler for incoming encrypted items
 
+		void sendPrivateChatItem(RsChatItem *) ;
+
 		void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
 
 		/// make some statistics about time shifts, to prevent various issues. 
@@ -328,75 +326,6 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 		bool _should_reset_lobby_counts ;
 
 		RsChatSerialiser *_serializer ;
-
-		// ===========================================================//
-		//         Members related to anonymous distant chat.         //
-		// ===========================================================//
-
-	public:
-		virtual void connectToTurtleRouter(p3turtle *) ;
-
-		// Creates the invite if the public key of the distant peer is available.
-		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
-		//
-		bool initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code) ;
-		bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
-		virtual bool getDistantChatStatus(const DistantChatPeerId& hash,RsGxsId& gxs_id,uint32_t& status) ;
-
-	private:
-		class DistantChatPeerInfo 
-		{
-			public:
-				DistantChatPeerInfo() { dh = NULL; }
-
-			time_t last_contact ; 			// used to send keep alive packets
-
-			DH *dh ;
-			unsigned char aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
-
-
-			uint32_t status ;					// info: do we have a tunnel ?
-			RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
-			RsGxsId gxs_id ;          		// gxs id of the peer we're talking to.
-			RsGxsId own_gxs_id ;         	// gxs id we're using to talk.
-			RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
-		};
-
-		// This maps contains the current peers to talk to with distant chat.
-		//
-		std::map<TurtleFileHash,DistantChatPeerInfo> _distant_chat_peers ;
-
-		// List of items to be sent asap. Used to store items that we cannot pass directly to 
-		// sendTurtleData(), because of Mutex protection.
-
-		std::list<RsChatItem*> pendingDistantChatItems ;
-
-		// Overloaded from RsTurtleClientService
-
-		virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
-		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
-		void markDistantChatAsClosed(const TurtleVirtualPeerId& vpid) ;
-		void startClientDistantChatConnection(const RsFileHash& hash,const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id) ;
-		bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
-		TurtleFileHash hashFromGxsId(const RsGxsId& pid) ;
-
-		void handleRecvDHPublicKey(RsChatDHPublicKeyItem *item) ;
-		bool locked_sendDHPublicKey(const DistantChatPeerInfo& pinfo) ;
-		bool locked_initDHSessionKey(DistantChatPeerInfo& pinfo);
-		DistantChatPeerId virtualPeerIdFromHash(const TurtleFileHash& hash  ) ;	// ... and to a hash for p3turtle
-
-
-		// Utility functions
-
-		void sendTurtleData(RsChatItem *) ;
-		void sendPrivateChatItem(RsChatItem *) ;
-
-		static TurtleFileHash hashFromVirtualPeerId(const DistantChatPeerId& peerId) ;	// converts IDs so that we can talk to RsPeerId from outside
-
-		p3turtle *mTurtle ;
-		p3IdService *mIdService ;
 };
 
 class p3ChatService::StateStringInfo

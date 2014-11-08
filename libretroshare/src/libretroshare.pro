@@ -319,6 +319,8 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/fttransfermodule.h \
 			ft/ftturtlefiletransferitem.h 
 
+HEADERS += chat/distantchat.h
+
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
@@ -470,6 +472,8 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
 			ft/ftturtlefiletransferitem.cc 
+
+SOURCES += chat/distantchat.cc
 
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
