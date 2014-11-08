@@ -212,7 +212,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 			comment += "]";
 		}
 		else
-			comment += QObject::tr("signed by unknown Key") ;
+			comment += QObject::tr("unknown Key") ;
 	}
 	else
 		comment += "Authentication: anonymous" ;
