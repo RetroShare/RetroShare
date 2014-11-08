@@ -20,7 +20,6 @@ FORMS = NetworkSimulatorGUI.ui TurtleRouterStatistics.ui GlobalRouterStatistics.
 
 LIBS *= ../../../lib/libretroshare.a \
         ../../../../../libbitdht/src/lib/libbitdht.a \
-		  ../../../../../../lib/sqlcipher/.libs/libsqlcipher.a   \
 		  ../../../../../openpgpsdk/src/lib/libops.a \
 		  ../lib/libnscore.a \
-		  -lgnome-keyring -lupnp -lssl -lcrypto -lbz2 -lixml
+		  -lsqlcipher -lgnome-keyring -lupnp -lssl -lcrypto -lbz2 -lixml
