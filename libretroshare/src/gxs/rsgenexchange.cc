@@ -2375,6 +2375,10 @@ bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet 
         return false;
 
     keySet = meta->keys;
+
+    for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator it=grpMeta.begin();it!=grpMeta.end();++it)
+        delete it->second ;
+
     return true;
 }
 
