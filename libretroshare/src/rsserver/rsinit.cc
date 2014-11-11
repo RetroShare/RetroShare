@@ -852,9 +852,10 @@ RsGRouter *rsGRouter = NULL ;
 #include "services/p3heartbeat.h"
 #include "services/p3discovery2.h"
 #include "services/p3msgservice.h"
-#include "services/p3chatservice.h"
 #include "services/p3statusservice.h"
+
 #include "turtle/p3turtle.h"
+#include "chat/p3chatservice.h"
 
 #ifdef RS_ENABLE_GXS
 // NEW GXS SYSTEMS.

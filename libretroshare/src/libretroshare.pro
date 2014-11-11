@@ -319,7 +319,10 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/fttransfermodule.h \
 			ft/ftturtlefiletransferitem.h 
 
-HEADERS += chat/distantchat.h
+HEADERS += chat/distantchat.h \
+			  chat/p3chatservice.h \
+			  chat/distributedchat.h \
+			  chat/rschatitems.h
 
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
@@ -418,8 +421,7 @@ HEADERS +=	serialiser/rsbaseserial.h \
                         serialiser/rsgxsupdateitems.h \
                         serialiser/rsserviceinfoitems.h \
 
-HEADERS +=	services/p3chatservice.h \
-			services/p3msgservice.h \
+HEADERS +=	services/p3msgservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3banlist.h \
@@ -473,7 +475,10 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/fttransfermodule.cc \
 			ft/ftturtlefiletransferitem.cc 
 
-SOURCES += chat/distantchat.cc
+SOURCES += chat/distantchat.cc \
+			  chat/p3chatservice.cc \
+			  chat/distributedchat.cc \
+			  chat/rschatitems.cc
 
 SOURCES +=	pqi/authgpg.cc \
 			pqi/authssl.cc \
@@ -564,8 +569,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
                         serialiser/rsgxsupdateitems.cc \
                         serialiser/rsserviceinfoitems.cc \
 
-SOURCES +=	services/p3chatservice.cc \
-			services/p3msgservice.cc \
+SOURCES +=	services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
 			services/p3banlist.cc \

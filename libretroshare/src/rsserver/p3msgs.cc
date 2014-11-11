@@ -39,7 +39,7 @@ const int p3facemsgzone = 11453;
 #include "rsserver/p3msgs.h"
 
 #include "services/p3msgservice.h"
-#include "services/p3chatservice.h"
+#include "chat/p3chatservice.h"
 
 #include "pqi/authgpg.h"
 

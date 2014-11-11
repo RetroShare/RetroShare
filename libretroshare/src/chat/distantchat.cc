@@ -45,7 +45,7 @@
 #include <retroshare/rsids.h>
 #include "distantchat.h"
 
-#define DEBUG_DISTANT_CHAT
+//#define DEBUG_DISTANT_CHAT
 
 void DistantChatService::connectToTurtleRouter(p3turtle *tr)
 {

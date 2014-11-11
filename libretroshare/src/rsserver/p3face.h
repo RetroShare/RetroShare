@@ -38,8 +38,9 @@
 #include "retroshare/rstypes.h"
 #include "util/rsthreads.h"
 
+#include "chat/p3chatservice.h"
+
 #include "services/p3msgservice.h"
-#include "services/p3chatservice.h"
 #include "services/p3statusservice.h"
 
 class p3heartbeat;

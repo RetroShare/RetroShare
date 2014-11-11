@@ -35,6 +35,7 @@
 #include "services/p3service.h"
 #include "pqi/pqiservicemonitor.h"
 #include "chat/distantchat.h"
+#include "chat/distributedchat.h"
 #include "retroshare/rsmsgs.h"
 
 class p3ServiceControl;
@@ -50,7 +51,7 @@ typedef RsPeerId ChatLobbyVirtualPeerId ;
   * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
   * @see NotifyBase
   */
-class p3ChatService: public p3Service, public DistantChatService, public p3Config, public pqiServiceMonitor
+class p3ChatService: public p3Service, public DistantChatService, public DistributedChatService, public p3Config, public pqiServiceMonitor
 {
 	public:
 		p3ChatService(p3ServiceControl *cs, p3IdService *pids,p3LinkMgr *cm, p3HistoryMgr *historyMgr);
@@ -172,26 +173,6 @@ class p3ChatService: public p3Service, public DistantChatService, public p3Confi
 		 */
 		bool clearPrivateChatQueue(bool incoming, const RsPeerId &id);
 
-		bool getVirtualPeerId(const ChatLobbyId& lobby_id, RsPeerId& virtual_peer_id) ;
-		bool isLobbyId(const RsPeerId& virtual_peer_id, ChatLobbyId& lobby_id) ;
-		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >& cl_infos) ;
-		bool acceptLobbyInvite(const ChatLobbyId& id) ;
-		void denyLobbyInvite(const ChatLobbyId& id) ;
-		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
-		void invitePeerToLobby(const ChatLobbyId&, const RsPeerId& peer_id,bool connexion_challenge = false) ;
-		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
-		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
-		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
-		bool setDefaultNickNameForChatLobby(const std::string& nick) ;
-		bool getDefaultNickNameForChatLobby(std::string& nick) ;
-		void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
-		bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
-		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
-		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic, const std::list<RsPeerId>& invited_friends,uint32_t privacy_type) ;
-
-		void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
-		bool joinVisibleChatLobby(const ChatLobbyId& id) ;
-
 	protected:
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -204,6 +185,12 @@ class p3ChatService: public p3Service, public DistantChatService, public p3Confi
 		virtual bool loadList(std::list<RsItem*>& load) ;
 
 		bool isOnline(const RsPeerId& id) ;
+
+		/// This is to be used by subclasses/parents to call IndicateConfigChanged()
+		virtual void triggerConfigSave()  { IndicateConfigChanged() ; }
+		/// Same, for storing messages in incoming list
+		virtual void locked_storeIncomingMsg(RsChatMsgItem *) ;
+
 	private:
 		RsMutex mChatMtx;
 
@@ -214,12 +201,9 @@ class p3ChatService: public p3Service, public DistantChatService, public p3Confi
 		void receiveChatQueue();
 		void handleIncomingItem(RsItem *);	// called by the former, and turtle handler for incoming encrypted items
 
-		void sendPrivateChatItem(RsChatItem *) ;
+		virtual void sendChatItem(RsChatItem *) ;
 
 		void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
-
-		/// make some statistics about time shifts, to prevent various issues. 
-		void addTimeShiftStatistics(int shift) ;
 
 		/// Send avatar info to peer in jpeg format.
 		void sendAvatarJpegData(const RsPeerId& peer_id) ;
@@ -235,12 +219,6 @@ class p3ChatService: public p3Service, public DistantChatService, public p3Confi
 		bool handleRecvChatMsgItem(RsChatMsgItem *item) ;			// returns false if the item should be deleted.
 		void handleRecvChatStatusItem(RsChatStatusItem *item) ;
 		void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
-		void handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item) ;
-		void handleRecvChatLobbyList(RsChatLobbyListItem *item) ;
-		void handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item) ;
-
-		/// Checks that the lobby object is not flooding a lobby.
-		bool locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id,uint32_t lobby_count) ;
 
 		/// Sends a request for an avatar to the peer of given id
 		void sendAvatarRequest(const RsPeerId& peer_id) ;
@@ -249,37 +227,12 @@ class p3ChatService: public p3Service, public DistantChatService, public p3Confi
 		void sendCustomStateRequest(const RsPeerId& peer_id);
 
 		/// called as a proxy to sendItem(). Possibly splits item into multiple items of size lower than the maximum item size.
-		void checkSizeAndSendMessage(RsChatLobbyMsgItem *item) ;
-		void checkSizeAndSendMessage_deprecated(RsChatMsgItem *item) ;	// keep for compatibility for a few weeks.
+        //void checkSizeAndSendMessage(RsChatLobbyMsgItem *item) ;
+        void checkSizeAndSendMessage(RsChatMsgItem *item) ;	// keep for compatibility for a few weeks.
 
 		/// Called when a RsChatMsgItem is received. The item may be collapsed with any waiting partial chat item from the same peer.
-		bool locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem*) ;
-		bool locked_checkAndRebuildPartialMessage_deprecated(RsChatMsgItem*) ;
+        bool locked_checkAndRebuildPartialMessage(RsChatMsgItem *) ;
 
-		/// receive and handle chat lobby item
-		bool recvLobbyChat(RsChatLobbyMsgItem*,const RsPeerId& src_peer_id) ;
-		bool sendLobbyChat(const RsPeerId &id, const std::string&, const ChatLobbyId&) ;
-		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
-		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
-		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;
-		void sendConnectionChallenge(ChatLobbyId id) ;
-		void handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem*) ;
-		void cleanLobbyCaches() ;
-		bool bounceLobbyObject(RsChatLobbyBouncingObject *obj, const RsPeerId& peer_id) ;
-
-		void sendLobbyStatusItem(const ChatLobbyId&, int type, const std::string& status_string) ;
-		void sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id) ;
-		void sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick) ;
-
-		void sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id) ;
-		void sendLobbyStatusKeepAlive(const ChatLobbyId&) ;
-
-		bool locked_initLobbyBouncableObject(const ChatLobbyId& id,RsChatLobbyBouncingObject&) ;
-
-		static ChatLobbyVirtualPeerId makeVirtualPeerId(ChatLobbyId) ;
-		static uint64_t makeConnexionChallengeCode(const RsPeerId& peer_id,ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;
-
-		void locked_printDebugInfo() const ;
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
@@ -294,36 +247,9 @@ class p3ChatService: public p3Service, public DistantChatService, public p3Confi
 		AvatarInfo *_own_avatar ;
 		std::map<RsPeerId,AvatarInfo *> _avatars ;
 		std::map<RsPeerId,RsChatMsgItem *> _pendingPartialMessages ;	
-		std::map<ChatLobbyMsgId,std::vector<RsChatLobbyMsgItem*> > _pendingPartialLobbyMessages ;	// should be used for all chat msgs after version updgrade
+
 		std::string _custom_status_string ;
 		std::map<RsPeerId,StateStringInfo> _state_strings ;
-
-		class ChatLobbyEntry: public ChatLobbyInfo
-		{
-			public:
-				std::map<ChatLobbyMsgId,time_t> msg_cache ;
-				RsPeerId virtual_peer_id ;
-				int connexion_challenge_count ;
-				time_t last_connexion_challenge_time ;
-				time_t last_keep_alive_packet_time ;
-				std::set<RsPeerId> previously_known_peers ;
-				uint32_t flags ;
-		};
-
-		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
-		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
-		std::map<ChatLobbyId,VisibleChatLobbyRecord> _visible_lobbies ;
-		std::map<ChatLobbyVirtualPeerId,ChatLobbyId> _lobby_ids ;
-		std::map<ChatLobbyId,ChatLobbyFlags> _known_lobbies_flags ;	// flags for all lobbies, including the ones that are not known. So we can't
-																				// store them in _chat_lobbies (subscribed lobbies) nor _visible_lobbies.
-																				// Known flags:
-																				// 		RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE
-
-		std::string _default_nick_name ;
-		float _time_shift_average ;
-		time_t last_lobby_challenge_time ; 					// prevents bruteforce attack
-		time_t last_visible_lobby_info_request_time ;	// allows to ask for updates
-		bool _should_reset_lobby_counts ;
 
 		RsChatSerialiser *_serializer ;
 };

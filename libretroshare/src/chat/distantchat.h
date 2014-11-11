@@ -26,6 +26,9 @@
 #pragma once
 
 #include <turtle/turtleclientservice.h>
+#include <chat/rschatitems.h>
+#include <retroshare/rsmsgs.h>
+
 
 class p3IdService ;
 
