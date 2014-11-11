@@ -120,13 +120,7 @@ const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
 class RsFeedItem
 {
 	public:
-		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
-			:mType(type), mId1(id1), mId2(id2), mId3(id3)
-		{
-			return;
-		}
-
-		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4)
+		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2 = "", const std::string& id3 = "", const std::string& id4 = "")
 			:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4) {}
 
 		RsFeedItem() :mType(0) { return; }
@@ -203,8 +197,8 @@ class NotifyClient
 		virtual void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
 		virtual void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
 		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) { signature_result = false ;return true; }
-		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {};
-		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {};
+		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
+		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
 		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
 
 		virtual bool askForPassword                   (const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */ ) { return false ;}

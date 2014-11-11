@@ -57,7 +57,6 @@ class p3ConnectMgr;
 class CacheStrapper;
 class CacheTransfer;
 
-class pqiNotify; /* needed by FiStore */
 class ftCacheStrapper;
 class ftFiStore;
 class ftFiMonitor;

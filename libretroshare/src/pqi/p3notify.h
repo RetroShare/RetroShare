@@ -86,13 +86,12 @@ class p3Notify: public RsNotify
 		bool SetSysMessageMode(uint32_t sysid, uint32_t mode);
 		bool SetPopupMessageMode(uint32_t ptype, uint32_t mode);
 
-		/* Overloaded from pqiNotify */
-		virtual bool AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg);
-		virtual bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
-		virtual bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
-		virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3);
-		virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4);
-		virtual bool ClearFeedItems(uint32_t type);
+		/* Notify messages */
+		bool AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg);
+		bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
+		bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
+		bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2 = "", const std::string& id3 = "", const std::string& id4 = "");
+		bool ClearFeedItems(uint32_t type);
 
 		// Notifications of clients. Can be called from anywhere inside libretroshare.
 		//

@@ -196,15 +196,6 @@ bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::str
 	return true;
 }
 
-bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
-{
-	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3));
-
-	return true;
-}
-
-
 bool p3Notify::ClearFeedItems(uint32_t type)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/

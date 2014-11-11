@@ -35,7 +35,6 @@
  */
 
 class p3PeerMgr ;
-class pqiNotify ;
 
 #include "dbase/findex.h"
 #include "dbase/cachestrapper.h"

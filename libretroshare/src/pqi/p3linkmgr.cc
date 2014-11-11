@@ -472,7 +472,7 @@ void p3LinkMgrIMPL::tickMonitors()
 					if (notify)
 					{
 						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id.toStdString(),"", "Online: ");
-						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id.toStdString(), "", "");
+						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id.toStdString());
 					}
 				}
 			}
