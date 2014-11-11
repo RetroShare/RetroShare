@@ -79,14 +79,14 @@ void GroupShareKey::setTyp()
             
         ui->headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
         ui->headerFrame->setHeaderText(tr("Share Channel"));    
-
-
+        ui->sharekeyinfo_label->setText(tr("You can let your friends know about your Channel by sharing it with them. Select the Friends with which you want to Share your Channel."));
     }
     else if(mGrpType == FORUM_KEY_SHARE)
     {
         
         ui->headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
         ui->headerFrame->setHeaderText(tr("Share Forum")); 
+        ui->sharekeyinfo_label->setText(tr("You can let your friends know about your Forum by sharing it with them. Select the Friends with which you want to Share your Forum."));
 
     }
     else if (mGrpType == POSTED_KEY_SHARE)
@@ -95,7 +95,8 @@ void GroupShareKey::setTyp()
             return;
         
         ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));    
-        ui->headerFrame->setHeaderText(tr("Share Posted"));     
+        ui->headerFrame->setHeaderText(tr("Share Posted"));
+        ui->sharekeyinfo_label->setText(tr("You can let your friends know about your Posted by sharing it with them. Select the Friends with which you want to Share your Posted."));     
 
     }
     else
