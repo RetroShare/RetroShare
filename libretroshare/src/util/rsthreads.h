@@ -30,6 +30,7 @@
 #include <pthread.h>
 #include <inttypes.h>
 #include <string>
+#include <iostream>
 
 /* RsIface Thread Wrappers */
 
@@ -44,14 +45,15 @@ class RsMutex
 	RsMutex(const std::string& name)
 	{
 		/* remove unused parameter warnings */
-		(void) name;
 
 		pthread_mutex_init(&realMutex, NULL);
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 		_thread_id = 0 ;
 #endif
 #ifdef RSMUTEX_DEBUG
-		this->name = name;
+		this->_name = name;
+#else
+		(void) name;
 #endif
 	}
 	~RsMutex() 
@@ -63,13 +65,17 @@ class RsMutex
 #ifdef RSMUTEX_DEBUG
 	void setName(const std::string &name)
 	{
-		this->name = name;
+		this->_name = name;
 	}
 #endif
 
 	void	lock();
 	void	unlock();
 	bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
+
+#ifdef RSMUTEX_DEBUG
+	const std::string& name() const { return _name ; }
+#endif
 
 	private:
 		pthread_mutex_t  realMutex;
@@ -78,10 +84,7 @@ class RsMutex
 		uint32_t _cnt ;
 #endif
 #ifdef RSMUTEX_DEBUG
-		static double getCurrentTS() ;
-
-		std::string name;
-		double _time_stamp ;
+		std::string _name;
 #endif
 };
 
@@ -89,12 +92,79 @@ class RsStackMutex
 {
 	public:
 
-	RsStackMutex(RsMutex &mtx): mMtx(mtx) { mMtx.lock(); }
-	~RsStackMutex() { mMtx.unlock(); }
+		RsStackMutex(RsMutex &mtx)
+			: mMtx(mtx) 
+		{ 
+			mMtx.lock(); 
+#ifdef RSMUTEX_DEBUG
+			double ts = getCurrentTS() ;
+			_time_stamp = ts ;
+			_lineno = 0 ;
+			_info = "[no info]" ;
+#endif
+		}
+		RsStackMutex(RsMutex &mtx,const char *function_name,const char *file_name,int lineno)
+			: mMtx(mtx)
+#ifdef RSMUTEX_DEBUG
+			, _info(std::string(function_name)+" in file "+file_name),_lineno(lineno)
+#endif
+		{ 
+#ifdef RSMUTEX_DEBUG
+			double ts = getCurrentTS() ;
+			_time_stamp = ts ;
+			pthread_t owner = mMtx.owner() ;
+#endif
+
+			mMtx.lock(); 
+
+#ifdef RSMUTEX_DEBUG
+			ts = getCurrentTS() ;
+
+			if(ts - _time_stamp > 1.0)
+				std::cerr << "Mutex " << (void*)&mMtx << " \"" << mtx.name() << "\"" 
+					<< " waited for " << ts - _time_stamp 
+					<< " seconds in thread " << pthread_self() 
+					<< " for locked thread " << owner << ". in " << _info << ":" << _lineno << std::endl;
+
+			_time_stamp = ts ;	// This is to re-init the locking time without accounting for how much we waited.
+#endif
+		}
+
+		~RsStackMutex() 
+		{ 
+			mMtx.unlock(); 
+#ifdef RSMUTEX_DEBUG
+			double ts = getCurrentTS() ;
+
+			if(ts - _time_stamp > 1.0)
+				std::cerr << "Mutex " << (void*)&mMtx << " \"" << mMtx.name() << "\"" 
+					<< " locked for " << ts - _time_stamp 
+					<< " seconds in thread " << pthread_self() 
+					<< ". in " << _info << ":" << _lineno << std::endl;
+#endif
+		}
 
 	private:
-	RsMutex &mMtx;
+		RsMutex &mMtx;
+
+#ifdef RSMUTEX_DEBUG
+		static double getCurrentTS() ;
+		double _time_stamp ;
+		std::string _info ;
+		int _lineno ;
+#endif
 };
+
+// This macro allows you to trace which mutex in the code is locked for how much time.
+// se this as follows:
+//
+// {
+// 	RS_STACK_MUTEX(myMutex) ;
+//
+// 	do_something() ;
+// }
+//
+#define RS_STACK_MUTEX(m) RsStackMutex __local_retroshare_mutex(m,__PRETTY_FUNCTION__,__FILE__,__LINE__) 
 
 class RsThread;
 

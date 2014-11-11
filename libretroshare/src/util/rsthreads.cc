@@ -186,12 +186,6 @@ void RsMutex::unlock()
 #ifndef WIN32
 		_thread_id = 0 ;
 #endif
-#ifdef RSMUTEX_DEBUG
-		double ts = getCurrentTS() ;
-
-		if(ts - _time_stamp > 1.0)	// locked for more than 0.5 seconds => somthing fishy is happenning
-			std::cerr << "Mutex " << (void*)this << " \"" << name << "\"" << " got locked for " << ts - _time_stamp << " seconds in thread " << pthread_self() << std::endl;
-#endif
 		pthread_mutex_unlock(&realMutex); 
 
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
@@ -202,7 +196,6 @@ void RsMutex::unlock()
 void RsMutex::lock()
 {
 #ifdef RSMUTEX_DEBUG
-	_time_stamp = getCurrentTS() ;
 	pthread_t owner = _thread_id ;
 #endif
 
@@ -213,14 +206,6 @@ void RsMutex::lock()
 #endif
 			retval = pthread_mutex_lock(&realMutex);
 
-#ifdef RSMUTEX_DEBUG
-	double ts = getCurrentTS() ;
-
-	if(ts - _time_stamp > 1.0)
-		std::cerr << "Mutex " << (void*)this << " \"" << name << "\"" << " waited for " << ts - _time_stamp << " seconds in thread " << pthread_self() << " for locked thread " << owner << std::endl;
-
-	_time_stamp = getCurrentTS() ;	// This is to re-init the locking time without accounting for how much we waited.
-#endif
 	switch(retval)
 	{
 		case 0:
@@ -279,9 +264,8 @@ void RsMutex::lock()
 	++_cnt ;
 #endif
 }
-
 #ifdef RSMUTEX_DEBUG
-double RsMutex::getCurrentTS()
+double RsStackMutex::getCurrentTS()
 {
 
 #ifndef WINDOWS_SYS
@@ -296,4 +280,5 @@ double RsMutex::getCurrentTS()
         return cts;
 }
 #endif
+
 

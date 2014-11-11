@@ -106,7 +106,7 @@ public:
 
     static void recordEvent(uint16_t service_type, RsItem *item)
     {
-        RsStackMutex m(mtx) ;
+		  RS_STACK_MUTEX(mtx) ;
 
         uint32_t bw = RsNxsSerialiser(service_type).size(item) ;	// this is used to estimate bandwidth.
         timeval tv ;
@@ -208,7 +208,7 @@ void RsGxsNetService::syncWithPeers()
 
     static RsNxsSerialiser ser(mServType) ;	// this is used to estimate bandwidth.
 
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 	std::set<RsPeerId> peers;
 	mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
@@ -811,7 +811,7 @@ struct get_second : public std::unary_function<typename UpdateMap::value_type, R
 
 bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
-    RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
     // hardcore templates
     std::transform(mClientGrpUpdateMap.begin(), mClientGrpUpdateMap.end(),
@@ -896,7 +896,7 @@ bool RsGxsNetService::handleTransaction(RsNxsItem* item)
 	 * If it does then check this not a initiating transactions
 	 */
 
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 	const RsPeerId& peer = item->PeerId();
 
@@ -1081,7 +1081,7 @@ void RsGxsNetService::run(){
 
 void RsGxsNetService::updateServerSyncTS()
 {
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*> gxsMap;
 
@@ -1143,7 +1143,7 @@ bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 
 void RsGxsNetService::processTransactions(){
 
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 	TransactionsPeerMap::iterator mit = mTransactions.begin();
 
@@ -1330,7 +1330,7 @@ void RsGxsNetService::processTransactions(){
 
 int RsGxsNetService::getGroupPopularity(const RsGxsGroupId& gid)
 {
-    RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
     std::map<RsGxsGroupId,std::set<RsPeerId> >::const_iterator it = mGroupSuppliers.find(gid) ;
 
@@ -1342,7 +1342,7 @@ int RsGxsNetService::getGroupPopularity(const RsGxsGroupId& gid)
 
 void RsGxsNetService::processCompletedTransactions()
 {
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 	/*!
 	 * Depending on transaction we may have to respond to peer
 	 * responsible for transaction
@@ -2006,7 +2006,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 
 void RsGxsNetService::runVetting()
 {
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 	std::vector<AuthorPending*>::iterator vit = mPendingResp.begin();
 
@@ -2281,7 +2281,7 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrp *item)
 void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 {
 
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
         if(!locked_CanReceiveUpdate(item))
 	{
@@ -2629,7 +2629,7 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
 }
 void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 {
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
     // We do that early, so as to get info about who sends data about which group,
     // even when the group doesn't need update.
@@ -2827,14 +2827,14 @@ void RsGxsNetService::setSyncAge(uint32_t /* age */)
 
 int RsGxsNetService::requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId)
 {
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 	mExplicitRequest[peerId].assign(grpId.begin(), grpId.end());
 	return 1;
 }
 
 void RsGxsNetService::processExplicitGroupRequests()
 {
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 	std::map<RsPeerId, std::list<RsGxsGroupId> >::const_iterator cit = mExplicitRequest.begin();
 
@@ -2866,7 +2866,7 @@ void RsGxsNetService::processExplicitGroupRequests()
 #define NXS_NET_DEBUG
 int RsGxsNetService::sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)
 {
-	RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 	mPendingPublishKeyRecipients[grpId] = peers ;
 
@@ -2877,7 +2877,7 @@ int RsGxsNetService::sharePublishKey(const RsGxsGroupId& grpId,const std::list<R
 
 void RsGxsNetService::sharePublishKeysPending()
 {
-    RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
     if(mPendingPublishKeyRecipients.empty())
         return ;
@@ -3001,7 +3001,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 #ifdef NXS_NET_DEBUG
     std::cerr << "RsGxsNetService::sharePublishKeys() " << std::endl;
 #endif
-	 RsStackMutex stack(mNxsMutex);
+	RS_STACK_MUTEX(mNxsMutex) ;
 
 #ifdef NXS_NET_DEBUG
 	 std::cerr << "  PeerId : " << item->PeerId() << std::endl;

@@ -221,7 +221,7 @@ void RsGenExchange::tick()
 
 				if (!grpIds.empty())
 				{
-					RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
 					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
 					gc->mGrpIdList = grpIds;
@@ -229,7 +229,7 @@ void RsGenExchange::tick()
 				}
 
 				if (!msgIds.empty()) {
-					RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
 					RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
 					c->msgChangeMap = msgIds;
@@ -262,7 +262,7 @@ bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
                 RsGxsGrpMsgIdPair& msgId)
 {
-	RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::acknowledgeTokenMsg(). token=" << token << std::endl;
@@ -294,7 +294,7 @@ bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
 
 bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token, RsGxsGroupId& grpId)
 {
-	RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::acknowledgeTokenGrp(). token=" << token << std::endl;
@@ -984,7 +984,7 @@ bool RsGenExchange::checkAuthenFlag(const PrivacyBitPos& pos, const uint8_t& fla
 
 void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 {
-	RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::receiveChanges()" << std::endl;
@@ -1277,7 +1277,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 
 bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 {
-	RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
 	NxsMsgDataResult msgResult;
 	bool ok = mDataAccess->getMsgData(token, msgResult);
 	NxsMsgDataResult::iterator mit = msgResult.begin();
@@ -1328,7 +1328,7 @@ bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 
 bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap &msgItems)
 {
-    RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
     NxsMsgRelatedDataResult msgResult;
     bool ok = mDataAccess->getMsgRelatedData(token, msgResult);
 
@@ -1422,7 +1422,7 @@ bool RsGenExchange::setAuthenPolicyFlag(const uint8_t &msgFlag, uint32_t& authen
 
 void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 {
-    RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
 
     std::vector<RsNxsGrp*>::iterator vit = groups.begin();
 
@@ -1456,7 +1456,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 
 void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 {
-    RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
 
     std::vector<RsNxsMsg*>::iterator vit = messages.begin();
 
@@ -1492,7 +1492,7 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 {
 
-    RsStackMutex stack(mGenMtx);
+	RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
     GxsGrpPendingSign ggps(grpItem, token);
     mGrpsToPublish.push_back(ggps);
@@ -1507,7 +1507,7 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 
 void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 {
-	RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
         mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));
 
@@ -1519,7 +1519,7 @@ void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 
 void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 {
-	RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
 	mGroupDeletePublish.push_back(GroupDeletePublish(grpItem, token));
 
@@ -1531,7 +1531,7 @@ void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 
 void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
     mMsgsToPublish.insert(std::make_pair(token, msgItem));
 
@@ -1545,7 +1545,7 @@ void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
 void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag, const uint32_t& mask)
 {
 	/* TODO APPLY MASK TO FLAGS */
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
 
     GrpLocMetaData g;
@@ -1558,7 +1558,7 @@ void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& 
 void RsGenExchange::setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& status, const uint32_t& mask)
 {
 	/* TODO APPLY MASK TO FLAGS */
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
 
     GrpLocMetaData g;
@@ -1571,7 +1571,7 @@ void RsGenExchange::setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grp
 
 void RsGenExchange::setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString)
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
 
     GrpLocMetaData g;
@@ -1583,7 +1583,7 @@ void RsGenExchange::setGroupServiceString(uint32_t& token, const RsGxsGroupId& g
 void RsGenExchange::setMsgStatusFlags(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const uint32_t& status, const uint32_t& mask)
 {
 	/* TODO APPLY MASK TO FLAGS */
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
 
     MsgLocMetaData m;
@@ -1595,7 +1595,7 @@ void RsGenExchange::setMsgStatusFlags(uint32_t& token, const RsGxsGrpMsgIdPair& 
 
 void RsGenExchange::setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString )
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
 
     MsgLocMetaData m;
@@ -1606,7 +1606,7 @@ void RsGenExchange::setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair
 
 void RsGenExchange::processMsgMetaChanges()
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
     GxsMsgReq msgIds;
 
@@ -1682,7 +1682,7 @@ void RsGenExchange::processMsgMetaChanges()
 
 void RsGenExchange::processGrpMetaChanges()
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
     std::list<RsGxsGroupId> grpChanged;
 
@@ -1775,7 +1775,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 void RsGenExchange::publishMsgs()
 {
 
-	RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
 	// stick back msgs pending signature
 	typedef std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> > PendSignMap;
@@ -1970,7 +1970,7 @@ RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpI
 
 void RsGenExchange::processGroupUpdatePublish()
 {
-	RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
 	// get keys for group update publish
 
@@ -2040,7 +2040,7 @@ void RsGenExchange::processGroupUpdatePublish()
 
 void RsGenExchange::processRoutingClues()
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
     for(std::map<RsGxsId,std::set<RsPeerId> >::const_iterator it = mRoutingClues.begin();it!=mRoutingClues.end();++it)
         for(std::set<RsPeerId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
@@ -2050,7 +2050,7 @@ void RsGenExchange::processRoutingClues()
 }
 void RsGenExchange::processGroupDelete()
 {
-	RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
     // get keys for group delete publish
 	typedef std::pair<bool, RsGxsGroupId> GrpNote;
@@ -2122,7 +2122,7 @@ bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 
 void RsGenExchange::publishGrps()
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     NxsGrpSignPendVect::iterator vit = mGrpsToPublish.begin();
 
     typedef std::pair<bool, RsGxsGroupId> GrpNote;
@@ -2360,7 +2360,7 @@ bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet 
     if(grpId.isNull())
         return false;
 
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
     std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
     grpMeta[grpId] = NULL;
@@ -2410,7 +2410,7 @@ void RsGenExchange::computeHash(const RsTlvBinaryData& data, RsFileHash& hash)
 
 void RsGenExchange::processRecvdMessages()
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
 	 if(!mMsgPendingValidate.empty())
@@ -2604,7 +2604,7 @@ void RsGenExchange::processRecvdMessages()
 
 void RsGenExchange::processRecvdGroups()
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
     if(mReceivedGrps.empty())
         return;
@@ -2721,7 +2721,7 @@ void RsGenExchange::processRecvdGroups()
 
 void RsGenExchange::performUpdateValidation()
 {
-	RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
 
 	if(mGroupUpdates.empty())
 		return;
@@ -2816,7 +2816,7 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 
 void RsGenExchange::setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff)
 {
-    RsStackMutex stack(mGenMtx);
+					RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
 
     GrpLocMetaData g;
