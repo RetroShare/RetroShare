@@ -28,6 +28,8 @@
 
 #include <retroshare/rsidentity.h>
 
+#include "rsserver/p3face.h"
+#include "retroshare/rsnotify.h"
 
 #include "retroshare/rsgxsflags.h"
 #include <stdio.h>
@@ -98,6 +100,51 @@ uint32_t p3GxsForums::forumsAuthenPolicy()
 
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
+	if (!changes.empty())
+	{
+		p3Notify *notify = RsServer::notify();
+
+		if (notify)
+		{
+			std::vector<RsGxsNotify*>::iterator it;
+			for(it = changes.begin(); it != changes.end(); ++it)
+			{
+				RsGxsNotify *c = *it;
+				if (c->getType() == RsGxsNotify::TYPE_RECEIVE)
+				{
+					RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
+					if (msgChange)
+					{
+						std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+						std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+						for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+						{
+							std::vector<RsGxsMessageId>::iterator mit1;
+							for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+							{
+								notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
+							}
+						}
+						continue;
+					}
+
+					RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+					if (grpChange)
+					{
+						/* group received */
+						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+						std::list<RsGxsGroupId>::iterator git;
+						for (git = grpList.begin(); git != grpList.end(); ++git)
+						{
+							notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
+						}
+						continue;
+					}
+				}
+			}
+		}
+	}
+
 	RsGxsIfaceHelper::receiveChanges(changes);
 }
 

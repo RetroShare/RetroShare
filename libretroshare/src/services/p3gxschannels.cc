@@ -33,6 +33,9 @@
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsfiles.h"
 
+#include "rsserver/p3face.h"
+#include "retroshare/rsnotify.h"
+
 #include <stdio.h>
 
 // For Dummy Msgs.
@@ -128,6 +131,12 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << "p3GxsChannels::notifyChanges()";
 	std::cerr << std::endl;
 
+	p3Notify *notify = NULL;
+	if (!changes.empty())
+	{
+		notify = RsServer::notify();
+	}
+
 	/* iterate through and grab any new messages */
 	std::list<RsGxsGroupId> unprocessedGroups;
 
@@ -135,26 +144,64 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-		if (msgChange && !msgChange->metaChange())
+		if (msgChange)
 		{
-			std::cerr << "p3GxsChannels::notifyChanges() Found Message Change Notification";
-			std::cerr << std::endl;
-
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVE)
 			{
-				std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
+				/* message received */
+				if (notify)
+				{
+					std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+					std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+					for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+					{
+						std::vector<RsGxsMessageId>::iterator mit1;
+						for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+						{
+							notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_MSG, mit->first.toStdString(), mit1->toStdString());
+						}
+					}
+				}
+			}
+
+			if (!msgChange->metaChange())
+			{
+				std::cerr << "p3GxsChannels::notifyChanges() Found Message Change Notification";
 				std::cerr << std::endl;
 
-				if (autoDownloadEnabled(mit->first))
+				std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+				std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+				for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 				{
-					std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
+					std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
 					std::cerr << std::endl;
 
-					/* problem is most of these will be comments and votes, 
-					 * should make it occasional - every 5mins / 10minutes TODO */
-					unprocessedGroups.push_back(mit->first);
+					if (autoDownloadEnabled(mit->first))
+					{
+						std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
+						std::cerr << std::endl;
+
+						/* problem is most of these will be comments and votes,
+						 * should make it occasional - every 5mins / 10minutes TODO */
+						unprocessedGroups.push_back(mit->first);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (notify && (*it)->getType() == RsGxsNotify::TYPE_RECEIVE)
+			{
+				RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+				if (grpChange)
+				{
+					/* group received */
+					std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+					std::list<RsGxsGroupId>::iterator git;
+					for (git = grpList.begin(); git != grpList.end(); ++git)
+					{
+						notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
+					}
 				}
 			}
 		}

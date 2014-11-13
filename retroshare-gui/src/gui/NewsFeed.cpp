@@ -30,12 +30,10 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
 
-#if 0
-#include "feeds/ChanNewItem.h"
-#include "feeds/ChanMsgItem.h"
-#include "feeds/ForumNewItem.h"
-#include "feeds/ForumMsgItem.h"
-#endif
+//#include "feeds/ChanNewItem.h"
+#include "feeds/GxsChannelPostItem.h"
+//#include "feeds/ForumNewItem.h"
+//#include "feeds/ForumMsgItem.h"
 #include "settings/rsettingswin.h"
 
 #ifdef BLOGS
@@ -54,20 +52,20 @@
 #include "msgs/MessageComposer.h"
 #include "common/FeedNotify.h"
 
-const uint32_t NEWSFEED_PEERLIST = 	0x0001;
+const uint32_t NEWSFEED_PEERLIST =       0x0001;
 
+const uint32_t NEWSFEED_FORUMNEWLIST =   0x0002;
+const uint32_t NEWSFEED_FORUMMSGLIST =   0x0003;
+const uint32_t NEWSFEED_CHANNELNEWLIST = 0x0004;
+const uint32_t NEWSFEED_CHANNELMSGLIST = 0x0005;
 #if 0
-const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
-const uint32_t NEWSFEED_FORUMMSGLIST = 	0x0003;
-const uint32_t NEWSFEED_CHANNEWLIST = 	0x0004;
-const uint32_t NEWSFEED_CHANMSGLIST = 	0x0005;
-const uint32_t NEWSFEED_BLOGNEWLIST = 	0x0006;
-const uint32_t NEWSFEED_BLOGMSGLIST = 	0x0007;
+const uint32_t NEWSFEED_BLOGNEWLIST =    0x0006;
+const uint32_t NEWSFEED_BLOGMSGLIST =    0x0007;
 #endif
 
-const uint32_t NEWSFEED_MESSAGELIST = 	0x0008;
-const uint32_t NEWSFEED_CHATMSGLIST = 	0x0009;
-const uint32_t NEWSFEED_SECLIST = 	0x000a;
+const uint32_t NEWSFEED_MESSAGELIST =    0x0008;
+const uint32_t NEWSFEED_CHATMSGLIST =    0x0009;
+const uint32_t NEWSFEED_SECLIST =        0x000a;
 
 /*****
  * #define NEWS_DEBUG  1
@@ -174,33 +172,33 @@ void NewsFeed::updateDisplay()
 					addFeedItemSecurityUnknownOut(fi);
 				break;
 
-#if 0
-			case RS_FEED_ITEM_CHAN_NEW:
-				if (flags & RS_FEED_TYPE_CHAN)
-					addFeedItemChanNew(fi);
+			case RS_FEED_ITEM_CHANNEL_NEW:
+				if (flags & RS_FEED_TYPE_CHANNEL)
+					addFeedItemChannelNew(fi);
 				break;
-			case RS_FEED_ITEM_CHAN_UPDATE:
-				if (flags & RS_FEED_TYPE_CHAN)
-					addFeedItemChanUpdate(fi);
-				break;
-			case RS_FEED_ITEM_CHAN_MSG:
-				if (flags & RS_FEED_TYPE_CHAN)
-					addFeedItemChanMsg(fi);
+//			case RS_FEED_ITEM_CHANNEL_UPDATE:
+//				if (flags & RS_FEED_TYPE_CHANNEL)
+//					addFeedItemChannelUpdate(fi);
+//				break;
+			case RS_FEED_ITEM_CHANNEL_MSG:
+				if (flags & RS_FEED_TYPE_CHANNEL)
+					addFeedItemChannelMsg(fi);
 				break;
 
 			case RS_FEED_ITEM_FORUM_NEW:
 				if (flags & RS_FEED_TYPE_FORUM)
 					addFeedItemForumNew(fi);
 				break;
-			case RS_FEED_ITEM_FORUM_UPDATE:
-				if (flags & RS_FEED_TYPE_FORUM)
-					addFeedItemForumUpdate(fi);
-				break;
+//			case RS_FEED_ITEM_FORUM_UPDATE:
+//				if (flags & RS_FEED_TYPE_FORUM)
+//					addFeedItemForumUpdate(fi);
+//				break;
 			case RS_FEED_ITEM_FORUM_MSG:
 				if (flags & RS_FEED_TYPE_FORUM)
 					addFeedItemForumMsg(fi);
 				break;
 
+#if 0
 			case RS_FEED_ITEM_BLOG_NEW:
 				if (flags & RS_FEED_TYPE_BLOG)
 					addFeedItemBlogNew(fi);
@@ -284,7 +282,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			break;
 
 #if 0
-		case RS_FEED_TYPE_CHAN:
+		case RS_FEED_TYPE_CHANNEL:
 		{
 			std::list<ChannelInfo> channelList;
 			rsChannels->getChannelList(channelList);
@@ -516,12 +514,10 @@ void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const RsPeerId &
 	addFeedItem(item);
 }
 
-void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 {
 	/* make new widget */
-    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_CONNECT, false);
-
-	/* store */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_CONNECT, false);
 
 	/* add to layout */
 	addFeedItem(pi);
@@ -533,12 +529,10 @@ void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 
 }
 
-void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 {
 	/* make new widget */
-    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_STD, false);
-
-	/* store */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_STD, false);
 
 	/* add to layout */
 	addFeedItem(pi);
@@ -549,12 +543,10 @@ void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 {
 	/* make new widget */
-    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_HELLO, false);
-
-	/* store */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_HELLO, false);
 
 	/* add to layout */
 	addFeedItem(pi);
@@ -565,12 +557,10 @@ void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 {
 	/* make new widget */
-    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_NEW_FOF, false);
-
-	/* store */
+	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_NEW_FOF, false);
 
 	/* add to layout */
 	addFeedItem(pi);
@@ -581,15 +571,13 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 {
 	/* make new widget */
-    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
-
-	/* store */
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-    addFeedItemIfUnique(pi, fi.mType, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, fi.mType, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityConnectAttempt()";
@@ -597,15 +585,13 @@ void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 {
 	/* make new widget */
-    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
-
-	/* store */
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-    addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityAuthDenied()";
@@ -613,15 +599,13 @@ void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 {
 	/* make new widget */
-    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
-
-	/* store */
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
 
 	/* add to layout */
-    addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownIn()";
@@ -629,15 +613,13 @@ void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 {
 	/* make new widget */
-    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
-
-	/* store */
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
 
 	/* add to layout */
-    addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";
@@ -645,17 +627,13 @@ void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 #endif
 }
 
-#if 0
-void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
+void NewsFeed::addFeedItemChannelNew(RsFeedItem &fi)
 {
-
 	/* make new widget */
-	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, true);
-
-	/* store in list */
+//	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, true);
 
 	/* add to layout */
-	addFeedItem(cni);
+//	addFeedItem(cni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanNew()";
@@ -663,31 +641,34 @@ void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
-{
-	/* make new widget */
-	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, false);
+//void NewsFeed::addFeedItemChannelUpdate(RsFeedItem &fi)
+//{
+//	/* make new widget */
+//	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, false);
 
-	/* store in list */
+//	/* add to layout */
+//	addFeedItem(cni);
+
+//#ifdef NEWS_DEBUG
+//	std::cerr << "NewsFeed::addFeedItemChanUpdate()";
+//	std::cerr << std::endl;
+//#endif
+//}
+
+void NewsFeed::addFeedItemChannelMsg(RsFeedItem &fi)
+{
+	RsGxsGroupId grpId(fi.mId1);
+	RsGxsMessageId msgId(fi.mId2);
+
+	if (grpId.isNull() || msgId.isNull()) {
+		return;
+	}
+
+	/* make new widget */
+	GxsChannelPostItem *item = new GxsChannelPostItem(this, NEWSFEED_CHANNELNEWLIST, grpId, msgId, false, true);
 
 	/* add to layout */
-	addFeedItem(cni);
-
-#ifdef NEWS_DEBUG
-	std::cerr << "NewsFeed::addFeedItemChanUpdate()";
-	std::cerr << std::endl;
-#endif
-}
-
-void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
-{
-	/* make new widget */
-	ChanMsgItem *cm = new ChanMsgItem(this, NEWSFEED_CHANMSGLIST, fi.mId1, fi.mId2, false);
-
-	/* store in forum list */
-
-	/* add to layout */
-	addFeedItem(cm);
+	addFeedItem(item);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanMsg()";
@@ -695,16 +676,13 @@ void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
+void NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 {
 	/* make new widget */
-	ForumNewItem *fni = new ForumNewItem(this, NEWSFEED_FORUMNEWLIST, fi.mId1, false, true);
-
-	/* store in forum list */
-	mForumNewItems.push_back(fni);
+//	ForumNewItem *fni = new ForumNewItem(this, NEWSFEED_FORUMNEWLIST, fi.mId1, false, true);
 
 	/* add to layout */
-	addFeedItem(fni);
+//	addFeedItem(fni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumNew()";
@@ -712,32 +690,27 @@ void	NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
+//void NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
+//{
+//	/* make new widget */
+//	ForumNewItem *fni = new ForumNewItem(this, NEWSFEED_FORUMNEWLIST, fi.mId1, false, false);
+
+//	/* add to layout */
+//	addFeedItem(fni);
+
+//#ifdef NEWS_DEBUG
+//	std::cerr << "NewsFeed::addFeedItemForumUpdate()";
+//	std::cerr << std::endl;
+//#endif
+//}
+
+void NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 {
 	/* make new widget */
-	ForumNewItem *fni = new ForumNewItem(this, NEWSFEED_FORUMNEWLIST, fi.mId1, false, false);
-
-	/* store in forum list */
-	mForumNewItems.push_back(fni);
+//	ForumMsgItem *fm = new ForumMsgItem(this, NEWSFEED_FORUMMSGLIST, fi.mId1, fi.mId2, false);
 
 	/* add to layout */
-	addFeedItem(fni);
-
-#ifdef NEWS_DEBUG
-	std::cerr << "NewsFeed::addFeedItemForumUpdate()";
-	std::cerr << std::endl;
-#endif
-}
-
-void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
-{
-	/* make new widget */
-	ForumMsgItem *fm = new ForumMsgItem(this, NEWSFEED_FORUMMSGLIST, fi.mId1, fi.mId2, false);
-
-	/* store in forum list */
-
-	/* add to layout */
-	addFeedItem(fm);
+//	addFeedItem(fm);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumMsg()";
@@ -745,13 +718,12 @@ void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
+#if 0
+void NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 {
 #ifdef BLOGS
 	/* make new widget */
 	BlogNewItem *bni = new BlogNewItem(this, NEWSFEED_BLOGNEWLIST, fi.mId1, false, true);
-
-	/* store in list */
 
 	/* add to layout */
 	addFeedItem(bni);
@@ -765,13 +737,11 @@ void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
+void NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 {
 #ifdef BLOGS
 	/* make new widget */
 	BlogMsgItem *bm = new BlogMsgItem(this, NEWSFEED_BLOGMSGLIST, fi.mId1, fi.mId2, false);
-
-	/* store in forum list */
 
 	/* add to layout */
 	addFeedItem(bm);
@@ -787,7 +757,7 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 
 #endif
 
-void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
+void NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChatNew()";
@@ -800,20 +770,16 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
 	}
 
 	/* make new widget */
-    ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, RsPeerId(fi.mId1), fi.mId2);
-
-	/* store in forum list */
+	ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, RsPeerId(fi.mId1), fi.mId2);
 
 	/* add to layout */
 	addFeedItem(cm);
 }
 
-void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
+void NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 {
 	/* make new widget */
 	MsgItem *mi = new MsgItem(this, NEWSFEED_MESSAGELIST, fi.mId1, false);
-
-	/* store in list */
 
 	/* add to layout */
 	addFeedItem(mi);
@@ -824,7 +790,7 @@ void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 #endif
 }
 
-void	NewsFeed::addFeedItemFilesNew(RsFeedItem &/*fi*/)
+void NewsFeed::addFeedItemFilesNew(RsFeedItem &/*fi*/)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemFilesNew()";
@@ -857,7 +823,7 @@ void NewsFeed::openChat(const RsPeerId &peerId)
 	std::cerr << std::endl;
 #endif
 
-    ChatDialog::chatFriend(peerId);
+	ChatDialog::chatFriend(peerId);
 }
 
 void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const RsGxsMessageId &/*msgId*/, const QString &/*title*/)

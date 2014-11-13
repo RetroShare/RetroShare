@@ -44,6 +44,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
   connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
 
+  ui.notify_Blogs->hide();
+
   QFont font = ui.notify_Peers->font(); // use font from existing checkbox
 
   /* add feed notify */
@@ -112,11 +114,11 @@ uint NotifyPage::getNewsFlags()
 
     if (ui.notify_Peers->isChecked())
         newsFlags |= RS_FEED_TYPE_PEER;
-#if 0
     if (ui.notify_Channels->isChecked())
-        newsFlags |= RS_FEED_TYPE_CHAN;
+        newsFlags |= RS_FEED_TYPE_CHANNEL;
     if (ui.notify_Forums->isChecked())
         newsFlags |= RS_FEED_TYPE_FORUM;
+#if 0
     if (ui.notify_Blogs->isChecked())
         newsFlags |= RS_FEED_TYPE_BLOG;
 #endif
@@ -224,9 +226,9 @@ void NotifyPage::load()
     ui.popup_ConnectAttempt->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
 
     ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
-#if 0
-    ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHAN);
+    ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHANNEL);
     ui.notify_Forums->setChecked(newsflags & RS_FEED_TYPE_FORUM);
+#if 0
     ui.notify_Blogs->setChecked(newsflags & RS_FEED_TYPE_BLOG);
 #endif
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
