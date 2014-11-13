@@ -409,7 +409,7 @@ bool RsGRouterGenericDataItem::serialise(void *data,uint32_t& size) const
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+        std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -429,7 +429,7 @@ bool RsGRouterACKItem::serialise(void *data,uint32_t& size) const
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+        std::cerr << "RsGRouterACKItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -486,7 +486,7 @@ bool RsGRouterMatrixFriendListItem::serialise(void *data,uint32_t& size) const
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+        std::cerr << "RsGRouterMatrixFriendListItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -513,7 +513,7 @@ bool RsGRouterMatrixCluesItem::serialise(void *data,uint32_t& size) const
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+        std::cerr << "RsGRouterMatrixCluesItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -562,7 +562,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     if (offset != tlvsize)
     {
         ok = false;
-        std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+        std::cerr << "RsGRouterRoutingInfoItem::serialisedata() size error! " << std::endl;
     }
 
     return ok;
