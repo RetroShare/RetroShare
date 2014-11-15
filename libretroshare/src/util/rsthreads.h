@@ -113,6 +113,11 @@ class RsStackMutex
 			double ts = getCurrentTS() ;
 			_time_stamp = ts ;
 			pthread_t owner = mMtx.owner() ;
+#else
+			/* remove unused parameter warnings */
+			(void) function_name;
+			(void) file_name;
+			(void) lineno;
 #endif
 
 			mMtx.lock(); 
