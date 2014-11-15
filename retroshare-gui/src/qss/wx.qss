@@ -5,6 +5,12 @@ QToolBar {
 
 }
 
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+       
+    border-image: url(qss/wx/wx.png);
+}
+
+
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
 	border: 0px;

@@ -2,6 +2,12 @@
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
  }
+ 
+ 
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+       
+    border-image: url(qss/yaba/yaba.png);
+}
 
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
@@ -24,6 +30,7 @@ QWidget#chatcentralwidget{
                                        stop:0 #6F6F6F, stop:1 #979797);
 }
 
+
 /* Channels */
 
 ChannelFeed QFrame#headerFrame {
@@ -33,13 +40,13 @@ ChannelFeed QFrame#headerFrame {
 }
 
 /* Customize the toolbar. */
-QToolBar#toolBar {
+QToolBar#toolBarAction {
     border-image: url(qss/yaba/yaba.png);
 
 }
 
-QToolBar#toolBar_2 {
-    border-image: url(qss/yaba/yaba2.png);
+QToolBar#toolBarPage {
+    border-image: url(qss/yaba/yaba.png);
 
 }
 

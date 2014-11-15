@@ -2,6 +2,15 @@
    background-color: #3E1716;
 }
 
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+       
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
+}
+
+
 QDialog{
          background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 red, stop: 1 darkred);
@@ -13,7 +22,7 @@ HeaderFrame {
 }
 
 /* Customize the toolbar. */
-QToolBar#toolBar {
+QToolBar#toolBarPage {
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
 								   stop: 0 #F55332, stop: 0.5 #C82B18, 
 								   stop: 0.51 #B71502, stop: 1 #900907);
@@ -21,8 +30,11 @@ QToolBar#toolBar {
 
 }
 
-QToolBar#toolBar_2 {
-    border-image: url(qss/redscorpion/red2.png);
+QToolBar#toolBarAction {
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
 
 
 }

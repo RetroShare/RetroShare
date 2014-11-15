@@ -6,6 +6,13 @@
 
 }
 
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+       
+    border-image: url(qss/uus/uus.png);
+}
+
+
+
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
 	border: 0px;
@@ -18,12 +25,12 @@ QDialog{
 
 
 /* Customize the toolbar. */
-QToolBar#toolBar {
+QToolBar#toolBarAction {
     border-image: url(qss/uus/uus.png);
 
 }
-QToolBar#toolBar_2 {
-    border-image: url(qss/uus/uus2.png);
+QToolBar#toolBarPage {
+    border-image: url(qss/uus/uus.png);
 
 }
 

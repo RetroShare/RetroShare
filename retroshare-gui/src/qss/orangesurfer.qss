@@ -5,6 +5,11 @@
                                     
 }
 
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+       
+    border-image: url(qss/orangesurfer/main.png);
+}
+
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
 	border: 0px;
@@ -28,13 +33,13 @@ QToolBar#chattoolBar{
 }
 
 /* Customize the toolbar. */
-QToolBar#toolBar {
+QToolBar#toolBarPage {
     border-image: url(qss/orangesurfer/main.png);
 
 }
 
-QToolBar#toolBar_2 {
-    border-image: url(qss/orangesurfer/main2.png);
+QToolBar#toolBarAction {
+    border-image: url(qss/orangesurfer/main.png);
 
 }
 
