@@ -64,7 +64,7 @@ static RSA *extractPublicKey(const RsTlvSecurityKey& key)
 
         return rsakey;
 }
-static void setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)
+static void setRSAPublicKeyData(RsTlvSecurityKey & key, RSA *rsa_pub)
 {
         unsigned char *data = NULL ;	// this works for OpenSSL > 0.9.7
         int reqspace = i2d_RSAPublicKey(rsa_pub, &data);
@@ -75,7 +75,7 @@ static void setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)
 		  free(data) ;
 }
 
-static void setRSAPrivateKey(RsTlvSecurityKey & key, RSA *rsa_priv)
+static void setRSAPrivateKeyData(RsTlvSecurityKey & key, RSA *rsa_priv)
 {
         unsigned char *data = NULL ;
         int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
@@ -88,6 +88,8 @@ static void setRSAPrivateKey(RsTlvSecurityKey & key, RSA *rsa_priv)
 
 static RSA *extractPrivateKey(const RsTlvSecurityKey & key)
 {
+    assert(key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+
         const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
         long keylen = key.keyData.bin_len;
 
@@ -103,14 +105,16 @@ bool GxsSecurity::generateKeyPair(RsTlvSecurityKey& public_key,RsTlvSecurityKey&
     RSA *rsa     = RSA_generate_key(2048, 65537, NULL, NULL);
     RSA *rsa_pub = RSAPublicKey_dup(rsa);
 
-    setRSAPublicKey(public_key, rsa_pub);
-    setRSAPrivateKey(private_key, rsa);
+    setRSAPublicKeyData(public_key, rsa_pub);
+    setRSAPrivateKeyData(private_key, rsa);
 
-    public_key.startTS = time(NULL);
-    public_key.endTS = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+    public_key.startTS  = time(NULL);
+    public_key.endTS    = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+    public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;
 
-    private_key.startTS = public_key.startTS;
-    private_key.endTS = 0; /* no end */
+    private_key.startTS  = public_key.startTS;
+    private_key.endTS    = 0; /* no end */
+    private_key.keyFlags = RSTLV_KEY_TYPE_FULL ;
 
     // clean up
     RSA_free(rsa);
@@ -121,28 +125,31 @@ bool GxsSecurity::generateKeyPair(RsTlvSecurityKey& public_key,RsTlvSecurityKey&
 
 bool GxsSecurity::extractPublicKey(const RsTlvSecurityKey& private_key,RsTlvSecurityKey& public_key)
 {
-	if(!(private_key.keyFlags & RSTLV_KEY_TYPE_FULL))
-		return false ;
+    public_key.TlvClear() ;
 
-	RSA *rsaPrivKey = extractPrivateKey(private_key);
+    if(!(private_key.keyFlags & RSTLV_KEY_TYPE_FULL))
+        return false ;
 
-	if(!rsaPrivKey)
-		return false ;
+    RSA *rsaPrivKey = extractPrivateKey(private_key);
 
-	RSA *rsaPubKey = RSAPublicKey_dup(rsaPrivKey);
-	RSA_free(rsaPrivKey);
+    if(!rsaPrivKey)
+        return false ;
 
-	if(!rsaPubKey)
-		return false ;
+    RSA *rsaPubKey = RSAPublicKey_dup(rsaPrivKey);
+    RSA_free(rsaPrivKey);
 
-	setRSAPublicKey(public_key, rsaPubKey);
-	RSA_free(rsaPubKey);
+    if(!rsaPubKey)
+        return false ;
 
-	public_key.keyFlags  = private_key.keyFlags & (RSTLV_KEY_DISTRIB_MASK) ;	// keep the distrib flags
-	public_key.keyFlags |= RSTLV_KEY_TYPE_PUBLIC_ONLY;
-	public_key.endTS     = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+    setRSAPublicKeyData(public_key, rsaPubKey);
+    RSA_free(rsaPubKey);
 
-	return true ;
+    public_key.keyFlags  = private_key.keyFlags & (RSTLV_KEY_DISTRIB_MASK) ;	// keep the distrib flags
+    public_key.keyFlags |= RSTLV_KEY_TYPE_PUBLIC_ONLY;
+    public_key.startTS   = private_key.startTS ;
+    public_key.endTS     = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+
+    return true ;
 }
 
 bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign)

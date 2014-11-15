@@ -42,6 +42,20 @@ TEST(libretroshare_gxs, GxsSecurity)
 
 	srand48(getpid()) ;
 
+	EXPECT_TRUE( pub_key.keyId   == priv_key.keyId   );
+	EXPECT_TRUE( pub_key.startTS == priv_key.startTS );
+
+	RsTlvSecurityKey pub_key2 ;
+	EXPECT_TRUE(GxsSecurity::extractPublicKey(priv_key,pub_key2)) ;
+
+	EXPECT_TRUE( pub_key.keyId    == pub_key2.keyId    );
+	EXPECT_TRUE( pub_key.keyFlags == pub_key2.keyFlags );
+	EXPECT_TRUE( pub_key.startTS  == pub_key2.startTS  );
+	EXPECT_TRUE( pub_key.endTS    == pub_key2.endTS    );
+
+	EXPECT_TRUE(pub_key.keyData.bin_len == pub_key2.keyData.bin_len) ;
+	EXPECT_TRUE(!memcmp(pub_key.keyData.bin_data,pub_key2.keyData.bin_data,pub_key.keyData.bin_len));
+
 	// create some random data and sign it / verify the signature.
 	
 	uint32_t data_len = 1000 + RSRandom::random_u32()%100 ;
