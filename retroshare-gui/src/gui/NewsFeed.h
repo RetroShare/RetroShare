@@ -23,18 +23,21 @@
 #define _NEWS_FEED_DIALOG_H
 
 #include "mainpage.h"
-#include "ui_NewsFeed.h"
 
 #include "gui/feeds/FeedHolder.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
-#define IMAGE_NEWSFEED          ":/images/newsfeed/news-feed-32.png"
+#define IMAGE_NEWSFEED ":/images/newsfeed/news-feed-32.png"
+
+namespace Ui {
+class NewsFeed;
+}
 
 class RsFeedItem;
-
 class FeedNotify;
+class FeedItem;
 
-class NewsFeed : public RsAutoUpdatePage, public FeedHolder, private Ui::NewsFeed
+class NewsFeed : public RsAutoUpdatePage, public FeedHolder
 {
 	Q_OBJECT
 
@@ -67,42 +70,42 @@ signals:
 private slots:
 //	void toggleChanMsgItems(bool on);
 	void feedoptions();
-
-	void removeAll();
-	void itemDestroyed(QObject*);
-
-private:
-	void addFeedItem(QWidget *item);
-	void addFeedItemIfUnique(QWidget *item, int itemType, const RsPeerId &sslId, bool replace);
-
-	void addFeedItemPeerConnect(RsFeedItem &fi);
-	void addFeedItemPeerDisconnect(RsFeedItem &fi);
-	void addFeedItemPeerNew(RsFeedItem &fi);
-	void addFeedItemPeerHello(RsFeedItem &fi);
-
-	void addFeedItemSecurityConnectAttempt(RsFeedItem &fi);
-	void addFeedItemSecurityAuthDenied(RsFeedItem &fi);
-	void addFeedItemSecurityUnknownIn(RsFeedItem &fi);
-	void addFeedItemSecurityUnknownOut(RsFeedItem &fi);
-
-	void addFeedItemChannelNew(RsFeedItem &fi);
-//	void addFeedItemChannelUpdate(RsFeedItem &fi);
-	void addFeedItemChannelMsg(RsFeedItem &fi);
-	void addFeedItemForumNew(RsFeedItem &fi);
-//	void addFeedItemForumUpdate(RsFeedItem &fi);
-	void addFeedItemForumMsg(RsFeedItem &fi);
-#if 0
-	void addFeedItemBlogNew(RsFeedItem &fi);
-	void addFeedItemBlogMsg(RsFeedItem &fi);
-#endif
-
-	void addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck);
-	void addFeedItemMessage(RsFeedItem &fi);
-	void addFeedItemFilesNew(RsFeedItem &fi);
+	void settingsChanged();
 
 	void sendNewsFeedChanged();
 
-	std::list<QObject*> widgets;
+private:
+	void addFeedItem(FeedItem *item);
+	void addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, bool replace);
+
+	void addFeedItemPeerConnect(const RsFeedItem &fi);
+	void addFeedItemPeerDisconnect(const RsFeedItem &fi);
+	void addFeedItemPeerNew(const RsFeedItem &fi);
+	void addFeedItemPeerHello(const RsFeedItem &fi);
+
+	void addFeedItemSecurityConnectAttempt(const RsFeedItem &fi);
+	void addFeedItemSecurityAuthDenied(const RsFeedItem &fi);
+	void addFeedItemSecurityUnknownIn(const RsFeedItem &fi);
+	void addFeedItemSecurityUnknownOut(const RsFeedItem &fi);
+
+	void addFeedItemChannelNew(const RsFeedItem &fi);
+//	void addFeedItemChannelUpdate(const RsFeedItem &fi);
+	void addFeedItemChannelMsg(const RsFeedItem &fi);
+	void addFeedItemForumNew(const RsFeedItem &fi);
+//	void addFeedItemForumUpdate(const RsFeedItem &fi);
+	void addFeedItemForumMsg(const RsFeedItem &fi);
+#if 0
+	void addFeedItemBlogNew(const RsFeedItem &fi);
+	void addFeedItemBlogMsg(const RsFeedItem &fi);
+#endif
+
+	void addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck);
+	void addFeedItemMessage(const RsFeedItem &fi);
+	void addFeedItemFilesNew(const RsFeedItem &fi);
+
+private:
+	/* UI - from Designer */
+	Ui::NewsFeed *ui;
 };
 
 #endif

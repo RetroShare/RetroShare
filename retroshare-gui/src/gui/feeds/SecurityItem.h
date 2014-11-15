@@ -23,6 +23,7 @@
 #define _SECURITY_ITEM_DIALOG_H
 
 #include "ui_SecurityItem.h"
+#include "FeedItem.h"
 #include <stdint.h>
 
 //const uint32_t SEC_TYPE_CONNECT_ATTEMPT  = 0x0001; /* failed Connect Attempt */
@@ -32,17 +33,20 @@
 
 class FeedHolder;
 
-class SecurityItem : public QWidget, private Ui::SecurityItem
+class SecurityItem : public FeedItem, private Ui::SecurityItem
 {
 	Q_OBJECT
 
 public:
 	/** Default Constructor */
-    SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_addr,uint32_t type, bool isHome);
+	SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_addr,uint32_t type, bool isHome);
 
 	void updateItemStatic();
 
-    bool isSame(const RsPeerId &sslId, uint32_t type);
+	bool isSame(const RsPeerId &sslId, uint32_t type);
+
+	/* FeedItem */
+	virtual void expand(bool open);
 
 private slots:
 	/* default stuff */
@@ -57,14 +61,12 @@ private slots:
 
 	void updateItem();
 
-
-
 private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-    RsPgpId  mGpgId;
-    RsPeerId mSslId;
+	RsPgpId  mGpgId;
+	RsPeerId mSslId;
 	std::string mSslCn;
 	std::string mIP;
 	uint32_t mType;

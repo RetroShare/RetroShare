@@ -23,6 +23,7 @@
 #define _PEER_ITEM_DIALOG_H
 
 #include "ui_PeerItem.h"
+#include "FeedItem.h"
 #include <stdint.h>
 
 const uint32_t PEER_TYPE_STD     = 0x0001;
@@ -32,15 +33,18 @@ const uint32_t PEER_TYPE_NEW_FOF = 0x0004; /* new Friend of Friend */
 
 class FeedHolder;
 
-class PeerItem : public QWidget, private Ui::PeerItem
+class PeerItem : public FeedItem, private Ui::PeerItem
 {
 	Q_OBJECT
 
 public:
 	/** Default Constructor */
-    PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome);
+	PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome);
 
 	void updateItemStatic();
+
+	/* FeedItem */
+	virtual void expand(bool open);
 
 private slots:
 	/* default stuff */

@@ -41,8 +41,8 @@
  ****/
 
 /** Constructor */
-ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message)
-:QWidget(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
+ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message) :
+    FeedItem(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -224,16 +224,18 @@ void ChatMsgItem::togglequickmessage()
 
 	if (messageFrame->isHidden())
 	{
-		messageFrame->setVisible(true);
+		messageFrame->show();
         sendButton->show();
         cancelButton->show();
     }
 	else
 	{
-		messageFrame->setVisible(false);
+		messageFrame->hide();
         sendButton->hide();
         cancelButton->hide();
-    }	
+    }
+
+    emit sizeChanged(this);
 
     mParent->lockLayout(this, false);
 }
@@ -253,6 +255,8 @@ void ChatMsgItem::sendMessage()
     messageFrame->setVisible(false);
     sendButton->hide();
     cancelButton->hide();
+
+    emit sizeChanged(this);
 }
 
 void ChatMsgItem::on_quickmsgText_textChanged()

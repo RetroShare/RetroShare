@@ -20,8 +20,10 @@
  ****************************************************************/
 
 #include <QTimer>
+#include <QDateTime>
 
 #include "NewsFeed.h"
+#include "ui_NewsFeed.h"
 
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
@@ -51,6 +53,7 @@
 #include "chat/ChatDialog.h"
 #include "msgs/MessageComposer.h"
 #include "common/FeedNotify.h"
+#include "notifyqt.h"
 
 const uint32_t NEWSFEED_PEERLIST =       0x0001;
 
@@ -67,6 +70,8 @@ const uint32_t NEWSFEED_MESSAGELIST =    0x0008;
 const uint32_t NEWSFEED_CHATMSGLIST =    0x0009;
 const uint32_t NEWSFEED_SECLIST =        0x000a;
 
+#define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
+
 /*****
  * #define NEWS_DEBUG  1
  ****/
@@ -74,11 +79,12 @@ const uint32_t NEWSFEED_SECLIST =        0x000a;
 static NewsFeed *instance = NULL;
 
 /** Constructor */
-NewsFeed::NewsFeed(QWidget *parent)
-: RsAutoUpdatePage(1000,parent)
+NewsFeed::NewsFeed(QWidget *parent) :
+    RsAutoUpdatePage(1000,parent),
+    ui(new Ui::NewsFeed)
 {
 	/* Invoke the Qt Designer generated object setup routine */
-	setupUi(this);
+	ui->setupUi(this);
 
 	setUpdateWhenInvisible(true);
 
@@ -86,8 +92,12 @@ NewsFeed::NewsFeed(QWidget *parent)
 		instance = this;
 	}
 
-	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
-	connect(feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
+	ui->feedWidget->enableRemove(true);
+
+	connect(ui->removeAllButton, SIGNAL(clicked()), ui->feedWidget, SLOT(clear()));
+	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
+	connect(ui->feedWidget, SIGNAL(feedCountChanged()), this, SLOT(sendNewsFeedChanged()));
+	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
 QString hlp_str = tr(
  " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
@@ -103,7 +113,9 @@ QString hlp_str = tr(
    </ul> </p>                                                                                                      \
  ") ;
 
-	registerHelpButton(helpButton,hlp_str) ;
+	registerHelpButton(ui->helpButton,hlp_str) ;
+
+	settingsChanged();
 }
 
 NewsFeed::~NewsFeed()
@@ -116,6 +128,11 @@ NewsFeed::~NewsFeed()
 UserNotify *NewsFeed::getUserNotify(QObject *parent)
 {
 	return new NewsFeedUserNotify(this, parent);
+}
+
+void NewsFeed::settingsChanged()
+{
+	ui->feedWidget->setSortRole(ROLE_RECEIVED, Settings->getAddFeedsAtEnd() ? Qt::AscendingOrder : Qt::DescendingOrder);
 }
 
 void NewsFeed::updateDisplay()
@@ -235,7 +252,7 @@ void NewsFeed::updateDisplay()
 			if (rsPlugin) {
 				FeedNotify *feedNotify = rsPlugin->qt_feedNotify();
 				if (feedNotify && feedNotify->notifyEnabled()) {
-					QWidget *item = feedNotify->feedItem(this);
+					FeedItem *item = feedNotify->feedItem(this);
 					if (item) {
 						addFeedItem(item);
 						break;
@@ -251,6 +268,8 @@ void NewsFeed::testFeeds(uint notifyFlags)
 	if (!instance) {
 		return;
 	}
+
+	instance->ui->feedWidget->enableCountChangedSignal(false);
 
 	uint pos = 0;
 
@@ -439,6 +458,10 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			break;
 		}
 	}
+
+	instance->ui->feedWidget->enableCountChangedSignal(true);
+
+	instance->sendNewsFeedChanged();
 }
 
 void NewsFeed::testFeed(FeedNotify *feedNotify)
@@ -451,7 +474,7 @@ void NewsFeed::testFeed(FeedNotify *feedNotify)
 		return;
 	}
 
-	QWidget *feedItem = feedNotify->testFeedItem(instance);
+	FeedItem *feedItem = feedNotify->testFeedItem(instance);
 	if (!feedItem) {
 		return;
 	}
@@ -459,62 +482,73 @@ void NewsFeed::testFeed(FeedNotify *feedNotify)
 	instance->addFeedItem(feedItem);
 }
 
-void NewsFeed::addFeedItem(QWidget *item)
+void NewsFeed::addFeedItem(FeedItem *item)
 {
-	static const unsigned int MAX_WIDGETS_SIZE = 500 ;
+	static const unsigned int MAX_FEEDITEM_COUNT = 500 ;
 
 	item->setAttribute(Qt::WA_DeleteOnClose, true);
 
-	connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(itemDestroyed(QObject*)));
-	widgets.push_back(item);
-
 	// costly, but not really a problem here
-	while(widgets.size() > MAX_WIDGETS_SIZE)
-	{
-		QWidget *item = dynamic_cast<QWidget*>(widgets.front()) ;
-		
-		if(item)
-			item->close() ;
-		widgets.pop_front() ;
+	int feedItemCount;
+	bool fromTop = Settings->getAddFeedsAtEnd();
+
+	while ((feedItemCount = ui->feedWidget->feedItemCount()) >= MAX_FEEDITEM_COUNT) {
+		FeedItem *feedItem = ui->feedWidget->feedItem(fromTop ? 0 : feedItemCount - 1);
+		if (!feedItem) {
+			break;
+		}
+
+		ui->feedWidget->removeFeedItem(feedItem);
 	}
 
-	sendNewsFeedChanged();
-
-	lockLayout(NULL, true);
-
-	if (Settings->getAddFeedsAtEnd()) {
-		itemsLayout->addWidget(item);
-	} else {
-		itemsLayout->insertWidget(0, item);
-	}
-	item->show();
-
-	lockLayout(item, false);
+	ui->feedWidget->addFeedItem(item, ROLE_RECEIVED, QDateTime::currentDateTime());
 }
 
-void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const RsPeerId &sslId, bool replace)
+struct AddFeedItemIfUniqueData
 {
-	foreach (QObject *itemObject, widgets) {
-		SecurityItem *secitem = dynamic_cast<SecurityItem*>(itemObject);
-		if ((secitem) && (secitem->isSame(sslId, itemType)))
-		{
-			if (!replace)
-			{
-				delete item;
-				return;
-			}
-			else
-			{
-				secitem->close();
-				break;
-			}
+	AddFeedItemIfUniqueData(int type, const RsPeerId &sslId) : mType(type), mSslId(sslId) {}
+
+	int mType;
+	const RsPeerId &mSslId;
+};
+
+static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
+{
+	AddFeedItemIfUniqueData *findData = (AddFeedItemIfUniqueData*) data;
+	if (!findData || findData->mSslId.isNull()) {
+		return false;
+	}
+
+	SecurityItem *secitem = dynamic_cast<SecurityItem*>(feedItem);
+	if (!secitem) {
+		return false;
+	}
+
+	if (secitem->isSame(findData->mSslId, findData->mType)) {
+		return true;
+	}
+
+	return false;
+}
+
+void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, bool replace)
+{
+	AddFeedItemIfUniqueData data(itemType, sslId);
+	FeedItem *feedItem = ui->feedWidget->findFeedItem(addFeedItemIfUniqueCallback, &data);
+
+	if (feedItem) {
+		if (!replace) {
+			delete item;
+			return;
 		}
+
+		ui->feedWidget->removeFeedItem(item);
 	}
 
 	addFeedItem(item);
 }
 
-void NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerConnect(const RsFeedItem &fi)
 {
 	/* make new widget */
 	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_CONNECT, false);
@@ -526,10 +560,9 @@ void NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 	std::cerr << "NewsFeed::addFeedItemPeerConnect()";
 	std::cerr << std::endl;
 #endif
-
 }
 
-void NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerDisconnect(const RsFeedItem &fi)
 {
 	/* make new widget */
 	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_STD, false);
@@ -543,7 +576,7 @@ void NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerHello(const RsFeedItem &fi)
 {
 	/* make new widget */
 	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_HELLO, false);
@@ -557,7 +590,7 @@ void NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
+void NewsFeed::addFeedItemPeerNew(const RsFeedItem &fi)
 {
 	/* make new widget */
 	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_NEW_FOF, false);
@@ -571,7 +604,7 @@ void NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityConnectAttempt(const RsFeedItem &fi)
 {
 	/* make new widget */
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
@@ -585,7 +618,7 @@ void NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityAuthDenied(const RsFeedItem &fi)
 {
 	/* make new widget */
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
@@ -599,7 +632,7 @@ void NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityUnknownIn(const RsFeedItem &fi)
 {
 	/* make new widget */
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
@@ -613,7 +646,7 @@ void NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
+void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 {
 	/* make new widget */
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
@@ -627,7 +660,7 @@ void NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemChannelNew(RsFeedItem &fi)
+void NewsFeed::addFeedItemChannelNew(const RsFeedItem &fi)
 {
 	/* make new widget */
 //	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, true);
@@ -641,7 +674,7 @@ void NewsFeed::addFeedItemChannelNew(RsFeedItem &fi)
 #endif
 }
 
-//void NewsFeed::addFeedItemChannelUpdate(RsFeedItem &fi)
+//void NewsFeed::addFeedItemChannelUpdate(const RsFeedItem &fi)
 //{
 //	/* make new widget */
 //	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, false);
@@ -655,7 +688,7 @@ void NewsFeed::addFeedItemChannelNew(RsFeedItem &fi)
 //#endif
 //}
 
-void NewsFeed::addFeedItemChannelMsg(RsFeedItem &fi)
+void NewsFeed::addFeedItemChannelMsg(const RsFeedItem &fi)
 {
 	RsGxsGroupId grpId(fi.mId1);
 	RsGxsMessageId msgId(fi.mId2);
@@ -676,7 +709,7 @@ void NewsFeed::addFeedItemChannelMsg(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
+void NewsFeed::addFeedItemForumNew(const RsFeedItem &fi)
 {
 	/* make new widget */
 //	ForumNewItem *fni = new ForumNewItem(this, NEWSFEED_FORUMNEWLIST, fi.mId1, false, true);
@@ -690,7 +723,7 @@ void NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 #endif
 }
 
-//void NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
+//void NewsFeed::addFeedItemForumUpdate(const RsFeedItem &fi)
 //{
 //	/* make new widget */
 //	ForumNewItem *fni = new ForumNewItem(this, NEWSFEED_FORUMNEWLIST, fi.mId1, false, false);
@@ -704,7 +737,7 @@ void NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 //#endif
 //}
 
-void NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
+void NewsFeed::addFeedItemForumMsg(const RsFeedItem &fi)
 {
 	/* make new widget */
 //	ForumMsgItem *fm = new ForumMsgItem(this, NEWSFEED_FORUMMSGLIST, fi.mId1, fi.mId2, false);
@@ -719,7 +752,7 @@ void NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 }
 
 #if 0
-void NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
+void NewsFeed::addFeedItemBlogNew(const RsFeedItem &fi)
 {
 #ifdef BLOGS
 	/* make new widget */
@@ -737,7 +770,7 @@ void NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
+void NewsFeed::addFeedItemBlogMsg(const RsFeedItem &fi)
 {
 #ifdef BLOGS
 	/* make new widget */
@@ -757,7 +790,7 @@ void NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 
 #endif
 
-void NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
+void NewsFeed::addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChatNew()";
@@ -776,7 +809,7 @@ void NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
 	addFeedItem(cm);
 }
 
-void NewsFeed::addFeedItemMessage(RsFeedItem &fi)
+void NewsFeed::addFeedItemMessage(const RsFeedItem &fi)
 {
 	/* make new widget */
 	MsgItem *mi = new MsgItem(this, NEWSFEED_MESSAGELIST, fi.mId1, false);
@@ -790,7 +823,7 @@ void NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 #endif
 }
 
-void NewsFeed::addFeedItemFilesNew(RsFeedItem &/*fi*/)
+void NewsFeed::addFeedItemFilesNew(const RsFeedItem &/*fi*/)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemFilesNew()";
@@ -801,7 +834,7 @@ void NewsFeed::addFeedItemFilesNew(RsFeedItem &/*fi*/)
 /* FeedHolder Functions (for FeedItem functionality) */
 QScrollArea *NewsFeed::getScrollArea()
 {
-	return scrollArea;
+	return NULL;
 }
 
 void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
@@ -832,36 +865,18 @@ void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, 
 	std::cerr << std::endl;
 }
 
-void NewsFeed::itemDestroyed(QObject *item)
+static void sendNewsFeedChangedCallback(FeedItem *feedItem, void *data)
 {
-	widgets.remove(item);
-	sendNewsFeedChanged();
-}
-
-void NewsFeed::removeAll()
-{
-#ifdef NEWS_DEBUG
-	std::cerr << "NewsFeed::removeAll()" << std::endl;
-#endif
-
-	foreach (QObject *item, widgets) {
-		if (item) {
-			item->deleteLater();
-		}
+	if (dynamic_cast<PeerItem*>(feedItem) == NULL) {
+		/* don't count PeerItem's */
+		++(*((int*) data));
 	}
-	widgets.clear();
 }
 
 void NewsFeed::sendNewsFeedChanged()
 {
 	int count = 0;
-
-	foreach (QObject *item, widgets) {
-		if (dynamic_cast<PeerItem*>(item) == NULL) {
-			/* don't count PeerItem's */
-			count++;
-		}
-	}
+	ui->feedWidget->withAll(sendNewsFeedChangedCallback, &count);
 
 	emit newsFeedChanged(count);
 }

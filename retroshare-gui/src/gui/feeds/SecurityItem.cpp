@@ -43,43 +43,42 @@
  ****/
 
 /** Constructor */
-SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mIP(ip_address), mType(type), mIsHome(isHome)
+SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome) :
+    FeedItem(NULL), mParent(parent), mFeedId(feedId),
+    mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mIP(ip_address), mType(type), mIsHome(isHome)
 {
-    /* Invoke the Qt Designer generated object setup routine */
-    setupUi(this);
-  
-    quickmsgButton->hide();
-    chatButton->hide();
-    removeFriendButton->setEnabled(false);
-    removeFriendButton->hide();
-    peerDetailsButton->setEnabled(false);
-    friendRequesttoolButton->hide();
-    requestLabel->hide();
+	/* Invoke the Qt Designer generated object setup routine */
+	setupUi(this);
 
-    /* general ones */
-    connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-    connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
+	quickmsgButton->hide();
+	chatButton->hide();
+	removeFriendButton->setEnabled(false);
+	removeFriendButton->hide();
+	peerDetailsButton->setEnabled(false);
+	friendRequesttoolButton->hide();
+	requestLabel->hide();
 
-    /* specific ones */
-    connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
+	/* general ones */
+	connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
+	connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
 
-    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
+	/* specific ones */
+	connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
 
-    connect( removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
-    connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
-    connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
+	connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
 
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+	connect( removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
+	connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
+	connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
 
+	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
-    avatar->setId(mSslId);
+	avatar->setId(mSslId);
 
-    expandFrame->hide();
+	expandFrame->hide();
 
-    updateItemStatic();
-    updateItem();
+	updateItemStatic();
+	updateItem();
 }
 
 
@@ -283,9 +282,16 @@ void SecurityItem::updateItem()
 
 void SecurityItem::toggle()
 {
-	mParent->lockLayout(this, true);
+	expand(expandFrame->isHidden());
+}
 
-	if (expandFrame->isHidden())
+void SecurityItem::expand(bool open)
+{
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
+
+	if (open)
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
@@ -298,7 +304,11 @@ void SecurityItem::toggle()
 		expandButton->setToolTip(tr("Expand"));
 	}
 
-	mParent->lockLayout(this, false);
+	emit sizeChanged(this);
+
+	if (mParent) {
+		mParent->lockLayout(this, false);
+	}
 }
 
 void SecurityItem::removeItem()

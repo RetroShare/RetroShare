@@ -39,8 +39,8 @@
  ****/
 
 /** Constructor */
-MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
+MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome) :
+   FeedItem(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -194,24 +194,34 @@ void MsgItem::updateItem()
 
 void MsgItem::toggle()
 {
-	mParent->lockLayout(this, true);
+	expand(expandFrame->isHidden());
+}
 
-	if (expandFrame->isHidden())
+void MsgItem::expand(bool open)
+{
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
+
+	if (open)
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-        expandButton->setToolTip(tr("Hide"));
+		expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
-        expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-        expandButton->setToolTip(tr("Expand"));
+		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		expandButton->setToolTip(tr("Expand"));
 	}
 
-	mParent->lockLayout(this, false);
-}
+	emit sizeChanged(this);
 
+	if (mParent) {
+		mParent->lockLayout(this, false);
+	}
+}
 
 void MsgItem::removeItem()
 {

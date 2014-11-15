@@ -40,9 +40,9 @@
  ****/
 
 /** Constructor */
-PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mPeerId(peerId), mType(type), mIsHome(isHome)
+PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome) :
+    FeedItem(NULL), mParent(parent), mFeedId(feedId),
+    mPeerId(peerId), mType(type), mIsHome(isHome)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -209,9 +209,16 @@ void PeerItem::updateItem()
 
 void PeerItem::toggle()
 {
-	mParent->lockLayout(this, true);
+	expand(expandFrame->isHidden());
+}
 
-	if (expandFrame->isHidden())
+void PeerItem::expand(bool open)
+{
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
+
+	if (open)
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
@@ -224,9 +231,12 @@ void PeerItem::toggle()
 		expandButton->setToolTip(tr("Expand"));
 	}
 
-	mParent->lockLayout(this, false);
-}
+	emit sizeChanged(this);
 
+	if (mParent) {
+		mParent->lockLayout(this, false);
+	}
+}
 
 void PeerItem::removeItem()
 {

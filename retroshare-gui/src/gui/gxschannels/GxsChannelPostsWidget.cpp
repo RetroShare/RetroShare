@@ -467,7 +467,7 @@ void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
 	insertChannelPosts(posts, NULL, true);
 }
 
-static void setAllMessagesReadCallback(FeedItem *feedItem, const QVariant &data)
+static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 {
 	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	if (!channelPostItem) {
@@ -477,7 +477,7 @@ static void setAllMessagesReadCallback(FeedItem *feedItem, const QVariant &data)
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
 
 	uint32_t token;
-	rsGxsChannels->setMessageReadStatus(token, msgPair, data.toBool());
+	rsGxsChannels->setMessageReadStatus(token, msgPair, *((bool*) data));
 }
 
 void GxsChannelPostsWidget::setAllMessagesRead(bool read)
@@ -486,5 +486,5 @@ void GxsChannelPostsWidget::setAllMessagesRead(bool read)
 		return;
 	}
 
-	ui->feedWidget->withAll(setAllMessagesReadCallback, read);
+	ui->feedWidget->withAll(setAllMessagesReadCallback, &read);
 }
