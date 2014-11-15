@@ -149,6 +149,21 @@ bool GxsSecurity::extractPublicKey(const RsTlvSecurityKey& private_key,RsTlvSecu
     public_key.startTS   = private_key.startTS ;
     public_key.endTS     = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
 
+    // This code fixes a problem of old RSA keys where the fingerprint wasn't computed using SHA1(n,e) but
+    // using the first bytes of n (ouuuuch!). Still, these keys are valid and should produce a correct
+    // fingerprint. So we replace the public key fingerprint (that is normally recomputed) with the FP of
+    // the private key.
+
+    if(public_key.keyId != private_key.keyId)
+    {
+        std::cerr << std::endl;
+        std::cerr << "WARNING: GXS ID key pair " << private_key.keyId << " has inconsistent fingerprint. This is an old key " << std::endl;
+        std::cerr << "         that is unsecured (can be faked easily) should not be used anymore. Please delete it." << std::endl;
+        std::cerr << std::endl;
+
+        public_key.keyId = private_key.keyId ;
+    }
+
     return true ;
 }
 

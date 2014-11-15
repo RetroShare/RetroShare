@@ -125,14 +125,11 @@ bool DistantChatService::handleTunnelRequest(const RsFileHash& hash,const RsPeer
 	std::list<RsGxsId> own_id_list ;
 	rsIdentity->getOwnIds(own_id_list) ;
 
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "DistantChatService::handleTunnelRequest: received tunnel request for hash " << hash << std::endl;
-#endif
-
 	for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
 		if(hashFromGxsId(*it) == hash)
 		{
 #ifdef DEBUG_DISTANT_CHAT
+			std::cerr << "DistantChatService::handleTunnelRequest: received tunnel request for hash " << hash << std::endl;
 			std::cerr << "  answering true!" << std::endl;
 #endif
 			return true ;
@@ -555,8 +552,8 @@ bool DistantChatService::locked_sendDHPublicKey(const DistantChatPeerInfo& pinfo
 	RsTlvSecurityKey  signature_key ;
 	RsTlvSecurityKey  signature_key_public ;
 
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Getting key material for signature with GXS id " << pingo.own_gxs_id << std::endl;
+#ifdef DEBUG_DISTANT_CHAT
+    std::cerr << "  Getting key material for signature with GXS id " << pinfo.own_gxs_id << std::endl;
 #endif
 	// The following code is only here to force caching the keys. 
 	//
@@ -583,7 +580,7 @@ bool DistantChatService::locked_sendDHPublicKey(const DistantChatPeerInfo& pinfo
 
 	assert(!(signature_key_public.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
 
-#ifdef DEBUG_DISTANT_MSG
+#ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "  Signing..." << std::endl;
 #endif
 	uint32_t size = BN_num_bytes(dhitem->public_key) ;
@@ -602,8 +599,10 @@ bool DistantChatService::locked_sendDHPublicKey(const DistantChatPeerInfo& pinfo
 	dhitem->gxs_key = signature_key_public ;
 	dhitem->PeerId(pinfo.virtual_peer_id) ;
 
-#ifdef DEBUG_DISTANT_MSG
+#ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  Pushing DH session key item to pending distant messages..." << std::endl;
+    dhitem->print(std::cerr, 2) ;
+    std::cerr << std::endl;
 #endif
     pendingDistantChatItems.push_back(dhitem) ;
 
