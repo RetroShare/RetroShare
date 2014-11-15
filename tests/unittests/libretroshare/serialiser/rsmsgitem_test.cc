@@ -27,6 +27,7 @@
 
 #include "util/rsrandom.h"
 #include "serialiser/rsmsgitems.h"
+#include "chat/rschatitems.h"
 
 #include "support.h"
 #include "rstlvutil.h"

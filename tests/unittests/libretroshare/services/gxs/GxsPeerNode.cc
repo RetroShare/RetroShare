@@ -312,13 +312,7 @@ bool GxsPeerNode::createCircle(const std::string &name,
         std::cerr << std::endl;
 
 	uint32_t token;
-	if (!mGxsCircles->createGroup(token, grp1))
-	{
-		std::cerr << "GxsPeerNode::createCircle() failed";
-		std::cerr << std::endl;
-		return false;
-	}
-
+	mGxsCircles->createGroup(token, grp1) ;
 
 	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 	{
