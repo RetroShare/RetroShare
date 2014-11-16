@@ -34,7 +34,7 @@
 
 /** Constructor */
 FeedReaderFeedItem::FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, FeedHolder *parent, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo)
-	: QWidget(NULL), mFeedReader(feedReader), mNotify(notify), mParent(parent), ui(new Ui::FeedReaderFeedItem)
+    : FeedItem(NULL), mFeedReader(feedReader), mNotify(notify), mParent(parent), ui(new Ui::FeedReaderFeedItem)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
@@ -95,9 +95,16 @@ FeedReaderFeedItem::~FeedReaderFeedItem()
 
 void FeedReaderFeedItem::toggle()
 {
-	mParent->lockLayout(this, true);
+	expand(ui->expandFrame->isHidden());
+}
 
-	if (ui->expandFrame->isHidden()) {
+void FeedReaderFeedItem::expand(bool open)
+{
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
+
+	if (open) {
 		ui->expandFrame->show();
 		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
@@ -109,7 +116,11 @@ void FeedReaderFeedItem::toggle()
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
-	mParent->lockLayout(this, false);
+	emit sizeChanged(this);
+
+	if (mParent) {
+		mParent->lockLayout(this, false);
+	}
 }
 
 void FeedReaderFeedItem::removeItem()

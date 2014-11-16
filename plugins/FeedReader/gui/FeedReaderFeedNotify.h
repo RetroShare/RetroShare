@@ -27,16 +27,17 @@
 class RsFeedReader;
 class FeedReaderNotify;
 class QMutex;
+class FeedItem;
 
 class FeedReaderFeedNotify : public FeedNotify
 {
 	Q_OBJECT
 
 protected:
-	class FeedItem
+	class FeedItemData
 	{
 	public:
-		FeedItem() {}
+		FeedItemData() {}
 
 	public:
 		QString mFeedId;
@@ -50,8 +51,8 @@ public:
 	virtual bool hasSetting(QString &name);
 	virtual bool notifyEnabled();
 	virtual void setNotifyEnabled(bool enabled);
-	virtual QWidget *feedItem(FeedHolder *parent);
-	virtual QWidget *testFeedItem(FeedHolder *parent);
+	virtual FeedItem *feedItem(FeedHolder *parent);
+	virtual FeedItem *testFeedItem(FeedHolder *parent);
 
 private slots:
 	void msgChanged(const QString &feedId, const QString &msgId, int type);
@@ -61,7 +62,7 @@ private:
 	FeedReaderNotify *mNotify;
 
 	QMutex *mMutex;
-	QList<FeedItem> mPendingNewsFeed;
+	QList<FeedItemData> mPendingNewsFeed;
 };
 
 #endif // FEEDREADERFEEDNOTIFY_H

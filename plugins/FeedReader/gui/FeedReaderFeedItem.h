@@ -22,7 +22,7 @@
 #ifndef _FEEDREADERFEEDITEM_H
 #define _FEEDREADERFEEDITEM_H
 
-#include <QWidget>
+#include "gui/feeds/FeedItem.h"
 
 namespace Ui {
 class FeedReaderFeedItem;
@@ -34,13 +34,16 @@ class FeedHolder;
 class FeedInfo;
 class FeedMsgInfo;
 
-class FeedReaderFeedItem : public QWidget
+class FeedReaderFeedItem : public FeedItem
 {
 	Q_OBJECT
 
 public:
 	FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, FeedHolder *parent, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo);
 	~FeedReaderFeedItem();
+
+	/* FeedItem */
+	virtual void expand(bool open);
 
 private slots:
 	/* default stuff */
