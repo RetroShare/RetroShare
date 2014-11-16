@@ -58,9 +58,9 @@ PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WindowFlags 
 	updateDisplay() ;
 }
 
-void PopupDistantChatDialog::init(const DistantChatPeerId& pid,const QString & title)
+void PopupDistantChatDialog::init(const RsPeerId &pid,const QString & title)
 {
-    _pid = pid ;
+    _pid = RsGxsId(pid) ;
     PopupChatDialog::init(pid,title) ;
 }
 
@@ -77,8 +77,7 @@ void PopupDistantChatDialog::updateDisplay()
 	//
 	
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
-	RsGxsId gxs_id ;
-	rsMsgs->getDistantChatStatus(_pid,gxs_id,status) ;
+    rsMsgs->getDistantChatStatus(_pid,status) ;
 
 	switch(status)
 	{
@@ -118,9 +117,8 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
     //std::cerr << "Closing window => closing distant chat for hash " << _pid << std::endl;
 
-	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
-    RsGxsId gxs_id ;
-    rsMsgs->getDistantChatStatus(_pid,gxs_id,status) ;
+    uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
+    rsMsgs->getDistantChatStatus(_pid,status) ;
 
 	if(status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
@@ -140,21 +138,20 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const DistantChatPeerId &id) const
+QString PopupDistantChatDialog::getPeerName(const RsGxsId& id) const
 {
 	uint32_t status ;
-    RsGxsId gxs_id ;
 
-    if(rsMsgs->getDistantChatStatus(id,gxs_id,status))
+    if(rsMsgs->getDistantChatStatus(id,status))
 	 {
 		 RsIdentityDetails details  ;
 
-		 if(rsIdentity->getIdDetails(gxs_id,details))
+         if(rsIdentity->getIdDetails(RsGxsId(id),details))
 			 return QString::fromUtf8( details.mNickname.c_str() ) ;
 		 else
-			 return QString::fromStdString(gxs_id.toStdString()) ;
+             return QString::fromStdString(id.toStdString()) ;
 	 }
 	else
-		return ChatDialog::getPeerName(id) ;
+        return ChatDialog::getPeerName(RsPeerId(id)) ;
 }
 

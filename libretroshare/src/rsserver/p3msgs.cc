@@ -368,11 +368,11 @@ bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_
 {
 	return mChatSrv->initiateDistantChatConnexion(gxs_id,error_code) ;
 }
-bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,RsGxsId& gxs_id,uint32_t& status)
+bool p3Msgs::getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status)
 {
-	return mChatSrv->getDistantChatStatus(pid,gxs_id,status) ;
+    return mChatSrv->getDistantChatStatus(gxs_id,status) ;
 }
-bool p3Msgs::closeDistantChatConnexion(const DistantChatPeerId& pid)
+bool p3Msgs::closeDistantChatConnexion(const RsGxsId& pid)
 {
 	return mChatSrv->closeDistantChatConnexion(pid) ;
 }

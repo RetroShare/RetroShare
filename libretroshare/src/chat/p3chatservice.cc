@@ -272,15 +272,13 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 }
 
 
-bool p3ChatService::isOnline(const DistantChatPeerId& pid)
+bool p3ChatService::isOnline(const RsPeerId& pid)
 {
 	// check if the id is a tunnel id or a peer id.
 
 	uint32_t status ;
-	RsGxsId gxs_id ;
 
-	std::string hash ;
-	if(getDistantChatStatus(pid,gxs_id,status)) 
+    if(getDistantChatStatus(RsGxsId(pid),status))
 		return status == RS_DISTANT_CHAT_STATUS_CAN_TALK ;
 	else
 		return mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid);

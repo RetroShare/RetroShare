@@ -426,8 +426,8 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::str
 /****************************************/
 
 virtual bool initiateDistantChatConnexion(const RsGxsId& pid,uint32_t& error_code) = 0;
-virtual bool getDistantChatStatus(const DistantChatPeerId& pid,RsGxsId& gxs_id,uint32_t& status) = 0;
-virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) = 0;
+virtual bool getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status) = 0;
+virtual bool closeDistantChatConnexion(const RsGxsId& pid) = 0;
 
 };
 

@@ -51,8 +51,8 @@ class DistantChatService: public RsTurtleClientService
 		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
 		//
 		bool initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code) ;
-		bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
-		virtual bool getDistantChatStatus(const DistantChatPeerId& hash,RsGxsId& gxs_id,uint32_t& status) ;
+        bool closeDistantChatConnexion(const RsGxsId& pid) ;
+        virtual bool getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status) ;
 
 		// derived in p3ChatService
 		virtual void handleIncomingItem(RsItem *) = 0;
@@ -95,7 +95,7 @@ class DistantChatService: public RsTurtleClientService
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
-		void markDistantChatAsClosed(const TurtleVirtualPeerId& vpid) ;
+        void markDistantChatAsClosed(const RsGxsId &vpid) ;
 		void startClientDistantChatConnection(const RsFileHash& hash,const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id) ;
 		bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
 		TurtleFileHash hashFromGxsId(const RsGxsId& pid) ;
