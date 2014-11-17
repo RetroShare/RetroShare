@@ -40,7 +40,7 @@ class PopupDistantChatDialog: public PopupChatDialog
         virtual void init(const RsPeerId &pid, const QString &title);
 		virtual void closeEvent(QCloseEvent *e) ;
 	
-        virtual QString getPeerName(const RsGxsId &id) const ;
+        virtual QString getPeerName(const RsPeerId &id) const ;
 
 	protected slots:
 		void updateDisplay() ; // overloads RsAutoUpdatePage

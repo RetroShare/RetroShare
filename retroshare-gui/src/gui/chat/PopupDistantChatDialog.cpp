@@ -138,20 +138,15 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const RsGxsId& id) const
+QString PopupDistantChatDialog::getPeerName(const RsPeerId& id) const
 {
-	uint32_t status ;
+    uint32_t status ;
 
-    if(rsMsgs->getDistantChatStatus(id,status))
-	 {
-		 RsIdentityDetails details  ;
+    RsIdentityDetails details  ;
 
          if(rsIdentity->getIdDetails(RsGxsId(id),details))
-			 return QString::fromUtf8( details.mNickname.c_str() ) ;
-		 else
-             return QString::fromStdString(id.toStdString()) ;
-	 }
-	else
-        return ChatDialog::getPeerName(RsPeerId(id)) ;
+         return QString::fromUtf8( details.mNickname.c_str() ) ;
+     else
+         return QString::fromStdString(id.toStdString()) ;
 }
 

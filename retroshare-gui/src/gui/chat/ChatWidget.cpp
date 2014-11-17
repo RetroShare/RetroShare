@@ -224,8 +224,7 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 		mChatType = CHATTYPE_LOBBY;
 	} else {
 		uint32_t status;
-        RsGxsId gxs_id;
-        if (rsMsgs->getDistantChatStatus(peerId, gxs_id, status)) {
+        if (rsMsgs->getDistantChatStatus(RsGxsId(peerId), status)) {
 			mChatType = CHATTYPE_DISTANT;
 		} else {
 			mChatType = CHATTYPE_PRIVATE;
@@ -1299,15 +1298,14 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
 		QString peerName ;
 		uint32_t stts ;
-        RsGxsId gxs_id ;
 
-		if(rsMsgs->getDistantChatStatus(peerId,gxs_id,stts))
+        if(rsMsgs->getDistantChatStatus(RsGxsId(peerId),stts))
 		{
 			RsIdentityDetails details  ;
-			if(rsIdentity->getIdDetails(gxs_id,details))
+            if(rsIdentity->getIdDetails(RsGxsId(peerId),details))
 				peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
 			else
-				peerName = QString::fromStdString(gxs_id.toStdString()) ;
+                peerName = QString::fromStdString(peerId.toStdString()) ;
 		}
 		else
 			peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
