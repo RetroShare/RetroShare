@@ -876,7 +876,7 @@ void IdDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req
 
 		case IDDIALOG_IDDETAILS:
 			insertIdDetails(req.mToken);
-			break;
+            break;
 
 		case IDDIALOG_REPLIST:
 			insertRepList(req.mToken);
@@ -901,8 +901,31 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
     QMenu contextMnu( this );
 
     contextMnu.addAction(ui.editIdentity);
-	 contextMnu.addAction(ui.removeIdentity);
-	 contextMnu.addAction(ui.chatIdentity);
+    contextMnu.addAction(ui.removeIdentity);
+
+    std::list<RsGxsId> own_identities ;
+    rsIdentity->getOwnIds(own_identities) ;
+
+    if(own_identities.size() == 1)
+    {
+        QAction * action = contextMnu.addAction(QIcon(),"Chat with this peer",this,SLOT(chatIdentity()));
+        action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+    }
+    else
+    {
+        QMenu *mnu = contextMnu.addMenu("Chat with this peer as...") ;
+
+        for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+        {
+            RsIdentityDetails idd ;
+            rsIdentity->getIdDetails(*it,idd) ;
+
+        QPixmap pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+
+            QAction * action = mnu->addAction(QIcon(pixmap),QString::fromStdString(idd.mNickname) + " (" + QString::fromStdString((*it).toStdString())+ ")",this,SLOT(chatIdentity()));
+            action->setData(QString::fromStdString((*it).toStdString())) ;
+        }
+    }
 
     contextMnu.exec(QCursor::pos());
 }
@@ -917,12 +940,17 @@ void IdDialog::chatIdentity()
 		return;
 	}
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+    std::string keyId = item->text(RSID_COL_KEYID).toStdString();
 
-	uint32_t error_code ;
+    QAction *action = qobject_cast<QAction *>(QObject::sender());
+    if (!action)
+        return ;
 
-	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), error_code))
-		QMessageBox::information(NULL,"Distant cannot work","Distant chat refused with this peer. Reason: "+QString::number(error_code)) ;
+    RsGxsId from_gxs_id(action->data().toString().toStdString());
+    uint32_t error_code ;
+
+    if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), from_gxs_id, error_code))
+        QMessageBox::information(NULL,"Distant chat cannot work","Distant chat refused with this peer. Error code: "+QString::number(error_code)) ;
 }
 
 

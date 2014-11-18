@@ -501,8 +501,6 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 
 	// Looks for the DH params. If not there yet, create them.
 	//
-	bool should_send = false ;
-
 	int size = DH_size(it->second.dh) ;
 	unsigned char *key_buff = new unsigned char[size] ;
 
@@ -777,31 +775,39 @@ void DistantChatService::sendTurtleData(RsChatItem *item)
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
-bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code)
+bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,uint32_t& error_code)
 {
-	TurtleFileHash hash = hashFromGxsId(gxs_id) ;
+    TurtleFileHash hash = hashFromGxsId(to_gxs_id) ;
 
 	// should be a parameter.
 	
-	std::list<RsGxsId> lst ;
+    std::list<RsGxsId> lst ;
 	mIdService->getOwnIds(lst) ;
 
-	if(lst.empty())
-	{
-		std::cerr << "  (EE) Cannot start distant chat, since no GXS id is available." << std::endl;
-		return false ;
-	}
-	RsGxsId own_gxs_id = lst.front() ;
+    bool found = false ;
+    for(std::list<RsGxsId>::const_iterator it = lst.begin();it!=lst.end();++it)
+        if(*it == from_gxs_id)
+    {
+            found=true;
+        break ;
+    }
+
+    if(!found)
+    {
+        std::cerr << "  (EE) Cannot start distant chat, since GXS id " << from_gxs_id << " is not available." << std::endl;
+        return false ;
+    }
+    RsGxsId own_gxs_id = from_gxs_id ;
 
 	//
-	startClientDistantChatConnection(hash,gxs_id,own_gxs_id) ;
+    startClientDistantChatConnection(hash,to_gxs_id,own_gxs_id) ;
     error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
 
     // spawn a status item so as to open the chat window.
     RsChatMsgItem *item = new RsChatMsgItem;
-    item->message = "Starting distant chat. Please wait for secure tunnel to be established." ;
+    item->message = "[Starting distant chat. Please wait for secure tunnel to be established.]" ;
     item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
-    item->PeerId(RsPeerId(gxs_id)) ;
+    item->PeerId(RsPeerId(to_gxs_id)) ;
     handleRecvChatMsgItem(item) ;
 
 	return true ;

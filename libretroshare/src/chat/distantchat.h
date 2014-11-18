@@ -50,7 +50,7 @@ public:
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //
-    bool initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code) ;
+    bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId &from_gxs_id, uint32_t &error_code) ;
     bool closeDistantChatConnexion(const RsGxsId& pid) ;
     virtual bool getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status) ;
 

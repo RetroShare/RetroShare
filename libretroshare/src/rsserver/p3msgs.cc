@@ -364,9 +364,9 @@ void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
 {
 	mChatSrv->getPendingChatLobbyInvites(invites) ;
 }
-bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code)
+bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,uint32_t& error_code)
 {
-	return mChatSrv->initiateDistantChatConnexion(gxs_id,error_code) ;
+    return mChatSrv->initiateDistantChatConnexion(to_gxs_id,from_gxs_id,error_code) ;
 }
 bool p3Msgs::getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status)
 {

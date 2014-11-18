@@ -196,7 +196,7 @@ class p3Msgs: public RsMsgs
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,uint32_t privacy_type) ;
 
-	  virtual bool initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code) ;
+      virtual bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,uint32_t& error_code) ;
       virtual bool getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status) ;
       virtual bool closeDistantChatConnexion(const RsGxsId &pid) ;
 
