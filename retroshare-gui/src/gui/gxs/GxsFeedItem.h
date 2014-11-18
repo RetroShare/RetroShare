@@ -24,78 +24,42 @@
 #ifndef _GXS_GENERIC_FEED_ITEM_H
 #define _GXS_GENERIC_FEED_ITEM_H
 
-#include <QMetaType>
+#include "GxsGroupFeedItem.h"
 
-#include <retroshare/rsgxsifacehelper.h>
-#include "gui/feeds/FeedItem.h"
-#include "util/TokenQueue.h"
-#include "gui/RetroShareLink.h"
-
-#include <stdint.h>
-
-class FeedHolder;
-class RsGxsUpdateBroadcastBase;
-
-class GxsFeedItem : public FeedItem, public TokenResponse
+class GxsFeedItem : public GxsGroupFeedItem
 {
 	Q_OBJECT
 
 public:
 	/** Note parent can = NULL */
-	GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate);
+	GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate);
 	virtual ~GxsFeedItem();
 
-	RsGxsGroupId groupId() { return mGroupId; }
 	RsGxsMessageId messageId() { return mMessageId; }
 
-	virtual void setContent(const QVariant &content) = 0;
-
 protected:
-	// generic Fns - to be overloaded.
-	virtual void updateItemStatic();
-	virtual void updateItem();
-	virtual void loadMessage(const uint32_t &token) = 0;
-
+	/* load message data */
 	void requestMessage();
 
-	virtual void loadGroupMeta(const uint32_t &token);
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
-	virtual RetroShareLink::enumType getLinkType() = 0;
+	virtual void loadMessage(const uint32_t &token) = 0;
 	virtual QString messageName() = 0;
 
-	// general fns that can be implemented here.
+	/* GxsGroupFeedItem */
+	virtual bool isLoading();
+	virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
+
+	/* TokenResponse */
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected slots:
 	void comments(const QString &title);
-	void subscribe();
-	void unsubscribe();
-	void removeItem();
-	void copyLink();
-
-private slots:
-	/* RsGxsUpdateBroadcastBase */
-	void fillDisplay(bool complete);
-
-protected:
-	FeedHolder *mFeedHolder;
-	uint32_t    mFeedId;
-	bool        mIsHome;
-
-	RsGxsGroupId mGroupId;
-	RsGxsMessageId mMessageId;
-
-	RsGroupMetaData mGroupMeta;
+	void copyMessageLink();
 
 private:
-	void requestGroupMeta();
-
-	RsGxsIfaceHelper *mGxsIface;
-	TokenQueue *mLoadQueue;
-	RsGxsUpdateBroadcastBase *mUpdateBroadcastBase;
+	RsGxsMessageId mMessageId;
+	uint32_t mTokenTypeMessage;
 };
 
-Q_DECLARE_METATYPE(RsGxsGroupId)
 Q_DECLARE_METATYPE(RsGxsMessageId)
 
 #endif

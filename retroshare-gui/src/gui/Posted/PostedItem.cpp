@@ -38,18 +38,35 @@
 /** Constructor */
 
 PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
-	GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, true, false)
+    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, false)
 {
 	setup();
+
+	requestGroup();
+	requestMessage();
+}
+
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false)
+{
+	setup();
+
+	setGroup(group, false);
+	setPost(post);
 }
 
 PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome) :
-	GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false, false),
-	mPost(post)
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false)
 {
 	setup();
 
-	setContent(mPost);
+	requestGroup();
+	setPost(post);
+}
+
+PostedItem::~PostedItem()
+{
+	delete(ui);
 }
 
 void PostedItem::setup()
@@ -58,15 +75,75 @@ void PostedItem::setup()
 	ui = new Ui::PostedItem;
 	ui->setupUi(this);
 
-	mInSetContent = false;
-
 	setAttribute(Qt::WA_DeleteOnClose, true);
+
+	mInFill = false;
+
+	/* clear ui */
+	ui->titleLabel->setText(tr("Loading"));
+	ui->dateLabel->clear();
+	ui->fromLabel->clear();
+	ui->siteLabel->clear();
 
 	connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
 	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+}
+
+bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
+{
+	if (groupId() != group.mMeta.mGroupId) {
+		std::cerr << "PostedItem::setGroup() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mGroup = group;
+
+	if (doFill) {
+		fill();
+	}
+
+	return true;
+}
+
+bool PostedItem::setPost(const RsPostedPost &post, bool doFill)
+{
+	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
+		std::cerr << "PostedItem::setPost() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mPost = post;
+
+	if (doFill) {
+		fill();
+	}
+
+	return true;
+}
+
+void PostedItem::loadGroup(const uint32_t &token)
+{
+	std::vector<RsPostedGroup> groups;
+	if (!rsPosted->getGroupData(token, groups))
+	{
+		std::cerr << "PostedItem::loadGroup() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (groups.size() != 1)
+	{
+		std::cerr << "PostedItem::loadGroup() Wrong number of Items";
+		std::cerr << std::endl;
+		return;
+	}
+
+	setGroup(groups[0]);
 }
 
 void PostedItem::loadMessage(const uint32_t &token)
@@ -86,48 +163,40 @@ void PostedItem::loadMessage(const uint32_t &token)
 		return;
 	}
 
-	mPost = posts[0];
-	setContent(mPost);
+	setPost(posts[0]);
 }
 
-void PostedItem::setContent(const QVariant &content)
+void PostedItem::fill()
 {
-	if (!content.canConvert<RsPostedPost>()) {
+	if (isLoading()) {
+		/* Wait for all requests */
 		return;
 	}
 
-	RsPostedPost post = content.value<RsPostedPost>();
-	setContent(post);
-}
-
-void PostedItem::setContent(const RsPostedPost &post)
-{
-	mInSetContent = true;
-
-	mPost = post;
+	mInFill = true;
 
 	QDateTime qtime;
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
 	ui->dateLabel->setText(timestamp);
-	ui->fromLabel->setId(post.mMeta.mAuthorId);
-	ui->titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+	ui->fromLabel->setId(mPost.mMeta.mAuthorId);
+	ui->titleLabel->setText("<a href=" + QString::fromStdString(mPost.mLink) +
 	                        "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-	                        QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
-	ui->siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
+	                        messageName() + "</span></a>");
+	ui->siteLabel->setText("<a href=" + QString::fromStdString(mPost.mLink) +
 	                       "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-	                       QString::fromStdString(post.mLink) + "</span></a>");
+	                       QString::fromStdString(mPost.mLink) + "</span></a>");
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
 	//score += " Top" + QString::number(post.mTopScore); 
 	//score += " New" + QString::number(post.mNewScore);
 
-	QString score = QString::number(post.mTopScore);
+	QString score = QString::number(mPost.mTopScore);
 
 	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-	ui->notes->setText(QString::fromUtf8(post.mNotes.c_str()));
+	ui->notes->setText(QString::fromUtf8(mPost.mNotes.c_str()));
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
@@ -136,9 +205,9 @@ void PostedItem::setContent(const RsPostedPost &post)
 		//frame_comment->show();
 		ui->commentButton->show();
 
-		if (post.mComments)
+		if (mPost.mComments)
 		{
-			QString commentText = QString::number(post.mComments);
+			QString commentText = QString::number(mPost.mComments);
 			commentText += " ";
 			commentText += tr("Comments");
 			ui->commentButton->setText(commentText);
@@ -148,7 +217,7 @@ void PostedItem::setContent(const RsPostedPost &post)
 			ui->commentButton->setText(tr("Comment"));
 		}
 
-		setReadStatus(IS_MSG_NEW(post.mMeta.mMsgStatus), IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus));
+		setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 	}
 	else
 	{
@@ -169,7 +238,7 @@ void PostedItem::setContent(const RsPostedPost &post)
 	}
 
 	// disable voting buttons - if they have already voted.
-	if (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+	if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 	{
 		ui->voteUpButton->setEnabled(false);
 		ui->voteDownButton->setEnabled(false);
@@ -193,7 +262,7 @@ void PostedItem::setContent(const RsPostedPost &post)
 	}
 #endif
 
-	mInSetContent = false;
+	mInFill = false;
 }
 
 const RsPostedPost &PostedItem::getPost() const
@@ -204,6 +273,11 @@ const RsPostedPost &PostedItem::getPost() const
 RsPostedPost &PostedItem::post()
 {
 	return mPost;
+}
+
+QString PostedItem::groupName()
+{
+	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
 }
 
 QString PostedItem::messageName()
@@ -276,7 +350,7 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 
 void PostedItem::readToggled(bool checked)
 {
-	if (mInSetContent) {
+	if (mInFill) {
 		return;
 	}
 

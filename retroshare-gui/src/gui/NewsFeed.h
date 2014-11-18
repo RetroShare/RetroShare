@@ -25,6 +25,7 @@
 #include "mainpage.h"
 
 #include "gui/feeds/FeedHolder.h"
+#include "util/TokenQueue.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
 #define IMAGE_NEWSFEED ":/images/newsfeed/news-feed-32.png"
@@ -37,7 +38,7 @@ class RsFeedItem;
 class FeedNotify;
 class FeedItem;
 
-class NewsFeed : public RsAutoUpdatePage, public FeedHolder
+class NewsFeed : public RsAutoUpdatePage, public FeedHolder, public TokenResponse
 {
 	Q_OBJECT
 
@@ -66,6 +67,10 @@ public:
 
 signals:
 	void newsFeedChanged(int count);
+
+protected:
+	/* TokenResponse */
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 //	void toggleChanMsgItems(bool on);
@@ -103,7 +108,16 @@ private:
 	void addFeedItemMessage(const RsFeedItem &fi);
 	void addFeedItemFilesNew(const RsFeedItem &fi);
 
+	virtual void loadChannelGroup(const uint32_t &token);
+	virtual void loadChannelPost(const uint32_t &token);
+
+	virtual void loadForumGroup(const uint32_t &token);
+	virtual void loadForumMessage(const uint32_t &token);
+
 private:
+	TokenQueue *mTokenQueueChannel;
+	TokenQueue *mTokenQueueForum;
+
 	/* UI - from Designer */
 	Ui::NewsFeed *ui;
 };

@@ -329,11 +329,14 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	}
 	if (item) {
-		item->setContent(post);
+		item->setPost(post);
 		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	} else {
-		uint32_t subscribeFlags = 0xffffffff;
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, subscribeFlags, true, false);
+		/* Group is not always available because of the TokenQueue */
+		RsGxsChannelGroup dummyGroup;
+		dummyGroup.mMeta.mGroupId = groupId();
+		dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
 

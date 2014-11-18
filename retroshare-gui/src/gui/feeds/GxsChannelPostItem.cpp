@@ -30,7 +30,6 @@
 
 #include "FeedHolder.h"
 #include "SubFileItem.h"
-//#include "gui/notifyqt.h"
 #include "util/misc.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
@@ -45,54 +44,41 @@
 #define COLOR_NORMAL QColor(248, 248, 248)
 #define COLOR_NEW    QColor(220, 236, 253)
 
-#define SELF_LOAD      1
-#define DATA_PROVIDED  2
-
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
-	GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, true, autoUpdate)
+    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
 {
-	mMode = SELF_LOAD;
-
 	setup();
+
+	requestGroup();
+	requestMessage();
 }
 
-/** Constructor */
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subFlags, bool isHome, bool autoUpdate) :
-	GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, false, autoUpdate)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
 {
+#ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::GxsChannelPostItem() Direct Load";
 	std::cerr << std::endl;
-
-	mMode = DATA_PROVIDED;
-	mGroupMeta.mSubscribeFlags = subFlags;
+#endif
 
 	setup();
 
-	// is it because we are in the constructor?
-	loadPost(post);
+	setGroup(group, false);
+	setPost(post);
 }
 
-void GxsChannelPostItem::setContent(const QVariant &content)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
 {
-	if (!content.canConvert<RsGxsChannelPost>()) {
-		return;
-	}
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsChannelPostItem::GxsChannelPostItem() Direct Load";
+	std::cerr << std::endl;
+#endif
 
-	RsGxsChannelPost post = content.value<RsGxsChannelPost>();
-	setContent(post);
-}
+	setup();
 
-bool GxsChannelPostItem::setContent(const RsGxsChannelPost &post)
-{
-	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
-		std::cerr << "GxsChannelPostItem::setPost() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	loadPost(post);
-
-	return true;
+	requestGroup();
+	setPost(post);
 }
 
 GxsChannelPostItem::~GxsChannelPostItem()
@@ -106,24 +92,30 @@ void GxsChannelPostItem::setup()
 	ui = new Ui::GxsChannelPostItem;
 	ui->setupUi(this);
 
-	setAttribute ( Qt::WA_DeleteOnClose, true );
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	mInUpdateItemStatic = false;
+	mInFill = false;
+
+	/* clear ui */
+	ui->titleLabel->setText(tr("Loading"));
+	ui->subjectLabel->clear();
+	ui->datetimelabel->clear();
+	ui->filelabel->clear();
 
 	/* general ones */
-	connect(ui->expandButton, SIGNAL(clicked(void)), this, SLOT(toggle(void)));
-	connect(ui->clearButton, SIGNAL(clicked(void)), this, SLOT(removeItem(void)));
+	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
+	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
 
 	/* specific */
 	connect(ui->readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
-	connect(ui->unsubscribeButton, SIGNAL(clicked(void)), this, SLOT(unsubscribeChannel(void)));
+	connect(ui->unsubscribeButton, SIGNAL(clicked()), this, SLOT(unsubscribeChannel()));
 
-	connect(ui->downloadButton, SIGNAL(clicked(void)), this, SLOT(download(void)));
+	connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(download()));
 	// HACK FOR NOW.
-	connect(ui->commentButton, SIGNAL(clicked(void)), this, SLOT(loadComments(void)));
+	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
-	connect(ui->playButton, SIGNAL(clicked(void)), this, SLOT( play(void)));
-	connect(ui->copyLinkButton, SIGNAL(clicked(void)), this, SLOT(copyLink(void)));
+	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
+	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 	//connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
@@ -148,16 +140,84 @@ void GxsChannelPostItem::setup()
 	ui->expandFrame->hide();
 }
 
+bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
+{
+	if (groupId() != group.mMeta.mGroupId) {
+		std::cerr << "GxsChannelPostItem::setGroup() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mGroup = group;
+
+	if (doFill) {
+		fill();
+	}
+
+	return true;
+}
+
+bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post, bool doFill)
+{
+	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
+		std::cerr << "GxsChannelPostItem::setPost() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mPost = post;
+
+	if (doFill) {
+		fill();
+	}
+
+	updateItem();
+
+	return true;
+}
+
+QString GxsChannelPostItem::groupName()
+{
+	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
+}
+
 void GxsChannelPostItem::loadComments()
 {
 	QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 	comments(title);
 }
 
+void GxsChannelPostItem::loadGroup(const uint32_t &token)
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsChannelGroupItem::loadGroup()";
+	std::cerr << std::endl;
+#endif
+
+	std::vector<RsGxsChannelGroup> groups;
+	if (!rsGxsChannels->getGroupData(token, groups))
+	{
+		std::cerr << "GxsChannelGroupItem::loadGroup() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (groups.size() != 1)
+	{
+		std::cerr << "GxsChannelGroupItem::loadGroup() Wrong number of Items";
+		std::cerr << std::endl;
+		return;
+	}
+
+	setGroup(groups[0]);
+}
+
 void GxsChannelPostItem::loadMessage(const uint32_t &token)
 {
+#ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::loadMessage()";
 	std::cerr << std::endl;
+#endif
 
 	std::vector<RsGxsChannelPost> posts;
 	if (!rsGxsChannels->getPostData(token, posts))
@@ -174,23 +234,24 @@ void GxsChannelPostItem::loadMessage(const uint32_t &token)
 		return;
 	}
 
-	loadPost(posts[0]);
-
-	updateItem();
+	setPost(posts[0]);
 }
 
-void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
+void GxsChannelPostItem::fill()
 {
 	/* fill in */
 
+	if (isLoading()) {
+		/* Wait for all requests */
+		return;
+	}
+
 #ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelPostItem::loadPost()";
+	std::cerr << "GxsChannelPostItem::fill()";
 	std::cerr << std::endl;
 #endif
 
-	mInUpdateItemStatic = true;
-
-	mPost = post;
+	mInFill = true;
 
 	QString title;
 
@@ -198,14 +259,15 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	{
 		title = tr("Channel Feed") + ": ";
 		RetroShareLink link;
-		link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, post.mMeta.mGroupId, "");
+		link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
 		title += link.toHtml();
 		ui->titleLabel->setText(title);
+
 		RetroShareLink msgLink;
-		msgLink.createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, post.mMeta.mGroupId, post.mMeta.mMsgId, QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+		msgLink.createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
 		ui->subjectLabel->setText(msgLink.toHtml());
 
-		if (IS_GROUP_SUBSCRIBED(mSubscribeFlags) || IS_GROUP_ADMIN(mSubscribeFlags))
+		if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
 		{
 			ui->unsubscribeButton->setEnabled(true);
 		}
@@ -220,8 +282,8 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	else
 	{
 		/* subject */
-		ui->titleLabel->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-		ui->subjectLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
+		ui->subjectLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 		
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
@@ -234,11 +296,11 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		ui->unsubscribeButton->hide();
 		ui->copyLinkButton->show();
 
-		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
+		if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
 		{
 			ui->readButton->setVisible(true);
 
-			setReadStatus(IS_MSG_NEW(post.mMeta.mMsgStatus), IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus));
+			setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 		} 
 		else 
 		{
@@ -250,7 +312,11 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
-		ui->commentButton->show();
+		if (mIsHome) {
+			ui->commentButton->show();
+		} else {
+			ui->commentButton->hide();
+		}
 
 // THIS CODE IS doesn't compile - disabling until fixed.
 #if 0
@@ -280,12 +346,12 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		voteDownButton->setEnabled(false);
 	}*/
 
-	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-	ui->msgFrame->setVisible(!post.mMsg.empty());
+	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	ui->msgFrame->setVisible(!mPost.mMsg.empty());
 
-	ui->datetimelabel->setText(DateTime::formatLongDateTime(post.mMeta.mPublishTs));
+	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
 
-	ui->filelabel->setText(QString("(%1 %2) %3").arg(post.mCount).arg(tr("Files")).arg(misc::friendlyUnit(post.mSize)));
+	ui->filelabel->setText(QString("(%1 %2) %3").arg(mPost.mCount).arg(tr("Files")).arg(misc::friendlyUnit(mPost.mSize)));
 
 	if (mFileItems.empty() == false) {
 		std::list<SubFileItem *>::iterator it;
@@ -297,7 +363,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	}
 
 	std::list<RsGxsFile>::const_iterator it;
-	for(it = post.mFiles.begin(); it != post.mFiles.end(); ++it)
+	for(it = mPost.mFiles.begin(); it != mPost.mFiles.end(); ++it)
 	{
 		/* add file */
 		std::string path;
@@ -312,15 +378,15 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		layout->addWidget(fi);
 	}
 
-	if(post.mThumbnail.mData != NULL)
+	if(mPost.mThumbnail.mData != NULL)
 	{
 		QPixmap thumbnail;
-		thumbnail.loadFromData(post.mThumbnail.mData, post.mThumbnail.mSize, "PNG");
+		thumbnail.loadFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, "PNG");
 		// Wiping data - as its been passed to thumbnail.
 		ui->logoLabel->setPixmap(thumbnail);
 	}
 
-	mInUpdateItemStatic = false;
+	mInFill = false;
 }
 
 QString GxsChannelPostItem::messageName()
@@ -379,6 +445,7 @@ void GxsChannelPostItem::updateItem()
 	std::cerr << "GxsChannelPostItem::updateItem()";
 	std::cerr << std::endl;
 #endif
+
 	int msec_rate = 10000;
 
 	int downloadCount = 0;
@@ -503,7 +570,6 @@ void GxsChannelPostItem::unsubscribeChannel()
 #endif
 
 	unsubscribe();
-	updateItemStatic();
 }
 
 void GxsChannelPostItem::download()
@@ -531,7 +597,7 @@ void GxsChannelPostItem::play()
 
 void GxsChannelPostItem::readToggled(bool checked)
 {
-	if (mInUpdateItemStatic) {
+	if (mInFill) {
 		return;
 	}
 

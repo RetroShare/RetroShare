@@ -27,12 +27,12 @@
 
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
-//#include <retroshare/rschannels.h>
-//#include <retroshare/rsforums.h>
+#include <retroshare/rsgxschannels.h>
+#include <retroshare/rsgxsforums.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
 
-//#include "feeds/ChanNewItem.h"
+#include "feeds/GxsChannelGroupItem.h"
 #include "feeds/GxsChannelPostItem.h"
 //#include "feeds/ForumNewItem.h"
 //#include "feeds/ForumMsgItem.h"
@@ -72,6 +72,9 @@ const uint32_t NEWSFEED_SECLIST =        0x000a;
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
+#define TOKEN_TYPE_GROUP    1
+#define TOKEN_TYPE_MESSAGE  2
+
 /*****
  * #define NEWS_DEBUG  1
  ****/
@@ -85,6 +88,9 @@ NewsFeed::NewsFeed(QWidget *parent) :
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
+
+	mTokenQueueChannel = NULL;
+	mTokenQueueForum = NULL;
 
 	setUpdateWhenInvisible(true);
 
@@ -122,6 +128,13 @@ NewsFeed::~NewsFeed()
 {
 	if (instance == this) {
 		instance = NULL;
+	}
+
+	if (mTokenQueueChannel) {
+		delete(mTokenQueueChannel);
+	}
+	if (mTokenQueueForum) {
+		delete(mTokenQueueForum);
 	}
 }
 
@@ -300,117 +313,35 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			instance->addFeedItemSecurityUnknownOut(fi);
 			break;
 
-#if 0
 		case RS_FEED_TYPE_CHANNEL:
 		{
-			std::list<ChannelInfo> channelList;
-			rsChannels->getChannelList(channelList);
-
-			std::list<ChannelInfo>::iterator channelIt;
-			for (channelIt = channelList.begin(); channelIt != channelList.end(); ++channelIt) {
-				if (fi.mId1.empty()) {
-					/* store first channel */
-					fi.mId1 = channelIt->channelId;
-				}
-
-				if (!channelIt->channelDesc.empty()) {
-					/* take channel with description */
-					fi.mId1 = channelIt->channelId;
-					break;
-				}
+			if (!instance->mTokenQueueChannel) {
+				instance->mTokenQueueChannel = new TokenQueue(rsGxsChannels->getTokenService(), instance);
 			}
 
-			instance->addFeedItemChanNew(fi);
-			instance->addFeedItemChanUpdate(fi);
+			RsTokReqOptions opts;
+			opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+			uint32_t token;
+			instance->mTokenQueueChannel->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP);
 
-			RsFeedItem fiMsg;
-			bool bFound = false;
-
-			for (channelIt = channelList.begin(); channelIt != channelList.end(); ++channelIt) {
-				std::list<ChannelMsgSummary> channelMsgs;
-				rsChannels->getChannelMsgList(channelIt->channelId, channelMsgs);
-
-				std::list<ChannelMsgSummary>::iterator msgIt;
-				for (msgIt = channelMsgs.begin(); msgIt != channelMsgs.end(); ++msgIt) {
-					if (fiMsg.mId2.empty()) {
-						/* store first channel message */
-						fiMsg.mId1 = msgIt->channelId;
-						fiMsg.mId2 = msgIt->msgId;
-					}
-
-					if (!msgIt->msg.empty()) {
-						/* take channel message with description */
-						fiMsg.mId1 = msgIt->channelId;
-						fiMsg.mId2 = msgIt->msgId;
-						bFound = true;
-						break;
-					}
-				}
-
-				if (bFound) {
-					break;
-				}
-			}
-
-			instance->addFeedItemChanMsg(fiMsg);
 			break;
 		}
 
 		case RS_FEED_TYPE_FORUM:
 		{
-			std::list<ForumInfo> forumList;
-			rsForums->getForumList(forumList);
-
-			std::list<ForumInfo>::iterator forumIt;
-			for (forumIt = forumList.begin(); forumIt != forumList.end(); ++forumIt) {
-				if (fi.mId1.empty()) {
-					/* store first forum */
-					fi.mId1 = forumIt->forumId;
-				}
-
-				if (!forumIt->forumDesc.empty()) {
-					/* take forum with description */
-					fi.mId1 = forumIt->forumId;
-					break;
-				}
+			if (!instance->mTokenQueueForum) {
+				instance->mTokenQueueForum = new TokenQueue(rsGxsForums->getTokenService(), instance);
 			}
 
-			instance->addFeedItemForumNew(fi);
-			instance->addFeedItemForumUpdate(fi);
+			RsTokReqOptions opts;
+			opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+			uint32_t token;
+			instance->mTokenQueueForum->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP);
 
-			RsFeedItem fiMsg;
-			bool bFound = false;
-
-			for (forumIt = forumList.begin(); forumIt != forumList.end(); ++forumIt) {
-				std::list<ThreadInfoSummary> forumMsgs;
-				rsForums->getForumThreadList(forumIt->forumId, forumMsgs);
-
-				std::list<ThreadInfoSummary>::iterator msgIt;
-				for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
-					if (fiMsg.mId2.empty()) {
-						/* store first forum message */
-						fiMsg.mId1 = msgIt->forumId;
-						fiMsg.mId2 = msgIt->msgId;
-					}
-
-					if (!msgIt->msg.empty()) {
-						/* take channel message with description */
-						fiMsg.mId1 = msgIt->forumId;
-						fiMsg.mId2 = msgIt->msgId;
-						bFound = true;
-						break;
-					}
-				}
-
-				if (bFound) {
-					break;
-				}
-			}
-
-			instance->addFeedItemForumMsg(fiMsg);
 			break;
 		}
 
+#if 0
 		case RS_FEED_TYPE_BLOG:
 // not used
 //			instance->addFeedItemBlogNew(fi);
@@ -464,6 +395,191 @@ void NewsFeed::testFeeds(uint notifyFlags)
 	instance->sendNewsFeedChanged();
 }
 
+void NewsFeed::loadChannelGroup(const uint32_t &token)
+{
+	std::vector<RsGxsChannelGroup> groups;
+	if (!rsGxsChannels->getGroupData(token, groups)) {
+		std::cerr << "NewsFeed::loadChannelGroup() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsFeedItem fi;
+	std::vector<RsGxsChannelGroup>::iterator channelIt;
+	for (channelIt = groups.begin(); channelIt != groups.end(); ++channelIt) {
+		if (fi.mId1.empty()) {
+			/* store first channel */
+			fi.mId1 = channelIt->mMeta.mGroupId.toStdString();
+		}
+
+		if (!channelIt->mDescription.empty()) {
+			/* take channel with description */
+			fi.mId1 = channelIt->mMeta.mGroupId.toStdString();
+			break;
+		}
+	}
+
+	if (fi.mId1.empty()) {
+		return;
+	}
+
+	instance->addFeedItemChannelNew(fi);
+//	instance->addFeedItemChanUpdate(fi);
+
+	/* Prepare group ids for message request */
+	std::list<RsGxsGroupId> grpIds;
+	for (channelIt = groups.begin(); channelIt != groups.end(); ++channelIt) {
+		grpIds.push_back(channelIt->mMeta.mGroupId);
+	}
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_THREAD;
+	uint32_t msgToken;
+	instance->mTokenQueueChannel->requestMsgInfo(msgToken, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_MESSAGE);
+}
+
+void NewsFeed::loadChannelPost(const uint32_t &token)
+{
+	std::vector<RsGxsChannelPost> posts;
+	if (!rsGxsChannels->getPostData(token, posts)) {
+		std::cerr << "NewsFeed::loadChannelPost() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsFeedItem fi;
+	std::vector<RsGxsChannelPost>::iterator postIt;
+	for (postIt = posts.begin(); postIt != posts.end(); ++postIt) {
+		if (fi.mId2.empty()) {
+			/* store first channel message */
+			fi.mId1 = postIt->mMeta.mGroupId.toStdString();
+			fi.mId2 = postIt->mMeta.mMsgId.toStdString();
+		}
+
+		if (!postIt->mMsg.empty()) {
+			/* take channel message with description */
+			fi.mId1 = postIt->mMeta.mGroupId.toStdString();
+			fi.mId2 = postIt->mMeta.mMsgId.toStdString();
+			break;
+		}
+	}
+
+	if (!fi.mId1.empty()) {
+		instance->addFeedItemChannelMsg(fi);
+	}
+}
+
+void NewsFeed::loadForumGroup(const uint32_t &token)
+{
+	std::vector<RsGxsForumGroup> forums;
+	if (!rsGxsForums->getGroupData(token, forums)) {
+		std::cerr << "NewsFeed::loadForumGroup() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsFeedItem fi;
+	std::vector<RsGxsForumGroup>::iterator forumIt;
+	for (forumIt = forums.begin(); forumIt != forums.end(); ++forumIt) {
+		if (fi.mId1.empty()) {
+			/* store first forum */
+			fi.mId1 = forumIt->mMeta.mGroupId.toStdString();
+		}
+
+		if (!forumIt->mDescription.empty()) {
+			/* take forum with description */
+			fi.mId1 = forumIt->mMeta.mGroupId.toStdString();
+			break;
+		}
+	}
+
+	if (fi.mId1.empty()) {
+		return;
+	}
+
+	instance->addFeedItemForumNew(fi);
+//	instance->addFeedItemForumUpdate(fi);
+
+	/* Prepare group ids for message request */
+	std::list<RsGxsGroupId> grpIds;
+	for (forumIt = forums.begin(); forumIt != forums.end(); ++forumIt) {
+		grpIds.push_back(forumIt->mMeta.mGroupId);
+	}
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_THREAD;
+	uint32_t msgToken;
+	instance->mTokenQueueForum->requestMsgInfo(msgToken, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_MESSAGE);
+}
+
+void NewsFeed::loadForumMessage(const uint32_t &token)
+{
+	std::vector<RsGxsForumMsg> msgs;
+	if (!rsGxsForums->getMsgData(token, msgs)) {
+		std::cerr << "NewsFeed::loadChannelPost() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsFeedItem fi;
+	std::vector<RsGxsForumMsg>::iterator msgIt;
+	for (msgIt = msgs.begin(); msgIt != msgs.end(); ++msgIt) {
+		if (fi.mId2.empty()) {
+			/* store first forum message */
+			fi.mId1 = msgIt->mMeta.mGroupId.toStdString();
+			fi.mId2 = msgIt->mMeta.mMsgId.toStdString();
+		}
+
+		if (!msgIt->mMsg.empty()) {
+			/* take forum message with description */
+			fi.mId1 = msgIt->mMeta.mGroupId.toStdString();
+			fi.mId2 = msgIt->mMeta.mMsgId.toStdString();
+			break;
+		}
+	}
+
+	if (!fi.mId1.empty()) {
+		instance->addFeedItemForumMsg(fi);
+	}
+}
+
+void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	if (queue == mTokenQueueChannel) {
+		switch (req.mUserType) {
+		case TOKEN_TYPE_GROUP:
+			loadChannelGroup(req.mToken);
+			break;
+
+		case TOKEN_TYPE_MESSAGE:
+			loadChannelPost(req.mToken);
+			break;
+
+		default:
+			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << std::endl;
+			break;
+		}
+	}
+
+	if (queue == mTokenQueueForum) {
+		switch (req.mUserType) {
+		case TOKEN_TYPE_GROUP:
+			loadForumGroup(req.mToken);
+			break;
+
+		case TOKEN_TYPE_MESSAGE:
+			loadForumMessage(req.mToken);
+			break;
+
+		default:
+			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << std::endl;
+			break;
+		}
+	}
+}
+
 void NewsFeed::testFeed(FeedNotify *feedNotify)
 {
 	if (!instance) {
@@ -484,7 +600,7 @@ void NewsFeed::testFeed(FeedNotify *feedNotify)
 
 void NewsFeed::addFeedItem(FeedItem *item)
 {
-	static const unsigned int MAX_FEEDITEM_COUNT = 500 ;
+	static const int MAX_FEEDITEM_COUNT = 500 ;
 
 	item->setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -662,11 +778,17 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 
 void NewsFeed::addFeedItemChannelNew(const RsFeedItem &fi)
 {
+	RsGxsGroupId grpId(fi.mId1);
+
+	if (grpId.isNull()) {
+		return;
+	}
+
 	/* make new widget */
-//	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, true);
+	GxsChannelGroupItem *item = new GxsChannelGroupItem(this, NEWSFEED_CHANNELNEWLIST, grpId, false, true);
 
 	/* add to layout */
-//	addFeedItem(cni);
+	addFeedItem(item);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanNew()";

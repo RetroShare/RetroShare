@@ -330,7 +330,11 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 
 void PostedListWidget::loadPost(const RsPostedPost &post)
 {
-	PostedItem *item = new PostedItem(this, 0, post, true);
+	/* Group is not always available because of the TokenQueue */
+	RsPostedGroup dummyGroup;
+	dummyGroup.mMeta.mGroupId = groupId();
+
+	PostedItem *item = new PostedItem(this, 0, dummyGroup, post, true);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
 	mPosts.insert(post.mMeta.mMsgId, item);
 	//QLayout *alayout = ui.scrollAreaWidgetContents->layout();
@@ -573,7 +577,7 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 			std::cerr << "PostedListWidget::updateCurrentDisplayComplete() updating MsgId: " << p.mMeta.mMsgId;
 			std::cerr << std::endl;
 
-			mPosts[p.mMeta.mMsgId]->setContent(p);
+			mPosts[p.mMeta.mMsgId]->setPost(p);
 		}
 		else
 		{

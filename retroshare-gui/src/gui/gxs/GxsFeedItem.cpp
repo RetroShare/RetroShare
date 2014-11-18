@@ -26,34 +26,32 @@
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 
 #include <iostream>
-#include <algorithm>
+//#include <algorithm>
 
 /**
  * #define DEBUG_ITEM	1
  **/
 
-#define GXSFEEDITEM_GROUPMETA  5
-#define GXSFEEDITEM_MESSAGE    6
-
-void GxsFeedItem::removeItem()
+GxsFeedItem::GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate) :
+    GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, iface, autoUpdate)
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::removeItem()";
+	std::cerr << "GxsFeedItem::GxsFeedItem()";
 	std::cerr << std::endl;
 #endif
 
-	if (mFeedHolder)
-	{
-		mFeedHolder->lockLayout(this, true);
-	}
+	/* load data if we can */
+	mMessageId = messageId;
 
-	hide();
+	mTokenTypeMessage = nextTokenType();
+}
 
-	if (mFeedHolder)
-	{
-		mFeedHolder->lockLayout(this, false);
-		mFeedHolder->deleteFeedItem(this, mFeedId);
-	}
+GxsFeedItem::~GxsFeedItem()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsFeedItem::~GxsFeedItem()";
+	std::cerr << std::endl;
+#endif
 }
 
 void GxsFeedItem::comments(const QString &title)
@@ -65,41 +63,13 @@ void GxsFeedItem::comments(const QString &title)
 
 	if (mFeedHolder)
 	{
-		mFeedHolder->openComments(mFeedId, mGroupId, mMessageId, title);
+		mFeedHolder->openComments(feedId(), groupId(), messageId(), title);
 	}
 }
 
-void GxsFeedItem::unsubscribe()
+void GxsFeedItem::copyMessageLink()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::unsubscribe()";
-	std::cerr << std::endl;
-#endif
-
-	if (mGxsIface)
-	{
-		uint32_t token;
-		mGxsIface->subscribeToGroup(token, mGroupId, false);
-	}
-}
-
-void GxsFeedItem::subscribe()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::subscribe()";
-	std::cerr << std::endl;
-#endif
-
-	if (mGxsIface)
-	{
-		uint32_t token;
-		mGxsIface->subscribeToGroup(token, mGroupId, true);
-	}
-}
-
-void GxsFeedItem::copyLink()
-{
-	if (mGroupId.isNull() || mMessageId.isNull()) {
+	if (groupId().isNull() || mMessageId.isNull()) {
 		return;
 	}
 
@@ -108,84 +78,29 @@ void GxsFeedItem::copyLink()
 	}
 
 	RetroShareLink link;
-	if (link.createGxsMessageLink(getLinkType(), mGroupId, mMessageId, messageName())) {
+	if (link.createGxsMessageLink(getLinkType(), groupId(), mMessageId, messageName())) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
 	}
 }
 
-void GxsFeedItem::updateItemStatic()
+//void GxsFeedItem::updateItemStatic()
+//{
+//#ifdef DEBUG_ITEM
+//	std::cerr << "GxsFeedItem::updateItemStatic()";
+//	std::cerr << std::endl;
+//#endif
+
+//	requestMessage();
+//}
+
+void GxsFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete)
 {
-	std::cerr << "GxsFeedItem::updateItemStatic()";
-	std::cerr << std::endl;
+	GxsGroupFeedItem::fillDisplay(updateBroadcastBase, complete);
 
-	requestMessage();
-}
-
-void GxsFeedItem::updateItem()
-{
-	std::cerr << "GxsFeedItem::updateItem() EMPTY";
-	std::cerr << std::endl;
-}
-
-/***********************************************************/
-
-GxsFeedItem::GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate) :
-	FeedItem(NULL)
-{
-	std::cerr << "GxsFeedItem::GxsFeedItem()";
-	std::cerr << std::endl;
-
-	/* this are just generally useful for all children */
-	mFeedHolder = feedHolder;
-	mFeedId = feedId;
-	mIsHome = isHome;
-
-	/* load data if we can */
-	mGroupId = groupId;
-	mMessageId = messageId;
-	mGxsIface = iface;
-
-	if (loadData && iface)
-	{
-		mLoadQueue = new TokenQueue(iface->getTokenService(), this);
-		requestGroupMeta();
-	}
-	else
-	{
-		mLoadQueue = NULL;
-	}
-
-	if (mGxsIface && autoUpdate) {
-		/* Connect to update broadcast */
-		mUpdateBroadcastBase = new RsGxsUpdateBroadcastBase(mGxsIface);
-		connect(mUpdateBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
-	} else {
-		mUpdateBroadcastBase = NULL;
-	}
-}
-
-GxsFeedItem::~GxsFeedItem()
-{
-	std::cerr << "GxsFeedItem::~GxsFeedItem()";
-	std::cerr << std::endl;
-
-	if (mUpdateBroadcastBase)
-	{
-		delete(mUpdateBroadcastBase);
-	}
-
-	if (mLoadQueue)
-	{
-		delete mLoadQueue;
-	}
-}
-
-void GxsFeedItem::fillDisplay(bool /*complete*/)
-{
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
-	mUpdateBroadcastBase->getAllMsgIds(msgs);
+	updateBroadcastBase->getAllMsgIds(msgs);
 
 	if (!msgs.empty())
 	{
@@ -200,31 +115,12 @@ void GxsFeedItem::fillDisplay(bool /*complete*/)
 	}
 }
 
-void GxsFeedItem::requestGroupMeta()
-{
-	std::cerr << "GxsFeedItem::requestGroup()";
-	std::cerr << std::endl;
-
-	if (!mLoadQueue)
-	{
-		return;
-	}
-
-	std::list<RsGxsGroupId> ids;
-	ids.push_back(mGroupId);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-	uint32_t token;
-	mLoadQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, GXSFEEDITEM_GROUPMETA);
-
-	updateItemStatic();
-}
-
 void GxsFeedItem::requestMessage()
 {
+#ifdef DEBUG_ITEM
 	std::cerr << "GxsFeedItem::requestMessage()";
 	std::cerr << std::endl;
+#endif
 
 	if (!mLoadQueue)
 	{
@@ -240,59 +136,39 @@ void GxsFeedItem::requestMessage()
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[mGroupId];
+	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[groupId()];
 	vect_msgIds.push_back(mMessageId);
 
 	uint32_t token;
-	mLoadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, GXSFEEDITEM_MESSAGE);
-}
-
-void GxsFeedItem::loadGroupMeta(const uint32_t &token)
-{
-	std::cerr << "GxsFeedItem::loadGroupMeta()";
-	std::cerr << std::endl;
-
-	std::list<RsGroupMetaData> groupMeta;
-
-	if (!mGxsIface->getGroupSummary(token, groupMeta))
-	{
-		std::cerr << "GxsFeedItem::loadGroupMeta() Error getting GroupMeta";
-		std::cerr << std::endl;
-		return;
-	}
-
-	if (groupMeta.size() == 1)
-	{
-		mGroupMeta = *groupMeta.begin();
-	}
-	else
-	{
-		std::cerr << "GxsFeedItem::loadGroupMeta() ERROR Should be ONE GroupMeta";
-		std::cerr << std::endl;
-	}
+	mLoadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeMessage);
 }
 
 void GxsFeedItem::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
+#ifdef DEBUG_ITEM
 	std::cerr << "GxsFeedItem::loadRequest()";
 	std::cerr << std::endl;
+#endif
 
-	if (queue == mLoadQueue)
-	{
-		switch(req.mUserType)
-		{
-		case GXSFEEDITEM_GROUPMETA:
-			loadGroupMeta(req.mToken);
-			break;
-
-		case GXSFEEDITEM_MESSAGE:
+	if (queue == mLoadQueue) {
+		if (req.mUserType == mTokenTypeMessage) {
 			loadMessage(req.mToken);
-			break;
-
-		default:
-			std::cerr << "GxsFeedItem::loadRequest() ERROR: INVALID TYPE";
-			std::cerr << std::endl;
-			break;
+			return;
 		}
 	}
+
+	GxsGroupFeedItem::loadRequest(queue, req);
+}
+
+bool GxsFeedItem::isLoading()
+{
+	if (GxsGroupFeedItem::isLoading()) {
+		return true;
+	}
+
+	if (mLoadQueue && mLoadQueue->activeRequestExist(mTokenTypeMessage)) {
+		return true;
+	}
+
+	return false;
 }

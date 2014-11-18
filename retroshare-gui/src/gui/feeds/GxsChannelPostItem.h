@@ -43,13 +43,13 @@ class GxsChannelPostItem : public GxsFeedItem
 	Q_OBJECT
 
 public:
-	/** Default Constructor */
 	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome, bool autoUpdate);
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
-	virtual void setContent(const QVariant &content);
-	bool setContent(const RsGxsChannelPost &post);
+	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
+	bool setPost(const RsGxsChannelPost &post, bool doFill = true);
 
 	void setFileCleanUpWarning(uint32_t time_left);
 
@@ -61,8 +61,13 @@ public:
 	virtual void expand(bool open);
 
 protected:
-	virtual void loadMessage(const uint32_t &token);
+	/* GxsGroupFeedItem */
+	virtual QString groupName();
+	virtual void loadGroup(const uint32_t &token);
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+
+	/* GxsFeedItem */
+	virtual void loadMessage(const uint32_t &token);
 	virtual QString messageName();
 
 private slots:
@@ -87,14 +92,13 @@ signals:
 
 private:
 	void setup();
-	void loadPost(const RsGxsChannelPost &post);
-
+	void fill();
 	void setReadStatus(bool isNew, bool isUnread);
 
-	bool mInUpdateItemStatic;
+private:
+	bool mInFill;
 
-	uint32_t mMode;
-	uint32_t mSubscribeFlags;
+	RsGxsChannelGroup mGroup;
 	RsGxsChannelPost mPost;
 
 	std::list<SubFileItem*> mFileItems;

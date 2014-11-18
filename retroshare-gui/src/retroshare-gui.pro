@@ -1192,6 +1192,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidget.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
+		gui/feeds/GxsChannelGroupItem.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
@@ -1199,6 +1200,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
+		gui/feeds/GxsChannelGroupItem.ui \
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
@@ -1207,6 +1209,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
+		gui/feeds/GxsChannelGroupItem.cpp \
 		gui/feeds/GxsChannelPostItem.cpp \
 		gui/gxschannels/GxsChannelUserNotify.cpp
 }
@@ -1264,6 +1267,7 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.h \
 		gui/gxs/GxsMessageFrameWidget.h \
 		gui/gxs/GxsMessageFramePostWidget.h \
+		gui/gxs/GxsGroupFeedItem.h \
 		gui/gxs/GxsFeedItem.h \
 		gui/gxs/RsGxsUpdateBroadcastBase.h \
 		gui/gxs/RsGxsUpdateBroadcastWidget.h \
@@ -1301,6 +1305,7 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.cpp \
 		gui/gxs/GxsMessageFrameWidget.cpp \
 		gui/gxs/GxsMessageFramePostWidget.cpp \
+		gui/gxs/GxsGroupFeedItem.cpp \
 		gui/gxs/GxsFeedItem.cpp \
 		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \

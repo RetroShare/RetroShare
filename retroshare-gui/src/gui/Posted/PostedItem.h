@@ -41,12 +41,15 @@ class PostedItem : public GxsFeedItem
 
 public:
 	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome);
 	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome);
+	virtual ~PostedItem();
+
+	bool setGroup(const RsPostedGroup& group, bool doFill = true);
+	bool setPost(const RsPostedPost& post, bool doFill = true);
 
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
-	void setContent(const RsPostedPost& post);
-	virtual void setContent(const QVariant &content);
 
 	/* FeedItem */
 	virtual void expand(bool /*open*/) {}
@@ -61,18 +64,24 @@ signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 protected:
-	virtual void loadMessage(const uint32_t &token);
+	/* GxsGroupFeedItem */
+	virtual QString groupName();
+	virtual void loadGroup(const uint32_t &token);
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+
+	/* GxsFeedItem */
+	virtual void loadMessage(const uint32_t &token);
 	virtual QString messageName();
 
 private:
 	void setup();
+	void fill();
 	void setReadStatus(bool isNew, bool isUnread);
 
-	bool mInSetContent;
+private:
+	bool mInFill;
 
-	uint32_t mType;
-	bool mSelected;
+	RsPostedGroup mGroup;
 	RsPostedPost mPost;
 
 	/** Qt Designer generated object */
