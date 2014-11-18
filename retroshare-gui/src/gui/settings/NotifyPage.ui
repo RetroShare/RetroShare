@@ -30,7 +30,7 @@
           <item>
            <widget class="QCheckBox" name="notify_Peers">
             <property name="text">
-             <string>Peers</string>
+             <string>Friend Connect</string>
             </property>
            </widget>
           </item>
