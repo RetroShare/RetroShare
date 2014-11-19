@@ -50,6 +50,7 @@ public:
 
 protected:
 	uint32_t nextTokenType() { return ++mNextTokenType; }
+	bool initLoadQueue();
 
 	/* load group data */
 	void requestGroup();

@@ -34,8 +34,8 @@
 
 #include "feeds/GxsChannelGroupItem.h"
 #include "feeds/GxsChannelPostItem.h"
-//#include "feeds/ForumNewItem.h"
-//#include "feeds/ForumMsgItem.h"
+#include "feeds/GxsForumGroupItem.h"
+#include "feeds/GxsForumMsgItem.h"
 #include "settings/rsettingswin.h"
 
 #ifdef BLOGS
@@ -833,11 +833,17 @@ void NewsFeed::addFeedItemChannelMsg(const RsFeedItem &fi)
 
 void NewsFeed::addFeedItemForumNew(const RsFeedItem &fi)
 {
+	RsGxsGroupId grpId(fi.mId1);
+
+	if (grpId.isNull()) {
+		return;
+	}
+
 	/* make new widget */
-//	ForumNewItem *fni = new ForumNewItem(this, NEWSFEED_FORUMNEWLIST, fi.mId1, false, true);
+	GxsForumGroupItem *item = new GxsForumGroupItem(this, NEWSFEED_FORUMNEWLIST, grpId, false, true);
 
 	/* add to layout */
-//	addFeedItem(fni);
+	addFeedItem(item);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumNew()";
@@ -861,11 +867,18 @@ void NewsFeed::addFeedItemForumNew(const RsFeedItem &fi)
 
 void NewsFeed::addFeedItemForumMsg(const RsFeedItem &fi)
 {
+	RsGxsGroupId grpId(fi.mId1);
+	RsGxsMessageId msgId(fi.mId2);
+
+	if (grpId.isNull() || msgId.isNull()) {
+		return;
+	}
+
 	/* make new widget */
-//	ForumMsgItem *fm = new ForumMsgItem(this, NEWSFEED_FORUMMSGLIST, fi.mId1, fi.mId2, false);
+	GxsForumMsgItem *item = new GxsForumMsgItem(this, NEWSFEED_FORUMMSGLIST, grpId, msgId, false, true);
 
 	/* add to layout */
-//	addFeedItem(fm);
+	addFeedItem(item);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumMsg()";

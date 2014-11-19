@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2008 Robert Fernie
+ *  Copyright (C) 2014 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,29 +19,29 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _GXSCHANNELGROUPITEM_H
-#define _GXSCHANNELGROUPITEM_H
+#ifndef _GXSFORUMGROUPITEM_H
+#define _GXSFORUMGROUPITEM_H
 
-#include <retroshare/rsgxschannels.h>
+#include <retroshare/rsgxsforums.h>
 #include "gui/gxs/GxsGroupFeedItem.h"
 
 namespace Ui {
-class GxsChannelGroupItem;
+class GxsForumGroupItem;
 }
  
 class FeedHolder;
 
-class GxsChannelGroupItem : public GxsGroupFeedItem
+class GxsForumGroupItem : public GxsGroupFeedItem
 {
 	Q_OBJECT
 
 public:
 	/** Default Constructor */
-	GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
-	GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate);
-	~GxsChannelGroupItem();
+	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
+	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, bool isHome, bool autoUpdate);
+	~GxsForumGroupItem();
 
-	bool setGroup(const RsGxsChannelGroup &group);
+	bool setGroup(const RsGxsForumGroup &group);
 
 	/* FeedItem */
 	virtual void expand(bool open);
@@ -50,23 +50,23 @@ protected:
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
 	virtual void loadGroup(const uint32_t &token);
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 
 private slots:
 	/* default stuff */
 	void toggle();
 
-	void subscribeChannel();
+	void subscribeForum();
 
 private:
 	void fill();
 	void setup();
 
 private:
-	RsGxsChannelGroup mGroup;
+	RsGxsForumGroup mGroup;
 
 	/** Qt Designer generated object */
-	Ui::GxsChannelGroupItem *ui;
+	Ui::GxsForumGroupItem *ui;
 };
 
 #endif

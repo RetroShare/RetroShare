@@ -85,16 +85,6 @@ void GxsFeedItem::copyMessageLink()
 	}
 }
 
-//void GxsFeedItem::updateItemStatic()
-//{
-//#ifdef DEBUG_ITEM
-//	std::cerr << "GxsFeedItem::updateItemStatic()";
-//	std::cerr << std::endl;
-//#endif
-
-//	requestMessage();
-//}
-
 void GxsFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete)
 {
 	GxsGroupFeedItem::fillDisplay(updateBroadcastBase, complete);
@@ -122,14 +112,13 @@ void GxsFeedItem::requestMessage()
 	std::cerr << std::endl;
 #endif
 
-	if (!mLoadQueue)
-	{
-		if (mGxsIface)
-		{
-			mLoadQueue = new TokenQueue(mGxsIface->getTokenService(), this);
-		} else {
-			return;
-		}
+	if (!initLoadQueue()) {
+		return;
+	}
+
+	if (mLoadQueue->activeRequestExist(mTokenTypeMessage)) {
+		/* Request already running */
+		return;
 	}
 
 	RsTokReqOptions opts;

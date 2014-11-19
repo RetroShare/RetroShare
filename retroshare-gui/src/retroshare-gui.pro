@@ -1170,17 +1170,23 @@ gxsforums {
 		gui/gxsforums/CreateGxsForumMsg.h \
 		gui/gxsforums/GxsForumThreadWidget.h \
 		gui/gxsforums/GxsForumsFillThread.h \
-		gui/gxsforums/GxsForumUserNotify.h
+		gui/gxsforums/GxsForumUserNotify.h \
+		gui/feeds/GxsForumGroupItem.h \
+		gui/feeds/GxsForumMsgItem.h
 
 	FORMS += gui/gxsforums/CreateGxsForumMsg.ui \
-		gui/gxsforums/GxsForumThreadWidget.ui
+		gui/gxsforums/GxsForumThreadWidget.ui \
+		gui/feeds/GxsForumGroupItem.ui \
+		gui/feeds/GxsForumMsgItem.ui
 
 	SOURCES += gui/gxsforums/GxsForumsDialog.cpp \
 		gui/gxsforums/GxsForumGroupDialog.cpp \
 		gui/gxsforums/CreateGxsForumMsg.cpp \
 		gui/gxsforums/GxsForumThreadWidget.cpp \
 		gui/gxsforums/GxsForumsFillThread.cpp \
-		gui/gxsforums/GxsForumUserNotify.cpp
+		gui/gxsforums/GxsForumUserNotify.cpp \
+		gui/feeds/GxsForumGroupItem.cpp \
+		gui/feeds/GxsForumMsgItem.cpp
 }
 	
 	

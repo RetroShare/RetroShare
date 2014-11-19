@@ -51,6 +51,7 @@ GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, cons
 	mGroupId = groupId;
 	mGxsIface = iface;
 
+	mNextTokenType = 0;
 	mTokenTypeGroup = nextTokenType();
 
 	mLoadQueue = NULL;
@@ -79,6 +80,20 @@ GxsGroupFeedItem::~GxsGroupFeedItem()
 	{
 		delete(mUpdateBroadcastBase);
 	}
+}
+
+bool GxsGroupFeedItem::initLoadQueue()
+{
+	if (mLoadQueue) {
+		return true;
+	}
+
+	if (!mGxsIface) {
+		return false;
+	}
+
+	mLoadQueue = new TokenQueue(mGxsIface->getTokenService(), this);
+	return (mLoadQueue != NULL);
 }
 
 void GxsGroupFeedItem::removeItem()
@@ -148,22 +163,6 @@ void GxsGroupFeedItem::copyGroupLink()
 	}
 }
 
-//void GxsGroupFeedItem::updateItemStatic()
-//{
-//#ifdef DEBUG_ITEM
-//	std::cerr << "GxsGroupFeedItem::updateItemStatic()";
-//	std::cerr << std::endl;
-//#endif
-//}
-
-//void GxsGroupFeedItem::updateItem()
-//{
-//#ifdef DEBUG_ITEM
-//	std::cerr << "GxsGroupFeedItem::updateItem() EMPTY";
-//	std::cerr << std::endl;
-//#endif
-//}
-
 void GxsGroupFeedItem::fillDisplaySlot(bool complete)
 {
 	fillDisplay(mUpdateBroadcastBase, complete);
@@ -188,12 +187,13 @@ void GxsGroupFeedItem::requestGroup()
 	std::cerr << std::endl;
 #endif
 
-	if (!mLoadQueue) {
-		if (mGxsIface) {
-			mLoadQueue = new TokenQueue(mGxsIface->getTokenService(), this);
-		} else {
-			return;
-		}
+	if (!initLoadQueue()) {
+		return;
+	}
+
+	if (mLoadQueue->activeRequestExist(mTokenTypeGroup)) {
+		/* Request already running */
+		return;
 	}
 
 	std::list<RsGxsGroupId> ids;

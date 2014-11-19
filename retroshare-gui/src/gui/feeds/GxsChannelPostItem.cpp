@@ -95,6 +95,7 @@ void GxsChannelPostItem::setup()
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	mInFill = false;
+	mCloseOnRead = false;
 
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading"));
@@ -118,7 +119,6 @@ void GxsChannelPostItem::setup()
 	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
-	//connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
 
 	//connect(ui-> voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	//connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
@@ -174,6 +174,16 @@ bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post, bool doFill)
 	updateItem();
 
 	return true;
+}
+
+QString GxsChannelPostItem::getTitleLabel()
+{
+	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
+}
+
+QString GxsChannelPostItem::getMsgLabel()
+{
+	return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 }
 
 QString GxsChannelPostItem::groupName()
@@ -257,6 +267,10 @@ void GxsChannelPostItem::fill()
 
 	if (!mIsHome)
 	{
+		if (mCloseOnRead && !IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
+			removeItem();
+		}
+
 		title = tr("Channel Feed") + ": ";
 		RetroShareLink link;
 		link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
@@ -278,6 +292,10 @@ void GxsChannelPostItem::fill()
 		ui->readButton->hide();
 		ui->newLabel->hide();
 		ui->copyLinkButton->hide();
+
+		if (IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
+			mCloseOnRead = true;
+		}
 	}
 	else
 	{
@@ -307,6 +325,8 @@ void GxsChannelPostItem::fill()
 			ui->readButton->setVisible(false);
 			ui->newLabel->setVisible(false);
 		}
+
+		mCloseOnRead = false;
 	}
 	
 	// differences between Feed or Top of Comment.
@@ -601,27 +621,14 @@ void GxsChannelPostItem::readToggled(bool checked)
 		return;
 	}
 
+	mCloseOnRead = false;
+
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
 	uint32_t token;
 	rsGxsChannels->setMessageReadStatus(token, msgPair, !checked);
 
 	setReadStatus(false, checked);
-}
-
-void GxsChannelPostItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
-{
-#if 0
-	if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
-		if (!mIsHome) {
-			if (status & CHANNEL_MSG_STATUS_READ) {
-				close();
-				return;
-			}
-		}
-		updateItemStatic();
-	}
-#endif
 }
 
 void GxsChannelPostItem::makeDownVote()
