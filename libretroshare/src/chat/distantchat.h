@@ -66,24 +66,30 @@ private:
     class DistantChatPeerInfo
     {
     public:
-        DistantChatPeerInfo() { dh = NULL; }
+        DistantChatPeerInfo() {}
 
         time_t last_contact ; 			// used to send keep alive packets
 
-        DH *dh ;
         unsigned char aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 
-
-        uint32_t status ;					// info: do we have a tunnel ?
+        uint32_t status ;		// info: do we have a tunnel ?
         RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
-        RsGxsId gxs_id ;          		// gxs id of the peer we're talking to.
         RsGxsId own_gxs_id ;         	// gxs id we're using to talk.
         RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
     };
 
+    class DistantChatDHInfo
+    {
+    public:
+        DH *dh ;
+        RsGxsId gxs_id ;
+        RsTurtleGenericTunnelItem::Direction direction ;
+    };
+
     // This maps contains the current peers to talk to with distant chat.
     //
-    std::map<TurtleFileHash,DistantChatPeerInfo> _distant_chat_peers ;
+    std::map<RsGxsId, DistantChatPeerInfo> 	_distant_chat_contacts ;		// current peers we can talk to
+    std::map<RsPeerId,DistantChatDHInfo>    	_distant_chat_virtual_peer_ids ;	// current virtual peers. Used to figure out tunnels, etc.
 
     // List of items to be sent asap. Used to store items that we cannot pass directly to
     // sendTurtleData(), because of Mutex protection.
@@ -96,14 +102,16 @@ private:
     virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
     void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
     void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
-    void markDistantChatAsClosed(const RsGxsId &vpid) ;
-    void startClientDistantChatConnection(const RsFileHash& hash,const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id) ;
-    bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
-    TurtleFileHash hashFromGxsId(const RsGxsId& pid) ;
+    void markDistantChatAsClosed(const RsGxsId &gxs_id) ;
+    void startClientDistantChatConnection(const RsGxsId &to_gxs_id,const RsGxsId& from_gxs_id) ;
+    //bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
+
+    static TurtleFileHash hashFromGxsId(const RsGxsId& pid) ;
+    static RsGxsId gxsIdFromHash(const TurtleFileHash& pid) ;
 
     void handleRecvDHPublicKey(RsChatDHPublicKeyItem *item) ;
-    bool locked_sendDHPublicKey(const DistantChatPeerInfo& pinfo) ;
-    bool locked_initDHSessionKey(DistantChatPeerInfo& pinfo);
+    bool locked_sendDHPublicKey(const DH *dh, const RsGxsId &own_gxs_id, const RsPeerId &virtual_peer_id) ;
+    bool locked_initDHSessionKey(DH *&dh);
     DistantChatPeerId virtualPeerIdFromHash(const TurtleFileHash& hash  ) ;	// ... and to a hash for p3turtle
 
 

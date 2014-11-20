@@ -906,9 +906,13 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
     std::list<RsGxsId> own_identities ;
     rsIdentity->getOwnIds(own_identities) ;
 
-    if(own_identities.size() == 1)
+    if(own_identities.size() <= 1)
     {
         QAction * action = contextMnu.addAction(QIcon(),"Chat with this peer",this,SLOT(chatIdentity()));
+
+    if(own_identities.empty())
+        action->setEnabled(false) ;
+    else
         action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
     }
     else
