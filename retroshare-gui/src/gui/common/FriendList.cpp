@@ -296,6 +296,7 @@ void FriendList::initializeHeader(bool /*afterLoadSettings*/)
         header->resizeSection(COLUMN_NAME, 150);
         header->resizeSection(COLUMN_LAST_CONTACT, 120);
     }*/
+    header->resizeSection(COLUMN_NAME, 220);
     header->resizeSection(COLUMN_AVATAR, COLUMN_AVATAR_WIDTH);
 }
 
@@ -1083,7 +1084,7 @@ void  FriendList::insertPeers()
                     gpgItem->setFont(i, font);
                 }
 
-                gpgIcon = QIcon(StatusDefs::imageUser(bestRSState));
+                gpgIcon = QIcon(StatusDefs::imageStatus(bestRSState));
 
                 if (!isStatusColumnHidden) {
                     gpgItem->setText(COLUMN_STATE, StatusDefs::name(bestRSState));
@@ -1096,13 +1097,13 @@ void  FriendList::insertPeers()
                         gpgItemText += "\n" + bestCustomStateString;
                     }
                 } else if (isStatusColumnHidden && !mHideState){
-                    gpgItemText += " [" + StatusDefs::name(bestRSState) + "]";
+                    gpgItemText += " - " + StatusDefs::name(bestRSState);
                 }
             } else if (gpg_online) {
                 if (!isStatusColumnHidden) {
                     gpgItem->setText(COLUMN_STATE, tr("Available"));
                 } else if (!mHideState && !mBigName) {
-                    gpgItemText += " [" + tr("Available") + "]";
+                    gpgItemText += " - " + tr("Available") ;
                 }
 
                 bestPeerState = PEER_STATE_AVAILABLE;
@@ -1121,12 +1122,12 @@ void  FriendList::insertPeers()
                 if (!isStatusColumnHidden) {
                     gpgItem->setText(COLUMN_STATE, StatusDefs::name(RS_STATUS_OFFLINE));
                 } else if (!mHideState && !mBigName) {
-                    gpgItemText += " [" + StatusDefs::name(RS_STATUS_OFFLINE) + "]";
+                    gpgItemText += " - " + StatusDefs::name(RS_STATUS_OFFLINE) ;
                 }
 
                 bestPeerState = PEER_STATE_OFFLINE;
                 gpgItem->setHidden(mHideUnconnected);
-                gpgIcon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
+                gpgIcon = QIcon(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
 
                 QColor textColor = mTextColorStatus[RS_STATUS_OFFLINE];
                 QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
@@ -1769,6 +1770,7 @@ void FriendList::setShowAvatarColumn(bool show)
     ui->peerTreeWidget->setColumnHidden(COLUMN_AVATAR, !show);
 
     updateHeader();
+    initializeHeader(true);
     insertPeers();
 }
 

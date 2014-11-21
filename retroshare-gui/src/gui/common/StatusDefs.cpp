@@ -82,6 +82,25 @@ const char *StatusDefs::imageUser(unsigned int status)
 	return "";
 }
 
+const char *StatusDefs::imageStatus(unsigned int status)
+{
+	switch (status) {
+	case RS_STATUS_OFFLINE:
+		return ":/images/status/user-offline.png";
+	case RS_STATUS_AWAY:
+		return ":/images/status/user-away.png";
+	case RS_STATUS_BUSY:
+		return ":/images/status/user-busy.png";
+	case RS_STATUS_ONLINE:
+		return ":/images/status/user-online.png";
+	case RS_STATUS_INACTIVE:
+		return ":/images/status/user-away-extended.png";
+	}
+
+	std::cerr << "StatusDefs::imageUser: Unknown status requested " << status;
+	return "";
+}
+
 QString StatusDefs::tooltip(unsigned int status)
 {
 	switch (status) {

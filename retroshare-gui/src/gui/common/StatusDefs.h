@@ -34,6 +34,7 @@ public:
 	static QString     name(unsigned int status);
 	static const char* imageIM(unsigned int status);
 	static const char* imageUser(unsigned int status);
+	static const char* imageStatus(unsigned int status);
 	static QString     tooltip(unsigned int status);
 
 	static QFont       font(unsigned int status);

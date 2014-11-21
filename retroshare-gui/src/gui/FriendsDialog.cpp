@@ -201,7 +201,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     RsAutoUpdatePage::lockAllEvents();
     ui.friendList->setShowStatusColumn(false);
     ui.friendList->setShowLastContactColumn(false);
-    ui.friendList->setShowAvatarColumn(false);
+    ui.friendList->setShowAvatarColumn(true);
     ui.friendList->setShowIPColumn(false);
     ui.friendList->setRootIsDecorated(true);
     ui.friendList->setShowGroups(true);

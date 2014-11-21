@@ -680,6 +680,11 @@
         <file>images/tags/dev-translator.png</file>
         <file>images/tags/dev-patcher.png</file>
         <file>images/tags/developer.png</file>
+        <file>images/status/user-online.png</file>
+        <file>images/status/user-offline.png</file>
+        <file>images/status/user-busy.png</file>
+        <file>images/status/user-away-extended.png</file>
+        <file>images/status/user-away.png</file>
         <file>images/circles/circles_32.png</file>
         <file>images/circles/circles_64.png</file>
         <file>images/newsfeed/news-feed-32.png</file>
