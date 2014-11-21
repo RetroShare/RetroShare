@@ -134,5 +134,5 @@ RsGxsCommentService *PostedDialog::getCommentService()
 
 QWidget *PostedDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 {
-	return new PostedItem(NULL, 0, grpId, msgId, true);
+	return new PostedItem(NULL, 0, grpId, msgId, true, false);
 }

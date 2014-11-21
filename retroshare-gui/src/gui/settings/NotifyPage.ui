@@ -49,6 +49,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="notify_Posted">
+            <property name="text">
+             <string>Posted</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="notify_Blogs">
             <property name="text">
              <string>Blogs</string>

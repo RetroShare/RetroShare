@@ -334,7 +334,7 @@ void PostedListWidget::loadPost(const RsPostedPost &post)
 	RsPostedGroup dummyGroup;
 	dummyGroup.mMeta.mGroupId = groupId();
 
-	PostedItem *item = new PostedItem(this, 0, dummyGroup, post, true);
+	PostedItem *item = new PostedItem(this, 0, dummyGroup, post, true, false);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
 	mPosts.insert(post.mMeta.mMsgId, item);
 	//QLayout *alayout = ui.scrollAreaWidgetContents->layout();

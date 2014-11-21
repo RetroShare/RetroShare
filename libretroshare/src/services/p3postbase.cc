@@ -32,6 +32,9 @@
 #include "services/p3postbase.h"
 #include "serialiser/rsgxscommentitems.h"
 
+#include "rsserver/p3face.h"
+#include "retroshare/rsnotify.h"
+
 // For Dummy Msgs.
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
@@ -86,14 +89,20 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << "p3PostBase::notifyChanges()";
 	std::cerr << std::endl;
 
+	p3Notify *notify = NULL;
+	if (!changes.empty())
+	{
+		notify = RsServer::notify();
+	}
+
 	std::vector<RsGxsNotify *>::iterator it;
 
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
-	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
-	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-	       if (msgChange)
-	       {
+		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
+		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+		if (msgChange)
+		{
 			std::cerr << "p3PostBase::notifyChanges() Found Message Change Notification";
 			std::cerr << std::endl;
 
@@ -107,10 +116,19 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				// FUTURE OPTIMISATION.
 				// It could be taken a step further and directly request these msgs for an update.
 				addGroupForProcessing(mit->first);
-			}
-	       }
 
-	       /* pass on Group Changes to GUI */
+				if (notify && msgChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+				{
+					std::vector<RsGxsMessageId>::iterator mit1;
+					for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+					{
+						notify->AddFeedItem(RS_FEED_ITEM_POSTED_MSG, mit->first.toStdString(), mit1->toStdString());
+					}
+				}
+			}
+		}
+
+		/* pass on Group Changes to GUI */
 		if (groupChange)
 		{
 			std::cerr << "p3PostBase::notifyChanges() Found Group Change Notification";
@@ -122,6 +140,11 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			{
 				std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
 				std::cerr << std::endl;
+
+				if (notify && groupChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+				{
+					notify->AddFeedItem(RS_FEED_ITEM_POSTED_NEW, git->toStdString());
+				}
 			}
 		}
 	}

@@ -29,6 +29,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsposted.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
 
@@ -36,6 +37,10 @@
 #include "feeds/GxsChannelPostItem.h"
 #include "feeds/GxsForumGroupItem.h"
 #include "feeds/GxsForumMsgItem.h"
+#include "feeds/PostedGroupItem.h"
+#include "Posted/PostedItem.h"
+#include "feeds/GxsForumMsgItem.h"
+
 #include "settings/rsettingswin.h"
 
 #ifdef BLOGS
@@ -69,6 +74,8 @@ const uint32_t NEWSFEED_BLOGMSGLIST =    0x0007;
 const uint32_t NEWSFEED_MESSAGELIST =    0x0008;
 const uint32_t NEWSFEED_CHATMSGLIST =    0x0009;
 const uint32_t NEWSFEED_SECLIST =        0x000a;
+const uint32_t NEWSFEED_POSTEDNEWLIST =  0x000b;
+const uint32_t NEWSFEED_POSTEDMSGLIST =  0x000c;
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
@@ -91,6 +98,7 @@ NewsFeed::NewsFeed(QWidget *parent) :
 
 	mTokenQueueChannel = NULL;
 	mTokenQueueForum = NULL;
+	mTokenQueuePosted = NULL;
 
 	setUpdateWhenInvisible(true);
 
@@ -135,6 +143,9 @@ NewsFeed::~NewsFeed()
 	}
 	if (mTokenQueueForum) {
 		delete(mTokenQueueForum);
+	}
+	if (mTokenQueuePosted) {
+		delete(mTokenQueuePosted);
 	}
 }
 
@@ -226,6 +237,19 @@ void NewsFeed::updateDisplay()
 			case RS_FEED_ITEM_FORUM_MSG:
 				if (flags & RS_FEED_TYPE_FORUM)
 					addFeedItemForumMsg(fi);
+				break;
+
+			case RS_FEED_ITEM_POSTED_NEW:
+				if (flags & RS_FEED_TYPE_POSTED)
+					addFeedItemPostedNew(fi);
+				break;
+//			case RS_FEED_ITEM_POSTED_UPDATE:
+//				if (flags & RS_FEED_TYPE_POSTED)
+//					addFeedItemPostedUpdate(fi);
+//				break;
+			case RS_FEED_ITEM_POSTED_MSG:
+				if (flags & RS_FEED_TYPE_POSTED)
+					addFeedItemPostedMsg(fi);
 				break;
 
 #if 0
@@ -337,6 +361,20 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 			uint32_t token;
 			instance->mTokenQueueForum->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP);
+
+			break;
+		}
+
+		case RS_FEED_TYPE_POSTED:
+		{
+			if (!instance->mTokenQueuePosted) {
+				instance->mTokenQueuePosted = new TokenQueue(rsPosted->getTokenService(), instance);
+			}
+
+			RsTokReqOptions opts;
+			opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+			uint32_t token;
+			instance->mTokenQueuePosted->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP);
 
 			break;
 		}
@@ -516,7 +554,7 @@ void NewsFeed::loadForumMessage(const uint32_t &token)
 {
 	std::vector<RsGxsForumMsg> msgs;
 	if (!rsGxsForums->getMsgData(token, msgs)) {
-		std::cerr << "NewsFeed::loadChannelPost() ERROR getting data";
+		std::cerr << "NewsFeed::loadForumPost() ERROR getting data";
 		std::cerr << std::endl;
 		return;
 	}
@@ -540,6 +578,80 @@ void NewsFeed::loadForumMessage(const uint32_t &token)
 
 	if (!fi.mId1.empty()) {
 		instance->addFeedItemForumMsg(fi);
+	}
+}
+
+void NewsFeed::loadPostedGroup(const uint32_t &token)
+{
+	std::vector<RsPostedGroup> posted;
+	if (!rsPosted->getGroupData(token, posted)) {
+		std::cerr << "NewsFeed::loadPostedGroup() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsFeedItem fi;
+	std::vector<RsPostedGroup>::iterator postedIt;
+	for (postedIt = posted.begin(); postedIt != posted.end(); ++postedIt) {
+		if (fi.mId1.empty()) {
+			/* store first posted */
+			fi.mId1 = postedIt->mMeta.mGroupId.toStdString();
+		}
+
+		if (!postedIt->mDescription.empty()) {
+			/* take posted with description */
+			fi.mId1 = postedIt->mMeta.mGroupId.toStdString();
+			break;
+		}
+	}
+
+	if (fi.mId1.empty()) {
+		return;
+	}
+
+	instance->addFeedItemPostedNew(fi);
+//	instance->addFeedItemPostedUpdate(fi);
+
+	/* Prepare group ids for message request */
+	std::list<RsGxsGroupId> grpIds;
+	for (postedIt = posted.begin(); postedIt != posted.end(); ++postedIt) {
+		grpIds.push_back(postedIt->mMeta.mGroupId);
+	}
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_THREAD;
+	uint32_t msgToken;
+	instance->mTokenQueuePosted->requestMsgInfo(msgToken, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_MESSAGE);
+}
+
+void NewsFeed::loadPostedMessage(const uint32_t &token)
+{
+	std::vector<RsPostedPost> msgs;
+	if (!rsPosted->getPostData(token, msgs)) {
+		std::cerr << "NewsFeed::loadPostedPost() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsFeedItem fi;
+	std::vector<RsPostedPost>::iterator msgIt;
+	for (msgIt = msgs.begin(); msgIt != msgs.end(); ++msgIt) {
+		if (fi.mId2.empty()) {
+			/* store first posted message */
+			fi.mId1 = msgIt->mMeta.mGroupId.toStdString();
+			fi.mId2 = msgIt->mMeta.mMsgId.toStdString();
+		}
+
+		if (!msgIt->mLink.empty()) {
+			/* take posted message with description */
+			fi.mId1 = msgIt->mMeta.mGroupId.toStdString();
+			fi.mId2 = msgIt->mMeta.mMsgId.toStdString();
+			break;
+		}
+	}
+
+	if (!fi.mId1.empty()) {
+		instance->addFeedItemPostedMsg(fi);
 	}
 }
 
@@ -570,6 +682,23 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 
 		case TOKEN_TYPE_MESSAGE:
 			loadForumMessage(req.mToken);
+			break;
+
+		default:
+			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << std::endl;
+			break;
+		}
+	}
+
+	if (queue == mTokenQueuePosted) {
+		switch (req.mUserType) {
+		case TOKEN_TYPE_GROUP:
+			loadPostedGroup(req.mToken);
+			break;
+
+		case TOKEN_TYPE_MESSAGE:
+			loadPostedMessage(req.mToken);
 			break;
 
 		default:
@@ -882,6 +1011,61 @@ void NewsFeed::addFeedItemForumMsg(const RsFeedItem &fi)
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumMsg()";
+	std::cerr << std::endl;
+#endif
+}
+
+void NewsFeed::addFeedItemPostedNew(const RsFeedItem &fi)
+{
+	RsGxsGroupId grpId(fi.mId1);
+
+	if (grpId.isNull()) {
+		return;
+	}
+
+	/* make new widget */
+	PostedGroupItem *item = new PostedGroupItem(this, NEWSFEED_POSTEDNEWLIST, grpId, false, true);
+
+	/* add to layout */
+	addFeedItem(item);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemPostedNew()";
+	std::cerr << std::endl;
+#endif
+}
+
+//void NewsFeed::addFeedItemPostedUpdate(const RsFeedItem &fi)
+//{
+//	/* make new widget */
+//	GxsPostedGroupItem *item = new GxsPostedGroupItem(this, NEWSFEED_POSTEDNEWLIST, grpId, false, true);
+
+//	/* add to layout */
+//	addFeedItem(item);
+
+//#ifdef NEWS_DEBUG
+//	std::cerr << "NewsFeed::addFeedItemPostedUpdate()";
+//	std::cerr << std::endl;
+//#endif
+//}
+
+void NewsFeed::addFeedItemPostedMsg(const RsFeedItem &fi)
+{
+	RsGxsGroupId grpId(fi.mId1);
+	RsGxsMessageId msgId(fi.mId2);
+
+	if (grpId.isNull() || msgId.isNull()) {
+		return;
+	}
+
+	/* make new widget */
+	PostedItem *item = new PostedItem(this, NEWSFEED_POSTEDMSGLIST, grpId, msgId, false, true);
+
+	/* add to layout */
+	addFeedItem(item);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemPostedMsg()";
 	std::cerr << std::endl;
 #endif
 }

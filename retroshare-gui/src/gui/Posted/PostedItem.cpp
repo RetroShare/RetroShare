@@ -37,8 +37,8 @@
 
 /** Constructor */
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, false)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, autoUpdate)
 {
 	setup();
 
@@ -46,8 +46,8 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroup
 	requestMessage();
 }
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
 {
 	setup();
 
@@ -55,8 +55,8 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGr
 	setPost(post);
 }
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
 {
 	setup();
 
@@ -85,11 +85,22 @@ void PostedItem::setup()
 	ui->fromLabel->clear();
 	ui->siteLabel->clear();
 
+	/* general ones */
+	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
+
+	/* specific */
+	connect(ui->readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
+
 	connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
 	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+
+	ui->clearButton->hide();
+	ui->readAndClearButton->hide();
+
+	ui->frame_notes->hide();
 }
 
 bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
@@ -237,6 +248,17 @@ void PostedItem::fill()
 		ui->newLabel->hide();
 	}
 
+	if (mIsHome)
+	{
+		ui->clearButton->hide();
+		ui->readAndClearButton->hide();
+	}
+	else
+	{
+		ui->clearButton->show();
+		ui->readAndClearButton->show();
+	}
+
 	// disable voting buttons - if they have already voted.
 	if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 	{
@@ -263,6 +285,8 @@ void PostedItem::fill()
 #endif
 
 	mInFill = false;
+
+	emit sizeChanged(this);
 }
 
 const RsPostedPost &PostedItem::getPost() const
@@ -360,4 +384,15 @@ void PostedItem::readToggled(bool checked)
 	rsPosted->setMessageReadStatus(token, msgPair, !checked);
 
 	setReadStatus(false, checked);
+}
+
+void PostedItem::readAndClearItem()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "PostedItem::readAndClearItem()";
+	std::cerr << std::endl;
+#endif
+
+	readToggled(false);
+	removeItem();
 }

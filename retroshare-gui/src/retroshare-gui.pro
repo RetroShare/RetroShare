@@ -1227,6 +1227,7 @@ posted {
 		gui/Posted/PostedListWidget.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedGroupDialog.h \
+		gui/feeds/PostedGroupItem.h \
 		gui/Posted/PostedCreatePostDialog.h \
 		gui/Posted/PostedUserNotify.h
 
@@ -1234,6 +1235,7 @@ posted {
 		#gui/Posted/PostedComments.h \
 	
 	FORMS += gui/Posted/PostedListWidget.ui \
+		gui/feeds/PostedGroupItem.ui \
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
 
@@ -1243,6 +1245,7 @@ posted {
 	
 	SOURCES += gui/Posted/PostedDialog.cpp \
 		gui/Posted/PostedListWidget.cpp \
+		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
 		gui/Posted/PostedGroupDialog.cpp \
 		gui/Posted/PostedCreatePostDialog.cpp \

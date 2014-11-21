@@ -96,9 +96,15 @@ private:
 	void addFeedItemChannelNew(const RsFeedItem &fi);
 //	void addFeedItemChannelUpdate(const RsFeedItem &fi);
 	void addFeedItemChannelMsg(const RsFeedItem &fi);
+
 	void addFeedItemForumNew(const RsFeedItem &fi);
 //	void addFeedItemForumUpdate(const RsFeedItem &fi);
 	void addFeedItemForumMsg(const RsFeedItem &fi);
+
+	void addFeedItemPostedNew(const RsFeedItem &fi);
+//	void addFeedItemPostedUpdate(const RsFeedItem &fi);
+	void addFeedItemPostedMsg(const RsFeedItem &fi);
+
 #if 0
 	void addFeedItemBlogNew(const RsFeedItem &fi);
 	void addFeedItemBlogMsg(const RsFeedItem &fi);
@@ -114,9 +120,13 @@ private:
 	virtual void loadForumGroup(const uint32_t &token);
 	virtual void loadForumMessage(const uint32_t &token);
 
+	virtual void loadPostedGroup(const uint32_t &token);
+	virtual void loadPostedMessage(const uint32_t &token);
+
 private:
 	TokenQueue *mTokenQueueChannel;
 	TokenQueue *mTokenQueueForum;
+	TokenQueue *mTokenQueuePosted;
 
 	/* UI - from Designer */
 	Ui::NewsFeed *ui;

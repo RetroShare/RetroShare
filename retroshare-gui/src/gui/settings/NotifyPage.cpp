@@ -118,6 +118,8 @@ uint NotifyPage::getNewsFlags()
         newsFlags |= RS_FEED_TYPE_CHANNEL;
     if (ui.notify_Forums->isChecked())
         newsFlags |= RS_FEED_TYPE_FORUM;
+    if (ui.notify_Posted->isChecked())
+        newsFlags |= RS_FEED_TYPE_POSTED;
 #if 0
     if (ui.notify_Blogs->isChecked())
         newsFlags |= RS_FEED_TYPE_BLOG;
@@ -228,6 +230,7 @@ void NotifyPage::load()
     ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
     ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHANNEL);
     ui.notify_Forums->setChecked(newsflags & RS_FEED_TYPE_FORUM);
+    ui.notify_Posted->setChecked(newsflags & RS_FEED_TYPE_POSTED);
 #if 0
     ui.notify_Blogs->setChecked(newsflags & RS_FEED_TYPE_BLOG);
 #endif

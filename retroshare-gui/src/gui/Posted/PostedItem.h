@@ -40,9 +40,9 @@ class PostedItem : public GxsFeedItem
 	Q_OBJECT
 
 public:
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome);
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate);
 	virtual ~PostedItem();
 
 	bool setGroup(const RsPostedGroup& group, bool doFill = true);
@@ -59,6 +59,7 @@ private slots:
 	void makeUpVote();
 	void makeDownVote();
 	void readToggled(bool checked);
+	void readAndClearItem();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
