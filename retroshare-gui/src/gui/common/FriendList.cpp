@@ -1967,9 +1967,9 @@ void FriendList::createDisplayMenu()
     menu->addAction(ui->actionShowLastContactColumn);
     menu->addAction(ui->actionShowIPColumn);
     menu->addAction(ui->actionShowStatusColumn);
-//    menu = displayMenu->addMenu(tr("Sort by"));
+    menu = displayMenu->addMenu(tr("Sort by"));
 //    menu->addAction(ui->actionSortByName);
-//    menu->addAction(ui->actionSortByState);
+    menu->addAction(ui->actionSortByState);
 //    menu->addAction(ui->actionSortByLastContact);
 //    menu->addAction(ui->actionSortByIP);
     displayMenu->addAction(ui->actionHideOfflineFriends);
@@ -1977,9 +1977,9 @@ void FriendList::createDisplayMenu()
 //    displayMenu->addAction(ui->actionRootIsDecorated);
     displayMenu->addAction(ui->actionShowGroups);
 
-//    QActionGroup *group = new QActionGroup(this);
+    QActionGroup *group = new QActionGroup(this);
 //    group->addAction(ui->actionSortByName);
-//    group->addAction(ui->actionSortByState);
+    group->addAction(ui->actionSortByState);
 //    group->addAction(ui->actionSortByLastContact);
 //    group->addAction(ui->actionSortByIP);
 
