@@ -329,7 +329,8 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 		/* Update threads */
 		insertThreads();
 	} else {
-		const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds = getMsgIds();
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		getAllMsgIds(msgIds);
 		if (msgIds.find(mForumId) != msgIds.end()) {
 			/* Update threads */
 			insertThreads();

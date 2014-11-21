@@ -499,7 +499,7 @@ void GxsForumMsgItem::setAsRead()
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
 	uint32_t token;
-	rsGxsForums->setMessageReadStatus(token, msgPair, false);
+	rsGxsForums->setMessageReadStatus(token, msgPair, true);
 
 	setReadStatus(false, false);
 }
