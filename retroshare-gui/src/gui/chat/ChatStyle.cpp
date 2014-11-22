@@ -101,6 +101,8 @@
 #include <QApplication>
 #include <QColor>
 #include <QXmlStreamReader>
+#include <QDomDocument>
+#include <QTextStream>
 
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
@@ -270,6 +272,41 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
 
 QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag)
 {
+	QDomDocument doc ;
+	QString styleOptimized ;
+	QString errorMsg ; int errorLine ; int errorColumn ;
+	QString messageBody = message ;
+	if (doc.setContent(messageBody, &errorMsg, &errorLine, &errorColumn)) {
+		QDomElement body = doc.documentElement();
+		if (!body.isNull()){
+			messageBody = "";
+			int count = body.childNodes().count();
+			for (int curs = 0; curs < count; ++curs){
+				QDomNode it = body.childNodes().item(curs);
+				if (it.nodeName().toLower() != "style") {
+					QString str;
+					QTextStream stream(&str);
+					it.toElement().save(stream, -1);
+					//remove Body element, as it was saved with...
+					if ((str.startsWith("<body>")) && (str.endsWith( "</body>"))) {
+						str.remove(0, 6);
+						str.chop(     7);
+					}//if ((str.startsWith("<body>")) && (str.endsWith( "</body>")))
+					//remove first <span> if it is without attribute
+					if ((str.startsWith("<span>")) && (str.endsWith( "</span>"))) {
+						str.remove(0, 6);
+						str.chop(     7);
+					}//if ((str.startsWith("<span>")) && (str.endsWith( "</span>")))
+					messageBody += str;
+				} else {
+					QDomText text = it.firstChild().toText();
+					styleOptimized = text.data();
+				}//if (it.nodeName().toLower() != "style")
+			}//foreach (QDomElement it, body.childNodes())
+		}//if (!body.isNull()){
+	}//if (docOK = doc.setContent(text, &errorMsg, &errorLine, &errorColumn))
+	if (messageBody.isEmpty()) messageBody = message;
+
     QString style = m_style[type];
 
     if (style.isEmpty()) {
@@ -292,34 +329,30 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
         case FORMATMSG_SYSTEM:
             style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_SYSTEM);
             break;
-        }
+		}//switch (type)
 
         if (style.isEmpty()) {
             // default style
             style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%time%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
-        }
+		}//if (style.isEmpty())
 
+		style = style.replace("\r","").replace("\n","").replace("\t","") ;
         m_style[type] = style;
-    }
+	}//if (style.isEmpty())
 
 #ifdef COLORED_NICKNAMES
     QColor color;
     if (flag & CHAT_FORMATMSG_SYSTEM) {
         color = Qt::darkBlue;
-    } else {
+	} else {//if ( flag & CHAT_FORMATMSG_SYSTEM
         // Calculate color from the name
-//        uint hash = 0x73ffe23a;
-//        for (int i = 0; i < name.length(); ++i) {
-//            hash = (hash ^ 0x28594888) + ((uint32_t) name[i].toLatin1() << (i % 4));
-//        }
-
         uint hash = 0;
         for (int i = 0; i < name.length(); ++i) {
             hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toLatin1())) & 0x3fff;
-        }
+		}//for (int i = 0; i < name.length(); ++i)
 
         color.setHsv(hash, 255, 150);
-    }
+	}//if (flag & CHAT_FORMATMSG_SYSTEM)
 #else
     Q_UNUSED(flag);
 #endif
@@ -330,8 +363,13 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 #ifdef COLORED_NICKNAMES
                              .replace("%color%", color.name())
 #endif
-                             .replace("%message%", message);
-
+	                         .replace("%message%", messageBody ) ;
+	if ( !styleOptimized.isEmpty() ) {
+		int pos = formatMsg.indexOf("</style>") ;
+		if ( pos >= 0 ) {
+			formatMsg.insert(pos, styleOptimized) ;
+		}//if (pos >= 0)
+	}//if (!styleOptimized.isEmpty())
     return formatMsg;
 }
 
