@@ -150,8 +150,8 @@ public:
 
     static float computeCurrentSendingProbability()
     {
-        int maxIn,maxOut;
-        float currIn,currOut ;
+        int maxIn=50,maxOut=50;
+        float currIn=0,currOut=0 ;
 
         rsConfig->GetMaxDataRates(maxIn,maxOut) ;
         rsConfig->GetCurrentDataRates(currIn,currOut) ;
