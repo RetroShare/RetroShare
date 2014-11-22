@@ -45,7 +45,7 @@
 #include <retroshare/rsids.h>
 #include "distantchat.h"
 
-#define DEBUG_DISTANT_CHAT
+//#define DEBUG_DISTANT_CHAT
 
 void DistantChatService::connectToTurtleRouter(p3turtle *tr)
 {
@@ -58,9 +58,9 @@ void DistantChatService::flush()
 	// Flush items that could not be sent, probably because of a Mutex protected zone.
 	//
 	while(!pendingDistantChatItems.empty())
-	{
-		sendTurtleData( pendingDistantChatItems.front() ) ;
-		pendingDistantChatItems.pop_front() ;
+    {
+        sendTurtleData( pendingDistantChatItems.front() ) ;
+        pendingDistantChatItems.pop_front() ;
     }
 
     // TODO:  also sweep GXS id map and disable any ID with no virtual peer id in the list.
@@ -72,13 +72,13 @@ bool DistantChatService::handleRecvItem(RsChatItem *item)
 		return false ;
 
 	switch(item->PacketSubType())
-	{
-			case RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY: handleRecvDHPublicKey(dynamic_cast<RsChatDHPublicKeyItem*>(item)) ; break ;
-																			return true ;
+    {
+    case RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY: handleRecvDHPublicKey(dynamic_cast<RsChatDHPublicKeyItem*>(item)) ; break ;
+        return true ;
 
-			default:
-																			return false ;
-	}
+    default:
+        return false ;
+    }
 
 	return false ;
 }
@@ -86,16 +86,14 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
 {
     std::map<RsGxsId,DistantChatPeerInfo>::const_iterator it=_distant_chat_contacts.find(RsGxsId(item->PeerId()));
 
-        if(it == _distant_chat_contacts.end())
-    {
-        std::cerr << "p3ChatService::handleOutgoingItem(): cannot send to " << item->PeerId() << ". No working tunnel for that distant peer." << std::endl;
+    if(it == _distant_chat_contacts.end())
         return false ;
-    }
+
 #ifdef CHAT_DEBUG
-        std::cerr << "p3ChatService::handleOutgoingItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
+    std::cerr << "p3ChatService::handleOutgoingItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
 #endif
-        sendTurtleData(item) ;
-        return true;
+    sendTurtleData(item) ;
+    return true;
 }
 
 void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
@@ -103,21 +101,6 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 	if(cs->flags & RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION)
         markDistantChatAsClosed(RsGxsId(cs->PeerId())) ;
 }
-
-//	bool DistantChatService::getHashFromVirtualPeerId(const TurtleVirtualPeerId& vpid,TurtleFileHash& hash)
-//	{
-//		RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
-//
-//		for(std::map<TurtleFileHash,DistantChatPeerInfo>::const_iterator it=_distant_chat_peers.begin();it!=_distant_chat_peers.end();++it)
-//			if( it->second.virtual_peer_id == vpid)
-//			{
-//				hash = it->first ;
-//				return true ;
-//			}
-//
-//		return false ;
-//	}
-
 
 bool DistantChatService::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& /*peer_id*/)
 {
@@ -182,54 +165,18 @@ void DistantChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleV
         }
     }
 
-    //		// Look for existing chat tunnels for this same peer. If exist, return.
-    //
-    //		RsGxsId gxs_id = gxsIdFromHash(hash) ;
-    //
-    //		std::map<RsGxsId,DistantChatPeerInfo>::const_iterator it2 = _distant_chat_contacts.find(gxs_id) ;
-    //
-    //		if(it2 == _distant_chat_contacts.end())
-    //		{
-    //			std::cerr << "(EE) Cannot find distant chat entry for GXS id " << gxs_id << ". This is a bug." << std::endl;
-    //			return ;
-    //		}
-    //
-    //		it2->second.last_contact = now ;
-    //		it2->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
-    //		it2->second.virtual_peer_id = virtual_peer_id ;
-    //		it2->second.direction = dir ;
-    //		it2->second.dh = NULL ;
-    //		memset(it->second.aes_key,0,DISTANT_CHAT_AES_KEY_SIZE) ;
-
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  Adding virtual peer " << virtual_peer_id << " for chat hash " << hash << std::endl;
 #endif
-
-    //		if(dir == RsTurtleGenericTunnelItem::DIRECTION_CLIENT)
-    //		{
-    //	#ifdef DEBUG_DISTANT_CHAT
-    //			std::cerr << "  Tunnel side: Server side." << std::endl;
-    //			std::cerr << "  Adding new peer id " << virtual_peer_id << std::endl;
-    //	#endif
-    //			RsGxsId own_gxs_id = gxsIdFromHash(hash) ;
-    //			std::list<RsGxsId> own_id_list ;
-    //			rsIdentity->getOwnIds(own_id_list) ;
-    //
-    //			std::list<RsGxsId>::const_iterator it = std::find(own_gxs_id,own_id_list.begin(),own_id_list.end());
-    //
-    //			if(it == own_id_list.end())
-    //			{
-    //				std::cerr << "(EE) DistantChatService::addVirtualPeer(): cannot find GXS id for hash " << hash << ". This is probably a bug" << std::endl;
-    //				return ;
-    //			}
-    //		}
 
     // Start a new DH session for this tunnel
     RS_STACK_MUTEX(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
     DH *& dh(_distant_chat_virtual_peer_ids[virtual_peer_id].dh) ;
 
+#ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  Starting new DH session." << std::endl;
+#endif
 
     if(!locked_initDHSessionKey(dh))
     {
@@ -248,7 +195,9 @@ void DistantChatService::removeVirtualPeer(const TurtleFileHash& hash,const Turt
 {
     bool tunnel_dn = false ;
 
+#ifdef DEBUG_DISTANT_CHAT
     std::cerr << "Distant chat: Removing virtual peer " << virtual_peer_id << " for hash " << hash << std::endl;
+#endif
     {
         RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -294,11 +243,15 @@ static void printBinaryData(void *data,uint32_t size)
 {
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
 
-	for(uint32_t j = 0; j < size; j++) 
+    uint32_t mx = std::max(50u,size) ;
+
+    for(uint32_t j = 0; j < mx; j++)
 	{ 
 		std::cerr << outl[ ( ((uint8_t*)data)[j]>>4) ] ; 
 		std::cerr << outl[ ((uint8_t*)data)[j] & 0xf ] ; 
-	}
+    }
+    if(size > 50)
+        std::cerr << "..." ;
 }
 #endif
 
@@ -487,7 +440,12 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 		signature_key = item->gxs_key ;
 
 #warning At this point, we should check that the key Ids  match!!
-	}
+    }
+    else if(signature_key.keyId != item->gxs_key.keyId)
+    {
+        std::cerr << "(EE) DH session key is signed by an ID that is not the ID of the key provided inthe packet. Refusing distant chat with this peer." << std::endl;
+        return;
+    }
 
 	if(!GxsSecurity::validateSignature((char*)data,pubkey_size,signature_key,item->signature))
 	{
@@ -508,17 +466,14 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 	int size = DH_size(it->second.dh) ;
 	unsigned char *key_buff = new unsigned char[size] ;
 
-	if(size == DH_compute_key(key_buff,item->public_key,it->second.dh)) 
-	{
-#ifdef DEBUG_DISTANT_CHAT
-		std::cerr << "  DH key computation successed. New key in place." << std::endl;
-#endif
-	}
-	else
+    if(size != DH_compute_key(key_buff,item->public_key,it->second.dh))
 	{
 		std::cerr << "  (EE) DH computation failed. Probably a bug. Error code=" << ERR_get_error() << std::endl;
 		return ;
 	}
+#ifdef DEBUG_DISTANT_CHAT
+    std::cerr << "  DH key computation successed. New key in place." << std::endl;
+#endif
 
     DistantChatPeerInfo& pinfo(_distant_chat_contacts[senders_id]) ;
 
@@ -586,7 +541,9 @@ bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
     for(i=0;i<6;++i)
         if(!mIdService->getPrivateKey(own_gxs_id,signature_key) || signature_key.keyData.bin_data == NULL)
         {
+#ifdef DEBUG_DISTANT_CHAT
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
+#endif
             usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
@@ -665,7 +622,9 @@ bool DistantChatService::locked_initDHSessionKey(DH *& dh)
         std::cerr << "  (EE) DH generate_key() failed! Error code = " << ERR_get_error() << std::endl;
         return false ;
     }
+#ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  (II) DH Session key inited." << std::endl;
+#endif
     return true ;
 }
 
@@ -710,8 +669,6 @@ void DistantChatService::sendTurtleData(RsChatItem *item)
 #ifdef DEBUG_DISTANT_CHAT
         std::cerr << "     Packet is a normal chat message. Sending to GXS id " << item->PeerId() << std::endl;
 #endif
-        bool found = false ;
-
         RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
         std::map<RsGxsId,DistantChatPeerInfo>::iterator it = _distant_chat_contacts.find(RsGxsId(item->PeerId())) ;
@@ -939,7 +896,9 @@ bool DistantChatService::closeDistantChatConnexion(const RsGxsId& gxs_id)
     {
         TurtleFileHash hash = hashFromGxsId(gxs_id) ;
         mTurtle->stopMonitoringTunnels(hash) ;
+#ifdef DEBUG_DISTANT_CHAT
         std::cerr << "  This is client side. Stopping tunnel manageement for hash " << hash << std::endl;
+#endif
     }
 
         _distant_chat_virtual_peer_ids.erase(it2) ;
