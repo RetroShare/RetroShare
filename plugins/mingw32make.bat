@@ -3,9 +3,9 @@ set MINGW=C:\MinGW
 
 set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-mingw32-make clean 
+mingw32-make clean
 
-qmake libbitdht.pro
+qmake plugins.pro
 
 mingw32-make
 
