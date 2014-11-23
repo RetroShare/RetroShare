@@ -1,5 +1,44 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   Improvements
+      GUI
+         * HTML Text optimization (patch from Phenom)
+         * Enabled by default to display Friends Avatar on Friendslist
+         * Changed for RS 0.6 the status icons
+         * beautify the status string which displays after nicknames
+         * improved GUI for distant chat, making it possible to choose which identity we use to chat someone
+         * improved design of existing feed items
+         * Added new stylesheet qdarkstyle
+         * created new RSFeedWidget to be used in news feed
+         * Added to change dynamicly the share key info description.
+         * Added default stylesheet for the info label
+
+      Distant chat
+         * improved logic in distant chat, and fixed several bugs causing unstable conversations
+
+      GXS
+         * implemented more tests and fixed a few bugs in GxsSecurity
+         * added feed items and logic for GXS channels/forums/posted
+
+      Core
+         * Mutex debugging: added a new macro RS_STACK_MUTEX(myMutex) to trigger a scope guard while recording file location 
+           and line number. Moved the timings from RsMutex to RsStackMutex. Changed the mutexes in rsgenexchange and rsgxsntservice to use the new macro.
+         * separated chat items from message items, separated chat into tree components: chat, distant chat and distributed chat 
+            (i.e. lobbies). moved all chat components into chat/. Removed deprecated chat items. Moved all distant chat code into a 
+            separate file. 
+         * fixed compilation of network simulator
+         * updated windows build bats
+
+   Bug fixes
+      * removed uninitialised memory read in rsgxsnetservice.cc
+      * fixed re-login after wrong passwd. Patch from Electron
+      * fixed adding groups to message recipient (Patch from Phenom, modified)
+      * fixed memory leak in rsgenexchange.cc
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 23 Nov 2014 19:00:00 +0100
+
+retroshare06 (0.6.0-0.7661~precise) precise; urgency=low
+
    Improvements:
       GUI 
          * Added systray menu in status bar. Helps people without a systray (Patch form Phenom)
