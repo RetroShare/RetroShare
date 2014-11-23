@@ -1495,6 +1495,8 @@ int RsServer::StartupRetroShare()
     interfaces.mGxsIdService    = mGxsIdService;
     interfaces.mGxsCirlces      = mGxsCircles;
     interfaces.mPgpAuxUtils     = pgpAuxUtils;
+    interfaces.mGxsForums       = mGxsForums;
+    interfaces.mGxsChannels     = mGxsChannels;
 	mPluginsManager->setInterfaces(interfaces);
 
 	// now add plugin objects inside the loop:

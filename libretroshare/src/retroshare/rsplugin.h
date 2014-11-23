@@ -44,7 +44,8 @@ class RsTurtle ;
 class RsDht ;
 class RsDisc ;
 class RsMsgs ;
-//class RsForums;
+class RsGxsForums;
+class RsGxsChannels;
 class RsNotify;
 class p3LinkMgr ;
 class MainPage ;
@@ -112,6 +113,8 @@ public:
     RsUtil::inited_ptr<RsGxsIdExchange> mGxsIdService;
     RsUtil::inited_ptr<RsGcxs>          mGxsCirlces;
     RsUtil::inited_ptr<PgpAuxUtils>     mPgpAuxUtils;
+    RsUtil::inited_ptr<RsGxsForums>     mGxsForums;
+    RsUtil::inited_ptr<RsGxsChannels>   mGxsChannels;
 };
 
 class RsPlugin
