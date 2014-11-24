@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QKeyEvent>
+#include <QScrollBar>
 
 #include "RSFeedWidget.h"
 #include "ui_RSFeedWidget.h"
@@ -28,6 +29,28 @@
 #include "gui/gxs/GxsFeedItem.h"
 
 #define COLUMN_FEED 0
+
+#define SINGLE_STEP  15
+
+/* Redefine single step for srolling */
+class RSFeedWidgetScrollBar : public QScrollBar
+{
+public:
+	RSFeedWidgetScrollBar(QWidget *parent = 0) : QScrollBar(parent) {}
+
+	void sliderChange(SliderChange change)
+	{
+		if (change == SliderStepsChange) {
+			if (singleStep() > SINGLE_STEP) {
+				/* Set our own value */
+				setSingleStep(SINGLE_STEP);
+				return;
+			}
+		}
+
+		QScrollBar::sliderChange(change);
+	}
+};
 
 RSFeedWidget::RSFeedWidget(QWidget *parent)
     : QWidget(parent), ui(new Ui::RSFeedWidget)
@@ -49,7 +72,8 @@ RSFeedWidget::RSFeedWidget(QWidget *parent)
 	mCountChangedDisabled = 0;
 
 	ui->treeWidget->installEventFilter(this);
-	ui->treeWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+	ui->treeWidget->setVerticalScrollBar(new RSFeedWidgetScrollBar);
 }
 
 RSFeedWidget::~RSFeedWidget()
