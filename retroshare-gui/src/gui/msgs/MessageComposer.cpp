@@ -136,6 +136,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     ui.hashBox->hide();
 	 ui.signMessage_CB->setChecked(true) ;
+     ui.signMessage_CB->setEnabled(false) ;
 
     // connect up the buttons.
     connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
@@ -235,28 +236,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     setupFormatActions();
 
-//	 std::list<RsGxsId> own_ids ;
-//	 rsIdentity->getOwnIds(own_ids) ;
-//
-//	 ui.respond_to_CB->addItem(tr("[no identity]"), QVariant(QString::fromStdString(RsGxsId().toStdString()))) ;
-//
-//	 for(std::list<RsGxsId>::const_iterator it(own_ids.begin());it!=own_ids.end();++it)
-//	 {
-//		 RsIdentityDetails details ;
-//		 rsIdentity->getIdDetails(*it,details) ;
-//
-//		 std::cerr << "Adding identity: id=" << (*it) << ", name=" << details.mNickname << std::endl;
-//
-//		 if(details.mNickname.empty()) // I don't know why, but that happens
-//			 ui.respond_to_CB->addItem(QString::fromStdString((*it).toStdString()), QString::fromStdString((*it).toStdString())) ;
-//		 else
-//			 ui.respond_to_CB->addItem(QString::fromUtf8(details.mNickname.c_str()), QString::fromStdString((*it).toStdString())) ;
-//	 }
-
-	 QObject::connect(ui.respond_to_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSigningButton(int))) ;
-
-//	 if(!own_ids.empty())
-//		 ui.respond_to_CB->setCurrentIndex(1) ;
+    ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
 
     /*ui.comboStyle->addItem("Standard");
     ui.comboStyle->addItem("Bullet List (Disc)");
@@ -266,9 +246,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.comboStyle->addItem("Ordered List (Alpha lower)");
     ui.comboStyle->addItem("Ordered List (Alpha upper)");*/
     //connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(textStyle(int)));
-    connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
 
-    connect(ui.comboFont, SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
+    connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
+    connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
 
     ui.comboSize->setEditable(true);
 
@@ -352,13 +332,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 MessageComposer::~MessageComposer()
 {
     delete(m_compareRole);
-}
-void MessageComposer::updateSigningButton(int n)
-{
-	if(n == 0)
-		ui.signMessage_CB->setEnabled(false) ;
-	else
-		ui.signMessage_CB->setEnabled(true) ;
 }
 
 void MessageComposer::processSettings(bool bLoad)
@@ -2354,8 +2327,14 @@ void MessageComposer::addContact(enumType type)
 	for (std::list<RsPeerId>::const_iterator idIt = peerIds.begin(); idIt != peerIds.end(); ++idIt) 
 		addRecipient(type, *idIt);
 
-	std::list<RsGxsId> gxsIds ;
-	ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, false);
+    std::list<RsGxsId> gxsIds ;
+    ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, false);
+
+    if(!gxsIds.empty() && ui.respond_to_CB->count() == 0)
+    {
+        QMessageBox::warning(NULL,tr("Cannot send distant messages"),tr("In order to send distant messages, you need an identity to sign with. Please go to the Identities tab and create one first."));
+        return ;
+    }
 	for (std::list<RsGxsId>::const_iterator idIt = gxsIds.begin(); idIt != gxsIds.end(); ++idIt) 
 		addRecipient(type, *idIt);
 }

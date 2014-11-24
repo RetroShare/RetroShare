@@ -50,6 +50,8 @@ public:
 	GxsIdChooser(QWidget *parent = NULL);
 	virtual ~GxsIdChooser();
 
+    void setFlags(uint32_t flags) ;
+
 	void setUpdateWhenInvisible(bool update);
 	const std::list<RsGxsGroupId> &getGrpIds();
 	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds();

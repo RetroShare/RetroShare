@@ -71,6 +71,11 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 }
 
+void GxsIdChooser::setFlags(uint32_t flags)
+{
+    mFlags = flags ;
+    updateDisplay(true);
+}
 GxsIdChooser::~GxsIdChooser()
 {
 	if (mIdQueue) {
@@ -124,9 +129,9 @@ bool GxsIdChooser::makeIdDesc(const RsGxsId &gxsId, QString &desc)
 			desc = QString("%1 ... [").arg(tr("Not found"));
 			desc += QString::fromStdString(gxsId.toStdString().substr(0,5));
 			desc += "...]";
-		}//if (mTimerCount > MAX_TRY)
+        }
 		return false;
-	}//if (!GxsIdDetails::MakeIdDesc(gxsId, false, desc, icons))
+    }
 	return true;
 }
 
@@ -140,8 +145,8 @@ void GxsIdChooser::addPrivateId(const RsGxsId &gxsId, bool replace)
 		if (replace && mTimerCount <= MAX_TRY) {
 			/* Retry */
 			return;
-		}//if (replace && mTimerCount <= MAX_TRY)
-	}//if (!found)
+        }
+    }
 
     QString id = QString::fromStdString(gxsId.toStdString());
 
@@ -154,9 +159,9 @@ void GxsIdChooser::addPrivateId(const RsGxsId &gxsId, bool replace)
 			setItemData(index, found ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
 			model()->sort(0);
 		return;
-		}//if (index >= 0)
+        }
 		//If not found create a new item.
-	}//if (replace)
+    }
 
 	/* Add new item */
 	addItem(str, id);
@@ -172,7 +177,7 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 	mTimerCount = 0;
 	if (mTimer) {
 		delete(mTimer);
-	}//if (mTimer)
+    }
 
 	std::list<RsGxsId> ids;
 	//rsIdentity->getOwnIds(ids);
@@ -181,19 +186,19 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		std::cerr << "GxsIdChooser::loadPrivateIds() Error getting GroupData";
 		std::cerr << std::endl;
 		return;
-	}//if (!rsIdentity->getGroupData(token, datavector))
+    }
 
 	for (std::vector<RsGxsIdGroup>::iterator vit = datavector.begin();
 	     vit != datavector.end(); ++vit) {
 		RsGxsIdGroup data = (*vit);
 		if (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
 			ids.push_back((RsGxsId) data.mMeta.mGroupId);
-		}//if (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+        }
 
 		if (mDefaultIdName == data.mMeta.mGroupName) {
 			mDefaultId=(RsGxsId) data.mMeta.mGroupId;
-		}//if (mDefaultIdName == data.mMeta.mGroupName)
-	}//for (std::vector<RsGxsIdGroup>::iterator vit
+        }
+    }
 
 	//rsIdentity->getDefaultId(defId);
 	// Prefer to use an application specific default???
@@ -207,8 +212,8 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		addItem(str, id);
 		setItemData(count() - 1, QString("0_%2").arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_NO_ID, ROLE_TYPE);
-		}//if (!(mFlags & IDCHOOSER_ID_REQUIRED)
-	}//if (mFirstLoad)
+        }
+    }
 
 	if (!mFirstLoad) {
 		for (int idx=0; idx < count(); ++idx) {
@@ -225,23 +230,23 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 					if (lit == ids.end()) {
 						removeItem(idx);
 						idx--;
-					}//if (lit == ids.end())
-				}//default:
-			}//switch (type.toInt())
-		}//for (int idx=0; idx < count(); ++idx)
-	}//if (!mFirstLoad)
+                    }
+                }
+            }
+        }
+    }
 
 	if (ids.empty()) {
 		std::cerr << "GxsIdChooser::loadPrivateIds() ERROR no ids";
 		std::cerr << std::endl;
 		mFirstLoad = false;
 		return;
-	}//if (ids.empty())
+    }
 
 	for(std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); ++it) {
 		/* add to Chooser */
 		addPrivateId(*it, !mFirstLoad);
-	}//for(std::list<RsGxsId>::iterator it
+    }
 
 	if (!mPendingId.empty()) {
 		/* Create and start timer to load pending id's */
@@ -251,7 +256,7 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		mTimer->setInterval(500);
 		connect(mTimer, SIGNAL(timeout()), this, SLOT(timer()));
 		mTimer->start();
-	}//if (!mPendingId.empty())
+    }
 
 	setDefaultItem();
 
@@ -267,11 +272,11 @@ void GxsIdChooser::setDefaultItem()
 	} else {
 		QString id = QString::fromStdString(mDefaultId.toStdString());
 		def = findData(id);
-	}//if ((mFlags & IDCHOOSER_ANON_DEFAULT)
+    }
 
 	if (def >= 0) {
 		setCurrentIndex(def);
-	}//if (def >= 0)
+    }
 
 }
 
@@ -284,7 +289,7 @@ bool GxsIdChooser::setChosenId(RsGxsId &gxsId)
 	if (index >= 0) {
 		setCurrentIndex(index);
 		return true;
-	}//if (index >= 0)
+    }
 		return false;
 	}
 
@@ -292,7 +297,7 @@ GxsIdChooser::ChosenId_Ret GxsIdChooser::getChosenId(RsGxsId &gxsId)
 {
 	if (count() < 1) {
 		return None;
-	}//if (count() < 1)
+    }
 
 	int idx = currentIndex();
 
@@ -306,7 +311,7 @@ GxsIdChooser::ChosenId_Ret GxsIdChooser::getChosenId(RsGxsId &gxsId)
 		return KnowId;
 		case TYPE_UNKNOWN_ID:
 		return UnKnowId;
-	}//switch (type.toInt())
+    }
 
 	return None;
 }
@@ -320,7 +325,7 @@ void GxsIdChooser::myCurrentIndexChanged(int index)
 		setToolTip(text);
 	} else {
 		setToolTip("");
-	}//if (width()<fm.boundingRect(text).width())
+    }
 }
 		
 void GxsIdChooser::timer()
@@ -336,7 +341,7 @@ void GxsIdChooser::timer()
 		pendingId.pop_front();
 
 		addPrivateId(id, true);
-	}//while (!pendingId.empty())
+    }
 
 	setDefaultItem();
 
@@ -354,8 +359,8 @@ void GxsIdChooser::timer()
 			mTimer = NULL;
 			mTimerCount = 0;
 			mPendingId.clear();
-		}//if (mTimerCount <= MAX_TRY)
-	}//if (mPendingId.empty())
+        }
+    }
 		}
 
 void GxsIdChooser::updateDisplay(bool complete)
@@ -393,7 +398,7 @@ void GxsIdChooser::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			std::cerr << "IdDialog::loadRequest() ERROR";
 			std::cerr << std::endl;
 		break;
-	}//switch(req.mUserType)
+    }
 }
 
 void GxsIdChooser::insertIdList(uint32_t token)

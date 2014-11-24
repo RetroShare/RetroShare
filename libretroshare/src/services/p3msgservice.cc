@@ -1728,7 +1728,7 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 
 		// 2 - now sign the data, if necessary, and put the signature up front
 
-		if(item->msgFlags & RS_MSG_FLAGS_SIGNED)
+        if(item->msgFlags & RS_MSG_FLAGS_SIGNED && !source_gxs_id.isNull())
 		{
 #ifdef DEBUG_DISTANT_MSG
 			std::cerr << "  Signing the message with key id " << source_gxs_id << std::endl;
@@ -1739,7 +1739,7 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 #ifdef DEBUG_DISTANT_MSG
 			std::cerr << "     Getting key material..." << std::endl;
 #endif
-			if(!mIdService->getPrivateKey(source_gxs_id,signature_key))
+            if(mIdService->getPrivateKey(source_gxs_id,signature_key) < 0)
 				throw std::runtime_error("Cannot get signature key for id " + source_gxs_id.toStdString()) ;
 
 #ifdef DEBUG_DISTANT_MSG

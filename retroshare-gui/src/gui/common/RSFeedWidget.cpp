@@ -49,6 +49,7 @@ RSFeedWidget::RSFeedWidget(QWidget *parent)
 	mCountChangedDisabled = 0;
 
 	ui->treeWidget->installEventFilter(this);
+	ui->treeWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
 RSFeedWidget::~RSFeedWidget()
