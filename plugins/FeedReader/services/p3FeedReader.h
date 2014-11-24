@@ -26,17 +26,19 @@
 #include "plugins/rspqiservice.h"
 #include "interface/rsFeedReader.h"
 
+#include "retroshare/rsgxsifacetypes.h"
+
 class RsFeedReaderFeed;
 class RsFeedReaderMsg;
 class p3FeedReaderThread;
 
-//Todo: Replace with gxs forums
-class RsForums;
+class RsGxsForums;
+class RsGxsForumGroup;
 
 class p3FeedReader : public RsPQIService, public RsFeedReader
 {
 public:
-	p3FeedReader(RsPluginHandler *pgHandler, RsForums *forums);
+	p3FeedReader(RsPluginHandler *pgHandler, RsGxsForums *forums);
 
 	/****************** FeedReader Interface *************/
 	virtual void stop();
@@ -68,6 +70,7 @@ public:
 	virtual bool            processFeed(const std::string &feedId);
 	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read);
 	virtual bool            retransformMsg(const std::string &feedId, const std::string &msgId);
+	virtual bool            clearMessageCache(const std::string &feedId);
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString);
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString);
@@ -88,6 +91,10 @@ public:
 
 	void setFeedInfo(const std::string &feedId, const std::string &name, const std::string &description);
 
+	bool getForumGroup(const RsGxsGroupId &groupId, RsGxsForumGroup &forumGroup);
+	bool updateForumGroup(const RsGxsForumGroup &forumGroup, const std::string &groupName, const std::string &groupDescription);
+	bool waitForToken(uint32_t token);
+
 protected:
 	/****************** p3Config STUFF *******************/
 	virtual RsSerialiser *setupSerialiser();
@@ -100,9 +107,11 @@ private:
 	void deleteAllMsgs_locked(RsFeedReaderFeed *fi);
 	void stopPreviewThreads_locked();
 
+private:
 	time_t   mLastClean;
-	RsForums *mForums;
+	RsGxsForums *mForums;
 	RsFeedReaderNotify *mNotify;
+	volatile bool mStopped;
 
 	RsMutex mFeedReaderMtx;
 	std::list<RsItem*> cleanSaveData;

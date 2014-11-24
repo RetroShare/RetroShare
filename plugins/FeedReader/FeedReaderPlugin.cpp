@@ -87,8 +87,7 @@ void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
 	mInterfaces = interfaces;
 
-	//Todo: Replace with gxs forums
-	mFeedReader = new p3FeedReader(mPlugInHandler, NULL /*mInterfaces.mForums*/);
+	mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mGxsForums);
 	rsFeedReader = mFeedReader;
 
 	mNotify = new FeedReaderNotify();

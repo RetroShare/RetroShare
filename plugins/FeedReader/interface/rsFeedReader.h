@@ -45,7 +45,6 @@ enum RsFeedReaderErrorState {
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE           = 100,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND        = 101,
 	RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN         = 102,
-	RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS    = 103,
 
 	RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR             = 150,
 	RS_FEED_ERRORSTATE_PROCESS_XPATH_INTERNAL_ERROR   = 151,
@@ -218,6 +217,7 @@ public:
 	virtual bool            processFeed(const std::string &feedId) = 0;
 	virtual bool            setMessageRead(const std::string &feedId, const std::string &msgId, bool read) = 0;
 	virtual bool            retransformMsg(const std::string &feedId, const std::string &msgId) = 0;
+	virtual bool            clearMessageCache(const std::string &feedId) = 0;
 
 	virtual RsFeedReaderErrorState processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, std::string &description, std::string &errorString) = 0;
 	virtual RsFeedReaderErrorState processXslt(const std::string &xslt, std::string &description, std::string &errorString) = 0;

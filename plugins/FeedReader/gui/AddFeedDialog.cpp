@@ -28,20 +28,28 @@
 #include "PreviewFeedDialog.h"
 #include "FeedReaderStringDefs.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/common/UIStateHelper.h"
 
-//Todo: Replace with gxs forums
-//#include "retroshare/rsforums.h"
+#include <retroshare/rsgxsforums.h>
+#include <iostream>
 
-//bool sortForumInfo(const ForumInfo& info1, const ForumInfo& info2)
-//{
-//	return QString::fromStdWString(info1.forumName).compare(QString::fromStdWString(info2.forumName), Qt::CaseInsensitive);
-//}
+#define TOKEN_TYPE_FORUM_GROUPS 1
 
 AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
 	: QDialog(parent, Qt::Window), mFeedReader(feedReader), mNotify(notify), ui(new Ui::AddFeedDialog)
 {
 	ui->setupUi(this);
 
+	/* Setup UI helper */
+	mStateHelper = new UIStateHelper(this);
+
+	mStateHelper->addWidget(TOKEN_TYPE_FORUM_GROUPS, ui->forumComboBox, UISTATE_LOADING_DISABLED);
+	mStateHelper->addWidget(TOKEN_TYPE_FORUM_GROUPS, ui->buttonBox->button(QDialogButtonBox::Ok), UISTATE_LOADING_DISABLED);
+
+	/* Setup TokenQueue */
+	mTokenQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+
+	/* Connect signals */
 	connect(ui->buttonBox->button(QDialogButtonBox::Ok), SIGNAL(clicked()), this, SLOT(createFeed()));
 	connect(ui->buttonBox->button(QDialogButtonBox::Cancel), SIGNAL(clicked()), this, SLOT(reject()));
 
@@ -52,7 +60,7 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	connect(ui->typeForumRadio, SIGNAL(toggled(bool)), this, SLOT(typeForumToggled()));
 	connect(ui->previewButton, SIGNAL(clicked()), this, SLOT(preview()));
 
-	/* currently only for loacl feeds */
+	/* currently only for local feeds */
 	connect(ui->saveCompletePageCheckBox, SIGNAL(toggled(bool)), this, SLOT(denyForumToggled()));
 
 	connect(ui->urlLineEdit, SIGNAL(textChanged(QString)), this, SLOT(validate()));
@@ -60,16 +68,18 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	connect(ui->useInfoFromFeedCheckBox, SIGNAL(toggled(bool)), this, SLOT(validate()));
 	connect(ui->typeLocalRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
 	connect(ui->typeForumRadio, SIGNAL(toggled(bool)), this, SLOT(validate()));
+	connect(ui->forumComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(validate()));
+
+	connect(ui->clearCachePushButton, SIGNAL(clicked()), this, SLOT(clearMessageCache()));
 
 	ui->headerFrame->setHeaderText(tr("Feed Details"));
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/FeedReader.png"));
 
 	ui->activatedCheckBox->setChecked(true);
-	ui->forumComboBox->setEnabled(false);
+	mStateHelper->setWidgetEnabled(ui->forumComboBox, false);
 	ui->useInfoFromFeedCheckBox->setChecked(true);
 	ui->updateForumInfoCheckBox->setEnabled(false);
 	ui->updateForumInfoCheckBox->setChecked(true);
-	ui->forumNameLabel->hide();
 	ui->useAuthenticationCheckBox->setChecked(false);
 	ui->useStandardStorageTimeCheckBox->setChecked(true);
 	ui->useStandardUpdateInterval->setChecked(true);
@@ -81,22 +91,10 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	mTransformationType = RS_FEED_TRANSFORMATION_TYPE_NONE;
 	ui->transformationTypeLabel->setText(FeedReaderStringDefs::transforationTypeString(mTransformationType));
 
+	ui->clearCachePushButton->show();
+
 	/* fill own forums */
-	//Todo: Replace with gxs forums
-//	std::list<ForumInfo> forumList;
-//	if (rsForums->getForumList(forumList)) {
-//		forumList.sort(sortForumInfo);
-//		for (std::list<ForumInfo>::iterator it = forumList.begin(); it != forumList.end(); ++it) {
-//			ForumInfo &forumInfo = *it;
-//			/* show only own anonymous forums */
-//			if ((forumInfo.subscribeFlags & RS_DISTRIB_ADMIN) && (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_ANON)) {
-//				ui->forumComboBox->addItem(QString::fromStdWString(forumInfo.forumName), QString::fromStdString(forumInfo.forumId));
-//			}
-//		}
-//	}
-	/* insert item to create a new forum */
-	ui->forumComboBox->insertItem(0, tr("Create a new anonymous public forum"), "");
-	ui->forumComboBox->setCurrentIndex(0);
+	requestForumGroups();
 
 	validate();
 
@@ -104,9 +102,6 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	/* load settings */
 	processSettings(true);
-
-	//Todo: Replace with gxs forums
-	ui->typeForumRadio->setEnabled(false);
 }
 
 AddFeedDialog::~AddFeedDialog()
@@ -114,7 +109,8 @@ AddFeedDialog::~AddFeedDialog()
 	/* save settings */
 	processSettings(false);
 
-	delete ui;
+	delete(ui);
+	delete(mTokenQueue);
 }
 
 void AddFeedDialog::processSettings(bool load)
@@ -164,7 +160,7 @@ void AddFeedDialog::useStandardProxyToggled()
 void AddFeedDialog::typeForumToggled()
 {
 	bool checked = ui->typeForumRadio->isChecked();
-	ui->forumComboBox->setEnabled(checked);
+	mStateHelper->setWidgetEnabled(ui->forumComboBox, checked);
 	ui->updateForumInfoCheckBox->setEnabled(checked);
 }
 
@@ -195,7 +191,11 @@ void AddFeedDialog::validate()
 		ok = false;
 	}
 
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(ok);
+	if (ui->typeForumRadio->isChecked() && ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().isEmpty()) {
+		ok = false;
+	}
+
+	mStateHelper->setWidgetEnabled(ui->buttonBox->button(QDialogButtonBox::Ok), ok);
 }
 
 void AddFeedDialog::setParent(const std::string &parentId)
@@ -215,7 +215,6 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 		}
 
 		setWindowTitle(tr("Edit feed"));
-		ui->typeGroupBox->setEnabled(false);
 
 		mParentId = feedInfo.parentId;
 
@@ -229,28 +228,15 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 
 		ui->descriptionPlainTextEdit->setPlainText(QString::fromUtf8(feedInfo.description.c_str()));
 
-		ui->typeGroupBox->setEnabled(false);
-		ui->forumComboBox->hide();
-		ui->forumNameLabel->clear();
-		ui->forumNameLabel->show();
-
 		if (feedInfo.flag.forum) {
+			mStateHelper->setWidgetEnabled(ui->forumComboBox, true);
 			ui->typeForumRadio->setChecked(true);
 			ui->saveCompletePageCheckBox->setEnabled(false);
 
-			if (feedInfo.forumId.empty()) {
-				ui->forumNameLabel->setText(tr("Not yet created"));
-			} else {
-				//Todo: Replace with gxs forums
-//				ForumInfo forumInfo;
-//				if (rsForums->getForumInfo(feedInfo.forumId, forumInfo)) {
-//					ui->forumNameLabel->setText(QString::fromStdWString(forumInfo.forumName));
-//				} else {
-//					ui->forumNameLabel->setText(tr("Unknown forum"));
-//				}
-			}
+			setActiveForumId(feedInfo.forumId);
 		} else {
 			ui->typeLocalRadio->setChecked(true);
+			mStateHelper->setWidgetEnabled(ui->forumComboBox, false);
 		}
 
 		ui->useAuthenticationCheckBox->setChecked(feedInfo.flag.authentication);
@@ -276,9 +262,26 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 		mXslt = feedInfo.xslt;
 
 		ui->transformationTypeLabel->setText(FeedReaderStringDefs::transforationTypeString(mTransformationType));
+
+		ui->clearCachePushButton->show();
 	}
 
 	return true;
+}
+
+void AddFeedDialog::setActiveForumId(const std::string &forumId)
+{
+	if (mStateHelper->isLoading(TOKEN_TYPE_FORUM_GROUPS)) {
+		mFillForumId = forumId;
+		return;
+	}
+
+	int index = ui->forumComboBox->findData(QString::fromStdString(forumId));
+	if (index >= 0) {
+		ui->forumComboBox->setCurrentIndex(index);
+	} else {
+		ui->forumComboBox->setCurrentIndex(0);
+	}
 }
 
 void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
@@ -296,11 +299,9 @@ void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 	feedInfo.description = ui->descriptionPlainTextEdit->toPlainText().toUtf8().constData();
 
 	feedInfo.flag.forum = ui->typeForumRadio->isChecked();
-	if (mFeedId.empty()) {
-		if (feedInfo.flag.forum) {
-			/* set forum (only when create a new feed) */
-			feedInfo.forumId = ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().toStdString();
-		}
+
+	if (feedInfo.flag.forum) {
+		feedInfo.forumId = ui->forumComboBox->itemData(ui->forumComboBox->currentIndex()).toString().toStdString();
 	}
 
 	feedInfo.flag.authentication = ui->useAuthenticationCheckBox->isChecked();
@@ -360,5 +361,74 @@ void AddFeedDialog::preview()
 	if (dialog.exec() == QDialog::Accepted) {
 		mTransformationType = dialog.getData(mXPathsToUse, mXPathsToRemove, mXslt);
 		ui->transformationTypeLabel->setText(FeedReaderStringDefs::transforationTypeString(mTransformationType));
+	}
+}
+
+void AddFeedDialog::clearMessageCache()
+{
+	if (mFeedId.empty()) {
+		return;
+	}
+
+	mFeedReader->clearMessageCache(mFeedId);
+}
+
+void AddFeedDialog::requestForumGroups()
+{
+	mStateHelper->setLoading(TOKEN_TYPE_FORUM_GROUPS, true);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_FORUM_GROUPS);
+
+	uint32_t token;
+	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, TOKEN_TYPE_FORUM_GROUPS);
+}
+
+void AddFeedDialog::loadForumGroups(const uint32_t &token)
+{
+	std::vector<RsGxsForumGroup> groups;
+	rsGxsForums->getGroupData(token, groups);
+
+	ui->forumComboBox->clear();
+
+	for (std::vector<RsGxsForumGroup>::iterator it = groups.begin(); it != groups.end(); ++it) {
+		const RsGxsForumGroup &group = *it;
+
+		/* show only own forums */
+		if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags)) {
+			ui->forumComboBox->addItem(QString::fromUtf8(group.mMeta.mGroupName.c_str()), QString::fromStdString(group.mMeta.mGroupId.toStdString()));
+		}
+	}
+
+	/* insert empty item */
+	ui->forumComboBox->insertItem(0, "", "");
+	ui->forumComboBox->setCurrentIndex(0);
+
+	mStateHelper->setLoading(TOKEN_TYPE_FORUM_GROUPS, false);
+
+	if (!mFillForumId.empty()) {
+		setActiveForumId(mFillForumId);
+		mFillForumId.clear();
+	}
+}
+
+void AddFeedDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	if (queue == mTokenQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+		case TOKEN_TYPE_FORUM_GROUPS:
+			loadForumGroups(req.mToken);
+			break;
+
+		default:
+			std::cerr << "AddFeedDialog::loadRequest() ERROR: INVALID TYPE";
+			std::cerr << std::endl;
+
+		}
 	}
 }

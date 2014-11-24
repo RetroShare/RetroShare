@@ -14,7 +14,7 @@
    <string>Create new feed</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
+   <iconset>
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -75,19 +75,6 @@
            <item>
             <widget class="QComboBox" name="forumComboBox"/>
            </item>
-           <item>
-            <widget class="QLabel" name="forumNameLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string notr="true">Forum name</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item>
@@ -146,13 +133,6 @@
          <string>Storage time</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0" colspan="2">
-          <widget class="QCheckBox" name="useStandardStorageTimeCheckBox">
-           <property name="text">
-            <string>Use standard storage time</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="storageTimeLabel">
            <property name="text">
@@ -170,6 +150,20 @@
            </property>
            <property name="maximum">
             <number>999999999</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="useStandardStorageTimeCheckBox">
+           <property name="text">
+            <string>Use standard storage time</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="clearCachePushButton">
+           <property name="text">
+            <string>Clear cache</string>
            </property>
           </widget>
          </item>
@@ -433,8 +427,6 @@
   <tabstop>proxyPortSpinBox</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
- <resources>
-  <include location="../../../retroshare-gui/src/gui/images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -24,20 +24,24 @@
 #include "p3FeedReaderThread.h"
 #include "serialiser/rsconfigitems.h"
 #include "retroshare/rsiface.h"
-//Todo: Replace with gxs forums
-//#include "retroshare/rsforums.h"
+#include "retroshare/rsgxsforums.h"
 #include "util/rsstring.h"
+#include "gxs/rsgenexchange.h"
+
+#include <unistd.h>
 
 RsFeedReader *rsFeedReader = NULL;
 
 #define FEEDREADER_CLEAN_INTERVAL 1 * 60 * 60 // check every hour
-#define FEEDREADER_FORUM_PREFIX  L"RSS: "
+#define FEEDREADER_FORUM_PREFIX  "RSS: "
+
+#define MAX_REQUEST_AGE 30 // 30 seconds
 
 /*********
  * #define FEEDREADER_DEBUG
  *********/
 
-p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsForums *forums)
+p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums)
 	: RsPQIService(RS_SERVICE_TYPE_PLUGIN_FEEDREADER,  5, pgHandler),
 	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mPreviewMutex("p3FeedReaderPreview")
 {
@@ -53,6 +57,7 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsForums *forums)
 	mForums = forums;
 	mNotify = NULL;
 	mSaveInBackground = false;
+	mStopped = false;
 
 	mPreviewDownloadThread = NULL;
 	mPreviewProcessThread = NULL;
@@ -129,7 +134,7 @@ static void feedToInfo(const RsFeedReaderFeed *feed, FeedInfo &info)
 	}
 }
 
-static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed, bool add)
+static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed)
 {
 //	feed->feedId = info.feedId;
 	feed->parentId = info.parentId;
@@ -144,10 +149,8 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed, bool add)
 	feed->updateInterval = info.updateInterval;
 //	feed->lastUpdate = info.lastUpdate;
 	feed->storageTime = info.storageTime;
-	if (add) {
-		/* set forum id only when adding a feed */
-		feed->forumId = info.forumId;
-	}
+
+	feed->forumId = info.forumId;
 
 	feed->transformationType = info.transformationType;
 	feed->xpathsToUse.ids = info.xpathsToUse;
@@ -156,7 +159,6 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed, bool add)
 
 //	feed->preview = info.flag.preview;
 
-	uint32_t oldFlag = feed->flag;
 	feed->flag = 0;
 	if (info.flag.infoFromFeed) {
 		feed->flag |= RS_FEED_FLAG_INFO_FROM_FEED;
@@ -182,17 +184,11 @@ static void infoToFeed(const FeedInfo &info, RsFeedReaderFeed *feed, bool add)
 	if (info.flag.saveCompletePage) {
 		feed->flag |= RS_FEED_FLAG_SAVE_COMPLETE_PAGE;
 	}
-	if (add) {
-		/* only set when adding a new feed */
-		if (info.flag.folder) {
-			feed->flag |= RS_FEED_FLAG_FOLDER;
-		}
-		if (info.flag.forum) {
-			feed->flag |= RS_FEED_FLAG_FORUM;
-		}
-	} else {
-		/* use old bits */
-		feed->flag |= (oldFlag & (RS_FEED_FLAG_FOLDER | RS_FEED_FLAG_FORUM));
+	if (info.flag.folder) {
+		feed->flag |= RS_FEED_FLAG_FOLDER;
+	}
+	if (info.flag.forum) {
+		feed->flag |= RS_FEED_FLAG_FORUM;
 	}
 	if (info.flag.updateForumInfo) {
 		feed->flag |= RS_FEED_FLAG_UPDATE_FORUM_INFO;
@@ -311,6 +307,8 @@ void p3FeedReader::setSaveInBackground(bool saveInBackground)
 
 void p3FeedReader::stop()
 {
+	mStopped = true;
+
 	{
 		RsStackMutex stack(mPreviewMutex); /******* LOCK STACK MUTEX *********/
 
@@ -458,7 +456,7 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &fee
 		}
 
 		RsFeedReaderFeed *fi = new RsFeedReaderFeed;
-		infoToFeed(feedInfo, fi, true);
+		infoToFeed(feedInfo, fi);
 		rs_sprintf(fi->feedId, "%lu", mNextFeedId++);
 
 		mFeeds[fi->feedId] = fi;
@@ -478,8 +476,8 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &fee
 RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo &feedInfo)
 {
 	std::string forumId;
-	//Todo: Replace with gxs forums
-//	ForumInfo forumInfo;
+	std::string forumName;
+	std::string forumDescription;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -522,20 +520,20 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 		}
 
 		RsFeedReaderFeed *fi = feedIt->second;
+		std::string oldForumId = fi->forumId;
 		std::string oldName = fi->name;
 		std::string oldDescription = fi->description;
 
-		infoToFeed(feedInfo, fi, false);
+		infoToFeed(feedInfo, fi);
 
-		//Todo: Replace with gxs forums
-//		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() &&
-//			(fi->name != oldName || fi->description != oldDescription)) {
-//			/* name or description changed, update forum */
-//			forumId = fi->forumId;
-//			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfo.forumName);
-//			librs::util::ConvertUtf8ToUtf16(fi->description, forumInfo.forumDesc);
-//			forumInfo.forumName.insert(0, FEEDREADER_FORUM_PREFIX);
-//		}
+		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() &&
+		    (fi->forumId != oldForumId || fi->name != oldName || fi->description != oldDescription)) {
+			/* name or description changed, update forum */
+			forumId = fi->forumId;
+			forumName = fi->name;
+			forumDescription = fi->description;
+			forumName.insert(0, FEEDREADER_FORUM_PREFIX);
+		}
 	}
 
 	IndicateConfigChanged();
@@ -544,19 +542,13 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 
-	//Todo: Replace with gxs forums
-//	if (!forumId.empty()) {
-//		if (mForums) {
-//			/* name or description changed, update forum */
-//			if (!mForums->setForumInfo(forumId, forumInfo)) {
-//#ifdef FEEDREADER_DEBUG
-//				std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
-//#endif
-//			}
-//		} else {
-//			std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << ", member mForums is not set" << std::endl;
-//		}
-//	}
+	if (!forumId.empty()) {
+		RsGxsForumGroup forumGroup;
+		if (getForumGroup(RsGxsGroupId(forumId), forumGroup)) {
+			updateForumGroup(forumGroup, forumName, forumDescription);
+		}
+		//TODO: error
+	}
 
 	return RS_FEED_ADD_RESULT_SUCCESS;
 }
@@ -677,7 +669,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
 #endif
 
 		RsFeedReaderFeed *fi = new RsFeedReaderFeed;
-		infoToFeed(feedInfo, fi, true);
+		infoToFeed(feedInfo, fi);
 		rs_sprintf(fi->feedId, "preview%d", mNextPreviewFeedId--);
 		fi->preview = true;
 
@@ -1230,6 +1222,51 @@ bool p3FeedReader::retransformMsg(const std::string &feedId, const std::string &
 			}
 		}
 	}
+
+	return true;
+}
+
+bool p3FeedReader::clearMessageCache(const std::string &feedId)
+{
+	{
+		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
+
+#ifdef FEEDREADER_DEBUG
+		std::cerr << "p3FeedReader::clearMessageCache - feed id " << feedId << std::endl;
+#endif
+
+		std::map<std::string, RsFeedReaderFeed*>::iterator feedIt = mFeeds.find(feedId);
+		if (feedIt == mFeeds.end()) {
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::clearMessageCache - feed id " << feedId << " not found" << std::endl;
+#endif
+			return false;
+		}
+
+		if (feedIt->second->flag & RS_FEED_FLAG_FOLDER) {
+#ifdef FEEDREADER_DEBUG
+			std::cerr << "p3FeedReader::clearMessageCache - feed " << feedIt->second->name << " is a folder" << std::endl;
+#endif
+			return false;
+		}
+
+		RsFeedReaderFeed *fi = feedIt->second;
+
+		std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
+		for (msgIt = fi->msgs.begin(); msgIt != fi->msgs.end(); ) {
+			RsFeedReaderMsg *mi = msgIt->second;
+
+			if (mi->flag & RS_FEEDMSG_FLAG_DELETED) {
+				delete(mi);
+				std::map<std::string, RsFeedReaderMsg*>::iterator deleteIt = msgIt++;
+				fi->msgs.erase(deleteIt);
+				continue;
+			}
+			++msgIt;
+		}
+	}
+
+	IndicateConfigChanged();
 
 	return true;
 }
@@ -1854,6 +1891,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 
 	std::list<std::string> addedMsgs;
 	std::string forumId;
+	RsGxsId authorId;
 	std::list<RsFeedReaderMsg> forumMsgs;
 
 	{
@@ -1873,65 +1911,29 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 		bool forum = (fi->flag & RS_FEED_FLAG_FORUM) && !fi->preview;
 		RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
 
-//Todo: Replace with gxs forums
-#if 0
 		if (forum && !msgs.empty()) {
 			if (mForums) {
-				if (fi->forumId.empty()) {
-					/* create new forum */
-					std::wstring forumName;
-					librs::util::ConvertUtf8ToUtf16(fi->name, forumName);
-					forumName.insert(0, FEEDREADER_FORUM_PREFIX);
-
-					long todo; // search for existing forum?
-
-					/* search for existing own forum */
-//					std::list<ForumInfo> forumList;
-//					if (mForums->getForumList(forumList)) {
-//						std::wstring wName = StringToWString(name);
-//						for (std::list<ForumInfo>::iterator it = forumList.begin(); it != forumList.end(); ++it) {
-//							if (it->forumName == wName) {
-//								std::cout << "DEBUG_RSS2FORUM: Found existing forum " << it->forumId << " for " << name << std::endl;
-//								return it->forumId;
-//							}
-//						}
-//					}
-
-					std::wstring forumDescription;
-					librs::util::ConvertUtf8ToUtf16(fi->description, forumDescription);
-					/* create anonymous public forum */
-					fi->forumId = mForums->createForum(forumName, forumDescription, RS_DISTRIB_PUBLIC | RS_DISTRIB_AUTHEN_ANON);
-					forumId = fi->forumId;
-
-					if (fi->forumId.empty()) {
-						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE;
-
-#ifdef FEEDREADER_DEBUG
-						std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't create forum for feed " << feedId << " (" << fi->name << ") - ignore all messages" << std::endl;
-					} else {
-						std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - forum " << fi->forumId << " (" << fi->name << ") created" << std::endl;
-#endif
-					}
-				} else {
+				if (!fi->forumId.empty()) {
 					/* check forum */
-					ForumInfo forumInfo;
-					if (mForums->getForumInfo(fi->forumId, forumInfo)) {
-						if ((forumInfo.subscribeFlags & RS_DISTRIB_ADMIN) == 0) {
-							errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN;
-						} else if ((forumInfo.forumFlags & RS_DISTRIB_AUTHEN_REQ) || (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_ANON) == 0) {
-							errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS;
-						} else {
+					RsGxsForumGroup forumGroup;
+					if (getForumGroup(RsGxsGroupId(fi->forumId), forumGroup)) {
+						if (IS_GROUP_PUBLISHER(forumGroup.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(forumGroup.mMeta.mSubscribeFlags)) {
 							forumId = fi->forumId;
+							authorId = forumGroup.mMeta.mAuthorId;
+						} else {
+							errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN;
 						}
 					} else {
 						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND;
 					}
+				} else {
+					std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - forum id is empty (" << fi->name << ")" << std::endl;
+					errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND;
 				}
 			} else {
 				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
 			}
 		}
-#endif
 
 		/* process msgs */
 		if (errorState == RS_FEED_ERRORSTATE_OK) {
@@ -1982,39 +1984,49 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 		}
 	}
 
-	//Todo: Replace with gxs forums
-//	if (!forumId.empty() && !forumMsgs.empty()) {
-//		if (mForums) {
-//			/* add messages as forum messages */
-//			std::list<RsFeedReaderMsg>::iterator msgIt;
-//			for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
-//				RsFeedReaderMsg &mi = *msgIt;
+	if (!forumId.empty() && !forumMsgs.empty()) {
+		if (mForums) {
+			/* a bit tricky */
+			RsGenExchange *genExchange = dynamic_cast<RsGenExchange*>(mForums);
+			if (genExchange) {
+				/* add messages as forum messages */
+				std::list<RsFeedReaderMsg>::iterator msgIt;
+				for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
+					RsFeedReaderMsg &mi = *msgIt;
 
-//				/* convert to forum messages */
-//				ForumMsgInfo forumMsgInfo;
-//				forumMsgInfo.forumId = forumId;
-//				librs::util::ConvertUtf8ToUtf16(mi.title, forumMsgInfo.title);
+					/* convert to forum messages */
+					RsGxsForumMsg forumMsg;
+					forumMsg.mMeta.mGroupId = RsGxsGroupId(forumId);
+					forumMsg.mMeta.mMsgName = mi.title;
+					forumMsg.mMeta.mAuthorId = authorId;
 
-//				std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
-//				/* add link */
-//				if (!mi.link.empty()) {
-//					description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
-//				}
-//				librs::util::ConvertUtf8ToUtf16(description, forumMsgInfo.msg);
+					std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+					/* add link */
+					if (!mi.link.empty()) {
+						description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
+					}
+					forumMsg.mMsg = description;
 
-//				if (mForums->ForumMessageSend(forumMsgInfo)) {
-//					/* set to new */
-//					mForums->setMessageStatus(forumMsgInfo.forumId, forumMsgInfo.msgId, 0, FORUM_MSG_STATUS_MASK);
-//				} else {
-//#ifdef FEEDREADER_DEBUG
-//					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
-//#endif
-//				}
-//			}
-//		} else {
-//			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
-//		}
-//	}
+					uint32_t token;
+					if (mForums->createMsg(token, forumMsg) && waitForToken(token)) {
+						RsGxsGrpMsgIdPair msgPair;
+						if (mForums->acknowledgeMsg(token, msgPair)) {
+							/* set to new */
+							genExchange->setMsgStatusFlags(token, msgPair, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD, GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD);
+						}
+					} else {
+#ifdef FEEDREADER_DEBUG
+						std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
+#endif
+					}
+				}
+			} else {
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not derived from RsGenExchange" << std::endl;
+			}
+		} else {
+			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
+		}
+	}
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -2068,8 +2080,8 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 	bool changed = false;
 	bool preview;
 	std::string forumId;
-	//Todo: Replace with gxs forums
-//	ForumInfo forumInfoNew;
+	std::string forumName;
+	std::string forumDescription;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -2101,14 +2113,13 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 			changed = true;
 		}
 
-		//Todo: Replace with gxs forums
-//		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() && !preview) {
-//			/* change forum too */
-//			forumId = fi->forumId;
-//			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfoNew.forumName);
-//			librs::util::ConvertUtf8ToUtf16(fi->description, forumInfoNew.forumDesc);
-//			forumInfoNew.forumName.insert(0, FEEDREADER_FORUM_PREFIX);
-//		}
+		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() && !preview) {
+			/* change forum too */
+			forumId = fi->forumId;
+			forumName = fi->name;
+			forumDescription = fi->description;
+			forumName.insert(0, FEEDREADER_FORUM_PREFIX);
+		}
 	}
 
 	if (changed) {
@@ -2121,29 +2132,112 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 		}
 	}
 
-	//Todo: Replace with gxs forums
-//	if (!forumId.empty()) {
-//		if (mForums) {
-//			ForumInfo forumInfo;
-//			if (mForums->getForumInfo(forumId, forumInfo)) {
-//				if (forumInfo.forumName != forumInfoNew.forumName || forumInfo.forumDesc != forumInfoNew.forumDesc) {
-//					/* name or description changed, update forum */
-//#ifdef FEEDREADER_DEBUG
-//					std::cerr << "p3FeedReader::setFeed - change forum " << forumId << std::endl;
-//#endif
-//					if (!mForums->setForumInfo(forumId, forumInfoNew)) {
-//#ifdef FEEDREADER_DEBUG
-//						std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
-//#endif
-//					}
-//				}
-//			} else {
-//#ifdef FEEDREADER_DEBUG
-//				std::cerr << "p3FeedReader::setFeed - can't get forum info " << forumId << std::endl;
-//#endif
-//			}
-//		} else {
-//			std::cerr << "p3FeedReader::setFeedInfo - can't process forum, member mForums is not set" << std::endl;
-//		}
-//	}
+	if (!forumId.empty()) {
+		RsGxsForumGroup forumGroup;
+		if (getForumGroup(RsGxsGroupId(forumId), forumGroup)) {
+			updateForumGroup(forumGroup, forumName, forumDescription);
+		}
+		//TODO: error
+	}
+}
+
+bool p3FeedReader::getForumGroup(const RsGxsGroupId &groupId, RsGxsForumGroup &forumGroup)
+{
+	if (!mForums) {
+		std::cerr << "p3FeedReader::getForumGroup - can't get forum group " << groupId.toStdString() << ", member mForums is not set" << std::endl;
+		return false;
+	}
+
+	if (groupId.isNull()) {
+		std::cerr << "p3FeedReader::getForumGroup - group id is not valid" << std::endl;
+		return false;
+	}
+
+	std::list<RsGxsGroupId> grpIds;
+	grpIds.push_back(groupId);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+	mForums->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds);
+
+	if (!waitForToken(token)) {
+		std::cerr << "p3FeedReader::getForumGroup - waitForToken for request failed" << std::endl;
+		return false;
+	}
+
+	std::vector<RsGxsForumGroup> groups;
+	if (!mForums->getGroupData(token, groups)) {
+		std::cerr << "p3FeedReader::getForumGroup - Error getting data" << std::endl;
+		return false;
+	}
+
+	if (groups.size() != 1) {
+		std::cerr << "p3FeedReader::getForumGroup - Wrong number of items" << std::endl;
+		return false;
+	}
+
+	forumGroup = groups[0];
+
+	return true;
+}
+
+bool p3FeedReader::updateForumGroup(const RsGxsForumGroup &forumGroup, const std::string &groupName, const std::string &groupDescription)
+{
+	if (!mForums) {
+		std::cerr << "p3FeedReader::updateForumGroup - can't change forum " << forumGroup.mMeta.mGroupId.toStdString() << ", member mForums is not set" << std::endl;
+		return false;
+	}
+
+	if (forumGroup.mMeta.mGroupName == groupName && forumGroup.mDescription == groupDescription) {
+		/* No change */
+		return true;
+	}
+
+	RsGxsForumGroup newForumGroup = forumGroup;
+	newForumGroup.mMeta.mGroupName = groupName;
+	newForumGroup.mDescription = groupDescription;
+
+	uint32_t token;
+	if (!mForums->updateGroup(token, newForumGroup)) {
+		std::cerr << "p3FeedReader::updateForumGroup - can't change forum " << newForumGroup.mMeta.mGroupId.toStdString() << std::endl;
+		return false;
+	}
+
+	if (!waitForToken(token)) {
+		std::cerr << "p3FeedReader::updateForumGroup - waitForToken for update failed" << std::endl;
+		return false;
+	}
+
+	/* Forum updated */
+	return true;
+}
+
+bool p3FeedReader::waitForToken(uint32_t token)
+{
+	if (!mForums) {
+		return false;
+	}
+
+	RsTokenService *service = mForums->getTokenService();
+	int count = MAX_REQUEST_AGE * 2;
+
+	while (!mStopped) {
+		uint32_t status = service->requestStatus(token);
+		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED) {
+			break;
+		}
+
+		if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE) {
+			return true;
+		}
+
+		if (count-- <= 0) {
+			break;
+		}
+
+		usleep(500 * 1000); // sleep for 500 msec
+	}
+
+	return false;
 }
