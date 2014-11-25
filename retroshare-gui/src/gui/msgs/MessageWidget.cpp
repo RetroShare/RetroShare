@@ -247,7 +247,7 @@ void MessageWidget::processSettings(const QString &settingsGroup, bool load)
 		// load settings
 
 		// expandFiles
-		bool value = Settings->value("expandFiles", true).toBool();
+		bool value = Settings->value("expandFiles", false).toBool();
 		ui.expandFilesButton->setChecked(value);
 		ui.msgList->setVisible(value);
 		togglefileview();
@@ -289,10 +289,10 @@ void MessageWidget::togglefileview()
 
 	if (ui.expandFilesButton->isChecked()) {
 		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-		ui.expandFilesButton->setToolTip(tr("Hide"));
+		ui.expandFilesButton->setToolTip(tr("Hide the attachment pane"));
 	} else {
 		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-		ui.expandFilesButton->setToolTip(tr("Expand"));
+		ui.expandFilesButton->setToolTip(tr("Show the attachment pane"));
 	}
 }
 
@@ -583,7 +583,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
-	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
+	ui.filesText->setText(QString("%1").arg(msgInfo.count)/*.arg(msgInfo.count == 1 ? tr("File") : tr("Files"))*/);
 
 	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
 		ui.decryptFrame->show();

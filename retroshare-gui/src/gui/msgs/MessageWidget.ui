@@ -355,6 +355,26 @@
             <property name="spacing">
              <number>6</number>
             </property>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="expandFilesButton">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="2">
              <widget class="QLabel" name="label_6">
               <property name="text">
@@ -365,13 +385,13 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="3">
+            <item row="0" column="4">
              <widget class="QLabel" name="label_2">
               <property name="font">
                <font>
                 <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
@@ -379,12 +399,12 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="4">
+            <item row="0" column="3">
              <widget class="QLabel" name="filesText">
               <property name="font">
                <font>
                 <pointsize>10</pointsize>
-                <italic>true</italic>
+                <italic>false</italic>
                </font>
               </property>
               <property name="text">
@@ -415,29 +435,12 @@
             <property name="toolTip">
              <string>Download all Recommended Files</string>
             </property>
+            <property name="text">
+             <string>Download all</string>
+            </property>
             <property name="icon">
              <iconset resource="../images.qrc">
               <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="expandFilesButton">
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
