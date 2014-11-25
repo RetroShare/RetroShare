@@ -840,7 +840,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
             {
 
                 RsTlvSecurityKey authorKey;
-                bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) == 1;
+                bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) ;
 
 				if (auth_key_fetched)
 				{
@@ -912,7 +912,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 			{
 
 				RsTlvSecurityKey authorKey;
-				bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) == 1;
+                bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) ;
 
 				if (auth_key_fetched)
 				{

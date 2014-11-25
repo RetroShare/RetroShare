@@ -1739,7 +1739,7 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 #ifdef DEBUG_DISTANT_MSG
 			std::cerr << "     Getting key material..." << std::endl;
 #endif
-            if(mIdService->getPrivateKey(source_gxs_id,signature_key) < 0)
+            if(!mIdService->getPrivateKey(source_gxs_id,signature_key))
 				throw std::runtime_error("Cannot get signature key for id " + source_gxs_id.toStdString()) ;
 
 #ifdef DEBUG_DISTANT_MSG

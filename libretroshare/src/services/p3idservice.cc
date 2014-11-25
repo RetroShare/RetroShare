@@ -476,16 +476,16 @@ bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId) const
 	return false;
 }
 
-int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
+bool p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	RsGxsIdCache data;
 	if (mPublicKeyCache.fetch(id, data))
 	{
 		key = data.pubkey;
-		return 1;
+        return true;
 	}
-	return -1;
+    return false;
 }
 
 bool p3IdService::requestPrivateKey(const RsGxsId &id)
@@ -495,16 +495,16 @@ bool p3IdService::requestPrivateKey(const RsGxsId &id)
 	return cache_request_load(id);
 }
 
-int  p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
+bool p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	RsGxsIdCache data;
 	if (mPrivateKeyCache.fetch(id, data))
 	{
 		key = data.pubkey;
-		return 1;
+        return true;
 	}
-	return -1;
+    return false;
 }
 
 

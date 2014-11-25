@@ -155,8 +155,8 @@ public:
      * @return a pointer to a valid profile if successful, otherwise NULL
      *
      */
-    virtual int  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
-    virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
+    virtual bool  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
+    virtual bool  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
 
 
 };

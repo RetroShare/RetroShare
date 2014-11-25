@@ -283,11 +283,11 @@ virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
 	 */
 virtual bool haveKey(const RsGxsId &id);
 virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
-virtual int  getKey(const RsGxsId &id, RsTlvSecurityKey &key);
+virtual bool  getKey(const RsGxsId &id, RsTlvSecurityKey &key);
 
 virtual bool havePrivateKey(const RsGxsId &id);
 virtual bool requestPrivateKey(const RsGxsId &id);
-virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);  
+virtual bool getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 
 	/**************** RsGixsReputation Implementation 
 	 * Notes:
