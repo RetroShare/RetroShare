@@ -58,27 +58,37 @@ void RsGxsGrpMetaData::clear(){
 
     mGroupId.clear();
     mOrigGrpId.clear();
-    mAuthorId.clear();
     mGroupName.clear();
-    mServiceString.clear();
-    mPublishTs = 0;
     mGroupFlags = 0;
+    mPublishTs = 0;
+    mSignFlags = 0;
+    mAuthorId.clear();
+
+    mCircleId.clear();
+    mCircleType = 0;
+
+    signSet.TlvClear();
+    keys.TlvClear();
+
+    mServiceString.clear();
+    mAuthenFlags = 0;
+    mParentGrpId.clear();
+
+    mSubscribeFlags = 0;
+
     mPop = 0;
     mMsgCount = 0;
     mGroupStatus = 0;
     mLastPost = 0;
-    mSubscribeFlags = 0;
-    signSet.TlvClear();
-    keys.TlvClear();
-    mCircleId.clear();
-    mInternalCircle.clear();
-    mOriginator.clear();
-    mCircleType = 0;
-    mAuthenFlags = 0;
-    mParentGrpId.clear();
-    mRecvTS = 0;
     mReputationCutOff = 0;
+    mGrpSize = 0 ;
 
+    mGroupStatus = 0 ;
+    mRecvTS = 0;
+
+    mOriginator.clear();
+    mInternalCircle.clear();
+    mHash.clear() ;
 }
 
 bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
