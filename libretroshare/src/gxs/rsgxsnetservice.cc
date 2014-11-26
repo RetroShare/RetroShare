@@ -65,7 +65,16 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
 
 RsGxsNetService::~RsGxsNetService()
 {
+    RS_STACK_MUTEX(mNxsMutex) ;
 
+    for(TransactionsPeerMap::iterator it = mTransactions.begin();it!=mTransactions.end();++it)
+    {
+        for(TransactionIdMap::iterator it2 = it->second.begin();it2!=it->second.end();++it2)
+            delete it2->second ;
+
+        it->second.clear() ;
+    }
+    mTransactions.clear() ;
 }
 
 
