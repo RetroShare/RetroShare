@@ -553,7 +553,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     ok &= setRawUInt32(data, tlvsize, &offset, tried_friends.size()) ;
 
     for(std::list<FriendTrialRecord>::const_iterator it(tried_friends.begin());it!=tried_friends.end();++it)
-		 ok &= (*it).serialise(data,offset,size - offset) ;
+         ok &= (*it).serialise(data,offset,size) ;
 
 	 uint32_t ns = size - offset ;
 	 ok &= data_item->serialise( &((uint8_t*)data)[offset], ns) ;
