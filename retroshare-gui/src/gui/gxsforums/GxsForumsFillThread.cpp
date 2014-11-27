@@ -45,7 +45,6 @@ GxsForumsFillThread::GxsForumsFillThread(GxsForumThreadWidget *parent)
 	mFillComplete = false;
 
 	mFilterColumn = 0;
-	mSubscribeFlags = 0;
 
 	mViewType = 0;
 	mFlatView = false;

@@ -113,11 +113,11 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 		return;
 	}
 
-	bool updateGroup = false;
 	if (mGroupId.isNull()) {
 		return;
 	}
 
+	bool updateGroup = false;
 	const std::list<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
 	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), mGroupId) != grpIdsMeta.end()) {
 		updateGroup = true;

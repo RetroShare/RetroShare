@@ -106,13 +106,10 @@ private slots:
 	void fillThreadStatus(QString text);
 
 private:
-	void insertForumThreads(const RsGxsForumGroup &group);
-	void insertPostData(const RsGxsForumMsg &msg); // Second Half.
+	void insertMessageData(const RsGxsForumMsg &msg);
 
 	void insertThreads();
-	void insertPost();
-
-//	void forumMsgReadStatusChanged(const QString &forumId, const QString &msgId, int status);
+	void insertMessage();
 
 	void fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
 	void fillChildren(QTreeWidgetItem *parentItem, QTreeWidgetItem *newParentItem, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
@@ -130,6 +127,16 @@ private:
 
 	void processSettings(bool bLoad);
 
+	void requestGroupData();
+	void loadGroupData(const uint32_t &token);
+	void insertGroupData(const RsGxsForumGroup &group);
+
+	void requestMessageData(const RsGxsGrpMsgIdPair &msgId);
+	void loadMessageData(const uint32_t &token);
+	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
+	void loadMsgData_ReplyMessage(const uint32_t &token);
+
+private:
 	RsGxsGroupId mForumId;
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
@@ -139,18 +146,10 @@ private:
 	bool mInMsgAsReadUnread;
 	int mLastViewType;
 	RSTreeWidgetItemCompareRole *mThreadCompareRole;
-	TokenQueue *mThreadQueue;
+	TokenQueue *mTokenQueue;
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
-
-	void requestGroup_CurrentForum();
-	void loadGroup_CurrentForum(const uint32_t &token);
-
-	void requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId);
-	void loadMsgData_InsertPost(const uint32_t &token);
-	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
-	void loadMsgData_ReplyMessage(const uint32_t &token);
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;
@@ -162,6 +161,7 @@ private:
 	UIStateHelper *mStateHelper;
 
 	RsGxsMessageId mNavigatePendingMsgId;
+	QList<RsGxsMessageId> mIgnoredMsgId;
 
 	Ui::GxsForumThreadWidget *ui;
 };
