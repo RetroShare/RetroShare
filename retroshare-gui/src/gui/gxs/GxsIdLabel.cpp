@@ -24,34 +24,42 @@
 #include "GxsIdLabel.h"
 #include "GxsIdDetails.h"
 
-#include <algorithm>
-
-#include <retroshare/rspeers.h>
-
-#include <iostream>
-
 /** Constructor */
 GxsIdLabel::GxsIdLabel(QWidget *parent)
-:QLabel(parent), mTimer(NULL), mCount(0)
+    : QLabel(parent)
 {
-	mTimer = new QTimer(this);
-	mTimer->setSingleShot(true);
-	connect(mTimer, SIGNAL(timeout()), this, SLOT(loadId()));
+}
 
-	return;
+static void fillLabelCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
+{
+	QLabel *label = dynamic_cast<QLabel*>(object);
+	if (!label) {
+		return;
+	}
+
+	label->setText(GxsIdDetails::getNameForType(type, details));
+
+	QString toolTip;
+
+	switch (type) {
+	case GXS_ID_DETAILS_TYPE_EMPTY:
+	case GXS_ID_DETAILS_TYPE_LOADING:
+	case GXS_ID_DETAILS_TYPE_FAILED:
+		break;
+
+	case GXS_ID_DETAILS_TYPE_DONE:
+		toolTip = GxsIdDetails::getComment(details);
+		break;
+	}
+
+	label->setToolTip(toolTip);
 }
 
 void GxsIdLabel::setId(const RsGxsId &id)
 {
 	mId = id;
-    if (mId.isNull())
-	{
-		setText("No Signature");
-	}
-	else
-	{
-		loadId();
-	}
+
+	GxsIdDetails::process(mId, fillLabelCallback, this);
 }
 
 bool GxsIdLabel::getId(RsGxsId &id)
@@ -59,32 +67,3 @@ bool GxsIdLabel::getId(RsGxsId &id)
 	id = mId;
 	return true;
 }
-
-#define MAX_ATTEMPTS 3
-
-void GxsIdLabel::loadId()
-{
-	mCount++;
-
-	/* try and get details - if not there ... set callback */
-	QString desc;
-	QString comment ;
-	std::list<QIcon> icons;
-	bool loaded = GxsIdDetails::MakeIdDesc(mId, false, desc, icons,comment);
-
-	setText(desc);
-	setToolTip(comment);
-
-	if (loaded)
-	{
-		return;
-	}
-
-	if (mCount < MAX_ATTEMPTS)
-	{
-		/* timer event to try again */
-		mTimer->setInterval(mCount * 1000);
-     		mTimer->start();
-	}
-}
-

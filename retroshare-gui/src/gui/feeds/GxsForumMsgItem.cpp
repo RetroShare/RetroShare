@@ -100,6 +100,8 @@ void GxsForumMsgItem::setup()
 	ui->titleLabel->setText(tr("Loading"));
 	ui->subjectLabel->clear();
 	ui->timestamplabel->clear();
+	ui->parentNameLabel->clear();
+	ui->nameLabel->clear();
 
 	/* general ones */
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
@@ -294,6 +296,8 @@ void GxsForumMsgItem::fill()
 		}
 	}
 
+	ui->nameLabel->setId(mMessage.mMeta.mAuthorId);
+
 //	ui->avatar->setId(msg.srcId, true);
 
 //	if (rsPeers->getPeerName(msg.srcId) != "") {
@@ -322,6 +326,8 @@ void GxsForumMsgItem::fill()
 		linkParent.createGxsMessageLink(RetroShareLink::TYPE_FORUM, mParentMessage.mMeta.mGroupId, mParentMessage.mMeta.mMsgId, QString::fromUtf8(mParentMessage.mMeta.mMsgName.c_str()));
 		ui->parentSubLabel->setText(linkParent.toHtml());
 		ui->parentMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mParentMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+		ui->parentNameLabel->setId(mParentMessage.mMeta.mAuthorId);
 
 //		if (rsPeers->getPeerName(msgParent.srcId) !="")
 //		{

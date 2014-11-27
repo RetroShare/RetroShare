@@ -56,8 +56,6 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 
 	mDefaultId.clear() ;
 	mDefaultIdName.clear();
-	mTimer = NULL;
-	mTimerCount = 0;
 
 	/* Enable sort with own role */
 	QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
@@ -120,64 +118,34 @@ void GxsIdChooser::loadIds(uint32_t chooserFlags, RsGxsId defId)
 	mFirstLoad = true;
 }
 
-bool GxsIdChooser::makeIdDesc(const RsGxsId &gxsId, QString &desc)
+static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
-	std::list<QIcon> icons;
-	QString comment ;
-	if (!GxsIdDetails::MakeIdDesc(gxsId, false, desc, icons,comment)) {
-		if (mTimerCount > MAX_TRY) {
-			desc = QString("%1 ... [").arg(tr("Not found"));
-			desc += QString::fromStdString(gxsId.toStdString().substr(0,5));
-			desc += "...]";
-        }
-		return false;
-    }
-	return true;
-}
-
-void GxsIdChooser::addPrivateId(const RsGxsId &gxsId, bool replace)
-{
-	QString str;
-	bool found = makeIdDesc(gxsId, str);
-	if (!found) {
-		/* Add to pending id's */
-		mPendingId.push_back(gxsId);
-		if (replace && mTimerCount <= MAX_TRY) {
-			/* Retry */
-			return;
-        }
-    }
-
-    QString id = QString::fromStdString(gxsId.toStdString());
-
-	if (replace) {
-		/* Find and replace text of exisiting item */
-		int index = findData(id);
-		if (index >= 0) {
-			setItemText(index, str);
-			setItemData(index, QString("%1_%2").arg(found ? "1" : "2").arg(str), ROLE_SORT);
-			setItemData(index, found ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
-			model()->sort(0);
+	GxsIdChooser *chooser = dynamic_cast<GxsIdChooser*>(object);
+	if (!chooser) {
 		return;
-        }
-		//If not found create a new item.
-    }
+	}
 
-	/* Add new item */
-	addItem(str, id);
-	setItemData(count() - 1, QString("%1_%2").arg(found ? "1" : "2").arg(str), ROLE_SORT);
-	setItemData(count() - 1, found ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
-	model()->sort(0);
+	QString text = GxsIdDetails::getNameForType(type, details);
+	QString id = QString::fromStdString(details.mId.toStdString());
+
+	/* Find and replace text of exisiting item */
+	int index = chooser->findData(id);
+	if (index >= 0) {
+		chooser->setItemText(index, text);
+	} else {
+		/* Add new item */
+		chooser->addItem(text, id);
+		index = chooser->count() - 1;
+	}
+
+	chooser->setItemData(index, QString("%1_%2").arg((type == GXS_ID_DETAILS_TYPE_DONE) ? "1" : "2").arg(text), ROLE_SORT);
+	chooser->setItemData(index, (type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
+	chooser->model()->sort(0);
 }
 
 void GxsIdChooser::loadPrivateIds(uint32_t token)
 {
-	mPendingId.clear();
 	if (mFirstLoad)	{	clear();}
-	mTimerCount = 0;
-	if (mTimer) {
-		delete(mTimer);
-    }
 
 	std::list<RsGxsId> ids;
 	//rsIdentity->getOwnIds(ids);
@@ -245,17 +213,7 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 
 	for(std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); ++it) {
 		/* add to Chooser */
-		addPrivateId(*it, !mFirstLoad);
-    }
-
-	if (!mPendingId.empty()) {
-		/* Create and start timer to load pending id's */
-		mTimerCount = 0;
-		mTimer = new QTimer();
-		mTimer->setSingleShot(true);
-		mTimer->setInterval(500);
-		connect(mTimer, SIGNAL(timeout()), this, SLOT(timer()));
-		mTimer->start();
+		GxsIdDetails::process(*it, loadPrivateIdsCallback, this);
     }
 
 	setDefaultItem();
@@ -327,41 +285,6 @@ void GxsIdChooser::myCurrentIndexChanged(int index)
 		setToolTip("");
     }
 }
-		
-void GxsIdChooser::timer()
-{
-	++mTimerCount;
-
-	QList<RsGxsId> pendingId = mPendingId;
-	mPendingId.clear();
-
-	/* Process pending id's */
-	while (!pendingId.empty()) {
-		RsGxsId id = pendingId.front();
-		pendingId.pop_front();
-
-		addPrivateId(id, true);
-    }
-
-	setDefaultItem();
-
-	if (mPendingId.empty()) {
-		/* All pending id's processed */
-		delete(mTimer);
-		mTimer = NULL;
-		mTimerCount = 0;
-	} else {//if (mPendingId.empty())
-		if (mTimerCount <= MAX_TRY) {
-			/* Restart timer */
-			mTimer->start();
-		} else {//if (mTimerCount <= MAX_TRY)
-			delete(mTimer);
-			mTimer = NULL;
-			mTimerCount = 0;
-			mPendingId.clear();
-        }
-    }
-		}
 
 void GxsIdChooser::updateDisplay(bool complete)
 {

@@ -24,21 +24,96 @@
 #ifndef _GXS_ID_DETAILS_H
 #define _GXS_ID_DETAILS_H
 
+#include <QObject>
+#include <QMutex>
+#include <QVariant>
 #include <QIcon>
 #include <QString>
+
 #include <retroshare/rsidentity.h>
-#include <list>
 
-namespace GxsIdDetails
+class QLabel;
+
+enum GxsIdDetailsType
 {
+	GXS_ID_DETAILS_TYPE_EMPTY,
+	GXS_ID_DETAILS_TYPE_LOADING,
+	GXS_ID_DETAILS_TYPE_DONE,
+	GXS_ID_DETAILS_TYPE_FAILED
+};
 
-	bool MakeIdDesc(const RsGxsId &id, bool doIcons, 
-			QString &desc, std::list<QIcon> &icons,QString& comment);
+typedef void (*GxsIdDetailsCallbackFunction)(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &data);
 
-	bool GenerateCombinedIcon(QIcon &outIcon, std::list<QIcon> &icons);
+class GxsIdDetails : public QObject
+{
+	Q_OBJECT
 
-    QImage makeDefaultIcon(const RsGxsId& id);
+public:
+	GxsIdDetails();
+	virtual ~GxsIdDetails();
 
-} // namespace GxsIdDetails.
+	/* Information */
+	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment);
+
+	static QString getName(const RsIdentityDetails &details);
+	static QString getComment(const RsIdentityDetails &details);
+	static void getIcons(const RsIdentityDetails &details, QList<QIcon> &icons);
+
+	static QString getEmptyIdText();
+	static QString getLoadingText(const RsGxsId &id);
+	static QString getFailedText(const RsGxsId &id);
+
+	static QString getNameForType(GxsIdDetailsType type, const RsIdentityDetails &details);
+
+	static QIcon getLoadingIcon(const RsGxsId &id);
+
+	static bool GenerateCombinedIcon(QIcon &outIcon, const QList<QIcon> &icons);
+
+	static QImage makeDefaultIcon(const RsGxsId& id);
+
+	/* Processing */
+	static bool process(const RsGxsId &id, GxsIdDetailsCallbackFunction callback, QObject *object, const QVariant &data = QVariant());
+
+signals:
+	void startTimerFromThread();
+
+protected:
+	void connectObject_locked(QObject *object, bool doConnect);
+
+	/* Timer */
+	virtual void timerEvent(QTimerEvent *event);
+
+private slots:
+	void objectDestroyed(QObject *object);
+	void doStartTimer();
+
+protected:
+	class CallbackData
+	{
+	public:
+		CallbackData()
+		{
+			mAttempt = 0;
+			mCallback = 0;
+			mObject = NULL;
+		}
+
+	public:
+		int mAttempt;
+		RsGxsId mId;
+		GxsIdDetailsCallbackFunction mCallback;
+		QObject *mObject;
+		QVariant mData;
+	};
+
+	static GxsIdDetails *mInstance;
+
+	/* Pending data */
+	QList<CallbackData> mPendingData;
+	int mCheckTimerId;
+
+	/* Thread safe */
+	QMutex mMutex;
+};
 
 #endif

@@ -72,14 +72,11 @@ protected:
 
 private slots:
 	void fillDisplay(bool complete);
-	void timer();
 	void myCurrentIndexChanged(int index);
 
 private:
 	void requestIdList() ;
 	void loadPrivateIds(uint32_t token);
-	void addPrivateId(const RsGxsId &gxsId, bool replace);
-	bool makeIdDesc(const RsGxsId &gxsId, QString &desc);
 	void insertIdList(uint32_t token);
 	void setDefaultItem();
 
@@ -88,10 +85,6 @@ private:
 	std::string mDefaultIdName;
 	bool mFirstLoad;
 	QPushButton* addNewCxsId;
-
-	QList<RsGxsId> mPendingId;
-	QTimer *mTimer;
-	unsigned int mTimerCount;
 
 	TokenQueue *mIdQueue;
 	RsGxsUpdateBroadcastBase *mBase;

@@ -34,7 +34,6 @@
  * The tick signal to fill the id cannot be processed when the thread is finished.
  ***/
 
-
 class GxsIdRSTreeWidgetItem : public QObject, public RSTreeWidgetItem
 {
 	Q_OBJECT
@@ -46,39 +45,13 @@ public:
 	void setId(const RsGxsId &id, int column);
 	bool getId(RsGxsId &id);
 
-private slots:
-	void loadId();
+	int idColumn() { return mColumn; }
 
 private:
 	void init();
 
 	RsGxsId mId;
-	int mCount;
 	int mColumn;
 };
-
-#if 0
-class GxsIdTreeWidgetItem : public QObject, public QTreeWidgetItem
-{
-	Q_OBJECT
-
-public:
-	GxsIdTreeWidgetItem(QTreeWidget *parent = NULL);
-	GxsIdTreeWidgetItem(QTreeWidgetItem *parent);
-
-	void setId(const RsGxsId &id, int column);
-	bool getId(RsGxsId &id);
-
-private slots:
-	void loadId();
-
-private:
-	void init();
-
-	RsGxsId mId;
-	int mCount;
-	int mColumn;
-};
-#endif
 
 #endif

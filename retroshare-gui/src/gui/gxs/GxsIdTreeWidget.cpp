@@ -36,7 +36,7 @@ static void paintGxsId( QPainter * painter,
 {
 	QString desc;
 	QString comment;
-	std::list<QIcon> icons;
+	QList<QIcon> icons;
 	if (!GxsIdDetails::MakeIdDesc(id, true, desc, icons,comment))
 	{
 		/* flag for reloading */
@@ -45,11 +45,9 @@ static void paintGxsId( QPainter * painter,
 	const QRect &rect = option.rect;
 	int x = rect.left();
 	int y = rect.top();
-	int height = rect.height();
-	int width = rect.width();
 	
 
-	std::list<QIcon>::iterator it;
+	QList<QIcon>::iterator it;
 	const int IconSize = 15;
 	int i = 0;
 	for(it = icons.begin(); it != icons.end(); ++it, ++i)

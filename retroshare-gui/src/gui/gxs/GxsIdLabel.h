@@ -21,17 +21,15 @@
  *
  */
 
-
 #ifndef _GXS_ID_LABEL_H
 #define _GXS_ID_LABEL_H
 
-#include <QTimer>
 #include <QLabel>
 #include <retroshare/rsidentity.h>
 
 class GxsIdLabel : public QLabel
 {
-        Q_OBJECT
+	Q_OBJECT
 
 public:
 	GxsIdLabel(QWidget *parent = NULL);
@@ -39,15 +37,8 @@ public:
 	void setId(const RsGxsId &id);
 	bool getId(RsGxsId &id);
 
-private slots:
-	void loadId();
-
 private:
-
-	QTimer *mTimer;
 	RsGxsId mId;
-	int mCount;
 };
 
 #endif
-
