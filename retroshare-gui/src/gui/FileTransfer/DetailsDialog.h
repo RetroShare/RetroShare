@@ -34,7 +34,7 @@ class DetailsDialog : public QDialog
 
 public:
   /** Default constructor */
-  DetailsDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  DetailsDialog(QWidget *parent = 0);
   /** Default destructor */
   ~DetailsDialog() {}
   

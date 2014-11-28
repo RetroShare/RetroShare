@@ -108,9 +108,9 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
 
-	connect(ui->textboldButton, SIGNAL(clicked()), this, SLOT(setFont()));
-	connect(ui->textunderlineButton, SIGNAL(clicked()), this, SLOT(setFont()));
-	connect(ui->textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
+	//connect(ui->textboldButton, SIGNAL(clicked()), this, SLOT(setFont()));
+	//connect(ui->textunderlineButton, SIGNAL(clicked()), this, SLOT(setFont()));
+	//connect(ui->textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
 	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
 	connect(ui->colorButton, SIGNAL(clicked()), this, SLOT(chooseColor()));
 	connect(ui->emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
@@ -246,7 +246,7 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
     currentFont.fromString(PeerSettings->getPrivateChatFont(peerId));
 
 	colorChanged();
-	fontChanged();
+	//fontChanged();
 	setColorAndFont();
 
 	// load style
@@ -1121,7 +1121,7 @@ void ChatWidget::chooseFont()
 	QFont font = QFontDialog::getFont(&ok, currentFont, this);
 	if (ok) {
 		currentFont = font;
-		fontChanged();
+		//fontChanged();
 		setFont();
 	}
 }
@@ -1129,22 +1129,22 @@ void ChatWidget::chooseFont()
 void ChatWidget::resetFont()
 {
 	currentFont.fromString(Settings->getChatScreenFont());
-	fontChanged();
+	//fontChanged();
 	setFont();
 }
 
 void ChatWidget::fontChanged()
 {
-	ui->textboldButton->setChecked(currentFont.bold());
-	ui->textunderlineButton->setChecked(currentFont.underline());
-	ui->textitalicButton->setChecked(currentFont.italic());
+	//ui->textboldButton->setChecked(currentFont.bold());
+	//ui->textunderlineButton->setChecked(currentFont.underline());
+	//ui->textitalicButton->setChecked(currentFont.italic());
 }
 
 void ChatWidget::setColorAndFont()
 {
-	currentFont.setBold(ui->textboldButton->isChecked());
-	currentFont.setUnderline(ui->textunderlineButton->isChecked());
-	currentFont.setItalic(ui->textitalicButton->isChecked());
+	//currentFont.setBold(ui->textboldButton->isChecked());
+	//currentFont.setUnderline(ui->textunderlineButton->isChecked());
+	//currentFont.setItalic(ui->textitalicButton->isChecked());
 
 	ui->chatTextEdit->setFont(currentFont);
 	ui->chatTextEdit->setTextColor(currentColor);

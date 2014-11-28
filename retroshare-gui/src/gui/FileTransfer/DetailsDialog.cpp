@@ -31,8 +31,8 @@
 #include "gui/RetroShareLink.h"
 
 /** Default constructor */
-DetailsDialog::DetailsDialog(QWidget *parent, Qt::WindowFlags flags)
-  : QDialog(parent, flags)
+DetailsDialog::DetailsDialog(QWidget *parent)
+  : QDialog(parent, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
