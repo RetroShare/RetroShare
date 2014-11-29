@@ -45,6 +45,7 @@ GxsForumsFillThread::GxsForumsFillThread(GxsForumThreadWidget *parent)
 	mFillComplete = false;
 
 	mFilterColumn = 0;
+	mFilterString = QString();
 
 	mViewType = 0;
 	mFlatView = false;
@@ -110,7 +111,7 @@ void GxsForumsFillThread::run()
 	service->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
 
 	/* wait for the answer */
-	uint32_t requestStatus;
+	uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
 	while (!wasStopped()) {
 		requestStatus = service->requestStatus(token);
 		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
@@ -176,7 +177,7 @@ void GxsForumsFillThread::run()
 		std::cerr << "GxsForumsFillThread::run() Adding TopLevel Thread: mId: " << msg.mMeta.mMsgId << std::endl;
 #endif
 
-		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
+		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, mFilterString);
 		if (!mFlatView) {
 			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
 		}
@@ -218,8 +219,15 @@ void GxsForumsFillThread::run()
 				std::cerr << "GxsForumsFillThread::run() adding " << msg.mMeta.mMsgId << std::endl;
 #endif
 
-				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
+				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, mFilterString);
 				threadPair.second->addChild(item);
+
+				if ( !item->isHidden() && threadPair.second->isHidden() ){
+					threadPair.second->setHidden(false);
+					for (QTreeWidgetItem *cursIt = threadPair.second->parent(); cursIt; cursIt = cursIt->parent()){
+						cursIt->setHidden(false);
+					}
+				}
 
 				calculateExpand(msg, item);
 

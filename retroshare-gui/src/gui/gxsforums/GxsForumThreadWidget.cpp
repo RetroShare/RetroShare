@@ -62,13 +62,13 @@
 #define VIEW_FLAT       2
 
 /* Thread constants */
-#define COLUMN_THREAD_COUNT    6
 #define COLUMN_THREAD_TITLE    0
 #define COLUMN_THREAD_READ     1
 #define COLUMN_THREAD_DATE     2
 #define COLUMN_THREAD_AUTHOR   3
 #define COLUMN_THREAD_SIGNED   4
 #define COLUMN_THREAD_CONTENT  5
+#define COLUMN_THREAD_COUNT    6
 
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like msgid and parentid
 
@@ -815,7 +815,7 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
-QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
+QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QString filterString)
 {
     GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -874,12 +874,12 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	}
 #endif
 
-	if (filterColumn == COLUMN_THREAD_CONTENT) {
+	//if (filterColumn == COLUMN_THREAD_CONTENT) {
 		// need content for filter
 		QTextDocument doc;
 		doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()));
 		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
-	}
+	//}
 
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msg.mMeta.mMsgId.toStdString()));
 //#TODO
@@ -894,6 +894,9 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msg.mMeta.mMsgStatus);
 
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, false);
+
+	item->setHidden(!item->text(filterColumn).contains(filterString, Qt::CaseInsensitive));
+
 
 	return item;
 }
@@ -961,7 +964,8 @@ void GxsForumThreadWidget::insertThreads()
 	mFillThread->mCompareRole = mThreadCompareRole;
 	mFillThread->mForumId = mForumId;
 	mFillThread->mFilterColumn = ui->filterLineEdit->currentFilter();
-	mFillThread->mFilterColumn = COLUMN_THREAD_TITLE;
+	mFillThread->mFilterString = ui->filterLineEdit->text();
+	//mFillThread->mFilterColumn = COLUMN_THREAD_TITLE;
 	mFillThread->mExpandNewMessages = Settings->getForumExpandNewMessages();
 	mFillThread->mViewType = ui->viewBox->currentIndex();
 	if (mLastViewType != mFillThread->mViewType || mLastForumID != mForumId) {
