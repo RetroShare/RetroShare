@@ -482,6 +482,7 @@ void FriendsDialog::addChatMsg(bool incoming, bool history, const QString &name,
     QString formattedMessage = RsHtml().formatText(ui.msgText->document(), message, formatTextFlag, backgroundColor, desiredContrast);
     QString formatMsg = style.formatMessage(type, name, incoming ? recvTime : sendTime, formattedMessage);
 
+    ui.msgText->textCursor().setBlockFormat(QTextBlockFormat ());
     ui.msgText->append(formatMsg);
 }
 
