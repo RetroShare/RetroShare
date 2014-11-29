@@ -44,25 +44,15 @@
       <property name="horizontalSpacing">
        <number>6</number>
       </property>
-      <item row="0" column="1">
-       <widget class="QLabel" name="titleBarLabel">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Messages</string>
+      <item row="0" column="9">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
-      <item row="0" column="12">
-       <widget class="LineEditClear" name="filterLineEdit"/>
-      </item>
-      <item row="0" column="6">
-       <widget class="QToolButton" name="forwardmessageButton">
+      <item row="0" column="4">
+       <widget class="QToolButton" name="newmessageButton">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -71,22 +61,22 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777</width>
-          <height>16777</height>
+          <width>167777</width>
+          <height>167777</height>
          </size>
         </property>
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
-         <string>Forward selected message</string>
+         <string>New Message</string>
         </property>
         <property name="text">
-         <string>Foward</string>
+         <string>Compose</string>
         </property>
         <property name="icon">
          <iconset resource="images.qrc">
-          <normaloff>:/images/mailforward24-hover.png</normaloff>:/images/mailforward24-hover.png</iconset>
+          <normaloff>:/images/folder-draft24.png</normaloff>:/images/folder-draft24.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -102,14 +92,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="7">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="9">
+      <item row="0" column="11">
        <widget class="QToolButton" name="removemessageButton">
         <property name="minimumSize">
          <size>
@@ -150,7 +133,78 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="10">
+      <item row="0" column="1">
+       <widget class="QLabel" name="titleBarLabel">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Messages</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="15">
+       <widget class="LineEditClear" name="filterLineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="8">
+       <widget class="QToolButton" name="forwardmessageButton">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777</width>
+          <height>16777</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Forward selected message</string>
+        </property>
+        <property name="text">
+         <string>Foward</string>
+        </property>
+        <property name="icon">
+         <iconset resource="images.qrc">
+          <normaloff>:/images/mailforward24-hover.png</normaloff>:/images/mailforward24-hover.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonIconOnly</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="12">
        <widget class="QToolButton" name="printbutton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -200,7 +254,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="11">
+      <item row="0" column="13">
        <widget class="QToolButton" name="viewtoolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -263,7 +317,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="8">
+      <item row="0" column="10">
        <widget class="QToolButton" name="tagButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
@@ -292,14 +346,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
+      <item row="0" column="6">
        <widget class="QToolButton" name="replymessageButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -346,7 +393,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
+      <item row="0" column="7">
        <widget class="QToolButton" name="replyallmessageButton">
         <property name="minimumSize">
          <size>
@@ -387,48 +434,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QToolButton" name="newmessageButton">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>167777</width>
-          <height>167777</height>
-         </size>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>New Message</string>
-        </property>
-        <property name="text">
-         <string>Compose</string>
-        </property>
-        <property name="icon">
-         <iconset resource="images.qrc">
-          <normaloff>:/images/folder-draft24.png</normaloff>:/images/folder-draft24.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonIconOnly</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="13">
+      <item row="0" column="16">
        <widget class="QToolButton" name="helpButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
@@ -442,6 +448,42 @@
         </property>
         <property name="autoRaise">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="14">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="2">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Minimum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="5">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -839,7 +881,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>newmessageButton</tabstop>
   <tabstop>replymessageButton</tabstop>
   <tabstop>listWidget</tabstop>
  </tabstops>
