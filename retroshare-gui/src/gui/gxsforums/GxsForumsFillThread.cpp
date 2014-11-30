@@ -45,7 +45,6 @@ GxsForumsFillThread::GxsForumsFillThread(GxsForumThreadWidget *parent)
 	mFillComplete = false;
 
 	mFilterColumn = 0;
-	mFilterString = QString();
 
 	mViewType = 0;
 	mFlatView = false;
@@ -177,7 +176,7 @@ void GxsForumsFillThread::run()
 		std::cerr << "GxsForumsFillThread::run() Adding TopLevel Thread: mId: " << msg.mMeta.mMsgId << std::endl;
 #endif
 
-		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, mFilterString);
+		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
 		if (!mFlatView) {
 			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
 		}
@@ -219,15 +218,8 @@ void GxsForumsFillThread::run()
 				std::cerr << "GxsForumsFillThread::run() adding " << msg.mMeta.mMsgId << std::endl;
 #endif
 
-				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, mFilterString);
+				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
 				threadPair.second->addChild(item);
-
-				if ( !item->isHidden() && threadPair.second->isHidden() ){
-					threadPair.second->setHidden(false);
-					for (QTreeWidgetItem *cursIt = threadPair.second->parent(); cursIt; cursIt = cursIt->parent()){
-						cursIt->setHidden(false);
-					}
-				}
 
 				calculateExpand(msg, item);
 

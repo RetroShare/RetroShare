@@ -52,7 +52,7 @@ public:
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
 
-	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QString filterString);
+	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn);
 	QTreeWidgetItem *generateMissingItem(const RsGxsMessageId &msgId);
 
 	// Callback for all Loads.

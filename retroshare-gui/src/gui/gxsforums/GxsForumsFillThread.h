@@ -28,7 +28,6 @@ signals:
 public:
 	 RsGxsGroupId mForumId;
 	int mFilterColumn;
-	QString mFilterString;
 	bool mFillComplete;
 	int mViewType;
 	bool mFlatView;

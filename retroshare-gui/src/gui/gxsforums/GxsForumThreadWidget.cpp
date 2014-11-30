@@ -62,13 +62,13 @@
 #define VIEW_FLAT       2
 
 /* Thread constants */
+#define COLUMN_THREAD_COUNT    6
 #define COLUMN_THREAD_TITLE    0
 #define COLUMN_THREAD_READ     1
 #define COLUMN_THREAD_DATE     2
 #define COLUMN_THREAD_AUTHOR   3
 #define COLUMN_THREAD_SIGNED   4
 #define COLUMN_THREAD_CONTENT  5
-#define COLUMN_THREAD_COUNT    6
 
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like msgid and parentid
 
@@ -174,7 +174,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_THREAD_DATE, tr("Search Date"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_THREAD_AUTHOR, tr("Search Author"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_THREAD_CONTENT, tr("Search Content"));
-	ui->filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
+	// see processSettings
+	//ui->filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
 
 	mLastViewType = -1;
 
@@ -815,7 +816,7 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
-QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QString filterString)
+QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
 {
     GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -874,12 +875,12 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	}
 #endif
 
-	//if (filterColumn == COLUMN_THREAD_CONTENT) {
+	if (filterColumn == COLUMN_THREAD_CONTENT) {
 		// need content for filter
 		QTextDocument doc;
 		doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()));
 		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
-	//}
+	}
 
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msg.mMeta.mMsgId.toStdString()));
 //#TODO
@@ -894,9 +895,6 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msg.mMeta.mMsgStatus);
 
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, false);
-
-	item->setHidden(!item->text(filterColumn).contains(filterString, Qt::CaseInsensitive));
-
 
 	return item;
 }
@@ -964,8 +962,6 @@ void GxsForumThreadWidget::insertThreads()
 	mFillThread->mCompareRole = mThreadCompareRole;
 	mFillThread->mForumId = mForumId;
 	mFillThread->mFilterColumn = ui->filterLineEdit->currentFilter();
-	mFillThread->mFilterString = ui->filterLineEdit->text();
-	//mFillThread->mFilterColumn = COLUMN_THREAD_TITLE;
 	mFillThread->mExpandNewMessages = Settings->getForumExpandNewMessages();
 	mFillThread->mViewType = ui->viewBox->currentIndex();
 	if (mLastViewType != mFillThread->mViewType || mLastForumID != mForumId) {
