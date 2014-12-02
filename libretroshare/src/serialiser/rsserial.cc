@@ -175,6 +175,11 @@ uint16_t    RsItem::PacketService() const
 	return (type >> 8) & 0xFFFF;
 }
 
+void    RsItem::setPacketService(uint16_t service)
+{
+	type &= 0xFF0000FF;
+	type |= (uint32_t) (service << 8);
+}
 
 
 RsSerialType::RsSerialType(uint32_t t)

@@ -53,6 +53,11 @@ const uint16_t RS_SERVICE_TYPE_GROUTER       = 0x0018;
 const uint16_t RS_SERVICE_TYPE_SERVICEINFO   = 0x0020;
 /* Bandwidth Control */
 const uint16_t RS_SERVICE_TYPE_BWCTRL        = 0x0021;
+// New Mail Service (replace old Msg Service)
+const uint16_t RS_SERVICE_TYPE_MAIL          = 0x0022;
+const uint16_t RS_SERVICE_TYPE_DIRECT_MAIL   = 0x0023;
+const uint16_t RS_SERVICE_TYPE_DISTANT_MAIL  = 0x0024;
+const uint16_t RS_SERVICE_TYPE_GWEMAIL_MAIL  = 0x0025;
 
 // Non essential services.
 const uint16_t RS_SERVICE_TYPE_BANLIST       = 0x0101;

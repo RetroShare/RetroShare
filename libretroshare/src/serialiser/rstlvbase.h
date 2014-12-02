@@ -229,6 +229,8 @@ const uint16_t TLV_TYPE_DSDV_ENTRY_SET= 0x1082;
 const uint16_t TLV_TYPE_BAN_ENTRY     = 0x1090;
 const uint16_t TLV_TYPE_BAN_LIST      = 0x1091;
 
+const uint16_t TLV_TYPE_MSG_ADDRESS   = 0x10A0;
+const uint16_t TLV_TYPE_MSG_ID        = 0x10A1;
 
 
 const uint32_t RSTLV_IMAGE_TYPE_PNG = 0x0001;
