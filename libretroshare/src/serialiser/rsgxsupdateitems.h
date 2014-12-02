@@ -79,8 +79,8 @@ public:
     { clear();}
     virtual ~RsGxsMsgUpdateItem() {}
 
-	virtual void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent);
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     RsPeerId peerId;
     std::map<RsGxsGroupId, uint32_t> msgUpdateTS;

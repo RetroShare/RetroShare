@@ -438,8 +438,6 @@ private:
     // for an active transaction
     uint32_t mTransactionTimeOut;
 
-    std::map<RsGxsGroupId,std::list<RsPeerId> > mPendingPublishKeyRecipients ;
-
     RsPeerId mOwnId;
 
     RsNxsNetMgr* mNetMgr;
@@ -460,8 +458,9 @@ private:
     // need to be verfied
     std::vector<AuthorPending*> mPendingResp;
     std::vector<GrpCircleVetting*> mPendingCircleVets;
-
+    std::map<RsGxsGroupId,std::list<RsPeerId> > mPendingPublishKeyRecipients ;
     std::map<RsPeerId, std::list<RsGxsGroupId> > mExplicitRequest;
+    std::map<RsPeerId, std::set<RsGxsGroupId> > mPartialMsgUpdates ;
 
     // nxs sync optimisation
     // can pull dynamically the latest timestamp for each message

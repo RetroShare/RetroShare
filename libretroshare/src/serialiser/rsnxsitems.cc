@@ -27,10 +27,10 @@ const uint16_t RsNxsTransac::FLAG_END_FAIL_FULL = 0x0040;
 /** transaction type **/
 const uint16_t RsNxsTransac::FLAG_TYPE_GRP_LIST_RESP = 0x0100;
 const uint16_t RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP = 0x0200;
-const uint16_t RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ = 0x0400;
-const uint16_t RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ = 0x0800;
-const uint16_t RsNxsTransac::FLAG_TYPE_GRPS = 0x1000;
-const uint16_t RsNxsTransac::FLAG_TYPE_MSGS = 0x2000;
+const uint16_t RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ  = 0x0400;
+const uint16_t RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ  = 0x0800;
+const uint16_t RsNxsTransac::FLAG_TYPE_GRPS          = 0x1000;
+const uint16_t RsNxsTransac::FLAG_TYPE_MSGS          = 0x2000;
 
 
 uint32_t RsNxsSerialiser::size(RsItem *item) {
