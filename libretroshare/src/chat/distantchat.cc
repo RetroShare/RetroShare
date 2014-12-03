@@ -854,6 +854,11 @@ bool DistantChatService::closeDistantChatConnexion(const RsGxsId& gxs_id)
         if(it == _distant_chat_contacts.end())
         {
             std::cerr << "(EE) Cannot close distant chat connection. No connection openned for gxs id " << gxs_id << std::endl;
+
+        // We don't know if we are server or client side, but mTurtle will not complain if the hash doesn't exist.
+
+        mTurtle->stopMonitoringTunnels( hashFromGxsId(gxs_id) );
+
             return false ;
         }
         if(it->second.direction != RsTurtleGenericTunnelItem::DIRECTION_SERVER) 	// nothing more to do for server side.
@@ -861,6 +866,9 @@ bool DistantChatService::closeDistantChatConnexion(const RsGxsId& gxs_id)
     }
 
     // send a status item saying that we're closing the connection
+#ifdef DEBUG_DISTANT_CHAT
+    std::cerr << "  Sending a ACK to close the tunnel since we're managing it." << hash << std::endl;
+#endif
 
     RsChatStatusItem *cs = new RsChatStatusItem ;
 
@@ -870,6 +878,10 @@ bool DistantChatService::closeDistantChatConnexion(const RsGxsId& gxs_id)
 
     sendTurtleData(cs) ;	// that needs to be done off-mutex and before we close the tunnel.
 
+#ifdef DEBUG_DISTANT_CHAT
+    std::cerr << "  This is client side. Stopping tunnel manageement for hash " << hash << std::endl;
+#endif
+    mTurtle->stopMonitoringTunnels( hashFromGxsId(gxs_id) );
     {
         RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
         std::map<RsGxsId,DistantChatPeerInfo>::iterator it = _distant_chat_contacts.find(gxs_id) ;
@@ -885,21 +897,11 @@ bool DistantChatService::closeDistantChatConnexion(const RsGxsId& gxs_id)
 
         if(it2 == _distant_chat_virtual_peer_ids.end())
     {
-            std::cerr << "(WW) Cannot remove virtual peer id " << it->second.virtual_peer_id << ": unknown! Weird situation." << std::endl;
+        std::cerr << "(WW) Cannot remove virtual peer id " << it->second.virtual_peer_id << ": unknown! Weird situation." << std::endl;
         return true ;
     }
 
         DH_free(it2->second.dh) ;
-    // Client side: Stop tunnels
-        //
-    if(it2->second.direction == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
-    {
-        TurtleFileHash hash = hashFromGxsId(gxs_id) ;
-        mTurtle->stopMonitoringTunnels(hash) ;
-#ifdef DEBUG_DISTANT_CHAT
-        std::cerr << "  This is client side. Stopping tunnel manageement for hash " << hash << std::endl;
-#endif
-    }
 
         _distant_chat_virtual_peer_ids.erase(it2) ;
     }
