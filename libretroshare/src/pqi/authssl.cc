@@ -681,7 +681,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         }
 
         //long version = 0x00;
-        unsigned long chtype = MBSTRING_ASC;
+        unsigned long chtype = MBSTRING_UTF8;
         X509_NAME *issuer_name = X509_NAME_new();
         X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
                         (unsigned char *) AuthGPG::getAuthGPG()->getGPGOwnId().toStdString().c_str(), -1, -1, 0);

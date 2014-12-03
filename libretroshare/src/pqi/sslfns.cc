@@ -176,7 +176,7 @@ X509_REQ *GenerateX509Req(
 	 ****************************/
 
 	long version = 0x00;
-        unsigned long chtype = MBSTRING_ASC;
+        unsigned long chtype = MBSTRING_UTF8;
 	X509_NAME *x509_name = X509_NAME_new();
 
         // fill in the request.
@@ -750,9 +750,6 @@ int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &locat
 	}
 }
 
-
-
-
 std::string getX509NameString(X509_NAME *name)
 {
 	std::string namestr;
@@ -786,11 +783,9 @@ std::string getX509NameString(X509_NAME *name)
 		{
 			namestr += "\n";
 		}
-
 	}
 	return namestr;
 }
-
 
 std::string getX509CNString(X509_NAME *name)
 {
@@ -805,18 +800,18 @@ std::string getX509CNString(X509_NAME *name)
 		{
 			if (entry_data -> data != NULL)
 			{
-				namestr += (char *) entry_data -> data;
+				// do we need to convert ASN1_STRING to utf8 (ASN1_STRING_to_UTF8)?
+				namestr = (char *) entry_data->data;
 			}
 			else
 			{
-				namestr += "Unknown";
+				namestr = "Unknown";
 			}
-			return namestr;
+			break;
 		}
 	}
 	return namestr;
 }
-
 
 std::string getX509TypeString(X509_NAME *name, const char *type, int len)
 {
@@ -831,19 +826,19 @@ std::string getX509TypeString(X509_NAME *name, const char *type, int len)
 		{
 			if (entry_data -> data != NULL)
 			{
-				namestr += (char *) entry_data -> data;
+				// do we need to convert ASN1_STRING to utf8 (ASN1_STRING_to_UTF8)?
+				namestr = (char *) entry_data -> data;
 			}
 			else
 			{
-				namestr += "Unknown";
+				namestr = "Unknown";
 			}
-			return namestr;
+			break;
 		}
 	}
 	return namestr;
 }
 
-		
 std::string getX509LocString(X509_NAME *name)
 {
 	return getX509TypeString(name, "L", 2);
@@ -853,8 +848,7 @@ std::string getX509OrgString(X509_NAME *name)
 {
 	return getX509TypeString(name, "O", 2);
 }
-	
-		
+
 std::string getX509CountryString(X509_NAME *name)
 {
 	return getX509TypeString(name, "C", 2);
