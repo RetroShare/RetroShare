@@ -200,7 +200,7 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 
 void ChatWidget::addChatHorizontalWidget(QWidget *w)
 {
-	ui->verticalLayout->addWidget(w) ;
+	ui->verticalLayout_2->addWidget(w) ;
 	update() ;
 }
 

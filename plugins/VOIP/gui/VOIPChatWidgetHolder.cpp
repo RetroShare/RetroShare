@@ -107,15 +107,18 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 
 	// Make a widget with two video devices, one for echo, and one for the talking peer.
 	videoWidget = new QWidget(mChatWidget) ;
-	videoWidget->setLayout(new QHBoxLayout()) ;
+	videoWidget->setLayout(new QVBoxLayout()) ;
 	videoWidget->layout()->addWidget(echoVideoDevice = new QVideoOutputDevice(videoWidget)) ;
 	videoWidget->layout()->addWidget(outputVideoDevice = new QVideoOutputDevice(videoWidget)) ;
 	videoWidget->hide();
 
 	connect(inputVideoDevice, SIGNAL(networkPacketReady()), this, SLOT(sendVideoData()));
 
-	echoVideoDevice->setMinimumSize(128,95) ;
-	outputVideoDevice->setMinimumSize(128,95) ;
+	echoVideoDevice->setMinimumSize(320,256) ;
+	outputVideoDevice->setMinimumSize(320,256) ;
+	
+	echoVideoDevice->setStyleSheet("border: 1px solid #CCCCCC;");
+	outputVideoDevice->setStyleSheet("border: 1px solid #CCCCCC;");
 
 	mChatWidget->addChatHorizontalWidget(videoWidget) ;
 

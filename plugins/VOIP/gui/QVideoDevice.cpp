@@ -101,7 +101,7 @@ QVideoOutputDevice::QVideoOutputDevice(QWidget *parent)
 
 void QVideoOutputDevice::showFrameOff()
 {
-	setPixmap(QPixmap(":/images/video-icon-big.png").scaled(170,128,Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
+	setPixmap(QPixmap(":/images/video-icon-big.png").scaled(320,256,Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
 }
 
 void QVideoOutputDevice::showFrame(const QImage& img)
