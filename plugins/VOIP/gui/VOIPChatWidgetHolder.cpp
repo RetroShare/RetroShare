@@ -117,8 +117,8 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	echoVideoDevice->setMinimumSize(320,256) ;
 	outputVideoDevice->setMinimumSize(320,256) ;
 	
-	echoVideoDevice->setStyleSheet("border: 1px solid #CCCCCC;");
-	outputVideoDevice->setStyleSheet("border: 1px solid #CCCCCC;");
+	echoVideoDevice->setStyleSheet("border: 4px solid #CCCCCC; border-radius: 4px;");
+	outputVideoDevice->setStyleSheet("border: 4px solid #CCCCCC; border-radius: 4px;");
 
 	mChatWidget->addChatHorizontalWidget(videoWidget) ;
 
