@@ -25,7 +25,7 @@ QString retroshareVersion();
 QString retroshareRevision();
 
 #define GUI_VERSION "0.6.x"
-#define GUI_REVISION "Revision: 7106"
+#define GUI_REVISION "Revision: 7669"
 
 
 

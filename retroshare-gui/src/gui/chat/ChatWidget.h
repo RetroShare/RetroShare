@@ -173,7 +173,6 @@ private:
 	void setCurrentFileName(const QString &fileName);
 
 	void colorChanged();
-	void fontChanged();
 	void setColorAndFont();
 	void processSettings(bool load);
 

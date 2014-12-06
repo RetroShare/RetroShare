@@ -108,17 +108,14 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
 
-	//connect(ui->textboldButton, SIGNAL(clicked()), this, SLOT(setFont()));
-	//connect(ui->textunderlineButton, SIGNAL(clicked()), this, SLOT(setFont()));
-	//connect(ui->textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
 	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
-	connect(ui->colorButton, SIGNAL(clicked()), this, SLOT(chooseColor()));
 	connect(ui->emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
 	connect(ui->actionSaveChatHistory, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 	connect(ui->actionClearChatHistory, SIGNAL(triggered()), this, SLOT(clearChatHistory()));
 	connect(ui->actionDeleteChatHistory, SIGNAL(triggered()), this, SLOT(deleteChatHistory()));
 	connect(ui->actionMessageHistory, SIGNAL(triggered()), this, SLOT(messageHistory()));
 	connect(ui->actionChooseFont, SIGNAL(triggered()), this, SLOT(chooseFont()));
+	connect(ui->actionChooseColor, SIGNAL(triggered()), this, SLOT(chooseColor()));
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
@@ -143,6 +140,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	QMenu *menu = new QMenu();
 	menu->addAction(ui->actionChooseFont);
+	menu->addAction(ui->actionChooseColor);
 	menu->addAction(ui->actionResetFont);
 	ui->fontButton->setMenu(menu);
 
@@ -246,7 +244,6 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
     currentFont.fromString(PeerSettings->getPrivateChatFont(peerId));
 
 	colorChanged();
-	//fontChanged();
 	setColorAndFont();
 
 	// load style
@@ -1112,7 +1109,7 @@ void ChatWidget::colorChanged()
 {
 	QPixmap pix(16, 16);
 	pix.fill(currentColor);
-	ui->colorButton->setIcon(pix);
+	ui->actionChooseColor->setIcon(pix);
 }
 
 void ChatWidget::chooseFont()
@@ -1121,7 +1118,6 @@ void ChatWidget::chooseFont()
 	QFont font = QFontDialog::getFont(&ok, currentFont, this);
 	if (ok) {
 		currentFont = font;
-		//fontChanged();
 		setFont();
 	}
 }
@@ -1129,22 +1125,11 @@ void ChatWidget::chooseFont()
 void ChatWidget::resetFont()
 {
 	currentFont.fromString(Settings->getChatScreenFont());
-	//fontChanged();
 	setFont();
-}
-
-void ChatWidget::fontChanged()
-{
-	//ui->textboldButton->setChecked(currentFont.bold());
-	//ui->textunderlineButton->setChecked(currentFont.underline());
-	//ui->textitalicButton->setChecked(currentFont.italic());
 }
 
 void ChatWidget::setColorAndFont()
 {
-	//currentFont.setBold(ui->textboldButton->isChecked());
-	//currentFont.setUnderline(ui->textunderlineButton->isChecked());
-	//currentFont.setItalic(ui->textitalicButton->isChecked());
 
 	ui->chatTextEdit->setFont(currentFont);
 	ui->chatTextEdit->setTextColor(currentColor);

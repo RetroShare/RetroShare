@@ -108,8 +108,8 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	// Make a widget with two video devices, one for echo, and one for the talking peer.
 	videoWidget = new QWidget(mChatWidget) ;
 	videoWidget->setLayout(new QVBoxLayout()) ;
-	videoWidget->layout()->addWidget(echoVideoDevice = new QVideoOutputDevice(videoWidget)) ;
 	videoWidget->layout()->addWidget(outputVideoDevice = new QVideoOutputDevice(videoWidget)) ;
+	videoWidget->layout()->addWidget(echoVideoDevice = new QVideoOutputDevice(videoWidget)) ;
 	videoWidget->hide();
 
 	connect(inputVideoDevice, SIGNAL(networkPacketReady()), this, SLOT(sendVideoData()));
@@ -159,6 +159,11 @@ void VOIPChatWidgetHolder::hangupCall()
 	if (outputAudioDevice) {
 		outputAudioDevice->stop();
 	}
+
+	if (mChatWidget) {
+		mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
+	}
+	
 	audioListenToggleButton->setChecked(false);
 	audioCaptureToggleButton->setChecked(false);
 	hangupButton->hide();
@@ -219,6 +224,9 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
 		outputVideoDevice->showFrameOff();
 		videoWidget->hide();
+		
+		if (mChatWidget) 
+			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
 	}
 }
 
