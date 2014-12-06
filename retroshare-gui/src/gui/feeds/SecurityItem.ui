@@ -6,21 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
-    <height>240</height>
+    <width>763</width>
+    <height>241</height>
    </rect>
   </property>
   <layout class="QGridLayout">
-   <property name="leftMargin">
-    <number>1</number>
-   </property>
-   <property name="topMargin">
-    <number>1</number>
-   </property>
-   <property name="rightMargin">
-    <number>1</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>1</number>
    </property>
    <item row="0" column="0">
@@ -348,11 +339,11 @@
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="text">
-              <string>Write a quick Message</string>
+              <string>Send Message</string>
              </property>
              <property name="icon">
               <iconset resource="../images.qrc">
-               <normaloff>:/images/message-mail.png</normaloff>:/images/message-mail.png</iconset>
+               <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
              </property>
              <property name="popupMode">
               <enum>QToolButton::DelayedPopup</enum>
@@ -384,7 +375,7 @@
              </property>
              <property name="icon">
               <iconset resource="../images.qrc">
-               <normaloff>:/images/chat.png</normaloff>:/images/chat.png</iconset>
+               <normaloff>:/images/chat_24.png</normaloff>:/images/chat_24.png</iconset>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
