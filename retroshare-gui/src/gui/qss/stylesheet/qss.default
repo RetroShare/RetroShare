@@ -11,6 +11,69 @@ AvatarWidget[frameState="ONLINE"]{border-image:url(:/images/avatarstatus-bg-onli
 AvatarWidget[frameState="AWAY"]{border-image:url(:/images/avatarstatus-bg-away-116.png);}
 AvatarWidget[frameState="BUSY"]{border-image:url(:/images/avatarstatus-bg-busy-116.png);}
 
+/* Font */
+
+QLabel#titleBarLabel
+{
+	font-weight: bold;
+	qproperty-fontSizeFactor: 115;
+}
+
+QLabel#toasterLabel
+{
+	font-weight: bold;
+}
+
+ChatWidget QFrame#titleBarFrame > QLabel#titleLabel, ChatWidget QFrame#titleBarFrame > QLabel#statusLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+FriendsDialog QFrame#headFrame > QLabel#nicknameLabel
+{
+	qproperty-fontSizeFactor: 200;
+}
+
+ChatMsgItem QFrame#frame > QLabel#peerNameLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
+PeerItem QFrame#frame QFrame#peerFrame > QLabel#peerNameLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
+PostedItem QFrame#frame > QLabel#titleLabel
+{
+	qproperty-fontSizeFactor: 150;
+}
+
+PostedItem QFrame#frame > QLabel#scoreLabel
+{
+	qproperty-fontSizeFactor: 250;
+}
+
+GxsChannelPostItem QFrame#frame > QLabel#titleLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+PluginItem QFrame#frame > QLabel#subjectLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+RSettingsWin > QLabel#pageName
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+ConfCertDialog QFrame#frame QTabWidget QWidget > QLabel#servicePermissionsLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
 /* Color definitions */
 
 ForumsDialog, GxsForumThreadWidget

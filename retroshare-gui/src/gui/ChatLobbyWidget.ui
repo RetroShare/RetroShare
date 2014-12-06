@@ -43,14 +43,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="titleBarLabel">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
          <string>Chat lobbies</string>
         </property>
@@ -161,11 +154,6 @@
        </item>
        <item>
         <widget class="QTreeWidget" name="lobbyTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
          <property name="iconSize">
           <size>
            <width>16</width>
@@ -354,15 +342,9 @@
             </layout>
            </item>
            <item>
-            <widget class="QLabel" name="lobbyinfo_label">
-             <property name="font">
-              <font>
-               <family>Tahoma</family>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
+            <widget class="QLabel" name="lobbyInfoLabel">
              <property name="text">
-              <string>TextLabel</string>
+              <string notr="true">TextLabel</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -397,6 +379,11 @@
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

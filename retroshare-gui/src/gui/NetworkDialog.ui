@@ -14,14 +14,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="titleBarLabel">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
+      <widget class="QLabel" name="filterLabel">
        <property name="text">
         <string>Filter:</string>
        </property>
@@ -99,7 +92,7 @@
       </attribute>
       <column>
        <property name="text">
-        <string> </string>
+        <string/>
        </property>
       </column>
       <column>

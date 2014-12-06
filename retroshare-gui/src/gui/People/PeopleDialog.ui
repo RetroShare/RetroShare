@@ -58,16 +58,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="titleBarLabel">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;People&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>People</string>
         </property>
        </widget>
       </item>
@@ -105,62 +98,57 @@
       <layout class="QVBoxLayout">
        <item>
         <widget class="QSplitter" name="splitterExternal">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
          <widget class="QScrollArea" name="scrollAreaExternal">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>250</height>
-       </size>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>250</height>
+           </size>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
           <widget class="FlowLayoutWidget" name="idExternal">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
              <width>685</width>
-         <height>248</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout"/>
-      </widget>
-     </widget>
+             <height>248</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout"/>
+          </widget>
+         </widget>
          <widget class="QWidget" name="widgetExternal">
           <layout class="QGridLayout" name="layoutExternal">
-       <item row="0" column="0">
+           <item row="0" column="0">
             <widget class="QLabel" name="label_External">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
               <string>Drag your circles or people to each other.</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
             <widget class="PictureFlow" name="pictureFlowWidgetExternal" native="true">
-         <property name="widgetResizable" stdset="0">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
+             <property name="widgetResizable" stdset="0">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
@@ -214,11 +202,6 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
              <property name="text">
               <string>Drag your circles or people to each other.</string>
              </property>
@@ -245,6 +228,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
   <customwidget>
    <class>PictureFlow</class>
    <extends>QWidget</extends>

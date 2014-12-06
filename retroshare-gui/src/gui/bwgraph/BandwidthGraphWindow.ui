@@ -105,11 +105,6 @@
          </property>
          <item>
           <widget class="QCheckBox" name="chkReceiveRate">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
            <property name="contextMenuPolicy">
             <enum>Qt::NoContextMenu</enum>
            </property>
@@ -129,11 +124,6 @@
          </item>
          <item>
           <widget class="QCheckBox" name="chkSendRate">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
            <property name="contextMenuPolicy">
             <enum>Qt::NoContextMenu</enum>
            </property>
@@ -207,11 +197,6 @@
            </item>
            <item>
             <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
              <property name="text">
               <string>Style</string>
              </property>
@@ -338,11 +323,6 @@
                   <height>0</height>
                  </size>
                 </property>
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
@@ -356,11 +336,6 @@
               </item>
               <item>
                <widget class="QLabel" name="label">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
@@ -449,11 +424,6 @@
         <width>120</width>
         <height>80</height>
        </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
       </property>
       <property name="contextMenuPolicy">
        <enum>Qt::NoContextMenu</enum>

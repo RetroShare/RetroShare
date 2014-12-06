@@ -819,7 +819,7 @@ void ChatWidget::chatCharFormatChanged()
 
 void ChatWidget::resetStatusBar()
 {
-	ui->statusLabel->clear();
+	ui->typingLabel->clear();
 	ui->typingpixmapLabel->clear();
 
 	typing = false;
@@ -1325,8 +1325,8 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 			break;
 		}
 
-		QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
-		ui->titleLabel->setText(peerName + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
+		ui->titleLabel->setText(peerName);
+		ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
 
 		peerStatus = status;
 
@@ -1377,7 +1377,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString)
 {
-	ui->statusLabel->setText(QString(statusMask).arg(tr(statusString.toLatin1()))); // displays info for 5 secs.
+	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toLatin1()))); // displays info for 5 secs.
 	ui->typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
 	if (statusString == "is typing...") {

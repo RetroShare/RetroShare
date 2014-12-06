@@ -73,7 +73,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QLabel" name="titleLabel">
+             <widget class="StyledLabel" name="titleLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -82,11 +82,9 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
-                <stylestrategy>PreferAntialias</stylestrategy>
                </font>
               </property>
               <property name="text">
@@ -233,7 +231,6 @@
               <property name="font">
                <font>
                 <family>Tahoma</family>
-                <pointsize>10</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -518,6 +515,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

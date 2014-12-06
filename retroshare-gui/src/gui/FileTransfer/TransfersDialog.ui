@@ -43,14 +43,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="titleBarLabel">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
          <string>File Transfers</string>
         </property>
@@ -139,17 +132,6 @@
           <enum>Qt::Vertical</enum>
          </property>
          <widget class="QTreeView" name="downloadList">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
           <property name="mouseTracking">
            <bool>true</bool>
           </property>
@@ -226,17 +208,6 @@
             </property>
             <item row="0" column="0">
              <widget class="QTreeView" name="uploadsList">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>
@@ -256,6 +227,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

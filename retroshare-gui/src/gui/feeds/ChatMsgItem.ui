@@ -142,12 +142,7 @@
        </layout>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="peerNameLabel">
-        <property name="font">
-         <font>
-          <pointsize>14</pointsize>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="peerNameLabel">
         <property name="text">
          <string notr="true">Peer Name</string>
         </property>
@@ -179,7 +174,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -417,6 +411,11 @@
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

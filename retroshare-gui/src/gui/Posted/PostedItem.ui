@@ -10,11 +10,6 @@
     <height>156</height>
    </rect>
   </property>
-  <property name="font">
-   <font>
-    <pointsize>9</pointsize>
-   </font>
-  </property>
   <property name="windowTitle">
    <string notr="true"/>
   </property>
@@ -73,7 +68,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -90,11 +84,6 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-         </font>
         </property>
         <property name="text">
          <string notr="true">You eyes only</string>
@@ -130,12 +119,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="scoreLabel">
-          <property name="font">
-           <font>
-            <pointsize>20</pointsize>
-           </font>
-          </property>
+         <widget class="StyledLabel" name="scoreLabel">
           <property name="text">
            <string>0</string>
           </property>
@@ -176,7 +160,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -208,11 +191,6 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-         </font>
-        </property>
         <property name="text">
          <string notr="true">Signed by</string>
         </property>
@@ -228,11 +206,6 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-         </font>
         </property>
         <property name="text">
          <string notr="true">Signed by</string>
@@ -281,7 +254,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -325,7 +297,7 @@
        </widget>
       </item>
       <item row="0" column="1" colspan="12">
-       <widget class="QLabel" name="titleLabel">
+       <widget class="StyledLabel" name="titleLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -334,7 +306,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -387,6 +358,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
   <customwidget>
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>

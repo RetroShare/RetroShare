@@ -49,14 +49,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="titleBarLabel">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
          <string notr="true">Name</string>
         </property>
@@ -149,15 +142,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GroupTreeWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/GroupTreeWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>RSTabWidget</class>
    <extends>QTabWidget</extends>
    <header>gui/common/RSTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GroupTreeWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/GroupTreeWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

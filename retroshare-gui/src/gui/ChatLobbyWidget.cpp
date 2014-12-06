@@ -612,7 +612,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 			ui.lobbytype_lineEdit->setText( (( (*it).lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)?tr("Private"):tr("Public")) );
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
-			ui.lobbyinfo_label->setText(tr("You're not subscribed to this lobby; Double click-it to enter and chat.") );
+			ui.lobbyInfoLabel->setText(tr("You're not subscribed to this lobby; Double click-it to enter and chat.") );
 			return ;
 		}
 
@@ -623,7 +623,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 	ui.lobbypeers_lineEdit->clear();
 
 	QString text = tr("No lobby selected. \nSelect lobbies at left to show details.\nDouble click lobbies to enter and chat.") ;
-	ui.lobbyinfo_label->setText(text) ;
+	ui.lobbyInfoLabel->setText(text) ;
 }
 
 void ChatLobbyWidget::subscribeItem()

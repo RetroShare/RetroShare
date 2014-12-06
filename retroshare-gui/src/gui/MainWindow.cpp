@@ -513,12 +513,8 @@ void MainWindow::initStackedPage()
 /** Creates a new action associated with a config page. */
 QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QActionGroup *group)
 {
-    QFont font;
     QAction *action = new QAction(icon, text, group);
-    font = action->font();
-    font.setPointSize(9);
     action->setCheckable(true);
-    action->setFont(font);
     return action;
 }
 
