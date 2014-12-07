@@ -47,6 +47,7 @@ const uint32_t RS_CHAT_FLAG_PARTIAL_MESSAGE            = 0x0100;
 const uint32_t RS_CHAT_FLAG_LOBBY                      = 0x0200;
 const uint32_t RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION = 0x0400;
 const uint32_t RS_CHAT_FLAG_ACK_DISTANT_CONNECTION     = 0x0800;
+const uint32_t RS_CHAT_FLAG_KEEP_ALIVE                 = 0x1000;
 
 const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING 		= 0x0001;
 

@@ -68,7 +68,8 @@ private:
     public:
         DistantChatPeerInfo() {}
 
-        time_t last_contact ; 			// used to send keep alive packets
+        time_t last_contact ; 		// used to keep track of working connexion
+    time_t last_keep_alive_sent ;	// last time we sent a keep alive packet.
 
         unsigned char aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 

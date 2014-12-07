@@ -91,7 +91,6 @@ void PopupDistantChatDialog::updateDisplay()
 														  _status_label->setToolTip(QObject::tr("Distant peer has closed the chat")) ;
 
 														  QMessageBox::warning(NULL,tr("Distant chat terminated"),tr("The person you're talking to has deleted the secured chat tunnel. You may remove the chat window now.")) ;
-														  _update_timer->stop() ;
 														  setPeerStatus(RS_STATUS_OFFLINE) ;
 
 														 break ;
