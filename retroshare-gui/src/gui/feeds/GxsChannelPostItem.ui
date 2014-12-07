@@ -104,7 +104,6 @@
                <font>
                 <weight>75</weight>
                 <bold>true</bold>
-                <stylestrategy>PreferAntialias</stylestrategy>
                </font>
               </property>
               <property name="text">
@@ -143,11 +142,6 @@
             </item>
             <item>
              <widget class="QLabel" name="filelabel">
-              <property name="font">
-               <font>
-                <stylestrategy>PreferAntialias</stylestrategy>
-               </font>
-              </property>
               <property name="text">
                <string notr="true">fileLabel</string>
               </property>
@@ -230,7 +224,6 @@
              <widget class="QLabel" name="scoreLabel">
               <property name="font">
                <font>
-                <family>Tahoma</family>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -270,9 +263,6 @@
             </item>
             <item>
              <widget class="QPushButton" name="downloadButton">
-              <property name="font">
-               <font/>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
@@ -290,9 +280,6 @@
             </item>
             <item>
              <widget class="QPushButton" name="playButton">
-              <property name="font">
-               <font/>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>

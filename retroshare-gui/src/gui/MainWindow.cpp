@@ -523,10 +523,6 @@ QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QA
  * Have to pass function pointer and slot, because we can't make slot of function pointer */
 void MainWindow::addAction(QAction *action, FunctionType actionFunction, const char *slot)
 {
-    QFont font;
-    font = action->font();
-    font.setPointSize(9);
-    action->setFont(font);
     ui->toolBarAction->addAction(action);
     if (slot) connect(action, SIGNAL(triggered()), this, slot);
 

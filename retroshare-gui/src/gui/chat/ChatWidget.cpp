@@ -268,6 +268,8 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 		hist_chat_type = RS_HISTORY_TYPE_LOBBY;
 		messageCount = Settings->getLobbyChatHistoryCount();
 
+		ui->statusLabel->hide();
+
 		updateTitle();
 	} else {
 		hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
@@ -1278,19 +1280,19 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	}
 
 	/* set font size for status  */
-    if (RsPeerId(peer_id.toStdString()) == peerId) {
+	if (RsPeerId(peer_id.toStdString()) == peerId) {
 		// the peers status has changed
 
 		QString peerName ;
 		uint32_t stts ;
 
-        if(rsMsgs->getDistantChatStatus(RsGxsId(peerId),stts))
+		if(rsMsgs->getDistantChatStatus(RsGxsId(peerId),stts))
 		{
 			RsIdentityDetails details  ;
-            if(rsIdentity->getIdDetails(RsGxsId(peerId),details))
+			if(rsIdentity->getIdDetails(RsGxsId(peerId),details))
 				peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
 			else
-                peerName = QString::fromStdString(peerId.toStdString()) ;
+				peerName = QString::fromStdString(peerId.toStdString()) ;
 		}
 		else
 			peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());

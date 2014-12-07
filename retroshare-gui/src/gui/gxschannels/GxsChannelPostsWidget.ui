@@ -73,18 +73,13 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="nameLabel">
+       <widget class="StyledLabel" name="nameLabel">
         <property name="palette">
          <palette>
           <active/>
           <inactive/>
           <disabled/>
          </palette>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>21</pointsize>
-         </font>
         </property>
         <property name="text">
          <string notr="true">Channel Name</string>
@@ -332,6 +327,11 @@
    <extends>QWidget</extends>
    <header>gui/gxschannels/GxsChannelFilesWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

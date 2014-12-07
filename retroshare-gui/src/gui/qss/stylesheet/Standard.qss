@@ -171,7 +171,7 @@ CreateLobbyDialog QFrame#lobbyFrame {
 	background: white;
 }
 
-CreateLobbyDialog QLabel#lobbyinfo_label {
+CreateLobbyDialog QLabel#lobbyInfoLabel {
 	border: 1px solid #DCDC41;
 	border-radius: 6px;
 	background: #FFFFD7;

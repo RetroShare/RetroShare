@@ -31,13 +31,7 @@
     <widget class="QFrame" name="frame">
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QLabel" name="lobbyinfo_label">
-        <property name="font">
-         <font>
-          <family>Tahoma</family>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="lobbyInfoLabel">
         <property name="text">
          <string>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</string>
         </property>
@@ -254,6 +248,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
   <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>

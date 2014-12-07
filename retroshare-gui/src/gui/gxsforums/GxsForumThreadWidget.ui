@@ -211,11 +211,6 @@
        </item>
        <item>
         <widget class="GxsIdRSTreeWidget" name="threadTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -290,11 +285,6 @@
         <layout class="QGridLayout" name="postLayout">
          <item row="0" column="7">
           <widget class="QLabel" name="time_label">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string notr="true"/>
            </property>
@@ -401,11 +391,6 @@
          </item>
          <item row="0" column="9">
           <widget class="QLabel" name="by_label">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string notr="true"/>
            </property>
@@ -513,11 +498,6 @@
         <horstretch>0</horstretch>
         <verstretch>10</verstretch>
        </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-       </font>
       </property>
      </widget>
     </widget>

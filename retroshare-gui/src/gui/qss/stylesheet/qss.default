@@ -24,54 +24,69 @@ QLabel#toasterLabel
 	font-weight: bold;
 }
 
-ChatWidget QFrame#titleBarFrame > QLabel#titleLabel, ChatWidget QFrame#titleBarFrame > QLabel#statusLabel
+ChatWidget QFrame#titleBarFrame QLabel#titleLabel, ChatWidget QFrame#titleBarFrame QLabel#statusLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
 
-FriendsDialog QFrame#headFrame > QLabel#nicknameLabel
+FriendsDialog QFrame#headFrame QLabel#nicknameLabel
 {
 	qproperty-fontSizeFactor: 200;
 }
 
-ChatMsgItem QFrame#frame > QLabel#peerNameLabel
+ChatMsgItem QFrame#frame QLabel#peerNameLabel
 {
 	qproperty-fontSizeFactor: 175;
 }
 
-PeerItem QFrame#frame QFrame#peerFrame > QLabel#peerNameLabel
+PeerItem QFrame#frame QFrame#peerFrame QLabel#peerNameLabel
 {
 	qproperty-fontSizeFactor: 175;
 }
 
-PostedItem QFrame#frame > QLabel#titleLabel
+SecurityItem QFrame#frame QFrame#headFrame QLabel#peerNameLabel, SecurityItem QFrame#frame QFrame#headFrame QLabel#requestLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
+PostedItem QFrame#frame QLabel#titleLabel
 {
 	qproperty-fontSizeFactor: 150;
 }
 
-PostedItem QFrame#frame > QLabel#scoreLabel
+PostedItem QFrame#frame QLabel#scoreLabel
 {
 	qproperty-fontSizeFactor: 250;
 }
 
-GxsChannelPostItem QFrame#frame > QLabel#titleLabel
+GxsChannelPostItem QFrame#frame QLabel#titleLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
 
-PluginItem QFrame#frame > QLabel#subjectLabel
+PluginItem QFrame#frame QLabel#subjectLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
 
-RSettingsWin > QLabel#pageName
+RSettingsWin QLabel#pageName
 {
 	qproperty-fontSizeFactor: 125;
 }
 
-ConfCertDialog QFrame#frame QTabWidget QWidget > QLabel#servicePermissionsLabel
+ConfCertDialog QFrame#frame QTabWidget QWidget QLabel#servicePermissionsLabel
 {
 	qproperty-fontSizeFactor: 125;
+}
+
+GxsChannelPostsWidget QFrame#headFrame QLabel#nameLabel
+{
+	qproperty-fontSizeFactor: 250;
+}
+
+CreateLobbyDialog QFrame#frame QLabel#lobbyInfoLabel
+{
+	qproperty-fontSizeFactor: 150;
 }
 
 /* Color definitions */
