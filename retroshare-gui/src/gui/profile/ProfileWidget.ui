@@ -141,7 +141,7 @@
           <item row="0" column="0" colspan="3">
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel" name="publicIcon">
               <property name="maximumSize">
                <size>
                 <width>16</width>
@@ -154,10 +154,9 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLabel" name="label_5">
+             <widget class="StyledLabel" name="publicLabel">
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -412,7 +411,7 @@
           <item row="1" column="0" colspan="3">
            <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_12">
+             <widget class="QLabel" name="otherIcon">
               <property name="maximumSize">
                <size>
                 <width>16</width>
@@ -428,10 +427,9 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLabel" name="label_13">
+             <widget class="StyledLabel" name="otherLabel">
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -458,7 +456,7 @@
           <item row="0" column="0" colspan="4">
            <layout class="QGridLayout" name="gridLayout_8">
             <item row="0" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="myIcon">
               <property name="maximumSize">
                <size>
                 <width>16</width>
@@ -474,10 +472,9 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLabel" name="label_15">
+             <widget class="StyledLabel" name="myLabel">
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -725,6 +722,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

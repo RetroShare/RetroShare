@@ -179,11 +179,6 @@
         <height>0</height>
        </size>
       </property>
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
       <property name="mouseTracking">
        <bool>true</bool>
       </property>
@@ -218,11 +213,6 @@
            <horstretch>1</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
          </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>

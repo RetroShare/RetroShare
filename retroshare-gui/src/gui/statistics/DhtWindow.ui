@@ -234,12 +234,6 @@
             <layout class="QHBoxLayout" name="horizontalLayout_18">
              <item>
               <widget class="QFrame" name="frame">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
                <layout class="QGridLayout" name="gridLayout">
                 <item row="0" column="2">
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -258,12 +252,6 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="label_unreachable">
-                    <property name="font">
-                     <font>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -288,12 +276,6 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="label_online">
-                    <property name="font">
-                     <font>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -318,12 +300,6 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="label_offline">
-                    <property name="font">
-                     <font>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -348,12 +324,6 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="label_peers">
-                    <property name="font">
-                     <font>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -373,12 +343,6 @@
              </item>
              <item>
               <widget class="QWidget" name="widget_2" native="true">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
                <layout class="QHBoxLayout" name="horizontalLayout_15">
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_11">
@@ -397,12 +361,6 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="label_disconnected">
-                    <property name="font">
-                     <font>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -427,12 +385,6 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="label_direct">
-                    <property name="font">
-                     <font>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -457,12 +409,6 @@
                   </item>
                   <item>
                    <widget class="QLabel" name="label_proxy">
-                    <property name="font">
-                     <font>
-                      <weight>50</weight>
-                      <bold>false</bold>
-                     </font>
-                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -665,11 +611,6 @@
            <width>120</width>
            <height>80</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
          </property>
          <property name="contextMenuPolicy">
           <enum>Qt::NoContextMenu</enum>
