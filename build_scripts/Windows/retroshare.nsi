@@ -172,6 +172,7 @@ Section $(Section_Main) Section_Main
   File "${QTDIR}\bin\QtCore4.dll"
   File "${QTDIR}\bin\QtGui4.dll"
   File "${QTDIR}\bin\QtMultimedia4.dll"
+  File "${QTDIR}\bin\QtNetwork4.dll"
   File "${QTDIR}\bin\QtSvg4.dll"
   File "${QTDIR}\bin\QtXml4.dll"
 
