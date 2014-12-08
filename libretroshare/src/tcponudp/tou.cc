@@ -614,7 +614,8 @@ int 	tou_close(int sockfd)
 		
 #endif
 
-		delete tous->tcp;
+        delete tous->tcp;
+        tous->tcp = NULL ;	// prevents calling
 
 	}
 
