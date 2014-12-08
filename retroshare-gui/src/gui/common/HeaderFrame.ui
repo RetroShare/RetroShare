@@ -67,12 +67,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="headerLabel">
-        <property name="font">
-         <font>
-          <pointsize>18</pointsize>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="headerLabel">
         <property name="text">
          <string notr="true">Header text</string>
         </property>
@@ -93,6 +88,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

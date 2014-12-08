@@ -24,47 +24,47 @@ QLabel#toasterLabel
 	font-weight: bold;
 }
 
-ChatWidget QFrame#titleBarFrame QLabel#titleLabel, ChatWidget QFrame#titleBarFrame QLabel#statusLabel
+ChatWidget QLabel#titleLabel, ChatWidget QLabel#statusLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
 
-FriendsDialog QFrame#headFrame QLabel#nicknameLabel
+FriendsDialog QLabel#nicknameLabel
 {
 	qproperty-fontSizeFactor: 200;
 }
 
-ChatMsgItem QFrame#frame QLabel#peerNameLabel
+ChatMsgItem QLabel#peerNameLabel
 {
 	qproperty-fontSizeFactor: 175;
 }
 
-PeerItem QFrame#frame QFrame#peerFrame QLabel#peerNameLabel
+PeerItem QLabel#peerNameLabel
 {
 	qproperty-fontSizeFactor: 175;
 }
 
-SecurityItem QFrame#frame QFrame#headFrame QLabel#peerNameLabel, SecurityItem QFrame#frame QFrame#headFrame QLabel#requestLabel
+SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel
 {
 	qproperty-fontSizeFactor: 175;
 }
 
-PostedItem QFrame#frame QLabel#titleLabel
+PostedItem QLabel#titleLabel
 {
 	qproperty-fontSizeFactor: 150;
 }
 
-PostedItem QFrame#frame QLabel#scoreLabel
+PostedItem QLabel#scoreLabel
 {
 	qproperty-fontSizeFactor: 250;
 }
 
-GxsChannelPostItem QFrame#frame QLabel#titleLabel
+GxsChannelPostItem QLabel#titleLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
 
-PluginItem QFrame#frame QLabel#subjectLabel
+PluginItem QLabel#subjectLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
@@ -74,19 +74,44 @@ RSettingsWin QLabel#pageName
 	qproperty-fontSizeFactor: 125;
 }
 
-ConfCertDialog QFrame#frame QTabWidget QWidget QLabel#servicePermissionsLabel
+ConfCertDialog QLabel#servicePermissionsLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
 
-GxsChannelPostsWidget QFrame#headFrame QLabel#nameLabel
+GxsChannelPostsWidget QLabel#nameLabel
 {
 	qproperty-fontSizeFactor: 250;
 }
 
-CreateLobbyDialog QFrame#frame QLabel#lobbyInfoLabel
+CreateLobbyDialog QLabel#lobbyInfoLabel
 {
 	qproperty-fontSizeFactor: 150;
+}
+
+HeaderFrame QLabel#headerLabel
+{
+	qproperty-fontSizeFactor: 225;
+}
+
+ConnectFrientWizard QLabel#fr_label, ConnectFrientWizard QLabel#requestinfolabel
+{
+	qproperty-fontSizeFactor: 150;
+}
+
+ConnectFriendWizard QLabel#makefriend_infolabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+ShareManager QLabel#labelInstructions
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+CryptoPage QLabel#publicLabel, CryptoPage QLabel#otherLabel
+{
+	qproperty-fontSizeFactor: 125;
 }
 
 /* Color definitions */

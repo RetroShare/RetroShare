@@ -30,13 +30,6 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QRadioButton" name="textRadioButton">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
       <property name="text">
        <string>&amp;Enter the certificate manually</string>
       </property>
@@ -44,11 +37,6 @@
     </item>
     <item>
      <widget class="QRadioButton" name="certRadioButton">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>&amp;You get a certificate file from your friend</string>
       </property>
@@ -56,11 +44,6 @@
     </item>
     <item>
      <widget class="QRadioButton" name="foffRadioButton">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>&amp;Make friend with selected friends of my friends</string>
       </property>
@@ -68,11 +51,6 @@
     </item>
     <item>
      <widget class="QRadioButton" name="rsidRadioButton">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>&amp;Enter RetroShare ID manually</string>
       </property>
@@ -80,11 +58,6 @@
     </item>
     <item>
      <widget class="QRadioButton" name="emailRadioButton">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>&amp;Send an Invitation by Email 
  (She/He receives an email with instructions how to to download RetroShare)</string>
@@ -93,11 +66,6 @@
     </item>
     <item>
      <widget class="QRadioButton" name="friendRecommendationsRadioButton">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>Recommend many friends to each others</string>
       </property>
@@ -118,11 +86,6 @@
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QLabel" name="userCertLabel">
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>The text below is your PGP certificate. You have to provide it to your friend</string>
       </property>
@@ -135,7 +98,6 @@
         <property name="font">
          <font>
           <family>Courier New</family>
-          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="lineWrapMode">
@@ -290,11 +252,6 @@
     </item>
     <item>
      <widget class="QLabel" name="friendCertLabel">
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
       <property name="text">
        <string>Please, paste your friends PGP certificate into the box below</string>
       </property>
@@ -307,7 +264,6 @@
         <property name="font">
          <font>
           <family>Courier New</family>
-          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="lineWrapMode">
@@ -586,12 +542,7 @@
      <widget class="QFrame" name="frame">
       <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
-        <widget class="QLabel" name="fr_label">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
+        <widget class="StyledLabel" name="fr_label">
          <property name="text">
           <string notr="true">You have a friend request from</string>
          </property>
@@ -766,12 +717,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="requestinfolabel">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
+     <widget class="StyledLabel" name="requestinfolabel">
       <property name="text">
        <string>To accept the Friend Request, click the Finish button.</string>
       </property>
@@ -824,12 +770,76 @@
    </attribute>
    <layout class="QVBoxLayout" name="verticalLayout_18">
     <item>
-     <widget class="QLabel" name="makefriend_infolabel">
-      <property name="font">
-       <font>
-        <family>Tahoma</family>
-        <pointsize>11</pointsize>
-       </font>
+     <widget class="StyledLabel" name="makefriend_infolabel">
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
       </property>
       <property name="text">
        <string>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</string>
@@ -1092,9 +1102,20 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FriendSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1108,16 +1129,8 @@
    <header>gui/connect/ConnectFriendWizard.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>FriendSelectionWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/FriendSelectionWidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

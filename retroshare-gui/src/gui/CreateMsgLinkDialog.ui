@@ -32,12 +32,6 @@
    </item>
    <item row="1" column="0">
     <widget class="QFrame" name="_new_link_F">
-     <property name="font">
-      <font>
-       <family>Tahoma</family>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -47,11 +41,6 @@
      <layout class="QVBoxLayout" name="verticalLayout_5">
       <item>
        <widget class="QLabel" name="distantchatinfo_label">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
