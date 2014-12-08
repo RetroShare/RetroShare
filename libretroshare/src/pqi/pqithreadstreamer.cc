@@ -46,7 +46,8 @@ bool pqithreadstreamer::RecvItem(RsItem *item)
 
 int	pqithreadstreamer::tick()
 {
-	tick_bio();
+        RsStackMutex stack(mThreadMutex);
+    tick_bio();
 
 	return 0;
 }
@@ -82,8 +83,8 @@ void pqithreadstreamer::run()
 				mRunning = false;
 				return;
 			}
-		}
-		data_tick();
+        }
+        data_tick();
 	}
 }
 
@@ -146,7 +147,10 @@ int	pqithreadstreamer::data_tick()
 	//std::cerr << "pqithreadstream::data_tick() tick_recv";
 	//std::cerr << std::endl;
 
-	tick_recv(recv_timeout);
+    {
+        RsStackMutex stack(mThreadMutex);
+    tick_recv(recv_timeout);
+    }
 
 	// Push Items, Outside of Mutex.
 	RsItem *incoming = NULL;
@@ -158,7 +162,10 @@ int	pqithreadstreamer::data_tick()
 	//std::cerr << "pqithreadstream::data_tick() tick_send";
 	//std::cerr << std::endl;
 
-	tick_send(0);
+    {
+        RsStackMutex stack(mThreadMutex);
+    tick_send(0);
+    }
 
 	if (sleep_period)
 	{
