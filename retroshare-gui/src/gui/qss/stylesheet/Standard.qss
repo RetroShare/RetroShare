@@ -54,7 +54,8 @@ GenCertDialog QPushButton#genButton:hover {
 
 FriendsDialog QFrame#headFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 0px;
+	border: 1px;
+	border-radius: 4px;
 }
 
 FriendsDialog QFrame#headFrame > QLabel#nicknameLabel {

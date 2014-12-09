@@ -10,8 +10,11 @@
     <height>491</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -79,37 +82,17 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="FriendList" name="friendList" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-     </widget>
-     <widget class="QWidget" name="layoutWidget_1">
-      <layout class="QGridLayout" name="tabLayout">
-       <property name="verticalSpacing">
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
         <number>1</number>
        </property>
-       <item row="0" column="0">
+       <item>
         <widget class="QFrame" name="headFrame">
          <property name="minimumSize">
           <size>
@@ -123,6 +106,9 @@
            <height>70</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -135,6 +121,12 @@
           </property>
           <property name="topMargin">
            <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>6</number>
           </property>
           <item row="0" column="1" colspan="2">
            <widget class="StyledLabel" name="nicknameLabel">
@@ -156,20 +148,23 @@
             </property>
            </spacer>
           </item>
-          <item row="1" column="2" colspan="2">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+          <item row="0" column="0" rowspan="2">
+           <widget class="AvatarWidget" name="avatar">
+            <property name="minimumSize">
              <size>
-              <width>277</width>
-              <height>20</height>
+              <width>61</width>
+              <height>61</height>
              </size>
             </property>
-           </spacer>
+            <property name="maximumSize">
+             <size>
+              <width>61</width>
+              <height>61</height>
+             </size>
+            </property>
+           </widget>
           </item>
-          <item row="1" column="1">
+          <item row="1" column="1" colspan="3">
            <widget class="QToolButton" name="mypersonalstatusLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -198,26 +193,39 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0" rowspan="2">
-           <widget class="AvatarWidget" name="avatar">
-            <property name="minimumSize">
-             <size>
-              <width>61</width>
-              <height>61</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>61</width>
-              <height>61</height>
-             </size>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item>
+        <widget class="FriendList" name="friendList" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget_1">
+      <layout class="QGridLayout" name="tabLayout">
+       <property name="verticalSpacing">
+        <number>1</number>
+       </property>
+       <item row="0" column="0">
         <widget class="ChatTabWidget" name="tabWidget">
          <property name="currentIndex">
           <number>0</number>
@@ -226,6 +234,10 @@
           <bool>true</bool>
          </property>
          <widget class="QWidget" name="groupChatTab">
+          <attribute name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/kblogger.png</normaloff>:/images/kblogger.png</iconset>
+          </attribute>
           <attribute name="title">
            <string>Broadcast</string>
           </attribute>
