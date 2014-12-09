@@ -90,7 +90,7 @@ void pqithreadstreamer::run()
 
 void pqithreadstreamer::stop()
 {
-	RsStackMutex stack(mThreadMutex);
+//	RsStackMutex stack(mThreadMutex);
 
 	std::cerr << "pqithreadstream::stop()";
 	std::cerr << std::endl;
