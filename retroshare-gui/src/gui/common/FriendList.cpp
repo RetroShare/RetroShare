@@ -117,7 +117,7 @@ FriendList::FriendList(QWidget *parent) :
     m_compareRole(new RSTreeWidgetItemCompareRole),
     mBigName(false),
     mShowGroups(true),
-    mHideState(false),
+    mHideState(true),
     mHideUnconnected(false),
     groupsHasChanged(false),
     openGroups(NULL),
