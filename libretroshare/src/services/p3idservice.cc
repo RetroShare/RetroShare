@@ -2254,7 +2254,14 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 			createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
 		}
 		else
-		{
+        {
+            // Additional consistency checks.
+
+            if(sign_size == MAX_SIGN_SIZE)
+            {
+                std::cerr << "Inconsistent result. Signature uses full buffer. This is probably an error." << std::endl;
+                return SERVICE_CREATE_FAIL; // abandon attempt!
+            }
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::service_CreateGroup() Signature: ";
 			std::string strout;
