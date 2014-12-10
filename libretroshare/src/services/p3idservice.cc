@@ -2244,7 +2244,9 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 #define MAX_SIGN_SIZE 2048
 		uint8_t signarray[MAX_SIGN_SIZE]; 
 		unsigned int sign_size = MAX_SIGN_SIZE;
-		int result ;
+        int result ;
+
+        memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
 		if (!mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result))
 		{
@@ -2496,16 +2498,17 @@ bool p3IdService::pgphash_process()
 	SSGxsIdGroup ssdata;
 	ssdata.load(pg.mMeta.mServiceString); // attempt load - okay if fails.
 
-	RsPgpId pgpId;
+    RsPgpId pgpId;
+    bool error = false ;
 
-	if (checkId(pg, pgpId))	
+    if (checkId(pg, pgpId,error))
 	{
 		/* found a match - update everything */
 		/* Consistency issues here - what if Reputation was recently updated? */
 
 #ifdef DEBUG_IDS
 		std::cerr << "p3IdService::pgphash_process() CheckId Success for Group: " << pg.mMeta.mGroupId;
-		std::cerr << " PgpId: " << pgpId.toStdString();
+        std::cerr << " PgpId: " << pgpId;
 		std::cerr << std::endl;
 #endif // DEBUG_IDS
 
@@ -2514,7 +2517,14 @@ bool p3IdService::pgphash_process()
 		ssdata.pgp.pgpId = pgpId;
 
 	}
-	else
+    else if(error)
+    {
+            std::cerr << "Identity has an invalid signature. It will be deleted." << std::endl;
+
+            uint32_t token ;
+            deleteIdentity(token,pg) ;
+    }
+    else
 	{
 #ifdef DEBUG_IDS
 		std::cerr << "p3IdService::pgphash_process() No Match for Group: " << pg.mMeta.mGroupId;
@@ -2525,16 +2535,19 @@ bool p3IdService::pgphash_process()
 		ssdata.pgp.checkAttempts++;
 	}
 
-	// update IdScore too.
-	ssdata.score.rep.updateIdScore(true, ssdata.pgp.idKnown);
-	ssdata.score.rep.update();
+    if(!error)
+    {
+        // update IdScore too.
+        ssdata.score.rep.updateIdScore(true, ssdata.pgp.idKnown);
+        ssdata.score.rep.update();
 
-	/* set new Group ServiceString */
-	uint32_t dummyToken = 0;
-	std::string serviceString = ssdata.save();
-	setGroupServiceString(dummyToken, pg.mMeta.mGroupId, serviceString);
+        /* set new Group ServiceString */
+        uint32_t dummyToken = 0;
+        std::string serviceString = ssdata.save();
+        setGroupServiceString(dummyToken, pg.mMeta.mGroupId, serviceString);
 
-	cache_update_if_cached(RsGxsId(pg.mMeta.mGroupId.toStdString()), serviceString);
+        cache_update_if_cached(RsGxsId(pg.mMeta.mGroupId), serviceString);
+    }
 
 	// Schedule Next Processing.
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH_PROC, PGPHASH_PROC_PERIOD);
@@ -2543,13 +2556,15 @@ bool p3IdService::pgphash_process()
 
 
 
-bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
+bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId,bool& error)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::checkId() Starting Match Check for RsGxsId: ";
 	std::cerr << grp.mMeta.mGroupId;
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
+
+    error = false ;
 
 	/* some sanity checking... make sure hash is the right size */
 
@@ -2572,7 +2587,8 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 	for(mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); ++mit)
 	{
 		Sha1CheckSum hash;
-		calcPGPHash(RsGxsId(grp.mMeta.mGroupId.toStdString()), mit->second, hash);
+        calcPGPHash(RsGxsId(grp.mMeta.mGroupId), mit->second, hash);
+
 		if (ans == hash)
 		{
 #ifdef DEBUG_IDS
@@ -2614,7 +2630,10 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 				rs_sprintf_append(strout, "%02x", (uint32_t) ((uint8_t) grp.mPgpIdSign[i]));
 			}
 			std::cerr << strout;
-			std::cerr << std::endl;
+            std::cerr << std::endl;
+
+            error = true ;
+            return false ;
 		}
 	}
 

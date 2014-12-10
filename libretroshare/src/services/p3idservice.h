@@ -376,7 +376,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	bool pgphash_handlerequest(uint32_t token);
 	bool pgphash_process();
 
-	bool checkId(const RsGxsIdGroup &grp, RsPgpId &pgp_id);
+    bool checkId(const RsGxsIdGroup &grp, RsPgpId &pgp_id, bool &error);
 	void getPgpIdList();
 
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
