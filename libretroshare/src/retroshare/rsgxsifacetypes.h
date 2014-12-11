@@ -135,6 +135,17 @@ public:
 class GxsGroupStatistic
 {
 public:
+	GxsGroupStatistic()
+	{
+		mNumMsgs = 0;
+		mTotalSizeOfMsgs = 0;
+		mNumThreadMsgsNew = 0;
+		mNumThreadMsgsUnread = 0;
+		mNumChildMsgsNew = 0;
+		mNumChildMsgsUnread = 0;
+	}
+
+public:
 	/// number of message
 	RsGxsGroupId mGrpId;
 	uint32_t mNumMsgs;
@@ -148,7 +159,21 @@ public:
 class GxsServiceStatistic
 {
 public:
+	GxsServiceStatistic()
+	{
+		mNumMsgs = 0;
+		mNumGrps = 0;
+		mSizeOfMsgs = 0;
+		mSizeOfGrps = 0;
+		mNumGrpsSubscribed = 0;
+		mNumThreadMsgsNew = 0;
+		mNumThreadMsgsUnread = 0;
+		mNumChildMsgsNew = 0;
+		mNumChildMsgsUnread = 0;
+		mSizeStore = 0;
+	}
 
+public:
 	uint32_t mNumMsgs;
 	uint32_t mNumGrps;
 	uint32_t mSizeOfMsgs;
