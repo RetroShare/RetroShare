@@ -105,7 +105,7 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 	if (mRequests.size() == 1)
 	{
 		/* start the timer */
-		doPoll(0.1);
+		doPoll(0.25);
 	}
 }
 
@@ -117,7 +117,7 @@ void TokenQueue::doPoll(float dt)
 
 void TokenQueue::pollRequests()
 {
-	double pollPeriod = 1.0; // max poll period.
+	double pollPeriod = 0.5; // max poll period.
 
 	if (mRequests.empty())	{
 		return;
@@ -142,7 +142,7 @@ void TokenQueue::pollRequests()
 		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
 		{
 			mRequests.push_back(req);
-		}
+	}
 		else
 		{
 			std::cerr << "TokenQueue::loadRequest(): ";
