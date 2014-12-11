@@ -424,14 +424,6 @@ void MainWindow::initStackedPage()
   addPage(blogsFeed = new BlogsDialog(ui->stackPages), grp, NULL);
 #endif
 
-#if 0
-  //ui->stackPages->add(forumsDialog = new ForumsDialog(ui->stackPages),
-  //                   action = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(forumsDialog, action));
-  //TODO: Add iconPixmap, pageName and helpText to BlogsDialog.h
-  addPage(forumsDialog = new ForumsDialog(ui->stackPages), grp, &notify);
-#endif
-
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)
  {
