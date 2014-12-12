@@ -1,6 +1,75 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    Improvements
+
+      GUI
+         * Set the list with buttons in MainWindow and friend list in FriendsDialog to fixed when resizing the window.
+         * Optimized polling in TokenQueue
+         * Removed unecessary space around the main pages.
+         * Moved own frame for Avatar,status,nick display to the top of FriendsList.
+         * Moved font size definitions from ui files to default qss.
+         * Clean up Peer and SecurityItem feeds
+         * Set a fixed size for the Messages search filter.
+         * Enabled Minimize/Maximize Button for File Transfer details dialog.
+         * Clean up Buttons on ChatWidget, for Fonts use now Font Button.
+         * Changed rs logo icons, for better look and feel on the Taskbar
+         * Hide by default the Attachments Recommend Files list.
+         * Changed the tooltips for the Hide/Show Button , "Download all" Button now with default text.
+         * Moved files count label before "Recommend Files" label
+         * Reduced speed of scrolling of RSFeedWidget
+
+      GXS
+         * Added missing initialize of members in constructor of GxsGroupStatistic and GxsServiceStatistic
+         * remove GXS ids with faulty signature. This should not happen anyway.
+         * added additional check for signature consistency after signing GXS id.
+         * improved/cleaned debug outputs in in rsgxsnetservice.cc. Performed
+         * optimization of transaction system: limited the size of message transactions and allowed 
+            a much larger transaction timeout to suppress the transaction cancelling epidemic that caused 
+            global bandwidth increase and lack of channel/forum propagation
+         * Simplified usage of GxsIdDetails and removed some QTimer.
+         * fixed proper deleting of pending transactions inside mutex to avoid concurrent thread to use them
+         * fixed uninitialised memory read in rsgxsdataaccess.cc
+         * fixed inconsistency using getKey() and getPrivateKey() supposing it returns a boolean. It should return a boolean anyway.
+
+      Chat
+         * added keep-alive packets to distant chat. Improved the tunnel management logic.
+
+      VOIP
+         * Moved to display own video at bottom and Friend at top.
+         * Added to display system message text when call is stopped.
+         * Fixing spaces on chat window.
+         * Clean up chatwidget buttons, moved text color to the font menu button
+         * Added a border radius to the Video Widget.
+         * Moved to Display the Video Widget on the right side
+
+      FT
+         * two improvements of turtle router logic: increase of TR cache storage time to avoid too many void 
+            tunnels due to bouncing TR beyond storage period of 120 secs; prevent openning upload tunnels for 
+            files currently being downloaded before any chunk was obtained. Suggested by Jo.
+
+      Messaging
+         * Adding start of new Mail Service.
+         * added setFlags method in Id combo box. Removed possibility to send anonymous distant messages 
+            (too risky). Improved the logic in message composer GUI. Fixed bug when key not available in 
+            message encryption/signing routine.
+
+      Plugin system
+         * Added service pointer of forums and channels to RsPlugInInterfaces.
+
+      Installer
+         * Added missing dll to Windows installer.
+
+   Bug fixes
+
+      * fixed tcponudp bug causing SEGV when quitting and crash on UDP connexion reset. 
+      * Fixed utf8 issue when using strings with openssl
+      * fixed serialisation bug preventing the correct save of grouter matrix in some cases
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 12 Dec 2014 23:00:00 +0100
+
+retroshare06 (0.6.0-0.7702~precise) precise; urgency=low
+
+   Improvements
       GUI
          * HTML Text optimization (patch from Phenom)
          * Enabled by default to display Friends Avatar on Friendslist

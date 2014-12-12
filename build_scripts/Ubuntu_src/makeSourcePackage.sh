@@ -93,7 +93,7 @@ cd $workdir
 
 #for i in wheezy; do
 #for i in sid ; do
-for i in precise; do
+for i in trusty precise; do
 #for i in lucid precise quantal raring; do
 #for i in wheezy squeeze lucid precise quantal raring saucy; do
 #for i in sid squeeze; do
