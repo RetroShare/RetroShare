@@ -226,6 +226,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     //ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
     setNewPage(Settings->getLastPageInMainWindow());
+
+    ui->splitter->setStretchFactor(0, 0);
+    ui->splitter->setStretchFactor(1, 1);
+
     /* Load listWidget postion */
     QByteArray state = Settings->valueFromGroup("MainWindow", "SplitterState", QByteArray()).toByteArray();
     if (!state.isEmpty()) ui->splitter->restoreState(state);

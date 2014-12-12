@@ -191,6 +191,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.hashBox->setAutoHide(true);
 
     /* Set initial size the splitter */
+    ui.splitter->setStretchFactor(0, 0);
+    ui.splitter->setStretchFactor(1, 1);
     QList<int> sizes;
     sizes << height() << 100; // Qt calculates the right sizes
     ui.splitter_2->setSizes(sizes);
