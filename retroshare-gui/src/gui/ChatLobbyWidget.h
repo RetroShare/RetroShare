@@ -17,6 +17,7 @@ struct ChatLobbyInfoStruct
 	QIcon default_icon ;
 	ChatLobbyDialog *dialog ;
 	time_t last_typing_event ;
+	uint unread_count;
 };
 
 class ChatLobbyWidget : public RsAutoUpdatePage
@@ -34,10 +35,17 @@ public:
 	virtual QString pageName() const { return tr("Chat Lobbies") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
+	virtual UserNotify *getUserNotify(QObject *parent);
+
 	virtual void updateDisplay();
 
 	void setCurrentChatPage(ChatLobbyDialog *) ;	// used by ChatLobbyDialog to raise.
 	void addChatPage(ChatLobbyDialog *) ;
+
+	uint unreadCount();
+
+signals:
+	void unreadCountChanged(uint unreadCount);
 
 protected slots:
 	void lobbyChanged();

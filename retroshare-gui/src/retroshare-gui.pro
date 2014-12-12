@@ -392,6 +392,7 @@ HEADERS +=  rshare.h \
             gui/chat/CreateLobbyDialog.h \
             gui/chat/ChatStyle.h \
             gui/chat/ChatUserNotify.h \
+            gui/chat/ChatLobbyUserNotify.h \
             gui/connect/ConfCertDialog.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
@@ -724,6 +725,7 @@ SOURCES +=  main.cpp \
             gui/chat/CreateLobbyDialog.cpp \
             gui/chat/ChatStyle.cpp \
             gui/chat/ChatUserNotify.cpp \
+            gui/chat/ChatLobbyUserNotify.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \

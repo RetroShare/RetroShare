@@ -10,6 +10,7 @@
 #include "common/RSTreeWidgetItem.h"
 #include "notifyqt.h"
 #include "chat/ChatLobbyDialog.h"
+#include "chat/ChatLobbyUserNotify.h"
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
 #include <gui/settings/rsharesettings.h>
@@ -186,6 +187,16 @@ ChatLobbyWidget::~ChatLobbyWidget()
 	}
 }
 
+UserNotify *ChatLobbyWidget::getUserNotify(QObject *parent)
+{
+	ChatLobbyUserNotify *notify = new ChatLobbyUserNotify(parent);
+	connect(this, SIGNAL(unreadCountChanged(uint)), notify, SLOT(unreadCountChanged(uint)));
+
+	notify->unreadCountChanged(unreadCount());
+
+	return notify;
+}
+
 void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 {
 	std::cerr << "Creating customPopupMennu" << std::endl;
@@ -286,6 +297,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 		_lobby_infos[id].dialog = d ;
 		_lobby_infos[id].default_icon = QIcon() ;
 		_lobby_infos[id].last_typing_event = time(NULL) ;
+		_lobby_infos[id].unread_count = 0;
 
 		std::list<ChatLobbyInfo> lobbies;
 		rsMsgs->getChatLobbyList(lobbies);
@@ -736,6 +748,7 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 	{
 		ui.stackedWidget->removeWidget(it->second.dialog) ;
 		_lobby_infos.erase(it) ;
+		emit unreadCountChanged(unreadCount());
 	}
 
 	// Unsubscribe the chat lobby
@@ -778,7 +791,10 @@ void ChatLobbyWidget::updateCurrentLobby()
             int iPrivacyLevel= item->parent()->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt();
             QIcon icon = (iPrivacyLevel==RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
 			_lobby_infos[id].default_icon = icon ;
+			_lobby_infos[id].unread_count = 0;
 			item->setIcon(COLUMN_NAME, icon) ;
+
+			emit unreadCountChanged(unreadCount());
 		}
 	}
 
@@ -796,6 +812,9 @@ void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
 		return ;
 
 	_lobby_infos[id].default_icon = QIcon(IMAGE_MESSAGE) ;
+	++_lobby_infos[id].unread_count;
+
+	emit unreadCountChanged(unreadCount());
 
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 
@@ -953,3 +972,13 @@ int ChatLobbyWidget::getNumColVisible()
     return iNumColVis;
 }
 
+uint ChatLobbyWidget::unreadCount()
+{
+	uint count = 0;
+
+	for (std::map<ChatLobbyId,ChatLobbyInfoStruct>::iterator it = _lobby_infos.begin(); it != _lobby_infos.end(); ++it) {
+		count += it->second.unread_count;
+	}
+
+	return count;
+}
