@@ -60,13 +60,13 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.buttonBox->button(QDialogButtonBox::Ok));
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.sendButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumSubject);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
 
-	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.buttonBox->button(QDialogButtonBox::Ok));
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.sendButton);
 	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.innerFrame);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumSubject);
@@ -85,8 +85,8 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
 	// connect up the buttons.
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(createMsg()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui.sendButton, SIGNAL(clicked()), this, SLOT(createMsg()));
+	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
 	connect(ui.attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
 	connect(ui.generateCheckBox, SIGNAL(toggled(bool)), ui.generateSpinBox, SLOT(setEnabled(bool)));
@@ -259,7 +259,7 @@ void  CreateGxsForumMsg::createMsg()
 
 	RsHtml::optimizeHtml(ui.forumMessage, desc);
 
-	if(name.isEmpty()) {
+	if(name.isEmpty() | desc.isEmpty()) {
 		/* error message */
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
 
@@ -348,6 +348,27 @@ void  CreateGxsForumMsg::createNewGxsId()
 void CreateGxsForumMsg::closeEvent (QCloseEvent * /*event*/)
 {
 	Settings->saveWidgetInformation(this);
+}
+
+void CreateGxsForumMsg::reject()
+{
+    if (ui.forumMessage->document()->isModified()) {
+        QMessageBox::StandardButton ret;
+        ret = QMessageBox::warning(this, tr("Forum Message"),
+                                   tr("Forum Message has not been Sent.\n"
+                                      "Do you want to reject this message?"),
+                                   QMessageBox::Yes | QMessageBox::No);
+        switch (ret) {
+        case QMessageBox::Yes:
+            break;
+        case QMessageBox::No:
+            return; // don't close
+        default:
+            break;
+        }
+    }
+
+    QDialog::reject();
 }
 
 void CreateGxsForumMsg::smileyWidgetForums()
