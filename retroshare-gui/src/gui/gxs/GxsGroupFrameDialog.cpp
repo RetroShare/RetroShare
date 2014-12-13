@@ -100,6 +100,9 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	connect(ui->todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	/* Set initial size the splitter */
+	ui->splitter->setStretchFactor(0, 0);
+	ui->splitter->setStretchFactor(1, 1);
+
 	QList<int> sizes;
 	sizes << 300 << width(); // Qt calculates the right sizes
 	ui->splitter->setSizes(sizes);

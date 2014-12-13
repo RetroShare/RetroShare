@@ -142,6 +142,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     connect(showSubscribeAct,SIGNAL(triggered(bool)),this,SLOT(setShowSubscribeColumn(bool))) ;
 
 	// Set initial size of the splitter
+	ui.splitter->setStretchFactor(0, 0);
+	ui.splitter->setStretchFactor(1, 1);
+
 	QList<int> sizes;
 	sizes << 200 << width(); // Qt calculates the right sizes
 	ui.splitter->setSizes(sizes);

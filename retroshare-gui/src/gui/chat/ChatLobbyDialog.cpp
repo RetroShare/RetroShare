@@ -98,6 +98,10 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	unsubscribeButton->setIconSize(QSize(22,22)) ;
 	}
 
+	/* Initialize splitter */
+	ui.splitter->setStretchFactor(0, 1);
+	ui.splitter->setStretchFactor(1, 0);
+
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
 	getChatWidget()->addChatBarWidget(unsubscribeButton) ;
