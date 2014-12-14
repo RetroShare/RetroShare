@@ -3,6 +3,13 @@
                                        stop:0 lightgray, stop:1 darkgray);
 }
 
+FriendsDialog QFrame#headFrame {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #FBC957, stop:1 #D79704);
+	border: 1px;
+	border-radius: 4px;
+}
+
 QFrame#titleBarFrame, QFrame#toolBarFrame {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #FBC957, stop:1 #D79704);

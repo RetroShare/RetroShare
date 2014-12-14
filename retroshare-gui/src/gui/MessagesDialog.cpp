@@ -229,8 +229,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     QMenu *viewmenu = new QMenu();
     viewmenu->addAction(ui.actionTextBesideIcon);
     viewmenu->addAction(ui.actionIconOnly);
-    //viewmenu->addAction(ui.actionTextUnderIcon);
     ui.viewtoolButton->setMenu(viewmenu);
+    
+    // Set initial size of the splitter
+    ui.listSplitter->setStretchFactor(0, 0);
 
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("Subject"), COLUMN_SUBJECT, tr("Search Subject"));

@@ -11,7 +11,12 @@ QFrame#titleBarFrame, QFrame#toolBarFrame {
     border-image: url(qss/uus/uus.png);
 }
 
-
+FriendsDialog QFrame#headFrame {
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+	border: 1px;
+	border-radius: 4px;
+}
 
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);

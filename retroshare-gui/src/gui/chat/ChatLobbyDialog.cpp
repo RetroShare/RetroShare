@@ -93,9 +93,9 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/exit_32.png")) ;
+	icon.addPixmap(QPixmap(":/images/door_in.png")) ;
 	unsubscribeButton->setIcon(icon) ;
-	unsubscribeButton->setIconSize(QSize(22,22)) ;
+	unsubscribeButton->setIconSize(QSize(24,24)) ;
 	}
 
 	/* Initialize splitter */

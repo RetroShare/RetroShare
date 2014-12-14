@@ -215,7 +215,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     // add self nick and Avatar to Friends.
     RsPeerDetails pd ;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        ui.nicknameLabel->setText(PeerDefs::nameWithLocation(pd));
+        ui.nicknameLabel->setText(QString::fromUtf8(pd.name.c_str()));
     }
 
  QString hlp_str = tr(
