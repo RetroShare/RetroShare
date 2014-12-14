@@ -41,6 +41,7 @@
 #include "gui/common/FlowLayout.h"
 #include <QApplication>
 #include <QtGui>
+#include <QScrollBar>
 #include <QDebug>
 
 //*** FlowLayoutItem **********************************************************
