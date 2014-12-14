@@ -480,6 +480,7 @@ HEADERS +=  rshare.h \
             gui/common/FlowLayout.h \
             gui/common/PictureFlow.h \
             gui/common/StyledLabel.h \
+            gui/common/StyledElidedLabel.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -778,6 +779,7 @@ SOURCES +=  main.cpp \
             gui/common/FlowLayout.cpp \
             gui/common/PictureFlow.cpp \
             gui/common/StyledLabel.cpp \
+            gui/common/StyledElidedLabel.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \

@@ -27,6 +27,7 @@
 
 class QWidget;
 class QLabel;
+class ElidedLabel;
 class QLineEdit;
 class RSTreeWidget;
 class UIStateHelperData;
@@ -59,6 +60,7 @@ public:
 	/* Add widgets */
 	void addWidget(int index, QWidget *widget, UIStates states = UISTATE_LOADING_DISABLED | UISTATE_ACTIVE_ENABLED);
 	void addLoadPlaceholder(int index, QLabel *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
+	void addLoadPlaceholder(int index, ElidedLabel *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
 	void addLoadPlaceholder(int index, QLineEdit *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
 	void addLoadPlaceholder(int index, RSTreeWidget *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
 	void addLoadPlaceholder(int index, RSTextBrowser *widget, bool clear = true, const QString &text = "" /* ="Loading" */);

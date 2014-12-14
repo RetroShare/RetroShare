@@ -183,7 +183,7 @@
            </widget>
           </item>
           <item row="0" column="1" colspan="3">
-           <widget class="StyledLabel" name="nicknameLabel">
+           <widget class="StyledElidedLabel" name="nicknameLabel">
             <property name="text">
              <string notr="true">Nickname (Location)</string>
             </property>
@@ -829,6 +829,11 @@
    <extends>QTabWidget</extends>
    <header location="global">gui/chat/ChatTabWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

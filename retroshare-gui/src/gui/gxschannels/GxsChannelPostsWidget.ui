@@ -73,7 +73,7 @@
        </widget>
       </item>
       <item>
-       <widget class="StyledLabel" name="nameLabel">
+       <widget class="StyledElidedLabel" name="nameLabel">
         <property name="palette">
          <palette>
           <active/>
@@ -83,9 +83,6 @@
         </property>
         <property name="text">
          <string notr="true">Channel Name</string>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -307,6 +304,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
@@ -327,11 +329,6 @@
    <extends>QWidget</extends>
    <header>gui/gxschannels/GxsChannelFilesWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

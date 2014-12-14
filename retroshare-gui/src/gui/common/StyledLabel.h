@@ -23,7 +23,6 @@
 #define _STYLEDLABEL_H
 
 #include <QLabel>
-#include <retroshare/rsidentity.h>
 
 class StyledLabel : public QLabel
 {
@@ -32,6 +31,7 @@ class StyledLabel : public QLabel
 
 public:
 	StyledLabel(QWidget *parent = NULL);
+	StyledLabel(const QString &text, QWidget *parent = NULL);
 
 	void setFontSizeFactor(int factor);
 };

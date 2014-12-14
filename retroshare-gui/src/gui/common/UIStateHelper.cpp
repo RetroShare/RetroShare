@@ -27,6 +27,7 @@
 #include "UIStateHelper.h"
 #include "RSTreeWidget.h"
 #include "RSTextBrowser.h"
+#include "ElidedLabel.h"
 
 class UIStateHelperObject
 {
@@ -35,6 +36,11 @@ public:
 	{
 		init();
 		mLabel = widget;
+	}
+	UIStateHelperObject(ElidedLabel *widget)
+	{
+		init();
+		mElidedLabel = widget;
 	}
 	UIStateHelperObject(QLineEdit *widget)
 	{
@@ -56,6 +62,10 @@ public:
 	{
 		if (mLabel) {
 			mLabel->setText(text);
+		}
+
+		if (mElidedLabel) {
+			mElidedLabel->setText(text);
 		}
 
 		if (mLineEdit) {
@@ -93,6 +103,10 @@ public:
 			mLabel->clear();
 		}
 
+		if (mElidedLabel) {
+			mElidedLabel->clear();
+		}
+
 		if (mLineEdit) {
 			mLineEdit->clear();
 		}
@@ -110,6 +124,10 @@ public:
 	{
 		if (mLabel) {
 			return mLabel;
+		}
+
+		if (mElidedLabel) {
+			return mElidedLabel;
 		}
 
 		if (mLineEdit) {
@@ -133,6 +151,10 @@ public:
 			return true;
 		}
 
+		if (mElidedLabel == widget) {
+			return true;
+		}
+
 		if (mLineEdit == widget) {
 			return true;
 		}
@@ -151,9 +173,10 @@ public:
 	bool operator ==(const UIStateHelperObject &data) const
 	{
 		if (mLabel == data.mLabel &&
-			mLineEdit == data.mLineEdit &&
-			mTreeWidget == data.mTreeWidget &&
-			mRSTextBrowser == data.mRSTextBrowser) {
+		    mElidedLabel == data.mElidedLabel &&
+		    mLineEdit == data.mLineEdit &&
+		    mTreeWidget == data.mTreeWidget &&
+		    mRSTextBrowser == data.mRSTextBrowser) {
 			return true;
 		}
 
@@ -163,9 +186,10 @@ public:
 	bool operator <(const UIStateHelperObject &data) const
 	{
 		if (mLabel < data.mLabel ||
-			mLineEdit < data.mLineEdit ||
-			mTreeWidget < data.mTreeWidget ||
-			mRSTextBrowser < data.mRSTextBrowser) {
+		    mElidedLabel < data.mElidedLabel ||
+		    mLineEdit < data.mLineEdit ||
+		    mTreeWidget < data.mTreeWidget ||
+		    mRSTextBrowser < data.mRSTextBrowser) {
 			return true;
 		}
 
@@ -176,6 +200,7 @@ private:
 	void init()
 	{
 		mLabel = NULL;
+		mElidedLabel = NULL;
 		mLineEdit = NULL;
 		mTreeWidget = NULL;
 		mRSTextBrowser = NULL;
@@ -183,6 +208,7 @@ private:
 
 private:
 	QLabel *mLabel;
+	ElidedLabel *mElidedLabel;
 	QLineEdit *mLineEdit;
 	RSTreeWidget *mTreeWidget;
 	RSTextBrowser *mRSTextBrowser;
@@ -242,6 +268,12 @@ void UIStateHelper::addWidget(int index, QWidget *widget, UIStates states)
 }
 
 void UIStateHelper::addLoadPlaceholder(int index, QLabel *widget, bool clear, const QString &text)
+{
+	UIStateHelperData *data = findData(index, true);
+	data->mLoad.insert(UIStateHelperObject(widget), QPair<QString, bool>(text.isEmpty() ? tr("Loading") : text, clear));
+}
+
+void UIStateHelper::addLoadPlaceholder(int index, ElidedLabel *widget, bool clear, const QString &text)
 {
 	UIStateHelperData *data = findData(index, true);
 	data->mLoad.insert(UIStateHelperObject(widget), QPair<QString, bool>(text.isEmpty() ? tr("Loading") : text, clear));

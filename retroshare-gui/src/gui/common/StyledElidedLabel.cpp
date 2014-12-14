@@ -21,20 +21,20 @@
 
 #include <QFont>
 
-#include "StyledLabel.h"
+#include "StyledElidedLabel.h"
 
 /** Constructor */
-StyledLabel::StyledLabel(QWidget *parent)
-    : QLabel(parent)
+StyledElidedLabel::StyledElidedLabel(QWidget *parent)
+    : ElidedLabel(parent)
 {
 }
 
-StyledLabel::StyledLabel(const QString &text, QWidget *parent)
-    : QLabel(text, parent)
+StyledElidedLabel::StyledElidedLabel(const QString &text, QWidget *parent)
+    : ElidedLabel(text, parent)
 {
 }
 
-void StyledLabel::setFontSizeFactor(int factor)
+void StyledElidedLabel::setFontSizeFactor(int factor)
 {
 	QFont f = font();
 	qreal fontSize = factor * f.pointSizeF() / 100;

@@ -19,25 +19,21 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QFont>
+#ifndef _STYLEDELIDEDLABEL_H
+#define _STYLEDELIDEDLABEL_H
 
-#include "StyledLabel.h"
+#include "ElidedLabel.h"
 
-/** Constructor */
-StyledLabel::StyledLabel(QWidget *parent)
-    : QLabel(parent)
+class StyledElidedLabel : public ElidedLabel
 {
-}
+	Q_OBJECT
+	Q_PROPERTY(int fontSizeFactor WRITE setFontSizeFactor)
 
-StyledLabel::StyledLabel(const QString &text, QWidget *parent)
-    : QLabel(text, parent)
-{
-}
+public:
+	StyledElidedLabel(QWidget *parent = NULL);
+	StyledElidedLabel(const QString &text, QWidget *parent = NULL);
 
-void StyledLabel::setFontSizeFactor(int factor)
-{
-	QFont f = font();
-	qreal fontSize = factor * f.pointSizeF() / 100;
-	f.setPointSizeF(fontSize);
-	setFont(f);
-}
+	void setFontSizeFactor(int factor);
+};
+
+#endif
