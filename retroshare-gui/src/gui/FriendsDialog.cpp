@@ -805,7 +805,16 @@ void FriendsDialog::getAvatar()
 /** Loads own personal status */
 void FriendsDialog::loadmypersonalstatus()
 {
-    ui.mypersonalstatusLabel->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
+	QString statustring =  QString::fromUtf8(rsMsgs->getCustomStateString().c_str());
+
+	if (statustring.isEmpty())
+	{
+		ui.mypersonalstatusLabel->setText(tr("Set here your Status message"));
+	}
+	else
+	{
+		ui.mypersonalstatusLabel->setText(statustring);
+	}
 }
 
 void FriendsDialog::statusmessage()
