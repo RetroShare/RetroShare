@@ -161,7 +161,7 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * Return the max message size for security forwarding
 	   */
-	  virtual int getMaxMessageSecuritySize();
+	  virtual uint32_t getMaxMessageSecuritySize(int type);
 
 	  /*!
 	   * sends immediate status string to a specific peer, e.g. in a private chat

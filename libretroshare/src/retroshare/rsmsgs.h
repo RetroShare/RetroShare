@@ -83,6 +83,11 @@
 #define RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  		1	/* lobby is visible by friends. Friends can connect.*/
 #define RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 		2	/* lobby invisible by friends. Peers on invitation only .*/
 
+#define RS_CHAT_TYPE_PUBLIC  1
+#define RS_CHAT_TYPE_PRIVATE 2
+#define RS_CHAT_TYPE_LOBBY   3
+#define RS_CHAT_TYPE_DISTANT 4
+
 const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE( 0x00000001 ) ;
 
 typedef uint64_t 		ChatLobbyId ;
@@ -384,7 +389,7 @@ virtual int     getPrivateChatQueueCount(bool incoming) = 0;
 virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids) = 0;
 virtual	bool   getPrivateChatQueue(bool incoming, const RsPeerId& id, std::list<ChatInfo> &chats) = 0;
 virtual	bool   clearPrivateChatQueue(bool incoming, const RsPeerId& id) = 0;
-virtual int    getMaxMessageSecuritySize() = 0;
+virtual uint32_t getMaxMessageSecuritySize(int type) = 0;
 
 virtual void   sendStatusString(const RsPeerId& id,const std::string& status_string) = 0 ;
 virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;

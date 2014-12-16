@@ -509,25 +509,42 @@ void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
 	RsServer::notify()->notifyPeerHasNewAvatar(ca->PeerId().toStdString()) ;
 }
 
-int p3ChatService::getMaxMessageSecuritySize()
+uint32_t p3ChatService::getMaxMessageSecuritySize(int type)
 {
+	switch (type)
+	{
+	case RS_CHAT_TYPE_PUBLIC:
+	case RS_CHAT_TYPE_LOBBY:
+		return MAX_MESSAGE_SECURITY_SIZE;
+
+	case RS_CHAT_TYPE_PRIVATE:
+	case RS_CHAT_TYPE_DISTANT:
+		return 0; // unlimited
+	}
+
+	std::cerr << "p3ChatService::getMaxMessageSecuritySize: Unknown chat type " << type << std::endl;
+
 	return MAX_MESSAGE_SECURITY_SIZE;
 }
 
 bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 {
 	// Remove too big messages
-	if (ci->message.length() > MAX_MESSAGE_SECURITY_SIZE && (ci->chatFlags & RS_CHAT_FLAG_LOBBY))
+	if (ci->chatFlags & RS_CHAT_FLAG_LOBBY)
 	{
-		std::ostringstream os;
-		os << getMaxMessageSecuritySize();
+		uint32_t maxMessageSize = getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
+		if (maxMessageSize > 0 && ci->message.length() > maxMessageSize)
+		{
+			std::ostringstream os;
+			os << getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
 
-		ci->message = "**** Security warning: Message bigger than ";
-		ci->message += os.str();
-		ci->message += " characters, forwarded to you by ";
-		ci->message += rsPeers->getPeerName(ci->PeerId());
-		ci->message += ", dropped. ****";
-		return false;
+			ci->message = "**** Security warning: Message bigger than ";
+			ci->message += os.str();
+			ci->message += " characters, forwarded to you by ";
+			ci->message += rsPeers->getPeerName(ci->PeerId());
+			ci->message += ", dropped. ****";
+			return false;
+		}
 	}
 
 	// The following code has been suggested, but is kept suspended since it is a bit too much restrictive.

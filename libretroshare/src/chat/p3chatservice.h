@@ -159,8 +159,10 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 
 		/*!
 		 * Return the max message size for security forwarding
+		 * @param type RS_CHAT_TYPE_...
+		 * return 0 unlimited
 		 */
-		static int getMaxMessageSecuritySize();
+		static uint32_t getMaxMessageSecuritySize(int type);
 
 		/*!
 		 * Checks message security, especially remove billion laughs attacks

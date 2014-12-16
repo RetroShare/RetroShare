@@ -848,10 +848,29 @@ void ChatWidget::updateLenOfChatTextEdit()
 	QString text;
 	RsHtml::optimizeHtml(chatWidget, text);
 	std::wstring msg = text.toStdWString();
-	bool msgToLarge = (msg.length()>=size_t(rsMsgs->getMaxMessageSecuritySize()));
+
+	uint32_t maxMessageSize = 0;
+	switch (chatType()) {
+	case CHATTYPE_UNKNOWN:
+		break;
+	case CHATTYPE_PRIVATE:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_PRIVATE);
+		break;
+	case CHATTYPE_LOBBY:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
+		break;
+	case CHATTYPE_DISTANT:
+		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_DISTANT);
+		break;
+	}
+
+	bool msgToLarge = false;
+	if (maxMessageSize > 0) {
+		msgToLarge = (msg.length() >= maxMessageSize);
+	}
 
 	ui->sendButton->setEnabled(!msgToLarge);
-	text = tr("%1This message counts %2 characters.").arg(msgToLarge?tr("Warning: "):"").arg(msg.length());
+	text = tr("%1This message counts %2 characters.").arg(msgToLarge ? tr("Warning: ") : "").arg(msg.length());
 	ui->sendButton->setToolTip(text);
 	ui->chatTextEdit->setToolTip(msgToLarge?text:"");
 }
