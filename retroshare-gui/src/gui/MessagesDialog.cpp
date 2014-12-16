@@ -233,6 +233,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
+    ui.listSplitter->setStretchFactor(1, 1);
+    
 
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("Subject"), COLUMN_SUBJECT, tr("Search Subject"));
