@@ -315,7 +315,8 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 		}
 
 		/* now install a new one. */
-		{
+        if(!active)
+        {
 
 			pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::notifyEvent() Id: " + PeerId().toStdString() + " CONNECT_SUCCESS->marking so! (resetting others)");
 
