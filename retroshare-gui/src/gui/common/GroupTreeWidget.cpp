@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QToolButton>
 
+#include "retroshare/rsgxsflags.h"
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
@@ -353,18 +354,22 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setIcon(COLUMN_NAME, itemInfo.icon);
 
 		/* Set popularity */
-		QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
+        QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
+
 		item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
 		item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
 
 		/* Set tooltip */
 		if (itemInfo.privatekey) {
 			tooltip += "\n" + tr("Private Key Available");
-		}
+        }
+        if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
+            tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
+
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_POPULARITY, tooltip);
 
-		item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
+        item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
 
 		/* Set color */
 		QBrush brush;

@@ -48,6 +48,15 @@ typedef std::map<RsPeerId, TransactionIdMap > TransactionsPeerMap;
 
 class PgpAuxUtils;
 
+class RsGroupNetworkStatsRecord
+{
+    public:
+        RsGroupNetworkStatsRecord() { max_visible_count= 0 ; }
+
+        std::set<RsPeerId> suppliers ;
+    uint32_t max_visible_count ;
+};
+
 /*!
  * This class implements the RsNetWorkExchangeService
  * using transactions to handle synchrnisation of Nxs items between
@@ -128,7 +137,11 @@ public:
 
     virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers) ;
 
-    virtual int getGroupPopularity(const RsGxsGroupId& id) ;
+    /*!
+     * Returns statistics for the group networking activity: popularity (number of friends subscribers) and max_visible_msg_count,
+     * that is the max nnumber of messages reported by a friend.
+     */
+    virtual bool getGroupNetworkStats(const RsGxsGroupId& id,RsGroupNetworkStats& stats) ;
 
     /* p3Config methods */
 public:
@@ -477,7 +490,7 @@ private:
     ServerMsgMap mServerMsgUpdateMap;
     ClientGrpMap mClientGrpUpdateMap;
 
-    std::map<RsGxsGroupId,std::set<RsPeerId> > mGroupSuppliers ;
+    std::map<RsGxsGroupId,RsGroupNetworkStatsRecord> mGroupNetworkStats ;
 
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;

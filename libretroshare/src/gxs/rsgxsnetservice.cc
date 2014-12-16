@@ -37,7 +37,6 @@
 /***
  * #define NXS_NET_DEBUG	1
  ***/
-// #define NXS_NET_DEBUG	1
 
 #define GIXS_CUT_OFF 0
 
@@ -278,11 +277,11 @@ void RsGxsNetService::syncWithPeers()
         {
             RsGxsGrpMetaData* meta = mit->second;
 
-            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
-            {
-				toRequest.insert(std::make_pair(mit->first, meta));
-            }else
-            	delete meta;
+//            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
+ //           {
+        toRequest.insert(std::make_pair(mit->first, meta));
+  //          }else
+   //         	delete meta;
         }
 
         grpMeta.clear();
@@ -557,7 +556,7 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpRespPending* grpPen
     std::cerr << "locked_createTransactionFromPending() from peer " << grpPend->mPeerId << std::endl;
 #endif
 	GrpAuthorV::const_iterator cit = grpPend->mGrpAuthV.begin();
-	std::list<RsNxsItem*> reqList;
+    std::list<RsNxsItem*> reqList;
 	uint32_t transN = locked_getTransactionId();
 	for(; cit != grpPend->mGrpAuthV.end(); ++cit)
 	{
@@ -1434,16 +1433,19 @@ void RsGxsNetService::processTransactions()
     }
 }
 
-int RsGxsNetService::getGroupPopularity(const RsGxsGroupId& gid)
+bool RsGxsNetService::getGroupNetworkStats(const RsGxsGroupId& gid,RsGroupNetworkStats& stats)
 {
-	RS_STACK_MUTEX(mNxsMutex) ;
+    RS_STACK_MUTEX(mNxsMutex) ;
 
-    std::map<RsGxsGroupId,std::set<RsPeerId> >::const_iterator it = mGroupSuppliers.find(gid) ;
+    std::map<RsGxsGroupId,RsGroupNetworkStatsRecord>::const_iterator it = mGroupNetworkStats.find(gid) ;
 
-    if(it == mGroupSuppliers.end())
-        return 0 ;
-    else
-        return it->second.size();
+    if(it == mGroupNetworkStats.end())
+        return false ;
+
+    stats.mSuppliers = it->second.suppliers.size();
+    stats.mMaxVisibleCount = it->second.max_visible_count ;
+
+    return true ;
 }
 
 void RsGxsNetService::processCompletedTransactions()
@@ -1820,6 +1822,15 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     RsNxsSyncMsgItem* item = msgItemL.front();
     const RsGxsGroupId& grpId = item->grpId;
 
+    // store the count for the peer who sent the message list
+    uint32_t mcount = msgItemL.size() ;
+    RsPeerId pid = msgItemL.front()->PeerId() ;
+
+    RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[grpId];
+
+    gnsr.suppliers.insert(pid) ;
+    gnsr.max_visible_count = std::max(gnsr.max_visible_count, mcount) ;
+
 #ifdef NXS_NET_DEBUG
     std::cerr << "  grpId = " << grpId << std::endl;
     std::cerr << "  retrieving grp mesta data..." << std::endl;
@@ -1828,6 +1839,9 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     grpMetaMap[grpId] = NULL;
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
     RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
+
+    if(! (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
+        return ;
 
     int cutoff = 0;
     if(grpMeta != NULL)
@@ -2864,7 +2878,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 
     // We do that early, so as to get info about who sends data about which group,
     // even when the group doesn't need update.
-    mGroupSuppliers[item->grpId].insert(item->PeerId()) ;
+    mGroupNetworkStats[item->grpId].suppliers.insert(item->PeerId()) ;
 
         if(!locked_CanReceiveUpdate(item))
             return;

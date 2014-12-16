@@ -71,9 +71,9 @@ public:
 
     uint32_t    mSubscribeFlags;
 
-    uint32_t    mPop; // HOW DO WE DO THIS NOW.
-    uint32_t    mMsgCount; // ???
-    uint32_t      mLastPost; // ???
+    uint32_t    mPop; 			// Number of friends who subscribed
+    uint32_t    mVisibleMsgCount; 	// Max number of messages reported by a single friend (used for unsubscribed groups)
+    uint32_t    mLastPost; 		// Time stamp of last post (not yet filled)
     uint32_t    mReputationCutOff;
     uint32_t    mGrpSize;
 

@@ -77,7 +77,7 @@ void RsGxsGrpMetaData::clear(){
     mSubscribeFlags = 0;
 
     mPop = 0;
-    mMsgCount = 0;
+    mVisibleMsgCount = 0;
     mGroupStatus = 0;
     mLastPost = 0;
     mReputationCutOff = 0;
@@ -284,17 +284,17 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
 
 void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
 {
-	this->mAuthorId = rMeta.mAuthorId;
-	this->mGroupFlags = rMeta.mGroupFlags;
-	this->mGroupId = rMeta.mGroupId;
-	this->mGroupStatus = rMeta.mGroupStatus ;
-	this->mLastPost = rMeta.mLastPost;
-	this->mMsgCount = rMeta.mMsgCount ;
-	this->mPop = rMeta.mPop;
-	this->mPublishTs = rMeta.mPublishTs;
-	this->mSubscribeFlags = rMeta.mSubscribeFlags;
-	this->mGroupName = rMeta.mGroupName;
-	this->mServiceString = rMeta.mServiceString;
+    this->mAuthorId = rMeta.mAuthorId;
+    this->mGroupFlags = rMeta.mGroupFlags;
+    this->mGroupId = rMeta.mGroupId;
+    this->mGroupStatus = rMeta.mGroupStatus ;
+    this->mLastPost = rMeta.mLastPost;
+    this->mVisibleMsgCount = rMeta.mVisibleMsgCount ;
+    this->mPop = rMeta.mPop;
+    this->mPublishTs = rMeta.mPublishTs;
+    this->mSubscribeFlags = rMeta.mSubscribeFlags;
+    this->mGroupName = rMeta.mGroupName;
+    this->mServiceString = rMeta.mServiceString;
         this->mSignFlags = rMeta.mSignFlags;
         this->mCircleId = rMeta.mCircleId;
         this->mCircleType = rMeta.mCircleType;
@@ -307,18 +307,18 @@ void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
 
 void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)
 {
-	this->mAuthorId = rMeta.mAuthorId;
-	this->mChildTs = rMeta.mChildTs ;
-	this->mGroupId = rMeta.mGroupId;
-	this->mMsgFlags = rMeta.mMsgFlags ;
-	this->mMsgId = rMeta.mMsgId ;
-	this->mMsgName = rMeta.mMsgName;
-	this->mMsgStatus = rMeta.mMsgStatus;
-	this->mOrigMsgId = rMeta.mOrigMsgId;
-	this->mParentId = rMeta.mParentId ;
-	this->mPublishTs = rMeta.mPublishTs ;
-	this->mThreadId = rMeta.mThreadId;
-	this->mServiceString = rMeta.mServiceString;
+    this->mAuthorId = rMeta.mAuthorId;
+    this->mChildTs = rMeta.mChildTs ;
+    this->mGroupId = rMeta.mGroupId;
+    this->mMsgFlags = rMeta.mMsgFlags ;
+    this->mMsgId = rMeta.mMsgId ;
+    this->mMsgName = rMeta.mMsgName;
+    this->mMsgStatus = rMeta.mMsgStatus;
+    this->mOrigMsgId = rMeta.mOrigMsgId;
+    this->mParentId = rMeta.mParentId ;
+    this->mPublishTs = rMeta.mPublishTs ;
+    this->mThreadId = rMeta.mThreadId;
+    this->mServiceString = rMeta.mServiceString;
 }
 
 

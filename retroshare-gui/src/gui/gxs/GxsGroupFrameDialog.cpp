@@ -61,7 +61,6 @@
  *   these will need to be addressed in the future.
  *     -> Child TS (for sorting) is not handled by GXS, this will probably have to be done in the GUI.
  *     -> Need to handle IDs properly.
- *     -> Popularity not handled in GXS yet.
  *     -> Much more to do.
  */
 
@@ -655,6 +654,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupI
 	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
     groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
     groupItemInfo.privatekey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
+    groupItemInfo.max_visible_posts = groupInfo.mVisibleMsgCount ;
 
 #if TOGXS
 	if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
@@ -904,7 +904,7 @@ void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
 		return;
 	}
 
-	ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+    ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
 }
 
 /*********************** **** **** **** ***********************/

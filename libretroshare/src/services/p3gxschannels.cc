@@ -45,7 +45,6 @@
 /****
  * #define GXSCHANNEL_DEBUG 1
  ****/
-#define GXSCHANNEL_DEBUG 1
 
 RsGxsChannels *rsGxsChannels = NULL;
 

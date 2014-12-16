@@ -48,7 +48,8 @@ public:
 	{
 		popularity = 0;
 		privatekey = false;
-		subscribeFlags = 0;
+        subscribeFlags = 0;
+        max_visible_posts =0;
 	}
 
 public:
@@ -59,7 +60,8 @@ public:
 	QDateTime lastpost;
 	QIcon     icon;
 	bool      privatekey;
-	int       subscribeFlags;
+    quint32  subscribeFlags;
+    quint32  max_visible_posts ;
 };
 
 class GroupTreeWidget : public QWidget

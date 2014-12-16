@@ -75,6 +75,23 @@ public:
 
 };
 
+/*!
+ * This is used to query network statistics for a given group. This is useful to e.g. show group
+ * popularity, or number of visible messages for unsubscribed group.
+ */
+
+class RsGroupNetworkStats
+{
+public:
+    RsGroupNetworkStats()
+    {
+        mMaxVisibleCount = 0 ;
+    }
+
+    uint32_t mSuppliers ;
+    uint32_t mMaxVisibleCount ;
+};
+
 typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsNxsMsg*> > NxsMsgRelatedDataResult;
 typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>

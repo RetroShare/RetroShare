@@ -44,7 +44,7 @@ public:
             mSubscribeFlags = 0;
 
             mPop = 0;
-            mMsgCount = 0;
+            mVisibleMsgCount = 0;
             mLastPost = 0;
 
             mGroupStatus = 0;
@@ -76,9 +76,9 @@ public:
 
     uint32_t    mSubscribeFlags;
 
-    uint32_t    mPop; // HOW DO WE DO THIS NOW.
-    uint32_t    mMsgCount; // ???
-    time_t      mLastPost; // ???
+    uint32_t    mPop; 			// Popularity = number of friend subscribers
+    uint32_t    mVisibleMsgCount; 	// Max messages reported by friends
+    time_t      mLastPost; 		// Timestamp for last message. Not used yet.
 
     uint32_t    mGroupStatus;
     std::string mServiceString; // Service Specific Free-Form extra storage.
@@ -142,18 +142,19 @@ public:
 		mNumThreadMsgsNew = 0;
 		mNumThreadMsgsUnread = 0;
 		mNumChildMsgsNew = 0;
-		mNumChildMsgsUnread = 0;
+        mNumChildMsgsUnread = 0;
 	}
 
 public:
 	/// number of message
-	RsGxsGroupId mGrpId;
-	uint32_t mNumMsgs;
+    RsGxsGroupId mGrpId;
+
+    uint32_t mNumMsgs;			// from the database
 	uint32_t mTotalSizeOfMsgs;
 	uint32_t mNumThreadMsgsNew;
 	uint32_t mNumThreadMsgsUnread;
 	uint32_t mNumChildMsgsNew;
-	uint32_t mNumChildMsgsUnread;
+    uint32_t mNumChildMsgsUnread;
 };
 
 class GxsServiceStatistic

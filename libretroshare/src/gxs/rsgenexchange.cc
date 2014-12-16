@@ -1146,11 +1146,18 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 	{
 		RsGxsGrpMetaData& gMeta = *(*lit);
         m = gMeta;
+        RsGroupNetworkStats sts ;
 
-            if(mNetService != NULL)
-                m.mPop = mNetService->getGroupPopularity((*lit)->mGroupId) ;
-            else
-                m.mPop= 0 ;
+    if(mNetService != NULL && mNetService->getGroupNetworkStats((*lit)->mGroupId,sts))
+    {
+        m.mPop = sts.mSuppliers ;
+        m.mVisibleMsgCount = sts.mMaxVisibleCount ;
+    }
+    else
+    {
+        m.mPop= 0 ;
+        m.mVisibleMsgCount = 0 ;
+        }
 
         groupInfo.push_back(m);
 		delete (*lit);
@@ -1251,10 +1258,18 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				{
                     gItem->meta = *((*lit)->metaData);
 
-            if(mNetService != NULL)
-                gItem->meta.mPop = mNetService->getGroupPopularity(gItem->meta.mGroupId) ;
+            RsGroupNetworkStats sts ;
+
+            if(mNetService != NULL && mNetService->getGroupNetworkStats(gItem->meta.mGroupId,sts))
+        {
+                gItem->meta.mPop = sts.mSuppliers ;
+        gItem->meta.mVisibleMsgCount  = sts.mMaxVisibleCount;
+        }
             else
-                gItem->meta.mPop= 0 ;
+        {
+                gItem->meta.mPop = 0 ;
+        gItem->meta.mVisibleMsgCount = 0 ;
+        }
 					grpItem.push_back(gItem);
 				}
 				else

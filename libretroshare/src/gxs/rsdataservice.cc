@@ -327,7 +327,7 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     // local meta
     grpMeta->mSubscribeFlags = c.getInt32(COL_GRP_SUBCR_FLAG);
     grpMeta->mPop = c.getInt32(COL_GRP_POP);
-    grpMeta->mMsgCount = c.getInt32(COL_MSG_COUNT);
+    grpMeta->mVisibleMsgCount = c.getInt32(COL_MSG_COUNT);
     grpMeta->mLastPost = c.getInt32(COL_GRP_LAST_POST);
     grpMeta->mGroupStatus = c.getInt32(COL_GRP_STATUS);
 
@@ -743,7 +743,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         // local meta data
         cv.put(KEY_GRP_SUBCR_FLAG, (int32_t)grpMetaPtr->mSubscribeFlags);
         cv.put(KEY_GRP_POP, (int32_t)grpMetaPtr->mPop);
-        cv.put(KEY_MSG_COUNT, (int32_t)grpMetaPtr->mMsgCount);
+        cv.put(KEY_MSG_COUNT, (int32_t)grpMetaPtr->mVisibleMsgCount);
         cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
         cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
 
@@ -838,7 +838,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         // local meta data
         cv.put(KEY_GRP_SUBCR_FLAG, (int32_t)grpMetaPtr->mSubscribeFlags);
         cv.put(KEY_GRP_POP, (int32_t)grpMetaPtr->mPop);
-        cv.put(KEY_MSG_COUNT, (int32_t)grpMetaPtr->mMsgCount);
+        cv.put(KEY_MSG_COUNT, (int32_t)grpMetaPtr->mVisibleMsgCount);
         cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
         cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
 

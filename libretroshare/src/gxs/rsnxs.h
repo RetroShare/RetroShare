@@ -111,18 +111,18 @@ public:
      */
     virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId) = 0;
 
+    /*!
+     * returns some stats about this group related to the network visibility.
+     * For now, only one statistics:
+     *     max_known_messages:   max number of messages reported by a friend. This is used to display unsubscribed group content.
+     */
+    virtual bool getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats)=0;
 
     /*!
      * Request for this group is sent through to peers on your network
      * and how many hops from them you've indicated
      */
     virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)=0 ;
-
-    /*!
-     * Request the number of peers who sent info about this group, as an indicator
-     * of group popularity.
-     */
-    virtual int getGroupPopularity(const RsGxsGroupId& id) = 0 ;
 
 };
 
