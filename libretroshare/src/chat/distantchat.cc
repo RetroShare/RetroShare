@@ -45,7 +45,7 @@
 #include <retroshare/rsids.h>
 #include "distantchat.h"
 
-#define DEBUG_DISTANT_CHAT
+//#define DEBUG_DISTANT_CHAT
 
 static const uint32_t DISTANT_CHAT_KEEP_ALIVE_TIMEOUT = 15 ; // send keep alive packet so as to avoid tunnel breaks.
 
@@ -189,10 +189,6 @@ void DistantChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleV
             std::cerr << "  Tunnel already registered for " << hash << " and virtual peer " << virtual_peer_id << ". Doing nothing." << std::endl;
             return ;
         }
-        DistantChatDHInfo& dhinfo( _distant_chat_virtual_peer_ids[virtual_peer_id] ) ;
-    dhinfo.gxs_id.clear() ;
-    dhinfo.dh = NULL ;
-    dhinfo.direction = dir ;
 
         if(dir == RsTurtleGenericTunnelItem::DIRECTION_CLIENT)
         {
@@ -212,14 +208,21 @@ void DistantChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleV
                 return ;
             }
 
-        if(it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
-        {
-                std::cerr << "  virtual peer is for a distant chat session that is already openned and alive. Giving it up." << std::endl;
-                return ;
-        }
+				if(it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
+				{
+					std::cerr << "  virtual peer is for a distant chat session that is already openned and alive. Giving it up." << std::endl;
+					return ;
+				}
 
             own_gxs_id = it->second.own_gxs_id ;
         }
+
+		  std::cerr << "  Creating new virtual peer ID entry and empty DH session key." << std::endl;
+
+        DistantChatDHInfo& dhinfo( _distant_chat_virtual_peer_ids[virtual_peer_id] ) ;
+		  dhinfo.gxs_id.clear() ;
+		  dhinfo.dh = NULL ;
+		  dhinfo.direction = dir ;
     }
 
 #ifdef DEBUG_DISTANT_CHAT
