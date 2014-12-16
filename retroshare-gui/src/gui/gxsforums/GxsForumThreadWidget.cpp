@@ -694,9 +694,9 @@ void GxsForumThreadWidget::insertGroupData(const RsGxsForumGroup &group)
     ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
     mForumDescription = QString();
-    mForumDescription += QString("<b>Forum name: \t</b>")+QString::fromStdString( group.mMeta.mGroupName)+"<br/>" ;
+    mForumDescription += QString("<b>Forum name: \t</b>")+QString::fromUtf8( group.mMeta.mGroupName.c_str())+"<br/>" ;
     mForumDescription += QString("<b>Subscribers: \t</b>")+QString::number( group.mMeta.mPop)+"<br/>" ;
-    mForumDescription += QString("<b>Posts: \t</b>")+QString::number(group.mMeta.mVisibleMsgCount)+"<br/>" ;
+    mForumDescription += QString("<b>Posts (at neighbor nodes): \t</b>")+QString::number(group.mMeta.mVisibleMsgCount)+"<br/>" ;
     mForumDescription += QString("<b>Description: </b>")+"<br/><br/>" ;
 
     mForumDescription += QString::fromUtf8(group.mDescription.c_str());
