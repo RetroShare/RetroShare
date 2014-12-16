@@ -54,38 +54,36 @@ int	pqithreadstreamer::tick()
 
 void pqithreadstreamer::start()
 {
-	{
-		RsStackMutex stack(mThreadMutex);
-		mToRun = true;
-	}
+    mToRun = true;
+
 	RsThread::start();
 }
 
 void pqithreadstreamer::run()
 {
-	std::cerr << "pqithreadstream::run()";
-	std::cerr << std::endl;
+    std::cerr << "pqithreadstream::run()";
+    std::cerr << std::endl;
 
-	{
-		RsStackMutex stack(mThreadMutex);
-		mRunning = true;
-	}
+    {
+        RsStackMutex stack(mThreadMutex);
+        mRunning = true;
+    }
 
-	while(1)
-	{
-		{
-			RsStackMutex stack(mThreadMutex);
-			if (!mToRun)
-			{
-				std::cerr << "pqithreadstream::run() stopping";
-				std::cerr << std::endl;
+    while(1)
+    {
+        {
+            RsStackMutex stack(mThreadMutex);
+            if (!mToRun)
+            {
+                std::cerr << "pqithreadstream::run() stopping";
+                std::cerr << std::endl;
 
-				mRunning = false;
-				return;
-			}
+                mRunning = false;
+                return;
+            }
         }
         data_tick();
-	}
+    }
 }
 
 void pqithreadstreamer::stop()

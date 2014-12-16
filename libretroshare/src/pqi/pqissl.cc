@@ -1767,9 +1767,7 @@ int 	pqissl::netstatus()
 
 int 	pqissl::isactive()
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-	return active;
+    return active;	// no need to mutex this. It's atomic.
 }
 
 bool 	pqissl::moretoread(uint32_t usec)
