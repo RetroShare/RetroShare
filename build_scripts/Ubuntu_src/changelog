@@ -3,7 +3,15 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
    Improvements
 
       GUI
-         * Set the list with buttons in MainWindow and friend list in FriendsDialog to fixed when resizing the window.
+         * Set to display a placeholder text when status message is empty.
+         * Added new class StyledElidedLabel and used it for nick name and channel label.
+         * Disabled own location display on Friends Frame.
+         * Removed the Fixed size for Messages ListWidget
+         * Update stylesheets
+         * Fixed compile with Qt 5
+         * Added a warning MessageBox when closing Forum Post Dialog.
+         * Set the list with buttons in MainWindow and friend list in FriendsDialog to 
+            fixed when resizing the window.
          * Optimized polling in TokenQueue
          * Removed unecessary space around the main pages.
          * Moved own frame for Avatar,status,nick display to the top of FriendsList.
@@ -14,12 +22,16 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
          * Clean up Buttons on ChatWidget, for Fonts use now Font Button.
          * Changed rs logo icons, for better look and feel on the Taskbar
          * Hide by default the Attachments Recommend Files list.
-         * Changed the tooltips for the Hide/Show Button , "Download all" Button now with default text.
+         * Changed the tooltips for the Hide/Show Button , "Download all" Button now 
+            with default text.
          * Moved files count label before "Recommend Files" label
          * Reduced speed of scrolling of RSFeedWidget
 
       GXS
-         * Added missing initialize of members in constructor of GxsGroupStatistic and GxsServiceStatistic
+         * improved network statistics for GXS net service. Added number of available 
+            messages for unsubscribed forums in GUI. Should be done as well for channels.
+         * Added missing initialize of members in constructor of GxsGroupStatistic and 
+            GxsServiceStatistic
          * remove GXS ids with faulty signature. This should not happen anyway.
          * added additional check for signature consistency after signing GXS id.
          * improved/cleaned debug outputs in in rsgxsnetservice.cc. Performed
@@ -31,7 +43,14 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
          * fixed uninitialised memory read in rsgxsdataaccess.cc
          * fixed inconsistency using getKey() and getPrivateKey() supposing it returns a boolean. It should return a boolean anyway.
 
+      Core
+         * protection against multi-threaded usages in tcponudp
+         * fixed weird logic in handling connection attempt for an already connected peer.
+
       Chat
+         * Added size limit for chat types - Public, Private, Lobby, Distant
+            Set the size limit for private and distant chat to unlimited.
+         * fixed bug in distant chat causing multiple tunnels to break the DH session.
          * added keep-alive packets to distant chat. Improved the tunnel management logic.
 
       VOIP
@@ -61,6 +80,7 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    Bug fixes
 
+      * fixed cross-deadlock between pqissl and pqithreadstreamer by removing locks over atomic operations.
       * fixed tcponudp bug causing SEGV when quitting and crash on UDP connexion reset. 
       * Fixed utf8 issue when using strings with openssl
       * fixed serialisation bug preventing the correct save of grouter matrix in some cases
