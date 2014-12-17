@@ -283,7 +283,7 @@ PluginManager::removePlugin(QString pluginName)
         QFile fl(fn);
         if (!fl.remove())
         {
-	    QString em = tr("Error: failed to revove file %1"
+	    QString em = tr("Error: failed to remove file %1"
 	                         "(uninstalling plugin '%2')")
                             .arg(fn).arg(pluginName);
             emit errorAppeared( em);
@@ -335,7 +335,7 @@ PluginManager::installPlugin(QString fileName)
         } //    
 	else
 	{
-	    QString em = tr("Error: can't copy %1 as %2")
+	    QString em = tr("Error: can't copy %1 to %2")
 	                    .arg(fileName, newFileName) ;
             emit errorAppeared( em );
 	}

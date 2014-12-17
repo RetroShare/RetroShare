@@ -385,7 +385,7 @@
               <item>
                <widget class="QLabel" name="lSearch_MaxLimitColor">
                 <property name="text">
-                 <string>Number of found text coloring</string>
+                 <string>Maximum count for coloring matching text</string>
                 </property>
                </widget>
               </item>

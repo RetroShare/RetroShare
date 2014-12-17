@@ -103,7 +103,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
 
-	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctr+M</i>"));
+	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
@@ -870,7 +870,7 @@ void ChatWidget::updateLenOfChatTextEdit()
 	}
 
 	ui->sendButton->setEnabled(!msgToLarge);
-	text = tr("%1This message counts %2 characters.").arg(msgToLarge ? tr("Warning: ") : "").arg(msg.length());
+	text = tr("%1This message consists of %2 characters.").arg(msgToLarge ? tr("Warning: ") : "").arg(msg.length());
 	ui->sendButton->setToolTip(text);
 	ui->chatTextEdit->setToolTip(msgToLarge?text:"");
 }
@@ -1060,10 +1060,10 @@ bool ChatWidget::findText(const QString& qsStringToFind, bool bBackWard, bool bF
 		if (bFound)
 		{
 			qpBackGround.setColor(QPalette::Base,QColor(0,200,0));
-			ui->leSearch->setToolTip(QString::number(uiFoundCount)+tr(" founded items."));
+			ui->leSearch->setToolTip(QString::number(uiFoundCount)+tr(" items found."));
 		} else {
 			qpBackGround.setColor(QPalette::Base,QColor(200,0,0));
-			ui->leSearch->setToolTip(tr("No items founded."));
+			ui->leSearch->setToolTip(tr("No items found."));
 		}
 		ui->leSearch->setPalette(qpBackGround);
 
@@ -1099,7 +1099,7 @@ void ChatWidget::on_markButton_clicked(bool bValue)
 		if (ui->textBrowser->textCursor().selectedText().length()>0)
 		{
 			qtcMark=ui->textBrowser->textCursor();
-			ui->markButton->setToolTip(tr("<b>Return to marked text</b><br><i>Ctr+M</i>"));
+			ui->markButton->setToolTip(tr("<b>Return to marked text</b><br><i>Ctrl+M</i>"));
 
 		} else { bValue=false;}
 	} else {
@@ -1107,7 +1107,7 @@ void ChatWidget::on_markButton_clicked(bool bValue)
 		{
 			ui->textBrowser->setTextCursor(qtcMark);
 			qtcMark=QTextCursor(ui->textBrowser->document());
-			ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctr+M</i>"));
+			ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
 		}
 	}

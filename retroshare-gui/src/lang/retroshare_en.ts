@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.0">
 <context>
     <name>AWidget</name>
     <message>
@@ -500,6 +500,10 @@ p, li { white-space: pre-wrap; }
         <source>Hide Toaster Disable</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show SysTray on Status Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -556,6 +560,13 @@ p, li { white-space: pre-wrap; }
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BWGraphSource</name>
+    <message>
+        <source>KB/s</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -628,14 +639,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>BwCtrlWindow</name>
     <message>
-        <source>Bandwidth Control Window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bandwidth Measurements</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -691,19 +694,27 @@ p, li { white-space: pre-wrap; }
         <source>Totals</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChannelPage</name>
     <message>
-        <source>New channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open all forums in new tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load posts in background (Thread)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -814,6 +825,13 @@ Please choose one of it to chat with.</source>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyUserNotify</name>
+    <message>
+        <source>Chat Lobbies</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1160,26 +1178,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Distant chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open secured chat tunnel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t open distant chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot open distant chat. Error code=</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Private chat invite from </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1236,10 +1234,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Number of found text coloring</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Color of found text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1248,15 +1242,15 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>People around you can chat to</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PGP id : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Valid until : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum count for coloring matching text</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1324,19 +1318,7 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Font</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Attach a Picture</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add a File for your Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1440,10 +1422,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>WARNING: Could take long time on big history.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Don&apos;t stop to color after </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1464,27 +1442,58 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctr+M&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1This message counts %2 characters.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> founded items.</source>
+        <source>(Status)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No items founded.</source>
+        <source>Set text font &amp; color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctr+M&lt;/i&gt;</source>
+        <source>Attach a File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WARNING: Could take a long time on big history.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1This message consists of %2 characters.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> items found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No items found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CircleWidget</name>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Empty Circle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2944,19 +2953,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New GxsChannel Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Paste RetroShare Links</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3001,6 +3002,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Do you really want to generate %1 messages ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3086,6 +3091,19 @@ p, li { white-space: pre-wrap; }
         <source>Do you really want to generate %1 messages ?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum Message has not been Sent.
+Do you want to reject this message?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
@@ -3145,14 +3163,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CryptoPage</name>
     <message>
-        <source>Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Profile Manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Public Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3166,10 +3176,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location ID:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of Friends:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3193,19 +3199,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use old key format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save Key into a file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3237,15 +3231,46 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Identity ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>PGP fingerprint:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP Id :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend nodes:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy certificate to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save certificate to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new location...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DHTGraphSource</name>
+    <message>
+        <source>users</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3353,14 +3378,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DhtWindow</name>
     <message>
-        <source>DHT Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Net Status</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3382,14 +3399,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer Address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extra Label</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3657,38 +3666,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>#Peers: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> DHT: (#off:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>,unreach:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>,online:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>) Connections: (#dis:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>,#dir:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>,#proxy:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>,#relay:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>RELAY END</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3726,6 +3703,70 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>never</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Net Status:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nat Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nat Hole:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unreach:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Online:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offline:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Peers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disconnected:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direct:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relay:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Graph</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4090,19 +4131,15 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open all forums in new tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Forum</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Load embedded images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tabs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4300,6 +4337,10 @@ you plug it in.</source>
         <source>Paste certificate link</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Sort by</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
@@ -4341,10 +4382,6 @@ you plug it in.</source>
 </context>
 <context>
     <name>FriendsDialog</name>
-    <message>
-        <source>Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Edit status message</source>
         <translation type="unfinished"></translation>
@@ -4446,10 +4483,6 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Local network</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4494,11 +4527,19 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Network</source>
+        <source>Network graph</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set here your Status message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5060,33 +5101,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>GraphFrame</name>
-    <message>
-        <source>Recv: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 KB/s</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sent: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 KB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 MB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 GB</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>GraphWidget</name>
     <message>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
@@ -5187,9 +5201,56 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>GroupListView</name>
+    <name>GroupFrameSettingsWidget</name>
     <message>
-        <source>Anonymous</source>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open all forums in new tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide tabbar with one open tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GroupShareKey</name>
+    <message>
+        <source>Share</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can let your friends know about your Channel by sharing it with them. Select the Friends with which you want to Share your Channel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can let your friends know about your Forum by sharing it with them. Select the Friends with which you want to Share your Forum.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Posted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can let your friends know about your Posted by sharing it with them. Select the Friends with which you want to Share your Posted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select at least one peer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5345,6 +5406,80 @@ p, li { white-space: pre-wrap; }
         <source>Disable Auto-Download</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesStatusWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paused</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waiting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure that you want to cancel and delete the file?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t open folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Published</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsChannelGroupDialog</name>
@@ -5374,6 +5509,41 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Update Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelGroupItem</name>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribe to Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5443,6 +5613,18 @@ p, li { white-space: pre-wrap; }
         <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>I like this</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>I dislike this</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsChannelPostsWidget</name>
@@ -5483,10 +5665,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No Channel Selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5496,6 +5674,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable Auto-Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show feeds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Feeds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5683,6 +5877,76 @@ before you can comment</source>
     </message>
 </context>
 <context>
+    <name>GxsForumGroupItem</name>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumMsgItem</name>
+    <message>
+        <source>Subject: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unsubscribe To Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In Reply to: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum Feed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GxsForumThreadWidget</name>
     <message>
         <source>Form</source>
@@ -5864,6 +6128,26 @@ before you can comment</source>
         <source>Thread:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Original Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsForumUserNotify</name>
@@ -5899,23 +6183,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Original Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;            			&lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) 			or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former            			class is more resistant to spamming because posts are                                       			cryptographically signed using a Retroshare pseudo-identity.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5936,10 +6204,6 @@ before you can comment</source>
 </context>
 <context>
     <name>GxsGroupDialog</name>
-    <message>
-        <source>Create New</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Name</source>
         <translation type="unfinished"></translation>
@@ -6064,6 +6328,14 @@ before you can comment</source>
         <source>Failed to Prepare Group MetaData - please Review</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Will be used to send feedback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owner:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsGroupFrameDialog</name>
@@ -6108,10 +6380,6 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Restore Publish Rights</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Copy RetroShare Link</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6131,11 +6399,57 @@ before you can comment</source>
 <context>
     <name>GxsIdChooser</name>
     <message>
+        <source>No Signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdDetails</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No Signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>signed by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>anonymous</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsMessageFramePostWidget</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No name</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6391,39 +6705,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Yourself</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friends / Friends of Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Others</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pseudonyms</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Nickname</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>KeyId</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6431,43 +6713,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Identity Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friend of Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pseudonym</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Key ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGP Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGP Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGP Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6479,19 +6725,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PGP Linked Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anon Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6579,7 +6813,87 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Itentities</source>
+        <source>Identity name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by node...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by neighbor nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by distant nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This identity is owned by you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown PGP key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown key ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6663,6 +6977,41 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IdentityWidget</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KeyId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GXSId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GXS name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GXS id: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP id: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6815,23 +7164,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open Messenger</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DHT Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bandwidth Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6928,6 +7265,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Statistics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7364,7 +7705,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[no identity]</source>
+        <source>Cannot send distant messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In order to send distant messages, you need an identity to sign with. Please go to the Identities tab and create one first.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7528,22 +7873,6 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Print Document</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7585,6 +7914,14 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Unknown (needs decryption)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide the attachment pane</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the attachment pane</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8006,11 +8343,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <source>This message has been successfully decrypted, and is unsigned.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This message has been successfully decrypted, and is unsigned.</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friends nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8253,15 +8590,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export my certificate...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Peer details...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8390,6 +8719,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Since when I use this Certificat</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Export/create a new location</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -8471,10 +8804,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8613,6 +8942,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Disable All Toasters</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Posted</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -8707,6 +9040,21 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
 </context>
 <context>
+    <name>OutQueueStatisticsWidget</name>
+    <message>
+        <source>Outqueue statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By priority: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By service : </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
@@ -8715,10 +9063,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
 </context>
 <context>
     <name>PeerItem</name>
-    <message>
-        <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Chat</source>
         <translation type="unfinished"></translation>
@@ -8733,14 +9077,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8804,7 +9140,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Quick Message</source>
+        <source>Send Message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8826,35 +9162,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
 <context>
     <name>PeopleDialog</name>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;People&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yourself</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friends / Friends of Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Others</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pseudonyms</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>People</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>External</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drag your circles or people to each other.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Internal</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9127,10 +9447,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error: failed to revove file %1(uninstalling plugin &apos;%2&apos;)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error(uninstall): no plugin with name &apos;%1&apos; found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9139,7 +9455,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error: can&apos;t copy %1 as %2</source>
+        <source>Error: failed to remove file %1(uninstalling plugin &apos;%2&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: can&apos;t copy %1 to %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9307,22 +9627,6 @@ malicious behavior of crafted plugins.</source>
 <context>
     <name>PostedCreatePostDialog</name>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Signed by: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -9366,6 +9670,14 @@ p, li { white-space: pre-wrap; }
         <source>New ID</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PostedDialog</name>
@@ -9375,6 +9687,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Posted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt; 	 &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribed Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popular Topics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Topics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9410,13 +9746,40 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>PostedItem</name>
+    <name>PostedGroupItem</name>
     <message>
-        <source>0</source>
+        <source>Subscribe to Posted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posted Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Posted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PostedItem</name>
+    <message>
+        <source>0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9451,9 +9814,29 @@ p, li { white-space: pre-wrap; }
         <source>Submitted</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>PostedListDialog</name>
+    <name>PostedListWidget</name>
     <message>
         <source>Form</source>
         <translation type="unfinished"></translation>
@@ -9491,6 +9874,18 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit a new Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Showing 1-100</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9500,30 +9895,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>My Topics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribed Topics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Popular Topics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Topics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9538,36 +9909,22 @@ p, li { white-space: pre-wrap; }
         <source>Please create or choose a Signing Id before Voting</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>PostedPage</name>
     <message>
-        <source>Create New Topic</source>
+        <source>Tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Submit a new Post</source>
+        <source>Posted</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>PostedUserNotify</name>
     <message>
-        <source>Todo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Topic Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Topic Details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Posted Links</source>
+        <source>Posted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9609,10 +9966,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Identities</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9622,10 +9975,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>GID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9692,12 +10041,20 @@ and use the import button to load it</source>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select a Retroshare node key from the list below to be used on another computer, and press &amp;quot;Export selected key.&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To create a new location on a different computer,  select the identity manager in the login window. From there you can import the key file and create a new location for that key. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Creating a new node with the same key allows your  your friend nodes to accept you automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Full keys available in your keyring:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export selected key</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10136,14 +10493,6 @@ Reported error is:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Group details</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat this peer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Click to send a private message to %1 (%2).</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10168,19 +10517,23 @@ Reported error is:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Old</source>
+        <source>TR up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Now</source>
+        <source>TR dn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Round Trip Time:</source>
+        <source>Data up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading... </source>
+        <source>Data dn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data forward</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10391,6 +10744,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RSGraphWidget</name>
+    <message>
+        <source>%1 KB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 GB</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>RSImageBlockWidget</name>
     <message>
         <source>Form</source>
@@ -10569,10 +10937,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file were collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10641,10 +11005,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File already exist.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>What do you want to do?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10670,6 +11030,14 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Enter the new directory&apos;s name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file where collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10706,10 +11074,6 @@ If you believe it is correct, remove the corresponding line from the file and re
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File already exist.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>What do you want to do?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10723,6 +11087,10 @@ If you believe it is correct, remove the corresponding line from the file and re
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11062,10 +11430,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Write a quick Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Chat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11163,6 +11527,10 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Peer/location not in friendlist (PGP id=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send Message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11292,10 +11660,6 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show routing info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Max. tunnel req. forwarded per second:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11389,10 +11753,6 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Global routing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Discovery On (recommended)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11402,6 +11762,22 @@ If you have issues connecting over TOR check the TOR logs too.</source>
     </message>
     <message>
         <source>Hidden - See TOR Config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOR proxy is working correctly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOR status unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy seems to work.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11560,10 +11936,6 @@ If you have issues connecting over TOR check the TOR logs too.</source>
 <context>
     <name>ShareKey</name>
     <message>
-        <source>Share Channel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>check peers you would like to share private publish key with</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11572,15 +11944,12 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select the Friends with which you want to Share your Channel.</source>
+        <source>Share</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Contacts:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please select at least one peer</source>
+        <source>You can let your friends know about your Channel by sharing it with them. 
+Select the Friends with which you want to Share your Channel.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11937,6 +12306,73 @@ This choice can be reverted in settings.</source>
     </message>
 </context>
 <context>
+    <name>StatisticsWindow</name>
+    <message>
+        <source>Add Friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a Friend Wizard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Share</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messenger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SMPlayer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quick Start Wizard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bandwidth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global Router</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RTT Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StatusDefs</name>
     <message>
         <source>Offline</source>
@@ -12016,6 +12452,10 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>DHT: Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected: TOR</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12757,10 +13197,6 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>RTT Statistics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create Collection...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12778,6 +13214,10 @@ Try to be patient!</source>
     </message>
     <message>
         <source>File sharing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous tunnel 0x</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12898,6 +13338,14 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Unknown Peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel Requests</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -816,7 +816,7 @@ border-image: url(:/images/closepressed.png)
     <string>Don't stop to color after X items found (need more CPU)</string>
    </property>
    <property name="toolTip">
-    <string>WARNING: Could take long time on big history.</string>
+    <string>WARNING: Could take a long time on big history.</string>
    </property>
   </action>
   <action name="actionChooseColor">

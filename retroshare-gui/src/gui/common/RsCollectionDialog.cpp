@@ -594,7 +594,7 @@ void RsCollectionDialog::changeFileName()
 
 		QMessageBox mb;
 		mb.setText(tr("Save Collection File."));
-		mb.setInformativeText(tr("File already exist.")+"\n"+tr("What do you want to do?"));
+		mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
 		QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
 		QAbstractButton *btnMerge = mb.addButton(tr("Merge"), QMessageBox::NoRole);
 		QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
