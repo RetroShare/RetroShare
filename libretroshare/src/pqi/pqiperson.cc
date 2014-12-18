@@ -287,7 +287,7 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 	}
 
 	if (!pqi)
-	{
+    {
 	  pqioutput(PQL_WARNING, pqipersonzone, "Unknown notfyEvent Source!");
 	  return -1;
 	}
@@ -315,7 +315,6 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 		}
 
 		/* now install a new one. */
-        if(!active)
         {
 
 			pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::notifyEvent() Id: " + PeerId().toStdString() + " CONNECT_SUCCESS->marking so! (resetting others)");
@@ -342,7 +341,7 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 				}
 			}
 			return 1;
-		}
+        }
 		break;
 	case CONNECT_UNREACHABLE:
 	case CONNECT_FIREWALLED:
