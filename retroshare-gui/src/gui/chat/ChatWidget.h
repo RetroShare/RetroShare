@@ -98,7 +98,10 @@ public:
 	// Adds one widget in the chat bar. Used to add e.g. new buttons. The widget should be
 	// small enough in size.
 	void addChatBarWidget(QWidget *w) ;
-
+	
+	
+	void addVOIPBarWidget(QWidget *w);
+;
 	// Adds a new horizonal widget in the layout of the chat window.
 	void addChatHorizontalWidget(QWidget *w) ;
 
@@ -117,6 +120,8 @@ private slots:
 	void deleteChatHistory();
 	void messageHistory();
 	void resetStatusBar() ;
+	void searchHistory();
+
 
 signals:
 	void infoChanged(ChatWidget*);

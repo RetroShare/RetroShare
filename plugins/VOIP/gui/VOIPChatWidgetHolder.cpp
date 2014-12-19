@@ -16,47 +16,58 @@
 
 #include <retroshare/rsstatus.h>
 
-#define CALL_START ":/images/call-start-22.png"
-#define CALL_STOP  ":/images/call-stop-22.png"
-#define CALL_HOLD  ":/images/call-hold-22.png"
+#define CALL_START ":/images/call-start.png"
+#define CALL_STOP  ":/images/call-stop.png"
+#define CALL_HOLD  ":/images/call-hold.png"
 
 
 VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	: QObject(), ChatWidgetHolder(chatWidget)
 {
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-muted-22.png")) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Normal,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Disabled,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Active,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Selected,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-muted.png")) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Normal,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Disabled,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Active,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Selected,QIcon::On) ;
 
 	audioListenToggleButton = new QToolButton ;
 	audioListenToggleButton->setIcon(icon) ;
-	audioListenToggleButton->setIconSize(QSize(22,22)) ;
+	audioListenToggleButton->setIconSize(QSize(48,48)) ;
 	audioListenToggleButton->setAutoRaise(true) ;
 	audioListenToggleButton->setCheckable(true);
-	audioListenToggleButton->setMinimumSize(QSize(28,28)) ;
-	audioListenToggleButton->setMaximumSize(QSize(28,28)) ;
+	audioListenToggleButton->setMinimumSize(QSize(50,50)) ;
+	audioListenToggleButton->setMaximumSize(QSize(50,50)) ;
 	audioListenToggleButton->setText(QString()) ;
 	audioListenToggleButton->setToolTip(tr("Mute"));
 
 	QIcon icon2 ;
-	icon2.addPixmap(QPixmap(":/images/call-start-22.png")) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Normal,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Disabled,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Active,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Selected,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-start.png")) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Normal,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Disabled,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Active,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Selected,QIcon::On) ;
 
 	audioCaptureToggleButton = new QToolButton ;
-	audioCaptureToggleButton->setMinimumSize(QSize(28,28)) ;
-	audioCaptureToggleButton->setMaximumSize(QSize(28,28)) ;
+	audioCaptureToggleButton->setMinimumSize(QSize(50,50)) ;
+	audioCaptureToggleButton->setMaximumSize(QSize(50,50)) ;
 	audioCaptureToggleButton->setText(QString()) ;
 	audioCaptureToggleButton->setToolTip(tr("Start Call"));
 	audioCaptureToggleButton->setIcon(icon2) ;
-	audioCaptureToggleButton->setIconSize(QSize(22,22)) ;
+	audioCaptureToggleButton->setIconSize(QSize(48,48)) ;
 	audioCaptureToggleButton->setAutoRaise(true) ;
 	audioCaptureToggleButton->setCheckable(true) ;
+	
+	hangupButton = new QToolButton ;
+	hangupButton->setIcon(QIcon(":/images/call-stop.png")) ;
+	hangupButton->setIconSize(QSize(48,48)) ;
+	hangupButton->setMinimumSize(QSize(50,50)) ;
+	hangupButton->setMaximumSize(QSize(50,50)) ;
+	hangupButton->setCheckable(false) ;
+	hangupButton->setAutoRaise(true) ;		
+	hangupButton->setText(QString()) ;
+	hangupButton->setToolTip(tr("Hangup Call"));
+	hangupButton->hide();	
 
 	QIcon icon3 ;
 	icon3.addPixmap(QPixmap(":/images/video-icon-on.png")) ;
@@ -66,35 +77,24 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Selected,QIcon::On) ;
 
 	videoCaptureToggleButton = new QToolButton ;
-	videoCaptureToggleButton->setMinimumSize(QSize(28,28)) ;
-	videoCaptureToggleButton->setMaximumSize(QSize(28,28)) ;
+	videoCaptureToggleButton->setMinimumSize(QSize(50,50)) ;
+	videoCaptureToggleButton->setMaximumSize(QSize(50,50)) ;
 	videoCaptureToggleButton->setText(QString()) ;
 	videoCaptureToggleButton->setToolTip(tr("Start Video Call"));
 	videoCaptureToggleButton->setIcon(icon3) ;
-	videoCaptureToggleButton->setIconSize(QSize(22,22)) ;
+	videoCaptureToggleButton->setIconSize(QSize(48,48)) ;
 	videoCaptureToggleButton->setAutoRaise(true) ;
 	videoCaptureToggleButton->setCheckable(true) ;
-	
-	hangupButton = new QToolButton ;
-	hangupButton->setIcon(QIcon(":/images/call-stop-22.png")) ;
-	hangupButton->setIconSize(QSize(22,22)) ;
-	hangupButton->setMinimumSize(QSize(28,28)) ;
-	hangupButton->setMaximumSize(QSize(28,28)) ;
-	hangupButton->setCheckable(false) ;
-	hangupButton->setAutoRaise(true) ;		
-	hangupButton->setText(QString()) ;
-	hangupButton->setToolTip(tr("Hangup Call"));
-	hangupButton->hide();
 
 	connect(videoCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleVideoCapture()));
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
 	connect(audioCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioCapture()));
 	connect(hangupButton, SIGNAL(clicked()), this , SLOT(hangupCall()));
 
-	mChatWidget->addChatBarWidget(audioListenToggleButton) ;
-	mChatWidget->addChatBarWidget(audioCaptureToggleButton) ;
-	mChatWidget->addChatBarWidget(videoCaptureToggleButton) ;
-	mChatWidget->addChatBarWidget(hangupButton) ;
+	mChatWidget->addVOIPBarWidget(audioListenToggleButton) ;
+	mChatWidget->addVOIPBarWidget(audioCaptureToggleButton) ;
+	mChatWidget->addVOIPBarWidget(hangupButton) ;
+	mChatWidget->addVOIPBarWidget(videoCaptureToggleButton) ;
 
 	outputAudioProcessor = NULL ;
 	outputAudioDevice = NULL ;

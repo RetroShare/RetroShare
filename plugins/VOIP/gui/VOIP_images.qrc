@@ -1,13 +1,13 @@
 <RCC>
 	<qresource prefix="/">
-		<file>images/audio-volume-medium-22.png</file>
+		<file>images/audio-volume-high.png</file>
 		<file>images/muted_self.svg</file>
-		<file>images/audio-volume-muted-22.png</file>
+		<file>images/audio-volume-muted.png</file>
 		<file>images/talking_on.svg</file>
 		<file>images/talking_off.svg</file>
-		<file>images/call-start-22.png</file>
-		<file>images/call-stop-22.png</file>
-		<file>images/call-hold-22.png</file>
+		<file>images/call-start.png</file>
+		<file>images/call-stop.png</file>
+		<file>images/call-hold.png</file>
 		<file>images/camera-on.png</file>
 		<file>images/camera-off.png</file>
 		<file>images/video-icon-big.png</file>

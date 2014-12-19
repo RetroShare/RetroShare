@@ -102,6 +102,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionMoveToCursor, SIGNAL(triggered()), this, SLOT(toogle_MoveToCursor()));
 	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
+	connect(ui->actionSearch_History, SIGNAL(triggered()), this, SLOT(searchHistory()));
 
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
@@ -132,6 +133,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
+	
+	ui->searchframe->hide();
 
 	setAcceptDrops(true);
 	ui->chatTextEdit->setAcceptDrops(false);
@@ -149,6 +152,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionDeleteChatHistory);
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionMessageHistory);
+	menu->addAction(ui->actionSearch_History);
 	ui->pushtoolsButton->setMenu(menu);
 
 	ui->chatTextEdit->installEventFilter(this);
@@ -206,6 +210,12 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 {
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
+
+void ChatWidget::addVOIPBarWidget(QWidget *w)
+{
+	ui->titleBarFrame->layout()->addWidget(w) ;
+}
+
 
 void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 {
@@ -1193,6 +1203,16 @@ void ChatWidget::messageHistory()
 {
 	ImHistoryBrowser imBrowser(peerId, ui->chatTextEdit, window());
 	imBrowser.exec();
+}
+
+void ChatWidget::searchHistory()
+{
+	if(ui->actionSearch_History->isChecked()){
+      ui->searchframe->show();
+  }else {
+      ui->searchframe->hide();
+  }
+  
 }
 
 void ChatWidget::addExtraFile()
