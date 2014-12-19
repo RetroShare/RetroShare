@@ -33,11 +33,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 
 	audioListenToggleButton = new QToolButton ;
 	audioListenToggleButton->setIcon(icon) ;
-	audioListenToggleButton->setIconSize(QSize(48,48)) ;
+	audioListenToggleButton->setIconSize(QSize(42,42)) ;
 	audioListenToggleButton->setAutoRaise(true) ;
 	audioListenToggleButton->setCheckable(true);
-	audioListenToggleButton->setMinimumSize(QSize(50,50)) ;
-	audioListenToggleButton->setMaximumSize(QSize(50,50)) ;
+	audioListenToggleButton->setMinimumSize(QSize(44,44)) ;
+	audioListenToggleButton->setMaximumSize(QSize(44,44)) ;
 	audioListenToggleButton->setText(QString()) ;
 	audioListenToggleButton->setToolTip(tr("Mute"));
 
@@ -49,20 +49,20 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Selected,QIcon::On) ;
 
 	audioCaptureToggleButton = new QToolButton ;
-	audioCaptureToggleButton->setMinimumSize(QSize(50,50)) ;
-	audioCaptureToggleButton->setMaximumSize(QSize(50,50)) ;
+	audioCaptureToggleButton->setMinimumSize(QSize(44,44)) ;
+	audioCaptureToggleButton->setMaximumSize(QSize(44,44)) ;
 	audioCaptureToggleButton->setText(QString()) ;
 	audioCaptureToggleButton->setToolTip(tr("Start Call"));
 	audioCaptureToggleButton->setIcon(icon2) ;
-	audioCaptureToggleButton->setIconSize(QSize(48,48)) ;
+	audioCaptureToggleButton->setIconSize(QSize(42,42)) ;
 	audioCaptureToggleButton->setAutoRaise(true) ;
 	audioCaptureToggleButton->setCheckable(true) ;
 	
 	hangupButton = new QToolButton ;
 	hangupButton->setIcon(QIcon(":/images/call-stop.png")) ;
-	hangupButton->setIconSize(QSize(48,48)) ;
-	hangupButton->setMinimumSize(QSize(50,50)) ;
-	hangupButton->setMaximumSize(QSize(50,50)) ;
+	hangupButton->setIconSize(QSize(42,42)) ;
+	hangupButton->setMinimumSize(QSize(44,44)) ;
+	hangupButton->setMaximumSize(QSize(44,44)) ;
 	hangupButton->setCheckable(false) ;
 	hangupButton->setAutoRaise(true) ;		
 	hangupButton->setText(QString()) ;
@@ -77,12 +77,12 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
 	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Selected,QIcon::On) ;
 
 	videoCaptureToggleButton = new QToolButton ;
-	videoCaptureToggleButton->setMinimumSize(QSize(50,50)) ;
-	videoCaptureToggleButton->setMaximumSize(QSize(50,50)) ;
+	videoCaptureToggleButton->setMinimumSize(QSize(44,44)) ;
+	videoCaptureToggleButton->setMaximumSize(QSize(44,44)) ;
 	videoCaptureToggleButton->setText(QString()) ;
 	videoCaptureToggleButton->setToolTip(tr("Start Video Call"));
 	videoCaptureToggleButton->setIcon(icon3) ;
-	videoCaptureToggleButton->setIconSize(QSize(48,48)) ;
+	videoCaptureToggleButton->setIconSize(QSize(42,42)) ;
 	videoCaptureToggleButton->setAutoRaise(true) ;
 	videoCaptureToggleButton->setCheckable(true) ;
 
