@@ -1408,10 +1408,15 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
 			ui->statusMessageLabel->hide();
+			ui->titleLabel->setAlignment ( Qt::AlignTop );
+			ui->statusLabel->setAlignment ( Qt::AlignTop );
+
 		} else {
 			ui->statusMessageLabel->show();
 			status_text = RsHtml().formatText(NULL, status_string, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 			ui->statusMessageLabel->setText(status_text);
+			ui->titleLabel->setAlignment ( Qt::AlignVCenter );
+			ui->statusLabel->setAlignment ( Qt::AlignVCenter );
 		}
 	}
 }
