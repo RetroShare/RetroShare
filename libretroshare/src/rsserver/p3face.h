@@ -137,8 +137,8 @@ class RsServer: public RsControl, public RsThread
 		/* Config */
 
 		virtual int     ConfigSetBootPrompt( bool on );
-
-		virtual void    ConfigFinalSave( );
+        virtual void    ConfigFinalSave( );
+        virtual void	startServiceThread(RsThread *t) ;
 
 		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
@@ -178,15 +178,20 @@ class RsServer: public RsControl, public RsThread
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
 
-		/* GXS */
-		p3Wiki *mWiki;
-		p3Posted *mPosted;
-		p3PhotoService *mPhoto;
-		p3GxsCircles *mGxsCircles;
-		p3IdService *mGxsIdService;
-		p3GxsForums *mGxsForums;
-		p3GxsChannels *mGxsChannels;
-		p3Wire *mWire;
+        // This list contains all threaded services. It will be used to shut them down properly.
+
+        std::list<RsThread*> mRegisteredServiceThreads ;
+
+        /* GXS */
+//		p3Wiki *mWiki;
+//		p3Posted *mPosted;
+//		p3PhotoService *mPhoto;
+//		p3GxsCircles *mGxsCircles;
+//        p3GxsNetService *mGxsNetService;
+//        p3IdService *mGxsIdService;
+//		p3GxsForums *mGxsForums;
+//		p3GxsChannels *mGxsChannels;
+//		p3Wire *mWire;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;

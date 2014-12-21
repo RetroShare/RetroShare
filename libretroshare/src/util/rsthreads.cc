@@ -49,57 +49,57 @@
 	#include <iostream>
 #endif
 
-extern "C" void* rsthread_init(void* p)
+void *RsThread::rsthread_init(void* p)
 {
   RsThread *thread = (RsThread *) p;
   if (!thread)
   {
-    return 0;
+    return NULL;
   }
   thread -> run();
-  return 0;
+  return NULL;
 }
 
-
-pthread_t  createThread(RsThread &thread)
+void RsThread::start()
 {
     pthread_t tid;
-    void  *data = (void *) (&thread);
+    void  *data = (void *)this ;
 
-    thread.mMutex.lock();
-    {
+    RS_STACK_MUTEX(mMutex) ;
 
 #if 0
-	int ret;
-	ret = pthread_attr_init(&tattr);
-	if (doDetached)
-	{
-		ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_DETACHED);
-	}
-	else
-	{
-		ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_JOINABLE);
-	}
+    int ret;
+    ret = pthread_attr_init(&tattr);
+    if (doDetached)
+    {
+        ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_DETACHED);
+    }
+    else
+    {
+        ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_JOINABLE);
+    }
 
-      	pthread_create(&tid, &tattr, &rsthread_init, data);
+    pthread_create(&tid, &tattr, &rsthread_init, data);
 #endif
 
-			int err ;
+    int err ;
 
-			if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data))) 
-				thread.mTid = tid;
-			else
-				std::cerr << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
+    if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data)))
+    {
+        mTid = tid;
+        mIsRunning = true ;
     }
-    thread.mMutex.unlock();
-
-    return tid;
-
+    else
+    {
+        std::cerr << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
+        mIsRunning = false ;
+    }
 }
+
 
 RsThread::RsThread () : mMutex("RsThread")
 {
-	mIsRunning = true;
+    mIsRunning = false;
 
 #ifdef WINDOWS_SYS
     memset (&mTid, 0, sizeof(mTid));

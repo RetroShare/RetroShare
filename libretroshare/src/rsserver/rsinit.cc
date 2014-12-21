@@ -1298,14 +1298,14 @@ int RsServer::StartupRetroShare()
 
         // init gxs services
 	PgpAuxUtils *pgpAuxUtils = new PgpAuxUtilsImpl();
-        mGxsIdService = new p3IdService(gxsid_ds, NULL, pgpAuxUtils);
+        p3IdService *mGxsIdService = new p3IdService(gxsid_ds, NULL, pgpAuxUtils);
 
         // circles created here, as needed by Ids.
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, NULL, rsInitConfig->gxs_passwd);
 
 	// create GxsCircles - early, as IDs need it.
-        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService, pgpAuxUtils);
+        p3GxsCircles *mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService, pgpAuxUtils);
 
         // create GXS ID service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
@@ -1333,7 +1333,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_POSTED, 
 			NULL, rsInitConfig->gxs_passwd);
 
-        mPosted = new p3Posted(posted_ds, NULL, mGxsIdService);
+        p3Posted *mPosted = new p3Posted(posted_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* posted_ns = new RsGxsNetService(
@@ -1351,7 +1351,7 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_WIKI,
                         NULL, rsInitConfig->gxs_passwd);
 
-        mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
+        p3Wiki *mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
@@ -1368,7 +1368,7 @@ int RsServer::StartupRetroShare()
                                                             RS_SERVICE_GXS_TYPE_FORUMS, NULL, rsInitConfig->gxs_passwd);
 
 
-        mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
+        p3GxsForums *mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
@@ -1384,7 +1384,7 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
                                                             RS_SERVICE_GXS_TYPE_CHANNELS, NULL, rsInitConfig->gxs_passwd);
 
-        mGxsChannels = new p3GxsChannels(gxschannels_ds, NULL, mGxsIdService);
+        p3GxsChannels *mGxsChannels = new p3GxsChannels(gxschannels_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
@@ -1708,33 +1708,33 @@ int RsServer::StartupRetroShare()
 #ifdef RS_ENABLE_GXS
 
 	// Must Set the GXS pointers before starting threads.
-	rsIdentity = mGxsIdService;
-	rsGxsCircles = mGxsCircles;
-	rsWiki = mWiki;
-	rsPosted = mPosted;
-	rsGxsForums = mGxsForums;
-	rsGxsChannels = mGxsChannels;
-	//rsPhoto = mPhoto;
-	//rsWire = mWire;
+    rsIdentity = mGxsIdService;
+    rsGxsCircles = mGxsCircles;
+    rsWiki = mWiki;
+    rsPosted = mPosted;
+    rsGxsForums = mGxsForums;
+    rsGxsChannels = mGxsChannels;
+    //rsPhoto = mPhoto;
+    //rsWire = mWire;
 
 	/*** start up GXS core runner ***/
-	createThread(*mGxsIdService);
-	createThread(*mGxsCircles);
-	createThread(*mPosted);
-	createThread(*mWiki);
-	createThread(*mGxsForums);
-	createThread(*mGxsChannels);
+    startServiceThread(mGxsIdService);
+    startServiceThread(mGxsCircles);
+    startServiceThread(mPosted);
+    startServiceThread(mWiki);
+    startServiceThread(mGxsForums);
+    startServiceThread(mGxsChannels);
 
 	//createThread(*mPhoto);
 	//createThread(*mWire);
 
 	// cores ready start up GXS net servers
-	createThread(*gxsid_ns);
-	createThread(*gxscircles_ns);
-	createThread(*posted_ns);
-	createThread(*wiki_ns);
-	createThread(*gxsforums_ns);
-	createThread(*gxschannels_ns);
+    startServiceThread(gxsid_ns);
+    startServiceThread(gxscircles_ns);
+    startServiceThread(posted_ns);
+    startServiceThread(wiki_ns);
+    startServiceThread(gxsforums_ns);
+    startServiceThread(gxschannels_ns);
 
 	//createThread(*photo_ns);
 	//createThread(*wire_ns);
@@ -1781,7 +1781,7 @@ int RsServer::StartupRetroShare()
 	}
 
 	/* Startup this thread! */
-	createThread(*this);
+    start() ;
 
 	return 1;
 }

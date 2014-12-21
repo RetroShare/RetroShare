@@ -178,22 +178,25 @@ pthread_t  createThread(RsThread &thread);
 
 class RsThread
 {
-	public:
-	RsThread();
-virtual ~RsThread() {}
+public:
+    RsThread();
+    virtual ~RsThread() {}
 
-virtual void start() { mIsRunning = true; createThread(*this); }
-virtual void run() = 0; /* called once the thread is started */
-virtual	void join(); /* waits for the the mTid thread to stop */
-virtual	void stop(); /* calls pthread_exit() */
+    void start() ;
+    void join(); /* waits for the the mTid thread to stop */
+    void stop(); /* calls pthread_exit() */
 
-bool isRunning();
+    bool isRunning();
 
-	pthread_t mTid;
-	RsMutex   mMutex;
-
+protected:
+    virtual void run() = 0; /* called once the thread is started. Should be overloaded by subclasses. */
 private:
-	bool mIsRunning;
+    static void *rsthread_init(void*) ;
+
+    pthread_t mTid;
+    RsMutex   mMutex;
+
+    bool mIsRunning;
 };
 
 
