@@ -177,7 +177,9 @@ public:
     RsConfigDataRates rates ;
     rsConfig->getTotalBandwidthRates(rates) ;
 
+#ifdef NXS_NET_DEBUG
     std::cerr << std::dec << std::endl;
+#endif
 
     float outqueue_factor     = 1.0f/pow( std::max(0.02f,rates.mQueueOut / (float)OUTQUEUE_CUTOFF_VALUE),5.0f) ;
     float accepted_bandwidth  = std::max( 0.0f, maxOut - currOut) ;
@@ -2057,7 +2059,9 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	// then what grps to request
 	// then add an active Transaction for request
 
+#ifdef NXS_NET_DEBUG
     std::cerr << "locked_genReqGrpTransaction(): " << std::endl;
+#endif
 
 	std::list<RsNxsSyncGrpItem*> grpItemL;
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();

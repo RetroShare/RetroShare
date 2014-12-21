@@ -86,8 +86,10 @@ uint32_t p3PostBase::postBaseAuthenPolicy()
 
 void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
+#ifdef POSTBASE_DEBUG
 	std::cerr << "p3PostBase::notifyChanges()";
 	std::cerr << std::endl;
+#endif
 
 	p3Notify *notify = NULL;
 	if (!changes.empty())
@@ -103,15 +105,19 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		if (msgChange)
 		{
+#ifdef POSTBASE_DEBUG
 			std::cerr << "p3PostBase::notifyChanges() Found Message Change Notification";
 			std::cerr << std::endl;
+#endif
 
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
 			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 			{
+#ifdef POSTBASE_DEBUG
 				std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
 				std::cerr << std::endl;
+#endif
 				// To start with we are just going to trigger updates on these groups.
 				// FUTURE OPTIMISATION.
 				// It could be taken a step further and directly request these msgs for an update.
@@ -131,15 +137,19 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		/* pass on Group Changes to GUI */
 		if (groupChange)
 		{
+#ifdef POSTBASE_DEBUG
 			std::cerr << "p3PostBase::notifyChanges() Found Group Change Notification";
 			std::cerr << std::endl;
+#endif
 
 			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
 			std::list<RsGxsGroupId>::iterator git;
 			for(git = groupList.begin(); git != groupList.end(); ++git)
 			{
+#ifdef POSTBASE_DEBUG
 				std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
 				std::cerr << std::endl;
+#endif
 
 				if (notify && groupChange->getType() == RsGxsNotify::TYPE_RECEIVE)
 				{
@@ -150,8 +160,10 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	}
 	receiveHelperChanges(changes);
 
+#ifdef POSTBASE_DEBUG
 	std::cerr << "p3PostBase::notifyChanges() -> receiveChanges()";
 	std::cerr << std::endl;
+#endif
 }
 
 void	p3PostBase::service_tick()
@@ -184,8 +196,10 @@ void p3PostBase::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& 
         // Overloaded from RsTickEvent for Event callbacks.
 void p3PostBase::handle_event(uint32_t event_type, const std::string & /* elabel */)
 {
+#ifdef POSTBASE_DEBUG
 	std::cerr << "p3PostBase::handle_event(" << event_type << ")";
 	std::cerr << std::endl;
+#endif
 
 	// stuff.
 	switch(event_type)
@@ -196,8 +210,10 @@ void p3PostBase::handle_event(uint32_t event_type, const std::string & /* elabel
 
 		default:
 			/* error */
+#ifdef POSTBASE_DEBUG
 			std::cerr << "p3PostBase::handle_event() Unknown Event Type: " << event_type;
 			std::cerr << std::endl;
+#endif
 			break;
 	}
 }
@@ -236,8 +252,10 @@ void p3PostBase::background_tick()
 
 bool p3PostBase::background_requestAllGroups()
 {
+#ifdef POSTBASE_DEBUG
 	std::cerr << "p3PostBase::background_requestAllGroups()";
 	std::cerr << std::endl;
+#endif
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST;
 	RsTokReqOptions opts;
@@ -254,8 +272,10 @@ bool p3PostBase::background_requestAllGroups()
 void p3PostBase::background_loadGroups(const uint32_t &token)
 {
 	/* get messages */
+#ifdef POSTBASE_DEBUG
 	std::cerr << "p3PostBase::background_loadGroups()";
 	std::cerr << std::endl;
+#endif
 
 	std::list<RsGxsGroupId> groupList;
 	bool ok = RsGenExchange::getGroupList(token, groupList);

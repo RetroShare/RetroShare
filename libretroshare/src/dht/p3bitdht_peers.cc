@@ -222,7 +222,7 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
 
 	if (addr.ss_family != AF_INET)
 	{
-		std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet.";
+		std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
 		std::cerr << std::endl;
 		sockaddr_clear(&addrv4);
 

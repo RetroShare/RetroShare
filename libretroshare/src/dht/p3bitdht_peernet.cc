@@ -461,7 +461,6 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 						uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode)
 {
 #ifdef DEBUG_PEERNET
-#endif
 	std::cerr << "p3BitDht::ConnectCallback()";
 	std::cerr << std::endl;
 	std::cerr << "srcId: ";
@@ -479,6 +478,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 	std::cerr << " point: " << point;
 	std::cerr << " cbtype: " << cbtype;
 	std::cerr << std::endl;
+#endif
 
 
 	/* we handle MID and START/END points differently... this is biggest difference.
@@ -898,7 +898,6 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 		case BITDHT_CONNECT_CB_FAILED:
 		{
 #ifdef DEBUG_PEERNET
-#endif
 			std::cerr << "dhtConnectionCallback() Connection Attempt Failed with:";
 			bdStdPrintId(std::cerr, &(peerId));
 			std::cerr << std::endl;
@@ -915,6 +914,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			std::cerr << " ErrorSrc: " << errsrc;
 			std::cerr << " ErrorType: " << errtype;
 			std::cerr << std::endl;
+#endif
 			
 			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
@@ -1873,7 +1873,6 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 								  uint32_t mode, uint32_t loc, uint32_t delayOrBandwidth)
 {
 #ifdef DEBUG_PEERNET
-#endif
 	std::cerr << "p3BitDht::initiateConnection()";
 	std::cerr << std::endl;
 	std::cerr << "\t srcId: ";
@@ -1892,6 +1891,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	std::cerr << std::endl;
 	std::cerr << "\t DelayOrBandwidth: " << delayOrBandwidth;
 	std::cerr << std::endl;
+#endif
 
 	bdId peerConnectId;
 
@@ -2376,10 +2376,10 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely)
 {
 #ifdef DEBUG_BITDHT_COMMON
-#endif
 	std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked()";
 	bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 	std::cerr << std::endl;
+#endif
 	
 	/* translate id into string for exclusive mode */
 	std::string pid;
@@ -2393,10 +2393,10 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 			dpd->mExclusiveProxyLock = false;
 
 #ifdef DEBUG_PEERNET
-#endif
 			std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked() Lock released by Connection to peer: ";
 			bdStdPrintNodeId(std::cerr, &(dpd->mDhtId.id));
 			std::cerr << std::endl;
+#endif
 		}
 		else 
 		{
@@ -2411,9 +2411,9 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 	else
 	{
 #ifdef DEBUG_BITDHT_COMMON
-#endif
 		std::cerr << "p3BitDht::ReleaseProxyExclusiveMode_locked() Don't Have a Lock";
 		std::cerr << std::endl;
+#endif
 	}
 
 }

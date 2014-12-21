@@ -952,8 +952,10 @@ int unix_fcntl_nonblock(int fd)
 
 int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t socklen)
 {
+#ifdef NET_DEBUG
 	std::cerr << "unix_connect()";
 	std::cerr << std::endl;
+#endif
 
 	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
 	socklen_t len = socklen;
