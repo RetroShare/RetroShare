@@ -326,7 +326,7 @@
               <item>
                <widget class="QLabel" name="lSearch_CharToStart">
                 <property name="text">
-                 <string>Number of char to start search</string>
+                 <string>Threshold for automatic search</string>
                 </property>
                </widget>
               </item>

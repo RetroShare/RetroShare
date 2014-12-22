@@ -193,7 +193,7 @@ void ServicePermissionsPage::load()
 	columnHeaders.push_back(tr("Default"));
 	for(pit = peerList.begin(); pit != peerList.end(); ++pit)
 	{
-		columnHeaders.push_back(QString::fromStdString( rsPeers->getPeerName(*pit)));
+		columnHeaders.push_back(QString::fromUtf8(rsPeers->getPeerName(*pit).c_str()));
 	}
 
 	// Fill in CheckBoxes.

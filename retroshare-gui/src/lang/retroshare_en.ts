@@ -1218,10 +1218,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Number of char to start search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Case sensitive</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1255,6 +1251,10 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Maximum count for coloring matching text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Threshold for automatic search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
