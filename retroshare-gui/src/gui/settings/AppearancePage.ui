@@ -369,7 +369,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Inon Size = 32x32</string>
+          <string>Icon Size = 32x32</string>
          </property>
         </item>
        </widget>

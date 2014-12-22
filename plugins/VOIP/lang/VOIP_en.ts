@@ -543,12 +543,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="72"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="83"/>
         <source>Start Video Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="86"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="69"/>
         <source>Hangup Call</source>
         <translation type="unfinished"></translation>
     </message>

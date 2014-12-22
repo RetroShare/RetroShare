@@ -289,7 +289,7 @@ void QuickStartWizard::loadShare()
 		cb->addItem(tr("Browsable")) ;
 		cb->addItem(tr("Universal")) ;
 
-		cb->setToolTip(tr("Decide here whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
+		cb->setToolTip(tr("Please decide whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
 
 		// TODO
 		//  - set combobox current value depending on what rsFiles reports.

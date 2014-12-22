@@ -177,7 +177,7 @@
      <item>
       <widget class="QPushButton" name="pushButtonDisableAll">
        <property name="toolTip">
-        <string>Disable All Toaster temporaly</string>
+        <string>Disable All Toaster temporarily</string>
        </property>
        <property name="text">
         <string>Disable All Toasters</string>

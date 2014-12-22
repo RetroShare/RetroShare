@@ -233,7 +233,7 @@ void GlobalRouterStatisticsWidget::updateContent()
 		packet_string += tr(" by ")+QString::fromStdString(cache_infos[i].local_origin.toStdString()) ;
 		packet_string += tr(" size=")+QString::number(cache_infos[i].data_size) ;
 		packet_string += tr(" Status ")+status_string[cache_infos[i].status % 6] ;
-		packet_string += " "+QString::number(now - cache_infos[i].time_stamp) + tr(" secs ago");
+		packet_string += " " + tr("%1 secs ago").arg(now - cache_infos[i].time_stamp);
 
 		tos[ QString::fromStdString(cache_infos[i].destination.toStdString()) ].push_back(packet_string) ;
 	}

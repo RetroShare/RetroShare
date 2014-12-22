@@ -809,7 +809,7 @@ void FriendsDialog::loadmypersonalstatus()
 
 	if (statustring.isEmpty())
 	{
-		ui.mypersonalstatusLabel->setText(tr("Set here your Status message"));
+		ui.mypersonalstatusLabel->setText(tr("Set your status message here."));
 	}
 	else
 	{

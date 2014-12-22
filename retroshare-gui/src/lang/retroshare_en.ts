@@ -504,6 +504,10 @@ p, li { white-space: pre-wrap; }
         <source>Show SysTray on Status Bar</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Icon Size = 32x32</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -1483,6 +1487,14 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display Search Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Box</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4539,7 +4551,7 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Set here your Status message</source>
+        <source>Set your status message here.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5080,10 +5092,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> secs ago</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>To: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5097,6 +5105,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Routing matrix  (</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 secs ago</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8935,15 +8947,15 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Disable All Toaster temporaly</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Disable All Toasters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Posted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable All Toaster temporarily</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10728,18 +10740,18 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Decide here whether this directory is
-* Network Wide: 	anonymously shared over the network (including your friends)
-* Browsable: 	browsable by your friends
-* Universal: 		both</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>If checked, the share is anonymously shared to anybody.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>If checked, the share is browsable by your friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please decide whether this directory is
+* Network Wide: 	anonymously shared over the network (including your friends)
+* Browsable: 	browsable by your friends
+* Universal: 		both</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10953,10 +10965,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item of collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11038,6 +11046,10 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>File already exists.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11819,10 +11831,6 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Permissions changes are not saved permanently. (TODO)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Chat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11884,6 +11892,10 @@ If you have issues connecting over TOR check the TOR logs too.</source>
     </message>
     <message>
         <source>Permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permission changes are not saved permanently. (TODO)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

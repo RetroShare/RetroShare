@@ -60,7 +60,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Permissions changes are not saved permanently. (TODO)</string>
+          <string>Permission changes are not saved permanently. (TODO)</string>
          </property>
         </widget>
        </item>
