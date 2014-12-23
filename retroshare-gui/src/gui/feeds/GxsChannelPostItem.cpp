@@ -391,8 +391,16 @@ void GxsChannelPostItem::fill()
 		mFileItems.push_back(fi);
 		
 		/* check if the file is a media file */
-		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix())) 
-			fi->mediatype();
+		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
+		{ 
+        fi->mediatype();
+				/* check if the file is not a media file and change text */
+        ui->playButton->setText(tr("Open"));
+        ui->playButton->setToolTip(tr("Open File"));
+    } else {
+        ui->playButton->setText(tr("Play"));
+        ui->playButton->setToolTip(tr("Play Media"));
+    }
 
 		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);
