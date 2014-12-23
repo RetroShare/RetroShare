@@ -78,9 +78,9 @@
 
 #define COLUMN_COUNT        5
 #define COLUMN_NAME         0
-#define COLUMN_STATE        1
-#define COLUMN_LAST_CONTACT 2
-#define COLUMN_AVATAR       3
+#define COLUMN_AVATAR       1
+#define COLUMN_STATE        2
+#define COLUMN_LAST_CONTACT 3
 #define COLUMN_IP           4
 
 #define COLUMN_DATA     0 // column for storing the userdata id
@@ -296,7 +296,7 @@ void FriendList::initializeHeader(bool /*afterLoadSettings*/)
         header->resizeSection(COLUMN_NAME, 150);
         header->resizeSection(COLUMN_LAST_CONTACT, 120);
     }*/
-    header->resizeSection(COLUMN_NAME, 220);
+    header->resizeSection(COLUMN_NAME, 200);
     header->resizeSection(COLUMN_AVATAR, COLUMN_AVATAR_WIDTH);
 }
 

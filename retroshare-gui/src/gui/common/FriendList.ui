@@ -6,24 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>337</width>
-    <height>229</height>
+    <width>475</width>
+    <height>292</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -38,16 +29,7 @@
       <property name="spacing">
        <number>3</number>
       </property>
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
+      <property name="margin">
        <number>2</number>
       </property>
       <item>
@@ -133,17 +115,17 @@
      </column>
      <column>
       <property name="text">
+       <string>Avatar</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Status</string>
       </property>
      </column>
      <column>
       <property name="text">
        <string>Last Contact</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Avatar</string>
       </property>
      </column>
      <column>
