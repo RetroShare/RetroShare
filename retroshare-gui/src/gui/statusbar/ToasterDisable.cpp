@@ -56,6 +56,6 @@ ToasterDisable::ToasterDisable(QWidget *parent)
 void ToasterDisable::disable(bool isDisable)
 {
 	imageButton->setIcon(QIcon(isDisable ? IMAGE_TOASTERDISABLE : IMAGE_TOASTERENABLE));
-	imageButton->setToolTip(isDisable ? tr("All Toasters are disable") : tr("Toasters are enable"));
+	imageButton->setToolTip(isDisable ? tr("All Toasters are disabled") : tr("Toasters are enabled"));
 	imageButton->setChecked(isDisable);
 }

@@ -334,7 +334,7 @@ void DhtWindow::updateNetPeers()
 		std::string name = rsPeers->getPeerName(*it);
 
 		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(status.mDhtId));
-		peer_item -> setData(PTW_COL_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
+		peer_item -> setData(PTW_COL_RSNAME, Qt::DisplayRole, QString::fromUtf8(name.c_str()));
 		peer_item -> setData(PTW_COL_RSID, Qt::DisplayRole, QString::fromStdString(status.mRsId.toStdString()));
 
 		QString dhtstate;
