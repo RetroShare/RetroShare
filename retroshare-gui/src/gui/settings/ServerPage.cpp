@@ -36,6 +36,8 @@
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
 
+//#define SERVER_DEBUG 1
+
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags), mIsHiddenNode(false)
 {
@@ -81,8 +83,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 #endif
 
+#ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
 	std::cerr << std::endl;
+#endif
 }
 
 void ServerPage::updateMaxTRUpRate(int b)
@@ -122,8 +126,10 @@ ServerPage::save(QString &/*errmsg*/)
 /** Loads the settings for this page */
 void ServerPage::load()
 {
+#ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::load() called";
 	std::cerr << std::endl;
+#endif
 
 	/* load up configuration from rsPeers */
 	RsPeerDetails detail;
@@ -250,8 +256,10 @@ void ServerPage::toggleTurtleRouting(bool b)
 /** Loads the settings for this page */
 void ServerPage::updateStatus()
 {
-	std::cerr << "ServerPage::updateStatusd() called";
+#ifdef SERVER_DEBUG
+	std::cerr << "ServerPage::updateStatus() called";
 	std::cerr << std::endl;
+#endif
 
 	if(RsAutoUpdatePage::eventsLocked())
 		return ;
@@ -459,8 +467,10 @@ void ServerPage::saveAddresses()
 /** Loads the settings for this page */
 void ServerPage::loadHiddenNode()
 {
+#ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::loadHiddenNode() called";
 	std::cerr << std::endl;
+#endif
 
 	/* load up configuration from rsPeers */
 	RsPeerDetails detail;
@@ -576,8 +586,10 @@ void ServerPage::loadHiddenNode()
 /** Loads the settings for this page */
 void ServerPage::updateStatusHiddenNode()
 {
+#ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::updateStatusHiddenNode() called";
 	std::cerr << std::endl;
+#endif
 
 // THIS IS DISABLED FOR NOW.
 #if 0
