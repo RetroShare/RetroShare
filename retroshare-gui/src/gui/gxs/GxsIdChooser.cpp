@@ -24,8 +24,8 @@
 #include "GxsIdChooser.h"
 #include "GxsIdDetails.h"
 #include "RsGxsUpdateBroadcastBase.h"
+#include "gui/Identity/IdDialog.h"
 
-#include <QTimer>
 #include <QSortFilterProxyModel>
 #include <algorithm>
 
@@ -33,26 +33,28 @@
 
 #include <iostream>
 
-#define MAX_TRY  10 // 5 seconds
-
 #define ROLE_SORT Qt::UserRole + 1 // Qt::UserRole is reserved for data
 #define ROLE_TYPE Qt::UserRole + 2 //
 
+/* Used for sorting too */
 #define TYPE_NO_ID       1
 #define TYPE_FOUND_ID    2
 #define TYPE_UNKNOWN_ID  3
+#define TYPE_CREATE_ID   4
 
 #define IDCHOOSER_REFRESH  1
 
+//#define IDCHOOSER_DEBUG
+
 /** Constructor */
 GxsIdChooser::GxsIdChooser(QWidget *parent)
-: QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
+    : QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
 {
 	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
 	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
 
 	mIdQueue = NULL;
-	mFirstLoad=true;
+	mFirstLoad = true;
 
 	mDefaultId.clear() ;
 	mDefaultIdName.clear();
@@ -64,37 +66,26 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	setModel(proxy);
 
 	proxy->setSortRole(ROLE_SORT);
-	connect(this, SIGNAL(currentIndexChanged(int)),this,SLOT(myCurrentIndexChanged(int)));
+
+	/* Connect signals */
+	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myCurrentIndexChanged(int)));
+	connect(this, SIGNAL(activated(int)), this, SLOT(indexActivated(int)));
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 }
 
 void GxsIdChooser::setFlags(uint32_t flags)
 {
-    mFlags = flags ;
-    updateDisplay(true);
+	mFlags = flags ;
+	updateDisplay(true);
 }
+
 GxsIdChooser::~GxsIdChooser()
 {
 	if (mIdQueue) {
 		delete(mIdQueue);
 		mIdQueue = NULL;
 	}
-}
-
-void GxsIdChooser::setUpdateWhenInvisible(bool update)
-{
-	mBase->setUpdateWhenInvisible(update);
-}
-
-const std::list<RsGxsGroupId> &GxsIdChooser::getGrpIds()
-{
-	return mBase->getGrpIds();
-}
-
-const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &GxsIdChooser::getMsgIds()
-{
-	return mBase->getMsgIds();
 }
 
 void GxsIdChooser::fillDisplay(bool complete)
@@ -108,7 +99,6 @@ void GxsIdChooser::showEvent(QShowEvent *event)
 	mBase->showEvent(event);
 	QComboBox::showEvent(event);
 }
-
 
 void GxsIdChooser::loadIds(uint32_t chooserFlags, RsGxsId defId)
 {
@@ -138,14 +128,16 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		index = chooser->count() - 1;
 	}
 
-	chooser->setItemData(index, QString("%1_%2").arg((type == GXS_ID_DETAILS_TYPE_DONE) ? "1" : "2").arg(text), ROLE_SORT);
+	chooser->setItemData(index, QString("%1_%2").arg((type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID).arg(text), ROLE_SORT);
 	chooser->setItemData(index, (type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
 	chooser->model()->sort(0);
 }
 
 void GxsIdChooser::loadPrivateIds(uint32_t token)
 {
-	if (mFirstLoad)	{	clear();}
+	if (mFirstLoad) {
+		clear();
+	}
 
 	std::list<RsGxsId> ids;
 	//rsIdentity->getOwnIds(ids);
@@ -154,71 +146,77 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		std::cerr << "GxsIdChooser::loadPrivateIds() Error getting GroupData";
 		std::cerr << std::endl;
 		return;
-    }
+	}
 
-	for (std::vector<RsGxsIdGroup>::iterator vit = datavector.begin();
-	     vit != datavector.end(); ++vit) {
+	for (std::vector<RsGxsIdGroup>::iterator vit = datavector.begin(); vit != datavector.end(); ++vit) {
 		RsGxsIdGroup data = (*vit);
 		if (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
 			ids.push_back((RsGxsId) data.mMeta.mGroupId);
-        }
+		}
 
 		if (mDefaultIdName == data.mMeta.mGroupName) {
-			mDefaultId=(RsGxsId) data.mMeta.mGroupId;
-        }
-    }
+			mDefaultId = (RsGxsId) data.mMeta.mGroupId;
+		}
+	}
 
 	//rsIdentity->getDefaultId(defId);
 	// Prefer to use an application specific default???
 
 	if (mFirstLoad) {
 		if (!(mFlags & IDCHOOSER_ID_REQUIRED)) {
-		/* add No Signature option */
-		QString str = tr("No Signature");
-		QString id = "";
+			/* add No Signature option */
+			QString str = tr("No Signature");
+			QString id = "";
 
-		addItem(str, id);
-		setItemData(count() - 1, QString("0_%2").arg(str), ROLE_SORT);
+			addItem(str, id);
+			setItemData(count() - 1, QString("%1_%2").arg(TYPE_NO_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_NO_ID, ROLE_TYPE);
-        }
-    }
+		}
+		if (!(mFlags & IDCHOOSER_NO_CREATE)) {
+			/* add Create Identity option */
+			QString str = tr("Create new Identity");
+			QString id = "";
 
-	if (!mFirstLoad) {
-		for (int idx=0; idx < count(); ++idx) {
-			QVariant type = itemData(idx,ROLE_TYPE);
+			addItem(str, id);
+			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
+			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
+		}
+	} else {
+		for (int idx = 0; idx < count(); ++idx) {
+			QVariant type = itemData(idx, ROLE_TYPE);
 			switch (type.toInt()) {
-				case TYPE_NO_ID:
+			case TYPE_NO_ID:
+			case TYPE_CREATE_ID:
 				break;
-				case TYPE_FOUND_ID:
-				case TYPE_UNKNOWN_ID:
-				default: {
+			case TYPE_FOUND_ID:
+			case TYPE_UNKNOWN_ID:
+				{
 					QVariant var = itemData(idx);
 					RsGxsId gxsId = RsGxsId(var.toString().toStdString());
-					std::list<RsGxsId>::iterator lit = std::find( ids.begin(), ids.end(), gxsId);
+					std::list<RsGxsId>::iterator lit = std::find(ids.begin(), ids.end(), gxsId);
 					if (lit == ids.end()) {
 						removeItem(idx);
 						idx--;
-                    }
-                }
-            }
-        }
-    }
+					}
+				}
+			}
+		}
+	}
+
+	mFirstLoad = false;
 
 	if (ids.empty()) {
 		std::cerr << "GxsIdChooser::loadPrivateIds() ERROR no ids";
 		std::cerr << std::endl;
-		mFirstLoad = false;
 		return;
-    }
+	}
 
-	for(std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); ++it) {
+	for (std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); ++it) {
 		/* add to Chooser */
 		GxsIdDetails::process(*it, loadPrivateIdsCallback, this);
-    }
+	}
 
 	setDefaultItem();
-
-	mFirstLoad=false;
 }
 
 void GxsIdChooser::setDefaultItem()
@@ -230,16 +228,15 @@ void GxsIdChooser::setDefaultItem()
 	} else {
 		QString id = QString::fromStdString(mDefaultId.toStdString());
 		def = findData(id);
-    }
+	}
 
 	if (def >= 0) {
 		setCurrentIndex(def);
-    }
-
+	}
 }
 
 bool GxsIdChooser::setChosenId(RsGxsId &gxsId)
-	{
+{
 	QString id = QString::fromStdString(gxsId.toStdString());
 
 	/* Find text of exisiting item */
@@ -247,55 +244,72 @@ bool GxsIdChooser::setChosenId(RsGxsId &gxsId)
 	if (index >= 0) {
 		setCurrentIndex(index);
 		return true;
-    }
-		return false;
 	}
+	return false;
+}
 
 GxsIdChooser::ChosenId_Ret GxsIdChooser::getChosenId(RsGxsId &gxsId)
 {
 	if (count() < 1) {
 		return None;
-    }
+	}
 
 	int idx = currentIndex();
 
 	QVariant var = itemData(idx);
 	gxsId = RsGxsId(var.toString().toStdString());
-	QVariant type = itemData(idx,ROLE_TYPE);
+	QVariant type = itemData(idx, ROLE_TYPE);
 	switch (type.toInt()) {
-		case TYPE_NO_ID:
+	case TYPE_NO_ID:
 		return NoId;
-		case TYPE_FOUND_ID:
+	case TYPE_FOUND_ID:
 		return KnowId;
-		case TYPE_UNKNOWN_ID:
+	case TYPE_UNKNOWN_ID:
 		return UnKnowId;
-    }
+	case TYPE_CREATE_ID:
+		break;
+	}
 
 	return None;
 }
 
 void GxsIdChooser::myCurrentIndexChanged(int index)
 {
-	Q_UNUSED(index)
+	Q_UNUSED(index);
+
 	QFontMetrics fm = QFontMetrics(font());
 	QString text = currentText();
-	if (width()<fm.boundingRect(text).width()) {
+	if (width() < fm.boundingRect(text).width()) {
 		setToolTip(text);
 	} else {
 		setToolTip("");
-    }
+	}
+}
+
+void GxsIdChooser::indexActivated(int index)
+{
+	int type = itemData(index, ROLE_TYPE).toInt();
+	if (type == TYPE_CREATE_ID) {
+		IdEditDialog dlg(this);
+		dlg.setupNewId(false);
+		dlg.exec();
+//		ui.idChooser->setDefaultId(dlg.getLastIdName());
+	}
 }
 
 void GxsIdChooser::updateDisplay(bool complete)
 {
 	Q_UNUSED(complete)
+
 	/* Update identity list */
 	requestIdList();
-	}
+}
 
 void GxsIdChooser::requestIdList()
 {
-	if (!mIdQueue) return;
+	if (!mIdQueue) {
+		return;
+	}
 
 	mIdQueue->cancelActiveRequestTokens(IDCHOOSER_REFRESH);
 
@@ -310,21 +324,19 @@ void GxsIdChooser::requestIdList()
 void GxsIdChooser::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	Q_UNUSED(queue)
+
+#ifdef IDCHOOSER_DEBUG
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
+#endif
 
 	switch(req.mUserType) {
-		case IDCHOOSER_REFRESH:
-			insertIdList(req.mToken);
+	case IDCHOOSER_REFRESH:
+		loadPrivateIds(req.mToken);
 		break;
-		default:
-			std::cerr << "IdDialog::loadRequest() ERROR";
-			std::cerr << std::endl;
+	default:
+		std::cerr << "IdDialog::loadRequest() ERROR";
+		std::cerr << std::endl;
 		break;
-    }
-}
-
-void GxsIdChooser::insertIdList(uint32_t token)
-{
-	loadPrivateIds(token);
+	}
 }

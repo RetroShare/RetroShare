@@ -21,7 +21,6 @@
  *
  */
 
-
 #ifndef _GXS_ID_CHOOSER_H
 #define _GXS_ID_CHOOSER_H
 
@@ -38,23 +37,20 @@
 class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
-#define IDCHOOSER_ID_REQUIRED	0x0001
+#define IDCHOOSER_ID_REQUIRED   0x0001
 #define IDCHOOSER_ANON_DEFAULT  0x0002
+#define IDCHOOSER_NO_CREATE     0x0004
 
 class GxsIdChooser : public QComboBox, public TokenResponse
 {
-        Q_OBJECT
+	Q_OBJECT
 
 public:
 	GxsIdChooser(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
 	GxsIdChooser(QWidget *parent = NULL);
 	virtual ~GxsIdChooser();
 
-    void setFlags(uint32_t flags) ;
-
-	void setUpdateWhenInvisible(bool update);
-	const std::list<RsGxsGroupId> &getGrpIds();
-	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds();
+	void setFlags(uint32_t flags) ;
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);//TokenResponse
 
@@ -68,16 +64,16 @@ public:
 
 protected:
 	virtual void showEvent(QShowEvent *event);
-	virtual void updateDisplay(bool complete);
+	void updateDisplay(bool complete);
 
 private slots:
 	void fillDisplay(bool complete);
 	void myCurrentIndexChanged(int index);
+	void indexActivated(int index);
 
 private:
 	void requestIdList() ;
 	void loadPrivateIds(uint32_t token);
-	void insertIdList(uint32_t token);
 	void setDefaultItem();
 
 	uint32_t mFlags;
@@ -91,4 +87,3 @@ private:
 };
 
 #endif
-
