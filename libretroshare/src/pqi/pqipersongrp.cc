@@ -82,9 +82,13 @@ int pqipersongrp::tickServiceRecv()
 
 	while(NULL != (pqi = GetRsRawItem()))
 	{
+		static int ntimes=0 ;
+		if(++ntimes < 20)
+		{
 		std::cerr << "pqipersongrp::tickServiceRecv() GetRsRawItem()";
 		std::cerr << " should never happen anymore!";
 		std::cerr << std::endl;
+		}
 
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
