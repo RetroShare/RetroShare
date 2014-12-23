@@ -477,10 +477,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Inon Size = 32x32</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Status Bar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -719,6 +715,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load posts in background (Thread)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open each channel in a new tab</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4154,6 +4154,10 @@ you plug it in.</source>
         <source>Tabs</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open each forum in a new tab</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendList</name>
@@ -5216,10 +5220,6 @@ p, li { white-space: pre-wrap; }
     <name>GroupFrameSettingsWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open all forums in new tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9932,6 +9932,10 @@ malicious behavior of crafted plugins.</source>
         <source>Posted</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open each topic in a new tab</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PostedUserNotify</name>
@@ -12675,11 +12679,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ToasterDisable</name>
     <message>
-        <source>All Toasters are disable</source>
+        <source>All Toasters are disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toasters are enable</source>
+        <source>Toasters are enabled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

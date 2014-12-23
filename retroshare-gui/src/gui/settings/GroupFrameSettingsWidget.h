@@ -17,6 +17,8 @@ public:
 	explicit GroupFrameSettingsWidget(QWidget *parent = 0);
 	~GroupFrameSettingsWidget();
 
+	void setOpenAllInNewTabText(const QString &text);
+
 	void loadSettings(GroupFrameSettings::Type type);
 	void saveSettings(GroupFrameSettings::Type type);
 
