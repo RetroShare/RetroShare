@@ -1242,7 +1242,7 @@ void MessagesDialog::insertMessages()
             {
                 item->setIcon(COLUMN_SIGNATURE, QIcon(":/images/blue_lock_open.png")) ;
                 item->setToolTip(COLUMN_SIGNATURE, tr("This message has been successfully decrypted, and is unsigned.")) ;
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/mail-decrypted-full.png")) ;
+                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-read.png")) ;
 
                 if(it->msgflags & RS_MSG_SIGNED)
                 {
