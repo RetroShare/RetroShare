@@ -154,7 +154,6 @@ private:
 	void newGroup();
 	void init();
 	void initMode();
-	void createNewGxsId();
 
 	// Functions that can be overloaded for specific stuff.
 

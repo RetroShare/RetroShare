@@ -53,6 +53,9 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
 	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
 
+	/* Initialize ui */
+	setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
 	mIdQueue = NULL;
 	mFirstLoad = true;
 
@@ -172,15 +175,6 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_NO_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_NO_ID, ROLE_TYPE);
 		}
-		if (!(mFlags & IDCHOOSER_NO_CREATE)) {
-			/* add Create Identity option */
-			QString str = tr("Create new Identity");
-			QString id = "";
-
-			addItem(str, id);
-			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
-			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
-		}
 	} else {
 		for (int idx = 0; idx < count(); ++idx) {
 			QVariant type = itemData(idx, ROLE_TYPE);
@@ -203,9 +197,8 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		}
 	}
 
-	mFirstLoad = false;
-
 	if (ids.empty()) {
+		mFirstLoad = false;
 		std::cerr << "GxsIdChooser::loadPrivateIds() ERROR no ids";
 		std::cerr << std::endl;
 		return;
@@ -215,6 +208,20 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		/* add to Chooser */
 		GxsIdDetails::process(*it, loadPrivateIdsCallback, this);
 	}
+
+	if (mFirstLoad) {
+		if (!(mFlags & IDCHOOSER_NO_CREATE)) {
+			/* add Create Identity option */
+			QString str = tr("Create new Identity");
+			QString id = "";
+
+			addItem(str, id);
+			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
+			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
+		}
+	}
+
+	mFirstLoad = false;
 
 	setDefaultItem();
 }
@@ -226,8 +233,10 @@ void GxsIdChooser::setDefaultItem()
 	if ((mFlags & IDCHOOSER_ANON_DEFAULT) && !(mFlags & IDCHOOSER_ID_REQUIRED)) {
 		def = findData(TYPE_NO_ID, ROLE_TYPE);
 	} else {
-		QString id = QString::fromStdString(mDefaultId.toStdString());
-		def = findData(id);
+		if (!mDefaultId.isNull()) {
+			QString id = QString::fromStdString(mDefaultId.toStdString());
+			def = findData(id);
+		}
 	}
 
 	if (def >= 0) {
@@ -293,7 +302,7 @@ void GxsIdChooser::indexActivated(int index)
 		IdEditDialog dlg(this);
 		dlg.setupNewId(false);
 		dlg.exec();
-//		ui.idChooser->setDefaultId(dlg.getLastIdName());
+		setDefaultId(dlg.getLastIdName());
 	}
 }
 

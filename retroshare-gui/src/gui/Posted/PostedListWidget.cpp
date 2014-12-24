@@ -28,7 +28,6 @@
 
 #include "PostedCreatePostDialog.h"
 #include "PostedItem.h"
-#include "gui/Identity/IdDialog.h"
 #include "gui/common/UIStateHelper.h"
 
 #include <retroshare/rsposted.h>
@@ -62,8 +61,6 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(showNext()));
 	connect(ui->prevButton, SIGNAL(clicked()), this, SLOT(showPrev()));
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
-
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	// default sort method.
 	mSortMethod = RsPosted::HotRankType;
@@ -271,14 +268,6 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	uint32_t token;
 	rsPosted->createVote(token, vote);
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, mTokenTypeVote);
-}
-
-void PostedListWidget::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }
 
 void PostedListWidget::subscribeGroup(bool subscribe)

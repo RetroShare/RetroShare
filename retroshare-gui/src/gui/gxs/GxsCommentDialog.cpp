@@ -23,7 +23,6 @@
 
 #include "gui/gxs/GxsCommentDialog.h"
 #include "ui_GxsCommentDialog.h"
-#include "gui/Identity/IdDialog.h"
 
 #include <iostream>
 #include <sstream>
@@ -48,7 +47,6 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	/* force voterId through - first time */
 	voterSelectionChanged( 0 );
@@ -142,12 +140,4 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 	ui->notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 #endif
-}
-
-void  GxsCommentDialog::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }

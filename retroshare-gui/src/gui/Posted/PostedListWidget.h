@@ -67,7 +67,6 @@ protected:
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
 
 private slots:
-	void createNewGxsId();
 	void newPost();
 
 	void submitVote(const RsGxsGrpMsgIdPair& msgId, bool up);

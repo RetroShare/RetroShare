@@ -33,7 +33,6 @@
 #include "gui/RetroShareLink.h"
 #include "gui/common/Emoticons.h"
 #include "gui/common/UIStateHelper.h"
-#include "gui/Identity/IdDialog.h"
 
 #include "util/HandleRichText.h"
 #include "util/misc.h"
@@ -90,7 +89,6 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
 	connect(ui.attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
 	connect(ui.generateCheckBox, SIGNAL(toggled(bool)), ui.generateSpinBox, SLOT(setEnabled(bool)));
-	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	setAcceptDrops(true);
 	ui.hashBox->setDropWidget(this);
@@ -335,14 +333,6 @@ void  CreateGxsForumMsg::createMsg()
 	}//if (generateCount)
 
 	close();
-}
-
-void  CreateGxsForumMsg::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui.idChooser->setDefaultId(dlg.getLastIdName());
 }
 
 void CreateGxsForumMsg::closeEvent (QCloseEvent * /*event*/)

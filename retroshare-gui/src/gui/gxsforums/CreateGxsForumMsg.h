@@ -45,7 +45,6 @@ private slots:
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
 	/* actions to take.... */
 	void createMsg();
-	void createNewGxsId();
 
 	void smileyWidgetForums();
 	void addSmileys();

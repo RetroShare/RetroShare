@@ -26,7 +26,6 @@
 #include "util/misc.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
-#include "gui/Identity/IdDialog.h"
 #include "retroshare/rsgxsflags.h"
 
 #include <algorithm>
@@ -92,8 +91,6 @@ void GxsGroupDialog::init()
 	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
-
-	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
@@ -187,14 +184,6 @@ void GxsGroupDialog::initMode()
 		}
 		break;
 	}
-}
-
-void  GxsGroupDialog::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui.idChooser->setDefaultId(dlg.getLastIdName());
 }
 
 void GxsGroupDialog::clearForm()
