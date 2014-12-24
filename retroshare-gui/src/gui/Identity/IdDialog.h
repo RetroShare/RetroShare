@@ -25,18 +25,19 @@
 #define IDENTITYDIALOG_H
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
-#include "ui_IdDialog.h"
 
 #include <retroshare/rsidentity.h>
 
-#include <map>
-
-#include "gui/Identity/IdEditDialog.h"
 #include "util/TokenQueue.h"
 
 #define IMAGE_IDDIALOG          ":/images/identity/identities_32.png"
 
+namespace Ui {
+class IdDialog;
+}
+
 class UIStateHelper;
+class QTreeWidgetItem;
 
 class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
@@ -68,21 +69,23 @@ private slots:
 
 	void todo();
 	void modifyReputation();
-	
-		/** Create the context popup menu and it's submenus */
+
+	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
 
 private:
-    void requestIdDetails(RsGxsGroupId &id);
+	void processSettings(bool load);
+
+	void requestIdDetails();
 	void insertIdDetails(uint32_t token);
 
 	void requestIdList();
-    void requestIdData(std::list<RsGxsGroupId> &ids);
+	void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
 	void filterIds();
 
-	void requestRepList(const RsGxsGroupId &aboutId);
+	void requestRepList();
 	void insertRepList(uint32_t token);
 
 	void requestIdEdit(std::string &id);
@@ -92,8 +95,10 @@ private:
 	TokenQueue *mIdQueue;
 	UIStateHelper *mStateHelper;
 
+	RsGxsGroupId mId;
+
 	/* UI - from Designer */
-	Ui::IdDialog ui;
+	Ui::IdDialog *ui;
 };
 
 #endif

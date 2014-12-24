@@ -24,7 +24,7 @@
 #include "GxsIdChooser.h"
 #include "GxsIdDetails.h"
 #include "RsGxsUpdateBroadcastBase.h"
-#include "gui/Identity/IdDialog.h"
+#include "gui/Identity/IdEditDialog.h"
 
 #include <QSortFilterProxyModel>
 #include <algorithm>

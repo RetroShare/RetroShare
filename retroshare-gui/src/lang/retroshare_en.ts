@@ -2861,14 +2861,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit Circle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3089,14 +3081,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Generate mass data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5637,6 +5621,18 @@ p, li { white-space: pre-wrap; }
         <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Media</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsChannelPostsWidget</name>
@@ -5773,14 +5769,6 @@ p, li { white-space: pre-wrap; }
         <source>OwnVote</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>GxsCommentTreeWidget</name>
@@ -5846,14 +5834,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>You need to create an Identity
 before you can comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6321,14 +6301,6 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6412,6 +6384,10 @@ before you can comment</source>
     <name>GxsIdChooser</name>
     <message>
         <source>No Signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6817,10 +6793,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Do you really want to delete this Identity ?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Really delete? </source>
         <translation type="unfinished"></translation>
     </message>
@@ -6906,6 +6878,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to delete this Identity?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat with this peer as...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distant chat cannot work</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this peer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error code</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9675,14 +9667,6 @@ malicious behavior of crafted plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9883,14 +9867,6 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
