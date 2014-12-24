@@ -199,6 +199,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     loadmypersonalstatus();
 
+    ui.mypersonalstatusLabel->setMinimumWidth(25);
+
     // load settings
     RsAutoUpdatePage::lockAllEvents();
     ui.friendList->setShowStatusColumn(false);

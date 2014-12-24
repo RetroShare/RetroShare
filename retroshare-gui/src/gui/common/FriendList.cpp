@@ -1791,6 +1791,7 @@ void FriendList::updateHeader()
             && ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT) \
             && ui->peerTreeWidget->isColumnHidden(COLUMN_IP)) {
         ui->peerTreeWidget->setHeaderHidden(true);
+        initializeHeader(true);
     } else {
         ui->peerTreeWidget->setHeaderHidden(false);
     }
@@ -1966,7 +1967,7 @@ void FriendList::createDisplayMenu()
     menu->addAction(ui->actionShowAvatarColumn);
     menu->addAction(ui->actionShowLastContactColumn);
     menu->addAction(ui->actionShowIPColumn);
-    menu->addAction(ui->actionShowStatusColumn);
+    //menu->addAction(ui->actionShowStatusColumn);
     menu = displayMenu->addMenu(tr("Sort by"));
 //    menu->addAction(ui->actionSortByName);
     menu->addAction(ui->actionSortByState);
