@@ -22,10 +22,10 @@
 #ifndef MIMETEXTEDIT_H
 #define MIMETEXTEDIT_H
 
-#include <QTextEdit>
 #include <QCompleter>
+#include "RSTextEdit.h"
 
-class MimeTextEdit : public QTextEdit
+class MimeTextEdit : public RSTextEdit
 {
 	Q_OBJECT
 

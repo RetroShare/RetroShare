@@ -492,6 +492,9 @@ border-image: url(:/images/closepressed.png)
            <height>30</height>
           </size>
          </property>
+         <property name="placeholderText">
+          <string>Type a message here</string>
+         </property>
         </widget>
        </item>
       </layout>

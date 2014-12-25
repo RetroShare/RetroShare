@@ -1497,6 +1497,10 @@ Double click lobbies to enter and chat.</source>
         <source>Search Box</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Type a message here</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CircleWidget</name>

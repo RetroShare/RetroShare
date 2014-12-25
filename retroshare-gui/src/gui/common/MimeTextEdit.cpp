@@ -34,7 +34,7 @@
 #include <retroshare/rspeers.h>
 
 MimeTextEdit::MimeTextEdit(QWidget *parent)
-	: QTextEdit(parent), mCompleter(0)
+    : RSTextEdit(parent), mCompleter(0)
 {
 	mCompleterKeyModifiers = Qt::ControlModifier;
 	mCompleterKey = Qt::Key_Space;
@@ -52,7 +52,7 @@ bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
 	}
 #endif
 
-	return QTextEdit::canInsertFromMimeData(source);
+	return RSTextEdit::canInsertFromMimeData(source);
 }
 
 void MimeTextEdit::insertFromMimeData(const QMimeData* source)
@@ -75,7 +75,7 @@ void MimeTextEdit::insertFromMimeData(const QMimeData* source)
 	}
 #endif
 
-	return QTextEdit::insertFromMimeData(source);
+	return RSTextEdit::insertFromMimeData(source);
 }
 
 void MimeTextEdit::setCompleter(QCompleter *completer)
@@ -126,7 +126,7 @@ void MimeTextEdit::focusInEvent(QFocusEvent *e)
 	if (mCompleter)
 		mCompleter->setWidget(this);
 
-	QTextEdit::focusInEvent(e);
+	RSTextEdit::focusInEvent(e);
 }
 
 void MimeTextEdit::keyPressEvent(QKeyEvent *e)
@@ -154,7 +154,7 @@ void MimeTextEdit::keyPressEvent(QKeyEvent *e)
 	}
 	isShortcut |= mForceCompleterShowNextKeyEvent;
 	if (!mCompleter || !isShortcut) // do not process the shortcut when we have a completer
-		QTextEdit::keyPressEvent(e);
+		RSTextEdit::keyPressEvent(e);
 
 	if (!mCompleter) return; //Nothing else to do if not mCompleter initialized
 
@@ -181,7 +181,7 @@ void MimeTextEdit::keyPressEvent(QKeyEvent *e)
 	mCompleter->complete(cr); // popup it up!
 
 	if (mCompleter->completionCount()==0 && isShortcut){
-		QTextEdit::keyPressEvent(e);// Process the key if no match
+		RSTextEdit::keyPressEvent(e);// Process the key if no match
 	}
 	mForceCompleterShowNextKeyEvent = false;
 }

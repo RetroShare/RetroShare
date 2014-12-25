@@ -450,6 +450,7 @@ HEADERS +=  rshare.h \
             gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
             gui/common/RSListWidgetItem.h \
+            gui/common/RSTextEdit.h \
             gui/common/RSPlainTextEdit.h \
             gui/common/RSTreeWidget.h \
             gui/common/RSTreeWidgetItem.h \
@@ -749,6 +750,7 @@ SOURCES +=  main.cpp \
             gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
             gui/common/RSListWidgetItem.cpp \
+            gui/common/RSTextEdit.cpp \
             gui/common/RSPlainTextEdit.cpp \
             gui/common/RSTreeWidget.cpp \
             gui/common/RSTreeWidgetItem.cpp \
