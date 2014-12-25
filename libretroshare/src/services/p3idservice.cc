@@ -2302,7 +2302,11 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
     // to see the grp id on the list of ownIds immediately after the group was created
     {
         RsStackMutex stack(mIdMtx);
-        mOwnIds.push_back(RsGxsId(item->meta.mGroupId));
+        RsGxsId gxsId(item->meta.mGroupId);
+        if (std::find(mOwnIds.begin(), mOwnIds.end(), gxsId) == mOwnIds.end())
+        {
+            mOwnIds.push_back(gxsId);
+        }
     }
 
 	return createStatus;
