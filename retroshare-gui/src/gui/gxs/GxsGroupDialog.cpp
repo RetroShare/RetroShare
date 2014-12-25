@@ -322,8 +322,8 @@ void GxsGroupDialog::setupReadonly()
 	//ui.groupLogo->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 	ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 
-	ui.groupDesc->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
-	ui.groupDescLabel->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
+	ui.groupDesc->setReadOnly(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION);
+	//ui.groupDescLabel->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
 
 	ui.distribGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 
@@ -367,6 +367,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 
 	/* setup name */
 	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+	ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
 
 	/* set description */
 	ui.groupDesc->setPlainText(description);

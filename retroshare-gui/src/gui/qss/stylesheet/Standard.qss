@@ -579,3 +579,9 @@ QLabel#sharekeyinfo_label{
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
+
+QLabel#subscribersLabel{
+  border: 1px solid #CCCCCC;
+  border-radius: 6px;
+
+}
