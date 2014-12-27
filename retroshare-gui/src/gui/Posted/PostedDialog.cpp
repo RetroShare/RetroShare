@@ -28,8 +28,18 @@
 #include "PostedUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/common/GroupTreeWidget.h"
 
 #include <retroshare/rsposted.h>
+
+class PostedGroupInfoData : public RsUserdata
+{
+public:
+	PostedGroupInfoData() : RsUserdata() {}
+
+public:
+	QMap<RsGxsGroupId, QString> mDescription;
+};
 
 /** Constructor */
 PostedDialog::PostedDialog(QWidget *parent)
@@ -135,4 +145,41 @@ RsGxsCommentService *PostedDialog::getCommentService()
 QWidget *PostedDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 {
 	return new PostedItem(NULL, 0, grpId, msgId, true, false);
+}
+
+void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+{
+	std::vector<RsPostedGroup> groups;
+	rsPosted->getGroupData(token, groups);
+
+	/* Save groups to fill description */
+	PostedGroupInfoData *postedData = new PostedGroupInfoData;
+	userdata = postedData;
+
+	std::vector<RsPostedGroup>::iterator groupIt;
+	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
+		RsPostedGroup &group = *groupIt;
+		groupInfo.push_back(group.mMeta);
+
+		if (!group.mDescription.empty()) {
+			postedData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
+		}
+	}
+}
+
+void PostedDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+
+	const PostedGroupInfoData *postedData = dynamic_cast<const PostedGroupInfoData*>(userdata);
+	if (!postedData) {
+		std::cerr << "PostedDialog::groupInfoToGroupItemInfo() Failed to cast data to PostedGroupInfoData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = postedData->mDescription.find(groupInfo.mGroupId);
+	if (descriptionIt != postedData->mDescription.end()) {
+		groupItemInfo.description = descriptionIt.value();
+	}
 }

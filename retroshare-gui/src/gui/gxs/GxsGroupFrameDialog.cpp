@@ -649,12 +649,11 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupI
 {
 	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
-	//groupItemInfo.description =
 	groupItemInfo.popularity = groupInfo.mPop;
 	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
-    groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
-    groupItemInfo.privatekey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
-    groupItemInfo.max_visible_posts = groupInfo.mVisibleMsgCount ;
+	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
+	groupItemInfo.privatekey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
+	groupItemInfo.max_visible_posts = groupInfo.mVisibleMsgCount ;
 
 #if TOGXS
 	if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {

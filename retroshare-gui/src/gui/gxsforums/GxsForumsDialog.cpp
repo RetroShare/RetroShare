@@ -25,6 +25,16 @@
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/common/GroupTreeWidget.h"
+
+class GxsForumGroupInfoData : public RsUserdata
+{
+public:
+	GxsForumGroupInfoData() : RsUserdata() {}
+
+public:
+	QMap<RsGxsGroupId, QString> mDescription;
+};
 
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
@@ -124,4 +134,41 @@ int GxsForumsDialog::shareKeyType()
 GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
 {
 	return new GxsForumThreadWidget(groupId);
+}
+
+void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+{
+	std::vector<RsGxsForumGroup> groups;
+	rsGxsForums->getGroupData(token, groups);
+
+	/* Save groups to fill description */
+	GxsForumGroupInfoData *forumData = new GxsForumGroupInfoData;
+	userdata = forumData;
+
+	std::vector<RsGxsForumGroup>::iterator groupIt;
+	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
+		RsGxsForumGroup &group = *groupIt;
+		groupInfo.push_back(group.mMeta);
+
+		if (!group.mDescription.empty()) {
+			forumData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
+		}
+	}
+}
+
+void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+
+	const GxsForumGroupInfoData *forumData = dynamic_cast<const GxsForumGroupInfoData*>(userdata);
+	if (!forumData) {
+		std::cerr << "GxsForumsDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsForumGroupInfoData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = forumData->mDescription.find(groupInfo.mGroupId);
+	if (descriptionIt != forumData->mDescription.end()) {
+		groupItemInfo.description = descriptionIt.value();
+	}
 }

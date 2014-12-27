@@ -36,6 +36,7 @@ public:
 
 public:
 	QMap<RsGxsGroupId, QIcon> mIcon;
+	QMap<RsGxsGroupId, QString> mDescription;
 };
 
 /** Constructor */
@@ -181,7 +182,7 @@ void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<Rs
 	std::vector<RsGxsChannelGroup> groups;
 	rsGxsChannels->getGroupData(token, groups);
 
-	/* Save groups to fill icons */
+	/* Save groups to fill icons and description */
 	GxsChannelGroupInfoData *channelData = new GxsChannelGroupInfoData;
 	userdata = channelData;
 
@@ -195,6 +196,10 @@ void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<Rs
 			image.loadFromData(group.mImage.mData, group.mImage.mSize, "PNG");
 			channelData->mIcon[group.mMeta.mGroupId] = image;
 		}
+
+		if (!group.mDescription.empty()) {
+			channelData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
+		}
 	}
 }
 
@@ -207,6 +212,11 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo
 		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData";
 		std::cerr << std::endl;
 		return;
+	}
+
+	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = channelData->mDescription.find(groupInfo.mGroupId);
+	if (descriptionIt != channelData->mDescription.end()) {
+		groupItemInfo.description = descriptionIt.value();
 	}
 
 	QMap<RsGxsGroupId, QIcon>::const_iterator iconIt = channelData->mIcon.find(groupInfo.mGroupId);
