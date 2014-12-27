@@ -10,30 +10,54 @@ workdir=retroshare06-$version
 echo This script is going to build the debian source package for RetroShare, from the svn.
 
 if test -d "$workdir" ;  then
-	echo Please remove the $workdir directory first.
-	exit
+	echo Removing the $workdir directory...
+	rm -rf $workdir
 fi
 
 svn update
 
-if test "$1" = "" ; then
+# Parse options
+svnrev=""
+dist=""
+# This is the key for "Cyril Soler <csoler@sourceforge.net>"
+gpgkey="C737CA98"
+while [ $# -gt 0 ]; do
+    case $1 in
+	"-rev") shift
+            svnrev=$1
+	    shift
+	    ;;
+	"-distribution") shift
+	    dist=$1
+	    shift
+	    ;;
+	"-key") shift
+	    gpgkey=$1
+	    shift
+	    ;;
+	"*") echo "Unknown option"
+	    exit 1
+	    ;;
+    esac
+done
+
+if test "$svnrev" = "" ; then
 	echo attempting to get svn revision number...
 	svn=`svn info | grep 'Revision:' | cut -d\  -f2`
 else
 	echo svn number has been provided. Forcing update.
-	svn="$1"
 fi
 
 echo done.
-version="$version"."$svn"
+version="$version"."$svnrev"
 echo got version number $version. 
 echo Please check that the changelog is up to date. 
-echo Hit ENTER is this is this correct. Otherwise hit Ctrl+C 
+echo Hit ENTER if this is correct. Otherwise hit Ctrl+C 
 read tmp
 
 packages="."
 
-echo SVN number is $svn
+echo SVN number is $svnrev
 echo version is $version
 
 echo Extracting base archive...
@@ -44,17 +68,20 @@ cp -r debian $workdir/debian
 
 echo Checking out latest snapshot in libbitdht...
 cd $workdir/src/
-svn co -r$svn $svnpath/trunk/ . 
+svn co -r$svnrev $svnpath/trunk/ . 
 cd ../..
 
 # VOIP tweak  
 cp $workdir/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
 
-# handling of libssh-0.5.4
-
-wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
+# handling of libssh
+#LIBSSH_VERSION=0.5.4
+#LIBSSH_DIR=41
+LIBSSH_VERSION=0.6.4
+LIBSSH_DIR=107
+[ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz https://red.libssh.org/attachments/download/${LIBSSH_DIR}/libssh-${LIBSSH_VERSION}.tar.gz
 cd $workdir
-tar zxvf ../libssh-0.5.4.tar.gz
+tar zxvf ../libssh-${LIBSSH_VERSION}.tar.gz
 cd ..
 
 # cd $workdir
@@ -62,7 +89,6 @@ cd ..
 # cd ..
 
 # cleaning up protobof generated files
-
 \rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
 \rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
 
@@ -71,16 +97,15 @@ echo Setting version numbers...
 # setup version numbers
 cat $workdir/src/libretroshare/src/util/rsversion.h | grep -v SVN_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto2342
 echo \#define SVN_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto2342
-echo \#define SVN_REVISION_NUMBER $svn >> /tmp/toto2342
+echo \#define SVN_REVISION_NUMBER $svnrev >> /tmp/toto2342
 cp /tmp/toto2342 $workdir/src/libretroshare/src/util/rsversion.h
 
 cat $workdir/src/retroshare-gui/src/util/rsguiversion.h | grep -v GUI_REVISION | grep -v GUI_VERSION > /tmp/toto4463
 echo \#define GUI_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto4463
-echo \#define GUI_VERSION \"Revision: "$svn"\" >> /tmp/toto4463
+echo \#define GUI_VERSION \"Revision: "$svnrev"\" >> /tmp/toto4463
 cp /tmp/toto4463 $workdir/src/retroshare-gui/src/util/rsguiversion.h
 
 # Various cleaning
-
 echo Cleaning...
 find $workdir -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
 
@@ -90,15 +115,9 @@ find $workdir -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
 
 cd $workdir
 
-
-#for i in wheezy; do
-#for i in sid ; do
-for i in trusty precise; do
-#for i in lucid precise quantal raring; do
-#for i in wheezy squeeze lucid precise quantal raring saucy; do
-#for i in sid squeeze; do
+for i in $dist; do
 	echo copying changelog for $i
-	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
+	sed -e s/XXXXXX/"$svnrev"/g -e s/YYYYYY/"$i"/g ../changelog > debian/changelog
 
 	if test "$i" = "lucid" ; then
 		cp ../control.ubuntu_lucid debian/control
@@ -108,9 +127,5 @@ for i in trusty precise; do
 		cp ../debian/control debian/control
 	fi
 
-	# This is the key for "Cyril Soler <csoler@sourceforge.net>"
-	debuild -S -kC737CA98
+	debuild -S -k$gpgkey
 done
-
-
-
