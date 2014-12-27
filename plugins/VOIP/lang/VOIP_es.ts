@@ -1,54 +1,5 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.0">
 <context>
-    <name>AudioChatWidgetHolder</name>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="27"/>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="95"/>
-        <source>Mute yourself</source>
-        <translation>Silenciar</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="47"/>
-        <source>Start Call</source>
-        <translation>Iniciar llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="69"/>
-        <source>Hangup Call</source>
-        <translation>Colgar llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="97"/>
-        <source>Unmute yourself</source>
-        <translation>Desilenciarse a si mismo</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="126"/>
-        <source>Hold Call</source>
-        <translation>Retener llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
-        <source>VoIP Status</source>
-        <translation>Estado VoIP</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
-        <source>Outgoing Call is started...</source>
-        <translation>La llamada saliente está inciada...</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="151"/>
-        <source>Resume Call</source>
-        <translation>Reanudar llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="175"/>
-        <source>Answer</source>
-        <translation>Responder</translation>
-    </message>
-</context>
-<context>
     <name>AudioInput</name>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
@@ -137,80 +88,85 @@
         <translation>vacío</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="240"/>
+        <location filename="../gui/AudioInputConfig.ui" line="242"/>
         <source>Audio Processing</source>
         <translation>Procesamiento del audio</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="246"/>
+        <location filename="../gui/AudioInputConfig.ui" line="248"/>
         <source>Noise Suppression</source>
         <translation>Supresión de ruido</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="259"/>
+        <location filename="../gui/AudioInputConfig.ui" line="261"/>
         <source>Noise suppression</source>
         <translation>Supresión de ruido</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="262"/>
+        <location filename="../gui/AudioInputConfig.ui" line="264"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;Establece la cantidad de supresión de ruido a aplicar.&lt;b&gt;&lt;br /&gt;Cuanto mayor sea este valor, mas agresivamente se suprimirá el ruido estacionario.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="294"/>
+        <location filename="../gui/AudioInputConfig.ui" line="296"/>
         <source>Amplification</source>
         <translation>Amplificación</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="304"/>
+        <location filename="../gui/AudioInputConfig.ui" line="306"/>
         <source>Maximum amplification of input sound</source>
         <translation>Amplificación máxima del sonido de entrada</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="307"/>
+        <location filename="../gui/AudioInputConfig.ui" line="309"/>
         <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;RetroShare normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but RetroShare will start picking up other conversations if you leave it to auto-tune to that level.</source>
         <translation>&lt;b&gt;Amplificación máxima de entrada.&lt;/b&gt;&lt;br /&gt;RetroShare normaliza el volumen de entrada antes de la compresión, y esto establece cuánto se le permite amplificar.&lt;br /&gt;El nivel real se actualiza continuamente basado en su patrón de voz actual, pero nunca sobrepasará el nivel especificado aquí.&lt;br /&gt;Si el nivel de &lt;i&gt;Volumen del Micrófono&lt;/i&gt; de las estadísticas de audio ronda el 100%, probablemente desee establecer esto alrededor de 2.0, pero si, como la mayoría de la gente, no consigue alcanzar el 100%, establezca esto a algo mucho mayor.&lt;br /&gt;Idealmente, fíjelo de tal forma que el &lt;i&gt;Volumen del Micrófono * Factor de Amplificación &gt;= 100&lt;/i&gt;, incluso cuando hable realmente bajo.&lt;br /&gt;&lt;br /&gt;Tenga en cuenta que no es perjudicial establecer esto al máximo, pero RetroShare comenzará a captar otras conversaciones si lo deja autoajustarse a ese nivel.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="339"/>
+        <location filename="../gui/AudioInputConfig.ui" line="341"/>
         <source>Echo Cancellation Processing</source>
         <translation>Proceso de cancelación de eco</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioInputConfig.ui" line="354"/>
+        <source>Video Processing</source>
+        <translation>Procesamiento de vídeo</translation>
     </message>
 </context>
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="115"/>
         <source>Continuous</source>
         <translation>Continuamente</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="101"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="116"/>
         <source>Voice Activity</source>
         <translation>Actividad de voz</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="102"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="117"/>
         <source>Push To Talk</source>
         <translation>Presionar para hablar</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="204"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="222"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="212"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="230"/>
         <source>Off</source>
         <translation>Apagado</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="215"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="233"/>
         <source>-%1 dB</source>
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="72"/>
+        <location filename="../gui/AudioInputConfig.h" line="76"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -503,42 +459,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;Plugin VOIP de RetroShare&lt;/h3&gt;&lt;br/&gt; * Colaboradores: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="100"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt;El plugin VOIP añade Voz IP a la ventana de chat privado de RetroShare. para usarlo, haga lo siguiente:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="101"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; Configure el nivel del micrófono mediante el panel de configuración&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="102"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt; Compruebe su micrófono mirando los VU-metters&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="103"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; en el chat privado, habilite la entrada/salida de sonido pulsando en los dos iconos de VOIP&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <location filename="../VOIPPlugin.cpp" line="104"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Por supuesto, su amigo también tiene que ejecutar el plugin para poder hablar/escuchar con usted.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="101"/>
+        <location filename="../VOIPPlugin.cpp" line="105"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;Esta es una característica experimental. No dude en enviar comentarios y sugerencias al equipo de RS dev team.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="126"/>
+        <location filename="../VOIPPlugin.cpp" line="130"/>
         <source>RTT Statistics</source>
         <translation>Estadísticas RTT</translation>
     </message>
@@ -568,15 +524,101 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="163"/>
+        <location filename="../VOIPPlugin.cpp" line="164"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Este plugin permite la comunicación de voz entre amigos en RetroShare.</translation>
     </message>
 </context>
 <context>
+    <name>VOIPChatWidgetHolder</name>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="42"/>
+        <source>Mute</source>
+        <translation>Silenciar</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="55"/>
+        <source>Start Call</source>
+        <translation>Iniciar llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="72"/>
+        <source>Start Video Call</source>
+        <translation>Comenzar vídeo-llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="86"/>
+        <source>Hangup Call</source>
+        <translation>Colgar llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="143"/>
+        <source>Mute yourself</source>
+        <translation>Silenciar</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="145"/>
+        <source>Unmute yourself</source>
+        <translation>Desilenciarse a si mismo</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <source>VoIP Status</source>
+        <translation>Estado VoIP</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
+        <source>Outgoing Call stopped.</source>
+        <translation>Llamada saliente detenida.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="177"/>
+        <source>Hold Call</source>
+        <translation>Retener llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
+        <source>Outgoing Call is started...</source>
+        <translation>La llamada saliente está inciada...</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="203"/>
+        <source>Resume Call</source>
+        <translation>Reanudar llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="216"/>
+        <source>Shut camera off</source>
+        <translation>Cortar la cámara</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
+        <source>you&apos;re now sending video...</source>
+        <translation>ahora está enviando vídeo...</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="224"/>
+        <source>Activate camera</source>
+        <translation>Activar cámara</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <source>Video call stopped</source>
+        <translation>Vídeo-llamada detenida</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="263"/>
+        <source>Answer</source>
+        <translation>Responder</translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="168"/>
+        <location filename="../VOIPPlugin.cpp" line="169"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>

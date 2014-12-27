@@ -1,54 +1,5 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.0">
 <context>
-    <name>AudioChatWidgetHolder</name>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="27"/>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="95"/>
-        <source>Mute yourself</source>
-        <translation>Выключить микрофон</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="47"/>
-        <source>Start Call</source>
-        <translation>Позвонить</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="69"/>
-        <source>Hangup Call</source>
-        <translation>Удерживать вызов</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="97"/>
-        <source>Unmute yourself</source>
-        <translation>Включить микрофон</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="126"/>
-        <source>Hold Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
-        <source>VoIP Status</source>
-        <translation>Статус VoIP</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
-        <source>Outgoing Call is started...</source>
-        <translation>Начинаем исходящий вызов...</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="151"/>
-        <source>Resume Call</source>
-        <translation>Возобновить вызов</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="175"/>
-        <source>Answer</source>
-        <translation>Ответить</translation>
-    </message>
-</context>
-<context>
     <name>AudioInput</name>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
@@ -63,17 +14,17 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="36"/>
         <source>&amp;Transmit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Передавать</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="46"/>
         <source>When to transmit your speech</source>
-        <translation type="unfinished"/>
+        <translation>Во время передачи вашей речи</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="49"/>
         <source>&lt;b&gt;This sets when speech should be transmitted.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuous&lt;/i&gt; - All the time&lt;br /&gt;&lt;i&gt;Voice Activity&lt;/i&gt; - When you are speaking clearly.&lt;br /&gt;&lt;i&gt;Push To Talk&lt;/i&gt; - When you hold down the hotkey set under &lt;i&gt;Shortcuts&lt;/i&gt;.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;Устанавливает интервалы времени, когда речевой сигнал подлежит передаче.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Непрерывно&lt;/i&gt; — в течение всего времени&lt;br /&gt;&lt;i&gt;Речевая активность&lt;/i&gt; — когда вы говорите отчётливо и громко.&lt;br /&gt;&lt;i&gt;Нажать для разговора&lt;/i&gt; — когда вы удерживаете горячую клавишу из &lt;i&gt;Сочетание клавиш&lt;/i&gt;.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="63"/>
@@ -98,12 +49,12 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="129"/>
         <source>How long to keep transmitting after silence</source>
-        <translation>Как долго продолжать передавать речь после наступления тишины</translation>
+        <translation>Как долго продолжать передачу речи после наступления тишины</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="132"/>
         <source>&lt;b&gt;This selects how long after a perceived stop in speech transmission should continue.&lt;/b&gt;&lt;br /&gt;Set this higher if your voice breaks up when you speak (seen by a rapidly blinking voice icon next to your name).</source>
-        <translation>&lt;b&gt;Как долго после паузы в речи продолжать передачу.&lt;/b&gt;&lt;br /&gt;Увеличьте это значение, если у Вас много пауз в речи (можно увидеть по часто мигающей иконке голоса рядом с вашим именем).</translation>
+        <translation>&lt;b&gt;Как долго после паузы в речи продолжать передачу.&lt;/b&gt;&lt;br /&gt;Увеличьте это значение, если у Вас много пауз в речи (можно увидеть по часто мигающей иконке голоса рядом с Вашим именем).</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="148"/>
@@ -134,83 +85,88 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="225"/>
         <source>empty</source>
-        <translation type="unfinished"/>
+        <translation>пустой</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="240"/>
+        <location filename="../gui/AudioInputConfig.ui" line="242"/>
         <source>Audio Processing</source>
         <translation>Обработка звука</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="246"/>
+        <location filename="../gui/AudioInputConfig.ui" line="248"/>
         <source>Noise Suppression</source>
         <translation>Подавление шума</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="259"/>
+        <location filename="../gui/AudioInputConfig.ui" line="261"/>
         <source>Noise suppression</source>
         <translation>Подавление шума</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="262"/>
+        <location filename="../gui/AudioInputConfig.ui" line="264"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;Устанавливает коэффициент подавления шума.&lt;/b&gt;&lt;br /&gt;Чем выше это значение, тем более агрессивно будет подавлен шум.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="294"/>
+        <location filename="../gui/AudioInputConfig.ui" line="296"/>
         <source>Amplification</source>
         <translation>Усиление</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="304"/>
+        <location filename="../gui/AudioInputConfig.ui" line="306"/>
         <source>Maximum amplification of input sound</source>
         <translation>Максимальное усиление исходящего звука</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="307"/>
+        <location filename="../gui/AudioInputConfig.ui" line="309"/>
         <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;RetroShare normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but RetroShare will start picking up other conversations if you leave it to auto-tune to that level.</source>
         <translation>&lt;b&gt;Максимальное усиление исходящего сигнала.&lt;/b&gt;&lt;br /&gt;RetroShare нормализует исходящую громкость до сжатия и эта опция устанавливает на сколько можно его усилить.&lt;br /&gt;Актуальный уровень постоянно обновляется на основе текущего образца речи, но никогда не будет выше установленного здесь уровня.&lt;br /&gt;Если уровень &lt;i&gt;Громкости микрофона&lt;/i&gt; аудиостатистики держится на уровне 100%, Вы можете установить его на 2.0 или выше, но если, как многие люди, Вы не можете достичь 100%, установите его на чуть более высоком уровне.&lt;br /&gt;В идеале, установите его так, чтобы &lt;i&gt;Громкость микрофона * Фактор усиления &gt;= 100&lt;/i&gt;, даже если Вы говорите слишком мягко.&lt;br /&gt;&lt;br /&gt;Заметьте, что ничего плохого не случится, если Вы установите его на максимум, но RetroShare начнет передавать другие переговоры, если Вы оставите это значение по умолчанию.</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="339"/>
+        <location filename="../gui/AudioInputConfig.ui" line="341"/>
         <source>Echo Cancellation Processing</source>
-        <translation type="unfinished"/>
+        <translation>Обработка Отмены Эхо</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioInputConfig.ui" line="354"/>
+        <source>Video Processing</source>
+        <translation>Обработка видео</translation>
     </message>
 </context>
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="115"/>
         <source>Continuous</source>
         <translation>непрерывный</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="101"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="116"/>
         <source>Voice Activity</source>
-        <translation type="unfinished"/>
+        <translation>Голосовая активность</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="102"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="117"/>
         <source>Push To Talk</source>
         <translation>Активация по кнопке</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="204"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="222"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 с</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="212"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="230"/>
         <source>Off</source>
-        <translation type="unfinished"/>
+        <translation>Выкл</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="215"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="233"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="72"/>
+        <location filename="../gui/AudioInputConfig.h" line="76"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -432,12 +388,12 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="86"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
-        <translation type="unfinished"/>
+        <translation>Говорите нормально и переместите ползунок ниже, так что бы бар переходил в зеленую зону, когда вы говорите и не появлялся в оранжевой зоне.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="130"/>
         <source>Stop looping echo for this wizard</source>
-        <translation type="unfinished"/>
+        <translation>Остановить цикл эхо для этого мастера</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="150"/>
@@ -472,7 +428,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="213"/>
         <source>Voice Detection</source>
-        <translation type="unfinished"/>
+        <translation>Обнаружение Голоса</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="226"/>
@@ -503,42 +459,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
-        <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
-        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
-        <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
-        <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../VOIPPlugin.cpp" line="99"/>
+        <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
+        <translation>&lt;h3&gt;RetroShare VOIP плагин&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
+        <translation>&lt;br/&gt;Плагин VOIP добавляет VOIP в частном окне чата из RetroShare. Чтобы использовать его, выполните следующие действия:&lt;UL&gt;</translation>
+    </message>
+    <message>
+        <location filename="../VOIPPlugin.cpp" line="101"/>
+        <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
+        <translation>&lt;li&gt;установка уровня использования микрофона с помощью панели настройки&lt;/li&gt;</translation>
+    </message>
+    <message>
+        <location filename="../VOIPPlugin.cpp" line="102"/>
+        <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
+        <translation>&lt;li&gt;проверьте свой ​​микрофон, глядя на VU-Меттерс&lt;/li&gt;</translation>
+    </message>
+    <message>
+        <location filename="../VOIPPlugin.cpp" line="103"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; в личном чате, включите звук нажимая на две клавиши VOIP&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <location filename="../VOIPPlugin.cpp" line="104"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Ваш друг должен включить данный плагин чтобы говорить/слышать вас</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="101"/>
+        <location filename="../VOIPPlugin.cpp" line="105"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;br/&gt;&lt;br/&gt;Это экспериментальная функция. Не стесняйтесь,  отправить комментарии и предложения для команды разработчиков RS.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="126"/>
+        <location filename="../VOIPPlugin.cpp" line="130"/>
         <source>RTT Statistics</source>
         <translation>RTT статистика</translation>
     </message>
@@ -562,21 +518,107 @@
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="361"/>
         <source>Round Trip Time:</source>
-        <translation type="unfinished"/>
+        <translation>Время оборота:</translation>
     </message>
 </context>
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="163"/>
+        <location filename="../VOIPPlugin.cpp" line="164"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Плагин позволяет общаться голосом между друзьями в RetroShare</translation>
     </message>
 </context>
 <context>
+    <name>VOIPChatWidgetHolder</name>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="42"/>
+        <source>Mute</source>
+        <translation>Отключить звук</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="55"/>
+        <source>Start Call</source>
+        <translation>Позвонить</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="72"/>
+        <source>Start Video Call</source>
+        <translation>Совершить видеозвонок</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="86"/>
+        <source>Hangup Call</source>
+        <translation>Удерживать вызов</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="143"/>
+        <source>Mute yourself</source>
+        <translation>Выключить микрофон</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="145"/>
+        <source>Unmute yourself</source>
+        <translation>Включить микрофон</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <source>VoIP Status</source>
+        <translation>Статус VoIP</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
+        <source>Outgoing Call stopped.</source>
+        <translation>Исходящий звонок завершён.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="177"/>
+        <source>Hold Call</source>
+        <translation>Удержание Вызова</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
+        <source>Outgoing Call is started...</source>
+        <translation>Начинаем исходящий вызов...</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="203"/>
+        <source>Resume Call</source>
+        <translation>Возобновить вызов</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="216"/>
+        <source>Shut camera off</source>
+        <translation>Выключить камеру</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
+        <source>you&apos;re now sending video...</source>
+        <translation>отправка видео...</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="224"/>
+        <source>Activate camera</source>
+        <translation>Включить камеру</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <source>Video call stopped</source>
+        <translation>Видеозвонок завершён</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="263"/>
+        <source>Answer</source>
+        <translation>Ответить</translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="168"/>
+        <location filename="../VOIPPlugin.cpp" line="169"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>

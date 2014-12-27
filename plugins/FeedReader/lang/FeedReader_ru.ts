@@ -4,92 +4,97 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="14"/>
         <source>Create new feed</source>
-        <translation type="unfinished"/>
+        <translation>Создать новый канал</translation>
+    </message>
+    <message>
+        <location filename="../gui/AddFeedDialog.ui" line="93"/>
+        <source>Authentication (not yet supported)</source>
+        <translation>Проверка подлинности (пока не поддерживается)</translation>
+    </message>
+    <message>
+        <location filename="../gui/AddFeedDialog.ui" line="99"/>
+        <source>Feed needs authentication</source>
+        <translation>Канал требует проверки подлинности</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="106"/>
-        <source>Authentication (not yet supported)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.ui" line="112"/>
-        <source>Feed needs authentication</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.ui" line="119"/>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>Пользователь</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="126"/>
+        <location filename="../gui/AddFeedDialog.ui" line="113"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="222"/>
+        <location filename="../gui/AddFeedDialog.ui" line="166"/>
+        <source>Clear cache</source>
+        <translation>Очистить кэш</translation>
+    </message>
+    <message>
+        <location filename="../gui/AddFeedDialog.ui" line="216"/>
         <source>Update interval</source>
-        <translation type="unfinished"/>
+        <translation>Интервал обновления</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="228"/>
+        <location filename="../gui/AddFeedDialog.ui" line="222"/>
         <source>Use standard update interval</source>
-        <translation type="unfinished"/>
+        <translation>Использовать стандартный  интервал обновления</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="235"/>
+        <location filename="../gui/AddFeedDialog.ui" line="229"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation>Интервал в минутах (0 = ручной)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="254"/>
+        <location filename="../gui/AddFeedDialog.ui" line="248"/>
         <source>Last update</source>
-        <translation type="unfinished"/>
+        <translation>Последнее обновление</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="267"/>
+        <location filename="../gui/AddFeedDialog.ui" line="261"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Никогда</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="388"/>
+        <location filename="../gui/AddFeedDialog.ui" line="382"/>
         <source>Embed images</source>
-        <translation type="unfinished"/>
+        <translation>Встроенные изображения</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="146"/>
+        <location filename="../gui/AddFeedDialog.ui" line="133"/>
         <source>Storage time</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.ui" line="152"/>
-        <source>Use standard storage time</source>
-        <translation type="unfinished"/>
+        <translation>Время хранения</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="159"/>
-        <source>Days (0 = off)</source>
-        <translation type="unfinished"/>
+        <source>Use standard storage time</source>
+        <translation>Использовать стандартное время хранения </translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="182"/>
+        <location filename="../gui/AddFeedDialog.ui" line="139"/>
+        <source>Days (0 = off)</source>
+        <translation>Дней (0 = выкл)</translation>
+    </message>
+    <message>
+        <location filename="../gui/AddFeedDialog.ui" line="176"/>
         <source>Proxy</source>
         <translation>Прокси</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="188"/>
+        <location filename="../gui/AddFeedDialog.ui" line="182"/>
         <source>Use standard proxy</source>
-        <translation type="unfinished"/>
+        <translation>Использовать стандартный прокси-сервер</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="195"/>
+        <location filename="../gui/AddFeedDialog.ui" line="189"/>
         <source>Server</source>
         <translation>Сервер</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="205"/>
+        <location filename="../gui/AddFeedDialog.ui" line="199"/>
         <source>:</source>
-        <translation type="unfinished"/>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="51"/>
@@ -102,111 +107,96 @@
         <translation>Форум</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="96"/>
+        <location filename="../gui/AddFeedDialog.ui" line="83"/>
         <source>Local Feed</source>
-        <translation type="unfinished"/>
+        <translation>Местный Канал</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="328"/>
+        <location filename="../gui/AddFeedDialog.ui" line="322"/>
         <source>Transformation</source>
-        <translation type="unfinished"/>
+        <translation>Преобразование</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="336"/>
+        <location filename="../gui/AddFeedDialog.ui" line="330"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation>Тип преобразования</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="349"/>
+        <location filename="../gui/AddFeedDialog.ui" line="343"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation type="unfinished"/>
+        <translation>Просмотр &amp;&amp; Преобразование</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="361"/>
+        <location filename="../gui/AddFeedDialog.ui" line="355"/>
         <source>Misc</source>
         <translation>Разное</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="367"/>
+        <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Activated</source>
-        <translation type="unfinished"/>
+        <translation>Активирован</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="374"/>
+        <location filename="../gui/AddFeedDialog.ui" line="368"/>
         <source>Use name and description from feed</source>
-        <translation type="unfinished"/>
+        <translation>Использовать имя и описание из канала</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="381"/>
+        <location filename="../gui/AddFeedDialog.ui" line="375"/>
         <source>Update forum information</source>
-        <translation type="unfinished"/>
+        <translation>Обновить информацию форума</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="395"/>
+        <location filename="../gui/AddFeedDialog.ui" line="389"/>
         <source>Save complete web page (experimental for local feeds)</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить полные веб-страницы (экспериментальная функция для местных каналов)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="292"/>
+        <location filename="../gui/AddFeedDialog.ui" line="286"/>
         <source>Description:</source>
         <translation>Описание:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="306"/>
+        <location filename="../gui/AddFeedDialog.ui" line="300"/>
         <source>RSS-Feed-URL:</source>
-        <translation type="unfinished"/>
+        <translation>RSS-Канал-URL:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="316"/>
+        <location filename="../gui/AddFeedDialog.ui" line="310"/>
         <source>Name:</source>
         <translation>Имя:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="63"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="75"/>
         <source>Feed Details</source>
-        <translation type="unfinished"/>
+        <translation>Подробности о Канале</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="96"/>
-        <source>Create a new anonymous public forum</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="212"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="217"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Edit feed</source>
-        <translation type="unfinished"/>
+        <translation>Редактировать канал</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="237"/>
-        <source>Not yet created</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="243"/>
-        <source>Unknown forum</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Не удается редактировать канал. Канал не существует.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Create feed</source>
-        <translation type="unfinished"/>
+        <translation>Создать канал</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Cannot create feed.</source>
-        <translation type="unfinished"/>
+        <translation>Не удалось создать канал.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Cannot change feed.</source>
-        <translation type="unfinished"/>
+        <translation>Не удается изменить канал.</translation>
     </message>
 </context>
 <context>
@@ -224,17 +214,17 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="26"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation>Интервал в минутах (0 = ручной)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="49"/>
         <source>Storage time</source>
-        <translation type="unfinished"/>
+        <translation>Время хранения</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="55"/>
         <source>Days (0 = off)</source>
-        <translation type="unfinished"/>
+        <translation>Дней (0 = выкл)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="78"/>
@@ -244,7 +234,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="84"/>
         <source>Use proxy</source>
-        <translation type="unfinished"/>
+        <translation>Использовать прокси-сервер</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="91"/>
@@ -254,7 +244,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="108"/>
         <source>:</source>
-        <translation type="unfinished"/>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="118"/>
@@ -269,156 +259,156 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить настройки в фоновом режиме (для медленных систем, требуется больше памяти)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
-        <translation type="unfinished"/>
+        <translation>Открыть все каналы в новой вкладке</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="50"/>
         <source>FeedReader</source>
-        <translation type="unfinished"/>
+        <translation>FeedReader – RSS-агрегатор</translation>
     </message>
 </context>
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="68"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="73"/>
         <source>Feeds</source>
-        <translation type="unfinished"/>
+        <translation>Каналы</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="91"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="96"/>
         <source>Add new feed</source>
-        <translation type="unfinished"/>
+        <translation>Добавить новый канал</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="108"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="113"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation>Обновить канал</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="94"/>
         <source>Message Folders</source>
-        <translation type="unfinished"/>
+        <translation>Папки Сообщений</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="291"/>
         <source>New</source>
         <translation>Новый</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="289"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="292"/>
         <source>Feed</source>
-        <translation type="unfinished"/>
+        <translation>Канал</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="296"/>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>Папка</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="304"/>
         <source>Open in new tab</source>
-        <translation type="unfinished"/>
+        <translation>Открыть в новой вкладке</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="312"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="317"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Update</source>
         <translation>Обновлять</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Activate</source>
-        <translation type="unfinished"/>
+        <translation>Активировать</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Deactivate</source>
-        <translation type="unfinished"/>
+        <translation>Деактивировать</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="527"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>Без названия</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="739"/>
         <source>Add new folder</source>
-        <translation type="unfinished"/>
+        <translation>Добавить новую папку</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <source>Please enter a name for the folder</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, введите имя для папки</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Create folder</source>
-        <translation type="unfinished"/>
+        <translation>Создать папку</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Cannot create folder.</source>
-        <translation type="unfinished"/>
+        <translation>Не удается создать папку.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove folder</source>
-        <translation type="unfinished"/>
+        <translation>Удалить папку</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove feed</source>
-        <translation type="unfinished"/>
+        <translation>Удалить канал</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the folder %1?</source>
-        <translation type="unfinished"/>
+        <translation>Вы хотите удалить папку %1?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the feed %1?</source>
-        <translation type="unfinished"/>
+        <translation>Вы хотите удалить канал %1?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="792"/>
         <source>Edit folder</source>
-        <translation type="unfinished"/>
+        <translation>Редактировать папку</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Please enter a new name for the folder</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, введите новое имя для папки</translation>
     </message>
 </context>
 <context>
     <name>FeedReaderFeedItem</name>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="116"/>
         <source>Expand</source>
         <translation>Раскрыть</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="222"/>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>Установить как чтение и удаление элемента</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="248"/>
@@ -428,15 +418,15 @@
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="80"/>
         <source>Open link in browser</source>
-        <translation type="unfinished"/>
+        <translation>Открыть ссылку в браузере</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="81"/>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Копировать ссылку в буфер обмена</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="110"/>
         <source>Hide</source>
         <translation>Скрыть</translation>
     </message>
@@ -446,22 +436,22 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="47"/>
         <source>Feed Reader</source>
-        <translation type="unfinished"/>
+        <translation>Читатель Канала</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="125"/>
         <source>Test</source>
-        <translation type="unfinished"/>
+        <translation>Тест</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="136"/>
         <source>Test message</source>
-        <translation type="unfinished"/>
+        <translation>Тестовое сообщение</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="137"/>
         <source>This is a test message.</source>
-        <translation type="unfinished"/>
+        <translation>Это тестовое сообщение.</translation>
     </message>
 </context>
 <context>
@@ -474,7 +464,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="66"/>
         <source>Mark messages as read</source>
-        <translation type="unfinished"/>
+        <translation>Отметить сообщения как прочитанные</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="69"/>
@@ -484,22 +474,22 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="86"/>
         <source>Mark messages as unread</source>
-        <translation type="unfinished"/>
+        <translation>Отметить сообщения как непрочитанные</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="103"/>
         <source>Mark all messages as read</source>
-        <translation type="unfinished"/>
+        <translation>Отметить все сообщения как прочитанные</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="120"/>
         <source>Remove messages</source>
-        <translation type="unfinished"/>
+        <translation>Удалить сообщения</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="137"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation>Обновить канал</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="151"/>
@@ -537,27 +527,27 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="94"/>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>Поиск Автора</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Open link in browser</source>
-        <translation type="unfinished"/>
+        <translation>Открыть ссылку в браузере</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="107"/>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Копировать ссылку в буфер обмена</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="229"/>
         <source>The messages will be added to the forum</source>
-        <translation type="unfinished"/>
+        <translation>Сообщения будут добавлены на форум</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="244"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>Без названия</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="305"/>
@@ -577,7 +567,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="316"/>
         <source>Copy link</source>
-        <translation type="unfinished"/>
+        <translation>Копировать ссылку</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="319"/>
@@ -587,7 +577,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="324"/>
         <source>Retransform</source>
-        <translation type="unfinished"/>
+        <translation>Retransform</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="698"/>
@@ -603,14 +593,14 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="160"/>
+        <location filename="../FeedReaderPlugin.cpp" line="153"/>
         <source>This plugin provides a Feedreader.</source>
-        <translation type="unfinished"/>
+        <translation>Плагин предоставляет возможность загрузки RSS-рассылок</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="165"/>
+        <location filename="../FeedReaderPlugin.cpp" line="158"/>
         <source>FeedReader</source>
-        <translation type="unfinished"/>
+        <translation>RSS-агрегатор</translation>
     </message>
 </context>
 <context>
@@ -618,168 +608,163 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="36"/>
         <source>Feed not found.</source>
-        <translation type="unfinished"/>
+        <translation>Канал не найден.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="39"/>
         <source>Parent not found.</source>
-        <translation type="unfinished"/>
+        <translation>Родительский объект не найден.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="42"/>
         <source>Parent is no folder.</source>
-        <translation type="unfinished"/>
+        <translation>Родитель не является папкой.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="45"/>
         <source>Feed is a folder.</source>
-        <translation type="unfinished"/>
+        <translation>Канал — это папка.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="48"/>
         <source>Feed is no folder.</source>
-        <translation type="unfinished"/>
+        <translation>Канал — это не папка.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="51"/>
         <source>Unknown error occured.</source>
-        <translation type="unfinished"/>
+        <translation>Произошла неизвестная ошибка.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="65"/>
         <source>Waiting for download</source>
-        <translation type="unfinished"/>
+        <translation>Ожидание скачивания</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="67"/>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>Загрузка</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="69"/>
         <source>Waiting for process</source>
-        <translation type="unfinished"/>
+        <translation>Ожидание процесса</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="71"/>
         <source>Processing</source>
-        <translation type="unfinished"/>
+        <translation>Обработка</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
         <source>Unknown</source>
         <translation>Неизвестно</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="91"/>
         <source>Internal download error</source>
-        <translation type="unfinished"/>
+        <translation>Внутренняя ошибка загрузки</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="94"/>
         <source>Download error</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка загрузки</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="97"/>
         <source>Unknown content type</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестный тип содержимого</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="100"/>
         <source>Download not found</source>
-        <translation type="unfinished"/>
+        <translation>Загрузка не найдена</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="103"/>
         <source>Unknown response code</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестный код ответа</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="108"/>
         <source>Internal process error</source>
-        <translation type="unfinished"/>
+        <translation>Внутренняя ошибка процесса</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="111"/>
         <source>Unknown XML format</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестный формат XML</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="114"/>
         <source>Can&apos;t create forum</source>
-        <translation type="unfinished"/>
+        <translation>Не удается создать форум</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="117"/>
         <source>Forum not found</source>
-        <translation type="unfinished"/>
+        <translation>Форум не найден</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="120"/>
         <source>You are not admin of the forum</source>
-        <translation type="unfinished"/>
+        <translation>Вы не администратор форума</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
-        <source>The forum is no anonymous forum</source>
-        <translation type="unfinished"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="124"/>
+        <source>Can&apos;t read html</source>
+        <translation>Не удается прочитать html</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
-        <source>Can&apos;t read html</source>
-        <translation type="unfinished"/>
+        <source>Internal XPath error</source>
+        <translation>Внутренняя ошибка XPath</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
-        <source>Internal XPath error</source>
-        <translation type="unfinished"/>
+        <source>Wrong XPath expression</source>
+        <translation>Неправильное выражение XPath</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
-        <source>Wrong XPath expression</source>
-        <translation type="unfinished"/>
+        <source>Empty XPath result</source>
+        <translation>Пустой результат XPath</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
-        <source>Empty XPath result</source>
-        <translation type="unfinished"/>
+        <source>XSLT format error</source>
+        <translation>Ошибка формата XSLT</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
-        <source>XSLT format error</source>
-        <translation type="unfinished"/>
+        <source>XSLT transformation error</source>
+        <translation>Ошибка преобразования XSLT</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
-        <source>XSLT transformation error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
         <source>Empty XSLT result</source>
-        <translation type="unfinished"/>
+        <translation>Пустой результат XSLT</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="146"/>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестная ошибка</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="160"/>
         <source>No transformation</source>
-        <translation type="unfinished"/>
+        <translation>Без преобразования</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="162"/>
         <source>XPath</source>
-        <translation type="unfinished"/>
+        <translation>XPath</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="164"/>
         <source>XSLT</source>
-        <translation type="unfinished"/>
+        <translation>XSLT</translation>
     </message>
 </context>
 <context>
@@ -787,7 +772,7 @@
     <message>
         <location filename="../gui/FeedReaderUserNotify.cpp" line="40"/>
         <source>FeedReader Message</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение из FeedReader</translation>
     </message>
 </context>
 <context>
@@ -805,17 +790,17 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="68"/>
         <source>Feed name</source>
-        <translation type="unfinished"/>
+        <translation>Название канала</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="204"/>
         <source>Previous</source>
-        <translation type="unfinished"/>
+        <translation>Предыдущий</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="233"/>
         <source>0/0</source>
-        <translation type="unfinished"/>
+        <translation>0/0</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="262"/>
@@ -825,12 +810,12 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="282"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation>Тип преобразования</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="308"/>
         <source>Structure</source>
-        <translation type="unfinished"/>
+        <translation>Структура</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="328"/>
@@ -840,22 +825,22 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="520"/>
         <source>XPath use</source>
-        <translation type="unfinished"/>
+        <translation>Использование XPath</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="541"/>
         <source>XPath remove</source>
-        <translation type="unfinished"/>
+        <translation>Удаление XPath</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="179"/>
         <source>Cannot create preview</source>
-        <translation type="unfinished"/>
+        <translation>Не удается создать предварительный просмотр</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="166"/>
         <source>XSLT is used on focus lost or when Ctrl+Enter is pressed</source>
-        <translation type="unfinished"/>
+        <translation>XSLT используется при потере фокуса или при нажатии клавиши Ctrl + Enter</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="423"/>
@@ -865,7 +850,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>
@@ -875,19 +860,19 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="547"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>Без названия</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="642"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="661"/>
         <source>Error getting content</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка при получении содержимого</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="772"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="793"/>
         <source>Error parsing document</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка синтаксического анализа документа</translation>
     </message>
 </context>
 </TS>

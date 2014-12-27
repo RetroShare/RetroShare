@@ -7,87 +7,92 @@
         <translation>Crear nueva fuente</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="106"/>
+        <location filename="../gui/AddFeedDialog.ui" line="93"/>
         <source>Authentication (not yet supported)</source>
         <translation>Autenticación (no soportado)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="112"/>
+        <location filename="../gui/AddFeedDialog.ui" line="99"/>
         <source>Feed needs authentication</source>
         <translation>La fuente necesita autenticación</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="119"/>
+        <location filename="../gui/AddFeedDialog.ui" line="106"/>
         <source>User</source>
         <translation>Usuario</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="126"/>
+        <location filename="../gui/AddFeedDialog.ui" line="113"/>
         <source>Password</source>
         <translation>Contraseña</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="222"/>
+        <location filename="../gui/AddFeedDialog.ui" line="166"/>
+        <source>Clear cache</source>
+        <translation>Limpiar caché</translation>
+    </message>
+    <message>
+        <location filename="../gui/AddFeedDialog.ui" line="216"/>
         <source>Update interval</source>
         <translation>Intervalo de actualización</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="228"/>
+        <location filename="../gui/AddFeedDialog.ui" line="222"/>
         <source>Use standard update interval</source>
         <translation>Utilizar el intervalo de actualización estándar</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="235"/>
+        <location filename="../gui/AddFeedDialog.ui" line="229"/>
         <source>Interval in minutes (0 = manual)</source>
         <translation>Intervalo en minutos (0 = manual)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="254"/>
+        <location filename="../gui/AddFeedDialog.ui" line="248"/>
         <source>Last update</source>
         <translation>Última actualización</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="267"/>
+        <location filename="../gui/AddFeedDialog.ui" line="261"/>
         <source>Never</source>
         <translation>Nunca</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="388"/>
+        <location filename="../gui/AddFeedDialog.ui" line="382"/>
         <source>Embed images</source>
         <translation>Insertar imágenes</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="146"/>
+        <location filename="../gui/AddFeedDialog.ui" line="133"/>
         <source>Storage time</source>
         <translation>Tiempo de almacenamiento</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="152"/>
+        <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Use standard storage time</source>
         <translation>Utilizar el tiempo de almacenamiento estándar</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="159"/>
+        <location filename="../gui/AddFeedDialog.ui" line="139"/>
         <source>Days (0 = off)</source>
         <translation>Días (0 = apagado)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="182"/>
+        <location filename="../gui/AddFeedDialog.ui" line="176"/>
         <source>Proxy</source>
         <translation>Proxy</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="188"/>
+        <location filename="../gui/AddFeedDialog.ui" line="182"/>
         <source>Use standard proxy</source>
         <translation>Usar proxy estándar</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="195"/>
+        <location filename="../gui/AddFeedDialog.ui" line="189"/>
         <source>Server</source>
         <translation>Servidor</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="205"/>
+        <location filename="../gui/AddFeedDialog.ui" line="199"/>
         <source>:</source>
         <translation>:</translation>
     </message>
@@ -102,109 +107,94 @@
         <translation>Foro</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="96"/>
+        <location filename="../gui/AddFeedDialog.ui" line="83"/>
         <source>Local Feed</source>
         <translation>Fuente local</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="328"/>
+        <location filename="../gui/AddFeedDialog.ui" line="322"/>
         <source>Transformation</source>
         <translation>Transformación</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="336"/>
+        <location filename="../gui/AddFeedDialog.ui" line="330"/>
         <source>Transformation type</source>
         <translation>Tipo de transformación</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="349"/>
+        <location filename="../gui/AddFeedDialog.ui" line="343"/>
         <source>Preview &amp;&amp; Transformation</source>
         <translation>Vista previa &amp;&amp; Transformación</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="361"/>
+        <location filename="../gui/AddFeedDialog.ui" line="355"/>
         <source>Misc</source>
         <translation>Variado</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="367"/>
+        <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Activated</source>
         <translation>Activado</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="374"/>
+        <location filename="../gui/AddFeedDialog.ui" line="368"/>
         <source>Use name and description from feed</source>
         <translation>Use el nombre y la descripción de la fuente</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="381"/>
+        <location filename="../gui/AddFeedDialog.ui" line="375"/>
         <source>Update forum information</source>
         <translation>Actualización de la información del foro</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="395"/>
+        <location filename="../gui/AddFeedDialog.ui" line="389"/>
         <source>Save complete web page (experimental for local feeds)</source>
         <translation>Guardar la página web completa (experimental para fuentes locales)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="292"/>
+        <location filename="../gui/AddFeedDialog.ui" line="286"/>
         <source>Description:</source>
         <translation>Descripción:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="306"/>
+        <location filename="../gui/AddFeedDialog.ui" line="300"/>
         <source>RSS-Feed-URL:</source>
         <translation>URL-Fuente-RSS:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="316"/>
+        <location filename="../gui/AddFeedDialog.ui" line="310"/>
         <source>Name:</source>
         <translation>Nombre:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="63"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="75"/>
         <source>Feed Details</source>
         <translation>Detalles de la fuente</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="96"/>
-        <source>Create a new anonymous public forum</source>
-        <translation>Crear un nuevo foro público anónimo</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="212"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="217"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Edit feed</source>
         <translation>Editar fuente</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="237"/>
-        <source>Not yet created</source>
-        <translation>Aún no se ha creado</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="243"/>
-        <source>Unknown forum</source>
-        <translation>Foro desconocido</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
         <translation>No se puede editar la fuente. La fuente no existe.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Create feed</source>
         <translation>Crear fuente</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Cannot create feed.</source>
         <translation>No se puede crear la fuente.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Cannot change feed.</source>
         <translation>No se puede cambiar la fuente.</translation>
     </message>
@@ -285,17 +275,17 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="68"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="73"/>
         <source>Feeds</source>
         <translation>Fuentes</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="91"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="96"/>
         <source>Add new feed</source>
         <translation>Añadir nueva fuente</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="108"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="113"/>
         <source>Update feed</source>
         <translation>Actualizar fuente</translation>
     </message>
@@ -305,104 +295,104 @@
         <translation>Carpetas de mensajes</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="291"/>
         <source>New</source>
         <translation>Nuevo</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="289"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="292"/>
         <source>Feed</source>
         <translation>Fuente</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="296"/>
         <source>Folder</source>
         <translation>Carpeta</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="304"/>
         <source>Open in new tab</source>
         <translation>Abrir en una nueva pestaña</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="312"/>
         <source>Edit</source>
         <translation>Editar</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="317"/>
         <source>Delete</source>
         <translation>Borrar</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Update</source>
         <translation>Actualizar</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Activate</source>
         <translation>Activar</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Deactivate</source>
         <translation>Desactivar</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="527"/>
         <source>No name</source>
         <translation>Sin nombre</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="739"/>
         <source>Add new folder</source>
         <translation>Añadir nueva carpeta</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <source>Please enter a name for the folder</source>
         <translation>Por favor, introduzca un nombre para la carpeta</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Create folder</source>
         <translation>Crear carpeta</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Cannot create folder.</source>
         <translation>No se puede crear la carpeta.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove folder</source>
         <translation>Quitar carpeta</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove feed</source>
         <translation>Quitar fuente</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>¿Quiere eliminar la carpeta %1?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>¿Quiere eliminar la fuente %1?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="792"/>
         <source>Edit folder</source>
         <translation>Editar carpeta</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Please enter a new name for the folder</source>
         <translation>Por favor, introduzca un nombre nuevo para la carpeta</translation>
     </message>
@@ -411,7 +401,7 @@
     <name>FeedReaderFeedItem</name>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="116"/>
         <source>Expand</source>
         <translation>Expandir</translation>
     </message>
@@ -436,7 +426,7 @@
         <translation>Copiar enlace al Portapapeles</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="110"/>
         <source>Hide</source>
         <translation>Ocultar</translation>
     </message>
@@ -603,12 +593,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="160"/>
+        <location filename="../FeedReaderPlugin.cpp" line="153"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Este plugin proporciona un lector de noticias.</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="165"/>
+        <location filename="../FeedReaderPlugin.cpp" line="158"/>
         <source>FeedReader</source>
         <translation>Lector de noticias</translation>
     </message>
@@ -667,7 +657,7 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
         <source>Unknown</source>
         <translation>Desconocido</translation>
     </message>
@@ -722,62 +712,57 @@
         <translation>Usted no es administrador del foro</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
-        <source>The forum is no anonymous forum</source>
-        <translation>El foro es un foro anónimo</translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="124"/>
         <source>Can&apos;t read html</source>
         <translation>No se puede leer html</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
         <source>Internal XPath error</source>
         <translation>Error interno de XPath</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
         <source>Wrong XPath expression</source>
         <translation>Expresión XPath Incorrecta</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
         <source>Empty XPath result</source>
         <translation>Resultado de XPath vacío</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
         <source>XSLT format error</source>
         <translation>Error de formato XSLT</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
         <source>XSLT transformation error</source>
         <translation>Error de transformación XSLT</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
         <source>Empty XSLT result</source>
         <translation>Resultado XSLT vacío</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="146"/>
         <source>Unknown error</source>
         <translation>Error desconocido</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="160"/>
         <source>No transformation</source>
         <translation>Sin transformación</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="162"/>
         <source>XPath</source>
         <translation>XPath</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="164"/>
         <source>XSLT</source>
         <translation>XSLT</translation>
     </message>
