@@ -24,6 +24,7 @@
 #include <QMessageBox>
 
 #include "util/misc.h"
+#include "util/DateTime.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
 #include "retroshare/rsgxsflags.h"
@@ -96,6 +97,7 @@ void GxsGroupDialog::init()
 	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
 	ui.typePublic->setChecked(true);
+	ui.typePublic_3->setChecked(true);
 	updateCircleOptions();
 
 	connect(ui.typePublic, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
@@ -163,13 +165,13 @@ void GxsGroupDialog::initMode()
 		case MODE_CREATE:
 		{
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Forum"));
 			newGroup();
 		}
 		break;
 
 		case MODE_SHOW:
 		{
+			ui.stackedWidget->setCurrentIndex(1);
 			mReadonlyFlags = 0xffffffff; // Force all to readonly.
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
 			requestGroup(mGrpMeta.mGroupId);
@@ -202,19 +204,23 @@ void GxsGroupDialog::setupDefaults()
 		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC)
 		{
 			ui.typePublic->setChecked(true);
+			ui.typePublic_3->setChecked(true);
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_GROUP)
 		{
 			ui.typeGroup->setChecked(true);
+			ui.typeGroup_3->setChecked(true);
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_LOCAL)
 		{
 			ui.typeLocal->setChecked(true);
+			ui.typeLocal_3->setChecked(true);
 		}
 		else
 		{
 			// default
 			ui.typePublic->setChecked(true);
+			ui.typePublic_3->setChecked(true);
 		}
 	}
 
@@ -265,20 +271,25 @@ void GxsGroupDialog::setupDefaults()
 		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_YES)
 		{
 			ui.comments_allowed->setChecked(true);
+			ui.comments_allowed_3->setChecked(true);
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_NO)
 		{
 			ui.comments_no->setChecked(true);
+			ui.comments_no_3->setChecked(true);
 		}
 		else
 		{
 			// default
 			ui.comments_no->setChecked(true);
+			ui.comments_no_3->setChecked(true);
 		}
     }
 #ifndef RS_USE_CIRCLES
     ui.typeGroup->setEnabled(false);
     ui.typeLocal->setEnabled(false);
+    ui.typeGroup_3->setEnabled(false);
+    ui.typeLocal_3->setEnabled(false);
 #endif
 }
 
@@ -290,9 +301,9 @@ void GxsGroupDialog::setupVisibility()
 	ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 
 	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
-	ui.groupDescLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
 	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
+	ui.distribGroupBox_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
 
 	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
@@ -301,6 +312,8 @@ void GxsGroupDialog::setupVisibility()
 	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
 	ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	ui.commentGroupBox_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	ui.commentslabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 
 	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
 }
@@ -317,24 +330,19 @@ void GxsGroupDialog::setAllReadonly()
 
 void GxsGroupDialog::setupReadonly()
 {
-	ui.groupName->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_NAME));
 
-	//ui.groupLogo->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 	ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
-
-	ui.groupDesc->setReadOnly(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION);
-	//ui.groupDescLabel->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
-
-	ui.distribGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 
 	ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
 
 	ui.pubKeyShare_cb->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_SHAREKEYS));
 
 	ui.personalGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
+	
 	ui.idChooser->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
 
-	ui.commentGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
+	ui.distribGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
+	ui.commentGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
 
 	ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
 #ifndef UNFINISHED
@@ -367,8 +375,31 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 
 	/* setup name */
 	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-	ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-
+	
+	/* Show Mode */
+	ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+	ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
+	ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
+	ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
+	ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
+	ui.descriptiontextEdit->setPlainText(description);
+	
+		switch (mode())
+  {
+		case MODE_CREATE:{
+		}
+		break;
+		case MODE_SHOW:{
+			ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+			if (mPicture.isNull())
+			return;
+			ui.headerFrame->setHeaderImage(mPicture);
+		}
+		break;
+		case MODE_EDIT:{
+		}
+		break;
+  }
 	/* set description */
 	ui.groupDesc->setPlainText(description);
 
@@ -376,13 +407,16 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 	{
 		case GXS_CIRCLE_TYPE_YOUREYESONLY:
 			ui.typeLocal->setChecked(true);
+			ui.typeLocal_3->setChecked(true);
 			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
 			break;
 		case GXS_CIRCLE_TYPE_PUBLIC:
 			ui.typePublic->setChecked(true);
+			ui.typePublic_3->setChecked(true);
 			break;
 		case GXS_CIRCLE_TYPE_EXTERNAL:
 			ui.typeGroup->setChecked(true);
+			ui.typeGroup_3->setChecked(true);
 			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
 			break;
 		default:
@@ -593,10 +627,12 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	    (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN))
 	{
 		ui.comments_allowed->setChecked(true);
+		ui.comments_allowed_3->setChecked(true);
 	}
 	else
 	{
 		ui.comments_no->setChecked(true);
+		ui.comments_no_3->setChecked(true);
 	}
 }
 
