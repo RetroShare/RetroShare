@@ -5242,15 +5242,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share Posted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can let your friends know about your Posted by sharing it with them. Select the Friends with which you want to Share your Posted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Please select at least one peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can let your friends know about your Topic by sharing it with them. Select the Friends with which you want to Share your Topic.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5504,11 +5504,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create Channel</source>
+        <source>Update Channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Update Channel</source>
+        <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5704,6 +5704,10 @@ p, li { white-space: pre-wrap; }
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsChannelUserNotify</name>
@@ -5856,10 +5860,6 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Update Forum</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5869,6 +5869,10 @@ before you can comment</source>
     </message>
     <message>
         <source>Select Forum Admins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6305,10 +6309,6 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Submit Group Changes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6322,6 +6322,46 @@ before you can comment</source>
     </message>
     <message>
         <source>Owner:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a descriptive title here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a descriptive description here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments not allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9737,11 +9777,11 @@ malicious behavior of crafted plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create Topic</source>
+        <source>Update Topic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Update Topic</source>
+        <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

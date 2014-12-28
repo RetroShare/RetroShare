@@ -95,7 +95,7 @@ void GroupShareKey::setTyp()
             return;
         
         ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));    
-        ui->headerFrame->setHeaderText(tr("Share Posted"));
+        ui->headerFrame->setHeaderText(tr("Share Topic"));
         ui->sharekeyinfo_label->setText(tr("You can let your friends know about your Topic by sharing it with them. Select the Friends with which you want to Share your Topic."));
 
     }
