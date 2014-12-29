@@ -116,47 +116,12 @@ class p3Msgs: public RsMsgs
 	  
 
 	  /*!
-	   * public chat sent to all peers
+       * Send a chat message.
+       * @param destination where to send the chat message
+       * @param msg the message
+       * @see ChatId
 	   */
-	  virtual	bool	sendPublicChat(const std::string& msg);
-
-	  /*!
-	   * chat is sent to specifc peer
-	   * @param id peer to send chat msg to
-	   */
-	  virtual	bool	sendPrivateChat(const RsPeerId& id, const std::string& msg);
-
-	  /*!
-	   * returns the count of messages in public or private queue
-	   * @param public or private queue
-	   */
-	  virtual	int    getPublicChatQueueCount();
-
-	  /*!
-	   * @param chats ref to list of received public chats is stored here
-	   */
-	  virtual	bool	getPublicChatQueue(std::list<ChatInfo> &chats);
-
-	  /*!
-	   * returns the count of messages in private queue
-	   * @param public or private queue
-	   */
-	  virtual	int    getPrivateChatQueueCount(bool incoming);
-
-	  /*!
-	   * @param id's of available private chat messages
-	   */
-	  virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids);
-
-	  /*!
-	   * @param chats ref to list of received private chats is stored here
-	   */
-	  virtual	bool	getPrivateChatQueue(bool incoming, const RsPeerId& id, std::list<ChatInfo> &chats);
-
-	  /*!
-	   * @param clear private chat queue
-	   */
-	  virtual	bool	clearPrivateChatQueue(bool incoming, const RsPeerId& id);
+      virtual bool sendChat(ChatId destination, std::string msg) ;
 
 	  /*!
 	   * Return the max message size for security forwarding
@@ -165,16 +130,10 @@ class p3Msgs: public RsMsgs
 
 	  /*!
 	   * sends immediate status string to a specific peer, e.g. in a private chat
-	   * @param peer_id peer to send status string to
+       * @param chat_id chat id to send status string to
 	   * @param status_string immediate status to send
 	   */
-	  virtual void    sendStatusString(const RsPeerId& peer_id, const std::string& status_string) ;
-
-	  /*!
-	   * sends immediate status to all peers
-	   * @param status_string immediate status to send
-	   */
-	  virtual void    sendGroupChatStatusString(const std::string& status_string) ;
+      virtual void    sendStatusString(const ChatId& chat_id, const std::string& status_string) ;
 
 	  /****************************************/
 

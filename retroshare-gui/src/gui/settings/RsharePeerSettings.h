@@ -23,6 +23,8 @@
 #define _RSHAREPEERSETTINGS_H
 
 #include <QSettings>
+#include <retroshare/rstypes.h>
+#include <retroshare/rsmsgs.h>
 
 class RSStyle;
 
@@ -33,38 +35,38 @@ public:
     /* create settings object */
     static void Create ();
 
-    QString getPrivateChatColor(const RsPeerId &peerId);
-    void    setPrivateChatColor(const RsPeerId &peerId, const QString &value);
+    QString getPrivateChatColor(const ChatId& chatId);
+    void    setPrivateChatColor(const ChatId& chatId, const QString &value);
 
-    QString getPrivateChatFont(const RsPeerId &peerId);
-    void    setPrivateChatFont(const RsPeerId &peerId, const QString &value);
+    QString getPrivateChatFont(const ChatId& chatId);
+    void    setPrivateChatFont(const ChatId& chatId, const QString &value);
 
-    bool    getPrivateChatOnTop(const RsPeerId &peerId);
-    void    setPrivateChatOnTop(const RsPeerId &peerId, bool value);
+    bool    getPrivateChatOnTop(const ChatId& chatId);
+    void    setPrivateChatOnTop(const ChatId& chatId, bool value);
 
-    void    saveWidgetInformation(const RsPeerId &peerId, QWidget *widget);
-    void    loadWidgetInformation(const RsPeerId &peerId, QWidget *widget);
+    void    saveWidgetInformation(const ChatId& chatId, QWidget *widget);
+    void    loadWidgetInformation(const ChatId& chatId, QWidget *widget);
 
-    bool    getShowAvatarFrame(const RsPeerId &peerId);
-    void    setShowAvatarFrame(const RsPeerId &peerId, bool value);
+    bool    getShowAvatarFrame(const ChatId& chatId);
+    void    setShowAvatarFrame(const ChatId& chatId, bool value);
 
-    bool    getShowParticipantsFrame(const RsPeerId &peerId);
-    void    setShowParticipantsFrame(const RsPeerId &peerId, bool value);
+    bool    getShowParticipantsFrame(const ChatId& chatId);
+    void    setShowParticipantsFrame(const ChatId& chatId, bool value);
 
-    void    getStyle(const RsPeerId &peerId, const QString &name, RSStyle &style);
-    void    setStyle(const RsPeerId &peerId, const QString &name, RSStyle &style);
+    void    getStyle(const ChatId& chatId, const QString &name, RSStyle &style);
+    void    setStyle(const ChatId& chatId, const QString &name, RSStyle &style);
 
 protected:
     /** Default constructor. */
     RsharePeerSettings();
 
-    bool getSettingsIdOfPeerId(const RsPeerId &peerId, std::string &settingsId);
+    bool getSettingsIdOfPeerId(const ChatId& chatId, std::string &settingsId);
     void cleanDeadIds();
 
     /* get value of peer */
-    QVariant get(const RsPeerId &peerId, const QString &key, const QVariant &defaultValue = QVariant());
+    QVariant get(const ChatId& chatId, const QString &key, const QVariant &defaultValue = QVariant());
     /* set value of peer */
-    void     set(const RsPeerId &peerId, const QString &key, const QVariant &value);
+    void     set(const ChatId& chatId, const QString &key, const QVariant &value);
 
     /* map for fast access of the gpg id to the ssl id */
     std::map<RsPeerId, std::string> m_SslToGpg;

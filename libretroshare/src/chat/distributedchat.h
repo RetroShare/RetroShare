@@ -91,7 +91,7 @@ class DistributedChatService
         bool locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *) ;
         void checkSizeAndSendLobbyMessage(RsChatLobbyMsgItem *) ;
 
-        bool sendLobbyChat(const RsPeerId &id, const std::string&, const ChatLobbyId&) ;
+        bool sendLobbyChat(const ChatLobbyId &lobby_id, const std::string&) ;
         bool handleRecvChatLobbyMsgItem(RsChatMsgItem *item) ;
 
     private:

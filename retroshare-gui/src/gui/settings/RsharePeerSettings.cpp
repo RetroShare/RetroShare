@@ -29,7 +29,6 @@
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
 
 #include "RsharePeerSettings.h"
 #include "rsharesettings.h"
@@ -77,11 +76,11 @@ void RsharePeerSettings::cleanDeadIds()
                 continue;
             }
 
-            ChatLobbyId lid;
-            if (rsMsgs->isLobbyId(RsPeerId((*group).toStdString()), lid)) {
-                continue;
-            }
-            if (rsPeers->isGPGAccepted(RsPgpId((*group).toStdString())) == false) {
+            // TODO: implement cleanup for chatlobbies and distant chat
+
+            ChatId chatId((*group).toStdString());
+            // remove if not a chat id and pgp id was removed from friendslist
+            if(chatId.isNotSet() && rsPeers->isGPGAccepted(RsPgpId((*group).toStdString())) == false) {
                 remove(*group);
             }
         }
@@ -92,38 +91,42 @@ void RsharePeerSettings::cleanDeadIds()
     }
 }
 
-bool RsharePeerSettings::getSettingsIdOfPeerId(const RsPeerId &peerId, std::string &settingsId)
+bool RsharePeerSettings::getSettingsIdOfPeerId(const ChatId& chatId, std::string &settingsId)
 {
-    ChatLobbyId lid;
-    if (rsMsgs->isLobbyId(peerId, lid)) {
-        settingsId = peerId.toStdString();
+    if(chatId.isPeerId())
+    {
+        RsPeerId peerId = chatId.toPeerId();
+        // for ssl id, get pgp id
+        // check if pgp id is cached
+        std::map<RsPeerId, std::string>::iterator it = m_SslToGpg.find(peerId);
+        if (it != m_SslToGpg.end()) {
+            settingsId = it->second;
+            return true;
+        }
+        // if not fetch and store it
+        RsPeerDetails details;
+        if (rsPeers->getPeerDetails(peerId, details) == false) {
+            return false;
+        }
+        settingsId = details.gpg_id.toStdString();
+        m_SslToGpg[peerId] = settingsId ;
         return true;
     }
-
-    std::map<RsPeerId, std::string>::iterator it = m_SslToGpg.find(peerId);
-    if (it != m_SslToGpg.end()) {
-        settingsId = it->second;
+    if(chatId.isGxsId() || chatId.isLobbyId() || chatId.isBroadcast())
+    {
+        settingsId = chatId.toStdString();
         return true;
     }
-
-    RsPeerDetails details;
-    if (rsPeers->getPeerDetails(peerId, details) == false) {
-        return false;
-    }
-
-    settingsId = details.gpg_id.toStdString();
-    m_SslToGpg[peerId] = settingsId ;
-
-    return true;
+    return false;
 }
 
 /* get value of peer */
-QVariant RsharePeerSettings::get(const RsPeerId &peerId, const QString &key, const QVariant &defaultValue)
+QVariant RsharePeerSettings::get(const ChatId& chatId, const QString &key, const QVariant &defaultValue)
 {
     QVariant result;
 
     std::string settingsId;
-    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+    if (getSettingsIdOfPeerId(chatId, settingsId) == false) {
         /* settings id not found */
         return result;
     }
@@ -136,10 +139,10 @@ QVariant RsharePeerSettings::get(const RsPeerId &peerId, const QString &key, con
 }
 
 /* set value of peer */
-void RsharePeerSettings::set(const RsPeerId &peerId, const QString &key, const QVariant &value)
+void RsharePeerSettings::set(const ChatId& chatId, const QString &key, const QVariant &value)
 {
     std::string settingsId;
-    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+    if (getSettingsIdOfPeerId(chatId, settingsId) == false) {
         /* settings id not found */
         return;
     }
@@ -153,44 +156,44 @@ void RsharePeerSettings::set(const RsPeerId &peerId, const QString &key, const Q
     endGroup();
 }
 
-QString RsharePeerSettings::getPrivateChatColor(const RsPeerId &peerId)
+QString RsharePeerSettings::getPrivateChatColor(const ChatId& chatId)
 {
-    return get(peerId, "PrivateChatColor", QColor(Qt::black).name()).toString();
+    return get(chatId, "PrivateChatColor", QColor(Qt::black).name()).toString();
 }
 
-void RsharePeerSettings::setPrivateChatColor(const RsPeerId &peerId, const QString &value)
+void RsharePeerSettings::setPrivateChatColor(const ChatId& chatId, const QString &value)
 {
-    set(peerId, "PrivateChatColor", value);
+    set(chatId, "PrivateChatColor", value);
 }
 
-QString RsharePeerSettings::getPrivateChatFont(const RsPeerId &peerId)
+QString RsharePeerSettings::getPrivateChatFont(const ChatId& chatId)
 {
-    return get(peerId, "PrivateChatFont", Settings->getChatScreenFont()).toString();
+    return get(chatId, "PrivateChatFont", Settings->getChatScreenFont()).toString();
 }
 
-void RsharePeerSettings::setPrivateChatFont(const RsPeerId &peerId, const QString &value)
+void RsharePeerSettings::setPrivateChatFont(const ChatId& chatId, const QString &value)
 {
     if (Settings->getChatScreenFont() == value) {
-        set(peerId, "PrivateChatFont", QVariant());
+        set(chatId, "PrivateChatFont", QVariant());
     } else {
-        set(peerId, "PrivateChatFont", value);
+        set(chatId, "PrivateChatFont", value);
     }
 }
 
-bool RsharePeerSettings::getPrivateChatOnTop(const RsPeerId &peerId)
+bool RsharePeerSettings::getPrivateChatOnTop(const ChatId& chatId)
 {
-    return get(peerId, "PrivateChatOnTop", false).toBool();
+    return get(chatId, "PrivateChatOnTop", false).toBool();
 }
 
-void RsharePeerSettings::setPrivateChatOnTop(const RsPeerId &peerId, bool value)
+void RsharePeerSettings::setPrivateChatOnTop(const ChatId& chatId, bool value)
 {
-    set(peerId, "PrivateChatOnTop", value);
+    set(chatId, "PrivateChatOnTop", value);
 }
 
-void RsharePeerSettings::saveWidgetInformation(const RsPeerId &peerId, QWidget *widget)
+void RsharePeerSettings::saveWidgetInformation(const ChatId& chatId, QWidget *widget)
 {
     std::string settingsId;
-    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+    if (getSettingsIdOfPeerId(chatId, settingsId) == false) {
         /* settings id not found */
         return;
     }
@@ -207,10 +210,10 @@ void RsharePeerSettings::saveWidgetInformation(const RsPeerId &peerId, QWidget *
     endGroup();
 }
 
-void RsharePeerSettings::loadWidgetInformation(const RsPeerId &peerId, QWidget *widget)
+void RsharePeerSettings::loadWidgetInformation(const ChatId& chatId, QWidget *widget)
 {
     std::string settingsId;
-    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+    if (getSettingsIdOfPeerId(chatId, settingsId) == false) {
         /* settings id not found */
         return;
     }
@@ -227,30 +230,30 @@ void RsharePeerSettings::loadWidgetInformation(const RsPeerId &peerId, QWidget *
     endGroup();
 }
 
-bool RsharePeerSettings::getShowAvatarFrame(const RsPeerId &peerId)
+bool RsharePeerSettings::getShowAvatarFrame(const ChatId& chatId)
 {
-    return get(peerId, "ShowAvatarFrame", true).toBool();
+    return get(chatId, "ShowAvatarFrame", true).toBool();
 }
 
-void RsharePeerSettings::setShowAvatarFrame(const RsPeerId &peerId, bool value)
+void RsharePeerSettings::setShowAvatarFrame(const ChatId& chatId, bool value)
 {
-    return set(peerId, "ShowAvatarFrame", value);
+    return set(chatId, "ShowAvatarFrame", value);
 }
 
-bool RsharePeerSettings::getShowParticipantsFrame(const RsPeerId &peerId)
+bool RsharePeerSettings::getShowParticipantsFrame(const ChatId& chatId)
 {
-    return get(peerId, "ShowParticipantsFrame", true).toBool();
+    return get(chatId, "ShowParticipantsFrame", true).toBool();
 }
 
-void RsharePeerSettings::setShowParticipantsFrame(const RsPeerId &peerId, bool value)
+void RsharePeerSettings::setShowParticipantsFrame(const ChatId& chatId, bool value)
 {
-    return set(peerId, "ShowParticipantsFrame", value);
+    return set(chatId, "ShowParticipantsFrame", value);
 }
 
-void RsharePeerSettings::getStyle(const RsPeerId &peerId, const QString &name, RSStyle &style)
+void RsharePeerSettings::getStyle(const ChatId& chatId, const QString &name, RSStyle &style)
 {
     std::string settingsId;
-    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+    if (getSettingsIdOfPeerId(chatId, settingsId) == false) {
         /* settings id not found */
         return;
     }
@@ -266,10 +269,10 @@ void RsharePeerSettings::getStyle(const RsPeerId &peerId, const QString &name, R
     endGroup();
 }
 
-void RsharePeerSettings::setStyle(const RsPeerId &peerId, const QString &name, RSStyle &style)
+void RsharePeerSettings::setStyle(const ChatId& chatId, const QString &name, RSStyle &style)
 {
     std::string settingsId;
-    if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
+    if (getSettingsIdOfPeerId(chatId, settingsId) == false) {
         /* settings id not found */
         return;
     }

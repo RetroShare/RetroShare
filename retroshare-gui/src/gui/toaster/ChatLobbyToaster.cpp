@@ -25,12 +25,11 @@
 
 #include <retroshare/rsmsgs.h>
 
-ChatLobbyToaster::ChatLobbyToaster(const RsPeerId &peerId, const QString &name, const QString &message) : QWidget(NULL)
+ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const QString &name, const QString &message):
+    QWidget(NULL), mLobbyId(lobby_id)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
-
-	this->peerId = peerId;
 
 	connect(ui.toasterButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
@@ -44,21 +43,17 @@ ChatLobbyToaster::ChatLobbyToaster(const RsPeerId &peerId, const QString &name, 
 
 	std::list<ChatLobbyInfo> linfos;
 	rsMsgs->getChatLobbyList(linfos);
-
-	ChatLobbyId lobbyId;
-	if (rsMsgs->isLobbyId(peerId, lobbyId)) {
-		for (std::list<ChatLobbyInfo>::const_iterator it(linfos.begin()); it != linfos.end(); ++it) {
-			if ((*it).lobby_id == lobbyId) {
-				lobbyName += "@" + RsHtml::plainText(it->lobby_name);
-				break;
-			}
-		}
-	}
+    for (std::list<ChatLobbyInfo>::const_iterator it(linfos.begin()); it != linfos.end(); ++it) {
+        if ((*it).lobby_id == mLobbyId) {
+            lobbyName += "@" + RsHtml::plainText(it->lobby_name);
+            break;
+        }
+    }
 	ui.toasterLabel->setText(lobbyName);
 }
 
 void ChatLobbyToaster::chatButtonSlot()
 {
-	ChatDialog::chatFriend(peerId);
+    ChatDialog::chatFriend(ChatId(mLobbyId));
 	hide();
 }

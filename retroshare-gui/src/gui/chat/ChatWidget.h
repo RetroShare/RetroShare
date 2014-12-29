@@ -71,8 +71,8 @@ public:
 	explicit ChatWidget(QWidget *parent = 0);
 	~ChatWidget();
 
-    void init(const RsPeerId &peerId, const QString &title);
-	ChatType chatType() { return mChatType; }
+    void init(const ChatId &chat_id, const QString &title);
+    ChatType chatType();
 
 	bool hasNewMessages() { return newMessages; }
 	bool isTyping() { return typing; }
@@ -87,7 +87,6 @@ public:
 
 	void addToolsAction(QAction *action);
 
-    RsPeerId getPeerId() { return peerId; }
 	QString getTitle() { return title; }
 	int getPeerStatus() { return peerStatus; }
 	void setName(const QString &name);
@@ -101,7 +100,7 @@ public:
 	
 	
 	void addVOIPBarWidget(QWidget *w);
-;
+
 	// Adds a new horizonal widget in the layout of the chat window.
 	void addChatHorizontalWidget(QWidget *w) ;
 
@@ -184,7 +183,7 @@ private:
 	void completeNickname(bool reverse);
     QAbstractItemModel *modelFromPeers();
 
-    RsPeerId peerId;
+    ChatId chatId;
 	QString title;
 	QString name;
 	QString completionWord;
@@ -198,7 +197,6 @@ private:
 	bool newMessages;
 	bool typing;
 	int peerStatus;
-	ChatType mChatType;
 
 	time_t lastStatusSendTime;
 

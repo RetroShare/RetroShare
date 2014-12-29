@@ -68,8 +68,6 @@ class ftFileSearch;
 class ftDataMultiplex;
 class p3turtle;
 
-class ftDwlQueue;
-
 class p3PeerMgr;
 class p3ServiceControl;
 
@@ -286,8 +284,6 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		p3turtle *mTurtleRouter ;
 
 		ftFileSearch   *mFtSearch;
-
-		ftDwlQueue *mFtDwlQueue;
 
 		RsMutex srvMutex;
 		std::string mConfigPath;

@@ -293,7 +293,7 @@ void DistantChatService::removeVirtualPeer(const TurtleFileHash& hash,const Turt
 
     if(tunnel_dn)
     {
-        RsServer::notify()->notifyChatStatus(virtual_peer_id.toStdString(),"tunnel is down...",true) ;
+        RsServer::notify()->notifyChatStatus(ChatId(RsGxsId(virtual_peer_id)),"tunnel is down...") ;
         RsServer::notify()->notifyPeerStatusChanged(virtual_peer_id.toStdString(),RS_STATUS_OFFLINE) ;
     }
 }

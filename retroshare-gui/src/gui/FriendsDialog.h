@@ -22,18 +22,13 @@
 #ifndef _FRIENDSDIALOG_H
 #define _FRIENDSDIALOG_H
 
-#include "chat/ChatStyle.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
 #include "ui_FriendsDialog.h"
 
 #define IMAGE_PEERS         	":/images/groupchat.png"
 
-class QFont;
 class QAction;
-class QTextEdit;
-class QTextCharFormat;
-class ChatTabWidget;
 class NetworkDialog;
 class NetworkView;
 class IdDialog;
@@ -82,67 +77,20 @@ public:
 #endif
 	 IdDialog *idDialog;
 	 
-public slots:
-
-    void publicChatChanged(int type);
-//    void toggleSendItem( QTreeWidgetItem *item, int col );
-
-    void insertChat();
-    void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
-    void resetStatusBar() ;
-
-    void fileHashingFinished(QList<HashedFile> hashedFiles);
-
-    void smileyWidgetgroupchat();
-    void addSmileys();
-
-    // called by notifyQt when another peer is typing (in group chant and private chat)
-    void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
-
 protected:
-    bool eventFilter(QObject *obj, QEvent *ev);
     void showEvent (QShowEvent *event);
 
 private slots:
-    void pasteLink() ;
-    void contextMenu(QPoint) ;
-    void contextMenuMsgText(QPoint);
-    void chatCharFormatChanged();
-
-    void on_actionClear_Chat_History_triggered();
-    void on_actionDelete_Chat_History_triggered();
-    void on_actionMessageHistory_triggered();
-
-    void updateStatusString(const QString& peer_id, const QString& statusString) ;	// called when a peer is typing in group chat
-    void updateStatusTyping() ;										// called each time a key is hit
-
-    //void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
+    void chatMessageReceived(const ChatMessage& msg);
+    void chatStatusReceived(const ChatId& chat_id, const QString& status_string);
 
     void addFriend();
 
-    void chooseColor();
-    void insertSendList();
-    void sendMsg();
-
     void statusmessage();
-
-    void setFont();
-    void chooseFont();
 
     void getAvatar();
 
-//    void on_actionAdd_Group_activated();
-
     void loadmypersonalstatus();
-
-    void addExtraFile();
-
-    void addExtraPicture();
-
-    bool fileSave();
-    bool fileSaveAs();
-
-    void setCurrentFileName(const QString &fileName);
 
     //void newsFeedChanged(int count);
 
@@ -151,25 +99,6 @@ signals:
 
 private:
     void processSettings(bool bLoad);
-    void addChatMsg(bool incoming, bool history, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message);
-
-    void colorChanged();
-    void fontChanged();
-    void setColorAndFont();
-
-    QString fileName;
-
-    ChatStyle style;
-
-    QColor mCurrentColor;
-    time_t last_status_send_time ;
-
-    QFont mCurrentFont; /* how the text will come out */
-
-    //QWidget *newsFeed;
-    //QColor newsFeedTabColor;
-    //QString newsFeedText;
-    bool inChatCharFormatChanged;
 
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;

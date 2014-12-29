@@ -124,10 +124,7 @@ void CreateLobbyDialog::createLobby()
 	rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toUtf8().constData()) ;
 
 	// open chat window !!
-    RsPeerId vpid ;
-	
-	if(rsMsgs->getVirtualPeerId(id,vpid))
-		ChatDialog::chatFriend(vpid) ; 
+    ChatDialog::chatFriend(ChatId(id)) ;
 
 	close();
 }

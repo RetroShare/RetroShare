@@ -137,7 +137,9 @@ NotifyQt::NotifyQt() : cDialog(NULL)
 		_enabled = false ;
 	}
 
-	connect(this,SIGNAL(raiseChatWindow(QString)),this,SLOT(raiseChatWindow_slot(QString)),Qt::QueuedConnection) ;
+    // register to allow sending over Qt::QueuedConnection
+    qRegisterMetaType<ChatId>("ChatId");
+    qRegisterMetaType<ChatMessage>("ChatMessage");
 }
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
@@ -148,6 +150,20 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 			return ;
 	}
 	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
+}
+
+void NotifyQt::notifyChatMessage(const ChatMessage &msg)
+{
+    {
+        QMutexLocker m(&_mutex) ;
+        if(!_enabled)
+            return ;
+    }
+
+#ifdef NOTIFY_DEBUG
+    std::cerr << "notifyQt: Received chat message " << std::endl ;
+#endif
+    emit chatMessageReceived(msg);
 }
 
 void NotifyQt::notifyOwnAvatarChanged()
@@ -401,7 +417,7 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 
 	emit peerStatusChangedSummary();
 }
-
+#ifdef REMOVE
 void NotifyQt::notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status)
 {
 	{
@@ -423,7 +439,7 @@ void NotifyQt::notifyChannelMsgReadSatusChanged(const std::string& channelId, co
 
 	emit channelMsgReadSatusChanged(QString::fromStdString(channelId), QString::fromStdString(msgId), status);
 }
-
+#endif
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
 	{
@@ -508,12 +524,7 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 	emit chatLobbyEvent(lobby_id,event_type,QString::fromUtf8(nickname.c_str()),QString::fromUtf8(str.c_str())) ;
 }
 
-void NotifyQt::notifyChatShow(const std::string& peer_id)
-{
-	emit raiseChatWindow(QString::fromStdString(peer_id)) ;
-}
-
-void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
+void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_string)
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -524,12 +535,7 @@ void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& st
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
 #endif
-	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromUtf8(status_string.c_str()),is_private) ;
-}
-
-void NotifyQt::raiseChatWindow_slot(const QString& peer_str)
-{
-	ChatDialog::chatFriend(RsPeerId(peer_str.toStdString())) ;
+    emit chatStatusChanged(chat_id, QString::fromUtf8(status_string.c_str()));
 }
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
@@ -666,6 +672,8 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit configChanged() ;
 			break ;
+
+#ifdef REMOVE
 		case NOTIFY_LIST_FORUMLIST_LOCKED:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received forum msg changed" << std::endl ;
@@ -691,6 +699,8 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit privateChatChanged(list, type);
 			break;
+#endif
+
 		case NOTIFY_LIST_CHAT_LOBBY_LIST:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received notify chat lobby list" << std::endl;
@@ -837,13 +847,14 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHAT:
 					if ((popupflags & RS_POPUP_CHAT) && !_disableAllToaster)
 					{
-						ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
+                        // TODO: fix for distant chat, look up if dstant chat uses RS_POPUP_CHAT
+                        ChatDialog *chatDialog = ChatDialog::getChat(ChatId(RsPeerId(id)));
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active
 							break;
 						}
-						toaster = new Toaster(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
+                        toaster = new Toaster(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_GROUPCHAT:
@@ -864,18 +875,28 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
 					{
-						ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
-						ChatWidget *chatWidget;
-						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
-							// do not show when active
-							break;
-						}
-						ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
-						if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(QString::fromUtf8(title.c_str()))) {
-							// participant is muted
-							break;
-						}
-						toaster = new Toaster(new ChatLobbyToaster(RsPeerId(id), QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
+                        if(RsPeerId::SIZE_IN_BYTES < sizeof(ChatLobbyId))
+                        {
+                            std::cerr << "NotifyQt::UpdateGUI() Error: ChatLobbyId does not fit into a RsPeerId, this should not happen!" << std::endl;
+                            break;
+                        }
+                        RsPeerId vpid(id); // create virtual peer id
+                        ChatLobbyId lobby_id;
+                        // copy first bytes of virtual peer id, to make a chat lobby id
+                        memcpy(&lobby_id, vpid.toByteArray(), sizeof(ChatLobbyId));
+
+                        ChatDialog *chatDialog = ChatDialog::getChat(ChatId(lobby_id));
+                        ChatWidget *chatWidget;
+                        if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
+                            // do not show when active
+                            break;
+                        }
+                        ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
+                        if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(QString::fromUtf8(title.c_str()))) {
+                            // participant is muted
+                            break;
+                        }
+                        toaster = new Toaster(new ChatLobbyToaster(lobby_id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:
@@ -973,13 +994,13 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
                 toaster = new Toaster(new DownloadToaster(RsFileHash::random(), title));
 				break;
 			case RS_POPUP_CHAT:
-				toaster = new Toaster(new ChatToaster(id, message));
+                toaster = new Toaster(new ChatToaster(id, message));
 				break;
 			case RS_POPUP_GROUPCHAT:
 				toaster = new Toaster(new GroupChatToaster(id, message));
 				break;
 			case RS_POPUP_CHATLOBBY:
-				toaster = new Toaster(new ChatLobbyToaster(id, title, message));
+                toaster = new Toaster(new ChatLobbyToaster(0, title, message));
 				break;
 			case RS_POPUP_CONNECT_ATTEMPT:
 				toaster = new Toaster(new FriendRequestToaster(pgpid, title, id));

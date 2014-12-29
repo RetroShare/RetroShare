@@ -37,10 +37,11 @@ class PopupDistantChatDialog: public PopupChatDialog
 		/** Default destructor */
 		virtual ~PopupDistantChatDialog();
 	
-        virtual void init(const RsPeerId &pid, const QString &title);
+        virtual void init(const RsGxsId &gxs_id, const QString &title);
 		virtual void closeEvent(QCloseEvent *e) ;
 	
-        virtual QString getPeerName(const RsPeerId &id) const ;
+        virtual QString getPeerName(const ChatId &id) const ;
+        virtual QString getOwnName() const;
 
 	protected slots:
 		void updateDisplay() ; // overloads RsAutoUpdatePage

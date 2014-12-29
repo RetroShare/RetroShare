@@ -1175,7 +1175,7 @@ void NewsFeed::openChat(const RsPeerId &peerId)
 	std::cerr << std::endl;
 #endif
 
-	ChatDialog::chatFriend(peerId);
+    ChatDialog::chatFriend(ChatId(peerId));
 }
 
 void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const RsGxsMessageId &/*msgId*/, const QString &/*title*/)

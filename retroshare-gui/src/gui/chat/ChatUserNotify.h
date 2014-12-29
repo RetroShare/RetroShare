@@ -22,6 +22,7 @@
 #ifndef CHATUSERNOTIFY_H
 #define CHATUSERNOTIFY_H
 
+#include <retroshare/rsmsgs.h>
 #include "gui/common/UserNotify.h"
 
 class ChatUserNotify : public UserNotify
@@ -34,13 +35,15 @@ public:
 	virtual bool hasSetting(QString *name, QString *group);
 
 private slots:
-	void privateChatChanged(int list, int type);
+    void chatMessageReceived(ChatMessage msg);
 
 private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual unsigned int getNewCount();
 	virtual void iconClicked();
+
+    std::map<ChatId, int> mWaitingChats;
 };
 
 #endif // CHATUSERNOTIFY_H

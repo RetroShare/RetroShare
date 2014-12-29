@@ -27,6 +27,7 @@
  */
 
 class RsHistory;
+class ChatId;
 
 extern RsHistory *rsHistory;
 
@@ -72,10 +73,10 @@ public:
 class RsHistory
 {
 public:
-	virtual bool getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount) = 0;
+    virtual bool getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount) = 0;
 	virtual bool getMessage(uint32_t msgId, HistoryMsg &msg) = 0;
 	virtual void removeMessages(const std::list<uint32_t> &msgIds) = 0;
-	virtual void clear(const RsPeerId &chatPeerId) = 0;
+    virtual void clear(const ChatId &chatPeerId) = 0;
 
 	virtual bool getEnable(uint32_t chat_type) = 0;
 	virtual void setEnable(uint32_t chat_type, bool enable) = 0;

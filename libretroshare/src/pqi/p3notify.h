@@ -98,8 +98,8 @@ class p3Notify: public RsNotify
 		void notifyListPreChange              (int /* list */, int /* type */) ;
 		void notifyListChange                 (int /* list */, int /* type */) ;
 		void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) ;
-		void notifyChatStatus                 (const std::string& /* peer_id  */, const std::string& /* status_string */ ,bool /* is_private */) ;
-		void notifyChatShow                   (const std::string& /* peer_id  */) ;
+        void notifyChatMessage                (const ChatMessage& /* msg      */) ;
+        void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) ;
 		void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */) ;
 		void notifyChatLobbyTimeShift         (int                /* time_shift*/) ;
 		void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) ;
@@ -113,8 +113,10 @@ class p3Notify: public RsNotify
 
 		void notifyPeerStatusChangedSummary   () ;
 		void notifyDiscInfoChanged            () ;
+#ifdef REMOVE
 		void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
 		void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
+#endif
 		bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) ;
 		void notifyDownloadComplete           (const std::string& /* fileHash  */) ;
 		void notifyDownloadCompleteCount      (uint32_t           /* count     */) ;

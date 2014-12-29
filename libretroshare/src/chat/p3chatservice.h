@@ -67,7 +67,6 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 		 * @see NotifyBase
 		 */
 		virtual int   tick();
-		virtual int   status();
 
 		/*************** pqiMonitor callback ***********************/
 		virtual void statusChange(const std::list<pqiServicePeer> &plist);
@@ -75,9 +74,17 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 		/*!
 		 * public chat sent to all peers
 		 */
-		int	sendPublicChat(const std::string &msg);
+        void sendPublicChat(const std::string &msg);
 
 		/********* RsMsgs ***********/
+        /*!
+         * Send a chat message.
+         * @param destination where to send the chat message
+         * @param msg the message
+         * @see ChatId
+         */
+        bool sendChat(ChatId destination, std::string msg);
+
 		/*!
 		 * chat is sent to specifc peer
 		 * @param id peer to send chat msg to
@@ -88,7 +95,7 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
 		 * e.g currently used to update user when a peer 'is typing' during a chat
 		 */
-		void  sendStatusString(const RsPeerId& peer_id,const std::string& status_str) ;
+        void  sendStatusString(const ChatId& peer_id,const std::string& status_str) ;
 
 		/*!
 		 * send to all peers online
@@ -131,33 +138,6 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 		void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
 
 		/*!
-		 * returns the count of messages in public queue
-		 * @param public or private queue
-		 */
-		int getPublicChatQueueCount();
-
-		/*!
-		 * This retrieves all public chat msg items
-		 */
-		bool getPublicChatQueue(std::list<ChatInfo> &chats);
-
-		/*!
-		 * returns the count of messages in private queue
-		 * @param public or private queue
-		 */
-		int getPrivateChatQueueCount(bool incoming);
-
-		/*!
-		* @param id's of available private chat messages
-		*/
-		bool getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids);
-
-		/*!
-		 * This retrieves all private chat msg items for peer
-		 */
-		bool getPrivateChatQueue(bool incoming, const RsPeerId &id, std::list<ChatInfo> &chats);
-
-		/*!
 		 * Return the max message size for security forwarding
 		 * @param type RS_CHAT_TYPE_...
 		 * return 0 unlimited
@@ -186,7 +166,8 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 		virtual void saveDone();
 		virtual bool loadList(std::list<RsItem*>& load) ;
 
-		bool isOnline(const RsPeerId& id) ;
+        // accepts virtual peer id
+        bool isOnline(const RsPeerId &pid) ;
 
 		/// This is to be used by subclasses/parents to call IndicateConfigChanged()
 		virtual void triggerConfigSave()  { IndicateConfigChanged() ; }
@@ -205,7 +186,7 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 
 		virtual void sendChatItem(RsChatItem *) ;
 
-		void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
+        void initChatMessage(RsChatMsgItem *c, ChatMessage& msg);
 
 		/// Send avatar info to peer in jpeg format.
 		void sendAvatarJpegData(const RsPeerId& peer_id) ;
@@ -242,9 +223,7 @@ class p3ChatService: public p3Service, public DistantChatService, public Distrib
 		p3LinkMgr *mLinkMgr;
 		p3HistoryMgr *mHistoryMgr;
 
-		std::list<RsChatMsgItem *> publicList;
-		std::list<RsChatMsgItem *> privateIncomingList;
-		std::list<RsChatMsgItem *> privateOutgoingList;
+        std::list<RsChatMsgItem *> privateOutgoingList; // messages waiting to be send when peer comes online
 
 		AvatarInfo *_own_avatar ;
 		std::map<RsPeerId,AvatarInfo *> _avatars ;

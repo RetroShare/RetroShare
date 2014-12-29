@@ -1,5 +1,7 @@
 TEMPLATE = subdirs
 
+CONFIG += ordered
+
 SUBDIRS += \
         openpgpsdk/src/openpgpsdk.pro \
         supportlibs/pegmarkdown/pegmarkdown.pro \

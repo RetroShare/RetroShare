@@ -48,26 +48,24 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 
 	connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 	connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
-	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(const QString&, const QString&, bool)), this, SLOT(chatStatusChanged(const QString&, const QString&, bool)));
+    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusChanged(ChatId,QString)));
 }
 
-void PopupChatDialog::init(const RsPeerId &peerId, const QString &title)
+void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
 {
-	ChatDialog::init(peerId, title);
+    ChatDialog::init(chat_id, title);
 
 	/* Hide or show the avatar frames */
-    showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId));
+    showAvatarFrame(PeerSettings->getShowAvatarFrame(chat_id));
 
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-    ui.avatarWidget->setId(peerId);
+    ui.avatarWidget->setId(chat_id.toPeerId()); // not 100% correct, since this code is also used for distant chat
+                                                // but distance peers don't have a status anyway
 
 	ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.ownAvatarWidget->setOwnId();
 
 	ui.chatWidget->addToolsAction(ui.actionClearOfflineMessages);
-
-	// add offline chat messages
-	onChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
 
 	// add to window
 	PopupChatWindow *window = PopupChatWindow::getWindow(false);
@@ -119,87 +117,23 @@ void PopupChatDialog::showDialog(uint chatflags)
 
 // Called by libretroshare through notifyQt to display the peer's status
 //
-void PopupChatDialog::chatStatusChanged(const QString &peerId, const QString& statusString, bool isPrivateChat)
+void PopupChatDialog::chatStatusChanged(const ChatId &chat_id, const QString& statusString)
 {
-    if (isPrivateChat && this->peerId == RsPeerId(peerId.toStdString())) {
-        ui.chatWidget->updateStatusString(getPeerName(RsPeerId(peerId.toStdString())) + " %1", statusString);
+    if (mChatId.isSameEndpoint(chat_id)) {
+        ui.chatWidget->updateStatusString(getPeerName(chat_id) + " %1", statusString);
 	}
 }
 
-void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
+void PopupChatDialog::addChatMsg(const ChatMessage &msg)
 {
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
-		QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
-		QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
-		QString message = QString::fromUtf8(info.msg.c_str());
-		QString name = getPeerName(info.rsid) ;
+        QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
+        QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+        QString message = QString::fromUtf8(msg.msg.c_str());
+        QString name = msg.incoming? getPeerName(msg.chat_id): getOwnName();
 
-		cw->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-	}
-}
-
-void PopupChatDialog::onChatChanged(int list, int type)
-{
-	if (list == NOTIFY_LIST_PRIVATE_OUTGOING_CHAT) {
-		switch (type) {
-		case NOTIFY_TYPE_ADD:
-			{
-				std::list<ChatInfo> savedOfflineChatNew;
-
-				QString name = getPeerName(rsPeers->getOwnId()) ;
-
-				std::list<ChatInfo> offlineChat;
-				if (rsMsgs->getPrivateChatQueueCount(false) && rsMsgs->getPrivateChatQueue(false, peerId, offlineChat)) {
-					ui.actionClearOfflineMessages->setEnabled(true);
-
-					std::list<ChatInfo>::iterator it;
-					for(it = offlineChat.begin(); it != offlineChat.end(); ++it) {
-						/* are they public? */
-						if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
-							/* this should not happen */
-							continue;
-						}
-
-						savedOfflineChatNew.push_back(*it);
-
-						if (std::find(savedOfflineChat.begin(), savedOfflineChat.end(), *it) != savedOfflineChat.end()) {
-							continue;
-						}
-
-						QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
-						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
-						QString message = QString::fromUtf8(it->msg.c_str());
-
-						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_OFFLINE);
-					}
-				}
-
-				savedOfflineChat = savedOfflineChatNew;
-			}
-			break;
-		case NOTIFY_TYPE_DEL:
-			{
-				if (manualDelete == false) {
-					QString name = getPeerName(rsPeers->getOwnId()) ;
-
-					// now show saved offline chat messages as sent
-					std::list<ChatInfo>::iterator it;
-					for(it = savedOfflineChat.begin(); it != savedOfflineChat.end(); ++it) {
-						QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
-						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
-						QString message = QString::fromUtf8(it->msg.c_str());
-
-						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-					}
-				}
-
-				savedOfflineChat.clear();
-			}
-			break;
-		}
-
-		ui.actionClearOfflineMessages->setEnabled(!savedOfflineChat.empty());
+        cw->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 	}
 }
 
@@ -219,12 +153,15 @@ void PopupChatDialog::showAvatarFrame(bool show)
 		ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
 	}
 
-    PeerSettings->setShowAvatarFrame(getPeerId(), show);
+    PeerSettings->setShowAvatarFrame(mChatId, show);
 }
 
 void PopupChatDialog::clearOfflineMessages()
 {
 	manualDelete = true;
+    // TODO
+#ifdef REMOVE
 	rsMsgs->clearPrivateChatQueue(false, peerId);
+#endif
 	manualDelete = false;
 }

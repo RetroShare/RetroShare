@@ -68,7 +68,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	newMessages = false;
 	typing = false;
 	peerStatus = 0;
-	mChatType = CHATTYPE_UNKNOWN;
 	firstShow = true;
 	firstSearch = true;
 	inChatCharFormatChanged = false;
@@ -217,9 +216,9 @@ void ChatWidget::addVOIPBarWidget(QWidget *w)
 }
 
 
-void ChatWidget::init(const RsPeerId &peerId, const QString &title)
+void ChatWidget::init(const ChatId &chat_id, const QString &title)
 {
-	this->peerId = peerId;
+    this->chatId = chat_id;
 	this->title = title;
 
 	ui->titleLabel->setText(RsHtml::plainText(title));
@@ -227,37 +226,19 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
     RsPeerId ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
 
-	ChatLobbyId lid;
-	if (rsMsgs->isLobbyId(peerId, lid)) {
-		mChatType = CHATTYPE_LOBBY;
-	} else {
-		uint32_t status;
-        if (rsMsgs->getDistantChatStatus(RsGxsId(peerId), status)) {
-			mChatType = CHATTYPE_DISTANT;
-		} else {
-			mChatType = CHATTYPE_PRIVATE;
-		}
-	}
+    if(chatId.isPeerId() || chatId.isGxsId())
+        chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
+    if(chatId.isBroadcast() || chatId.isLobbyId())
+        chatStyle.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
 
-	switch (mChatType) {
-	case CHATTYPE_UNKNOWN:
-	case CHATTYPE_PRIVATE:
-	case CHATTYPE_DISTANT:
-		chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
-		break;
-	case CHATTYPE_LOBBY:
-		chatStyle.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
-		break;
-	}
-
-    currentColor.setNamedColor(PeerSettings->getPrivateChatColor(peerId));
-    currentFont.fromString(PeerSettings->getPrivateChatFont(peerId));
+    currentColor.setNamedColor(PeerSettings->getPrivateChatColor(chatId));
+    currentFont.fromString(PeerSettings->getPrivateChatFont(chatId));
 
 	colorChanged();
 	setColorAndFont();
 
 	// load style
-    PeerSettings->getStyle(peerId, "ChatWidget", style);
+    PeerSettings->getStyle(chatId, "ChatWidget", style);
 
 	/* Add plugin functions */
 	int pluginCount = rsPlugins->nbPlugins();
@@ -271,7 +252,7 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 		}
 	}
 
-	uint32_t hist_chat_type;
+    uint32_t hist_chat_type = 0xFFFF; // a value larger than the biggest RS_HISTORY_TYPE_* value
 	int messageCount;
 
 	if (chatType() == CHATTYPE_LOBBY) {
@@ -281,21 +262,25 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 		ui->statusLabel->hide();
 
 		updateTitle();
-	} else {
+    } else if (chatType() == CHATTYPE_PRIVATE){
 		hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
 		messageCount = Settings->getPrivateChatHistoryCount();
 
 		// initialize first status
 		StatusInfo peerStatusInfo;
 		// No check of return value. Non existing status info is handled as offline.
-		rsStatus->getStatus(peerId, peerStatusInfo);
-        updateStatus(QString::fromStdString(peerId.toStdString()), peerStatusInfo.status);
+        rsStatus->getStatus(chatId.toPeerId(), peerStatusInfo);
+        updateStatus(QString::fromStdString(chatId.toPeerId().toStdString()), peerStatusInfo.status);
 
 		// initialize first custom state string
-		QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(peerId).c_str());
-        updatePeersCustomStateString(QString::fromStdString(peerId.toStdString()), customStateString);
-	}
+        QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
+        updatePeersCustomStateString(QString::fromStdString(chatId.toPeerId().toStdString()), customStateString);
+    } else if(chatId.isBroadcast()){
+        hist_chat_type = RS_HISTORY_TYPE_PUBLIC;
+        messageCount = Settings->getPublicChatHistoryCount();
 
+        ui->titleBarFrame->setVisible(false);
+    }
 
 	if (rsHistory->getEnable(hist_chat_type)) 
 	{
@@ -304,15 +289,38 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 
 		if (messageCount > 0) 
 		{
-			rsHistory->getMessages(peerId, historyMsgs, messageCount);
+            rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
 			std::list<HistoryMsg>::iterator historyIt;
 			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
-				addChatMsg(historyIt->incoming, QString::fromUtf8(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+            {
+                // it can happen that a message is first added to the message history
+                // and later the gui receives the message through notify
+                // avoid this by not adding history entries if their age is < 2secs
+                if((time(NULL)-2) > historyIt->recvTime)
+                    addChatMsg(historyIt->incoming, QString::fromUtf8(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+            }
 		}
 	}
 
 	processSettings(true);
+}
+
+ChatWidget::ChatType ChatWidget::chatType()
+{
+    // transformation from ChatId::Type to ChatWidget::ChatType
+    // we don't use the type in ChatId directly, because of historic reasons
+    // ChatWidget::ChatType existed before ChatId::Type was introduced
+    // TODO: check if can change all code to use the type in ChatId directly
+    // but maybe it is good to have separate types in libretroshare and gui
+    if(chatId.isPeerId())
+        return CHATTYPE_PRIVATE;
+    if(chatId.isGxsId())
+        return CHATTYPE_DISTANT;
+    if(chatId.isLobbyId())
+        return CHATTYPE_LOBBY;
+
+    return CHATTYPE_UNKNOWN;
 }
 
 void ChatWidget::processSettings(bool load)
@@ -499,13 +507,10 @@ void ChatWidget::completeNickname(bool reverse)
 
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-        RsPeerId vpid;
-		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
-			if (vpid == peerId) {
-				lobby = &*lobbyIt;
-				break;
-			}
-		}
+        if (chatId.toLobbyId() == lobbyIt->lobby_id) {
+            lobby = &*lobbyIt;
+            break;
+        }
 	}
 
 	if (!lobby)
@@ -605,13 +610,10 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
 
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-        RsPeerId vpid;
-		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
-			if (vpid == peerId) {
-				lobby = &*lobbyIt;
-				break;
-			}
-		}
+        if (chatId.toLobbyId() == lobbyIt->lobby_id) {
+            lobby = &*lobbyIt;
+            break;
+        }
 	}
 
 	if (!lobby)
@@ -847,7 +849,7 @@ void ChatWidget::updateStatusTyping()
 		tr("is typing...");
 #endif
 
-		rsMsgs->sendStatusString(peerId, "is typing...");
+        rsMsgs->sendStatusString(chatId, "is typing...");
 		lastStatusSendTime = time(NULL) ;
 	}
 }
@@ -911,11 +913,7 @@ void ChatWidget::sendChat()
 #ifdef CHAT_DEBUG
 	std::cout << "ChatWidget:sendChat " << std::endl;
 #endif
-
-	if (rsMsgs->sendPrivateChat(peerId, msg)) {
-		QDateTime currentTime = QDateTime::currentDateTime();
-		addChatMsg(false, name, currentTime, currentTime, text, MSGTYPE_NORMAL);
-	}
+    rsMsgs->sendChat(chatId, msg);
 
 	chatWidget->clear();
 	// workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
@@ -1130,7 +1128,7 @@ void ChatWidget::chooseColor()
 	QRgb color = QColorDialog::getRgba(ui->chatTextEdit->textColor().rgba(), &ok, window());
 	if (ok) {
 		currentColor = QColor(color);
-		PeerSettings->setPrivateChatColor(peerId, currentColor.name());
+        PeerSettings->setPrivateChatColor(chatId, currentColor.name());
 		colorChanged();
 		setColorAndFont();
 	}
@@ -1171,7 +1169,7 @@ void ChatWidget::setColorAndFont()
 void ChatWidget::setFont()
 {
 	setColorAndFont();
-	PeerSettings->setPrivateChatFont(peerId, currentFont.toString());
+    PeerSettings->setPrivateChatFont(chatId, currentFont.toString());
 }
 
 void ChatWidget::smileyWidget()
@@ -1195,13 +1193,13 @@ void ChatWidget::deleteChatHistory()
 {
 	if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
 		clearChatHistory();
-		rsHistory->clear(peerId);
+        rsHistory->clear(chatId);
 	}
 }
 
 void ChatWidget::messageHistory()
 {
-	ImHistoryBrowser imBrowser(peerId, ui->chatTextEdit, window());
+    ImHistoryBrowser imBrowser(chatId, ui->chatTextEdit, window());
 	imBrowser.exec();
 }
 
@@ -1318,23 +1316,28 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 		return;
 	}
 
+    // make virtual peer id from gxs id in case of distant chat
+    RsPeerId vpid;
+    if(chatId.isGxsId())
+        vpid = RsPeerId(chatId.toGxsId());
+    else
+        vpid = chatId.toPeerId();
+
 	/* set font size for status  */
-	if (RsPeerId(peer_id.toStdString()) == peerId) {
+    if (peer_id.toStdString() == vpid.toStdString()) {
 		// the peers status has changed
 
 		QString peerName ;
-		uint32_t stts ;
-
-		if(rsMsgs->getDistantChatStatus(RsGxsId(peerId),stts))
+        if(chatId.isGxsId())
 		{
 			RsIdentityDetails details  ;
-			if(rsIdentity->getIdDetails(RsGxsId(peerId),details))
+            if(rsIdentity->getIdDetails(chatId.toGxsId(),details))
 				peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
 			else
-				peerName = QString::fromStdString(peerId.toStdString()) ;
+                peerName = QString::fromStdString(chatId.toGxsId().toStdString()) ;
 		}
 		else
-			peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
+            peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
 
 		// is scrollbar at the end?
 		QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
@@ -1404,6 +1407,8 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 {
 	QString status_text;
 
+    // TODO: fix peer_id and types and eveyrhing
+    /*
     if (RsPeerId(peer_id.toStdString()) == peerId) {
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
@@ -1419,6 +1424,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 			ui->statusLabel->setAlignment ( Qt::AlignVCenter );
 		}
 	}
+    */
 }
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString)
@@ -1444,7 +1450,7 @@ void ChatWidget::setName(const QString &name)
 bool ChatWidget::setStyle()
 {
 	if (style.showDialog(window())) {
-		PeerSettings->setStyle(peerId, "PopupChatDialog", style);
+        PeerSettings->setStyle(chatId, "PopupChatDialog", style);
 		return true;
 	}
 

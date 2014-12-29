@@ -41,6 +41,6 @@ OnlineToaster::OnlineToaster(const RsPeerId &peerId) : QWidget(NULL)
 
 void OnlineToaster::chatButtonSlot()
 {
-	ChatDialog::chatFriend(peerId);
+    ChatDialog::chatFriend(ChatId(peerId));
 	hide();
 }

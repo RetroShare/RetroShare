@@ -24,6 +24,8 @@
 
 #include "ui_ChatLobbyToaster.h"
 
+#include "retroshare/rsmsgs.h"
+
 /**
  * Shows a toaster when a chat is incoming.
  *
@@ -34,13 +36,13 @@ class ChatLobbyToaster : public QWidget
 	Q_OBJECT
 
 public:
-	ChatLobbyToaster(const RsPeerId &peerId, const QString &name, const QString &message);
+    ChatLobbyToaster(const  ChatLobbyId &lobby_id, const QString &name, const QString &message);
 
 private slots:
 	void chatButtonSlot();
 
 private:
-	RsPeerId peerId;
+    ChatLobbyId mLobbyId;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyToaster ui;

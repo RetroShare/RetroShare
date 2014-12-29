@@ -23,14 +23,15 @@
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 #include "gui/chat/ChatDialog.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
 
 ChatUserNotify::ChatUserNotify(QObject *parent) :
-	UserNotify(parent)
+    UserNotify(parent)
 {
-	connect(NotifyQt::getInstance(), SIGNAL(privateChatChanged(int, int)), this, SLOT(privateChatChanged(int, int)));
+    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
 }
 
 bool ChatUserNotify::hasSetting(QString *name, QString *group)
@@ -53,29 +54,46 @@ QIcon ChatUserNotify::getMainIcon(bool hasNew)
 
 unsigned int ChatUserNotify::getNewCount()
 {
-	return rsMsgs->getPrivateChatQueueCount(true);
+    int sum = 0;
+    for(std::map<ChatId, int>::iterator mit = mWaitingChats.begin(); mit != mWaitingChats.end(); ++mit)
+    {
+        sum += mit->second;
+    }
+    return sum;
 }
 
 void ChatUserNotify::iconClicked()
 {
 	ChatDialog *chatDialog = NULL;
-    std::list<RsPeerId> ids;
-	if (rsMsgs->getPrivateChatQueueIds(true, ids) && ids.size()) {
-		chatDialog = ChatDialog::getChat(ids.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
+    if (mWaitingChats.empty() == false) {
+        chatDialog = ChatDialog::getChat(mWaitingChats.begin()->first, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+        mWaitingChats.erase(mWaitingChats.begin());
 	}
 
 	if (chatDialog == NULL) {
 		MainWindow::showWindow(MainWindow::Friends);
 	}
+    updateIcon();
 }
 
-void ChatUserNotify::privateChatChanged(int list, int type)
+void ChatUserNotify::chatMessageReceived(ChatMessage msg)
 {
-	/* first process the chat messages */
-	ChatDialog::chatChanged(list, type);
-
-	if (list == NOTIFY_LIST_PRIVATE_INCOMING_CHAT) {
-		updateIcon();
-	}
+    if(ChatDialog::getExistingChat(msg.chat_id) || (Settings->getChatFlags() & RS_CHAT_OPEN) || msg.chat_id.isGxsId())
+        ChatDialog::chatMessageReceived(msg);
+    else
+    {
+        // this implicitly counts broadcast messages, because broadcast messages are not handled by chat dialog
+        bool found = false;
+        for(std::map<ChatId, int>::iterator mit = mWaitingChats.begin(); mit != mWaitingChats.end(); ++mit)
+        {
+            if(msg.chat_id.isSameEndpoint(mit->first))
+            {
+                mit->second++;
+                found = true;
+            }
+        }
+        if(!found)
+            mWaitingChats[msg.chat_id] = 1;
+        updateIcon();
+    }
 }
-

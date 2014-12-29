@@ -896,7 +896,7 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 	return true ;
 }
 
-bool DistributedChatService::sendLobbyChat(const RsPeerId &id, const std::string& msg, const ChatLobbyId& lobby_id)
+bool DistributedChatService::sendLobbyChat(const ChatLobbyId& lobby_id, const std::string& msg)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
@@ -923,7 +923,17 @@ bool DistributedChatService::sendLobbyChat(const RsPeerId &id, const std::string
 
 	RsPeerId ownId = rsPeers->getOwnId();
 
-	mHistMgr->addMessage(false, id, ownId, &item);
+    ChatMessage message;
+    message.chatflags = 0;
+    message.chat_id = ChatId(lobby_id);
+    message.msg = msg;
+    message.lobby_peer_nickname = item.nick;
+    message.recvTime = item.recvTime;
+    message.sendTime = item.sendTime;
+    message.incoming = false;
+    message.online = true;
+    RsServer::notify()->notifyChatMessage(message);
+    mHistMgr->addMessage(message);
 
 	bounceLobbyObject(&item, ownId) ;
 

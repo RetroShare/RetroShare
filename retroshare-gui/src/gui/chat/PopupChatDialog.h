@@ -34,10 +34,11 @@ class PopupChatDialog : public ChatDialog
 
 	friend class ChatDialog;
 
+protected slots:
+    void showAvatarFrame(bool show);
 private slots:
-	void showAvatarFrame(bool show);
 	void clearOfflineMessages();
-	void chatStatusChanged(const QString &peerId, const QString &statusString, bool isPrivateChat);
+    void chatStatusChanged(const ChatId &chat_id, const QString &statusString);
 
 protected:
 	/** Default constructor */
@@ -45,7 +46,7 @@ protected:
 	/** Default destructor */
 	virtual ~PopupChatDialog();
 
-    virtual void init(const RsPeerId &peerId, const QString &title);
+    virtual void init(const ChatId &chat_id, const QString &title);
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return true; }
@@ -56,12 +57,11 @@ protected:
 	void processSettings(bool load);
 
 protected:
-	virtual void addIncomingChatMsg(const ChatInfo& info);
-	virtual void onChatChanged(int list, int type);
+    virtual void addChatMsg(const ChatMessage& msg);
+    //virtual void onChatChanged(int list, int type);
 
 private:
 	bool manualDelete;
-	std::list<ChatInfo> savedOfflineChat;
 
 	/** Qt Designer generated object */
 	Ui::PopupChatDialog ui;

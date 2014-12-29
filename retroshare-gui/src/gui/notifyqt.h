@@ -4,6 +4,7 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rsnotify.h>
+#include <retroshare/rsmsgs.h>
 #include <QObject>
 #include <QMutex>
 #include <QPoint>
@@ -24,7 +25,6 @@ class Toaster;
 class SignatureEventData ;
 struct TurtleFileInfo;
 
-//class NotifyQt: public NotifyBase, public QObject
 class NotifyQt: public QObject, public NotifyClient
 {
 	Q_OBJECT
@@ -41,8 +41,8 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
-		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private);
-		virtual void notifyChatShow(const std::string& peer_id) ;
+        virtual void notifyChatMessage(const ChatMessage&        /* msg */);
+        virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 		virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
@@ -57,8 +57,10 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary();
+#ifdef REMOVE
 		virtual void notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status);
 		virtual void notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status);
+#endif
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 		virtual void notifyDiscInfoChanged() ;
@@ -102,11 +104,13 @@ class NotifyQt: public QObject, public NotifyClient
 		void neighboursChanged() const ;
 		void messagesChanged() const ;
 		void messagesTagsChanged() const;
+#ifdef REMOVE
 		void forumsChanged() const ; // use connect with Qt::QueuedConnection
 		void channelsChanged(int type) const ; // use connect with Qt::QueuedConnection
+#endif
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
-		void chatStatusChanged(const QString&,const QString&,bool) const ;
+        void chatStatusChanged(const ChatId&,const QString&) const ;
 		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
 		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;
@@ -116,15 +120,19 @@ class NotifyQt: public QObject, public NotifyClient
 		void diskFull(int,int) const ;
 		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
 		void peerStatusChangedSummary() const;
+#ifdef REMOVE
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int list, int type) const ;
-		void raiseChatWindow(const QString&) const ;
+#endif
+        void chatMessageReceived(ChatMessage msg);
 		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
 		void downloadComplete(const QString& /* fileHash */);
 		void downloadCompleteCountChanged(int /* count */);
+#ifdef REMOVE
 		void forumMsgReadSatusChanged(const QString& forumId, const QString& msgId, int status);
 		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
+#endif
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
 		void deferredSignatureHandlingRequested() ;
@@ -143,7 +151,6 @@ class NotifyQt: public QObject, public NotifyClient
 		void runningTick();
 		void handleSignatureEvent() ;
 		void handleChatLobbyTimeShift(int) ;
-		void raiseChatWindow_slot(const QString&) ;
 
 	private:
 		NotifyQt();

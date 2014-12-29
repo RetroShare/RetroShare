@@ -491,9 +491,9 @@ void ChatLobbyWidget::updateDisplay()
 			{
 				if (item == ui.lobbyTreeWidget->currentItem())
 				{
-					ChatDialog::chatFriend(vpid) ;
+                    ChatDialog::chatFriend(ChatId(lobby.lobby_id)) ;
 				}else{
-					ChatDialog::chatFriend(vpid,false) ;
+                    ChatDialog::chatFriend(ChatId(lobby.lobby_id),false) ;
 				}
 			}
 		}
@@ -590,10 +590,7 @@ static void subscribeLobby(QTreeWidgetItem *item)
 
 	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
 	if (rsMsgs->joinVisibleChatLobby(id)) {
-        RsPeerId vpeer_id;
-		if (rsMsgs->getVirtualPeerId(id, vpeer_id)) {
-            ChatDialog::chatFriend(vpeer_id,true) ;
-		}
+        ChatDialog::chatFriend(ChatId(id),true) ;
 	}
 }
 
@@ -755,10 +752,7 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 	}
 
 	// Unsubscribe the chat lobby
-    RsPeerId vpeer_id;
-	if (rsMsgs->getVirtualPeerId(id, vpeer_id)) 
-		ChatDialog::closeChat(vpeer_id);
-
+    ChatDialog::closeChat(ChatId(id));
 	rsMsgs->unsubscribeChatLobby(id);
     bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
 	if (isAutoSubscribe) rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
@@ -834,12 +828,9 @@ void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 
 void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str)
 {
-    RsPeerId vpid;
-	if (rsMsgs->getVirtualPeerId(lobby_id, vpid)) {
-		if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(vpid))) {
-			cld->displayLobbyEvent(event_type, nickname, str);
-		}
-	}
+    if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(lobby_id)))) {
+        cld->displayLobbyEvent(event_type, nickname, str);
+    }
 }
 
 void ChatLobbyWidget::readChatLobbyInvites()
@@ -855,7 +846,7 @@ void ChatLobbyWidget::readChatLobbyInvites()
 
             RsPeerId vpid;
 			if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid )) {
-                ChatDialog::chatFriend(vpid,true);
+                ChatDialog::chatFriend(ChatId((*it).lobby_id),true);
 			} else {
 				std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 			}

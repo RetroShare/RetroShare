@@ -66,10 +66,9 @@ protected:
 	virtual ~ChatLobbyDialog();
 
 	void processSettings(bool load);
-
-    virtual void init(const RsPeerId &peerId, const QString &title);
+    virtual void init();
 	virtual bool canClose();
-	virtual void addIncomingChatMsg(const ChatInfo& info);
+    virtual void addChatMsg(const ChatMessage &msg);
 
 protected slots:
 	void changeNickname();

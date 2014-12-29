@@ -223,8 +223,8 @@ void p3Notify::notifyListPreChange(int list, int type) { FOR_ALL_NOTIFY_CLIENTS 
 void p3Notify::notifyListChange   (int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListChange   (list,type) ; }
 
 void p3Notify::notifyErrorMsg      (int list, int sev, std::string msg)                                                         { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyErrorMsg(list,sev,msg) ; }
-void p3Notify::notifyChatStatus    (const std::string& peer_id , const std::string& status_string ,bool is_private)             { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatStatus(peer_id,status_string,is_private) ; }
-void p3Notify::notifyChatShow      (const std::string& peer_id)                                                                 { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatShow(peer_id) ; }
+void p3Notify::notifyChatMessage   (const ChatMessage &msg)                                                                            { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatMessage(msg) ; }
+void p3Notify::notifyChatStatus    (const ChatId&  chat_id, const std::string& status_string)             { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatStatus(chat_id,status_string) ; }
 
 void p3Notify::notifyChatLobbyTimeShift     (int                time_shift)                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyTimeShift(time_shift) ; }
 void p3Notify::notifyCustomState            (const std::string& peer_id   , const std::string&               status_string )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyCustomState       (peer_id,status_string) ; }
@@ -238,10 +238,10 @@ void p3Notify::notifyPeerStatusChanged      (const std::string& peer_id   , uint
 
 void p3Notify::notifyPeerStatusChangedSummary   ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChangedSummary() ; }
 void p3Notify::notifyDiscInfoChanged            ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiscInfoChanged         () ; } 
-
+#ifdef REMOVE
 void p3Notify::notifyForumMsgReadSatusChanged   (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyForumMsgReadSatusChanged   (channelId,msgId,status) ; }
 void p3Notify::notifyChannelMsgReadSatusChanged (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChannelMsgReadSatusChanged (channelId,msgId,status) ; }
-
+#endif
 void p3Notify::notifyDownloadComplete           (const std::string& fileHash )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadComplete           (fileHash) ; }
 void p3Notify::notifyDownloadCompleteCount      (uint32_t           count    )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadCompleteCount      (count) ; }
 void p3Notify::notifyHistoryChanged             (uint32_t           msgId    , int type)                                        { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHistoryChanged             (msgId,type) ; }

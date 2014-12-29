@@ -49,26 +49,223 @@ RsMsgs *rsMsgs = NULL;
 /****************************************/
 /****************************************/
 
-std::ostream &operator<<(std::ostream &out, const ChatInfo &info)
+ChatId::ChatId():
+    type(TYPE_NOT_SET),
+    lobby_id(0)
 {
-	out << "ChatInfo: rsid: " << info.rsid << std::endl;
-	out << "chatflags: " << info.chatflags << std::endl;
-	out << "sendTime: " << info.sendTime << std::endl;
-	out << "recvTime: " << info.recvTime << std::endl;
-	std::string message;
-	message.assign(info.msg.begin(), info.msg.end());
-	out << "msg: " << message;
-	return out;
+
 }
 
-bool operator==(const ChatInfo& info1, const ChatInfo& info2)
+ChatId::ChatId(RsPeerId id):
+    lobby_id(0)
 {
-	return info1.rsid == info2.rsid &&
-		   info1.chatflags == info2.chatflags &&
-		   info1.sendTime == info2.sendTime &&
-		   info1.recvTime == info2.recvTime &&
-		   info1.msg == info2.msg;
+    type = TYPE_PRIVATE;
+    peer_id = id;
+}
 
+ChatId::ChatId(RsGxsId id):
+    lobby_id(0)
+{
+    type = TYPE_PRIVATE_DISTANT;
+    gxs_id = id;
+}
+
+ChatId::ChatId(ChatLobbyId id):
+    lobby_id(0)
+{
+    type = TYPE_LOBBY;
+    lobby_id = id;
+}
+
+ChatId::ChatId(std::string str):
+    lobby_id(0)
+{
+    type = TYPE_NOT_SET;
+    if(str.empty())
+        return;
+    if(str[0] == 'P')
+    {
+        type = TYPE_PRIVATE;
+        peer_id = RsPeerId(str.substr(1));
+    }
+    else if(str[0] == 'D')
+    {
+        type = TYPE_PRIVATE_DISTANT;
+        gxs_id == GXSId(str.substr(1));
+    }
+    else if(str[0] == 'L')
+    {
+        if(sizeof(ChatLobbyId) != 8)
+        {
+            std::cerr << "ChatId::ChatId(std::string) Error: sizeof(ChatLobbyId) != 8. please report this" << std::endl;
+            return;
+        }
+        str = str.substr(1);
+        if(str.size() != 16)
+            return;
+        ChatLobbyId id = 0;
+        for(int i = 0; i<16; i++)
+        {
+            uint8_t c = str[i];
+            if(c <= '9')
+                c -= '9';
+            else
+                c -= 'A';
+            id = id << 4;
+            id |= c;
+        }
+        type = TYPE_LOBBY;
+        lobby_id = id;
+    }
+    else if(str[0] == 'B')
+    {
+        type = TYPE_BROADCAST;
+    }
+}
+
+ChatId ChatId::makeBroadcastId()
+{
+    ChatId id;
+    id.type = TYPE_BROADCAST;
+    return id;
+}
+
+std::string ChatId::toStdString() const
+{
+    std::string str;
+    if(type == TYPE_PRIVATE)
+    {
+        str += "P";
+        str += peer_id.toStdString();
+    }
+    else if(type == TYPE_PRIVATE_DISTANT)
+    {
+        str += "D";
+        str += gxs_id.toStdString();
+    }
+    else if(type == TYPE_LOBBY)
+    {
+        if(sizeof(ChatLobbyId) != 8)
+        {
+            std::cerr << "ChatId::toStdString() Error: sizeof(ChatLobbyId) != 8. please report this" << std::endl;
+            return "";
+        }
+        ChatLobbyId id = lobby_id;
+        for(int i = 0; i<16; i++)
+        {
+            uint8_t c = id >>(64-4);
+            if(c > 9)
+                c += 'A';
+            else
+                c += '1';
+            str += c;
+            id = id << 4;
+        }
+    }
+    else if(type == TYPE_BROADCAST)
+    {
+        str += "B";
+    }
+    return str;
+}
+
+bool ChatId::operator <(const ChatId& other) const
+{
+    if(type != other.type)
+        return type < other.type;
+    else
+    {
+        switch(type)
+        {
+        case TYPE_NOT_SET:
+            return false;
+        case TYPE_PRIVATE:
+            return peer_id < other.peer_id;
+        case TYPE_PRIVATE_DISTANT:
+            return gxs_id < other.gxs_id;
+        case TYPE_LOBBY:
+            return lobby_id < other.lobby_id;
+        case TYPE_BROADCAST:
+            return false;
+        default:
+            return false;
+        }
+    }
+}
+
+bool ChatId::isSameEndpoint(const ChatId &other) const
+{
+    if(type != other.type)
+        return false;
+    else
+    {
+        switch(type)
+        {
+        case TYPE_NOT_SET:
+            return false;
+        case TYPE_PRIVATE:
+            return peer_id == other.peer_id;
+        case TYPE_PRIVATE_DISTANT:
+            return gxs_id == other.gxs_id;
+        case TYPE_LOBBY:
+            return lobby_id == other.lobby_id;
+        case TYPE_BROADCAST:
+            return true;
+        default:
+            return false;
+        }
+    }
+}
+
+bool ChatId::isNotSet() const
+{
+    return type == TYPE_NOT_SET;
+}
+bool ChatId::isPeerId() const
+{
+    return type == TYPE_PRIVATE;
+}
+bool ChatId::isGxsId()  const
+{
+    return type == TYPE_PRIVATE_DISTANT;
+}
+bool ChatId::isLobbyId() const
+{
+    return type == TYPE_LOBBY;
+}
+bool ChatId::isBroadcast() const
+{
+    return type == TYPE_BROADCAST;
+}
+RsPeerId    ChatId::toPeerId()  const
+{
+    if(type == TYPE_PRIVATE)
+        return peer_id;
+    else
+    {
+        std::cerr << "ChatId Warning: conversation to RsPeerId requested, but type is different." << std::endl;
+        return RsPeerId();
+    }
+}
+RsGxsId     ChatId::toGxsId()   const
+{
+    if(type == TYPE_PRIVATE_DISTANT)
+        return gxs_id;
+    else
+    {
+        std::cerr << "ChatId Warning: conversation to RsGxsId requested, but type is different." << std::endl;
+        return RsGxsId();
+    }
+}
+ChatLobbyId ChatId::toLobbyId() const
+{
+    if(type == TYPE_LOBBY)
+        return lobby_id;
+    else
+    {
+        std::cerr << "ChatId Warning: conversation to ChatLobbyId requested, but type is different." << std::endl;
+        return 0;
+    }
 }
 
 bool p3Msgs::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
@@ -200,61 +397,19 @@ bool    p3Msgs::resetMessageStandardTagTypes(MsgTagType& tags)
 
 /****************************************/
 /****************************************/
-bool 	p3Msgs::sendPublicChat(const std::string& msg)
+bool p3Msgs::sendChat(ChatId destination, std::string msg)
 {
-	/* send a message to all for now */
-	return mChatSrv -> sendPublicChat(msg);
-}
-
-bool 	p3Msgs::sendPrivateChat(const RsPeerId& id, const std::string& msg)
-{
-	/* send a message to peer */
-	return mChatSrv -> sendPrivateChat(id, msg);
-}
-
-void p3Msgs::sendGroupChatStatusString(const std::string& status_string) 
-{
-	mChatSrv->sendGroupChatStatusString(status_string);
-}
-
-void p3Msgs::sendStatusString(const RsPeerId& peer_id, const std::string& status_string)
-{
-	mChatSrv->sendStatusString(peer_id, status_string);
-}
-
-int	p3Msgs::getPublicChatQueueCount()
-{
-	return mChatSrv->getPublicChatQueueCount();
-}
-
-bool	p3Msgs::getPublicChatQueue(std::list<ChatInfo> &chats)
-{
-	return mChatSrv->getPublicChatQueue(chats);
-}
-
-int	p3Msgs::getPrivateChatQueueCount(bool incoming)
-{
-	return mChatSrv->getPrivateChatQueueCount(incoming);
-}
-
-bool   p3Msgs::getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids)
-{
-	return mChatSrv->getPrivateChatQueueIds(incoming, ids);
-}
-
-bool	p3Msgs::getPrivateChatQueue(bool incoming, const RsPeerId& id, std::list<ChatInfo> &chats)
-{
-	return mChatSrv->getPrivateChatQueue(incoming, id, chats);
-}
-
-bool	p3Msgs::clearPrivateChatQueue(bool incoming, const RsPeerId& id)
-{
-	return mChatSrv->clearPrivateChatQueue(incoming, id);
+    return mChatSrv->sendChat(destination, msg);
 }
 
 uint32_t p3Msgs::getMaxMessageSecuritySize(int type)
 {
 	return mChatSrv->getMaxMessageSecuritySize(type);
+}
+
+void p3Msgs::sendStatusString(const ChatId& peer_id, const std::string& status_string)
+{
+    mChatSrv->sendStatusString(peer_id, status_string);
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)

@@ -43,10 +43,10 @@
 #define ROLE_PLAINTEXT Qt::UserRole + 1
 #define ROLE_OFFLINE   Qt::UserRole + 2
 
-ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const RsPeerId& peerId)
+ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const ChatId& peerId)
     : QThread(parent)
 {
-    m_peerId = peerId;
+    m_chatId = peerId;
     m_historyBrowser = parent;
     stopped = false;
 }
@@ -72,7 +72,7 @@ void ImHistoryBrowserCreateItemsThread::stop()
 void ImHistoryBrowserCreateItemsThread::run()
 {
     std::list<HistoryMsg> historyMsgs;
-    rsHistory->getMessages(m_peerId, historyMsgs, 0);
+    rsHistory->getMessages(m_chatId, historyMsgs, 0);
 
     int count = historyMsgs.size();
     int current = 0;
@@ -91,7 +91,7 @@ void ImHistoryBrowserCreateItemsThread::run()
 }
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWidget *parent)
+ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit, QWidget *parent)
   : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
@@ -100,8 +100,7 @@ ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWid
     ui.headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
     ui.headerFrame->setHeaderText(tr("Message History"));
 
-    m_peerId = peerId;
-    m_isPrivateChat = !m_peerId.isNull();
+    m_chatId = chatId;
     textEdit = edit;
 
     connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
@@ -117,7 +116,7 @@ ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWid
     ui.filterLineEdit->showFilterIcon();
 
     // embed smileys ?
-    if (m_isPrivateChat) {
+    if (m_chatId.isPeerId() || m_chatId.isGxsId()) {
         embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_PrivatChat", true).toBool();
     } else {
         embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_GroupChat", true).toBool();
@@ -137,7 +136,7 @@ ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWid
 
     ui.listWidget->installEventFilter(this);
 
-    m_createThread = new ImHistoryBrowserCreateItemsThread(this, m_peerId);
+    m_createThread = new ImHistoryBrowserCreateItemsThread(this, m_chatId);
     connect(m_createThread, SIGNAL(finished()), this, SLOT(createThreadFinished()));
     connect(m_createThread, SIGNAL(progress(int,int)), this, SLOT(createThreadProgress(int,int)));
     m_createThread->start();
@@ -430,7 +429,7 @@ void ImHistoryBrowser::removeMessages()
 
 void ImHistoryBrowser::clearHistory()
 {
-    rsHistory->clear(m_peerId);
+    rsHistory->clear(m_chatId);
 }
 
 void ImHistoryBrowser::sendMessage()

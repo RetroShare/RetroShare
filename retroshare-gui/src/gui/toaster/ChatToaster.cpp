@@ -25,25 +25,23 @@
 
 #include <retroshare/rspeers.h>
 
-ChatToaster::ChatToaster(const RsPeerId &peerId, const QString &message) : QWidget(NULL)
+ChatToaster::ChatToaster(const RsPeerId &peer_id, const QString &message) : QWidget(NULL), mPeerId(peer_id)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
-
-	this->peerId = peerId;
 
 	connect(ui.toasterButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
 	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
-	ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+    ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(mPeerId).c_str()));
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-	ui.avatarWidget->setId(peerId);
+    ui.avatarWidget->setId(mPeerId);
 }
 
 void ChatToaster::chatButtonSlot()
 {
-	ChatDialog::chatFriend(peerId);
+    ChatDialog::chatFriend(ChatId(mPeerId));
 	hide();
 }

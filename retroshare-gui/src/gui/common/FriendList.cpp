@@ -600,7 +600,8 @@ void  FriendList::insertPeers()
 
     // get ids of existing private chat messages
     std::list<RsPeerId> privateChatIds;
-    rsMsgs->getPrivateChatQueueIds(true, privateChatIds);
+    // TODO
+    //rsMsgs->getPrivateChatQueueIds(true, privateChatIds);
 
     // get existing groups
     std::list<RsGroupInfo> groupInfoList;
@@ -1292,7 +1293,7 @@ void FriendList::chatfriend(QTreeWidgetItem *item)
         ChatDialog::chatFriend(RsPgpId(getRsId(item)));
         break;
     case TYPE_SSL:
-        ChatDialog::chatFriend(RsPeerId(getRsId(item)));
+        ChatDialog::chatFriend(ChatId(RsPeerId(getRsId(item))));
         break;
     }
 }

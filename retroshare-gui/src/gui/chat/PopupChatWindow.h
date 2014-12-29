@@ -26,6 +26,7 @@
 #include <QTimer>
 #include "ui_PopupChatWindow.h"
 #include <retroshare/rstypes.h>
+#include <retroshare/rsmsgs.h>
 
 class ChatDialog;
 
@@ -69,7 +70,7 @@ private slots:
 private:
 	bool tabbedWindow;
 	bool firstShow;
-    RsPeerId peerId;
+    ChatId chatId;
 	ChatDialog *chatDialog;
 	QIcon mBlinkIcon;
 	QIcon *mEmptyIcon;

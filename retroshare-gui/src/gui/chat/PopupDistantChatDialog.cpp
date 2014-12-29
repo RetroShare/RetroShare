@@ -58,10 +58,13 @@ PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WindowFlags 
 	updateDisplay() ;
 }
 
-void PopupDistantChatDialog::init(const RsPeerId &pid,const QString & title)
+void PopupDistantChatDialog::init(const RsGxsId &gxs_id,const QString & title)
 {
-    _pid = RsGxsId(pid) ;
-    PopupChatDialog::init(pid,title) ;
+    _pid = gxs_id ;
+    PopupChatDialog::init(ChatId(gxs_id), title) ;
+
+    // hide avatar frame, because it does not have funcntionality for gxs
+    showAvatarFrame(false);
 }
 
 void PopupDistantChatDialog::updateDisplay()
@@ -137,15 +140,16 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const RsPeerId& id) const
+QString PopupDistantChatDialog::getPeerName(const ChatId &id) const
 {
-    uint32_t status ;
-
     RsIdentityDetails details  ;
-
-         if(rsIdentity->getIdDetails(RsGxsId(id),details))
+    if(rsIdentity->getIdDetails(id.toGxsId(),details))
          return QString::fromUtf8( details.mNickname.c_str() ) ;
      else
-         return QString::fromStdString(id.toStdString()) ;
+         return QString::fromStdString(id.toGxsId().toStdString()) ;
 }
 
+QString PopupDistantChatDialog::getOwnName() const
+{
+    return QString("me (TODO: gxs-name)");
+}

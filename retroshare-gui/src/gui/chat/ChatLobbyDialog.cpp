@@ -119,15 +119,14 @@ void ChatLobbyDialog::inviteFriends()
 
 	std::cerr << "Inviting these friends:" << std::endl;
 
-	ChatLobbyId lobby_id;
-	if (!rsMsgs->isLobbyId(getPeerId(), lobby_id)) 
+    if (!mChatId.isLobbyId())
 		return ;
 
     for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
 	{
 		std::cerr << "    " << *it  << std::endl;
 
-		rsMsgs->invitePeerToLobby(lobby_id,*it) ;
+        rsMsgs->invitePeerToLobby(mChatId.toLobbyId(),*it) ;
 	}
 }
 
@@ -162,28 +161,28 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 	contextMnu.exec(QCursor::pos());
 }
 
-void ChatLobbyDialog::init(const RsPeerId &peerId, const QString &title)
+void ChatLobbyDialog::init()
 {
 	std::list<ChatLobbyInfo> lobbies;
 	rsMsgs->getChatLobbyList(lobbies);
 
+    QString title;
+
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-        RsPeerId vpid;
-		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
-			if (vpid == peerId) {
-				QString msg = tr("Welcome to lobby %1").arg(RsHtml::plainText(lobbyIt->lobby_name));
-				_lobby_name = QString::fromUtf8(lobbyIt->lobby_name.c_str()) ;
-				if (!lobbyIt->lobby_topic.empty()) {
-					msg += "\n" + tr("Topic: %1").arg(RsHtml::plainText(lobbyIt->lobby_topic));
-				}
-				ui.chatWidget->setWelcomeMessage(msg);
-				break;
-			}
-		}
+        if (lobbyIt->lobby_id == lobbyId) {
+            title = QString::fromUtf8((*lobbyIt).lobby_name.c_str());
+            QString msg = tr("Welcome to lobby %1").arg(RsHtml::plainText(lobbyIt->lobby_name));
+            _lobby_name = QString::fromUtf8(lobbyIt->lobby_name.c_str()) ;
+            if (!lobbyIt->lobby_topic.empty()) {
+                msg += "\n" + tr("Topic: %1").arg(RsHtml::plainText(lobbyIt->lobby_topic));
+            }
+            ui.chatWidget->setWelcomeMessage(msg);
+            break;
+        }
 	}
 
-	ChatDialog::init(peerId, title);
+    ChatDialog::init(ChatId(lobbyId), title);
 
 	std::string nickName;
 	rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
@@ -194,8 +193,8 @@ void ChatLobbyDialog::init(const RsPeerId &peerId, const QString &title)
 
 	lastUpdateListTime = 0;
 
-	/* Hide or show the participants frames */
-	showParticipantsFrame(PeerSettings->getShowParticipantsFrame(peerId));
+    /* Hide or show the participants frames */
+    showParticipantsFrame(PeerSettings->getShowParticipantsFrame(ChatId(lobbyId)));
 
 	// add to window
 
@@ -214,9 +213,8 @@ ChatLobbyDialog::~ChatLobbyDialog()
 	// announce leaving of lobby
 
 	// check that the lobby still exists.
-	ChatLobbyId lid;
-	if (rsMsgs->isLobbyId(getPeerId(), lid)) {
-		rsMsgs->unsubscribeChatLobby(lobbyId);
+    if (mChatId.isLobbyId()) {
+        rsMsgs->unsubscribeChatLobby(mChatId.toLobbyId());
 	}
 
 	// save settings
@@ -285,18 +283,15 @@ void ChatLobbyDialog::changeNickname()
  * 
  * - Ignore Messages from muted chat participants
  */
-void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
+void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
 {
-	QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
-	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
-	QString message = QString::fromUtf8(info.msg.c_str());
-	QString name = QString::fromUtf8(info.peer_nickname.c_str());
-    QString rsid = QString::fromUtf8(info.rsid.toStdString().c_str());
-
-	//std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
+    QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
+    QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+    QString message = QString::fromUtf8(msg.msg.c_str());
+    QString name = QString::fromUtf8(msg.lobby_peer_nickname.c_str());
 	
 	if(!isParticipantMuted(name)) {
-	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+      ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 		emit messageReceived(id()) ;
 	}
 	
@@ -567,10 +562,12 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 bool ChatLobbyDialog::canClose()
 {
 	// check that the lobby still exists.
+    /* TODO
 	ChatLobbyId lid;
 	if (!rsMsgs->isLobbyId(getPeerId(), lid)) {
 		return true;
 	}
+    */
 
 	if (QMessageBox::Yes == QMessageBox::question(this, tr("Unsubscribe to lobby"), tr("Do you want to unsubscribe to this chat lobby?"), QMessageBox::Yes | QMessageBox::No)) {
 		return true;
@@ -601,5 +598,5 @@ void ChatLobbyDialog::showParticipantsFrame(bool show)
 		ui.participantsFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
 	}
 
-	PeerSettings->setShowParticipantsFrame(getPeerId(), show);
+    PeerSettings->setShowParticipantsFrame(ChatId(lobbyId), show);
 }

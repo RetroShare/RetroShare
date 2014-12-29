@@ -254,15 +254,64 @@ public:
 #define RS_DISTANT_CHAT_FLAG_SIGNED               0x0001 
 #define RS_DISTANT_CHAT_FLAG_SIGNATURE_OK         0x0002 
 
-class ChatInfo
+// Identifier for an chat endpoint like
+// neighbour peer, distant peer, chatlobby, broadcast
+class ChatId
 {
-	public:
-	RsPeerId rsid;
-	std::string peer_nickname;
-	unsigned int chatflags;
-	uint32_t sendTime;
-	uint32_t recvTime;
-	std::string msg;
+public:
+    ChatId();
+    explicit ChatId(RsPeerId     id);
+    explicit ChatId(RsGxsId      id);
+    explicit ChatId(ChatLobbyId  id);
+    explicit ChatId(std::string str);
+    static ChatId makeBroadcastId();
+
+    std::string toStdString() const;
+    bool operator<(const ChatId& other) const;
+    bool isSameEndpoint(const ChatId& other) const;
+
+    bool isNotSet() const;
+    bool isPeerId() const;
+    bool isGxsId()  const;
+    bool isLobbyId() const;
+    bool isBroadcast() const;
+
+    RsPeerId    toPeerId()  const;
+    RsGxsId     toGxsId()   const;
+    ChatLobbyId toLobbyId() const;
+
+    // for the very specific case of transfering a status string
+    // from the chatservice to the gui,
+    // this defines from which peer the status string came from
+    RsPeerId broadcast_status_peer_id;
+private:
+    enum Type { TYPE_NOT_SET,
+                TYPE_PRIVATE,            // private chat with directly connected friend, peer_id is valid
+                TYPE_PRIVATE_DISTANT,    // private chat with distant peer, gxs_id is valid
+                TYPE_LOBBY,              // chat lobby id, lobby_id is valid
+                TYPE_BROADCAST           // message to/from all connected peers
+              };
+
+    Type type;
+    RsPeerId peer_id;
+    RsGxsId  gxs_id;
+    ChatLobbyId lobby_id;
+};
+
+class ChatMessage
+{
+public:
+    ChatId chat_id; // id of chat endpoint
+    RsPeerId broadcast_peer_id; // only used for broadcast chat: source peer id
+    std::string lobby_peer_nickname; // only used for lobbys: nickname of message author
+
+    unsigned int chatflags;
+    uint32_t sendTime;
+    uint32_t recvTime;
+    std::string msg;
+    bool incoming;
+    bool online; // for outgoing messages: was this message send?
+    //bool system_message;
 };
 
 class ChatLobbyInvite
@@ -315,9 +364,6 @@ struct DistantChatInviteInfo
 };
 
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
-std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
-
-bool operator==(const ChatInfo&, const ChatInfo&);
 
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
@@ -381,18 +427,13 @@ virtual bool distantMessagingEnabled() = 0;
 /****************************************/
 /*                 Chat                 */
 /****************************************/
-virtual	bool   sendPublicChat(const std::string& msg) = 0;
-virtual	bool   sendPrivateChat(const RsPeerId& id, const std::string& msg) = 0;
-virtual int     getPublicChatQueueCount() = 0;
-virtual	bool   getPublicChatQueue(std::list<ChatInfo> &chats) = 0;
-virtual int     getPrivateChatQueueCount(bool incoming) = 0;
-virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids) = 0;
-virtual	bool   getPrivateChatQueue(bool incoming, const RsPeerId& id, std::list<ChatInfo> &chats) = 0;
-virtual	bool   clearPrivateChatQueue(bool incoming, const RsPeerId& id) = 0;
-virtual uint32_t getMaxMessageSecuritySize(int type) = 0;
+// sendChat for broadcast, private, lobby and private distant chat
+// note: for lobby chat, you first have to subscribe to a lobby
+//       for private distant chat, it is reqired to have an active distant chat session
+virtual	bool     sendChat(ChatId id, std::string msg) = 0;
+virtual uint32_t getMaxMessageSecuritySize(int type)  = 0;
 
-virtual void   sendStatusString(const RsPeerId& id,const std::string& status_string) = 0 ;
-virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;
+virtual void   sendStatusString(const ChatId& id,const std::string& status_string) = 0 ;
 
 virtual void   setCustomStateString(const std::string&  status_string) = 0 ;
 virtual std::string getCustomStateString() = 0 ;
