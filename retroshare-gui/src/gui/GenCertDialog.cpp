@@ -149,13 +149,13 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
-	ui.location_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
+	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
 	ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
 	ui.password_input->setPlaceholderText(tr("[Required] This password protects your PGP key."));
 	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
 #endif
 
-	ui.location_input->setToolTip(tr("Put a meaningful location. ex : home, laptop, etc. \nThis field will be used to differentiate different installations with\nthe same identity (PGP key).")) ;
+	ui.node_input->setToolTip(tr("Enter a meaningful node description. e.g. : home, laptop, etc. \nThis field will be used to differentiate different installations with\nthe same identity (PGP key).")) ;
 
 	ui.email_input->hide() ;
 	ui.email_label->hide() ;
@@ -199,9 +199,9 @@ void GenCertDialog::init()
 	if (foundGPGKeys) {
 		ui.no_gpg_key_label->hide();
 		ui.new_gpg_key_checkbox->setChecked(false);
-		setWindowTitle(tr("Create new Location"));
-		ui.genButton->setText(tr("Generate new Location"));
-		ui.headerFrame->setHeaderText(tr("Create a new Location"));
+		setWindowTitle(tr("Create new node"));
+		ui.genButton->setText(tr("Generate new node"));
+		ui.headerFrame->setHeaderText(tr("Create a new node"));
 		genNewGPGKey = false;
 	} else {
 		ui.no_gpg_key_label->setVisible(!mOnlyGenerateIdentity);
@@ -214,14 +214,15 @@ void GenCertDialog::init()
 	}
 
 	QString text = ui.header_label->text() + "\n";
+	text += tr("You can create a new identity with this form.");
 
 	if (mOnlyGenerateIdentity) {
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->hide();
 		ui.genprofileinfo_label->hide();
-		text += tr("You can create a new identity with this form.");
 	} else {
-		text += tr("You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.");
+		text += "\n";
+		text += tr("Alternatively you can use an existing identity. Just uncheck \"Create a new identity\"");
 	}
 	ui.header_label->setText(text);
 
@@ -252,9 +253,10 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.genPGPuser->hide();
 		ui.importIdentity_PB->hide() ;
 		ui.exportIdentity_PB->hide();
-		setWindowTitle(tr("Create new Identity"));
-		ui.genButton->setText(tr("Generate new Identity"));
-		ui.headerFrame->setHeaderText(tr("Create a new Identity"));
+		setWindowTitle(tr("Create new identity"));
+		ui.genButton->setText(tr("Generate new identity"));
+		ui.headerFrame->setHeaderText(tr("Create a new identity"));
+		ui.genButton->setVisible(true);
 		ui.genprofileinfo_label->hide();
 		ui.header_label->show();
 	} else {
@@ -272,9 +274,10 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.importIdentity_PB->setVisible(!mOnlyGenerateIdentity);
 		ui.exportIdentity_PB->setVisible(!mOnlyGenerateIdentity);
 		ui.exportIdentity_PB->setEnabled(ui.genPGPuser->count() != 0);
-		setWindowTitle(tr("Create new Location"));
-		ui.genButton->setText(tr("Generate new Location"));
-		ui.headerFrame->setHeaderText(tr("Create a new Location"));
+		setWindowTitle(tr("Create new node"));
+		ui.genButton->setText(tr("Generate new node"));
+		ui.genButton->setVisible(ui.genPGPuser->count() != 0);
+		ui.headerFrame->setHeaderText(tr("Create a new node"));
 		ui.genprofileinfo_label->show();
 		ui.header_label->hide();
 	}
@@ -304,7 +307,7 @@ void GenCertDialog::hiddenUiSetup()
 
 void GenCertDialog::exportIdentity()
 {
-	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+	QString fname = QFileDialog::getSaveFileName(this,tr("Export identity"), "",tr("RetroShare identity files (*.asc)")) ;
 
 	if(fname.isNull())
 		return ;
@@ -320,7 +323,7 @@ void GenCertDialog::exportIdentity()
 
 void GenCertDialog::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+	QString fname = QFileDialog::getOpenFileName(this,tr("Import identity"), "",tr("RetroShare identity files (*.asc)")) ;
 
 	if(fname.isNull())
 		return ;
@@ -340,7 +343,7 @@ void GenCertDialog::importIdentity()
 		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new location.")) ;
+		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
 	}
 
 	init() ;
@@ -349,7 +352,7 @@ void GenCertDialog::importIdentity()
 void GenCertDialog::genPerson()
 {
 	/* Check the data from the GUI. */
-	std::string genLoc  = ui.location_input->text().toUtf8().constData();
+	std::string genLoc  = ui.node_input->text().toUtf8().constData();
 	RsPgpId PGPId;
 	bool isHiddenLoc = false;
 
@@ -361,8 +364,8 @@ void GenCertDialog::genPerson()
 		{
 			/* Message Dialog */
 			QMessageBox::warning(this,
-				tr("Invalid Hidden Location"),
-			tr("Please put in a valid address of the form: 31769173498.onion:7800"),
+				tr("Invalid hidden node"),
+			tr("Please enter a valid address of the form: 31769173498.onion:7800"),
 			QMessageBox::Ok);
 			return;
 		}
@@ -373,8 +376,8 @@ void GenCertDialog::genPerson()
 		if (genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 tr("Generate PGP key Failure"),
-								 tr("Location field is required with a minimum of 3 characters"),
+								 tr("Generate PGP key failure"),
+								 tr("Node field is required with a minimum of 3 characters"),
 								 QMessageBox::Ok);
 			return;
 		}
@@ -383,8 +386,8 @@ void GenCertDialog::genPerson()
 		{
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 "Generate ID Failure",
-								 "Missing PGP Certificate",
+								 "Generate ID failure",
+								 "Missing PGP certificate",
 								 QMessageBox::Ok);
 			return;
 		}
@@ -394,7 +397,7 @@ void GenCertDialog::genPerson()
 		if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3 || genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 tr("Generate PGP key Failure"),
+								 tr("Generate PGP key failure"),
 								 tr("All fields are required with a minimum of 3 characters"),
 								 QMessageBox::Ok);
 			return;
@@ -403,7 +406,7 @@ void GenCertDialog::genPerson()
 		if(ui.password_input->text() != ui.password_input_2->text())
 		{
 			QMessageBox::warning(this,
-								 tr("Generate PGP key Failure"),
+								 tr("Generate PGP key failure"),
 								 tr("Passwords do not match"),
 								 QMessageBox::Ok);
 			return;
@@ -423,8 +426,8 @@ void GenCertDialog::genPerson()
 		ui.password_input->hide();
 		ui.genPGPuserlabel->hide();
 		ui.genPGPuser->hide();
-		ui.location_label->hide();
-		ui.location_input->hide();
+		ui.node_label->hide();
+		ui.node_input->hide();
 		ui.genButton->hide();
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
@@ -464,8 +467,8 @@ void GenCertDialog::genPerson()
 	{
 		/* Message Dialog */
 		QMessageBox::warning(this,
-                               tr("Generate ID Failure"),
-                               tr("Failed to Generate your new Certificate, maybe PGP password is wrong!"),
+                               tr("Generate ID failure"),
+                               tr("Failed to generate your new certificate, maybe PGP password is wrong!"),
                                QMessageBox::Ok);
 		reject();
        }

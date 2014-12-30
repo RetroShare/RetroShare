@@ -55,7 +55,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 #ifdef Q_WS_WIN
 
 #endif
-  connect(ui.createNewLocation_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
+  connect(ui.createNewNode_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
     ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }

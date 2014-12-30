@@ -130,7 +130,7 @@ void SecurityItem::updateItemStatic()
 			requestLabel->hide();
 			break;
 		case RS_FEED_ITEM_SEC_MISSING_CERTIFICATE:
-            title = tr("Peer/location not in friendlist (PGP id=")+QString::fromStdString(mGpgId.toStdString())+")";
+            title = tr("Peer/node not in friendlist (PGP id=")+QString::fromStdString(mGpgId.toStdString())+")";
 			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
 			requestLabel->show();
 			break;

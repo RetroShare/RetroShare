@@ -112,7 +112,7 @@ QString ConnectFriendWizard::getErrorString(uint32_t error_code)
 	switch(error_code)
 	{
 		case CERTIFICATE_PARSING_ERROR_SIZE_ERROR: 					return tr("Abnormal size read is bigger than memory block.") ;
-		case CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID: 		return tr("Invalid location id.") ;
+		case CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID: 		return tr("Invalid node id.") ;
 		case CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP: 		return tr("Invalid external IP.") ;
 		case CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP: 			return tr("Invalid local IP.") ;
 		case CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION: return tr("Invalid checksum section.") ;
@@ -355,7 +355,7 @@ void ConnectFriendWizard::initializePage(int id)
 				}
 			}
 
-			ui->locationEdit->setText(loc);
+			ui->nodeEdit->setText(loc);
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
@@ -412,7 +412,7 @@ void ConnectFriendWizard::initializePage(int id)
 				}
 			}
 
-			ui->fr_locationEdit->setText(loc);
+			ui->fr_nodeEdit->setText(loc);
 			
 			ui->fr_label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 
@@ -694,7 +694,7 @@ void ConnectFriendWizard::accept()
 		runProgressDialog = true;
 
 		if (!peerDetails.location.empty()) {
-			std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
+			std::cerr << "ConnectFriendWizard::accept() : setting peer node." << std::endl;
 			rsPeers->setLocation(peerDetails.id, peerDetails.location);
 		}
 

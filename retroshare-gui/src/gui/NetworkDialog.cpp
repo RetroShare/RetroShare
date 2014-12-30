@@ -219,7 +219,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 			contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend"), this, SLOT(makeFriend()));
 	}
 	if(peer_id == rsPeers->getGPGOwnId())
-		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export/create a new location"), this, SLOT(on_actionExportKey_activated()));
+		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
 
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
    //contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));

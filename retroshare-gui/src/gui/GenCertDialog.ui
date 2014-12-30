@@ -58,7 +58,7 @@
          </font>
         </property>
         <property name="text">
-         <string>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</string>
+         <string>You can create and run Retroshare nodes on different computers using the same identity. To do so just export the selected identity, import it on the other computer and create a new node with it.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -130,7 +130,7 @@
               <string>Your profile is associated with a PGP key</string>
              </property>
              <property name="text">
-              <string>Create a Hidden Location.</string>
+              <string>Create a hidden node.</string>
              </property>
              <property name="icon">
               <iconset resource="images.qrc">
@@ -216,7 +216,7 @@
              <item>
               <widget class="QLabel" name="password_label">
                <property name="toolTip">
-                <string>This Password is for PGP</string>
+                <string>This password is for PGP</string>
                </property>
                <property name="text">
                 <string>Password</string>
@@ -226,7 +226,7 @@
              <item>
               <widget class="QLabel" name="password_label_2">
                <property name="toolTip">
-                <string>This Password is for PGP</string>
+                <string>This password is for PGP</string>
                </property>
                <property name="text">
                 <string>Password (check)</string>
@@ -234,16 +234,16 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="location_label">
+              <widget class="QLabel" name="node_label">
                <property name="text">
-                <string>Location</string>
+                <string>Node</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="hiddenaddr_label">
                <property name="text">
-                <string>Tor Address</string>
+                <string>TOR address</string>
                </property>
               </widget>
              </item>
@@ -313,7 +313,7 @@ anonymous, you can use a fake email.</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="location_input">
+              <widget class="QLineEdit" name="node_input">
                <property name="maxLength">
                 <number>64</number>
                </property>
@@ -467,7 +467,7 @@ anonymous, you can use a fake email.</string>
   <tabstop>email_input</tabstop>
   <tabstop>password_input</tabstop>
   <tabstop>password_input_2</tabstop>
-  <tabstop>location_input</tabstop>
+  <tabstop>node_input</tabstop>
   <tabstop>hiddenaddr_input</tabstop>
   <tabstop>hiddenport_spinBox</tabstop>
   <tabstop>genButton</tabstop>

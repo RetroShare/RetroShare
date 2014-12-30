@@ -370,7 +370,7 @@ void ServicePermissionsPage::tableItemChanged ( QTableWidgetItem * item )
 {
 	std::cerr << "ServicePermissionsPage::tableItemChanged()";
 	std::cerr << std::endl;
-	std::cerr << "\t Location: Row: " << item->row() << " Column: " << item->column();
+	std::cerr << "\t Node: Row: " << item->row() << " Column: " << item->column();
 	std::cerr << std::endl;
 	std::cerr << "\t IsChecked: " << (Qt::Checked == item->checkState());
 	std::cerr << std::endl;

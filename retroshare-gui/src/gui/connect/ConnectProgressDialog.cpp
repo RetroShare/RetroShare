@@ -782,7 +782,7 @@ void ConnectProgressDialog::sayUdpDenied()
 	message += "\n\n";
 	message += tr("Please contact them to add your Full Certificate");
 	message += "\n";
-	message += tr("They need a Certificate + Location for UDP connections to succeed");
+	message += tr("They need a Certificate + Node for UDP connections to succeed");
 	message += "\n\n";
 	message += tr("Your Retroshare Node is configured Okay");
 

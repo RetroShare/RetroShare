@@ -482,9 +482,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="createNewLocation_PB">
+          <widget class="QPushButton" name="createNewNode_PB">
            <property name="text">
-            <string>Create new location...</string>
+            <string>Create new node...</string>
            </property>
           </widget>
          </item>

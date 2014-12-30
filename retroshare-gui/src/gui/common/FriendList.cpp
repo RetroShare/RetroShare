@@ -358,7 +358,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                  break;
              case TYPE_SSL:
                  //this is a SSL key
-                 textLabel->setText("<strong>" + tr("Location") + "</strong>");
+                 textLabel->setText("<strong>" + tr("Node") + "</strong>");
                  break;
          }
 
@@ -418,7 +418,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                      contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny Friend"), this, SLOT(removefriend()));
                  } else {
                      //this is a SSL key
-                     contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Location"), this, SLOT(removefriend()));
+                     contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
                  }
 
                  if (mShowGroups && type == TYPE_GPG) {
@@ -573,7 +573,7 @@ void FriendList::updateAvatar(const QString& id)
 
 /**
  * Get the list of peers from the RsIface.
- * Adds all friend gpg ids, with their locations as children to the peerTreeWidget.
+ * Adds all friend gpg ids, with their nodes as children to the peerTreeWidget.
  * If enabled, peers are sorted in their associated groups.
  * Groups are only updated, when groupsHasChanged is true.
  */
@@ -612,7 +612,7 @@ void  FriendList::insertPeers()
     std::list<RsPgpId>::iterator gpgIt;
     rsPeers->getGPGAcceptedList(gpgFriends);
 
-    //add own gpg id, if we have more than on location (ssl client)
+    //add own gpg id, if we have more than on node (ssl client)
     std::list<RsPeerId> ownSslContacts;
     RsPgpId ownId = rsPeers->getGPGOwnId();
     rsPeers->getAssociatedSSLIds(ownId, ownSslContacts);
@@ -944,7 +944,7 @@ void  FriendList::insertPeers()
                     sslItem->setToolTip(COLUMN_NAME, "");
                 }
 
-                // sort location
+                // sort node
                 sslItem->setData(COLUMN_STATE, ROLE_SORT, sText);
 
                 /* last contact */

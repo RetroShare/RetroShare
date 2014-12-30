@@ -58,9 +58,9 @@ StartDialog::StartDialog(QWidget *parent)
 		{
 			const QVariant & userData = QVariant(QString::fromStdString((*it).toStdString()));
 			RsPgpId gpgid ;
-			std::string name, email, location;
-			RsAccounts::GetAccountDetails(*it, gpgid, name, email, location);
-			QString accountName = QString::fromUtf8(name.c_str()) + " (" + QString::fromStdString(gpgid.toStdString()).right(8) + ") - " + QString::fromUtf8(location.c_str());
+			std::string name, email, node;
+			RsAccounts::GetAccountDetails(*it, gpgid, name, email, node);
+			QString accountName = QString::fromUtf8(name.c_str()) + " (" + QString::fromStdString(gpgid.toStdString()).right(8) + ") - " + QString::fromUtf8(node.c_str());
 			ui.loadName->addItem(accountName, userData);
 
 			if (preferedId == *it)
@@ -120,12 +120,12 @@ void StartDialog::notSecureWarning()
 	/* some error msg */
 	if (ui.autologin_checkbox->isChecked())
 #ifdef UBUNTU
-		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
+		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
 #else
 #ifdef __APPLE__
-		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your location) will be stored encrypted in your Keychain. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
+		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in your Keychain. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
 #else
-		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. \n\n Your PGP password will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
+		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. \n\n Your PGP password will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
 #endif
 #endif
 }

@@ -255,7 +255,7 @@ void ChatDialog::init(ChatId id, const QString &title)
 	}
 
 	// more than one ssl ids online or all offline
-	QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one locations.\nPlease choose one of it to chat with."), QMessageBox::Ok);
+	QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one nodes.\nPlease choose one of it to chat with."), QMessageBox::Ok);
 	mb.exec();
 }
 

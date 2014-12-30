@@ -73,7 +73,7 @@ static void displayWarningAboutDSAKeys()
 
 	QMessageBox msgBox;
 
-	QString txt = QObject::tr("You appear to have locations associated to DSA keys:");
+	QString txt = QObject::tr("You appear to have nodes associated to DSA keys:");
 	txt += "<UL>" ;
 	for(std::map<std::string,std::vector<std::string> >::const_iterator it(unsupported_keys.begin());it!=unsupported_keys.end();++it)
 	{
@@ -89,7 +89,7 @@ static void displayWarningAboutDSAKeys()
 	txt += "</UL>" ;
 
 	msgBox.setText(txt) ;
-	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We're very sorry for that."));
+	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We're very sorry for that."));
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
 	msgBox.setWindowIcon(QIcon(":/images/logo/logo_32.png"));

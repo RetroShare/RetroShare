@@ -620,7 +620,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
             gpgId = QString::fromStdString(detail.gpg_id.toStdString());
 
 			if (status == (int) RS_STATUS_OFFLINE) {
-				/* try other locations */
+				/* try other nodes */
                 std::list<RsPeerId> sslIds;
 				rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
 
@@ -637,7 +637,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 					}
 				}
 			} else {
-				/* one location is online */
+				/* one node is online */
 				gpgStatus = RS_STATUS_ONLINE;
 			}
 		}

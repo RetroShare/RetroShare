@@ -725,12 +725,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatDialog</name>
     <message>
-        <source>Your friend has more than one locations.
-Please choose one of it to chat with.</source>
+        <source>Talking to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Talking to </source>
+        <source>Your friend has more than one nodes.
+Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2124,10 +2124,6 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid location id.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid external IP.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2364,6 +2360,10 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid node id.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2658,10 +2658,6 @@ even if you don&apos;t make friends.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>We Cannot find your Friend.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2743,6 +2739,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Retroshare cannot connect without this information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Node for UDP connections to succeed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3259,11 +3259,11 @@ Do you want to reject this message?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create new location...</source>
+        <source>Node</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Node</source>
+        <source>Create new node...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4230,10 +4230,6 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Message Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4267,10 +4263,6 @@ you plug it in.</source>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4345,6 +4337,14 @@ you plug it in.</source>
         <source>Sort by</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Friend Node</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
@@ -4392,38 +4392,6 @@ you plug it in.</source>
     </message>
     <message>
         <source>Broadcast</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Messages entered here are sent to all connected friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4487,47 +4455,11 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>is typing...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New group chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Keyring</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4551,10 +4483,6 @@ you plug it in.</source>
     <name>GenCertDialog</name>
     <message>
         <source>Create new Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4584,19 +4512,11 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This Password is for PGP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4648,18 +4568,6 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create new Location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate new Location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a new Location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create new Identity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4669,18 +4577,6 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>You can create a new identity with this form.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4720,18 +4616,6 @@ and use the import button to load it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate PGP key Failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4739,14 +4623,6 @@ and use the import button to load it</source>
         <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your PGP password when asked, to sign your new key.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4762,21 +4638,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. 
-This field will be used to differentiate different installations with
-the same identity (PGP key).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Passwords do not match</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create a Hidden Location.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tor Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4788,11 +4650,89 @@ the same identity (PGP key).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid Hidden Location</source>
+        <source>You can create and run Retroshare nodes on different computers using the same identity. To do so just export the selected identity, import it on the other computer and create a new node with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please put in a valid address of the form: 31769173498.onion:7800</source>
+        <source>Create a hidden node.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This password is for PGP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOR address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter a meaningful node description. e.g. : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same identity (PGP key).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate new node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alternatively you can use an existing identity. Just uncheck &quot;Create a new identity&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate new identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RetroShare identity files (*.asc)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid hidden node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate PGP key failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node field is required with a minimum of 3 characters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generate ID failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8768,7 +8708,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export/create a new location</source>
+        <source>Export/create a new node</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10062,10 +10002,6 @@ and use the import button to load it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Select Trusted Friend</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10091,6 +10027,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export selected key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10438,14 +10378,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You appear to have locations associated to DSA keys:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10570,6 +10502,14 @@ Reported error is:
     </message>
     <message>
         <source>Data forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You appear to have nodes associated to DSA keys:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11562,11 +11502,11 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Peer/location not in friendlist (PGP id=</source>
+        <source>Send Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Send Message</source>
+        <source>Peer/node not in friendlist (PGP id=</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12297,14 +12237,6 @@ The current identities/locations will not be affected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12317,7 +12249,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
@@ -12325,7 +12265,7 @@ This choice can be reverted in settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
 
@@ -12333,7 +12273,7 @@ This choice can be reverted in settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP password will not be stored.
 

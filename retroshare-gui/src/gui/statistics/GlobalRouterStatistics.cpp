@@ -132,7 +132,7 @@ void GlobalRouterStatisticsWidget::updateContent()
 	// Routing matrix
 	// 	Key         [][][][][][][][][][]
 	//
-	// ->	each [] shows a square (one per friend location) that is the routing probabilities for all connected friends
+	// ->	each [] shows a square (one per friend node) that is the routing probabilities for all connected friends
 	// 	computed using the "computeRoutingProbabilitites()" method.
 	//
 	// Own key ids
