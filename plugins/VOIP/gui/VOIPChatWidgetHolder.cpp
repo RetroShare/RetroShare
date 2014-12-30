@@ -304,7 +304,7 @@ void VOIPChatWidgetHolder::sendVideoData()
 	RsVoipDataChunk chunk ;
 
 	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
-		rsVoip->sendVoipData(mChatWidget->getPeerId(),chunk) ;
+        rsVoip->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk) ;
 }
 
 void VOIPChatWidgetHolder::sendAudioData()
@@ -315,7 +315,7 @@ void VOIPChatWidgetHolder::sendAudioData()
         chunk.size = qbarray.size();
         chunk.data = (void*)qbarray.constData();
 		  chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
-        rsVoip->sendVoipData(mChatWidget->getPeerId(),chunk);
+        rsVoip->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk);
     }
 }
 

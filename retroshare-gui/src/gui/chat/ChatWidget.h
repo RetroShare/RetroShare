@@ -72,6 +72,7 @@ public:
 	~ChatWidget();
 
     void init(const ChatId &chat_id, const QString &title);
+    ChatId getChatId();
     ChatType chatType();
 
 	bool hasNewMessages() { return newMessages; }

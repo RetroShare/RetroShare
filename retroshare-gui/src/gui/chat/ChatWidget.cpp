@@ -306,6 +306,11 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 	processSettings(true);
 }
 
+ChatId ChatWidget::getChatId()
+{
+    return chatId;
+}
+
 ChatWidget::ChatType ChatWidget::chatType()
 {
     // transformation from ChatId::Type to ChatWidget::ChatType

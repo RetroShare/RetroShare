@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-		#VOIP \
-		#FeedReader
+		VOIP \
+		FeedReader

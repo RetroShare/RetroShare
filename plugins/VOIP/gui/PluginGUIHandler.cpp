@@ -33,7 +33,7 @@ void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 		return ;
 	}
 
-	ChatDialog *di = ChatDialog::getExistingChat(peer_id) ;
+    ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if (cw) {
@@ -74,7 +74,7 @@ void PluginGUIHandler::ReceivedVoipBandwidthInfo(const QString& qpeer_id,int byt
 {
 	RsPeerId peer_id(qpeer_id.toStdString()) ;
 
-	ChatDialog *di = ChatDialog::getExistingChat(peer_id) ;
+    ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
 
 	std::cerr << "PluginGUIHandler::received bw info for peer " << qpeer_id.toStdString() << ": " << bytes_per_sec << " Bps" << std::endl;
 	if(!di)
