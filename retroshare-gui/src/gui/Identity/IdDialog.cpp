@@ -176,6 +176,10 @@ IdDialog::IdDialog(QWidget *parent) :
 	/* Setup tree */
 	ui->treeWidget_IdList->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
 	ui->treeWidget_IdList->setContextMenuPolicy(Qt::CustomContextMenu) ;
+	
+	// Set initial size of the splitter
+  ui->splitter->setStretchFactor(0, 0);
+  ui->splitter->setStretchFactor(1, 1);
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 

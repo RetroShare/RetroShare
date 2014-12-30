@@ -280,6 +280,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         messageCount = Settings->getPublicChatHistoryCount();
 
         ui->titleBarFrame->setVisible(false);
+        ui->actionSearch_History->setVisible(false);
     }
 
 	if (rsHistory->getEnable(hist_chat_type)) 
