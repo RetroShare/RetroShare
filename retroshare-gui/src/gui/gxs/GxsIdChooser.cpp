@@ -131,8 +131,27 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		index = chooser->count() - 1;
 	}
 
+	QList<QIcon> icons;
+
+	switch (type) {
+	case GXS_ID_DETAILS_TYPE_EMPTY:
+	case GXS_ID_DETAILS_TYPE_FAILED:
+//		icons = ;
+		break;
+
+	case GXS_ID_DETAILS_TYPE_LOADING:
+		icons.push_back(GxsIdDetails::getLoadingIcon(details.mId));
+		break;
+
+	case GXS_ID_DETAILS_TYPE_DONE:
+		GxsIdDetails::getIcons(details, icons);
+		break;
+	}
+
 	chooser->setItemData(index, QString("%1_%2").arg((type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID).arg(text), ROLE_SORT);
 	chooser->setItemData(index, (type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
+	chooser->setItemIcon(index, icons.empty() ? QIcon() : icons[0]);
+
 	chooser->model()->sort(0);
 }
 
@@ -197,13 +216,6 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		}
 	}
 
-	if (ids.empty()) {
-		mFirstLoad = false;
-		std::cerr << "GxsIdChooser::loadPrivateIds() ERROR no ids";
-		std::cerr << std::endl;
-		return;
-	}
-
 	for (std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); ++it) {
 		/* add to Chooser */
 		GxsIdDetails::process(*it, loadPrivateIdsCallback, this);
@@ -215,7 +227,7 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 			QString str = tr("Create new Identity");
 			QString id = "";
 
-			addItem(str, id);
+			addItem(QIcon(":/images/identity/identity_create_32.png"), str, id);
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
 		}
