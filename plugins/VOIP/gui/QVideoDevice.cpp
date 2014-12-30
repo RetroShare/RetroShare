@@ -65,14 +65,17 @@ void QVideoInputDevice::grabFrame()
 	if(img->nChannels != 3)
 	{
 		std::cerr << "(EE) expected 3 channels. Got " << img->nChannels << std::endl;
-		cvReleaseImage(&img) ;
 		return ;
 	}
+
+    // convert to RGB and copy to new buffer, because cvQueryFrame tells us to not modify the buffer
+    cv::Mat img_rgb;
+    cv::cvtColor(cv::Mat(img), img_rgb, CV_BGR2RGB);
 
 	static const int _encoded_width = 128 ;
 	static const int _encoded_height = 128 ;
 
-	QImage image = QImage((uchar*)img->imageData,img->width,img->height,QImage::Format_RGB888).scaled(QSize(_encoded_width,_encoded_height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
+    QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888).scaled(QSize(_encoded_width,_encoded_height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
 
 	if(_video_encoder != NULL) 
 	{
