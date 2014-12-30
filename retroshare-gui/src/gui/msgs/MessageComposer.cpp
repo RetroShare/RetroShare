@@ -51,17 +51,18 @@
 #include "gui/common/GroupDefs.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/common/TagDefs.h"
+#include "gui/common/Emoticons.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/common/Emoticons.h"
-#include "textformat.h"
+#include "gui/connect/ConfCertDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/DateTime.h"
-#include "TagsMenu.h"
-#include "gui/common/TagDefs.h"
-#include "gui/connect/ConfCertDialog.h"
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
+#include "textformat.h"
+#include "TagsMenu.h"
 
 #define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
@@ -1444,16 +1445,18 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
         case PEER_TYPE_GXS: {
 
             RsIdentityDetails detail;
-        RsGxsId gid(id) ;
+            RsGxsId gid(id) ;
 
             if(!rsIdentity->getIdDetails(gid, detail))
             {
                 std::cerr << "Can't get peer details from " << gid << std::endl;
                 return ;
             }
+            
+            QPixmap identicon = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(gid))) ;
 
             name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
-            icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
+            icon = QIcon(identicon);
         }
             break ;
 

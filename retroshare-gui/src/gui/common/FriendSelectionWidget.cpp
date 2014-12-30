@@ -23,6 +23,7 @@
 #include <QDialogButtonBox>
 #include "FriendSelectionWidget.h"
 #include "ui_FriendSelectionWidget.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
@@ -526,6 +527,8 @@ void FriendSelectionWidget::secured_fillList()
 				RsIdentityDetails detail;
 				if (!rsIdentity->getIdDetails(RsGxsId(*gxsIt), detail)) 
 					continue; /* BAD */
+					
+				QPixmap identicon = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(*gxsIt))) ;
 
 				// make a widget per friend
 				gxsItem = new RSTreeWidgetItem(mCompareRole, IDTYPE_GXS);
@@ -533,9 +536,9 @@ void FriendSelectionWidget::secured_fillList()
 				QString name = QString::fromUtf8(detail.mNickname.c_str());
 				gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-				gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+				//gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
 				gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
-                gxsItem->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE)));
+				gxsItem->setIcon(COLUMN_NAME, QIcon(identicon));
 				gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
 				gxsItem->setData(COLUMN_DATA, ROLE_SORT, "2 " + name);
 
