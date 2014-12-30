@@ -120,6 +120,8 @@ void GxsGroupDialog::init()
 	ui.idChooser->loadIds(0,RsGxsId());
 	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
 	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, RsGxsCircleId());
+	
+	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
 
 	initMode();
 }

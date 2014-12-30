@@ -76,7 +76,11 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="forumSubject"/>
+             <widget class="QLineEdit" name="forumSubject">
+              <property name="placeholderText">
+               <string>Set a descriptive subject here</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -166,21 +170,37 @@
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
-              <property name="text">
+              <property name="toolTip">
                <string>Sign Message</string>
+              </property>
+              <property name="text">
+               <string/>
               </property>
               <property name="icon">
                <iconset resource="../images.qrc">
-                <normaloff>:/images/pgp.png</normaloff>:/images/pgp.png</iconset>
+                <normaloff>:/images/document-edit-sign.png</normaloff>:/images/document-edit-sign.png</iconset>
               </property>
               <property name="iconSize">
                <size>
-                <width>24</width>
-                <height>24</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
               <property name="checked">
                <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Post as:</string>
               </property>
              </widget>
             </item>

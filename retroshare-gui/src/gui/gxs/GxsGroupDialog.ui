@@ -476,7 +476,7 @@
           <item>
            <widget class="MimeTextEdit" name="groupDesc">
             <property name="placeholderText" stdset="0">
-             <string>Set a descriptive description here</string>
+             <string/>
             </property>
            </widget>
           </item>
