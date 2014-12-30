@@ -67,7 +67,7 @@
        </widget>
       </item>
       <item>
-       <widget class="StyledLabel" name="headerLabel">
+       <widget class="StyledElidedLabel" name="headerLabel">
         <property name="text">
          <string notr="true">Header text</string>
         </property>
@@ -90,9 +90,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
+   <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
+   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
