@@ -1455,7 +1455,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
             
             QPixmap identicon = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(gid))) ;
 
-            name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
+            name = tr("%2 <%2@%1>").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
             icon = QIcon(identicon);
         }
             break ;
