@@ -43,7 +43,7 @@ done
 
 if test "$svnrev" = "" ; then
 	echo attempting to get svn revision number...
-	svn=`svn info | grep 'Revision:' | cut -d\  -f2`
+	svnrev=`svn info | grep 'Revision:' | cut -d\  -f2`
 else
 	echo svn number has been provided. Forcing update.
 fi
