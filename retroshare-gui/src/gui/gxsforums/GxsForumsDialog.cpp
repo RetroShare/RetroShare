@@ -171,4 +171,9 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo,
 	if (descriptionIt != forumData->mDescription.end()) {
 		groupItemInfo.description = descriptionIt.value();
 	}
+	
+	if (IS_GROUP_ADMIN(groupInfo.mSubscribeFlags)) {
+    groupItemInfo.icon = QIcon(":images/konv_message2.png");
+  }
+
 }

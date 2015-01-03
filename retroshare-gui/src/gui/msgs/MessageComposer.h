@@ -93,6 +93,8 @@ private slots:
     void on_contactsdockWidget_visibilityChanged(bool visible);
     void toggleContacts();
     void buildCompleter();
+    void updatecontactsviewicons();
+
 
     void fileNew();
     void fileOpen();
@@ -147,6 +149,8 @@ private slots:
     void tagAboutToShow();
     void tagSet(int tagId, bool set);
     void tagRemoveAll();
+    
+    void on_closeInfoFrameButton_clicked();
 
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);

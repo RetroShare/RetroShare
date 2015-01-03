@@ -61,7 +61,7 @@ void SubscribeToolButton::updateUi()
 	} else {
 		setPopupMode(QToolButton::DelayedPopup);
 		setMenu(NULL);
-		setIcon(QIcon());
+		setIcon(QIcon(":/images/RSS_004_32.png"));
 		setText(tr("Subscribe"));
 
 #ifndef USE_MENUBUTTONPOPUP

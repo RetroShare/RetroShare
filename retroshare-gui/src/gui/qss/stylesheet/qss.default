@@ -138,7 +138,7 @@ ForumsDialog, GxsForumThreadWidget
 GroupTreeWidget
 {
 	qproperty-textColorCategory: rgb(79, 79, 79);
-	qproperty-textColorPrivateKey: blue;
+	qproperty-textColorPrivateKey: rgb(35,91,159);
 }
 
 FriendSelectionWidget
@@ -156,7 +156,7 @@ FriendList
     qproperty-textColorStatusOffline: black;
     qproperty-textColorStatusAway: gray;
     qproperty-textColorStatusBusy: gray;
-    qproperty-textColorStatusOnline: darkBlue;
+    qproperty-textColorStatusOnline: darkGreen;
     qproperty-textColorStatusInactive: gray;
 	qproperty-textColorGroup: rgb(123, 123, 123);
 }

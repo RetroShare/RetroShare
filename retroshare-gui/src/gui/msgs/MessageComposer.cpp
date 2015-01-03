@@ -130,14 +130,16 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     m_compareRole->setRole(COLUMN_CONTACT_NAME, ROLE_CONTACT_SORT);
 
     m_completer = NULL;
+    
+    ui.distantFrame->hide();
 
     Settings->loadWidgetInformation(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
 
     ui.hashBox->hide();
-	 ui.signMessage_CB->setChecked(true) ;
-     ui.signMessage_CB->setEnabled(false) ;
+    ui.signMessage_CB->setChecked(true) ;
+    ui.signMessage_CB->setEnabled(false) ;
 
     // connect up the buttons.
     connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
@@ -1457,6 +1459,8 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
 
             name = tr("%2 <%2@%1>").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
             icon = QIcon(identicon);
+            
+            ui.distantFrame->show();
         }
             break ;
 
@@ -2181,11 +2185,22 @@ bool MessageComposer::maybeSave()
 void MessageComposer::toggleContacts()
 {
     ui.contactsdockWidget->setVisible(!ui.contactsdockWidget->isVisible());
+    updatecontactsviewicons();
 }
 
 void MessageComposer::on_contactsdockWidget_visibilityChanged(bool visible)
 {
     contactSidebarAction->setChecked(visible);
+    updatecontactsviewicons();
+}
+
+void MessageComposer::updatecontactsviewicons()
+{
+    if(!ui.contactsdockWidget->isVisible()){
+      ui.actionContactsView->setIcon(QIcon(":/images/contactsclosed24.png"));
+    }else{
+      ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
+    } 
 }
 
 void  MessageComposer::addImage()
@@ -2472,4 +2487,9 @@ void MessageComposer::showTagLabels()
 		}
 		ui.tagLayout->addStretch();
 	}
+}
+
+void MessageComposer::on_closeInfoFrameButton_clicked()
+{
+	ui.distantFrame->setVisible(false);
 }
