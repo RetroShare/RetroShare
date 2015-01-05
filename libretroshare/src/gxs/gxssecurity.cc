@@ -462,9 +462,8 @@ bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 
     EVP_CIPHER_CTX ctx;
     int eklen = 0, net_ekl = 0;
-    unsigned char *ek = NULL;
+	unsigned char *ek = (unsigned char*)malloc(EVP_PKEY_size(privateKey));
     unsigned char iv[EVP_MAX_IV_LENGTH];
-    ek = (unsigned char*)malloc(EVP_PKEY_size(privateKey));
     EVP_CIPHER_CTX_init(&ctx);
 
     int in_offset = 0, out_currOffset = 0;
@@ -474,13 +473,13 @@ bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
     eklen = ntohl(net_ekl);
     in_offset += size_net_ekl;
 
-	 // Conservative limits to detect weird errors due to corrupted encoding.
-	 //
-	 if(eklen < 0 || eklen > 512 || eklen+in_offset > inlen)
-	 {
-		 std::cerr << "Error while deserialising encryption key length: eklen = " << std::dec << eklen << ". Giving up decryption." << std::endl;
-		 return false ;
-	 }
+	// Conservative limits to detect weird errors due to corrupted encoding.
+	if(eklen < 0 || eklen > 512 || eklen+in_offset > inlen)
+	{
+		std::cerr << "Error while deserialising encryption key length: eklen = " << std::dec << eklen << ". Giving up decryption." << std::endl;
+		free(ek);
+		return false;
+	}
 
     memcpy(ek, (unsigned char*)in + in_offset, eklen);
     in_offset += eklen;
@@ -506,7 +505,6 @@ bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 		 return false;
 	 }
 
-    in_offset += out_currOffset;
     outlen += out_currOffset;
 
     if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) 
