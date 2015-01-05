@@ -143,9 +143,9 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 		{
 			if (it->second == peer)
 			{
+				realPeerAddr = it->first;
 				mPeers.erase(it);
 				found = true;
-				realPeerAddr = it->first;
 
 #ifdef DEBUG_UDP_RELAY
 				std::cerr << "UdpRelayReceiver::removeUdpPeer() removing UdpPeer" << std::endl;
@@ -1036,20 +1036,17 @@ UdpRelayProxy::UdpRelayProxy()
 }
 
 UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass, uint32_t bandwidth)
+	: mAddrs(*addrSet),
+	  mRelayClass(relayClass),
+	  mBandwidth(0),
+	  mDataSize(0),
+	  mLastBandwidthTS(0),
+	  mLastTS(time(NULL)),
+	  mStartTS(time(NULL)),
+	  mBandwidthLimit(bandwidth)
 {
-	mAddrs = *addrSet;
-	mRelayClass = relayClass;
-
-	mBandwidth = 0;
-	mDataSize = 0;
-	mLastBandwidthTS = 0;
-	mLastTS = time(NULL);
-
-
-        mStartTS = time(NULL);
-	mBandwidthLimit = bandwidth;
-	/* fallback */
-	if (mBandwidthLimit == 0)
+	/* bandwidth fallback */
+	if (bandwidth == 0)
 	{
 		switch(relayClass)
 		{
