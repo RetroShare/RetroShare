@@ -584,7 +584,7 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 
 static void subscribeLobby(QTreeWidgetItem *item)
 {
-	if (item == NULL && item->type() != TYPE_LOBBY) {
+	if (item == NULL || item->type() != TYPE_LOBBY) {
 		return;
 	}
 
@@ -596,7 +596,7 @@ static void subscribeLobby(QTreeWidgetItem *item)
 
 void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
 {
-    if (item == NULL && item->type() != TYPE_LOBBY) {
+    if (item == NULL || item->type() != TYPE_LOBBY) {
         return;
     }
 
@@ -727,7 +727,7 @@ void ChatLobbyWidget::resetLobbyTreeIcons()
 void ChatLobbyWidget::unsubscribeItem()
 {
 	QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
-	if (item == NULL && item->type() != TYPE_LOBBY) {
+	if (item == NULL || item->type() != TYPE_LOBBY) {
 		return;
 	}
 
