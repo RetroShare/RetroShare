@@ -218,59 +218,68 @@ HashCache::HashCache(const std::string& path)
 
 void HashCache::save()
 {
-	if(_changed)
+	if(!_changed)
 	{
 #ifdef FIM_DEBUG
-		std::cerr << "Saving Hash Cache to file " << _path << "..." << std::endl ;
-#endif
-		std::ostringstream f ;
-
-		for(std::map<std::string,HashCacheInfo>::const_iterator it(_files.begin());it!=_files.end();++it)
-		{
-			f << it->first << std::endl ;
-			f << it->second.size << std::endl;
-			f << it->second.time_stamp << std::endl;
-			f << it->second.modf_stamp << std::endl;
-			f << it->second.hash << std::endl;
-		}
-
-		void *encryptedData = NULL ;
-		int encDataLen = 0 ;
-
-		if(!AuthSSL::getAuthSSL()->encrypt(encryptedData, encDataLen, f.str().c_str(), f.str().length(), AuthSSL::getAuthSSL()->OwnId()))
-		{
-			std::cerr << "Cannot encrypt hash cache. Something's wrong." << std::endl;
-			return;
-		}
-
-		FILE *F = fopen( (_path+".bin.tmp").c_str(),"wb" ) ;
-
-		if(F == NULL)
-		{
-			std::cerr << "Cannot open encrypted file cache for writing: " << _path+".bin.tmp" << std::endl;
-			free(encryptedData) ;
-			return ;
-		}
-		if(fwrite(encryptedData,1,encDataLen,F) != encDataLen)
-		{
-			std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
-			free(encryptedData) ;
-			return ;
-		}
-		fclose(F) ;
-		free(encryptedData) ;
-
-		RsDirUtil::renameFile(_path+".bin.tmp",_path+".bin") ;
-#ifdef FIM_DEBUG
-		std::cerr << "done." << std::endl ;
-#endif
-
-		_changed = false ;
-	}
-#ifdef FIM_DEBUG
-	else
 		std::cerr << "Hash cache not changed. Not saving." << std::endl ;
 #endif
+		return;
+	}
+
+#ifdef FIM_DEBUG
+	std::cerr << "Saving Hash Cache to file " << _path << "..." << std::endl ;
+#endif
+
+	std::ostringstream f ;
+	for(std::map<std::string,HashCacheInfo>::const_iterator it(_files.begin());
+		it != _files.end();
+		++it)
+	{
+		f << it->first << std::endl ;
+		f << it->second.size << std::endl;
+		f << it->second.time_stamp << std::endl;
+		f << it->second.modf_stamp << std::endl;
+		f << it->second.hash << std::endl;
+	}
+
+	void *encryptedData = NULL ;
+	int encDataLen = 0 ;
+
+	if(!AuthSSL::getAuthSSL()->encrypt(
+				encryptedData,
+				encDataLen,
+				f.str().c_str(),
+				f.str().length(),
+				AuthSSL::getAuthSSL()->OwnId()))
+	{
+		std::cerr << "Cannot encrypt hash cache. Something's wrong." << std::endl;
+		return;
+	}
+
+	FILE *F = fopen( (_path+".bin.tmp").c_str(),"wb" ) ;
+
+	if(!F)
+	{
+		std::cerr << "Cannot open encrypted file cache for writing: " << _path+".bin.tmp" << std::endl;
+		goto save_free;
+	}
+	if(fwrite(encryptedData,1,encDataLen,F) != encDataLen)
+	{
+		std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
+		goto save_close;
+	}
+
+	RsDirUtil::renameFile(_path+".bin.tmp",_path+".bin") ;
+#ifdef FIM_DEBUG
+	std::cerr << "done." << std::endl ;
+#endif
+
+	_changed = false;
+
+save_close:
+	fclose(F);
+save_free:
+	free(encryptedData);
 }
 
 bool HashCache::find(const std::string& full_path,uint64_t size,time_t time_stamp,RsFileHash& hash)
@@ -430,7 +439,7 @@ bool FileIndexMonitor::findLocalFile(const RsFileHash& hash,FileSearchFlags hint
 		/* search through the fileIndex */
 		fi.searchHash(hash, results);
 
-		if (results.size() > 0)
+		if ( !results.empty() )
 		{
 			/* find the full path for the first entry */
 			FileEntry *fe = results.front();
@@ -516,7 +525,6 @@ bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &f
 
 bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with stored data */
 {
-	bool ok = false;
 
 #ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::loadLocalCache(): subid = " << data.cid.subid << ", filename=" << data.name << ", peer id = " << data.pid << std::endl;
@@ -530,7 +538,7 @@ bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with s
 
 		std::string name = data.name ;	
 
-        if ((ok = fi.loadIndex(data.path + '/' + name, RsFileHash(), data.size)))
+		if ( fi.loadIndex(data.path + '/' + name, RsFileHash(), data.size) )
 		{
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::loadCache() Success!";
@@ -584,12 +592,6 @@ bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with s
 #ifdef FIM_DEBUG
 	else
 		std::cerr << "FileIndexMonitor:: not loading cache item " << data.name << std::endl;
-#endif
-#ifdef REMOVED
-	if (ok)
-	{
-		return updateCache(data);
-	}
 #endif
 
 	return false;
@@ -648,20 +650,9 @@ void 	FileIndexMonitor::run()
 
 		if(i < abs(updatePeriod) || autoCheckEnabled())
 			updateCycle();
-
-#ifdef FIM_DEBUG
-//		{
-//			RsStackMutex mtx(fiMutex) ;
-//			std::cerr <<"*********** FileIndex **************" << std::endl ;
-//			fi.printFileIndex(std::cerr) ;
-//			std::cerr <<"************** END *****************" << std::endl ;
-//			std::cerr << std::endl ;
-//		}
-#endif
 	}
 }
 
-//void 	FileIndexMonitor::updateCycle(std::string& current_job)
 void 	FileIndexMonitor::updateCycle()
 {
 	time_t startstamp = time(NULL);
@@ -724,8 +715,6 @@ void 	FileIndexMonitor::updateCycle()
 #endif
 
 		FileEntry fe;
-		/* entries that need to be checked properly */
-		std::list<FileEntry>::iterator hit;
 
 		/* determine the full root path */
 		std::string dirpath  = olddir->path;
@@ -1495,7 +1484,6 @@ bool    FileIndexMonitor::inDirectoryCheck()
 
 bool    FileIndexMonitor::internal_setSharedDirectories()
 {
-	int i;
 	bool changed = false;
 
 	{
@@ -1533,7 +1521,7 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 
 			/* if unique -> add, else add modifier  */
 			bool unique = false;
-			for(i = 0; !unique; ++i)
+			for(int i = 0; !unique; ++i)
 			{
 				std::string tst_dir = top_dir;
 				if (i > 0)
