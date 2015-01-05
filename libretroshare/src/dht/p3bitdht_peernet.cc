@@ -718,20 +718,10 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 									mNetMgr->getNetworkMode(), mNetMgr->getNatHoleMode(), mNetMgr->getNatTypeMode()));
 					}
 
-					if (exclusivePort)
-					{
 #ifdef DEBUG_PEERNET
-						std::cerr << "dhtConnectionCallback: we Require Exclusive Proxy Port for connection";
-						std::cerr << std::endl;
+					if (exclusivePort) std::cerr << "dhtConnectionCallback: we Require Exclusive Proxy Port for connection" << std::endl;
+					else std::cerr << "dhtConnectionCallback: Dont need Exclusive Proxy Port for connection" << std::endl;
 #endif
-					}
-					else
-					{
-#ifdef DEBUG_PEERNET
-						std::cerr << "dhtConnectionCallback: Dont need Exclusive Proxy Port for connection";
-						std::cerr << std::endl;
-#endif
-					}
 
 					connectOk = true;
 				}
