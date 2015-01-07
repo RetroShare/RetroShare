@@ -260,7 +260,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addWidget(dhtstatus);
 
     hashingstatus = new HashingStatus();
-    statusBar()->addPermanentWidget(hashingstatus);
+    statusBar()->addPermanentWidget(hashingstatus, 1);
 
     discstatus = new DiscStatus();
     statusBar()->addPermanentWidget(discstatus);

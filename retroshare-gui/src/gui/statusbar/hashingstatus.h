@@ -24,6 +24,7 @@
 #include <QWidget>
 
 class QLabel;
+class ElidedLabel;
 
 class HashingStatus : public QWidget
 {
@@ -39,7 +40,8 @@ public slots:
     void updateHashingInfo(const QString&) ;
 
 private:
-    QLabel *statusHashing, *hashloader;
+    ElidedLabel *statusHashing;
+    QLabel *hashloader;
     QMovie *movie;
     bool _compactMode;
 };
