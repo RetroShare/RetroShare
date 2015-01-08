@@ -298,6 +298,23 @@
             <property name="spacing">
              <number>6</number>
             </property>
+            <item row="0" column="2">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../images.qrc">:/images/attachment.png</pixmap>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Recommended Files</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="0">
              <widget class="QPushButton" name="expandFilesButton">
               <property name="focusPolicy">
@@ -318,25 +335,15 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="label_6">
+            <item row="0" column="3">
+             <widget class="QLabel" name="filesText">
               <property name="text">
                <string/>
               </property>
-              <property name="pixmap">
-               <pixmap resource="../images.qrc">:/images/attachment.png</pixmap>
-              </property>
              </widget>
             </item>
-            <item row="0" column="4">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Recommended Files</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QLabel" name="filesText">
+            <item row="0" column="5">
+             <widget class="QLabel" name="filesSize">
               <property name="text">
                <string/>
               </property>

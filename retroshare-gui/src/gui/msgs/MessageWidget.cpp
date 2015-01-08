@@ -494,7 +494,8 @@ void MessageWidget::fill(const std::string &msgId)
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, QString::number(it->size));
-        item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
+    item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
+    item->setTextAlignment( COLUMN_FILE_SIZE, Qt::AlignRight );
 
 		/* add to the list */
 		items.append(item);
@@ -583,7 +584,8 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
-	ui.filesText->setText(QString("%1").arg(msgInfo.count)/*.arg(msgInfo.count == 1 ? tr("File") : tr("Files"))*/);
+	ui.filesText->setText(QString("%1").arg(msgInfo.count));
+	ui.filesSize->setText(QString(misc::friendlyUnit(msgInfo.size)));
 
 	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
 		ui.decryptFrame->show();
