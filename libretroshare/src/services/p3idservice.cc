@@ -933,6 +933,13 @@ bool SSGxsIdPgp::load(const std::string &input)
 		idKnown = false;
 		return true;
 	}
+	else if (1 == sscanf(input.c_str(), "K:0 T:%d", &timestamp))
+	{
+		lastCheckTs = timestamp;
+		checkAttempts = 0;
+		idKnown = false;
+		return true;
+	}
 	else 
 	{
 		lastCheckTs = 0;
