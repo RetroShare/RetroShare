@@ -918,22 +918,28 @@ bool SSGxsIdPgp::load(const std::string &input)
 {
 	char pgpline[RSGXSID_MAX_SERVICE_STRING];
 	int timestamp = 0;
+	uint32_t attempts = 0;
 	if (1 == sscanf(input.c_str(), "K:1 I:%[^)]", pgpline))
 	{
 		idKnown = true;
 		std::string str_line = pgpline;
 		pgpId = RsPgpId(str_line);
+		return true;
 	}
-	else if (1 == sscanf(input.c_str(), "K:0 T:%d", &timestamp))
+	else if (2 == sscanf(input.c_str(), "K:0 T:%d C:%d", &timestamp, &attempts))
 	{
 		lastCheckTs = timestamp;
+		checkAttempts = attempts;
 		idKnown = false;
+		return true;
 	}
-	else
+	else 
 	{
+		lastCheckTs = 0;
+		checkAttempts = 0;
+		idKnown = false;
 		return false;
-	}	
-	return true;
+	}
 }
 
 std::string SSGxsIdPgp::save() const
@@ -946,7 +952,7 @@ std::string SSGxsIdPgp::save() const
 	}
 	else
 	{
-		rs_sprintf(output, "K:0 T:%d", lastCheckTs);
+		rs_sprintf(output, "K:0 T:%d C:%d", lastCheckTs, checkAttempts);
 	}
 	return output;
 }
@@ -2424,16 +2430,21 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 				if (wait_period > 30 * SECS_PER_DAY)
 				{
 					wait_period = 30 * SECS_PER_DAY;
-				}
-
-				if (age < wait_period)
-				{
+                }
 #ifdef DEBUG_IDS
-					std::cerr << "p3IdService::pgphash_request() discarding Recent Check";
-					std::cerr << std::endl;
+                std::cerr << "p3IdService: group " << *vit << " age=" << age << ", attempts=" << ssdata.pgp.checkAttempts  << ", wait period = " << wait_period ;
+#endif
+
+                if (age < wait_period)
+                {
+#ifdef DEBUG_IDS
+                    std::cerr << " => discard." << std::endl;
 #endif // DEBUG_IDS
-					continue;
-				}
+                    continue;
+                }
+#ifdef DEBUG_IDS
+                std::cerr << " => recheck!" << std::endl;
+#endif
 			}
 
 			/* if we get here -> then its to be processed */
