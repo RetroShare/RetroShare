@@ -1020,6 +1020,16 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 	}
 }
 
+void NotifyQt::notifyChatFontChanged()
+{
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+	emit chatFontChanged();
+}
 void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType)
 {
 	{

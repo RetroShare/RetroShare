@@ -160,6 +160,7 @@ private slots:
 	void chooseColor();
 	void chooseFont();
 	void resetFont();
+	void resetFonts();
 	void setFont();
 
 	void updateLenOfChatTextEdit();
@@ -178,7 +179,7 @@ private:
 	void setCurrentFileName(const QString &fileName);
 
 	void colorChanged();
-	void setColorAndFont();
+	void setColorAndFont(bool both);
 	void processSettings(bool load);
 
 	void completeNickname(bool reverse);

@@ -84,6 +84,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result) ;
 
 		/* Notify from GUI */
+		void notifyChatFontChanged();
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 
 		void testToaster(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
@@ -139,6 +140,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void chatLobbyTimeShift(int time_shift) ;
 
 		/* Notify from GUI */
+		void chatFontChanged();
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 		void settingsChanged();
 		void disableAllChanged(bool disableAll) const;

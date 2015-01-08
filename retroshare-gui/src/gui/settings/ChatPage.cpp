@@ -127,6 +127,7 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->endGroup();
 
     Settings->setChatScreenFont(fontTempChat.toString());
+    NotifyQt::getInstance()->notifyChatFontChanged();
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 
@@ -245,8 +246,11 @@ ChatPage::load()
     ui.publicChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
     ui.privateChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
     ui.lobbyChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
-
-    ui.labelChatFontPreview->setText(fontTempChat.rawName());
+    
+    // using fontTempChat.rawname() does not always work!
+    // see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName
+    QStringList fontname = fontTempChat.toString().split(",");
+    ui.labelChatFontPreview->setText(fontname[0]);
     ui.labelChatFontPreview->setFont(fontTempChat);
 
 	 ui.max_storage_period->setValue(rsHistory->getMaxStorageDuration()/86400) ;
@@ -298,7 +302,10 @@ void ChatPage::on_pushButtonChangeChatFont_clicked()
 	QFont font = QFontDialog::getFont(&ok, fontTempChat, this);
 	if (ok) {
 		fontTempChat = font;
-		ui.labelChatFontPreview->setText(fontTempChat.rawName());
+		// using fontTempChat.rawname() does not always work!
+		// see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName
+		QStringList fontname = fontTempChat.toString().split(",");
+		ui.labelChatFontPreview->setText(fontname[0]);
 		ui.labelChatFontPreview->setFont(fontTempChat);
 	}
 }

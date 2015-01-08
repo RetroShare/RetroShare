@@ -122,6 +122,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
 	connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
+	connect(NotifyQt::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
@@ -235,7 +236,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
     currentFont.fromString(PeerSettings->getPrivateChatFont(chatId));
 
 	colorChanged();
-	setColorAndFont();
+	setColorAndFont(true);
 
 	// load style
     PeerSettings->getStyle(chatId, "ChatWidget", style);
@@ -780,7 +781,7 @@ void ChatWidget::pasteText(const QString& S)
 {
 	//std::cerr << "In paste link" << std::endl;
 	ui->chatTextEdit->insertHtml(S);
-	setColorAndFont();
+	setColorAndFont(false);
 }
 
 void ChatWidget::pasteCreateMsgLink()
@@ -831,7 +832,7 @@ void ChatWidget::chatCharFormatChanged()
 	// Reset font and color before inserting a character if edit box is empty
 	// (color info disappears when the user deletes all text)
 	if (ui->chatTextEdit->toPlainText().isEmpty()) {
-		setColorAndFont();
+		setColorAndFont(false);
 	}
 
 	inChatCharFormatChanged = false;
@@ -1136,7 +1137,7 @@ void ChatWidget::chooseColor()
 		currentColor = QColor(color);
         PeerSettings->setPrivateChatColor(chatId, currentColor.name());
 		colorChanged();
-		setColorAndFont();
+		setColorAndFont(false);
 	}
 }
 
@@ -1163,10 +1164,24 @@ void ChatWidget::resetFont()
 	setFont();
 }
 
-void ChatWidget::setColorAndFont()
+void ChatWidget::resetFonts()
+{
+	currentFont.fromString(Settings->getChatScreenFont());
+	setColorAndFont(true);
+	PeerSettings->setPrivateChatFont(chatId, currentFont.toString());
+}
+
+void ChatWidget::setColorAndFont(bool both)
 {
 
 	ui->chatTextEdit->setFont(currentFont);
+	QStringList fontdata=currentFont.toString().split(",");
+	QString stylesheet="font-family: '"+fontdata[0]+"'; font-size: "+fontdata[1]+"pt;";
+	if (currentFont.bold()) stylesheet+=" font-weight: bold;";
+	if (currentFont.italic()) stylesheet+=" font-style: italic;";
+	if (currentFont.underline()) stylesheet+=" text-decoration: underline;";
+	if (both) ui->textBrowser->setStyleSheet(stylesheet);
+	ui->chatTextEdit->setStyleSheet(stylesheet);
 	ui->chatTextEdit->setTextColor(currentColor);
 
 	ui->chatTextEdit->setFocus();
@@ -1174,7 +1189,7 @@ void ChatWidget::setColorAndFont()
 
 void ChatWidget::setFont()
 {
-	setColorAndFont();
+	setColorAndFont(false);
     PeerSettings->setPrivateChatFont(chatId, currentFont.toString());
 }
 
