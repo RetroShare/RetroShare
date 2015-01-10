@@ -14,8 +14,6 @@ if test -d "$workdir" ;  then
 	rm -rf $workdir
 fi
 
-svn update
-
 # Parse options
 svnrev=""
 dist=""
@@ -35,11 +33,24 @@ while [ $# -gt 0 ]; do
 	    gpgkey=$1
 	    shift
 	    ;;
+	"-h") shift
+		echo Package building script for debian/ubuntu distributions
+		echo Usage:
+		echo "  "$0 '-key [PGP key id] -rev [svn revision number]  -distribution [distrib name list with quotes, in (wheezy, sid, precise, saucy, etc)]'
+		exit 1
+		;;
 	"*") echo "Unknown option"
 	    exit 1
 	    ;;
     esac
 done
+
+echo "  "Using PGP key id   : $gpgkey
+echo "  "Using distributions: $dist
+echo "  "Using svn          : $rev
+
+echo Updating svn...
+svn update
 
 if test "$svnrev" = "" ; then
 	echo attempting to get svn revision number...
