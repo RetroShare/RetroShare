@@ -239,16 +239,6 @@ void FriendsDialog::processSettings(bool bLoad)
 
 void FriendsDialog::showEvent(QShowEvent *event)
 {
-    static bool first = true;
-    if (first) {
-        // Workaround: now the scroll position is correct calculated
-        first = false;
-        /* remove
-        QScrollBar *scrollbar = ui.msgText->verticalScrollBar();
-        scrollbar->setValue(scrollbar->maximum());
-        */
-    }
-
     RsAutoUpdatePage::showEvent(event);
 }
 
@@ -262,6 +252,13 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
         QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
 
         ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+
+        if(ui.chatWidget->isActive())
+        {
+            // clear the chat notify when control returns to the Qt event loop
+            // we have to do this later, because we don't know if we or the notify receives the chat message first
+            QMetaObject::invokeMethod(this, "clearChatNotify", Qt::QueuedConnection);
+        }
     }
 }
 
@@ -317,6 +314,11 @@ void FriendsDialog::loadmypersonalstatus()
 	{
 		ui.mypersonalstatusLabel->setText(statustring);
 	}
+}
+
+void FriendsDialog::clearChatNotify()
+{
+    ChatUserNotify::clearWaitingChat(ChatId::makeBroadcastId());
 }
 
 void FriendsDialog::statusmessage()

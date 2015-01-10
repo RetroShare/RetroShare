@@ -75,6 +75,10 @@ public:
     ChatId getChatId();
     ChatType chatType();
 
+    // allow/disallow sendng of messages
+    void blockSending(QString msg);
+    void unblockSending();
+
 	bool hasNewMessages() { return newMessages; }
 	bool isTyping() { return typing; }
 
@@ -84,7 +88,7 @@ public:
 
 	void setWelcomeMessage(QString &text);
 	void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
-	void updateStatusString(const QString &statusMask, const QString &statusString);
+    void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
 
 	void addToolsAction(QAction *action);
 
@@ -199,6 +203,8 @@ private:
 	bool newMessages;
 	bool typing;
 	int peerStatus;
+
+    bool sendingBlocked;
 
 	time_t lastStatusSendTime;
 

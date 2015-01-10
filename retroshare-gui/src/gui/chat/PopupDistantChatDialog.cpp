@@ -82,36 +82,49 @@ void PopupDistantChatDialog::updateDisplay()
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
     rsMsgs->getDistantChatStatus(_pid,status) ;
 
+    QString msg;
 	switch(status)
 	{
-		case RS_DISTANT_CHAT_STATUS_UNKNOWN: //std::cerr << "Unknown hash. Error!" << std::endl;
-														 _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Hash error")) ;
-														  setPeerStatus(RS_STATUS_OFFLINE) ;
-														 break ;
-		case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED: std::cerr << "Chat remotely closed. " << std::endl;
-														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Distant peer has closed the chat")) ;
+        case RS_DISTANT_CHAT_STATUS_UNKNOWN: //std::cerr << "Unknown hash. Error!" << std::endl;
+            _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
+            msg = tr("Hash Error. No tunnel.");
+            _status_label->setToolTip(msg) ;
+            getChatWidget()->updateStatusString("%1", msg, true);
+            getChatWidget()->blockSending(tr("Can't send message, because there is no tunnel."));
+            setPeerStatus(RS_STATUS_OFFLINE) ;
+            break ;
+        case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED: std::cerr << "Chat remotely closed. " << std::endl;
+            _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
+            _status_label->setToolTip(QObject::tr("Distant peer has closed the chat")) ;
 
-														  QMessageBox::warning(NULL,tr("Distant chat terminated"),tr("The person you're talking to has deleted the secured chat tunnel. You may remove the chat window now.")) ;
-														  setPeerStatus(RS_STATUS_OFFLINE) ;
+            getChatWidget()->updateStatusString("%1", tr("The person you're talking to has deleted the secured chat tunnel. You may remove the chat window now."), true);
+            getChatWidget()->blockSending(tr("Can't send message, because the chat partner deleted the secure tunnel."));
+            setPeerStatus(RS_STATUS_OFFLINE) ;
 
-														 break ;
+            break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: //std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
-														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Tunnel is pending...")) ;
-														  setPeerStatus(RS_STATUS_OFFLINE) ;
-														 break ;
+            _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
+            msg = QObject::tr("Tunnel is pending...");
+            _status_label->setToolTip(msg) ;
+            getChatWidget()->updateStatusString("%1", msg, true);
+            getChatWidget()->blockSending(msg);
+            setPeerStatus(RS_STATUS_OFFLINE) ;
+            break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_OK: //std::cerr << "Tunnel is ok. " << std::endl;
-														 _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Secured tunnel established. Waiting for ACK...")) ;
-														  setPeerStatus(RS_STATUS_ONLINE) ;
-														 break ;
+            _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
+            msg = QObject::tr("Secured tunnel established. Waiting for ACK...");
+            _status_label->setToolTip(msg) ;
+            getChatWidget()->updateStatusString("%1", msg, true);
+            getChatWidget()->blockSending(msg);
+            setPeerStatus(RS_STATUS_ONLINE) ;
+            break ;
 		case RS_DISTANT_CHAT_STATUS_CAN_TALK: //std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
-														 _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Secured tunnel is working. You can talk!")) ;
-														  setPeerStatus(RS_STATUS_ONLINE) ;
-														 break ;
+            _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
+            msg = QObject::tr("Secured tunnel is working. You can talk!");
+            _status_label->setToolTip(msg) ;
+            getChatWidget()->unblockSending();
+            setPeerStatus(RS_STATUS_ONLINE) ;
+            break ;
 	}
 }
 

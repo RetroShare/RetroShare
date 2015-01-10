@@ -49,7 +49,7 @@
 #include "util/misc.h"
 #include "vmessagebox.h"
 #include "util/QtVersion.h"
-
+#include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
 
 #include "FriendList.h"
@@ -598,10 +598,9 @@ void  FriendList::insertPeers()
         return;
     }
 
-    // get ids of existing private chat messages
-    std::list<RsPeerId> privateChatIds;
-    // TODO
-    //rsMsgs->getPrivateChatQueueIds(true, privateChatIds);
+    // get peers with waiting incoming chats
+    std::vector<RsPeerId> privateChatIds;
+    ChatUserNotify::getPeersWithWaitingChat(privateChatIds);
 
     // get existing groups
     std::list<RsGroupInfo> groupInfoList;

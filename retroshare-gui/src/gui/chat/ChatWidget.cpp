@@ -46,6 +46,7 @@
 #include "gui/common/Emoticons.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
+#include "gui/chat/ChatUserNotify.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -61,7 +62,7 @@
  *****/
 
 ChatWidget::ChatWidget(QWidget *parent) :
-	QWidget(parent), ui(new Ui::ChatWidget)
+    QWidget(parent), ui(new Ui::ChatWidget), sendingBlocked(false)
 {
 	ui->setupUi(this);
 
@@ -330,6 +331,19 @@ ChatWidget::ChatType ChatWidget::chatType()
     return CHATTYPE_UNKNOWN;
 }
 
+void ChatWidget::blockSending(QString msg)
+{
+    sendingBlocked = true;
+    ui->sendButton->setEnabled(false);
+    ui->sendButton->setToolTip(msg);
+}
+
+void ChatWidget::unblockSending()
+{
+    sendingBlocked = false;
+    updateLenOfChatTextEdit();
+}
+
 void ChatWidget::processSettings(bool load)
 {
 	Settings->beginGroup(QString("ChatWidget"));
@@ -486,6 +500,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				newMessages = false;
 				emit infoChanged(this);
 				focusDialog();
+                ChatUserNotify::clearWaitingChat(chatId);
 			}
 		}
 	}
@@ -653,6 +668,7 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 	newMessages = false;
 	emit infoChanged(this);
 	focusDialog();
+    ChatUserNotify::clearWaitingChat(chatId);
 
 	if (firstShow) {
 		// Workaround: now the scroll position is correct calculated
@@ -863,6 +879,9 @@ void ChatWidget::updateStatusTyping()
 
 void ChatWidget::updateLenOfChatTextEdit()
 {
+    if(sendingBlocked)
+        return;
+
 	QTextEdit *chatWidget = ui->chatTextEdit;
 	QString text;
 	RsHtml::optimizeHtml(chatWidget, text);
@@ -1448,7 +1467,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
     */
 }
 
-void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString)
+void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
 	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toLatin1()))); // displays info for 5 secs.
 	ui->typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
@@ -1459,7 +1478,8 @@ void ChatWidget::updateStatusString(const QString &statusMask, const QString &st
 		emit infoChanged(this);
 	}
 
-	QTimer::singleShot(5000, this, SLOT(resetStatusBar())) ;
+    if(!permanent)
+        QTimer::singleShot(5000, this, SLOT(resetStatusBar())) ;
 }
 
 void ChatWidget::setName(const QString &name)

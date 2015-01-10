@@ -92,6 +92,8 @@ private slots:
 
     void loadmypersonalstatus();
 
+    void clearChatNotify();
+
     //void newsFeedChanged(int count);
 
 signals:

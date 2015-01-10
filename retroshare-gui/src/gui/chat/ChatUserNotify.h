@@ -25,12 +25,19 @@
 #include <retroshare/rsmsgs.h>
 #include "gui/common/UserNotify.h"
 
+// this class uses lots of global state
+// so only one instance is allowed
+// (it does not make sense to have multiple instances of this class anyway)
 class ChatUserNotify : public UserNotify
 {
 	Q_OBJECT
 
 public:
+    static void getPeersWithWaitingChat(std::vector<RsPeerId>& peers);
+    static void clearWaitingChat(ChatId id);
+
 	ChatUserNotify(QObject *parent = 0);
+    ~ChatUserNotify();
 
 	virtual bool hasSetting(QString *name, QString *group);
 
@@ -42,8 +49,6 @@ private:
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual unsigned int getNewCount();
 	virtual void iconClicked();
-
-    std::map<ChatId, int> mWaitingChats;
 };
 
 #endif // CHATUSERNOTIFY_H
