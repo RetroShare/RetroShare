@@ -266,7 +266,8 @@ void HashCache::save()
 	if(fwrite(encryptedData,1,encDataLen,F) != encDataLen)
 	{
 		std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
-		goto save_close;
+		fclose(F) ;
+		goto save_free;
 	}
 
 	fclose(F) ;
@@ -278,8 +279,6 @@ void HashCache::save()
 
 	_changed = false;
 
-save_close:
-	fclose(F);
 save_free:
 	free(encryptedData);
 }
