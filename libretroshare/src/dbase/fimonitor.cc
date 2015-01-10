@@ -269,6 +269,8 @@ void HashCache::save()
 		goto save_close;
 	}
 
+	fclose(F) ;
+
 	RsDirUtil::renameFile(_path+".bin.tmp",_path+".bin") ;
 #ifdef FIM_DEBUG
 	std::cerr << "done." << std::endl ;
