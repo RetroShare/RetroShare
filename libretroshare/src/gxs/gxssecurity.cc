@@ -56,6 +56,8 @@ static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
 
 static RSA *extractPublicKey(const RsTlvSecurityKey& key)
 {
+    assert(!(key.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
+
         const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
         long keylen = key.keyData.bin_len;
 

@@ -30,6 +30,7 @@
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 #include "util/radix64.h"
+#include "gxs/gxssecurity.h"
 
 
 //#include "pqi/authgpg.h"
@@ -485,6 +486,7 @@ bool p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
 		key = data.pubkey;
         return true;
 	}
+	key.keyId.clear() ;
     return false;
 }
 
@@ -1549,14 +1551,20 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 			{
 				fullkey = kit->second;
 				full_key_ok = true;
+
+				if(GxsSecurity::extractPublicKey(fullkey,pubkey))
+					pub_key_ok = true ;
+			}
+			else
+			{
+				pubkey = kit->second;
+				pub_key_ok = true ;
 			}
 
 			/* cache public key always 
 			 * we don't need to check the keyFlags, 
 			 * as both FULL and PUBLIC_ONLY keys contain the PUBLIC key
 			 */
-			pubkey = kit->second;
-			pub_key_ok = true;
 
 		}
 	}
@@ -1573,6 +1581,8 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	cache_process_recogntaginfo(item, tagList);
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+    assert(!(pubkey.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
 
 	// Create Cache Data.
 	RsGxsIdCache pubcache(item, pubkey, tagList);
@@ -1795,6 +1805,8 @@ bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceS
 		std::cerr << "p3IdService::cache_update_if_cached() Updating Public Cache";
 		std::cerr << std::endl;
 #endif // DEBUG_IDS
+
+        assert(!(pub_data.pubkey.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
 
 		pub_data.updateServiceString(serviceString);
 		mPublicKeyCache.store(id, pub_data);
