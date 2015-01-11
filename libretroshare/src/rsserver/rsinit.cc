@@ -1449,7 +1449,7 @@ int RsServer::StartupRetroShare()
 	mStatusSrv = new p3StatusService(serviceCtrl);
 
 #ifdef ENABLE_GROUTER
-	p3GRouter *gr = new p3GRouter(serviceCtrl,mLinkMgr) ;
+    p3GRouter *gr = new p3GRouter(serviceCtrl,mGxsIdService) ;
 	rsGRouter = gr ;
 	pqih->addService(gr,true) ;
 #endif
@@ -1466,6 +1466,7 @@ int RsServer::StartupRetroShare()
 
 	ftserver->connectToTurtleRouter(tr) ;
 	chatSrv->connectToTurtleRouter(tr) ;
+    gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
 #endif

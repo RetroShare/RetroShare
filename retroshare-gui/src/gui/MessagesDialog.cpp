@@ -1521,19 +1521,6 @@ void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead
     updateInterface();
 }
 
-void MessagesDialog::decryptSelectedMsg()
-{
-    if (!MessageWidget::decryptMsg(mCurrMsgId)) {
-        return;
-    }
-
-    // Force refill
-    mCurrMsgId.clear();
-    msgWidget->fill("");
-
-    insertMsgTxtAndFiles(ui.messageTreeWidget->currentItem());
-}
-
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 {
     QTreeWidgetItem *item = ui.messageTreeWidget->currentItem();

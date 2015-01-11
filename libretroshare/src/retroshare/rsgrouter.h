@@ -27,8 +27,9 @@
 
 #include "util/rsdir.h"
 #include "retroshare/rsids.h"
+#include "retroshare/rsgxsifacetypes.h"
 
-typedef GRouterKeyIdType GRouterKeyId ;	// we use SSLIds, so that it's easier in the GUI to mix up peer ids with grouter ids.
+typedef RsGxsId  GRouterKeyId ;	// we use SSLIds, so that it's easier in the GUI to mix up peer ids with grouter ids.
 typedef uint32_t GRouterServiceId ;
 typedef uint64_t GRouterMsgPropagationId ;
 
@@ -52,8 +53,9 @@ class RsGRouter
 
 		struct GRouterPublishedKeyInfo
 		{
-			std::string  description_string ;
-			uint32_t     service_id ;
+            std::string  	description_string ;
+            RsGxsId 	authentication_key ;
+            uint32_t     	service_id ;
 		};
 
 		struct GRouterRoutingMatrixInfo
@@ -85,8 +87,14 @@ class RsGRouter
 		//         Communication to other services.          //
 		//===================================================//
 
-		virtual void sendData(const GRouterKeyId& destination, const GRouterServiceId& client_id, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) =0;
-		virtual bool registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description_string) =0;
+        virtual bool sendData(	const RsGxsId& destination,
+            const GRouterServiceId& client_id,
+                    uint8_t *data,
+                    uint32_t data_size,
+                    const RsGxsId& signing_id,
+                    GRouterMsgPropagationId& id) =0;
+
+        virtual bool   registerKey(const RsGxsId& authentication_id, const GRouterServiceId& client_id,const std::string& description_string)=0 ;
 
         //===================================================//
         //         Routage feedback from other services      //

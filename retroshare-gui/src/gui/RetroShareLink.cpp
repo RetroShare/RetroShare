@@ -1279,7 +1279,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << " RetroShareLink::process MessageRequest : id : " << link.hash().toStdString() << ", subject : " << link.name().toStdString() << std::endl;
 #endif
 					RsPeerDetails detail;
-					DistantMsgPeerId dm_pid ;
 
 					// This is awful, but apparently the hash can be multiple different types. Let's check!
 

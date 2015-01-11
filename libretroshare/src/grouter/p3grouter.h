@@ -31,227 +31,285 @@
 
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rstypes.h"
 
+#include "turtle/turtleclientservice.h"
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
 
 #include "groutertypes.h"
 #include "groutermatrix.h"
 #include "grouteritems.h"
-//#include "groutercache.h"
 
 // To be put in pqi/p3cfgmgr.h
 //
 static const uint32_t CONFIG_TYPE_GROUTER = 0x0016 ;
 
+static const uint32_t RS_GROUTER_DATA_FLAGS_ENCRYPTED = 0x0001 ;
+
 class p3LinkMgr ;
-class RsGRouterPublishKeyItem ;
-class RsGRouterACKItem ;
+class p3turtle ;
+class p3IdService ;
+class RsGRouterItem ;
+class RsGRouterGenericDataItem ;
+class RsGRouterReceiptItem ;
 
-class p3GRouter: public RsGRouter, public p3Service, public p3Config
+class GRouterTunnelInfo
 {
-	public:
-		p3GRouter(p3ServiceControl *sc,p3LinkMgr *lm) ;
+    public:
+        GRouterTunnelInfo() :first_tunnel_ok_TS(0), last_tunnel_ok_TS(0) {}
 
-		//===================================================//
-		//         Router clients business                   //
-		//===================================================//
+        void addVirtualPeer(const TurtleVirtualPeerId& vpid)
+        {
+            assert(virtual_peers.find(vpid) == virtual_peers.end()) ;
+            time_t now = time(NULL) ;
 
-        // This method allows to associate client ids (that are saved to disk) to client objects deriving
-		// from GRouterClientService. The various services are responsible for regstering themselves to the
-		// global router, with consistent ids. The services are stored in a map, and arriving objects are
-		// passed on the correct service depending on the client id of the key they are reaching.
-		//
-        virtual bool registerClientService(const GRouterServiceId& id,GRouterClientService *service) ;
+            virtual_peers.insert(vpid) ;
 
-		// Use this method to register/unregister a key that the global router will
-		// forward in the network, so that is can be a possible destination for
-		// global messages.
-		//
-		// 	key		: 		The key that is published
-		// 	fingerp  :     Fingerprint of the key to encrypt the data.
-		// 	desc_str :     Any fixed length string (< 20 characters) to descript the address in words.
-		// 	client_id:		id of the client service to send the traffic to.
-		// 	               To obtain a client id, the service must register using the previous method.
-		//
-		// Unregistering a key might not have an instantaneous effect, so the client is responsible for 
-		// discarding traffic that might later come for this key.
-		//
-        virtual bool   registerKey(const GRouterKeyId& key, const GRouterServiceId& client_id,const std::string& description_string) ;
-        virtual bool unregisterKey(const GRouterKeyId& key) ;
+            if(first_tunnel_ok_TS == 0) first_tunnel_ok_TS = now ;
+            if(last_tunnel_ok_TS < now)  last_tunnel_ok_TS = now ;
+        }
 
-        //===================================================//
-        //         Routing clue collection methods           //
-        //===================================================//
+        std::set<TurtleVirtualPeerId> virtual_peers ;
 
-        virtual void addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id) ;
+        time_t first_tunnel_ok_TS ;	// timestamp when 1st tunnel was received.
+        time_t last_tunnel_ok_TS ;	// timestamp when last tunnel was received.
+};
+class p3GRouter: public RsGRouter, public RsTurtleClientService, public p3Service, public p3Config
+{
+public:
+    p3GRouter(p3ServiceControl *sc,p3IdService *is) ;
 
-        //===================================================//
-		//         Client/server request services            //
-		//===================================================//
+    //===================================================//
+    //         Router clients business                   //
+    //===================================================//
 
-		// Sends an item to the given destination.  The router takes ownership of
-		// the memory. That means item_data will be erase on return. The returned id should be
-		// remembered by the client, so that he knows when the data has been received.
-		// The client id is supplied so that the client can be notified when the data has been received.
-		//
-        virtual void sendData(const GRouterKeyId& destination,const GRouterServiceId& client_id, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) ;
+    // This method allows to associate client ids (that are saved to disk) to client objects deriving
+    // from GRouterClientService. The various services are responsible for regstering themselves to the
+    // global router, with consistent ids. The services are stored in a map, and arriving objects are
+    // passed on the correct service depending on the client id of the key they are reaching.
+    //
+    virtual bool registerClientService(const GRouterServiceId& id,GRouterClientService *service) ;
 
-		// Sends an ACK to the origin of the msg. This is used to notify for 
-		// unfound route, or message correctly received, depending on the particular situation.
-		//
-        virtual void sendACK(const RsPeerId& peer,GRouterMsgPropagationId mid, uint32_t flags) ;
+    // Use this method to register/unregister a key that the global router will
+    // forward in the network, so that is can be a possible destination for
+    // global messages.
+    //
+    // 	auth_id     : The GXS key that will be used to sign the data Receipts.
+    // 	contact_key : The key that is used to open tunnels
+    // 	desc_str    : Any fixed length string (< 20 characters) to descript the address in words.
+    // 	client_id   : Id of the client service to send the traffic to.
+    // 	               The client ID should match the ID that has been registered using the previous method.
+    //
+    // Unregistering a key might not have an instantaneous effect, so the client is responsible for
+    // discarding traffic that might later come for this key.
+    //
+    virtual bool   registerKey(const RsGxsId& authentication_id, const GRouterServiceId& client_id,const std::string& description_string) ;
+    virtual bool unregisterKey(const RsGxsId &key_id, const GRouterServiceId &sid) ;
 
-		//===================================================//
-		//                  Interface with RsGRouter         //
-		//===================================================//
+    //===================================================//
+    //         Routing clue collection methods           //
+    //===================================================//
 
-		// debug info from routing matrix
-		// 	- list of known key ids
-		// 	- list of clues/time_stamp for each key.
-		// 	- real time routing probabilities
-		//
-		virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) ;
+    virtual void addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id) ;
 
-		// debug info from routing cache
-		// 	- Cache Items
-		// 		* which message ids
-		// 		* directions
-		// 		* timestamp
-		// 		* message type
-		// 	- Cache state (memory size, etc)
-		//
-		virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& info) ;
+    //===================================================//
+    //         Client/server request services            //
+    //===================================================//
 
-		//===================================================//
-		//         Derived from p3Service                    //
-		//===================================================//
+    // Sends an item to the given destination.  The router takes ownership of
+    // the memory. That means item_data will be erase on return. The returned id should be
+    // remembered by the client, so that he knows when the data has been received.
+    // The client id is supplied so that the client can be notified when the data has been received.
+    //
+    virtual bool sendData(	const RsGxsId& destination,
+                const GRouterServiceId& client_id,
+                            uint8_t *data,
+                            uint32_t data_size,
+                            const RsGxsId& signing_id,
+                            GRouterMsgPropagationId& id) ;
 
-		virtual RsServiceInfo getServiceInfo() 
-		{ 
-			return RsServiceInfo(RS_SERVICE_TYPE_GROUTER, 
-										SERVICE_INFO_APP_NAME,
-										SERVICE_INFO_APP_MAJOR_VERSION,
-										SERVICE_INFO_APP_MINOR_VERSION,
-										SERVICE_INFO_MIN_MAJOR_VERSION,
-										SERVICE_INFO_MIN_MINOR_VERSION) ; 
-		}
+    //===================================================//
+    //                  Interface with RsGRouter         //
+    //===================================================//
 
-        virtual void setDebugEnabled(bool b) { _debug_enabled = b ; }
-	protected:
-		//===================================================//
-		//         Routing method handling                   //
-		//===================================================//
+    // debug info from routing matrix
+    // 	- list of known key ids
+    // 	- list of clues/time_stamp for each key.
+    // 	- real time routing probabilities
+    //
+    virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) ;
 
-		// Calls 
-		// 	- autoWash()
-		// 	- packet handling methods 
-		// 	- matrix updates
-		//
-		virtual int tick() ; 
+    // debug info from routing cache
+    // 	- Cache Items
+    // 		* which message ids
+    // 		* directions
+    // 		* timestamp
+    // 		* message type
+    // 	- Cache state (memory size, etc)
+    //
+    virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& info) ;
 
-		static const std::string SERVICE_INFO_APP_NAME ;
-		static const uint16_t SERVICE_INFO_APP_MAJOR_VERSION	= 	1;
-		static const uint16_t SERVICE_INFO_APP_MINOR_VERSION  = 	0;
-		static const uint16_t SERVICE_INFO_MIN_MAJOR_VERSION  = 	1;
-		static const uint16_t SERVICE_INFO_MIN_MINOR_VERSION	=	0;
+    //===================================================//
+    //         Derived from p3Service                    //
+    //===================================================//
 
-	private:
-		class nullstream: public std::ostream {};
+    virtual RsServiceInfo getServiceInfo()
+    {
+        return RsServiceInfo(RS_SERVICE_TYPE_GROUTER,
+                             SERVICE_INFO_APP_NAME,
+                             SERVICE_INFO_APP_MAJOR_VERSION,
+                             SERVICE_INFO_APP_MINOR_VERSION,
+                             SERVICE_INFO_MIN_MAJOR_VERSION,
+                             SERVICE_INFO_MIN_MINOR_VERSION) ;
+    }
 
-		std::ostream& grouter_debug() const 
-		{
-			static nullstream null ;
+    virtual void setDebugEnabled(bool b) { _debug_enabled = b ; }
 
-			return _debug_enabled?(std::cerr):null;
-		}
+    virtual void connectToTurtleRouter(p3turtle *pt) ;
 
-		void autoWash() ;
-		void routePendingObjects() ;
-		void handleIncoming() ;
-		void debugDump() ;
+protected:
+    //===================================================//
+    //         Routing method handling                   //
+    //===================================================//
 
-		// utility functions
-		//
-		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,uint32_t dist) ;
-		std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
-		static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
-		static time_t computeNextTimeDelay(time_t duration) ;
+    // Calls
+    // 	- autoWash()
+    // 	- packet handling methods
+    // 	- matrix updates
+    //
+    virtual int tick() ;
 
-		void locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) const ;
+    static const std::string SERVICE_INFO_APP_NAME ;
+    static const uint16_t SERVICE_INFO_APP_MAJOR_VERSION  =	1;
+    static const uint16_t SERVICE_INFO_APP_MINOR_VERSION  =	0;
+    static const uint16_t SERVICE_INFO_MIN_MAJOR_VERSION  =	1;
+    static const uint16_t SERVICE_INFO_MIN_MINOR_VERSION  =	0;
 
-		uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
+    //===================================================//
+    //         Interaction with turtle router            //
+    //===================================================//
 
-		//===================================================//
-		//                  p3Config methods                 //
-		//===================================================//
+    virtual bool handleTunnelRequest(const RsFileHash& /*hash*/,const RsPeerId& /*peer_id*/) ;
+    virtual void receiveTurtleData(RsTurtleGenericTunnelItem */*item*/,const RsFileHash& /*hash*/,const RsPeerId& /*virtual_peer_id*/,RsTurtleGenericTunnelItem::Direction /*direction*/);
+    virtual void addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir) ;
+    virtual void removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) ;
 
-		// Load/save the routing info, the pending items in transit, and the config variables.
-		//
-		virtual bool loadList(std::list<RsItem*>& items) ;
-		virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) ;
+private:
+    class nullstream: public std::ostream {};
 
-		virtual RsSerialiser *setupSerialiser() ;
+    std::ostream& grouter_debug() const
+    {
+        static nullstream null ;
 
-		//===================================================//
-		//                  Debug methods                    //
-		//===================================================//
+        return _debug_enabled?(std::cerr):null;
+    }
 
-		// Prints the internal state of the router, for debug purpose.
-		//
-		void debug_dump() ;
+    void autoWash() ;
+    void routePendingObjects() ;
+    void handleIncoming() ;
+    void handleTunnels() ;
 
-		// Stores the routing info
-		// 	- list of known key ids
-		// 	- list of clues/time_stamp for each key.
-		// 	- real time routing probabilities
-		//
-		GRouterMatrix _routing_matrix ;
+    void debugDump() ;
 
-		// Stores the routing events.
-		// 	- ongoing requests, waiting for return ACK
-		// 	- pending items
-		// Both a stored in 2 different lists, to allow a more efficient handling.
-		//
-		std::map<GRouterMsgPropagationId, GRouterRoutingInfo> _pending_messages;// pending messages
+    // utility functions
+    //
+    static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
+    static time_t computeNextTimeDelay(time_t duration) ;
 
-		// Stores the keys which identify the router's node. For each key, a structure holds:
-		// 	- the client service
-		// 	- flags
-		// 	- usage time stamps
-		//
-		std::map<GRouterKeyId, GRouterPublishedKeyInfo> _owned_key_ids ;
+    void locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) const ;
 
-		// Registered services. These are known to the different peers with a common id,
-		// so it's important to keep consistency here. This map is volatile, and re-created at each startup of
-		// the software, when newly created services register themselves.
+    uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
-		std::map<GRouterServiceId,GRouterClientService *> _registered_services ;
+    // signs an item with the given key.
+    bool signDataItem(RsGRouterGenericDataItem *item,const RsGxsId& id) ;
+    bool verifySignedDataItem(RsGRouterGenericDataItem *item) ;
+    bool encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key) ;
+    bool decryptDataItem(RsGRouterGenericDataItem *item) ;
+    Sha1CheckSum makeTunnelHash(const RsGxsId& destination,const GRouterServiceId& client);
+    void sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGenericDataItem *item);
 
-		// Data handling ethods
-		//
-		void handleRecvDataItem(RsGRouterGenericDataItem *item);
-		void handleRecvACKItem(RsGRouterACKItem *item);
+    //===================================================//
+    //                  p3Config methods                 //
+    //===================================================//
 
-		// Pointers to other RS objects
-		//
-		p3ServiceControl *mServiceControl ;
-		p3LinkMgr        *mLinkMgr ;
+    // Load/save the routing info, the pending items in transit, and the config variables.
+    //
+    virtual bool loadList(std::list<RsItem*>& items) ;
+    virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) ;
 
-		// Multi-thread protection mutex.
-		//
-		RsMutex grMtx ;
+    virtual RsSerialiser *setupSerialiser() ;
 
-		// config update/save variables
-		bool _changed ;
-		bool _debug_enabled ;
+    //===================================================//
+    //                  Debug methods                    //
+    //===================================================//
 
-		time_t _last_autowash_time ;
-		time_t _last_matrix_update_time ;
-		time_t _last_debug_output_time ;
-		time_t _last_config_changed ;
+    // Prints the internal state of the router, for debug purpose.
+    //
+    void debug_dump() ;
 
-		uint64_t _random_salt ;
+    //===================================================//
+    //              Internal queues/variables            //
+    //===================================================//
+
+    // Stores the routing info
+    // 	- list of known key ids
+    // 	- list of clues/time_stamp for each key.
+    // 	- real time routing probabilities
+    //
+    GRouterMatrix _routing_matrix ;
+
+
+    // Stores the keys which identify the router's node. For each key, a structure holds:
+    // 	- the client service
+    // 	- flags
+    // 	- usage time stamps
+    //
+    std::map<Sha1CheckSum, GRouterPublishedKeyInfo> _owned_key_ids ;
+
+    // Registered services. These are known to the different peers with a common id,
+    // so it's important to keep consistency here. This map is volatile, and re-created at each startup of
+    // the software, when newly created services register themselves.
+
+    std::map<GRouterServiceId,GRouterClientService *> _registered_services ;
+
+    // Stores the routing events.
+    // 	- ongoing requests, waiting for return ACK
+    // 	- pending items
+    // Both a stored in 2 different lists, to allow a more efficient handling.
+    //
+    std::map<GRouterMsgPropagationId, GRouterRoutingInfo> _pending_messages;// pending messages
+
+    std::map<TurtleFileHash,GRouterTunnelInfo> _virtual_peers ;
+
+    // Queue of incoming items. Might be receipts or data. Should always be empty (not a storage place)
+    std::list<RsGRouterItem*> _incoming_items ;
+
+    // Data handling methods
+    //
+    void handleRecvDataItem(RsGRouterGenericDataItem *item);
+    void handleRecvReceiptItem(RsGRouterReceiptItem *item);
+
+    // Pointers to other RS objects
+    //
+    p3ServiceControl *mServiceControl ;
+    p3turtle *mTurtle ;
+    p3IdService *mIdService ;
+
+    // Multi-thread protection mutex.
+    //
+    RsMutex grMtx ;
+
+    // config update/save variables
+    bool _changed ;
+    bool _debug_enabled ;
+
+    time_t _last_autowash_time ;
+    time_t _last_matrix_update_time ;
+    time_t _last_debug_output_time ;
+    time_t _last_config_changed ;
+
+    uint64_t _random_salt ;
 };
 
 template<typename T> p3GRouter::nullstream& operator<<(p3GRouter::nullstream& ns,const T&) { return ns ; }

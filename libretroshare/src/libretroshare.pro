@@ -433,7 +433,8 @@ HEADERS +=	services/p3msgservice.h \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
-			turtle/turtletypes.h
+			turtle/turtletypes.h \
+			turtle/turtleclientservice.h
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \

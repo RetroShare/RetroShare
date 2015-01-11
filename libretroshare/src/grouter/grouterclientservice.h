@@ -49,7 +49,7 @@ class GRouterClientService
 		//
 		// GRouter stays owner of the item, so the client should not delete it!
 		//
-		virtual void receiveGRouterData(const GRouterKeyId& destination_key, const RsGRouterGenericDataItem * /*item*/)
+            virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size)
 		{ 
 			std::cerr << "!!!!!! Received Data from global router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
 			std::cerr << "   destination key_id = " << destination_key.toStdString() << std::endl;

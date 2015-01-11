@@ -119,7 +119,6 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
     QString rsid;
 
     std::string peerName = rsPeers->getPeerName(id);
-    DistantMsgPeerId pid ;
 
     if(!peerName.empty())
     {

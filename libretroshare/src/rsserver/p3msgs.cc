@@ -293,10 +293,6 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 	return mMsgSrv->MessageSend(info);
 }
 
-bool p3Msgs::decryptMessage(const std::string& mId)
-{
-	return mMsgSrv->decryptMessage(mId);
-}
 void p3Msgs::enableDistantMessaging(bool b)
 {
 	mMsgSrv->enableDistantMessaging(b);

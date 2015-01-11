@@ -29,11 +29,12 @@
 #include <time.h>
 #include <list>
 #include "pgp/rscertificate.h"
+#include "turtle/p3turtle.h"
 #include "retroshare/rsgrouter.h"
 
 class RsGRouterGenericDataItem ;
 
-static const uint32_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
+static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
 static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 10;	// max number of clues to store
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS = 60;	// can be set to up to half the publish time interval. Prevents flooding routes.
@@ -51,21 +52,18 @@ static const time_t RS_GROUTER_MEAN_EXPECTED_RTT           =       30 ; // refer
 
 static const uint32_t GROUTER_ITEM_DISTANCE_UNIT           =      256 ; // One unit of distance between two peers
 static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =    6*256 ; // 6 distance units. That is a lot.
-static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     = 30*86400 ; // ACKN Items are kept in cache for 1 month, to allow sending acknowledgements to peers while not online.
+static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     =    86400 ; // Cached items are kept for 24 hours at most.
 static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME_DEAD=     3600 ; // DEAD Items are kept in cache for only 1 hour to favor re-exploring dead routes.
 
-static const uint32_t RS_GROUTER_ROUTING_STATE_UNKN = 0x0000 ;		// unknown. Unused.
-static const uint32_t RS_GROUTER_ROUTING_STATE_PEND = 0x0001 ;		// item is pending. Should be sent asap. 
-static const uint32_t RS_GROUTER_ROUTING_STATE_SENT = 0x0002 ;		// item is sent. Waiting for answer
-static const uint32_t RS_GROUTER_ROUTING_STATE_ARVD = 0x0003 ;		// item is at destination. The cache only holds it to avoid duplication.
-static const uint32_t RS_GROUTER_ROUTING_STATE_DEAD = 0x0004 ;		// item is at a dead end.
+static const uint32_t RS_GROUTER_DATA_STATUS_UNKNOWN = 0x0000 ;		// unknown. Unused.
+static const uint32_t RS_GROUTER_DATA_STATUS_PENDING = 0x0001 ;		// item is pending. Should be sent asap.
+static const uint32_t RS_GROUTER_DATA_STATUS_SENT    = 0x0002 ;		// item is sent. Waiting for answer
+static const uint32_t RS_GROUTER_DATA_STATUS_ACKOWLG = 0x0003 ;		// item is at destination. The cache only holds it to avoid duplication.
 
-static const uint32_t RS_GROUTER_ACK_STATE_UNKN                = 0x0000 ;		// unknown destination key
-static const uint32_t RS_GROUTER_ACK_STATE_RCVD                = 0x0001 ;		// data was received, directly
-static const uint32_t RS_GROUTER_ACK_STATE_IRCV                = 0x0002 ;		// data was received indirectly
-static const uint32_t RS_GROUTER_ACK_STATE_GVNP                = 0x0003 ;		// data was given up. No route.
-static const uint32_t RS_GROUTER_ACK_STATE_NORO                = 0x0004 ;		// data was given up. No route.
-static const uint32_t RS_GROUTER_ACK_STATE_TOOF                = 0x0005 ;		// dropped because of distance (too far)
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_UNMANAGED       = 0x0000 ;// unknown destination key
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_PENDING         = 0x0001 ;// unknown destination key
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_READY           = 0x0002 ;// unknown destination key
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_CAN_SEND        = 0x0003 ;// unknown destination key
 
 class FriendTrialRecord
 {
@@ -82,15 +80,17 @@ class FriendTrialRecord
 class GRouterRoutingInfo
 {
 	public:
-		uint32_t status_flags ;									// pending, waiting, etc.
-		RsPeerId  origin ;										// which friend sent us that item
-		time_t received_time ;									// time at which the item was originally received
-		time_t last_sent ;										// last time the item was sent to friends
+        uint32_t data_status ;			// pending, waiting, etc.
+        uint32_t tunnel_status ;		// status of tunnel handling.
+        time_t received_time_TS ;		// time at which the item was originally received
+        time_t last_sent_TS ;			// last time the item was sent to friends
+    time_t last_tunnel_request_TS ;		// last time tunnels have been asked for this item.
+    uint32_t sending_attempts ;		// number of times tunnels have been asked for this peer without success
 
-		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
-		GRouterKeyId destination_key ;						// ultimate destination for this key
-		GRouterServiceId client_id ;							// service ID of the client. Only valid when origin==OwnId
+        RsGxsId destination_key ;		// ultimate destination for this key
+        GRouterServiceId client_id ;		// service ID of the client. Only valid when origin==OwnId
+        TurtleFileHash tunnel_hash ;		// tunnel hash to be used for this item
 
-		RsGRouterGenericDataItem *data_item ;
+    RsGRouterGenericDataItem *data_item ;
 };
 

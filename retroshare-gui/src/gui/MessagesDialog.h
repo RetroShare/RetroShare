@@ -69,7 +69,6 @@ private slots:
   /** Create the context popup menu and it's submenus */
   void messageTreeWidgetCustomPopupMenu(QPoint point);
   void folderlistWidgetCustomPopupMenu(QPoint);
-  void decryptSelectedMsg() ;
 
   void changeBox(int newrow);
   void changeQuickView(int newrow);
