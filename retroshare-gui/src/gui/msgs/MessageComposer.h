@@ -95,6 +95,7 @@ private slots:
     void buildCompleter();
     void updatecontactsviewicons();
 
+	void filterComboBoxChanged(int);
 
     void fileNew();
     void fileOpen();
@@ -136,7 +137,6 @@ private slots:
     void titleChanged();
 
     // Add to To/Cc/Bcc address fields
-    void toggleShowNonFriend(bool bValue);
     void addTo();
     void addCc();
     void addBcc();

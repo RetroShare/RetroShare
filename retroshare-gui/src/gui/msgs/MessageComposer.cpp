@@ -195,10 +195,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.msgText, SIGNAL(copyAvailable(bool)), actionCopy, SLOT(setEnabled(bool)));
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
-
-    connect(ui.onlyTrustedKeys, SIGNAL(clicked(bool)), this, SLOT(toggleShowNonFriend(bool)));
-    ui.onlyTrustedKeys->setMinimumWidth(20);
-    ui.onlyTrustedKeys->setChecked(Settings->valueFromGroup("MessageComposer", "ShowOnlyTrustedKeys",false).toBool());
+    
+    connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged(int)));
 
     connect(ui.addToButton, SIGNAL(clicked(void)), this, SLOT(addTo()));
     connect(ui.addCcButton, SIGNAL(clicked(void)), this, SLOT(addCc()));
@@ -218,7 +216,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
     ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
                                           | FriendSelectionWidget::SHOW_SSL
-                                          | (ui.onlyTrustedKeys->isChecked() ? FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_GXS));
+                                          | FriendSelectionWidget::SHOW_GXS);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -240,15 +238,12 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     setupFormatActions();
 
     ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
-
-    /*ui.comboStyle->addItem("Standard");
-    ui.comboStyle->addItem("Bullet List (Disc)");
-    ui.comboStyle->addItem("Bullet List (Circle)");
-    ui.comboStyle->addItem("Bullet List (Square)");
-    ui.comboStyle->addItem("Ordered List (Decimal)");
-    ui.comboStyle->addItem("Ordered List (Alpha lower)");
-    ui.comboStyle->addItem("Ordered List (Alpha upper)");*/
-    //connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(textStyle(int)));
+    
+    /* Add filter types */
+    ui.filterComboBox->addItem(tr("All"));
+    ui.filterComboBox->addItem(tr("Friends"));
+    ui.filterComboBox->addItem(tr("Friends of Friends"));
+    ui.filterComboBox->setCurrentIndex(0);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
@@ -257,7 +252,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     QFontDatabase db;
     foreach(int size, db.standardSizes())
-        ui.comboSize->addItem(QString::number(size));
+    ui.comboSize->addItem(QString::number(size));
 
     connect(ui.comboSize, SIGNAL(activated(const QString &)),this, SLOT(textSize(const QString &)));
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
@@ -350,6 +345,11 @@ void MessageComposer::processSettings(bool bLoad)
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
         ui.splitter_2->restoreState(Settings->value("Splitter2").toByteArray());
+        
+        // state of filter combobox
+        int index = Settings->value("ShowType", 0).toInt();
+        ui.filterComboBox->setCurrentIndex(index);
+        
     } else {
         // save settings
 
@@ -359,6 +359,10 @@ void MessageComposer::processSettings(bool bLoad)
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
         Settings->setValue("Splitter2", ui.splitter_2->saveState());
+        
+        // state of filter combobox
+        Settings->setValue("ShowType", ui.filterComboBox->currentIndex());
+ 
     }
 
     Settings->endGroup();
@@ -2357,13 +2361,24 @@ void MessageComposer::addContact(enumType type)
 		addRecipient(type, *idIt);
 }
 
-void MessageComposer::toggleShowNonFriend(bool bValue)
+void MessageComposer::filterComboBoxChanged(int i)
 {
-    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
+	switch(i)
+	{
+		case 0:  ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
                                           | FriendSelectionWidget::SHOW_SSL
-                                          | (bValue?FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_GXS));
+                                          | FriendSelectionWidget::SHOW_GXS) ;
+				  break ;
+				  
+		case 1: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
+                                          | FriendSelectionWidget::SHOW_SSL) ;
+				  break ;
 
-    Settings->setValueToGroup("MessageComposer", "ShowOnlyTrustedKeys", bValue);
+		case 2: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS) ;
+				  break ;
+		default: ;
+	}
+
 }
 
 void MessageComposer::addTo()

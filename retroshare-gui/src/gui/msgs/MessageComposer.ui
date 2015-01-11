@@ -63,7 +63,7 @@
          <property name="margin">
           <number>1</number>
          </property>
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="FriendSelectionWidget" name="friendSelectionWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -100,15 +100,8 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QCheckBox" name="onlyTrustedKeys">
-             <property name="text">
-              <string>Only show people you trusted</string>
-             </property>
-            </widget>
-           </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
@@ -172,6 +165,23 @@
               </widget>
              </item>
             </layout>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Show:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="filterComboBox"/>
            </item>
           </layout>
          </item>
