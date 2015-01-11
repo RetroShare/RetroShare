@@ -122,14 +122,14 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 		//mConfigMgr->addConfiguration("gxsid.cfg", mGxsIdNs);
 		//mConfigMgr->addConfiguration("gxscircles.cfg", mGxsCircleNs);
 
-		createThread(*mGxsIdService);
-		createThread(*mGxsIdNs);
-		createThread(*mGxsCircles);
-		createThread(*mGxsCirclesNs);
+        mGxsIdService->start();
+        mGxsIdNs->start();
+        mGxsCircles->start();
+        mGxsCirclesNs->start();
 	}
 
-	createThread(*mTestService);
-	createThread(*mTestNs);
+    mTestService->start();
+    mTestNs->start();
 
 	//node->AddPqiServiceMonitor(status);
 }

@@ -31,7 +31,7 @@ static FileIndex *createBasicFileIndex(time_t age);
 TEST(libretroshare_dbase, SaveTest)
 {
 	RsPeerId peerId;
-	peerId.random();
+    peerId = RsPeerId::random();
 	FileIndex *fi1 = createBasicFileIndex(100);
 	FileIndex *fi2 = new FileIndex(peerId);
 
@@ -59,7 +59,7 @@ TEST(libretroshare_dbase, SaveTest)
 FileIndex *createBasicFileIndex(time_t age)
 {
 	RsPeerId peerId;
-	peerId.random();
+    peerId = RsPeerId::random();
 	FileIndex *fi = new FileIndex(peerId);
 
 	FileEntry fe;

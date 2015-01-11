@@ -30,7 +30,7 @@
 TEST(libretroshare_dbase, SearchTest)
 {
 	RsPeerId peerId;
-	peerId.random();
+    peerId = RsPeerId::random();
 
 	std::cout << std::string::npos << std::endl;
 	std::string testfile = "searchtest.index";

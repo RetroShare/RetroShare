@@ -262,6 +262,7 @@ SOURCES +=  libretroshare/serialiser/rsturtleitem_test.cc \
 		libretroshare/serialiser/tlvbase_test.cc \
 		libretroshare/serialiser/tlvstack_test.cc \
 		libretroshare/serialiser/tlvitems_test.cc \
+		libretroshare/serialiser/rsgrouteritem_test.cc \
 		libretroshare/serialiser/tlvtypes_test.cc \
 		libretroshare/serialiser/tlvkey_test.cc \
 		libretroshare/serialiser/support.cc \

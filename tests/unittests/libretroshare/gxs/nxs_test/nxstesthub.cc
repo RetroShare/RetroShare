@@ -121,10 +121,10 @@ void rs_nxs_test::NxsTestHub::StartTest()
 	PeerNxsMap::iterator mit = mPeerNxsMap.begin();
 	for(; mit != mPeerNxsMap.end(); mit++)
 	{
-		createThread(*(mit->second));
+        (mit->second)->start() ;
 	}
 
-	createThread(*this);
+    start() ;
 }
 
 

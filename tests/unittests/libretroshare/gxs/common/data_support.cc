@@ -107,7 +107,7 @@ void init_item(RsGxsGrpMetaData* metaGrp)
 
     metaGrp->mSubscribeFlags = rand()%2251;
     metaGrp->mPop = rand()%5262;
-    metaGrp->mMsgCount = rand()%2421;
+    metaGrp->mVisibleMsgCount = rand()%2421;
     metaGrp->mLastPost = rand()%2211;
     metaGrp->mReputationCutOff = rand()%5262;
 

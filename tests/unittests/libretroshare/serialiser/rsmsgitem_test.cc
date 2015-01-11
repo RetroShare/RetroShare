@@ -99,7 +99,7 @@ RsSerialType* init_item(RsChatLobbyInviteItem& cmi)
 
 RsSerialType* init_item(RsPrivateChatMsgConfigItem& pcmi)
 {
-	pcmi.configPeerId.random();
+    pcmi.configPeerId = RsPeerId::random();
 	pcmi.chatFlags = rand()%34;
 	pcmi.configFlags = rand()%21;
 	pcmi.sendTime = rand()%422224;
@@ -174,7 +174,7 @@ RsSerialType* init_item(RsMsgTags& mt)
 RsSerialType* init_item(RsMsgSrcId& ms)
 {
 	ms.msgId = rand()%434;
-	ms.srcId.random();
+    ms.srcId = RsPeerId::random();
 
 	return new RsMsgSerialiser();
 }
