@@ -139,7 +139,7 @@ namespace RsAccounts
 	// PGP Accounts.
 	int     GetPGPLogins(std::list<RsPgpId> &pgpIds);
 	int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
-	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
+	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
 	// PGP Support Functions.
 	bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;

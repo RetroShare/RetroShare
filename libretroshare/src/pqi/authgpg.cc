@@ -329,11 +329,11 @@ bool   AuthGPG::active()
         return gpgKeySelected;
 }
 
-bool    AuthGPG::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, std::string& errString) 
+bool    AuthGPG::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString)
 {
 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
-	
-	return PGPHandler::GeneratePGPCertificate(name, email, passwd, pgpId, errString) ;
+
+	return PGPHandler::GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString) ;
 }
 
 /**** These Two are common */

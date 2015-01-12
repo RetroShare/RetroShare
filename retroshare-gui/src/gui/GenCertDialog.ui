@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>784</width>
+    <width>805</width>
     <height>509</height>
    </rect>
   </property>
@@ -18,7 +18,16 @@
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -247,6 +256,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QLabel" name="keylength_label">
+               <property name="text">
+                <string>RSA key length</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -353,9 +369,29 @@ anonymous, you can use a fake email.</string>
                </item>
               </layout>
              </item>
+             <item>
+              <widget class="QComboBox" name="keylength_comboBox"/>
+             </item>
             </layout>
            </item>
           </layout>
+         </item>
+         <item row="5" column="0">
+          <widget class="QProgressBar" name="entropy_bar">
+           <property name="value">
+            <number>24</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="entropy_label">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_hiddenaddr2">
@@ -376,23 +412,6 @@ anonymous, you can use a fake email.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="entropy_label">
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QProgressBar" name="entropy_bar">
-           <property name="value">
-            <number>24</number>
            </property>
           </widget>
          </item>

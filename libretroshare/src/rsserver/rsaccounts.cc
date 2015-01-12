@@ -840,9 +840,9 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 }
 
 
-bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
+bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
 {
-    return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
+	return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 		// PGP Support Functions.
@@ -1222,9 +1222,9 @@ int     RsAccounts::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std
 	return rsAccounts->GetPGPLoginDetails(id, name, email);
 }
 
-bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
+bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
 {
-	return rsAccounts->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
+	return rsAccounts->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 // PGP Support Functions.

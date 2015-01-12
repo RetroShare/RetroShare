@@ -147,6 +147,11 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
 	ui.entropy_bar->setValue(0) ;
 
+	// make sure that QVariant always takes an 'int' otherwise the program will crash!
+	ui.keylength_comboBox->addItem("2048 bits", QVariant(2048));
+	ui.keylength_comboBox->addItem("3072 bits", QVariant(3072));
+	ui.keylength_comboBox->addItem("4096 bits", QVariant(4096));
+
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
 	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
@@ -259,6 +264,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.genButton->setVisible(true);
 		ui.genprofileinfo_label->hide();
 		ui.header_label->show();
+		ui.keylength_label->show();
+		ui.keylength_comboBox->show();
 	} else {
 		genNewGPGKey = false;
 		ui.name_label->hide();
@@ -280,9 +287,10 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.headerFrame->setHeaderText(tr("Create a new node"));
 		ui.genprofileinfo_label->show();
 		ui.header_label->hide();
+		ui.keylength_label->hide();
+		ui.keylength_comboBox->hide();
 	}
 }
-
 
 void GenCertDialog::hiddenUiSetup() 
 {
@@ -432,6 +440,8 @@ void GenCertDialog::genPerson()
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
 		ui.hidden_checkbox->hide();
+		ui.keylength_label->hide();
+		ui.keylength_comboBox->hide();
 
 		setCursor(Qt::WaitCursor) ;
 
@@ -439,7 +449,13 @@ void GenCertDialog::genPerson()
 		while(QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents)) ;
 
 		std::string email_str = "" ;
-		RsAccounts::GeneratePGPCertificate(ui.name_input->text().toUtf8().constData(), email_str.c_str(), ui.password_input->text().toUtf8().constData(), PGPId, err_string);
+		RsAccounts::GeneratePGPCertificate(
+					ui.name_input->text().toUtf8().constData(),
+					email_str.c_str(),
+					ui.password_input->text().toUtf8().constData(),
+					PGPId,
+					ui.keylength_comboBox->itemData(ui.keylength_comboBox->currentIndex()).toInt(),
+					err_string);
 
 		setCursor(Qt::ArrowCursor) ;
 	}

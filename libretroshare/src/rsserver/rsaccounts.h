@@ -89,7 +89,7 @@ class RsAccountsDetail
 
 		int  	GetPGPLogins(std::list<RsPgpId> &pgpIds);
 		int	GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
-		bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
+		bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
                 bool    SelectPGPAccount(const RsPgpId& pgpId);
 

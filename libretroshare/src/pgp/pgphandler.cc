@@ -360,7 +360,7 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids
 	return true ;
 }
 
-bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passphrase, RsPgpId& pgpId, std::string& errString) 
+bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passphrase, RsPgpId& pgpId, const int keynumbits, std::string& errString)
 {
 	// Some basic checks
 	
@@ -384,12 +384,15 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 		errString = std::string("(EE) passphrase in certificate exceeds the maximum allowed passphrase size") ;
 		return false ;
 	}
+	if(keynumbits % 1024 != 0)
+	{
+		errString = std::string("(EE) RSA key length is not a multiple of 1024") ;
+		return false ;
+	}
 
 	// Now the real thing
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
-
-	static const int KEY_NUMBITS = 2048 ;
 
 	// 1 - generate keypair - RSA-2048
 	//
@@ -398,7 +401,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	uid.user_id = (unsigned char *)s ;
 	unsigned long int e = 65537 ; // some prime number
 
-	ops_keydata_t *key = ops_rsa_create_selfsigned_keypair(KEY_NUMBITS,e,&uid) ;
+	ops_keydata_t *key = ops_rsa_create_selfsigned_keypair(keynumbits, e, &uid) ;
 
 	free(s) ;
 
@@ -409,7 +412,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	ops_create_info_t *cinfo = NULL ;
 	ops_memory_t *buf = NULL ;
-   ops_setup_memory_write(&cinfo, &buf, 0);
+	ops_setup_memory_write(&cinfo, &buf, 0);
 
 	if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
 	{

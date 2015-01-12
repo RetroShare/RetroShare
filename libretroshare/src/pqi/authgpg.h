@@ -135,7 +135,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		/* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
 
 		virtual int  GPGInit(const RsPgpId &ownId);
-		virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
+		virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
 		/*********************************************************************************/
 		/************************* STAGE 3 ***********************************************/
