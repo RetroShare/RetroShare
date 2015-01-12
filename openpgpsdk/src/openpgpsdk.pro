@@ -35,6 +35,7 @@ win32 {
 
 	LIBS_DIR = $$PWD/../../../libs
 
+	DEPENDPATH += $$LIBS_DIR/include
 	INCLUDEPATH += $$LIBS_DIR/include
 }
 

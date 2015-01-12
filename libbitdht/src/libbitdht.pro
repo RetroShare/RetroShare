@@ -102,8 +102,8 @@ openbsd-* {
 ################################### COMMON stuff ##################################
 ################################### COMMON stuff ##################################
 
-#DEPENDPATH += . \
-INCLUDEPATH += . \
+DEPENDPATH += .
+INCLUDEPATH += .
 
 HEADERS += \
 	bitdht/bdiface.h	\

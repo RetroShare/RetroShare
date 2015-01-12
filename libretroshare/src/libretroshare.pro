@@ -76,6 +76,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 
 
         BITDHT_DIR = ../../libbitdht/src
+	DEPENDPATH += . $${BITDHT_DIR}
 	INCLUDEPATH += . $${BITDHT_DIR}
 	# The next line is for compliance with debian packages. Keep it!
 	INCLUDEPATH += ../libbitdht
@@ -125,6 +126,7 @@ linux-* {
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
+	DEPENDPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
 	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
 
 	DESTDIR = lib
@@ -133,6 +135,7 @@ linux-* {
 
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
+	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
 	# where to put the shared library itself
@@ -232,6 +235,7 @@ win32 {
 	LIBS_DIR = $$PWD/../../../libs
 	OPENPGPSDK_DIR = $$PWD/../../openpgpsdk/src
 
+	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
 	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
 }
 

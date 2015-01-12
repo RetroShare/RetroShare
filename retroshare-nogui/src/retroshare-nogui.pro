@@ -42,6 +42,7 @@ linux-* {
 			}
 
 			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+			DEPENDPATH += ../../../lib/sqlcipher/src/
 			INCLUDEPATH += ../../../lib/sqlcipher/src/
 		} else {
 			LIBS += -lsqlcipher
@@ -105,7 +106,8 @@ win32 {
 
 	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
 
-	INCLUDEPATH += . $$LIBS_DIR/include
+	DEPENDPATH += $$LIBS_DIR/include
+	INCLUDEPATH += $$LIBS_DIR/include
 
 	gxs {
 		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
@@ -178,8 +180,7 @@ bitdht {
 	LIBS += ../../libbitdht/src/lib/libbitdht.a
 }
 
-DEPENDPATH += ../../libretroshare/src
-            
+DEPENDPATH += . ../../libretroshare/src
 INCLUDEPATH += . ../../libretroshare/src
 
 # Input
@@ -220,6 +221,7 @@ sshserver {
 		DEFINES *= LIBSSH_STATIC
 	}
 
+	DEPENDPATH += $$LIBSSH_DIR/include/
 	INCLUDEPATH += $$LIBSSH_DIR/include/
 
 	win32 {
@@ -342,6 +344,7 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/files.pb.cc \
 	#	        ../../rsctrl/src/gencc/stream.pb.cc \
 
+	DEPENDPATH *= rpc/proto/gencc
 	INCLUDEPATH *= rpc/proto/gencc
 
 	!win32 {
@@ -352,6 +355,7 @@ protorpc {
 	LIBS += -lprotobuf -lpthread
 	
 	win32 {
+		DEPENDPATH += $$LIBS_DIR/include/protobuf
 		INCLUDEPATH += $$LIBS_DIR/include/protobuf
 	}
 	

@@ -1,5 +1,6 @@
 TEMPLATE = lib
 
+DEPENDPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 
 linux-g++ {

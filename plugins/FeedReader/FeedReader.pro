@@ -82,6 +82,7 @@ TRANSLATIONS +=  \
 linux-* {
 	LIBXML2_DIR = /usr/include/libxml2
 
+	DEPENDPATH += $${LIBXML2_DIR}
 	INCLUDEPATH += $${LIBXML2_DIR}
 
 	LIBS += -lcurl -lxml2 -lxslt

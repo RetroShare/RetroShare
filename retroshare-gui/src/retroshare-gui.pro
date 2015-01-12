@@ -56,6 +56,7 @@ debug {
 	QMAKE_CFLAGS += -O0
 }
 
+DEPENDPATH *= retroshare-gui
 INCLUDEPATH *= retroshare-gui
 
 # treat warnings as error for better removing
@@ -88,7 +89,9 @@ linux-* {
 		}
 
 		LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+		DEPENDPATH += ../../../lib/sqlcipher/src/
 		INCLUDEPATH += ../../../lib/sqlcipher/src/
+		DEPENDPATH += ../../../lib/sqlcipher/tsrc/
 		INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
 
 	} else {
@@ -199,6 +202,7 @@ win32 {
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
+	DEPENDPATH += .
 	INCLUDEPATH += .
 }
 
@@ -284,21 +288,7 @@ win32 {
     LIBS += -lws2_32
 }
 
-DEPENDPATH += . \
-            rsiface \
-            control \
-            gui \
-            lang \
-            util \
-            gui/bwgraph \
-            gui/chat \
-            gui/connect \
-            gui/images \
-            gui/common \
-            gui/toaster \
-            gui/help/browser \
-            gui/elastic
-
+DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
 
 # Input
@@ -1082,6 +1072,7 @@ gxsphotoshare {
 	
 wikipoos {
 	
+	DEPENDPATH += ../../supportlibs/pegmarkdown
 	INCLUDEPATH += ../../supportlibs/pegmarkdown
 	
 	HEADERS += gui/WikiPoos/WikiDialog.h \

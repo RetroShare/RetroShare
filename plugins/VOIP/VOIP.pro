@@ -13,6 +13,7 @@ exists($$[QMAKE_MKSPECS]/features/mobility.prf) {
 CONFIG += qt uic qrc resources
 MOBILITY = multimedia
 
+DEPENDPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 
 #################################### Windows #####################################
