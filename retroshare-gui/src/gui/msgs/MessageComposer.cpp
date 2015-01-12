@@ -241,9 +241,18 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     
     /* Add filter types */
     ui.filterComboBox->addItem(tr("All"));
-    ui.filterComboBox->addItem(tr("Friends"));
-    ui.filterComboBox->addItem(tr("Friends of Friends"));
+    ui.filterComboBox->addItem(tr("Friend Nodes"));
+    ui.filterComboBox->addItem(tr("Anonymous"));
     ui.filterComboBox->setCurrentIndex(0);
+
+    /*ui.comboStyle->addItem("Standard");
+    ui.comboStyle->addItem("Bullet List (Disc)");
+    ui.comboStyle->addItem("Bullet List (Circle)");
+    ui.comboStyle->addItem("Bullet List (Square)");
+    ui.comboStyle->addItem("Ordered List (Decimal)");
+    ui.comboStyle->addItem("Ordered List (Alpha lower)");
+    ui.comboStyle->addItem("Ordered List (Alpha upper)");*/
+    //connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(textStyle(int)));
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
@@ -283,7 +292,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.recipientWidget->setColumnCount(COLUMN_RECIPIENT_COUNT);
 
     QHeaderView *header = ui.recipientWidget->horizontalHeader();
-    header->resizeSection(COLUMN_RECIPIENT_TYPE, 50);
+    header->resizeSection(COLUMN_RECIPIENT_TYPE, 70);
     header->resizeSection(COLUMN_RECIPIENT_ICON, 22);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
@@ -631,14 +640,21 @@ void MessageComposer::buildCompleter()
     std::list<RsGroupInfo> groupInfoList;
     std::list<RsGroupInfo>::iterator groupIt;
     rsPeers->getGroupInfoList(groupInfoList);
-
+    
     std::list<RsPeerId> peers;
     std::list<RsPeerId>::iterator peerIt;
     rsPeers->getFriendList(peers);
+    
+    std::list<RsGxsId> gxsIds;
+    std::list<RsGxsId>::iterator idIt;    
 
     // create completer list for friends
     QStringList completerList;
     QStringList completerGroupList;
+    
+    /*for (std::list<RsGxsId>::const_iterator idIt = gxsIds.begin(); idIt != gxsIds.end(); ++idIt) {
+    		completerList.append(*idIt);
+    }*/
 
     for (peerIt = peers.begin(); peerIt != peers.end(); ++peerIt) {
         RsPeerDetails detail;

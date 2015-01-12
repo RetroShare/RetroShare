@@ -204,6 +204,12 @@
            </property>
            <item row="0" column="0">
             <widget class="QLabel" name="label_3">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
               <string>Subject:</string>
              </property>
@@ -937,7 +943,7 @@ border-image: url(:/images/closepressed.png)
             <widget class="QLabel" name="fromLabel">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>70</width>
                <height>0</height>
               </size>
              </property>
