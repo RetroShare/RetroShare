@@ -182,6 +182,8 @@ Section $(Section_Main) Section_Main
 
   ; External binaries
   File "${SOURCEDIR}\..\libs\bin\miniupnpc.dll"
+  File "${SOURCEDIR}\..\libs\bin\libeay32.dll"
+  File "${SOURCEDIR}\..\libs\bin\ssleay32.dll"
 
   ; Other files
   File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
