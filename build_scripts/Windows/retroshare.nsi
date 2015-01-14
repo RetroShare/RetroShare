@@ -119,7 +119,6 @@ Page Custom PortableModePageCreate PortableModePageLeave
 
 # Set languages (first is default language)
 !insertmacro MUI_RESERVEFILE_LANGDLL
-ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 
 # Installer languages
 !define MUI_LANGDLL_ALLLANGUAGES
