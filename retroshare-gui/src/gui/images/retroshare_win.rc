@@ -1,3 +1,37 @@
+#include <winver.h>
 #include "retroshare_win.rc.h"
+#include "retroshare/rsversion.h"
 
 IDI_ICON1               ICON    "logo/logo_64.ico"
+
+#define STRINGIZER(version) #version
+#define VERSION_STRING(major,minor,build,buildadd,revision) STRINGIZER(major) "." STRINGIZER(minor) "." STRINGIZER(build) buildadd "." STRINGIZER(revision)
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     RS_MAJOR_VERSION,RS_MINOR_VERSION,RS_BUILD_NUMBER,RS_REVISION_NUMBER
+PRODUCTVERSION  RS_MAJOR_VERSION,RS_MINOR_VERSION,RS_BUILD_NUMBER,RS_REVISION_NUMBER
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080904b0"
+        BEGIN
+            VALUE "CompanyName", ""
+            VALUE "FileDescription", "RetroShare"
+            VALUE "FileVersion", VERSION_STRING(RS_MAJOR_VERSION, RS_MINOR_VERSION, RS_BUILD_NUMBER, RS_BUILD_NUMBER_ADD, RS_REVISION_NUMBER)
+            VALUE "InternalName", "RetroShare"
+            VALUE "OriginalFilename", "RetroShare.exe"
+            VALUE "ProductName", "RetroShare"
+            VALUE "ProductVersion", VERSION_STRING(RS_MAJOR_VERSION, RS_MINOR_VERSION, RS_BUILD_NUMBER, RS_BUILD_NUMBER_ADD, RS_REVISION_NUMBER)
+            VALUE "LegalCopyright", ""
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0809, 1200
+    END
+END

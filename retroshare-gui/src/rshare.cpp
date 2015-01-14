@@ -37,6 +37,7 @@
 #include <iostream>
 
 #include <retroshare/rsinit.h>
+#include <retroshare/rsversion.h>
 #include <lang/languagesupport.h>
 #include "gui/settings/rsharesettings.h"
 
@@ -160,6 +161,11 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 Rshare::~Rshare()
 {
 
+}
+
+QString Rshare::retroshareVersion()
+{
+	return QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
 }
 
 /** Enters the main event loop and waits until exit() is called. The signal

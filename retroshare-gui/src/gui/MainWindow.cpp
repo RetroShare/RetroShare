@@ -106,7 +106,6 @@
 
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/RsCollectionFile.h"
-#include "util/rsguiversion.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
@@ -201,8 +200,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(retroshareVersion()) + " - " + nameAndLocation);
-
+    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion()) + " - " + nameAndLocation);
 
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");

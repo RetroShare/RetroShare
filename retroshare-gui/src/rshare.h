@@ -61,6 +61,9 @@ public:
   /** Destructor. */
   ~Rshare();
 
+  /** Return the version info */
+  static QString retroshareVersion();
+
   /** Return the map of command-line arguments and values. */
   static QMap<QString, QString> arguments() { return _args; }
   /** Validates that all arguments were well-formed. */

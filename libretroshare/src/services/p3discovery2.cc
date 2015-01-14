@@ -24,7 +24,7 @@
  */
 
 #include "services/p3discovery2.h"
-#include "util/rsversion.h"
+#include "util/rsversioninfo.h"
 
 #include "retroshare/rsiface.h"
 #include "rsserver/p3face.h"

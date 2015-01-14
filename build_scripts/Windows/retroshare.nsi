@@ -2,19 +2,18 @@
 ; Reworked by Thunder
 
 # Needed defines
-;!define VERSION ""
+;!define BUILDADD ""
 ;!define SOURCEDIR ""
 ;!define RELEASEDIR ""
 ;!define QTDIR ""
 ;!define MINGWDIR ""
 
 # Optional defines
-;!define REVISION ""
 ;!define OUTDIR ""
 
 # Check needed defines
-!ifndef VERSION
-!error "VERSION is not defined"
+!ifndef BUILDADD
+!error "BUILDADD is not defined"
 !endif
 
 !ifndef SOURCEDIR
@@ -32,18 +31,26 @@
 !endif
 
 # Check optional defines
-!ifdef REVISION
-!define REVISION_ "${REVISION}_"
-!else
-!define REVISION ""
-!define REVISION_ ""
-!endif
-
 !ifdef OUTDIR
 !define OUTDIR_ "${OUTDIR}\"
 !else
 !define OUTDIR ""
 !define OUTDIR_ ""
+!endif
+
+# Get version from executable
+!GetDllVersion "${RELEASEDIR}\retroshare-gui\src\release\RetroShare.exe" VERSION_
+
+!define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}${BUILDADD}
+!define REVISION ${VERSION_4}
+
+# Check version
+!ifndef REVISION
+!error "REVISION is not defined"
+!endif
+
+!ifndef REVISION
+!error "REVISION is not defined"
 !endif
 
 # Application name and version
@@ -61,7 +68,7 @@
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare_${VERSION}_${REVISION_}setup.exe"
+OutFile "${OUTDIR_}RetroShare_${VERSION}_${REVISION}_setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -120,7 +127,6 @@ Page Custom PortableModePageCreate PortableModePageLeave
 
 # Set languages (first is default language)
 !insertmacro MUI_RESERVEFILE_LANGDLL
-ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 
 # Installer languages
 !define MUI_LANGDLL_ALLLANGUAGES

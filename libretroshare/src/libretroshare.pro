@@ -105,6 +105,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsdht.h \
 					retroshare/rsrtt.h \
 					retroshare/rsconfig.h \
+					retroshare/rsversion.h \
 					retroshare/rsservicecontrol.h \
 
 
@@ -451,7 +452,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsprint.h \
 			util/rsstring.h \
 			util/rsthreads.h \
-			util/rsversion.h \
+			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
 			util/radix64.h \
@@ -603,7 +604,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsprint.cc \
 			util/rsstring.cc \
 			util/rsthreads.cc \
-			util/rsversion.cc \
+			util/rsversioninfo.cc \
 			util/rswin.cc \
 			util/rsaes.cc \
 			util/rsrandom.cc \

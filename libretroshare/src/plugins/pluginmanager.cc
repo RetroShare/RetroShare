@@ -14,6 +14,7 @@
 
 #include <rsserver/p3face.h>
 #include <util/rsdir.h>
+#include <util/rsversioninfo.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
 #include <dbase/cachestrapper.h>

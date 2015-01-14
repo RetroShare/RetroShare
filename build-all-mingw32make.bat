@@ -3,8 +3,7 @@ set MINGW=C:\MinGW
 
 set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\util\rsguiversion.in retroshare-gui\src\util\rsguiversion.h
+"C:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\retroshare\rsversion.in libretroshare\src\retroshare\rsversion.h
 "C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\retroshare.in retroshare-gui\src\retroshare.nsi
 
 

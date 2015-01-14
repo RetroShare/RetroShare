@@ -24,7 +24,7 @@ class VOIPPlugin: public RsPlugin
 		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;
 		virtual void           qt_sound_events(SoundEvents &events) const;
 
-		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const ;
+		virtual void getPluginVersion(int& major, int& minor, int &build, int& svn_rev) const ;
 		virtual void setPlugInHandler(RsPluginHandler *pgHandler);
 
 		virtual std::string configurationFileName() const { return "voip.cfg" ; }

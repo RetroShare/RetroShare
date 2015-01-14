@@ -98,9 +98,10 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 				int major = 0;
 				int minor = 0;
+				int build = 0;
 				int svn_rev = 0;
-				plugin->getPluginVersion(major, minor, svn_rev);
-				pluginVersion = QString("%1.%2.%3").arg(major).arg(minor).arg(svn_rev);
+				plugin->getPluginVersion(major, minor, build, svn_rev);
+				pluginVersion = QString("%1.%2.%3.%4").arg(major).arg(minor).arg(build).arg(svn_rev);
 			}
 
 			 PluginItem *item = new PluginItem(pluginVersion, i,pluginTitle,pluginDescription,status_string,

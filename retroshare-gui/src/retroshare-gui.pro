@@ -204,6 +204,14 @@ win32 {
 
 	DEPENDPATH += .
 	INCLUDEPATH += .
+
+	greaterThan(QT_MAJOR_VERSION, 4) {
+		# Qt 5
+		RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
+	} else {
+		# Qt 4
+		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
+	}
 }
 
 ##################################### MacOS ######################################
@@ -357,7 +365,6 @@ HEADERS +=  rshare.h \
             util/EventFilter.h \
             util/EventReceiver.h \
             util/Widget.h \
-            util/rsguiversion.h \
             util/RsAction.h \
             util/RsUserdata.h \
             util/printpreview.h \
@@ -695,7 +702,6 @@ SOURCES +=  main.cpp \
             util/EventReceiver.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
-            util/rsguiversion.cpp \
             util/printpreview.cpp \
             util/log.cpp \
             util/misc.cpp \
