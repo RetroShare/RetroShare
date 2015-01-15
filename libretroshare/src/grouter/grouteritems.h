@@ -33,11 +33,13 @@
 #include "retroshare/rsgrouter.h"
 #include "p3grouter.h"
 
-const uint8_t RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY     = 0x01 ;	// used to publish a key
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK_deprecated  = 0x03 ;	// acknowledgement of data received
-const uint8_t RS_PKT_SUBTYPE_GROUTER_RECEIPT         = 0x04 ;	// acknowledgement of data received
-const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated = 0x05 ;	// used to send data to a destination
-const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA            = 0x06 ;	// used to send data to a destination (Signed by source)
+const uint8_t RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY       = 0x01 ;	// used to publish a key
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK_deprecated    = 0x03 ;	// acknowledgement of data received
+const uint8_t RS_PKT_SUBTYPE_GROUTER_RECEIPT           = 0x04 ;	// acknowledgement of data received
+const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated   = 0x05 ;	// used to send data to a destination
+const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA              = 0x06 ;	// used to send data to a destination (Signed by source)
+
+const uint8_t RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK = 0x10 ;	// chunk of data. Used internally.
 
 const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES  = 0x80 ;	// item to save matrix clues
 const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST  = 0x82 ;	// item to save friend lists
@@ -138,6 +140,26 @@ class RsGRouterReceiptItem: public RsGRouterItem
         RsTlvKeySignature signature ;		// signs mid+destination_key+state
 };
 
+// Low-level data items
+
+class RsGRouterTransactionChunkItem: public RsGRouterItem
+{
+    public:
+        RsGRouterTransactionChunkItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+
+        virtual bool serialise(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
+
+        virtual void clear() {}
+        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
+
+        GRouterMsgPropagationId propagation_id ;
+        uint32_t chunk_start ;
+        uint32_t chunk_size ;
+        uint32_t total_size ;
+        uint8_t *chunk_data ;
+};
+
 // Items for saving the routing matrix information.
 
 class RsGRouterMatrixCluesItem: public RsGRouterItem
@@ -216,6 +238,7 @@ class RsGRouterSerialiser: public RsSerialType
 
 	private:
         RsGRouterGenericDataItem      *deserialise_RsGRouterGenericDataItem(void *data,uint32_t size) const ;
+        RsGRouterTransactionChunkItem      *deserialise_RsGRouterTransactionChunkItem(void *data,uint32_t size) const ;
         RsGRouterReceiptItem          *deserialise_RsGRouterReceiptItem(void *data,uint32_t size) const ;
         RsGRouterMatrixCluesItem      *deserialise_RsGRouterMatrixCluesItem(void *data,uint32_t size) const ;
 		RsGRouterMatrixFriendListItem *deserialise_RsGRouterMatrixFriendListItem(void *data,uint32_t size) const ;

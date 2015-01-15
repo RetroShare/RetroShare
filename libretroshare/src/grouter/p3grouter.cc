@@ -395,22 +395,23 @@ bool p3GRouter::unregisterKey(const RsGxsId& key_id,const GRouterServiceId& sid)
 //                                                    Turtle management                                                      //
 //===========================================================================================================================//
 
-bool p3GRouter::handleTunnelRequest(const RsFileHash& /*hash*/,const RsPeerId& /*peer_id*/)
+bool p3GRouter::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& /*peer_id*/)
 {
-    NOT_IMPLEMENTED;
-
     // tunnel request is answered according to the following rules:
     // 	- we are the destination => always accept
     //	- we know the destination and have RCPT items to send back => always accept
     //	- we know the destination and have a route (according to matrix) => accept with high probability
     //	- we don't know the destination => accept with very low probability
 
+    if(_owned_key_ids.find(hash) == _owned_key_ids.end())
+        return false ;
+
+    std::cerr  << "p3GRouter::handleTunnelRequest(). Got req for hash " << hash << ", responding OK" << std::endl;
+
     return false ;
 }
-void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem */*item*/,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
-    NOT_IMPLEMENTED;
-
     std::cerr << "p3GRouter::receiveTurtleData() " << std::endl;
     std::cerr << "  Received data for hash : " << hash << std::endl;
     std::cerr << "  Virtual peer id        : " << virtual_peer_id << std::endl;
@@ -418,16 +419,148 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem */*item*/,const RsFi
 
     // turtle data is received.
     // This function
+    //  - possibly packs multi-item blocks back together
     // 	- converts it into a grouter generic item (by deserialising it)
-    //	-
+
+    RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+
+    if(item == NULL)
+    {
+        std::cerr << "  ERROR: item is not a data item. That is an error." << std::endl;
+        return ;
+    }
+    std::cerr << "  data size          : " << item->data_size << std::endl;
+    std::cerr << "  data bytes         : " << RsDirUtil::sha1sum((unsigned char*)item->data_bytes,item->data_size) << std::endl;
+
+    RsGRouterGenericDataItem *generic_item = NULL ;
+
+    {
+        RS_STACK_MUTEX(grMtx) ;
+
+        // Items come out of the pipe in order. We need to recover all chunks before we de-serialise the content and have it handled by handleIncoming()
+
+        std::map<TurtleFileHash,GRouterTunnelInfo>::iterator it = _virtual_peers.find(hash) ;
+
+        if(it == _virtual_peers.end())
+        {
+            std::cerr << "  ERROR: hash is not known. Cannot receive. Data is dropped." << std::endl;
+            return ;
+        }
+
+    RsItem *itm = RsGRouterSerialiser().deserialise(item->data_bytes,&item->data_size) ;
+    RsGRouterTransactionChunkItem *chunk_item = dynamic_cast<RsGRouterTransactionChunkItem*>(itm) ;
+
+    if(chunk_item == NULL)
+    {
+        std::cerr << "  ERROR: cannot deserialise turtle item into a GRouterTransactionChunk item." << std::endl;
+        if(itm)
+            delete itm ;
+        return ;
+    }
+    generic_item = it->second.addDataChunk(virtual_peer_id,chunk_item) ;
+
+    if(generic_item != NULL)
+        _incoming_items.push_back(generic_item) ;
+    }
 }
+
+void GRouterTunnelInfo::removeVirtualPeer(const TurtleVirtualPeerId& vpid)
+{
+    std::map<TurtleVirtualPeerId,RsGRouterTransactionChunkItem*>::iterator it = virtual_peers.find(vpid) ;
+
+    if(it == virtual_peers.end())
+    {
+        std::cerr << "  ERROR: removing a virtual peer that does not exist. This is an error!" << std::endl;
+        return ;
+    }
+
+    if(it->second != NULL)
+    {
+        std::cerr << "  WARNING: removing a virtual peer that still holds data. The data will be lost." << std::endl;
+        delete it->second ;
+    }
+
+    virtual_peers.erase(it) ;
+}
+void GRouterTunnelInfo::addVirtualPeer(const TurtleVirtualPeerId& vpid)
+{
+    std::map<TurtleVirtualPeerId,RsGRouterTransactionChunkItem*>::iterator it = virtual_peers.find(vpid) ;
+
+    if(it != virtual_peers.end())
+    {
+        std::cerr << "  ERROR: adding a virtual peer that already exist. This is an error!" << std::endl;
+        delete it->second ;
+    }
+
+    virtual_peers[vpid] = NULL ;
+
+    time_t now = time(NULL) ;
+
+    if(first_tunnel_ok_TS == 0) first_tunnel_ok_TS = now ;
+    if(last_tunnel_ok_TS < now)  last_tunnel_ok_TS = now ;
+
+}
+RsGRouterGenericDataItem *GRouterTunnelInfo::addDataChunk(const TurtleVirtualPeerId& vpid,RsGRouterTransactionChunkItem *chunk)
+{
+    // find the chunk
+    std::map<TurtleVirtualPeerId,RsGRouterTransactionChunkItem*>::iterator it = virtual_peers.find(vpid) ;
+
+    if(it == virtual_peers.end())
+    {
+        std::cerr << "  ERROR: no virtual peer " << vpid << " for chunk received. Dropping." << std::endl;
+        return NULL;
+    }
+
+    if(it->second == NULL)
+    {
+        if(chunk->chunk_start != 0)
+        {
+            std::cerr << "  ERROR: chunk numbering is wrong. First chunk is not starting at 0. Dropping." << std::endl;
+            delete chunk;
+            return NULL;
+        }
+        it->second = chunk ;
+    }
+    else
+    {
+        if(it->second->chunk_size != chunk->chunk_start || it->second->total_size != chunk->total_size)
+        {
+            std::cerr << "  ERROR: chunk numbering is wrong. Dropping." << std::endl;
+            delete chunk ;
+            delete it->second ;
+        }
+        it->second->chunk_data = (uint8_t*)realloc((uint8_t*)it->second->chunk_data,it->second->chunk_size + chunk->chunk_size) ;
+        memcpy(&it->second->chunk_data[it->second->chunk_size],chunk->chunk_data,chunk->chunk_size) ;
+        it->second->chunk_size += chunk->chunk_size ;
+
+        delete chunk ;
+    }
+
+    // if finished, return it.
+
+    if(it->second->total_size == it->second->chunk_size)
+    {
+        RsGRouterGenericDataItem *data_item= new RsGRouterGenericDataItem ;
+        data_item->data_bytes = it->second->chunk_data ;
+        data_item->data_size = it->second->chunk_size ;
+        it->second->chunk_data = NULL;
+        delete it->second ;
+        it->second= NULL ;
+
+        return data_item ;
+    }
+    else
+        return NULL ;
+}
+
 void p3GRouter::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir)
 {
+        RS_STACK_MUTEX(grMtx) ;
+
     // Server side tunnels. This is incoming data. Nothing to do.
 
     std::cerr << "p3GRouter::addVirtualPeer(). Received vpid " << virtual_peer_id << " for hash " << hash << ", direction=" << dir << std::endl;
-
-    std::cerr << "  adding server VPID." << std::endl;
+    std::cerr << "  adding VPID." << std::endl;
 
     _virtual_peers[hash].addVirtualPeer(virtual_peer_id) ;
 
@@ -443,9 +576,21 @@ void p3GRouter::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPee
 }
 void p3GRouter::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
 {
-    NOT_IMPLEMENTED;
+        RS_STACK_MUTEX(grMtx) ;
 
-    // this is mostly for unused tunnels. So no real work is needed here. Just remove the tunnels from client/server lists.
+    std::cerr << "p3GRouter::addVirtualPeer(). Received vpid " << virtual_peer_id << " for hash " << hash << std::endl;
+    std::cerr << "  removing VPID." << std::endl;
+
+    // make sure the VPID exists.
+
+    std::map<TurtleFileHash,GRouterTunnelInfo>::iterator it = _virtual_peers.find(hash) ;
+
+    if(it == _virtual_peers.end())
+    {
+        std::cerr << "  no virtual peers at all for this hash! This is a consistency error." << std::endl;
+        return ;
+    }
+    it->second.removeVirtualPeer(virtual_peer_id) ;
 }
 void p3GRouter::connectToTurtleRouter(p3turtle *pt)
 {
@@ -491,6 +636,8 @@ void p3GRouter::handleTunnels()
     // compute the priority of pending messages, according to the number of attempts and how far in the past they have been tried for the last time.
 
     // Delay after which a message is re-sent, depending on the number of attempts already made.
+
+        RS_STACK_MUTEX(grMtx) ;
 
 if(!_pending_messages.empty())
 {
@@ -554,35 +701,37 @@ void p3GRouter::routePendingObjects()
     // Go throught he list of pending messages.
     // For those with a tunnel ready, send the message in the tunnel.
 
+        RS_STACK_MUTEX(grMtx) ;
+
     time_t now = time(NULL) ;
 
     for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();++it)
         if(it->second.data_status == RS_GROUTER_DATA_STATUS_PENDING && it->second.tunnel_status == RS_GROUTER_TUNNEL_STATUS_READY)
-        {
-            const TurtleFileHash& hash(it->second.tunnel_hash) ;
-            std::map<TurtleFileHash,GRouterTunnelInfo>::const_iterator vpit ;
+    {
+        const TurtleFileHash& hash(it->second.tunnel_hash) ;
+        std::map<TurtleFileHash,GRouterTunnelInfo>::const_iterator vpit ;
 
-            if( (vpit = _virtual_peers.find(hash)) != _virtual_peers.end())
+        if( (vpit = _virtual_peers.find(hash)) != _virtual_peers.end())
+        {
+            // for now, just take one. But in the future, we will need some policy to temporarily store objects at proxy peers, etc.
+
+            std::cerr << "  " << vpit->second.virtual_peers.size() << " virtual peers available. " << std::endl;
+
+            if(vpit->second.virtual_peers.empty())
             {
-        // for now, just take one. But in the future, we will need some policy to temporarily store objects at proxy peers, etc.
-
-        std::cerr << "  " << vpit->second.virtual_peers.size() << " virtual peers available. " << std::endl;
-
-        if(vpit->second.virtual_peers.empty())
-        {
-            std::cerr << "  no peers available. Cannot send!!" << std::endl;
-            continue ;
-        }
-        TurtleVirtualPeerId vpid = *(vpit->second.virtual_peers.begin()) ;
-
-        std::cerr << "  sending to " << vpid << std::endl;
-
-                sendDataInTunnel(vpid,it->second.data_item) ;
-
-                it->second.data_status == RS_GROUTER_DATA_STATUS_SENT ;
-                it->second.last_sent_TS = now ;
+                std::cerr << "  no peers available. Cannot send!!" << std::endl;
+                continue ;
             }
+            TurtleVirtualPeerId vpid = (vpit->second.virtual_peers.begin())->first ;
+
+            std::cerr << "  sending to " << vpid << std::endl;
+
+            sendDataInTunnel(vpid,it->second.data_item) ;
+
+            it->second.data_status == RS_GROUTER_DATA_STATUS_SENT ;
+            it->second.last_sent_TS = now ;
         }
+    }
 
     // Also route back some ACKs if necessary.
     // [..]
@@ -590,7 +739,75 @@ void p3GRouter::routePendingObjects()
 
 void p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGenericDataItem *item)
 {
-    NOT_IMPLEMENTED ;
+    // split into chunks and send them all into the tunnel.
+
+    std::cerr << "p3GRouter::sendDataInTunnel()" << std::endl;
+
+    uint32_t size = item->serial_size();
+    uint8_t *data = (uint8_t*)malloc(size) ;
+
+    if(data == NULL)
+    {
+        std::cerr << "  ERROR: cannot allocate memory. Size=" << size << std::endl;
+        return ;
+    }
+
+    if(!item->serialise(data,size))
+    {
+        free(data) ;
+        std::cerr << "  ERROR: cannot serialise." << std::endl;
+        return ;
+    }
+
+    uint32_t offset = 0 ;
+    static const uint32_t CHUNK_SIZE = 15000 ;
+
+    while(offset < size)
+    {
+        uint32_t chunk_size = std::min(size - offset, CHUNK_SIZE) ;
+
+        RsGRouterTransactionChunkItem *chunk_item = new RsGRouterTransactionChunkItem ;
+        chunk_item->propagation_id = item->routing_id ;
+        chunk_item->total_size = size;
+        chunk_item->chunk_size = chunk_size ;
+        chunk_item->chunk_data = (uint8_t*)malloc(chunk_size) ;
+
+        std::cerr << "  preparing to send a chunk [" << offset << " -> " << offset + chunk_size << " / " << size << "]" << std::endl;
+
+        if(chunk_item->chunk_data == NULL)
+        {
+            std::cerr << "  ERROR: Cannot allocate memory for size " << chunk_size << std::endl;
+        }
+        memcpy(chunk_item->chunk_data,&data[offset],chunk_size) ;
+
+        offset += chunk_size ;
+
+        RsTurtleGenericDataItem *turtle_item = new RsTurtleGenericDataItem ;
+
+        uint32_t turtle_data_size = chunk_item->serial_size() ;
+        uint8_t *turtle_data = (uint8_t*)malloc(turtle_data_size) ;
+
+        if(turtle_data == NULL)
+        {
+            std::cerr << "  ERROR: Cannot allocate turtle data memory for size " << turtle_data_size << std::endl;
+            return ;
+        }
+        if(!chunk_item->serialise(turtle_data,turtle_data_size))
+        {
+            std::cerr << "  ERROR: cannot serialise RsGRouterTransactionChunkItem." << std::endl;
+            free(turtle_data) ;
+            return ;
+        }
+
+        delete chunk_item ;
+
+        turtle_item->data_size  = turtle_data_size ;
+        turtle_item->data_bytes = turtle_data ;
+
+        mTurtle->sendTurtleData(vpid,turtle_item) ;
+    }
+
+    free(data) ;
 }
 
 void p3GRouter::handleIncoming()
@@ -616,8 +833,9 @@ void p3GRouter::handleIncoming()
     }
 }
 
-void p3GRouter::locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) const
+void p3GRouter::locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id)
 {
+        RS_STACK_MUTEX (grMtx) ;
 #ifdef GROUTER_DEBUG
 	grouter_debug() << "  Key is owned by us. Notifying service that item was ACKed. msg_id=" << msg_id << ", service_id = " << service_id << "." << std::endl;
 #endif
@@ -635,7 +853,7 @@ void p3GRouter::locked_notifyClientAcknowledged(const GRouterMsgPropagationId& m
 
 void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
 {
-    RsStackMutex mtx(grMtx) ;
+    RS_STACK_MUTEX(grMtx) ;
 #ifdef GROUTER_DEBUG
     grouter_debug() << "Received new routing clue for key " << id << " from peer " << peer_id << std::endl;
 #endif
@@ -644,13 +862,14 @@ void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
 
 void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 {
-	RsStackMutex mtx(grMtx) ;
+    RS_STACK_MUTEX(grMtx) ;
+
     NOT_IMPLEMENTED;
 }
 
 bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientService *service)
 {
-	RsStackMutex mtx(grMtx) ;
+    RS_STACK_MUTEX(grMtx) ;
 	_registered_services[id] = service ;
 	return true ;
 }
@@ -873,7 +1092,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
 #endif
 
     {
-        RsStackMutex mtx(grMtx) ;
+        RS_STACK_MUTEX(grMtx) ;
         _pending_messages[propagation_id] = info ;
     }
 return true ;
@@ -893,10 +1112,17 @@ Sha1CheckSum p3GRouter::makeTunnelHash(const RsGxsId& destination,const GRouterS
 
     return Sha1CheckSum(bytes) ;
 }
+void p3GRouter::makeGxsIdAndClientId(const Sha1CheckSum& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
+{
+    assert(       gxs_id.SIZE_IN_BYTES == 16) ;
+    assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
+    gxs_id = RsGxsId(sum.toByteArray());// takes the first 16 bytes
+    client_id = sum.toByteArray()[19] + (sum.toByteArray()[18] << 8) ;
+}
 bool p3GRouter::loadList(std::list<RsItem*>& items)
 {
-	RsStackMutex mtx(grMtx) ;
+        RS_STACK_MUTEX(grMtx) ;
 
 #ifdef GROUTER_DEBUG
 	grouter_debug() << "p3GRouter::loadList() : " << std::endl;
@@ -948,7 +1174,9 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
 	grouter_debug() << "  saving routing clues." << std::endl;
 #endif
 
-	_routing_matrix.saveList(items) ;
+        RS_STACK_MUTEX(grMtx) ;
+
+    _routing_matrix.saveList(items) ;
 
 #ifdef GROUTER_DEBUG
     grouter_debug() << "  saving pending items." << std::endl;
@@ -971,14 +1199,14 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
 
 bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info) 
 {
-	info.per_friend_probabilities.clear() ;
+        RS_STACK_MUTEX(grMtx) ;
+
+    info.per_friend_probabilities.clear() ;
 	info.friend_ids.clear() ;
 	info.published_keys.clear() ;
 
 	std::set<RsPeerId> ids ;
 	mServiceControl->getPeersConnected(getServiceInfo().mServiceType,ids) ;
-
-	RsStackMutex mtx(grMtx) ;
 
     //info.published_keys = _owned_key_ids ;
 
@@ -999,8 +1227,9 @@ bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info)
 }
 bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)  
 {
-	RsStackMutex mtx(grMtx) ;
-	infos.clear() ;
+        RS_STACK_MUTEX(grMtx) ;
+
+    infos.clear() ;
 
 	for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::const_iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
 	{
@@ -1020,7 +1249,7 @@ bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)
 //
 void p3GRouter::debugDump()
 {
-	RsStackMutex mtx(grMtx) ;
+        RS_STACK_MUTEX(grMtx) ;
 
 	time_t now = time(NULL) ;
 
@@ -1059,8 +1288,8 @@ void p3GRouter::debugDump()
     {
         grouter_debug() << "    hash: " << it->first << ", first received: " << now - it->second.last_tunnel_ok_TS << " (secs ago), last received: " << now - it->second.last_tunnel_ok_TS << std::endl;
 
-        for(std::set<TurtleVirtualPeerId>::const_iterator it2 = it->second.virtual_peers.begin();it2!=it->second.virtual_peers.end();++it2)
-            grouter_debug() << "      " << *it2 << std::endl;
+        for(std::map<TurtleVirtualPeerId,RsGRouterTransactionChunkItem*>::const_iterator it2 = it->second.virtual_peers.begin();it2!=it->second.virtual_peers.end();++it2)
+            grouter_debug() << "      " << it2->first << " : cached data = " << (void*)it2->second << std::endl;
     }
 
 	grouter_debug() << "  Routing matrix: " << std::endl;

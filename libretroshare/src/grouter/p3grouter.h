@@ -52,28 +52,28 @@ class p3turtle ;
 class p3IdService ;
 class RsGRouterItem ;
 class RsGRouterGenericDataItem ;
+class RsGRouterTransactionChunkItem ;
 class RsGRouterReceiptItem ;
+
+// This class is responsible for accepting data chunks and merging them into a final object. When the object is
+// complete, it is de-serialised and returned as a RsGRouterGenericDataItem*.
 
 class GRouterTunnelInfo
 {
-    public:
-        GRouterTunnelInfo() :first_tunnel_ok_TS(0), last_tunnel_ok_TS(0) {}
+public:
+    GRouterTunnelInfo() :first_tunnel_ok_TS(0), last_tunnel_ok_TS(0) {}
 
-        void addVirtualPeer(const TurtleVirtualPeerId& vpid)
-        {
-            assert(virtual_peers.find(vpid) == virtual_peers.end()) ;
-            time_t now = time(NULL) ;
+    // These two methods handle the memory management of buffers for each virtual peers.
 
-            virtual_peers.insert(vpid) ;
+    void addVirtualPeer(const TurtleVirtualPeerId& vpid) ;
+    void removeVirtualPeer(const TurtleVirtualPeerId& vpid) ;
 
-            if(first_tunnel_ok_TS == 0) first_tunnel_ok_TS = now ;
-            if(last_tunnel_ok_TS < now)  last_tunnel_ok_TS = now ;
-        }
+    RsGRouterGenericDataItem *addDataChunk(const TurtleVirtualPeerId& vpid,RsGRouterTransactionChunkItem *chunk_item) ;
 
-        std::set<TurtleVirtualPeerId> virtual_peers ;
+    std::map<TurtleVirtualPeerId, RsGRouterTransactionChunkItem*> virtual_peers ;
 
-        time_t first_tunnel_ok_TS ;	// timestamp when 1st tunnel was received.
-        time_t last_tunnel_ok_TS ;	// timestamp when last tunnel was received.
+    time_t first_tunnel_ok_TS ;	// timestamp when 1st tunnel was received.
+    time_t last_tunnel_ok_TS ;	// timestamp when last tunnel was received.
 };
 class p3GRouter: public RsGRouter, public RsTurtleClientService, public p3Service, public p3Config
 {
@@ -217,7 +217,7 @@ private:
     static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
     static time_t computeNextTimeDelay(time_t duration) ;
 
-    void locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) const ;
+    void locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) ;
 
     uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
@@ -226,7 +226,10 @@ private:
     bool verifySignedDataItem(RsGRouterGenericDataItem *item) ;
     bool encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key) ;
     bool decryptDataItem(RsGRouterGenericDataItem *item) ;
-    Sha1CheckSum makeTunnelHash(const RsGxsId& destination,const GRouterServiceId& client);
+
+    static Sha1CheckSum makeTunnelHash(const RsGxsId& destination,const GRouterServiceId& client);
+    static void makeGxsIdAndClientId(const Sha1CheckSum& sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
+
     void sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGenericDataItem *item);
 
     //===================================================//

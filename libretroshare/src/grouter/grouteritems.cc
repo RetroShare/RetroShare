@@ -57,7 +57,42 @@ RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
 	}
 	return NULL;
 }
+RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransactionChunkItem(void *data, uint32_t tlvsize) const
+{
+    uint32_t offset = 8; // skip the header
+    uint32_t rssize = getRsItemSize(data);
+    bool ok = true ;
 
+    RsGRouterTransactionChunkItem *item = new RsGRouterTransactionChunkItem() ;
+
+    /* add mandatory parts first */
+    ok &= getRawUInt64(data, tlvsize, &offset, &item->propagation_id);
+    ok &= getRawUInt32(data, tlvsize, &offset, &item->chunk_start);
+    ok &= getRawUInt32(data, tlvsize, &offset, &item->chunk_size);
+    ok &= getRawUInt32(data, tlvsize, &offset, &item->total_size);
+
+    if( NULL == (item->chunk_data = (uint8_t*)malloc(item->chunk_size)))
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->chunk_size << std::endl;
+        return NULL ;
+    }
+    if(item->chunk_size + offset >= rssize)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+        return NULL ;
+    }
+
+    memcpy(item->chunk_data,&((uint8_t*)data)[offset],item->chunk_size) ;
+    offset += item->chunk_size ;
+
+    if (offset != rssize || !ok)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+        return NULL ;
+    }
+
+    return item;
+}
 RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -76,7 +111,13 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 		return NULL ;
 	}
 
-	memcpy(item->data_bytes,&((uint8_t*)data)[offset],item->data_size) ;
+    if(item->data_size + offset >= rssize)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+        return NULL ;
+    }
+
+    memcpy(item->data_bytes,&((uint8_t*)data)[offset],item->data_size) ;
 	offset += item->data_size ;
 
     ok &= item->signature.GetTlv(data, pktsize, &offset) ;
@@ -256,6 +297,42 @@ s += destination_key.serial_size() ;	// destination_key
     s += signature.TlvSize() ;	// signature
 
 	return s ;
+}
+uint32_t RsGRouterTransactionChunkItem::serial_size() const
+{
+    uint32_t s = 8 ;	// header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += 4 ;				// chunk_start
+    s += 4 ;				// chunk_size
+    s += 4 ;				// total_size
+    s += chunk_size ;			// data
+
+    return s;
+}
+bool RsGRouterTransactionChunkItem::serialise(void *data,uint32_t& size) const
+{
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
+
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, propagation_id);
+    ok &= setRawUInt32(data, tlvsize, &offset, chunk_start);
+    ok &= setRawUInt32(data, tlvsize, &offset, chunk_size);
+    ok &= setRawUInt32(data, tlvsize, &offset, total_size);
+
+    memcpy(&((uint8_t*)data)[offset],chunk_data,chunk_size) ;
+    offset += chunk_size ;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
 }
 bool RsGRouterGenericDataItem::serialise(void *data,uint32_t& size) const
 {
@@ -513,6 +590,15 @@ std::ostream& RsGRouterMatrixCluesItem::print(std::ostream& o, uint16_t)
 		o << "    " << (*it).friend_id << " " << (*it).time_stamp << " " << (*it).weight << std::endl;
 
 	return o ;
+}
+std::ostream& RsGRouterTransactionChunkItem::print(std::ostream& o, uint16_t)
+{
+    o << "RsGRouterTransactionChunkItem:" << std::endl ;
+    o << "   total_size:  " << total_size << std::endl;
+    o << "   chunk_size:  " << chunk_size << std::endl;
+    o << "  chunk_start:  " << chunk_start << std::endl;
+
+    return o ;
 }
 std::ostream& RsGRouterMatrixFriendListItem::print(std::ostream& o, uint16_t)
 {
