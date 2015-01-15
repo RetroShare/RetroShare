@@ -1427,7 +1427,8 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
         comboBox->addItem(tr("Bcc"), BCC);
 
         ui.recipientWidget->setCellWidget(row, COLUMN_RECIPIENT_TYPE, comboBox);
-
+        
+        comboBox->setLayoutDirection(Qt::RightToLeft);
         comboBox->installEventFilter(this);
     }
 
