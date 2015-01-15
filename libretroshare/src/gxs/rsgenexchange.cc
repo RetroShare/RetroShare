@@ -2892,7 +2892,6 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 		else	// remove message from list
 		{
 			// msg exist in retrieved index
-			delete cit2->first;
 			RsGxsMessageId::std_vector& notifyIds = msgIdsNotify[cit2->second->mGroupId];
 			RsGxsMessageId::std_vector::iterator it2 = std::find(notifyIds.begin(),
 					notifyIds.end(), cit2->second->mMsgId);
@@ -2901,6 +2900,9 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 #ifdef GEN_EXCH_DEBUG
 			std::cerr << "    discarding " << cit2->second->mMsgId << std::endl;
 #endif
+
+			delete cit2->first;
+			// cit2->second will be deleted too in the destructor of cit2->first (RsNxsMsg)
 		}
 	}
 
