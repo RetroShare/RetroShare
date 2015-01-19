@@ -53,7 +53,8 @@ class p3IdService ;
 class RsGRouterItem ;
 class RsGRouterGenericDataItem ;
 class RsGRouterTransactionChunkItem ;
-class RsGRouterReceiptItem ;
+class RsGRouterSignedReceiptItem ;
+class RsGRouterAbstractMsgItem ;
 
 // This class is responsible for accepting data chunks and merging them into a final object. When the object is
 // complete, it is de-serialised and returned as a RsGRouterGenericDataItem*.
@@ -68,7 +69,7 @@ public:
     void addVirtualPeer(const TurtleVirtualPeerId& vpid) ;
     void removeVirtualPeer(const TurtleVirtualPeerId& vpid) ;
 
-    RsGRouterGenericDataItem *addDataChunk(const TurtleVirtualPeerId& vpid,RsGRouterTransactionChunkItem *chunk_item) ;
+    RsGRouterAbstractMsgItem *addDataChunk(const TurtleVirtualPeerId& vpid,RsGRouterTransactionChunkItem *chunk_item) ;
 
     std::map<TurtleVirtualPeerId, RsGRouterTransactionChunkItem*> virtual_peers ;
 
@@ -207,17 +208,19 @@ private:
 
     void autoWash() ;
     void routePendingObjects() ;
-    void handleIncoming() ;
     void handleTunnels() ;
 
-    void debugDump() ;
+    void handleIncoming(const TurtleFileHash &hash, RsGRouterAbstractMsgItem *) ;
+    void handleIncomingReceiptItem(const TurtleFileHash &hash, RsGRouterSignedReceiptItem *receipt_item) ;
+    void handleIncomingDataItem(const TurtleFileHash &hash, RsGRouterGenericDataItem *data_item) ;
+
+    bool getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id);
+
 
     // utility functions
     //
     static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
     static time_t computeNextTimeDelay(time_t duration) ;
-
-    void locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) ;
 
     uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
@@ -249,7 +252,7 @@ private:
 
     // Prints the internal state of the router, for debug purpose.
     //
-    void debug_dump() ;
+    void debugDump() ;
 
     //===================================================//
     //              Internal queues/variables            //
@@ -290,8 +293,8 @@ private:
 
     // Data handling methods
     //
-    void handleRecvDataItem(RsGRouterGenericDataItem *item);
-    void handleRecvReceiptItem(RsGRouterReceiptItem *item);
+    //void handleRecvDataItem(RsGRouterGenericDataItem *item);
+    //void handleRecvReceiptItem(RsGRouterReceiptItem *item);
 
     // Pointers to other RS objects
     //

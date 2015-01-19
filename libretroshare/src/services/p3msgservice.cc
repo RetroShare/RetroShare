@@ -2198,14 +2198,14 @@ void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGx
     RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item) ;
 
     if(msg_item != NULL)
-	{
-		std::cerr << "  Encrypted item correctly deserialised. Passing on to incoming list." << std::endl;
+    {
+        std::cerr << "  Encrypted item correctly deserialised. Passing on to incoming list." << std::endl;
 
         msg_item->PeerId(RsPeerId(signing_key)) ;	// hack to pass on GXS id.
         handleIncomingItem(msg_item) ;
-	}
-	else
-		std::cerr << "  Item could not be deserialised. Format error??" << std::endl;
+    }
+    else
+        std::cerr << "  Item could not be deserialised. Format error??" << std::endl;
 }
 
 void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)

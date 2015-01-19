@@ -33,6 +33,7 @@
 #include "retroshare/rsgrouter.h"
 
 class RsGRouterGenericDataItem ;
+class RsGRouterSignedReceiptItem ;
 
 static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
@@ -55,15 +56,15 @@ static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =    6*256 ; // 6 dis
 static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     =    86400 ; // Cached items are kept for 24 hours at most.
 static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME_DEAD=     3600 ; // DEAD Items are kept in cache for only 1 hour to favor re-exploring dead routes.
 
-static const uint32_t RS_GROUTER_DATA_STATUS_UNKNOWN = 0x0000 ;		// unknown. Unused.
-static const uint32_t RS_GROUTER_DATA_STATUS_PENDING = 0x0001 ;		// item is pending. Should be sent asap.
-static const uint32_t RS_GROUTER_DATA_STATUS_SENT    = 0x0002 ;		// item is sent. Waiting for answer
-static const uint32_t RS_GROUTER_DATA_STATUS_ACKOWLG = 0x0003 ;		// item is at destination. The cache only holds it to avoid duplication.
+static const uint32_t RS_GROUTER_DATA_STATUS_UNKNOWN       = 0x0000 ;	// unknown. Unused.
+static const uint32_t RS_GROUTER_DATA_STATUS_PENDING       = 0x0001 ;	// item is pending. Should be sent asap.
+static const uint32_t RS_GROUTER_DATA_STATUS_SENT          = 0x0002 ;	// item is sent. Waiting for answer
+static const uint32_t RS_GROUTER_DATA_STATUS_RECEIPT_OK    = 0x0003 ;	// item is at destination.
 
-static const uint32_t RS_GROUTER_TUNNEL_STATUS_UNMANAGED       = 0x0000 ;// unknown destination key
-static const uint32_t RS_GROUTER_TUNNEL_STATUS_PENDING         = 0x0001 ;// unknown destination key
-static const uint32_t RS_GROUTER_TUNNEL_STATUS_READY           = 0x0002 ;// unknown destination key
-static const uint32_t RS_GROUTER_TUNNEL_STATUS_CAN_SEND        = 0x0003 ;// unknown destination key
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_UNMANAGED   = 0x0000 ; // no tunnel requested atm
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_PENDING     = 0x0001 ; // tunnel requested to turtle
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_READY       = 0x0002 ; // tunnel is ready but we're still waiting for various confirmations
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_CAN_SEND    = 0x0003 ; // tunnel is ready and data can be sent
 
 class FriendTrialRecord
 {
@@ -79,18 +80,19 @@ class FriendTrialRecord
 
 class GRouterRoutingInfo
 {
-	public:
-        uint32_t data_status ;			// pending, waiting, etc.
-        uint32_t tunnel_status ;		// status of tunnel handling.
-        time_t received_time_TS ;		// time at which the item was originally received
-        time_t last_sent_TS ;			// last time the item was sent to friends
+public:
+    uint32_t data_status ;			// pending, waiting, etc.
+    uint32_t tunnel_status ;		// status of tunnel handling.
+    time_t received_time_TS ;		// time at which the item was originally received
+    time_t last_sent_TS ;			// last time the item was sent to friends
     time_t last_tunnel_request_TS ;		// last time tunnels have been asked for this item.
     uint32_t sending_attempts ;		// number of times tunnels have been asked for this peer without success
 
-        RsGxsId destination_key ;		// ultimate destination for this key
-        GRouterServiceId client_id ;		// service ID of the client. Only valid when origin==OwnId
-        TurtleFileHash tunnel_hash ;		// tunnel hash to be used for this item
+    RsGxsId destination_key ;		// ultimate destination for this key
+    GRouterServiceId client_id ;		// service ID of the client. Only valid when origin==OwnId
+    TurtleFileHash tunnel_hash ;		// tunnel hash to be used for this item
 
     RsGRouterGenericDataItem *data_item ;
+    RsGRouterSignedReceiptItem *receipt_item ;
 };
 

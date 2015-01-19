@@ -34,17 +34,18 @@
 #include "p3grouter.h"
 
 const uint8_t RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY       = 0x01 ;	// used to publish a key
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK_deprecated    = 0x03 ;	// acknowledgement of data received
-const uint8_t RS_PKT_SUBTYPE_GROUTER_RECEIPT           = 0x04 ;	// acknowledgement of data received
-const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated   = 0x05 ;	// used to send data to a destination
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK_deprecated    = 0x03 ;	// dont use!
+const uint8_t RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT    = 0x04 ;	// long-distance acknowledgement of data received
+const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated   = 0x05 ;	// dont use!
 const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA              = 0x06 ;	// used to send data to a destination (Signed by source)
 
 const uint8_t RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK = 0x10 ;	// chunk of data. Used internally.
+const uint8_t RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN  = 0x11 ;	// acknowledge for finished transaction. Not necessary, but increases fiability.
 
-const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES  = 0x80 ;	// item to save matrix clues
-const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST  = 0x82 ;	// item to save friend lists
+const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES             = 0x80 ;	// item to save matrix clues
+const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST             = 0x82 ;	// item to save friend lists
 const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO_deprecated  = 0x87 ;	// deprecated. Don't use.
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO  = 0x89 ;	// item to save routing info
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO             = 0x89 ;	// item to save routing info
 
 const uint8_t QOS_PRIORITY_RS_GROUTER = 3 ;			// irrelevant since all items travel through tunnels
 
@@ -85,10 +86,19 @@ class RsGRouterNonCopyableObject
 /*                                Specific packets                                 */
 /***********************************************************************************/
 
-class RsGRouterGenericDataItem: public RsGRouterItem, public RsGRouterNonCopyableObject
+class RsGRouterAbstractMsgItem: public RsGRouterItem
 {
     public:
-        RsGRouterGenericDataItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_DATA) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+    RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
+
+    GRouterMsgPropagationId routing_id ;
+        GRouterKeyId destination_key ;
+};
+
+class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRouterNonCopyableObject
+{
+    public:
+        RsGRouterGenericDataItem() : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
         virtual ~RsGRouterGenericDataItem() { clear() ; }
 
         virtual bool serialise(void *data,uint32_t& size) const ;
@@ -105,8 +115,6 @@ class RsGRouterGenericDataItem: public RsGRouterItem, public RsGRouterNonCopyabl
 
         // packet data
         //
-        GRouterMsgPropagationId routing_id ;
-        GRouterKeyId destination_key ;
         uint32_t data_size ;
         uint8_t *data_bytes;
 
@@ -120,10 +128,10 @@ class RsGRouterGenericDataItem: public RsGRouterItem, public RsGRouterNonCopyabl
         bool serialise_signed_data(void *data,uint32_t& size) const ;
 };
 
-class RsGRouterReceiptItem: public RsGRouterItem
+class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 {
     public:
-        RsGRouterReceiptItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_RECEIPT) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+        RsGRouterSignedReceiptItem() : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
 
         virtual bool serialise(void *data,uint32_t& size) const ;
         virtual uint32_t serial_size() const ;
@@ -133,16 +141,14 @@ class RsGRouterReceiptItem: public RsGRouterItem
 
         // packet data
         //
-        GRouterMsgPropagationId mid ; 		// message id to which this ack is a response
-    GRouterKeyId destination_key ;		// This is the key to the peer we're reponding to.
-        uint32_t state ; 			// packet was delivered, not delivered, bounced, etc
+        uint32_t return_flags ; 		// packet was delivered, not delivered, bounced, etc
 
         RsTlvKeySignature signature ;		// signs mid+destination_key+state
 };
 
 // Low-level data items
 
-class RsGRouterTransactionChunkItem: public RsGRouterItem
+class RsGRouterTransactionChunkItem: public RsGRouterItem, public RsGRouterNonCopyableObject
 {
     public:
         RsGRouterTransactionChunkItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
@@ -158,6 +164,19 @@ class RsGRouterTransactionChunkItem: public RsGRouterItem
         uint32_t chunk_size ;
         uint32_t total_size ;
         uint8_t *chunk_data ;
+};
+class RsGRouterTransactionAcknItem: public RsGRouterItem
+{
+    public:
+        RsGRouterTransactionAcknItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
+
+        virtual bool serialise(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
+
+        virtual void clear() {}
+        virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
+
+        GRouterMsgPropagationId propagation_id ;
 };
 
 // Items for saving the routing matrix information.
@@ -223,26 +242,27 @@ class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo,
 
 class RsGRouterSerialiser: public RsSerialType
 {
-	public:
-		RsGRouterSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GROUTER) {}
+public:
+    RsGRouterSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GROUTER) {}
 
-		virtual uint32_t 	size (RsItem *item) 
-		{ 
-			return dynamic_cast<RsGRouterItem *>(item)->serial_size() ;
-		}
-		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
-		{ 
-			return dynamic_cast<RsGRouterItem *>(item)->serialise(data,*size) ;
-		}
-		virtual RsItem *deserialise (void *data, uint32_t *size) ;
+    virtual uint32_t 	size (RsItem *item)
+    {
+        return dynamic_cast<RsGRouterItem *>(item)->serial_size() ;
+    }
+    virtual bool serialise(RsItem *item, void *data, uint32_t *size)
+    {
+        return dynamic_cast<RsGRouterItem *>(item)->serialise(data,*size) ;
+    }
+    virtual RsItem *deserialise (void *data, uint32_t *size) ;
 
-	private:
-        RsGRouterGenericDataItem      *deserialise_RsGRouterGenericDataItem(void *data,uint32_t size) const ;
-        RsGRouterTransactionChunkItem      *deserialise_RsGRouterTransactionChunkItem(void *data,uint32_t size) const ;
-        RsGRouterReceiptItem          *deserialise_RsGRouterReceiptItem(void *data,uint32_t size) const ;
-        RsGRouterMatrixCluesItem      *deserialise_RsGRouterMatrixCluesItem(void *data,uint32_t size) const ;
-		RsGRouterMatrixFriendListItem *deserialise_RsGRouterMatrixFriendListItem(void *data,uint32_t size) const ;
-		RsGRouterRoutingInfoItem      *deserialise_RsGRouterRoutingInfoItem(void *data,uint32_t size) const ;
+private:
+    RsGRouterGenericDataItem      *deserialise_RsGRouterGenericDataItem(void *data,uint32_t size) const ;
+    RsGRouterTransactionChunkItem *deserialise_RsGRouterTransactionChunkItem(void *data,uint32_t size) const ;
+    RsGRouterTransactionAcknItem  *deserialise_RsGRouterTransactionAcknItem(void *data,uint32_t size) const ;
+    RsGRouterSignedReceiptItem    *deserialise_RsGRouterSignedReceiptItem(void *data,uint32_t size) const ;
+    RsGRouterMatrixCluesItem      *deserialise_RsGRouterMatrixCluesItem(void *data,uint32_t size) const ;
+    RsGRouterMatrixFriendListItem *deserialise_RsGRouterMatrixFriendListItem(void *data,uint32_t size) const ;
+    RsGRouterRoutingInfoItem      *deserialise_RsGRouterRoutingInfoItem(void *data,uint32_t size) const ;
 };
 
 

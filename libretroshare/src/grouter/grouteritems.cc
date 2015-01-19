@@ -45,12 +45,14 @@ RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		//case RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY:  return deserialise_RsGRouterPublishKeyItem(data, *pktsize);
-        case RS_PKT_SUBTYPE_GROUTER_DATA:   		return deserialise_RsGRouterGenericDataItem(data, *pktsize);
-        case RS_PKT_SUBTYPE_GROUTER_RECEIPT:    	return deserialise_RsGRouterReceiptItem(data, *pktsize);
-        case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:	return deserialise_RsGRouterMatrixCluesItem(data, *pktsize);
+        case RS_PKT_SUBTYPE_GROUTER_DATA:   		return deserialise_RsGRouterGenericDataItem     (data, *pktsize);
+        case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK:  return deserialise_RsGRouterTransactionChunkItem(data, *pktsize);
+            case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:   return deserialise_RsGRouterTransactionAcknItem (data, *pktsize);
+            case RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT:    	return deserialise_RsGRouterSignedReceiptItem   (data, *pktsize);
+            case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:	return deserialise_RsGRouterMatrixCluesItem     (data, *pktsize);
 		case RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST:	return deserialise_RsGRouterMatrixFriendListItem(data, *pktsize);
-		case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:	return deserialise_RsGRouterRoutingInfoItem(data, *pktsize);
+        case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:	return deserialise_RsGRouterRoutingInfoItem     (data, *pktsize);
+
 		default:
 				std::cerr << "RsGRouterSerialiser::deserialise(): Could not de-serialise item. SubPacket id = " << std::hex << getRsItemSubType(rstype) << " id = " << rstype << std::dec << std::endl;
 			return NULL;
@@ -76,7 +78,7 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
         std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->chunk_size << std::endl;
         return NULL ;
     }
-    if(item->chunk_size + offset >= rssize)
+    if(item->chunk_size + offset > rssize)
     {
         std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
         return NULL ;
@@ -84,6 +86,25 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
 
     memcpy(item->chunk_data,&((uint8_t*)data)[offset],item->chunk_size) ;
     offset += item->chunk_size ;
+
+    if (offset != rssize || !ok)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+        return NULL ;
+    }
+
+    return item;
+}
+RsGRouterTransactionAcknItem *RsGRouterSerialiser::deserialise_RsGRouterTransactionAcknItem(void *data, uint32_t tlvsize) const
+{
+    uint32_t offset = 8; // skip the header
+    uint32_t rssize = getRsItemSize(data);
+    bool ok = true ;
+
+    RsGRouterTransactionAcknItem *item = new RsGRouterTransactionAcknItem() ;
+
+    /* add mandatory parts first */
+    ok &= getRawUInt64(data, tlvsize, &offset, &item->propagation_id);
 
     if (offset != rssize || !ok)
     {
@@ -111,7 +132,7 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 		return NULL ;
 	}
 
-    if(item->data_size + offset >= rssize)
+    if(item->data_size + offset > rssize)
     {
         std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
         return NULL ;
@@ -134,16 +155,16 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 	return item;
 }
 
-RsGRouterReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterReceiptItem(void *data, uint32_t pktsize) const
+RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedReceiptItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
 
-    RsGRouterReceiptItem *item = new RsGRouterReceiptItem() ;
+    RsGRouterSignedReceiptItem *item = new RsGRouterSignedReceiptItem() ;
 
-    ok &= getRawUInt64(data, pktsize, &offset, &item->mid);
-    ok &= getRawUInt32(data, pktsize, &offset, &item->state);
+    ok &= getRawUInt64(data, pktsize, &offset, &item->routing_id);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->return_flags);
     ok &= item->destination_key.deserialise(data, pktsize, offset);
     ok &= item->signature.GetTlv(data, pktsize, &offset); 	// signature
 
@@ -288,7 +309,7 @@ uint32_t RsGRouterGenericDataItem::signed_data_size() const
 
     return s ;
 }
-uint32_t RsGRouterReceiptItem::serial_size() const
+uint32_t RsGRouterSignedReceiptItem::serial_size() const
 {
 	uint32_t s = 8 ;	// header
 	s += sizeof(GRouterMsgPropagationId)  ; // routing id
@@ -306,6 +327,13 @@ uint32_t RsGRouterTransactionChunkItem::serial_size() const
     s += 4 ;				// chunk_size
     s += 4 ;				// total_size
     s += chunk_size ;			// data
+
+    return s;
+}
+uint32_t RsGRouterTransactionAcknItem::serial_size() const
+{
+    uint32_t s = 8 ;	// header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
 
     return s;
 }
@@ -363,6 +391,25 @@ bool RsGRouterGenericDataItem::serialise(void *data,uint32_t& size) const
 
     return ok;
 }
+bool RsGRouterTransactionAcknItem::serialise(void *data,uint32_t& size) const
+{
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
+
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, propagation_id);
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
+}
 bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t& size) const
 {
     bool ok = true;
@@ -386,7 +433,7 @@ bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t& size) 
 
     return ok;
 }
-bool RsGRouterReceiptItem::serialise(void *data,uint32_t& size) const
+bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
 {
 	uint32_t tlvsize,offset=0;
 	bool ok = true;
@@ -395,8 +442,8 @@ bool RsGRouterReceiptItem::serialise(void *data,uint32_t& size) const
 		return false ;
 
 	/* add mandatory parts first */
-    ok &= setRawUInt64(data, tlvsize, &offset, mid);
-	ok &= setRawUInt32(data, tlvsize, &offset, state);
+    ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
+    ok &= setRawUInt32(data, tlvsize, &offset, return_flags);
     ok &= destination_key.serialise(data,tlvsize,offset) ;
     ok &= signature.SetTlv(data,tlvsize,&offset) ;
 
@@ -539,12 +586,12 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
 //
-std::ostream& RsGRouterReceiptItem::print(std::ostream& o, uint16_t)
+std::ostream& RsGRouterSignedReceiptItem::print(std::ostream& o, uint16_t)
 {
     o << "RsGRouterReceiptItem:" << std::endl ;
     o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-    o << "  Mid:            " << mid << std::endl ;
-    o << "  State:          " << state << std::endl ;
+    o << "  Mid:            " << routing_id << std::endl ;
+    o << "  State:          " << return_flags << std::endl ;
     o << "  Dest:           " << destination_key << std::endl ;
     o << "  Sign:           " << signature.keyId << std::endl ;
 
@@ -597,6 +644,13 @@ std::ostream& RsGRouterTransactionChunkItem::print(std::ostream& o, uint16_t)
     o << "   total_size:  " << total_size << std::endl;
     o << "   chunk_size:  " << chunk_size << std::endl;
     o << "  chunk_start:  " << chunk_start << std::endl;
+
+    return o ;
+}
+std::ostream& RsGRouterTransactionAcknItem::print(std::ostream& o, uint16_t)
+{
+    o << "RsGRouterTransactionAcknItem:" << std::endl ;
+    o << "   routing id:  " << propagation_id << std::endl;
 
     return o ;
 }
