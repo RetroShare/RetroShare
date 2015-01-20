@@ -486,16 +486,6 @@ void RshareSettings::setDisplayTrayGroupChat(bool bValue)
 	setValue("DisplayTrayGroupChat", bValue);
 }
 
-bool RshareSettings::getAddFeedsAtEnd()
-{
-	return value("AddFeedsAtEnd").toBool();
-}
-
-void RshareSettings::setAddFeedsAtEnd(bool bValue)
-{
-	setValue("AddFeedsAtEnd", bValue);
-}
-
 bool RshareSettings::getChatSendMessageWithCtrlReturn()
 {
 	return valueFromGroup("Chat", "SendMessageWithCtrlReturn", false).toBool();

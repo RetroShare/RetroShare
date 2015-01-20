@@ -199,9 +199,6 @@ public:
 	bool getDisplayTrayGroupChat();
 	void setDisplayTrayGroupChat(bool bValue);
 
-	bool getAddFeedsAtEnd();
-	void setAddFeedsAtEnd(bool bValue);
-
 	bool getChatSendMessageWithCtrlReturn();
 	void setChatSendMessageWithCtrlReturn(bool bValue);
 

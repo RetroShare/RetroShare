@@ -69,13 +69,15 @@ signals:
 	void newsFeedChanged(int count);
 
 protected:
+	void processSettings(bool load);
+
 	/* TokenResponse */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 //	void toggleChanMsgItems(bool on);
 	void feedoptions();
-	void settingsChanged();
+	void sortChanged(int index);
 
 	void sendNewsFeedChanged();
 

@@ -78,6 +78,9 @@
        </spacer>
       </item>
       <item>
+       <widget class="QComboBox" name="sortComboBox"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="feedOptionsButton">
         <property name="text">
          <string>Options</string>

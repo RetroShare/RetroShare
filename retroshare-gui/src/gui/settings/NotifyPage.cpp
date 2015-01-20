@@ -198,8 +198,6 @@ NotifyPage::save(QString &/*errmsg*/)
     MainWindow::installGroupChatNotifier();
     MainWindow::installNotifyIcons();
 
-    Settings->setAddFeedsAtEnd(ui.addFeedsAtEnd->isChecked());
-
     int index = ui.comboBoxToasterPosition->currentIndex();
     if (index != -1) {
         Settings->setToasterPosition((RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(index).toInt());
@@ -243,8 +241,6 @@ void NotifyPage::load()
 
     ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
     ui.systray_ChatLobby->setChecked(Settings->getDisplayTrayChatLobby());
-
-    ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
 
     ui.pushButtonDisableAll->setChecked(NotifyQt::isAllDisable());
 

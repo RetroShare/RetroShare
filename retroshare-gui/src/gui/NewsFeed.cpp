@@ -108,10 +108,14 @@ NewsFeed::NewsFeed(QWidget *parent) :
 
 	ui->feedWidget->enableRemove(true);
 
+	ui->sortComboBox->addItem(tr("Newest on top"), Qt::DescendingOrder);
+	ui->sortComboBox->addItem(tr("Oldest on top"), Qt::AscendingOrder);
+
+	connect(ui->sortComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortChanged(int)));
+
 	connect(ui->removeAllButton, SIGNAL(clicked()), ui->feedWidget, SLOT(clear()));
 	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
 	connect(ui->feedWidget, SIGNAL(feedCountChanged()), this, SLOT(sendNewsFeedChanged()));
-	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
 QString hlp_str = tr(
  " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
@@ -129,11 +133,15 @@ QString hlp_str = tr(
 
 	registerHelpButton(ui->helpButton,hlp_str) ;
 
-	settingsChanged();
+	// load settings
+	processSettings(true);
 }
 
 NewsFeed::~NewsFeed()
 {
+	// save settings
+	processSettings(false);
+
 	if (instance == this) {
 		instance = NULL;
 	}
@@ -154,9 +162,31 @@ UserNotify *NewsFeed::getUserNotify(QObject *parent)
 	return new NewsFeedUserNotify(this, parent);
 }
 
-void NewsFeed::settingsChanged()
+void NewsFeed::processSettings(bool load)
 {
-	ui->feedWidget->setSortRole(ROLE_RECEIVED, Settings->getAddFeedsAtEnd() ? Qt::AscendingOrder : Qt::DescendingOrder);
+	Settings->beginGroup("NewsFeed");
+
+	if (load) {
+		// load settings
+
+		// state of sort order
+		Qt::SortOrder sortOrder = (Qt::SortOrder) Settings->value("SortOrder", Qt::AscendingOrder).toInt();
+		ui->sortComboBox->setCurrentIndex(ui->sortComboBox->findData(sortOrder));
+		sortChanged(ui->sortComboBox->currentIndex());
+	} else {
+		// save settings
+
+		// state of sort order
+		Settings->setValue("SortOrder", ui->sortComboBox->itemData(ui->sortComboBox->currentIndex()).toInt());
+	}
+
+	Settings->endGroup();
+}
+
+void NewsFeed::sortChanged(int index)
+{
+	Qt::SortOrder sortOrder = (Qt::SortOrder) ui->sortComboBox->itemData(index).toInt();
+	ui->feedWidget->setSortRole(ROLE_RECEIVED, sortOrder);
 }
 
 void NewsFeed::updateDisplay()
@@ -735,7 +765,7 @@ void NewsFeed::addFeedItem(FeedItem *item)
 
 	// costly, but not really a problem here
 	int feedItemCount;
-	bool fromTop = Settings->getAddFeedsAtEnd();
+	bool fromTop = 	(ui->sortComboBox->itemData(ui->sortComboBox->currentIndex()).toInt() == Qt::AscendingOrder);
 
 	while ((feedItemCount = ui->feedWidget->feedItemCount()) >= MAX_FEEDITEM_COUNT) {
 		FeedItem *feedItem = ui->feedWidget->feedItem(fromTop ? 0 : feedItemCount - 1);
