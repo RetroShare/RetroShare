@@ -164,8 +164,9 @@ RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedRece
     RsGRouterSignedReceiptItem *item = new RsGRouterSignedReceiptItem() ;
 
     ok &= getRawUInt64(data, pktsize, &offset, &item->routing_id);
-    ok &= getRawUInt32(data, pktsize, &offset, &item->return_flags);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->flags);
     ok &= item->destination_key.deserialise(data, pktsize, offset);
+    ok &= item->data_hash.deserialise(data, pktsize, offset);
     ok &= item->signature.GetTlv(data, pktsize, &offset); 	// signature
 
 	if (offset != rssize || !ok)
@@ -311,13 +312,24 @@ uint32_t RsGRouterGenericDataItem::signed_data_size() const
 }
 uint32_t RsGRouterSignedReceiptItem::serial_size() const
 {
-	uint32_t s = 8 ;	// header
-	s += sizeof(GRouterMsgPropagationId)  ; // routing id
-s += destination_key.serial_size() ;	// destination_key
+    uint32_t s = 8 ;	// header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += destination_key.serial_size() ;	// destination_key
+    s += data_hash.serial_size() ;
     s += 4 ;  			// state
     s += signature.TlvSize() ;	// signature
 
-	return s ;
+    return s ;
+}
+uint32_t RsGRouterSignedReceiptItem::signed_data_size() const
+{
+    uint32_t s = 0 ;	// no header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += destination_key.serial_size() ;	// destination_key
+    s += data_hash.serial_size() ;
+    s += 4 ;  			// state
+
+    return s ;
 }
 uint32_t RsGRouterTransactionChunkItem::serial_size() const
 {
@@ -443,8 +455,9 @@ bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
 
 	/* add mandatory parts first */
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
-    ok &= setRawUInt32(data, tlvsize, &offset, return_flags);
+    ok &= setRawUInt32(data, tlvsize, &offset, flags);
     ok &= destination_key.serialise(data,tlvsize,offset) ;
+    ok &= data_hash.serialise(data,tlvsize,offset) ;
     ok &= signature.SetTlv(data,tlvsize,&offset) ;
 
 	if (offset != tlvsize)
@@ -455,7 +468,27 @@ bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
 
 	return ok;
 }
+bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t& size) const
+{
+    bool ok = true;
 
+    uint32_t offset=0;
+    uint32_t tlvsize = signed_data_size() ;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
+    ok &= setRawUInt32(data, tlvsize, &offset, flags);
+    ok &= destination_key.serialise(data,tlvsize,offset) ;
+    ok &= data_hash.serialise(data,tlvsize,offset) ;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGRouterReceiptItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
+}
 /* serialise the data to the buffer */
 uint32_t RsGRouterMatrixCluesItem::serial_size() const
 {
@@ -591,7 +624,7 @@ std::ostream& RsGRouterSignedReceiptItem::print(std::ostream& o, uint16_t)
     o << "RsGRouterReceiptItem:" << std::endl ;
     o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
     o << "  Mid:            " << routing_id << std::endl ;
-    o << "  State:          " << return_flags << std::endl ;
+    o << "  State:          " << flags << std::endl ;
     o << "  Dest:           " << destination_key << std::endl ;
     o << "  Sign:           " << signature.keyId << std::endl ;
 

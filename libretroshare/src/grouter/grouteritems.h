@@ -86,13 +86,22 @@ class RsGRouterNonCopyableObject
 /*                                Specific packets                                 */
 /***********************************************************************************/
 
+// This abstract item class encapsulates 2 types of signed items. All have signature, destination key
+// and routing ID. Sub-items are responsible for providing the serialised data to be signed for
+// both signing and checking.
+
 class RsGRouterAbstractMsgItem: public RsGRouterItem
 {
-    public:
+public:
     RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype) {}
 
+    virtual uint32_t signed_data_size() const = 0 ;
+    virtual bool serialise_signed_data(void *data,uint32_t& size) const = 0 ;
+
     GRouterMsgPropagationId routing_id ;
-        GRouterKeyId destination_key ;
+    GRouterKeyId destination_key ;
+    RsTlvKeySignature signature ;		// signs mid+destination_key+state
+        uint32_t flags ; 			// packet was delivered, not delivered, bounced, etc
 };
 
 class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRouterNonCopyableObject
@@ -118,14 +127,11 @@ class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRoute
         uint32_t data_size ;
         uint8_t *data_bytes;
 
-        RsTlvKeySignature signature ;	// signature by sender's key
-
         uint32_t randomized_distance ;	// number of hops (tunnel wise. Does not preclude of the real distance)
-        uint32_t flags ;
 
     // utility methods for signing data
-    uint32_t signed_data_size() const ;
-        bool serialise_signed_data(void *data,uint32_t& size) const ;
+    virtual uint32_t signed_data_size() const ;
+        virtual bool serialise_signed_data(void *data,uint32_t& size) const ;
 };
 
 class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
@@ -141,9 +147,11 @@ class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 
         // packet data
         //
-        uint32_t return_flags ; 		// packet was delivered, not delivered, bounced, etc
+    Sha1CheckSum data_hash ;		// avoids an attacker to re-use a given signed receipt. This is the hash of the enceypted data.
 
-        RsTlvKeySignature signature ;		// signs mid+destination_key+state
+    // utility methods for signing data
+    virtual uint32_t signed_data_size() const ;
+        virtual bool serialise_signed_data(void *data,uint32_t& size) const ;
 };
 
 // Low-level data items

@@ -225,15 +225,15 @@ private:
     uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
     // signs an item with the given key.
-    bool signDataItem(RsGRouterGenericDataItem *item,const RsGxsId& id) ;
-    bool verifySignedDataItem(RsGRouterGenericDataItem *item) ;
+    bool signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& id) ;
+    bool verifySignedDataItem(RsGRouterAbstractMsgItem *item) ;
     bool encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key) ;
     bool decryptDataItem(RsGRouterGenericDataItem *item) ;
 
     static Sha1CheckSum makeTunnelHash(const RsGxsId& destination,const GRouterServiceId& client);
-    static void makeGxsIdAndClientId(const Sha1CheckSum& sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
+    static void makeGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
 
-    void sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGenericDataItem *item);
+    bool sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterAbstractMsgItem *item);
 
     //===================================================//
     //                  p3Config methods                 //

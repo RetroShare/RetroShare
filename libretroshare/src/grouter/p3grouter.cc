@@ -503,6 +503,9 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileH
 
         mTurtle->sendTurtleData(virtual_peer_id,turtle_data_item) ;
 
+    // This is useful to send a receipt in the same tunnel while it's online.
+    generic_item->PeerId(virtual_peer_id) ;
+
         handleIncoming(hash,generic_item) ;
     }
 }
@@ -727,7 +730,7 @@ if(!_pending_messages.empty())
                 uint32_t item_delay = now - it->second.last_tunnel_request_TS ;
                 int item_priority = item_delay - send_retry_time_delays[std::min(5u,it->second.sending_attempts)] ;
 
-                grouter_debug() << "  delay=" << item_delay << " attempts=" << it->second.sending_attempts << ", priority=" << item_priority ;
+                grouter_debug() << "  delay=" << item_delay << " attempts=" << it->second.sending_attempts << ", priority=" << item_priority << std::endl;
 
                 if(item_priority > 0)
                     priority_list.push_back(std::make_pair(item_priority,&it->second)) ;
@@ -747,6 +750,8 @@ if(!_pending_messages.empty())
 
             grouter_debug() << std::endl;
         }
+    else
+        std::cerr << "  doing nothing." << std::endl;
     }
     if(!priority_list.empty())
         grouter_debug() << "  sorting..." << std::endl;
@@ -771,7 +776,7 @@ void p3GRouter::routePendingObjects()
     // Go throught he list of pending messages.
     // For those with a tunnel ready, send the message in the tunnel.
 
-        RS_STACK_MUTEX(grMtx) ;
+    RS_STACK_MUTEX(grMtx) ;
 
     time_t now = time(NULL) ;
 
@@ -779,50 +784,50 @@ void p3GRouter::routePendingObjects()
 
     for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();++it)
         if(it->second.data_status == RS_GROUTER_DATA_STATUS_PENDING && it->second.tunnel_status == RS_GROUTER_TUNNEL_STATUS_READY
-                    && now > it->second.last_sent_TS + MAX_DELAY_BETWEEN_TWO_SEND)
-    {
-        std::cerr << "  routing id: " << std::hex << it->first << std::dec ;
-
-        const TurtleFileHash& hash(it->second.tunnel_hash) ;
-        std::map<TurtleFileHash,GRouterTunnelInfo>::const_iterator vpit ;
-
-        if( (vpit = _virtual_peers.find(hash)) == _virtual_peers.end())
+                        && now > it->second.last_sent_TS + MAX_DELAY_BETWEEN_TWO_SEND)
         {
-            std::cerr << ". No virtual peers. Skipping now." << std::endl;
-            continue ;
+            std::cerr << "  routing id: " << std::hex << it->first << std::dec ;
+
+            const TurtleFileHash& hash(it->second.tunnel_hash) ;
+            std::map<TurtleFileHash,GRouterTunnelInfo>::const_iterator vpit ;
+
+            if( (vpit = _virtual_peers.find(hash)) == _virtual_peers.end())
+            {
+                std::cerr << ". No virtual peers. Skipping now." << std::endl;
+                continue ;
+            }
+
+            if(vpit->second.last_tunnel_ok_TS + TUNNEL_OK_WAIT_TIME > now)
+            {
+                std::cerr << ". Still waiting delay (stabilisation)." << std::endl;
+                continue ;
+            }
+
+            // for now, just take one. But in the future, we will need some policy to temporarily store objects at proxy peers, etc.
+
+            std::cerr << "  " << vpit->second.virtual_peers.size() << " virtual peers available. " << std::endl;
+
+            if(vpit->second.virtual_peers.empty())
+            {
+                std::cerr << "  no peers available. Cannot send!!" << std::endl;
+                continue ;
+            }
+            TurtleVirtualPeerId vpid = (vpit->second.virtual_peers.begin())->first ;
+
+            std::cerr << "  sending to " << vpid << std::endl;
+
+            sendDataInTunnel(vpid,it->second.data_item) ;
+
+            std::cerr << "  setting last sent time to now" << std::endl;
+
+            it->second.last_sent_TS = now ;
         }
-
-        if(vpit->second.last_tunnel_ok_TS + TUNNEL_OK_WAIT_TIME > now)
-        {
-            std::cerr << ". Still waiting delay (stabilisation)." << std::endl;
-            continue ;
-        }
-
-        // for now, just take one. But in the future, we will need some policy to temporarily store objects at proxy peers, etc.
-
-        std::cerr << "  " << vpit->second.virtual_peers.size() << " virtual peers available. " << std::endl;
-
-        if(vpit->second.virtual_peers.empty())
-        {
-            std::cerr << "  no peers available. Cannot send!!" << std::endl;
-            continue ;
-        }
-        TurtleVirtualPeerId vpid = (vpit->second.virtual_peers.begin())->first ;
-
-        std::cerr << "  sending to " << vpid << std::endl;
-
-        sendDataInTunnel(vpid,it->second.data_item) ;
-
-        std::cerr << "  setting last sent time to now" << std::endl;
-
-        it->second.last_sent_TS = now ;
-    }
 
     // Also route back some ACKs if necessary.
     // [..]
 }
 
-void p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGenericDataItem *item)
+bool p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterAbstractMsgItem *item)
 {
     // split into chunks and send them all into the tunnel.
 
@@ -836,14 +841,14 @@ void p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGeneri
     if(data == NULL)
     {
         std::cerr << "  ERROR: cannot allocate memory. Size=" << size << std::endl;
-        return ;
+        return false;
     }
 
     if(!item->serialise(data,size))
     {
         free(data) ;
         std::cerr << "  ERROR: cannot serialise." << std::endl;
-        return ;
+        return false;
     }
 
     uint32_t offset = 0 ;
@@ -865,7 +870,7 @@ void p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGeneri
         if(chunk_item->chunk_data == NULL)
         {
             std::cerr << "  ERROR: Cannot allocate memory for size " << chunk_size << std::endl;
-        return ;
+        return false;
         }
         memcpy(chunk_item->chunk_data,&data[offset],chunk_size) ;
 
@@ -879,13 +884,13 @@ void p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGeneri
         if(turtle_data == NULL)
         {
             std::cerr << "  ERROR: Cannot allocate turtle data memory for size " << turtle_data_size << std::endl;
-            return ;
+            return false;
         }
         if(!chunk_item->serialise(turtle_data,turtle_data_size))
         {
             std::cerr << "  ERROR: cannot serialise RsGRouterTransactionChunkItem." << std::endl;
             free(turtle_data) ;
-            return ;
+            return false;
         }
 
         delete chunk_item ;
@@ -898,6 +903,7 @@ void p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterGeneri
     }
 
     free(data) ;
+    return true ;
 }
 
 void p3GRouter::handleIncoming(const TurtleFileHash& hash,RsGRouterAbstractMsgItem *item)
@@ -917,45 +923,64 @@ void p3GRouter::handleIncoming(const TurtleFileHash& hash,RsGRouterAbstractMsgIt
 
 void p3GRouter::handleIncomingReceiptItem(const TurtleFileHash& hash,RsGRouterSignedReceiptItem *receipt_item)
 {
-    std::cerr << "Handling incoming signed receipt item. Passing to client." << std::endl;
+    std::cerr << "Handling incoming signed receipt item." << std::endl;
     std::cerr << "Item content:" << std::endl;
     receipt_item->print(std::cerr,2) ;
 
-    GRouterClientService *client = NULL ;
-    GRouterServiceId service_id = 0;
 
-    if(!getClientAndServiceId(hash,receipt_item->destination_key,client,service_id))
-    {
-        std::cerr << "  ERROR: cannot find client service for this hash/key combination." << std::endl;
-        return ;
-    }
-
-    // Because we don't do proxy transmission yet, the client needs to be notified. Otherwise, we will need to
+    // Because we don't do proxy-transmission yet, the client needs to be notified. Otherwise, we will need to
     // first check if we're a proxy or not. We also remove the message from the global router sending list.
     // in the proxy case, we should only store the receipt.
 
-    std::cerr << "  notifying client that the msg was received." << std::endl;
-
-    client->acknowledgeDataReceived(receipt_item->routing_id) ;
-
-    std::cerr << "  removing messsage from cache." << std::endl;
     {
         RS_STACK_MUTEX (grMtx) ;
 
         std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.find(receipt_item->routing_id) ;
-        if(it != _pending_messages.end())
+        if(it == _pending_messages.end())
         {
-            delete it->second.data_item ;
-            //delete it->second.receipt_item ;
+            std::cerr << "  ERROR: no routing ID corresponds to this message. Inconsistency!" << std::endl;
+            return ;
+        }
 
-            _pending_messages.erase(it) ;
-
-            //it->second.data_status  = RS_GROUTER_DATA_STATUS_RECEIPT_OK;
-            //it->second.receipt_item = signed_receipt_item ;
+        // check signature.
+        if(receipt_item->data_hash != RsDirUtil::sha1sum(it->second.data_item->data_bytes,it->second.data_item->data_size))
+        {
+            std::cerr << "  checking receipt hash : FAILED. Receipt is dropped." << std::endl;
+            return ;
         }
         else
-            std::cerr << "  ERROR: no routing ID corresponds to this message. Inconsistency!" << std::endl;
+            std::cerr << "  checking receipt hash : OK" << std::endl;
+
+        if(! verifySignedDataItem(receipt_item))
+        {
+            std::cerr << "  checking receipt signature : FAILED. Receipt is dropped." << std::endl;
+            return ;
+        }
+        std::cerr << "  checking receipt signature : OK. " << std::endl;
+
+        std::cerr << "  removing messsage from cache." << std::endl;
+
+        delete it->second.data_item ;
+        //delete it->second.receipt_item ;
+        _pending_messages.erase(it) ;
+
+        //it->second.data_status  = RS_GROUTER_DATA_STATUS_RECEIPT_OK;
+        //it->second.receipt_item = signed_receipt_item ;
     }
+    std::cerr << "  notifying client that the msg was received." << std::endl;
+
+    GRouterClientService *client = NULL ;
+    GRouterServiceId service_id = 0;
+
+    if(!getClientAndServiceId(hash,receipt_item->signature.keyId,client,service_id))
+    {
+        std::cerr << "  ERROR: cannot find client service for this hash/key combination." << std::endl;
+        return ;
+    }
+    std::cerr << "  retrieved client " << (void*)client << ", service_id=" << service_id << std::endl;
+    std::cerr << "  acknowledging client for data received" << std::endl;
+
+    client->acknowledgeDataReceived(receipt_item->routing_id) ;
 }
 
 void p3GRouter::handleIncomingDataItem(const TurtleFileHash& hash,RsGRouterGenericDataItem *generic_item)
@@ -981,6 +1006,10 @@ void p3GRouter::handleIncomingDataItem(const TurtleFileHash& hash,RsGRouterGener
     else
         std::cerr << "  verifying item signature: FAILED!" ;
 
+    // compute the hash before decryption.
+
+    Sha1CheckSum data_hash = RsDirUtil::sha1sum(generic_item->data_bytes,generic_item->data_size) ;
+
     if(!decryptDataItem(generic_item))
     {
         std::cerr << "  decrypting item : FAILED! Item will be dropped." << std::endl;
@@ -995,6 +1024,35 @@ void p3GRouter::handleIncomingDataItem(const TurtleFileHash& hash,RsGRouterGener
     memcpy(data_copy,generic_item->data_bytes,generic_item->data_size) ;
 
     client->receiveGRouterData(generic_item->destination_key,generic_item->signature.keyId,service_id,data_copy,generic_item->data_size);
+
+    // No we need to send a signed receipt to the sender.
+
+    RsGRouterSignedReceiptItem *receipt_item = new RsGRouterSignedReceiptItem ;
+    receipt_item->data_hash = data_hash ;
+    receipt_item->routing_id = generic_item->routing_id ;
+    receipt_item->destination_key = generic_item->signature.keyId ;
+    receipt_item->flags = 0 ;
+
+    std::cerr << "  preparing signed receipt." << std::endl;
+
+    if(!signDataItem(receipt_item,generic_item->destination_key))
+    {
+        std::cerr << "  signing: FAILED. Receipt dropped. ERROR." << std::endl;
+        return ;
+    }
+    std::cerr << "  signing: OK." << std::endl;
+
+    // Normally (proxy mode) we should store the signed receipt so that it can be sent back, and handle it
+    // in the routePendingObjects() method.
+
+    if(!sendDataInTunnel(generic_item->PeerId(),receipt_item))
+    {
+        std::cerr << "  sending signed receipt in tunnel " << generic_item->PeerId() << ": FAILED." << std::endl;
+        delete receipt_item ;
+        return ;
+    }
+
+    std::cerr << "  sent signed receipt in tunnel " << generic_item->PeerId() << std::endl;
 }
 
 bool p3GRouter::getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id)
@@ -1002,32 +1060,28 @@ bool p3GRouter::getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId&
     client = NULL ;
     service_id = 0;
 
-    RS_STACK_MUTEX (grMtx) ;
-    std::map<TurtleFileHash,GRouterPublishedKeyInfo>::iterator it = _owned_key_ids.find(hash) ;
+    RsGxsId gxs_id ;
+    makeGxsIdAndClientId(hash,gxs_id,service_id) ;
 
-    if(it == _owned_key_ids.end())
+    if(gxs_id != destination_key)
     {
-        std::cerr << "  ERROR: no registered GXS key for this hash! This is a consistency error." << std::endl;
+        std::cerr << "  ERROR: verification (destination) GXS key " << destination_key << " does not match key from hash " << gxs_id << std::endl;
         return false;
     }
-    // check that we have the correct key.
-    if(it->second.authentication_key != destination_key)
-    {
-        std::cerr << "  ERROR: hash is associated to key " << it->second.authentication_key << " whether item is for key " << destination_key << ": consistency error." << std::endl;
-        return false;
-    }
+
+    RS_STACK_MUTEX (grMtx) ;
+
     // now find the client given its id.
 
-    std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(it->second.service_id) ;
+    std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(service_id) ;
 
     if(its == _registered_services.end())
     {
-        std::cerr << "  ERROR: client id " << it->second.service_id << " not registered. Consistency error." << std::endl;
+        std::cerr << "  ERROR: client id " << service_id << " not registered. Consistency error." << std::endl;
         return false;
     }
 
     client = its->second ;
-    service_id = it->second.service_id ;
 
     return true ;
 }
@@ -1132,7 +1186,7 @@ bool p3GRouter::decryptDataItem(RsGRouterGenericDataItem *item)
     return true ;
 }
 
-bool p3GRouter::signDataItem(RsGRouterGenericDataItem *item,const RsGxsId& signing_id)
+bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signing_id)
 {
     uint8_t *data = NULL;
 
@@ -1178,7 +1232,7 @@ bool p3GRouter::signDataItem(RsGRouterGenericDataItem *item,const RsGxsId& signi
         return false ;
     }
 }
-bool p3GRouter::verifySignedDataItem(RsGRouterGenericDataItem *item)
+bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
 {
     uint8_t *data = NULL;
 
@@ -1319,7 +1373,7 @@ Sha1CheckSum p3GRouter::makeTunnelHash(const RsGxsId& destination,const GRouterS
 
     return Sha1CheckSum(bytes) ;
 }
-void p3GRouter::makeGxsIdAndClientId(const Sha1CheckSum& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
+void p3GRouter::makeGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
 {
     assert(       gxs_id.SIZE_IN_BYTES == 16) ;
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
