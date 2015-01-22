@@ -150,6 +150,8 @@ std::string ChatId::toStdString() const
             std::cerr << "ChatId::toStdString() Error: sizeof(ChatLobbyId) != 8. please report this" << std::endl;
             return "";
         }
+        str += "L";
+
         ChatLobbyId id = lobby_id;
         for(int i = 0; i<16; i++)
         {
