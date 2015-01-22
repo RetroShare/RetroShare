@@ -37,19 +37,19 @@ class RsGRouterSignedReceiptItem ;
 
 static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
-static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 10;	// max number of clues to store
-static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS = 60;	// can be set to up to half the publish time interval. Prevents flooding routes.
-static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD =  5;	// at most save config every 5 seconds
+static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       =   10 ;	// max number of clues to store
+static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS =   60 ;	// can be set to up to half the publish time interval. Prevents flooding routes.
+static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD       =    5 ;	// at most save config every 5 seconds
 
-static const float RS_GROUTER_BASE_WEIGHT_ROUTED_MSG  = 1.0f ; 		// base contribution of routed message clue to routing matrix
-static const float RS_GROUTER_BASE_WEIGHT_GXS_PACKET  = 0.1f ; 		// base contribution of GXS message to routing matrix
+static const float RS_GROUTER_BASE_WEIGHT_ROUTED_MSG          = 1.0f ;	// base contribution of routed message clue to routing matrix
+static const float RS_GROUTER_BASE_WEIGHT_GXS_PACKET          = 0.1f ;	// base contribution of GXS message to routing matrix
 
-static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD         =       10 ; // Output everything
-static const time_t RS_GROUTER_AUTOWASH_PERIOD             =       10 ; // Autowash every minute. Not a costly operation.
-static const time_t RS_GROUTER_MATRIX_UPDATE_PERIOD        =    1 *10 ; // Check for key advertising every 10 minutes
-static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =    2 *60 ; // time between two trial of sending a given message
-//atic const time_t RS_GROUTER_ROUTING_WAITING_TIME        =     3600 ; // time between two trial of sending a given message
-static const time_t RS_GROUTER_MEAN_EXPECTED_RTT           =       30 ; // reference RTT time for a message. 
+static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD         =      10 ; // Output everything
+static const time_t RS_GROUTER_AUTOWASH_PERIOD             =      10 ; // Autowash every minute. Not a costly operation.
+static const time_t RS_GROUTER_MATRIX_UPDATE_PERIOD        =   1 *10 ; // Check for key advertising every 10 minutes
+static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =   2 *60 ; // time between two trial of sending a given message
+//atic const time_t RS_GROUTER_ROUTING_WAITING_TIME        =    3600 ; // time between two trial of sending a given message
+static const time_t RS_GROUTER_MEAN_EXPECTED_RTT           =      30 ; // reference RTT time for a message.
 
 static const uint32_t GROUTER_ITEM_DISTANCE_UNIT           =      256 ; // One unit of distance between two peers
 static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =    6*256 ; // 6 distance units. That is a lot.
@@ -80,7 +80,15 @@ class FriendTrialRecord
 
 class GRouterRoutingInfo
 {
+    // There's no destructor to this class, because the memory is managed elsewhere, which
+    // ovoids lots of duplications if the class is copied.
 public:
+    GRouterRoutingInfo()
+    {
+        data_item = NULL ;
+        receipt_item = NULL ;
+    }
+
     uint32_t data_status ;			// pending, waiting, etc.
     uint32_t tunnel_status ;		// status of tunnel handling.
     time_t received_time_TS ;		// time at which the item was originally received

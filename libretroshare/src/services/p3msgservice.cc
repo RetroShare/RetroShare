@@ -2155,8 +2155,19 @@ void p3MsgService::manageDistantPeers()
 	enableDistantMessaging(mDistantMessagingEnabled) ;
 }
 
-void p3MsgService::acknowledgeDataReceived(const GRouterMsgPropagationId& id)
+void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t data_status)
 {
+    if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": Not fully implemented. The global router fails to send apacket, but we don't deal with it. Please remind the devs to do it" << std::endl;
+        return ;
+    }
+    if(data_status != GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED)
+    {
+        std::cerr << "p3MsgService: unhandled data status info from global router for msg ID " << id << ": this is a bug." << std::endl;
+        return ;
+    }
+
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::acknowledgeDataReceived(): acknowledging data received for msg propagation id  " << id << std::endl;

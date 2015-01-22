@@ -77,7 +77,7 @@ class RsGRouterNonCopyableObject
 {
 	public:
 		RsGRouterNonCopyableObject() {}
-	private:
+    protected:
 		RsGRouterNonCopyableObject(const RsGRouterNonCopyableObject&) {}
 		RsGRouterNonCopyableObject operator=(const RsGRouterNonCopyableObject&) { return *this ;}
 };
@@ -144,6 +144,8 @@ class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 
         virtual void clear() {}
         virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
+
+        RsGRouterSignedReceiptItem *duplicate() const ;
 
         // packet data
         //
@@ -237,10 +239,12 @@ class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo,
 
 		virtual void clear() 
 		{
-			if(data_item != NULL)
-				delete data_item ;
-			data_item = NULL ;
-		}
+            if(data_item != NULL) delete data_item ;
+            if(receipt_item != NULL) delete receipt_item ;
+
+            data_item = NULL ;
+            receipt_item = NULL ;
+        }
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
 };
 

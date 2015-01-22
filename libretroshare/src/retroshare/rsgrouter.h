@@ -38,69 +38,65 @@ class RsGRouterGenericDataItem ;
 
 class RsGRouter
 {
-	public:
-		// This is the interface file for the global router service.
-		//
-		struct GRouterRoutingCacheInfo
-		{
-			GRouterMsgPropagationId mid ;
-			RsPeerId                local_origin;
-			GRouterKeyId            destination ;
-			time_t                  time_stamp ;
-			uint32_t                status ;
-			uint32_t                data_size ;
-		};
+public:
+    // This is the interface file for the global router service.
+    //
+    struct GRouterRoutingCacheInfo
+    {
+        GRouterMsgPropagationId mid ;
+        RsPeerId                local_origin;
+        GRouterKeyId            destination ;
+        time_t                  time_stamp ;
+        uint32_t                status ;
+        uint32_t                data_size ;
+    };
 
-		struct GRouterPublishedKeyInfo
-		{
-            std::string  	description_string ;
-            RsGxsId 	authentication_key ;
-            uint32_t     	service_id ;
-		};
+    struct GRouterPublishedKeyInfo
+    {
+        std::string  	description_string ;
+        RsGxsId 	authentication_key ;
+        uint32_t     	service_id ;
+    };
 
-		struct GRouterRoutingMatrixInfo
-		{
-			// Probabilities of reaching a given key for each friend.
-			// This concerns all known keys.
-			//
-			std::map<GRouterKeyId, std::vector<float> > per_friend_probabilities ;
+    struct GRouterRoutingMatrixInfo
+    {
+        // Probabilities of reaching a given key for each friend.
+        // This concerns all known keys.
+        //
+        std::map<GRouterKeyId, std::vector<float> > per_friend_probabilities ;
 
-			// List of friend ids in the same order. Should roughly correspond to the friends that are currently online.
-			//
-			std::vector<RsPeerId> friend_ids ;
+        // List of friend ids in the same order. Should roughly correspond to the friends that are currently online.
+        //
+        std::vector<RsPeerId> friend_ids ;
 
-			// List of own published keys, with associated service ID
-			//
-			std::map<GRouterKeyId,GRouterPublishedKeyInfo> published_keys ;
-		};
+        // List of own published keys, with associated service ID
+        //
+        std::map<GRouterKeyId,GRouterPublishedKeyInfo> published_keys ;
+    };
 
-		//===================================================//
-		//                  Debugging info                   //
-		//===================================================//
+    //===================================================//
+    //                  Debugging info                   //
+    //===================================================//
 
-        virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos) =0;
-        virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) =0;
+    virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos) =0;
+    virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) =0;
 
-		// retrieve the routing probabilities
-		
-		//===================================================//
-		//         Communication to other services.          //
-		//===================================================//
+    // retrieve the routing probabilities
 
-        virtual bool sendData(	const RsGxsId& destination,
-            const GRouterServiceId& client_id,
-                    uint8_t *data,
-                    uint32_t data_size,
-                    const RsGxsId& signing_id,
-                    GRouterMsgPropagationId& id) =0;
+    //===================================================//
+    //         Communication to other services.          //
+    //===================================================//
 
-        virtual bool   registerKey(const RsGxsId& authentication_id, const GRouterServiceId& client_id,const std::string& description_string)=0 ;
+    virtual bool sendData(const RsGxsId& destination, const GRouterServiceId& client_id, uint8_t *data, uint32_t data_size, const RsGxsId& signing_id, GRouterMsgPropagationId& id) =0;
+    virtual bool cancel(GRouterMsgPropagationId mid) =0;
 
-        //===================================================//
-        //         Routage feedback from other services      //
-        //===================================================//
+    virtual bool registerKey(const RsGxsId& authentication_id, const GRouterServiceId& client_id,const std::string& description_string)=0 ;
 
-        virtual void addRoutingClue(const GRouterKeyId& destination, const RsPeerId& source) =0;
+    //===================================================//
+    //         Routage feedback from other services      //
+    //===================================================//
+
+    virtual void addRoutingClue(const GRouterKeyId& destination, const RsPeerId& source) =0;
 };
 
 // To access the GRouter from anywhere

@@ -123,12 +123,11 @@ public:
     // remembered by the client, so that he knows when the data has been received.
     // The client id is supplied so that the client can be notified when the data has been received.
     //
-    virtual bool sendData(	const RsGxsId& destination,
-                const GRouterServiceId& client_id,
-                            uint8_t *data,
-                            uint32_t data_size,
-                            const RsGxsId& signing_id,
-                            GRouterMsgPropagationId& id) ;
+    virtual bool sendData(const RsGxsId& destination, const GRouterServiceId& client_id, uint8_t *data, uint32_t data_size, const RsGxsId& signing_id, GRouterMsgPropagationId& id) ;
+
+    // Cancels a given sending order. If called too late, the message might already have left. But this will remove the item from the
+    // re-try list.
+    virtual bool cancel(GRouterMsgPropagationId mid) ;
 
     //===================================================//
     //                  Interface with RsGRouter         //
@@ -214,7 +213,7 @@ private:
     void handleIncomingReceiptItem(const TurtleFileHash &hash, RsGRouterSignedReceiptItem *receipt_item) ;
     void handleIncomingDataItem(const TurtleFileHash &hash, RsGRouterGenericDataItem *data_item) ;
 
-    bool getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id);
+    bool locked_getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id);
 
 
     // utility functions

@@ -137,7 +137,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		// Overloaded from GRouterClientService
 
         virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size) ;
-		virtual void acknowledgeDataReceived(const GRouterMsgPropagationId& msg_id) ;
+        virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,uint32_t data_status) ;
 
 		// Utility functions
 

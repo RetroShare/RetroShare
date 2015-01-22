@@ -194,6 +194,8 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
     ok &= getRawUInt32(data, pktsize, &offset, &item->tunnel_status);
     ok &= getRawTimeT(data, pktsize, &offset, item->received_time_TS);
     ok &= getRawTimeT(data, pktsize, &offset, item->last_sent_TS);
+
+    ok &= getRawTimeT(data, pktsize, &offset, item->last_tunnel_request_TS);
     ok &= getRawUInt32(data, pktsize, &offset, &item->sending_attempts);
 
     ok &= getRawUInt32(data, pktsize, &offset, &item->client_id);
@@ -205,11 +207,16 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	else
 		ok = false ;
 
-    item->receipt_item = deserialise_RsGRouterSignedReceiptItem(&((uint8_t*)data)[offset],pktsize - offset) ;
-    if(item->receipt_item != NULL)
-        offset += item->receipt_item->serial_size() ;
-    else
-        ok = false ;
+    // receipt item is optional.
+
+    if(offset < pktsize)
+    {
+        item->receipt_item = deserialise_RsGRouterSignedReceiptItem(&((uint8_t*)data)[offset],pktsize - offset) ;
+        if(item->receipt_item != NULL)
+            offset += item->receipt_item->serial_size() ;
+        else
+            ok = false ;
+    }
 
 
 	if (offset != rssize || !ok)
@@ -278,25 +285,29 @@ RsGRouterMatrixCluesItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixCluesI
 
 	return item;
 }
-
-
 RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
 {
-	RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
+    RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
 
-	item->routing_id = routing_id ;
-	item->destination_key = destination_key ;
-	item->data_size = data_size ;
+    // copy all members
 
-	// then duplicate the memory chunk
+    *item = *this ;
 
-	item->data_bytes = (uint8_t*)malloc(data_size) ;
-	memcpy(item->data_bytes,data_bytes,data_size) ;
+    // then duplicate the memory chunk
 
-    item->signature = signature ;
+    item->data_bytes = (uint8_t*)malloc(data_size) ;
+    memcpy(item->data_bytes,data_bytes,data_size) ;
 
-    item->randomized_distance = randomized_distance ;
-    item->flags = flags ;
+    return item ;
+}
+
+RsGRouterSignedReceiptItem *RsGRouterSignedReceiptItem::duplicate() const
+{
+    RsGRouterSignedReceiptItem *item = new RsGRouterSignedReceiptItem ;
+
+    // copy all members
+
+    *item = *this ;
 
     return item ;
 }
@@ -525,10 +536,12 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
 {
     uint32_t s = 8 ; 			// header
     s += PeerId().serial_size() ;
+
     s += 4  ; 				// data status_flags
     s += 4  ; 				// tunnel status_flags
     s += 8  ; 				// received_time
     s += 8  ; 				// last_sent
+
     s += 8  ; 				// last_TR_TS
     s += 4  ; 				// sending attempts
 
@@ -536,7 +549,9 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
     s += tunnel_hash.serial_size() ;
 
     s += data_item->serial_size();	// data_item
-    s += receipt_item->serial_size();	// receipt_item
+
+    if(receipt_item != NULL)
+        s += receipt_item->serial_size();	// receipt_item
 
     return s ;
 }
