@@ -644,7 +644,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			mTurtle->monitorTunnels(_queue[pos]->mHash,mFtServer) ;
+            mTurtle->monitorTunnels(_queue[pos]->mHash,mFtServer,true) ;
 	}
 
 	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED && _queue[pos]->mState != ftFileControl::PAUSED)
@@ -1276,7 +1276,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
   // We check that flags are consistent.  
   
   	if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-		mTurtle->monitorTunnels(hash,mFtServer) ;
+        mTurtle->monitorTunnels(hash,mFtServer,true) ;
 
 	bool assume_availability = flags & RS_FILE_REQ_CACHE ;	// assume availability for cache files
 

@@ -872,7 +872,7 @@ void DistantChatService::startClientDistantChatConnection(const RsGxsId& to_gxs_
     std::cerr << "Asking turtle router to monitor tunnels for hash " << hash << std::endl;
 #endif
 
-    mTurtle->monitorTunnels(hash,this) ;
+    mTurtle->monitorTunnels(hash,this,false) ;
 
     // spawn a status item so as to open the chat window.
     RsChatMsgItem *item = new RsChatMsgItem;

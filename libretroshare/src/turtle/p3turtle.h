@@ -197,9 +197,10 @@ class TurtleHashInfo
 {
 	public:
 		std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
-		TurtleRequestId last_request ;				// last request for the tunnels of this hash
-		time_t last_digg_time ;							// last time the tunnel digging happenned.
-		RsTurtleClientService *service ; 			// client service to which items should be sent. Never NULL.
+        TurtleRequestId last_request ;			// last request for the tunnels of this hash
+        time_t last_digg_time ;				// last time the tunnel digging happenned.
+        RsTurtleClientService *service ; 		// client service to which items should be sent. Never NULL.
+        bool use_aggressive_mode ;			// allow to re-digg tunnels even when some are already available
 };
 
 // Subclassing:
@@ -251,7 +252,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//  This function should be called in addition to ftServer::FileRequest() so that the turtle router
 		//  automatically provide tunnels for the file to download.
 		//
-		virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service) ;
+        virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service, bool allow_multi_tunnels) ;
 
 		/// This should be called when canceling a file download, so that the turtle router stops
 		/// handling tunnels for this file.
