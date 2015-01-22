@@ -88,7 +88,6 @@ public:
     time_t last_tunnel_request_TS ;		// last time tunnels have been asked for this item.
     uint32_t sending_attempts ;		// number of times tunnels have been asked for this peer without success
 
-    RsGxsId destination_key ;		// ultimate destination for this key
     GRouterServiceId client_id ;		// service ID of the client. Only valid when origin==OwnId
     TurtleFileHash tunnel_hash ;		// tunnel hash to be used for this item
 

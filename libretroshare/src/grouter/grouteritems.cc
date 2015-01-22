@@ -186,10 +186,18 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 
 	RsGRouterRoutingInfoItem *item = new RsGRouterRoutingInfoItem() ;
 
+    RsPeerId peer_id ;
+    ok &= peer_id.deserialise(data, pktsize, offset) ;
+    item->PeerId(peer_id) ;
+
     ok &= getRawUInt32(data, pktsize, &offset, &item->data_status);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->tunnel_status);
     ok &= getRawTimeT(data, pktsize, &offset, item->received_time_TS);
     ok &= getRawTimeT(data, pktsize, &offset, item->last_sent_TS);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->sending_attempts);
+
     ok &= getRawUInt32(data, pktsize, &offset, &item->client_id);
+    ok &= item->tunnel_hash.deserialise(data, pktsize, offset) ;
 
 	item->data_item = deserialise_RsGRouterGenericDataItem(&((uint8_t*)data)[offset],pktsize - offset) ;
 	if(item->data_item != NULL) 
@@ -197,7 +205,12 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	else
 		ok = false ;
 
-	item->destination_key = item->data_item->destination_key ;
+    item->receipt_item = deserialise_RsGRouterSignedReceiptItem(&((uint8_t*)data)[offset],pktsize - offset) ;
+    if(item->receipt_item != NULL)
+        offset += item->receipt_item->serial_size() ;
+    else
+        ok = false ;
+
 
 	if (offset != rssize || !ok)
 	{
@@ -510,15 +523,22 @@ uint32_t RsGRouterMatrixFriendListItem::serial_size() const
 }
 uint32_t RsGRouterRoutingInfoItem::serial_size() const
 {
-    uint32_t s = 8 ; 							// header
-    s += 4  ; 										// status_flags
-    s += 8  ; 										// received_time
-    s += 8  ; 										// last_sent
-    s += 4  ; 										// tried_friends.size() ;
-    s += sizeof(GRouterServiceId)  ; 		// service_id
-	 s += data_item->serial_size();			// data_item
+    uint32_t s = 8 ; 			// header
+    s += PeerId().serial_size() ;
+    s += 4  ; 				// data status_flags
+    s += 4  ; 				// tunnel status_flags
+    s += 8  ; 				// received_time
+    s += 8  ; 				// last_sent
+    s += 8  ; 				// last_TR_TS
+    s += 4  ; 				// sending attempts
 
-	return s ;
+    s += sizeof(GRouterServiceId)  ; 	// service_id
+    s += tunnel_hash.serial_size() ;
+
+    s += data_item->serial_size();	// data_item
+    s += receipt_item->serial_size();	// receipt_item
+
+    return s ;
 }
 
 bool RsGRouterMatrixFriendListItem::serialise(void *data,uint32_t& size) const
@@ -597,15 +617,27 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     if(!serialise_header(data,size,tlvsize,offset))
         return false ;
 
+    ok &= PeerId().serialise(data, tlvsize, offset) ;	// we keep this.
     ok &= setRawUInt32(data, tlvsize, &offset, data_status) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, tunnel_status) ;
     ok &= setRawTimeT(data, tlvsize, &offset, received_time_TS) ;
     ok &= setRawTimeT(data, tlvsize, &offset, last_sent_TS) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, last_tunnel_request_TS) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, sending_attempts) ;
+
     ok &= setRawUInt32(data, tlvsize, &offset, client_id) ;
+    ok &= tunnel_hash.serialise(data, tlvsize, offset) ;
 
      uint32_t ns = size - offset ;
      ok &= data_item->serialise( &((uint8_t*)data)[offset], ns) ;
-     offset += ns ;
+     offset += data_item->serial_size() ;
 
+     if(receipt_item != NULL)
+     {
+         uint32_t ns = size - offset ;
+         ok &= receipt_item->serialise( &((uint8_t*)data)[offset], ns) ;
+         offset += receipt_item->serial_size() ;
+     }
     if (offset != tlvsize)
     {
         ok = false;
@@ -623,7 +655,7 @@ std::ostream& RsGRouterSignedReceiptItem::print(std::ostream& o, uint16_t)
 {
     o << "RsGRouterReceiptItem:" << std::endl ;
     o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-    o << "  Mid:            " << routing_id << std::endl ;
+    o << "  Mid:            " << std::hex << routing_id << std::dec << std::endl ;
     o << "  State:          " << flags << std::endl ;
     o << "  Dest:           " << destination_key << std::endl ;
     o << "  Sign:           " << signature.keyId << std::endl ;
@@ -647,15 +679,18 @@ std::ostream& RsGRouterGenericDataItem::print(std::ostream& o, uint16_t)
 
 std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
 {
-	o << "RsGRouterRoutingInfoItem:" << std::endl ;
-	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-    o << "  recv time:       "<< received_time_TS << std::endl ;
-    o << "  Last sent:       "<< last_sent_TS << std::endl ;
-    o << "  flags:           "<< std::hex << data_status << std::dec << std::endl ;
-    o << "  Key 1:           "<< destination_key << std::endl ;
-    o << "  Key 2:           "<< data_item->destination_key << std::endl ;
-    o << "  Data size:       "<< data_item->data_size << std::endl ;
-	o << "  Client id:       "<< client_id << std::endl ;
+    o << "RsGRouterRoutingInfoItem:" << std::endl ;
+    o << "  direct origin:   "<< PeerId() << std::endl ;
+    o << "  data   status:   "<< std::hex<< data_status << std::dec << std::endl ;
+    o << "  tunnel status:   "<< tunnel_status << std::endl ;
+        o << "  recv time:       "<< received_time_TS << std::endl 	;
+        o << "  Last sent:       "<< last_sent_TS << std::endl ;
+        o << "  Sending attempts:"<< sending_attempts << std::endl ;
+        o << "  destination key: "<< data_item->destination_key << std::endl ;
+    o << "  Client id:       "<< client_id << std::endl ;
+    o << "  tunnel hash:     "<< tunnel_hash << std::endl ;
+        o << "  Data size:       "<< data_item->data_size << std::endl ;
+        o << "  Signed receipt:  "<< (void*)receipt_item << std::endl ;
 
 	return o ;
 }
