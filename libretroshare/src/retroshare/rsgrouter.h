@@ -46,9 +46,14 @@ public:
         GRouterMsgPropagationId mid ;
         RsPeerId                local_origin;
         GRouterKeyId            destination ;
-        time_t                  time_stamp ;
-        uint32_t                status ;
+        time_t                  routing_time;
+        time_t                  last_tunnel_attempt_time;
+        time_t                  last_sent_time;
+        bool                    receipt_available ;
+        uint32_t                data_status ;
+        uint32_t                tunnel_status ;
         uint32_t                data_size ;
+        Sha1CheckSum            data_hash ;
     };
 
     struct GRouterPublishedKeyInfo
@@ -71,7 +76,7 @@ public:
 
         // List of own published keys, with associated service ID
         //
-        std::map<GRouterKeyId,GRouterPublishedKeyInfo> published_keys ;
+        std::map<Sha1CheckSum,GRouterPublishedKeyInfo> published_keys ;
     };
 
     //===================================================//

@@ -217,6 +217,8 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
         else
             ok = false ;
     }
+    else
+        item->receipt_item = NULL ;
 
 
 	if (offset != rssize || !ok)

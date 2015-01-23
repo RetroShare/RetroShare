@@ -174,7 +174,6 @@ protected:
     //===================================================//
 
     // Calls
-    // 	- autoWash()
     // 	- packet handling methods
     // 	- matrix updates
     //
@@ -205,7 +204,6 @@ private:
         return _debug_enabled?(std::cerr):null;
     }
 
-    void autoWash() ;
     void routePendingObjects() ;
     void handleTunnels() ;
 
