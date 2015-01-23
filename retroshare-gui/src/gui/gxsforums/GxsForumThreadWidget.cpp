@@ -50,7 +50,7 @@
 //#define DEBUG_FORUMS
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE        ":/images/folder-draft.png"
+#define IMAGE_MESSAGE        ":/images/mail_new.png"
 #define IMAGE_MESSAGEREPLY   ":/images/mail_reply.png"
 #define IMAGE_MESSAGEREMOVE  ":/images/mail_delete.png"
 #define IMAGE_DOWNLOAD       ":/images/start.png"
@@ -390,12 +390,12 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(createmessage()));
 
-	QAction *newthreadAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr("Start New Thread"), &contextMnu);
-	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mSubscribeFlags));
-	connect(newthreadAct , SIGNAL(triggered()), this, SLOT(createthread()));
-
 	QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to Author"), &contextMnu);
 	connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
+	
+	QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
+	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mSubscribeFlags));
+	connect(newthreadAct , SIGNAL(triggered()), this, SLOT(createthread()));
 
 	QAction* expandAll = new QAction(tr("Expand all"), &contextMnu);
 	connect(expandAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(expandAll()));
@@ -459,8 +459,8 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	}
 
 	contextMnu.addAction(replyAct);
-	contextMnu.addAction(newthreadAct);
 	contextMnu.addAction(replyauthorAct);
+  contextMnu.addAction(newthreadAct);
 	QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!mForumId.isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
@@ -1639,7 +1639,7 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 
 		msgDialog->setQuotedMsg(QString::fromUtf8(msg.mMsg.c_str()), buildReplyHeader(msg.mMeta));
 
-		msgDialog->addRecipient(MessageComposer::TO, RsPeerId(msg.mMeta.mAuthorId));
+		msgDialog->addRecipient(MessageComposer::TO, RsGxsId(msg.mMeta.mAuthorId));
 		msgDialog->show();
 		msgDialog->activateWindow();
 
