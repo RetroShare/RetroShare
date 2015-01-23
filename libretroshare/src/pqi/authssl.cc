@@ -1094,106 +1094,116 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 
 int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
-        char    buf[256];
-        X509   *err_cert;
-        int     err, depth;
+    char    buf[256];
+    X509   *err_cert;
+    int     err, depth;
 
-        err_cert = X509_STORE_CTX_get_current_cert(ctx);
-        err = X509_STORE_CTX_get_error(ctx);
-        depth = X509_STORE_CTX_get_error_depth(ctx);
+    err_cert = X509_STORE_CTX_get_current_cert(ctx);
+    err = X509_STORE_CTX_get_error(ctx);
+    depth = X509_STORE_CTX_get_error_depth(ctx);
 
-        #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSLimpl::VerifyX509Callback(preverify_ok: " << preverify_ok
-                                 << " Err: " << err << " Depth: " << depth << std::endl;
-        #endif
+    if(err_cert == NULL)
+    {
+        std::cerr << "AuthSSLimpl::VerifyX509Callback(): Cannot get certificate. Error!" << std::endl;
+        return false ;
+    }
+    if(err != X509_V_OK)
+    {
+        std::cerr << "AuthSSLimpl::VerifyX509Callback(): get certificate returned error code =" << err << ", error depth=" << depth << std::endl;
+        return false ;
+    }
+#ifdef AUTHSSL_DEBUG
+    std::cerr << "AuthSSLimpl::VerifyX509Callback(preverify_ok: " << preverify_ok
+              << " Err: " << err << " Depth: " << depth << std::endl;
+#endif
 
-        /*
-        * Retrieve the pointer to the SSL of the connection currently treated
-        * and the application specific data stored into the SSL object.
-        */
+    /*
+    * Retrieve the pointer to the SSL of the connection currently treated
+    * and the application specific data stored into the SSL object.
+    */
 
-        X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
+    X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
 
-        #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSLimpl::VerifyX509Callback: depth: " << depth << ":" << buf << std::endl;
-        #endif
+#ifdef AUTHSSL_DEBUG
+    std::cerr << "AuthSSLimpl::VerifyX509Callback: depth: " << depth << ":" << buf << std::endl;
+#endif
 
 
-        if (!preverify_ok) {
-                #ifdef AUTHSSL_DEBUG
-                fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
+    if (!preverify_ok) {
+#ifdef AUTHSSL_DEBUG
+        fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
                 X509_verify_cert_error_string(err), depth, buf);
-                #endif
-        }
+#endif
+    }
 
-        /*
-        * At this point, err contains the last verification error. We can use
-        * it for something special
-        */
+    /*
+    * At this point, err contains the last verification error. We can use
+    * it for something special
+    */
 
-        if (!preverify_ok)
+    if (!preverify_ok)
+    {
+
+        X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
+#ifdef AUTHSSL_DEBUG
+        printf("issuer= %s\n", buf);
+#endif
+
+#ifdef AUTHSSL_DEBUG
+        fprintf(stderr, "Doing REAL PGP Certificates\n");
+#endif
+        uint32_t auth_diagnostic ;
+
+        /* do the REAL Authentication */
+        if (!AuthX509WithGPG(X509_STORE_CTX_get_current_cert(ctx),auth_diagnostic))
         {
+#ifdef AUTHSSL_DEBUG
+            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() X509 not authenticated.\n");
+#endif
+            std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
+            return false;
+        }
+        RsPgpId pgpid = RsPgpId(std::string(getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)));
 
-            X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
-            #ifdef AUTHSSL_DEBUG
-            printf("issuer= %s\n", buf);
-            #endif
-
-            #ifdef AUTHSSL_DEBUG
-            fprintf(stderr, "Doing REAL PGP Certificates\n");
-            #endif
-			uint32_t auth_diagnostic ;
-
-            /* do the REAL Authentication */
-            if (!AuthX509WithGPG(X509_STORE_CTX_get_current_cert(ctx),auth_diagnostic))
-            {
-                    #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() X509 not authenticated.\n");
-                    #endif
-					std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
-                    return false;
-            }
-            RsPgpId pgpid = RsPgpId(std::string(getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)));
-
-            if (pgpid != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
-            {
-                    #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() pgp key not accepted : \n");
-                    fprintf(stderr, "issuer pgpid : ");
-                    fprintf(stderr, "%s\n",pgpid.c_str());
-                    fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-                    fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
-                    fprintf(stderr, "\n");
-                    #endif
-                    return false;
-            }
-
-            preverify_ok = true;
-
-        } else {
-                #ifdef AUTHSSL_DEBUG
-                fprintf(stderr, "A normal certificate is probably a security breach attempt. We sould fail it !!!\n");
-                #endif
-                preverify_ok = false;
+        if (pgpid != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
+        {
+#ifdef AUTHSSL_DEBUG
+            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() pgp key not accepted : \n");
+            fprintf(stderr, "issuer pgpid : ");
+            fprintf(stderr, "%s\n",pgpid.c_str());
+            fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
+            fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+            fprintf(stderr, "\n");
+#endif
+            return false;
         }
 
-        if (preverify_ok) {
+        preverify_ok = true;
 
-            //sslcert *cert = NULL;
-            RsPeerId certId;
-            getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
+    } else {
+#ifdef AUTHSSL_DEBUG
+        fprintf(stderr, "A normal certificate is probably a security breach attempt. We sould fail it !!!\n");
+#endif
+        preverify_ok = false;
+    }
 
-        }
+    if (preverify_ok) {
 
-        #ifdef AUTHSSL_DEBUG
-        if (preverify_ok) {
-            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned true.\n");
-        } else {
-            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned false.\n");
-        }
-        #endif
+        //sslcert *cert = NULL;
+        RsPeerId certId;
+        getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
 
-        return preverify_ok;
+    }
+
+#ifdef AUTHSSL_DEBUG
+    if (preverify_ok) {
+        fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned true.\n");
+    } else {
+        fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned false.\n");
+    }
+#endif
+
+    return preverify_ok;
 }
 
 
