@@ -263,7 +263,7 @@ void HashCache::save()
 		std::cerr << "Cannot open encrypted file cache for writing: " << _path+".bin.tmp" << std::endl;
 		goto save_free;
 	}
-	if(fwrite(encryptedData,1,encDataLen,F) != encDataLen)
+    if(fwrite(encryptedData,1,encDataLen,F) != (uint32_t)encDataLen)
 	{
 		std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
 		fclose(F) ;

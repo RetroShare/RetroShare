@@ -1037,13 +1037,13 @@ UdpRelayProxy::UdpRelayProxy()
 
 UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass, uint32_t bandwidth)
 	: mAddrs(*addrSet),
-	  mRelayClass(relayClass),
 	  mBandwidth(0),
 	  mDataSize(0),
 	  mLastBandwidthTS(0),
 	  mLastTS(time(NULL)),
 	  mStartTS(time(NULL)),
-	  mBandwidthLimit(bandwidth)
+      mBandwidthLimit(bandwidth),
+      mRelayClass(relayClass)
 {
 	/* bandwidth fallback */
 	if (bandwidth == 0)

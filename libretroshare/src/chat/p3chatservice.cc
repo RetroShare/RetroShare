@@ -54,7 +54,7 @@ static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size
 																					  // Images are 96x96, which makes approx. 27000 bytes uncompressed.
 
 p3ChatService::p3ChatService(p3ServiceControl *sc,p3IdService *pids, p3LinkMgr *lm, p3HistoryMgr *historyMgr)
-    :p3Service(), p3Config(), mChatMtx("p3ChatService"),DistantChatService(pids),DistributedChatService(getServiceInfo().mServiceType,sc,historyMgr),mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
+    :DistantChatService(pids),DistributedChatService(getServiceInfo().mServiceType,sc,historyMgr), mChatMtx("p3ChatService"),mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
 	_serializer = new RsChatSerialiser() ;
 
@@ -654,9 +654,6 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 
 bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 {
-	bool publicChanged = false;
-	bool privateChanged = false;
-
 	time_t now = time(NULL);
 	std::string name;
     uint32_t popupChatFlag = RS_POPUP_CHAT;

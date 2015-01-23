@@ -786,7 +786,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		/* move to othersList */
-		bool success = false;
+        bool success = false;
 		std::map<RsPeerId, peerState>::iterator it;
 		//remove ssl and gpg_ids
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)

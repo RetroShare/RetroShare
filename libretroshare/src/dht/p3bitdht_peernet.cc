@@ -1775,8 +1775,8 @@ void p3BitDht::ConnectCalloutTCPAttempt(const RsPeerId &peerId, struct sockaddr_
 	sockaddr_storage_clear(srcaddr);
 
 	struct sockaddr_in *rap = (struct sockaddr_in *) &raddr;
-	struct sockaddr_in *pap = (struct sockaddr_in *) &proxyaddr;
-	struct sockaddr_in *sap = (struct sockaddr_in *) &srcaddr;
+    //struct sockaddr_in *pap = (struct sockaddr_in *) &proxyaddr;
+    //struct sockaddr_in *sap = (struct sockaddr_in *) &srcaddr;
 	
 	// only one to translate
 	rap->sin_family = AF_INET;
@@ -1803,8 +1803,8 @@ void p3BitDht::ConnectCalloutDirectOrProxy(const RsPeerId &peerId, struct sockad
 	sockaddr_storage_clear(srcaddr);
 	
 	struct sockaddr_in *rap = (struct sockaddr_in *) &raddr;
-	struct sockaddr_in *pap = (struct sockaddr_in *) &proxyaddr;
-	struct sockaddr_in *sap = (struct sockaddr_in *) &srcaddr;
+//	struct sockaddr_in *pap = (struct sockaddr_in *) &proxyaddr;
+//	struct sockaddr_in *sap = (struct sockaddr_in *) &srcaddr;
 	
 	// only one to translate
 	rap->sin_family = AF_INET;
