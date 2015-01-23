@@ -242,7 +242,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* Add filter types */
     ui.filterComboBox->addItem(tr("All"));
     ui.filterComboBox->addItem(tr("Friend Nodes"));
-    ui.filterComboBox->addItem(tr("Anonymous"));
+    ui.filterComboBox->addItem(tr("Everyone"));
     ui.filterComboBox->setCurrentIndex(0);
 
     /*ui.comboStyle->addItem("Standard");
