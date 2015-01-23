@@ -76,7 +76,7 @@ NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation)
 		if(circle)
 		{
 			meta->mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
-			meta->mCircleId.random();
+            meta->mCircleId = RsGxsCircleId::random();
 		}
 
 		RsGxsGroupId grpId = grp->grpId;

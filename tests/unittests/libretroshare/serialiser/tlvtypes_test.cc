@@ -176,7 +176,7 @@ TEST(libretroshare_serialiser, test_RsTlvPeerIdSet)
 
 	for(int i = 0; i < 15 ; i++)
 	{
-		testId.random();
+        testId = RsPeerId::random();
 		i1.ids.push_back(testId);
 	}
 
@@ -296,7 +296,7 @@ TEST(libretroshare_serialiser, test_RsTlvHashSet)
 	for(int i = 0; i < numRandStrings ; i++)
 	{
 		RsPeerId randId;
-		randId.random();
+        randId = RsPeerId::random();
 		i1.ids.push_back(randId);
 	}
 

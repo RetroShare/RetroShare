@@ -133,14 +133,12 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
-	connect(ui.decryptButton, SIGNAL(clicked()), this, SLOT(decrypt()));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
 
 	ui.imageBlockWidget->addButtonAction(tr("Load images always for this message"), this, SLOT(loadImagesAlways()), true);
 	ui.msgText->setImageBlockWidget(ui.imageBlockWidget);
-	ui.decryptFrame->hide();
 
 	/* hide the Tree +/- */
 	ui.msgList->setRootIsDecorated( false );
@@ -445,8 +443,6 @@ void MessageWidget::fill(const std::string &msgId)
 //		return;
 //	}
 
-	ui.decryptFrame->hide();
-
 	currMsgId = msgId;
 
 	if (currMsgId.empty()) {
@@ -573,12 +569,7 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.fromText->setToolTip(tooltip_string) ;
 	}
 
-	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
-		ui.subjectText->setText(tr("Encrypted message"));
-		ui.fromText->setText(tr("Unknown (needs decryption)")) ;
-	} else {
 		ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
-	}
 
 	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
@@ -586,10 +577,6 @@ void MessageWidget::fill(const std::string &msgId)
 
 	ui.filesText->setText(QString("%1").arg(msgInfo.count));
 	ui.filesSize->setText(QString(misc::friendlyUnit(msgInfo.size)));
-
-	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
-		ui.decryptFrame->show();
-	}
 
 	showTagLabels();
 
@@ -747,41 +734,4 @@ void MessageWidget::loadImagesAlways()
 	}
 
 	rsMsgs->MessageLoadEmbeddedImages(currMsgId, true);
-}
-
-void MessageWidget::decrypt()
-{
-	if (!decryptMsg(currMsgId)) {
-		return;
-	}
-
-	// Force refill
-	std::string msgId = currMsgId;
-	currMsgId.clear();
-
-	fill(msgId);
-}
-
-bool MessageWidget::decryptMsg(const std::string &msgId)
-{
-	if (msgId.empty()) {
-		return false;
-	}
-
-	MessageInfo msgInfo;
-	if (!rsMsgs->getMessage(msgId, msgInfo)) {
-		return false;
-	}
-
-	if (!(msgInfo.msgflags & RS_MSG_ENCRYPTED)) {
-		QMessageBox::warning(NULL, tr("Decryption failed!"), tr("This message is not encrypted. Cannot decrypt!"));
-		return false;
-	}
-
-	if (!rsMsgs->decryptMessage(msgId)) {
-		 QMessageBox::warning(NULL, tr("Decryption failed!"), tr("This message could not be decrypted."));
-		 return false;
-	}
-
-	return true;
 }

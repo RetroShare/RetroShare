@@ -127,7 +127,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		bool distantMessagingEnabled() ;
 
 	private:
-		void sendPrivateMsgItem(RsMsgItem *msgitem) ;
+        void sendDistantMsgItem(RsMsgItem *msgitem) ;
 
 		// This contains the ongoing tunnel handling contacts.
 		// The map is indexed by the hash
@@ -136,22 +136,23 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 
 		// Overloaded from GRouterClientService
 
-		virtual void receiveGRouterData(const GRouterKeyId& key,const RsGRouterGenericDataItem *item) ;
-		virtual void acknowledgeDataReceived(const GRouterMsgPropagationId& msg_id) ;
+        virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size) ;
+        virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,uint32_t data_status) ;
 
 		// Utility functions
 
 		bool createDistantMessage(const RsGxsId& destination_gxs_id,const RsGxsId& source_gxs_id,RsMsgItem *msg) ;
 		bool locked_findHashForVirtualPeerId(const RsPeerId& pid,Sha1CheckSum& hash) ;
-		void sendGRouterData(const GRouterKeyId &key_id,RsMsgItem *) ;
+        void sendGRouterData(const RsGxsId &key_id,RsMsgItem *) ;
 
 		void manageDistantPeers() ;
 
 		void handleIncomingItem(RsMsgItem *) ;
 
 		uint32_t getNewUniqueMsgId();
-		int     sendMessage(RsMsgItem *item);
-		void    checkSizeAndSendMessage(RsMsgItem *msg);
+        uint32_t sendMessage(RsMsgItem *item);
+        uint32_t sendDistantMessage(RsMsgItem *item,const RsGxsId& signing_gxs_id);
+        void    checkSizeAndSendMessage(RsMsgItem *msg);
 
 		int 	incomingMsgs();
 		void    processMsg(RsMsgItem *mi, bool incoming);
@@ -190,7 +191,10 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		uint32_t mMsgUniqueId;
 
 		// used delete msgSrcIds after config save
-		std::map<uint32_t, RsMsgSrcId*> mSrcIds;
+        std::map<uint32_t, RsMsgSrcId*> mSrcIds;
+
+        // temporary storage. Will not be needed when messages have a proper "from" field. Not saved!
+        std::map<uint32_t, RsGxsId> mDistantOutgoingMsgSigners;
 
 		// save the parent of the messages in draft for replied and forwarded
 		std::map<uint32_t, RsMsgParentId*> mParentId;

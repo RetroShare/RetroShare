@@ -90,12 +90,12 @@
 
 const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE( 0x00000001 ) ;
 
-typedef uint64_t 		ChatLobbyId ;
-typedef uint64_t 		ChatLobbyMsgId ;
+typedef uint64_t	ChatLobbyId ;
+typedef uint64_t	ChatLobbyMsgId ;
 typedef std::string 	ChatLobbyNickName ;
 
-typedef RsPeerId 				DistantChatPeerId ;
-typedef GRouterKeyIdType	DistantMsgPeerId ;
+typedef RsPeerId	DistantChatPeerId ;
+//typedef GRouterKeyId		DistantMsgPeerId ;
 
 typedef uint64_t     MessageId ;
 
@@ -368,14 +368,6 @@ std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
 
-struct DistantOfflineMessengingInvite
-{
-	RsPgpId issuer_pgp_id ;
-    DistantMsgPeerId peer_id ;
-	time_t time_of_validity ;
-};
-
-
 class RsMsgs 
 {
 	public:
@@ -390,7 +382,6 @@ virtual ~RsMsgs() { return; }
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
-virtual bool decryptMessage(const std::string& mId) = 0 ;
 
 virtual bool MessageSend(MessageInfo &info) = 0;
 virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;

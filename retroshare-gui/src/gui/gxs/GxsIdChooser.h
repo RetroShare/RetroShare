@@ -57,7 +57,9 @@ public:
 	enum ChosenId_Ret {None, KnowId, UnKnowId, NoId} ;
 	void loadIds(uint32_t chooserFlags, RsGxsId defId);
 	void setDefaultId(RsGxsId defId) {mDefaultId=defId;}
-	void setDefaultId(std::string defIdName) {mDefaultIdName=defIdName;}
+    void setDefaultId(std::string defIdName) {mDefaultIdName=defIdName;}
+
+    bool hasAvailableIds() const { return !mDefaultId.isNull() ; }
 
 	bool setChosenId(RsGxsId &gxsId);
 	ChosenId_Ret getChosenId(RsGxsId &gxsId);

@@ -385,7 +385,13 @@ bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 	if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
 
 	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
-	out = new uint8_t[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
+    out = (uint8_t*)malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
+
+    if(out == NULL)
+    {
+        std::cerr << "gxssecurity::encrypt(): cnnot allocate memory of size " << inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH << " to encrypt data." << std::endl;
+        return false ;
+    }
 
 	net_ekl = htonl(eklen);
 	memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
@@ -400,7 +406,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 	// now encrypt actual data
 	if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) 
 	{
-		delete[] out ;
+        free(out) ;
 		out = NULL ;
 		return false;
 	}
@@ -411,7 +417,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 	// add padding
 	if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) 
 	{
-		delete[] out ;
+        free(out) ;
 		out = NULL ;
 		return false;
 	}
@@ -422,7 +428,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 	// make sure offset has not gone passed valid memory bounds
 	if(out_offset > max_outlen) 
 	{
-		delete[] out ;
+        free(out) ;
 		out = NULL ;
 		return false;
 	}
@@ -498,11 +504,17 @@ bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 		 std::cerr << "Severe error in " << __PRETTY_FUNCTION__ << ": cannot encrypt. " << std::endl;
 		 return false ;
 	 }
-    out = new uint8_t[inlen - in_offset];
+    out = (uint8_t*)malloc(inlen - in_offset);
+
+    if(out == NULL)
+    {
+        std::cerr << "gxssecurity::decrypt(): cannot allocate memory of size " << inlen - in_offset << " to decrypt data." << std::endl;
+         return false;
+    }
 
     if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) 
 	 {
-		 delete[] out ;
+         free(out) ;
 		 out = NULL ;
 		 return false;
 	 }
@@ -511,7 +523,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 
     if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) 
 	 {
-		 delete[] out ;
+         free(out) ;
 		 out = NULL ;
 		 return false;
 	 }

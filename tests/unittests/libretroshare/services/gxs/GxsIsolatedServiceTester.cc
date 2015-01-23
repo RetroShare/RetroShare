@@ -55,8 +55,8 @@ GxsIsolatedServiceTester::GxsIsolatedServiceTester(const RsPeerId &ownId, const 
 	node->AddService(mTestNs);
 
         //mConfigMgr->addConfiguration("posted.cfg", posted_ns);
-	createThread(*mTestService);
-        createThread(*mTestNs);
+    mTestService->start();
+        mTestNs->start();
 
 	//node->AddPqiServiceMonitor(status);
 	addSerialType(new RsNxsSerialiser(RS_SERVICE_GXS_TYPE_TEST));

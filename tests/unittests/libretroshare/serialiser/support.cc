@@ -68,7 +68,7 @@ void init_item(RsTlvSecurityKeySet& ks)
 	for(int i=1; i<n; i++)
 	{
         RsGxsId a_str;
-        a_str.random();
+        a_str = RsGxsId::random();
 
 		RsTlvSecurityKey& a_key = ks.keys[a_str];
 		init_item(a_key);
@@ -190,7 +190,7 @@ void init_item(RsTlvSecurityKey& sk)
 	sk.endTS = randnum;
 	sk.keyFlags = randnum;
 	sk.startTS = randnum;
-    sk.keyId.random();
+    sk.keyId = RsGxsId::random();
 
 	std::string randomStr;
 	randString(LARGE_STR, randomStr);
@@ -202,7 +202,7 @@ void init_item(RsTlvSecurityKey& sk)
 
 void init_item(RsTlvKeySignature& ks)
 {
-    ks.keyId.random();
+    ks.keyId = RsGxsId::random();
 
 	std::string signData;
 	randString(LARGE_STR, signData);

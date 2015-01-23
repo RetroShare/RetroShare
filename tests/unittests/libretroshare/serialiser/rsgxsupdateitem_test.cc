@@ -15,18 +15,18 @@ RsSerialType* init_item(RsGxsGrpUpdateItem& i)
 {
 	i.clear();
 	i.grpUpdateTS = rand()%2424;
-	i.peerId.random();
+    i.peerId = RsPeerId::random();
 	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 RsSerialType* init_item(RsGxsMsgUpdateItem& i)
 {
 	i.clear();
-	i.peerId.random();
+    i.peerId = RsPeerId::random();
 	int numUpdates = rand()%123;
 
 	RsPeerId peer;
-	peer.random();
+    peer = RsPeerId::random();
 	for(int j=0; j < numUpdates; j++)
 	{
 		i.msgUpdateTS.insert(std::make_pair(peer, rand()%45));
@@ -46,7 +46,7 @@ RsSerialType* init_item(RsGxsServerGrpUpdateItem& i)
 RsSerialType* init_item(RsGxsServerMsgUpdateItem& i)
 {
 	i.clear();
-	i.grpId.random();
+    i.grpId = RsGxsGroupId::random();
 	i.msgUpdateTS = rand()%4252;
 	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }

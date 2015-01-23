@@ -29,118 +29,6 @@ bool RsGRouterItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvs
 	return true ;
 }
 
-/* serialise the data to the buffer */
-// uint32_t RsGRouterPublishKeyItem::serial_size() const
-// {
-// 	uint32_t s = 8 ; // header
-// 	s += POW_PAYLOAD_SIZE  ; // proof of work bytes
-// 	s += 4  ; // diffusion_id
-//     s += published_key.serial_size() ; // sha1 for published_key
-// 	s += 4  ; // service id
-// 	s += 4  ; // randomized distance
-// 	s += GetTlvStringSize(description_string) ; // description
-//     s += fingerprint.serial_size() ;		// fingerprint
-// 
-// 	return s ;
-// }
-//bool RsGRouterPublishKeyItem::serialise(void *data, uint32_t& pktsize) const
-//{
-//	uint32_t tlvsize,offset=0;
-//	bool ok = true;
-//	
-//	if(!serialise_header(data,pktsize,tlvsize,offset))
-//		return false ;
-//
-//	memcpy(&((uint8_t*)data)[offset],pow_bytes,POW_PAYLOAD_SIZE) ;
-//	offset += 8 ;
-//
-//	/* add mandatory parts first */
-//    ok &= setRawUInt32(data, tlvsize, &offset, diffusion_id);
-//    ok &= published_key.serialise(data, tlvsize, offset) ;
-//	ok &= setRawUInt32(data, tlvsize, &offset, service_id);
-//	ok &= setRawUFloat32(data, tlvsize, &offset, randomized_distance);
-//	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, description_string);
-//    ok &= fingerprint.serialise(data, tlvsize, offset) ;
-//
-//	if (offset != tlvsize)
-//	{
-//		ok = false;
-//		std::cerr << "RsFileItemSerialiser::serialiseData() Size Error! " << std::endl;
-//	}
-//
-//	return ok;
-//}
-
-/**********************************************************************************************/
-/*                                        PROOF OF WORK STUFF                                 */
-/**********************************************************************************************/
-
-bool RsGRouterProofOfWorkObject::checkProofOfWork()
-{
-	uint32_t size = serial_size() ;
-	unsigned char *mem = (unsigned char *)malloc(size) ;
-
-	if(mem == NULL)
-	{
-		std::cerr << "RsGRouterProofOfWorkObject: cannot allocate memory for " << size << " bytes." << std::endl;
-		return false ;
-	}
-
-	serialise(mem,size) ;
-	bool res = checkProofOfWork(mem,size) ;
-
-	free(mem) ;
-	return res ;
-}
-
-bool RsGRouterProofOfWorkObject::updateProofOfWork()
-{
-	uint32_t size = serial_size() ;
-	unsigned char *mem = (unsigned char *)malloc(size) ;
-
-	if(mem == NULL)
-	{
-		std::cerr << "RsGRouterProofOfWorkObject: cannot allocate memory for " << size << " bytes." << std::endl;
-		return false ;
-	}
-
-	serialise(mem,size) ;
-
-	memset(mem,0,POW_PAYLOAD_SIZE) ;	// init the payload
-
-	while(true)
-	{
-		if(checkProofOfWork(mem,size))
-			break ;
-
-		int k ;
-		for(k=0;k<POW_PAYLOAD_SIZE;++k)
-		{
-			++mem[k] ;
-			if(mem[k]!=0)
-				break ;
-		}
-		if(k == POW_PAYLOAD_SIZE)
-			return false ;
-	}
-	memcpy(pow_bytes,mem,POW_PAYLOAD_SIZE) ;	// copy the good bytes.
-
-	free(mem) ;
-	return true ;
-}
-
-
-bool RsGRouterProofOfWorkObject::checkProofOfWork(unsigned char *mem,uint32_t size)
-{
-	Sha1CheckSum sum = RsDirUtil::sha1sum(mem,size) ;
-
-    for(int i=0;i<PROOF_OF_WORK_REQUESTED_BYTES;++i)
-        if(sum.toByteArray()[i] != 0)
-            return false ;
-
-	return true ;
-}
-
 /**********************************************************************************************/
 /*                                          SERIALISER STUFF                                  */
 /**********************************************************************************************/
@@ -157,46 +45,75 @@ RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		//case RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY:  return deserialise_RsGRouterPublishKeyItem(data, *pktsize);
-		case RS_PKT_SUBTYPE_GROUTER_DATA:   		return deserialise_RsGRouterGenericDataItem(data, *pktsize);
-		case RS_PKT_SUBTYPE_GROUTER_ACK:    		return deserialise_RsGRouterACKItem(data, *pktsize);
-		case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:	return deserialise_RsGRouterMatrixCluesItem(data, *pktsize);
+        case RS_PKT_SUBTYPE_GROUTER_DATA:   		return deserialise_RsGRouterGenericDataItem     (data, *pktsize);
+        case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK:  return deserialise_RsGRouterTransactionChunkItem(data, *pktsize);
+            case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:   return deserialise_RsGRouterTransactionAcknItem (data, *pktsize);
+            case RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT:    	return deserialise_RsGRouterSignedReceiptItem   (data, *pktsize);
+            case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:	return deserialise_RsGRouterMatrixCluesItem     (data, *pktsize);
 		case RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST:	return deserialise_RsGRouterMatrixFriendListItem(data, *pktsize);
-		case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:	return deserialise_RsGRouterRoutingInfoItem(data, *pktsize);
+        case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:	return deserialise_RsGRouterRoutingInfoItem     (data, *pktsize);
+
 		default:
 				std::cerr << "RsGRouterSerialiser::deserialise(): Could not de-serialise item. SubPacket id = " << std::hex << getRsItemSubType(rstype) << " id = " << rstype << std::dec << std::endl;
 			return NULL;
 	}
 	return NULL;
 }
+RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransactionChunkItem(void *data, uint32_t tlvsize) const
+{
+    uint32_t offset = 8; // skip the header
+    uint32_t rssize = getRsItemSize(data);
+    bool ok = true ;
 
-//RsGRouterPublishKeyItem *RsGRouterSerialiser::deserialise_RsGRouterPublishKeyItem(void *data, uint32_t pktsize) const
-//{
-//	uint32_t offset = 8; // skip the header 
-//	uint32_t rssize = getRsItemSize(data);
-//	bool ok = true ;
-//
-//	RsGRouterPublishKeyItem *item = new RsGRouterPublishKeyItem() ;
-//
-//	memcpy(&((uint8_t*)data)[offset],item->pow_bytes,RsGRouterProofOfWorkObject::POW_PAYLOAD_SIZE) ;
-//	offset += 8 ;
-//
-//	ok &= getRawUInt32(data, pktsize, &offset, &item->diffusion_id); 	// file hash
-//    ok &= item->published_key.deserialise(data, pktsize, offset) ;
-//	ok &= getRawUInt32(data, pktsize, &offset, &item->service_id); 	// file hash
-//	ok &= getRawUFloat32(data, pktsize, &offset, item->randomized_distance); 	// file hash
-//	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE,item->description_string);
-//    ok &= item->fingerprint.deserialise(data,pktsize,offset) ;
-//
-//	if (offset != rssize || !ok)
-//	{
-//		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
-//		return NULL ;
-//	}
-//
-//	return item;
-//}
+    RsGRouterTransactionChunkItem *item = new RsGRouterTransactionChunkItem() ;
 
+    /* add mandatory parts first */
+    ok &= getRawUInt64(data, tlvsize, &offset, &item->propagation_id);
+    ok &= getRawUInt32(data, tlvsize, &offset, &item->chunk_start);
+    ok &= getRawUInt32(data, tlvsize, &offset, &item->chunk_size);
+    ok &= getRawUInt32(data, tlvsize, &offset, &item->total_size);
+
+    if( NULL == (item->chunk_data = (uint8_t*)malloc(item->chunk_size)))
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->chunk_size << std::endl;
+        return NULL ;
+    }
+    if(item->chunk_size + offset > rssize)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+        return NULL ;
+    }
+
+    memcpy(item->chunk_data,&((uint8_t*)data)[offset],item->chunk_size) ;
+    offset += item->chunk_size ;
+
+    if (offset != rssize || !ok)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+        return NULL ;
+    }
+
+    return item;
+}
+RsGRouterTransactionAcknItem *RsGRouterSerialiser::deserialise_RsGRouterTransactionAcknItem(void *data, uint32_t tlvsize) const
+{
+    uint32_t offset = 8; // skip the header
+    uint32_t rssize = getRsItemSize(data);
+    bool ok = true ;
+
+    RsGRouterTransactionAcknItem *item = new RsGRouterTransactionAcknItem() ;
+
+    /* add mandatory parts first */
+    ok &= getRawUInt64(data, tlvsize, &offset, &item->propagation_id);
+
+    if (offset != rssize || !ok)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+        return NULL ;
+    }
+
+    return item;
+}
 RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
@@ -207,19 +124,29 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 
 	ok &= getRawUInt64(data, pktsize, &offset, &item->routing_id); 	
 	ok &= item->destination_key.deserialise(data, pktsize, offset) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &item->randomized_distance);	
 	ok &= getRawUInt32(data, pktsize, &offset, &item->data_size); 	
 
-	if( NULL == (item->data_bytes = (uint8_t*)malloc(item->data_size)))
+    if( NULL == (item->data_bytes = (uint8_t*)malloc(item->data_size)))
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->data_size << std::endl;
 		return NULL ;
 	}
 
-	memcpy(item->data_bytes,&((uint8_t*)data)[offset],item->data_size) ;
+    if(item->data_size + offset > rssize)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+        return NULL ;
+    }
+
+    memcpy(item->data_bytes,&((uint8_t*)data)[offset],item->data_size) ;
 	offset += item->data_size ;
 
-	if (offset != rssize || !ok)
+    ok &= item->signature.GetTlv(data, pktsize, &offset) ;
+
+    ok &= getRawUInt32(data, pktsize, &offset, &item->randomized_distance);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->flags);
+
+    if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
 		return NULL ;
@@ -228,16 +155,19 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 	return item;
 }
 
-RsGRouterACKItem *RsGRouterSerialiser::deserialise_RsGRouterACKItem(void *data, uint32_t pktsize) const
+RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedReceiptItem(void *data, uint32_t pktsize) const
 {
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
 
-	RsGRouterACKItem *item = new RsGRouterACKItem() ;
+    RsGRouterSignedReceiptItem *item = new RsGRouterSignedReceiptItem() ;
 
-	ok &= getRawUInt64(data, pktsize, &offset, &item->mid); 	// file hash
-	ok &= getRawUInt32(data, pktsize, &offset, &item->state); 	// file hash
+    ok &= getRawUInt64(data, pktsize, &offset, &item->routing_id);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->flags);
+    ok &= item->destination_key.deserialise(data, pktsize, offset);
+    ok &= item->data_hash.deserialise(data, pktsize, offset);
+    ok &= item->signature.GetTlv(data, pktsize, &offset); 	// signature
 
 	if (offset != rssize || !ok)
 	{
@@ -256,26 +186,20 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 
 	RsGRouterRoutingInfoItem *item = new RsGRouterRoutingInfoItem() ;
 
-	ok &= getRawUInt32(data, pktsize, &offset, &item->status_flags); 	
-	ok &= item->origin.deserialise(data, pktsize, offset) ;
-	ok &= getRawTimeT(data, pktsize, &offset, item->received_time); 	
-	ok &= getRawTimeT(data, pktsize, &offset, item->last_sent); 	
-	ok &= getRawUInt32(data, pktsize, &offset, &item->client_id); 	
+    RsPeerId peer_id ;
+    ok &= peer_id.deserialise(data, pktsize, offset) ;
+    item->PeerId(peer_id) ;
 
-	uint32_t s = 0 ;
-	ok &= getRawUInt32(data, pktsize, &offset, &s) ;
+    ok &= getRawUInt32(data, pktsize, &offset, &item->data_status);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->tunnel_status);
+    ok &= getRawTimeT(data, pktsize, &offset, item->received_time_TS);
+    ok &= getRawTimeT(data, pktsize, &offset, item->last_sent_TS);
 
-	for(uint32_t i=0;i<s;++i)
-	{
-		FriendTrialRecord ftr ;
+    ok &= getRawTimeT(data, pktsize, &offset, item->last_tunnel_request_TS);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->sending_attempts);
 
-		ok &= ftr.friend_id.deserialise(data, pktsize, offset) ;
-		ok &= getRawTimeT(data, pktsize, &offset, ftr.time_stamp) ;
-		ok &= getRawUFloat32(data, pktsize, &offset, ftr.probability) ;
-		ok &= getRawUInt32(data, pktsize, &offset, &ftr.nb_friends) ;
-
-		item->tried_friends.push_back(ftr) ;
-	}
+    ok &= getRawUInt32(data, pktsize, &offset, &item->client_id);
+    ok &= item->tunnel_hash.deserialise(data, pktsize, offset) ;
 
 	item->data_item = deserialise_RsGRouterGenericDataItem(&((uint8_t*)data)[offset],pktsize - offset) ;
 	if(item->data_item != NULL) 
@@ -283,7 +207,19 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	else
 		ok = false ;
 
-	item->destination_key = item->data_item->destination_key ;
+    // receipt item is optional.
+
+    if(offset < pktsize)
+    {
+        item->receipt_item = deserialise_RsGRouterSignedReceiptItem(&((uint8_t*)data)[offset],pktsize - offset) ;
+        if(item->receipt_item != NULL)
+            offset += item->receipt_item->serial_size() ;
+        else
+            ok = false ;
+    }
+    else
+        item->receipt_item = NULL ;
+
 
 	if (offset != rssize || !ok)
 	{
@@ -351,70 +287,191 @@ RsGRouterMatrixCluesItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixCluesI
 
 	return item;
 }
-
-
 RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
 {
-	RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
+    RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
 
-	item->routing_id = routing_id ;
-	item->destination_key = destination_key ;
-	item->data_size = data_size ;
-	item->randomized_distance = randomized_distance ;
+    // copy all members
 
-	// then duplicate the memory chunk
+    *item = *this ;
 
-	item->data_bytes = (uint8_t*)malloc(data_size) ;
-	memcpy(item->data_bytes,data_bytes,data_size) ;
+    // then duplicate the memory chunk
 
-	return item ;
+    item->data_bytes = (uint8_t*)malloc(data_size) ;
+    memcpy(item->data_bytes,data_bytes,data_size) ;
+
+    return item ;
 }
 
+RsGRouterSignedReceiptItem *RsGRouterSignedReceiptItem::duplicate() const
+{
+    RsGRouterSignedReceiptItem *item = new RsGRouterSignedReceiptItem ;
+
+    // copy all members
+
+    *item = *this ;
+
+    return item ;
+}
 uint32_t RsGRouterGenericDataItem::serial_size() const
 {
-	uint32_t s = 8 ;	                      // header
-	s += sizeof(GRouterMsgPropagationId)  ; // routing id
-	s += destination_key.serial_size() ;	 // destination_key
-	s += 4 ;                                // randomized distance
-	s += 4 ;                       		 	 // data_size
-	s += data_size ;                        // data
+    uint32_t s = 8 ;	                      // header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += destination_key.serial_size() ;	 // destination_key
+    s += 4 ;                       		 	 // data_size
+    s += data_size ;                        // data
+    s += signature.TlvSize() ;		// signature
+    s += 4 ;                                // randomized distance
+    s += 4 ; 				// flags
 
-	return s ;
+    return s ;
 }
-uint32_t RsGRouterACKItem::serial_size() const
+uint32_t RsGRouterGenericDataItem::signed_data_size() const
 {
-	uint32_t s = 8 ;	// header
-	s += sizeof(GRouterMsgPropagationId)  ; // routing id
-	s += 4 ;  			// state
+    uint32_t s = 0 ;	                      // no header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += destination_key.serial_size() ;	 // destination_key
+    s += 4 ;                       		 	 // data_size
+    s += data_size ;                        // data
 
-	return s ;
+    return s ;
+}
+uint32_t RsGRouterSignedReceiptItem::serial_size() const
+{
+    uint32_t s = 8 ;	// header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += destination_key.serial_size() ;	// destination_key
+    s += data_hash.serial_size() ;
+    s += 4 ;  			// state
+    s += signature.TlvSize() ;	// signature
+
+    return s ;
+}
+uint32_t RsGRouterSignedReceiptItem::signed_data_size() const
+{
+    uint32_t s = 0 ;	// no header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += destination_key.serial_size() ;	// destination_key
+    s += data_hash.serial_size() ;
+    s += 4 ;  			// state
+
+    return s ;
+}
+uint32_t RsGRouterTransactionChunkItem::serial_size() const
+{
+    uint32_t s = 8 ;	// header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+    s += 4 ;				// chunk_start
+    s += 4 ;				// chunk_size
+    s += 4 ;				// total_size
+    s += chunk_size ;			// data
+
+    return s;
+}
+uint32_t RsGRouterTransactionAcknItem::serial_size() const
+{
+    uint32_t s = 8 ;	// header
+    s += sizeof(GRouterMsgPropagationId)  ; // routing id
+
+    return s;
+}
+bool RsGRouterTransactionChunkItem::serialise(void *data,uint32_t& size) const
+{
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
+
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, propagation_id);
+    ok &= setRawUInt32(data, tlvsize, &offset, chunk_start);
+    ok &= setRawUInt32(data, tlvsize, &offset, chunk_size);
+    ok &= setRawUInt32(data, tlvsize, &offset, total_size);
+
+    memcpy(&((uint8_t*)data)[offset],chunk_data,chunk_size) ;
+    offset += chunk_size ;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
 }
 bool RsGRouterGenericDataItem::serialise(void *data,uint32_t& size) const
 {
-	uint32_t tlvsize,offset=0;
-	bool ok = true;
-	
-	if(!serialise_header(data,size,tlvsize,offset))
-		return false ;
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
 
-	/* add mandatory parts first */
-	ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
-	ok &= destination_key.serialise(data, tlvsize, offset) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, randomized_distance) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
 
-	memcpy(&((uint8_t*)data)[offset],data_bytes,data_size) ;
-	offset += data_size ;
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
+    ok &= destination_key.serialise(data, tlvsize, offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, data_size);
 
-	if (offset != tlvsize)
-	{
-		ok = false;
+    memcpy(&((uint8_t*)data)[offset],data_bytes,data_size) ;
+    offset += data_size ;
+
+    ok &= signature.SetTlv(data, tlvsize, &offset) ;
+
+    ok &= setRawUInt32(data, tlvsize, &offset, randomized_distance) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, flags) ;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
         std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
-	}
+    }
 
-	return ok;
+    return ok;
 }
-bool RsGRouterACKItem::serialise(void *data,uint32_t& size) const
+bool RsGRouterTransactionAcknItem::serialise(void *data,uint32_t& size) const
+{
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
+
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, propagation_id);
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
+}
+bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t& size) const
+{
+    bool ok = true;
+
+    uint32_t offset = 0;
+    uint32_t tlvsize = signed_data_size() ;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
+    ok &= destination_key.serialise(data, tlvsize, offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, data_size);
+
+    memcpy(&((uint8_t*)data)[offset],data_bytes,data_size) ;
+    offset += data_size ;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
+}
+bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
 {
 	uint32_t tlvsize,offset=0;
 	bool ok = true;
@@ -423,18 +480,41 @@ bool RsGRouterACKItem::serialise(void *data,uint32_t& size) const
 		return false ;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt64(data, tlvsize, &offset, mid);
-	ok &= setRawUInt32(data, tlvsize, &offset, state);
+    ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
+    ok &= setRawUInt32(data, tlvsize, &offset, flags);
+    ok &= destination_key.serialise(data,tlvsize,offset) ;
+    ok &= data_hash.serialise(data,tlvsize,offset) ;
+    ok &= signature.SetTlv(data,tlvsize,&offset) ;
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-        std::cerr << "RsGRouterACKItem::serialisedata() size error! " << std::endl;
+        std::cerr << "RsGRouterReceiptItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
 }
+bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t& size) const
+{
+    bool ok = true;
 
+    uint32_t offset=0;
+    uint32_t tlvsize = signed_data_size() ;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
+    ok &= setRawUInt32(data, tlvsize, &offset, flags);
+    ok &= destination_key.serialise(data,tlvsize,offset) ;
+    ok &= data_hash.serialise(data,tlvsize,offset) ;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGRouterReceiptItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
+}
 /* serialise the data to the buffer */
 uint32_t RsGRouterMatrixCluesItem::serial_size() const
 {
@@ -456,17 +536,26 @@ uint32_t RsGRouterMatrixFriendListItem::serial_size() const
 }
 uint32_t RsGRouterRoutingInfoItem::serial_size() const
 {
-    uint32_t s = 8 ; 							// header
-    s += 4  ; 										// status_flags
-    s += origin.serial_size()  ; 			// origin
-    s += 8  ; 										// received_time
-    s += 8  ; 										// last_sent
-    s += 4  ; 										// tried_friends.size() ;
-    s += sizeof(GRouterServiceId)  ; 		// service_id
-    s += tried_friends.size() * ( RsPeerId::SIZE_IN_BYTES + 8 + 4 + 4 ) ;			// FriendTrialRecord
-	 s += data_item->serial_size();			// data_item
+    uint32_t s = 8 ; 			// header
+    s += PeerId().serial_size() ;
 
-	return s ;
+    s += 4  ; 				// data status_flags
+    s += 4  ; 				// tunnel status_flags
+    s += 8  ; 				// received_time
+    s += 8  ; 				// last_sent
+
+    s += 8  ; 				// last_TR_TS
+    s += 4  ; 				// sending attempts
+
+    s += sizeof(GRouterServiceId)  ; 	// service_id
+    s += tunnel_hash.serial_size() ;
+
+    s += data_item->serial_size();	// data_item
+
+    if(receipt_item != NULL)
+        s += receipt_item->serial_size();	// receipt_item
+
+    return s ;
 }
 
 bool RsGRouterMatrixFriendListItem::serialise(void *data,uint32_t& size) const
@@ -545,20 +634,27 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     if(!serialise_header(data,size,tlvsize,offset))
         return false ;
 
-    ok &= setRawUInt32(data, tlvsize, &offset, status_flags) ;
-    ok &= origin.serialise(data, tlvsize, offset) ;
-    ok &= setRawTimeT(data, tlvsize, &offset, received_time) ;
-    ok &= setRawTimeT(data, tlvsize, &offset, last_sent) ;
+    ok &= PeerId().serialise(data, tlvsize, offset) ;	// we keep this.
+    ok &= setRawUInt32(data, tlvsize, &offset, data_status) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, tunnel_status) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, received_time_TS) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, last_sent_TS) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, last_tunnel_request_TS) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, sending_attempts) ;
+
     ok &= setRawUInt32(data, tlvsize, &offset, client_id) ;
-    ok &= setRawUInt32(data, tlvsize, &offset, tried_friends.size()) ;
+    ok &= tunnel_hash.serialise(data, tlvsize, offset) ;
 
-    for(std::list<FriendTrialRecord>::const_iterator it(tried_friends.begin());it!=tried_friends.end();++it)
-         ok &= (*it).serialise(data,offset,size) ;
+     uint32_t ns = size - offset ;
+     ok &= data_item->serialise( &((uint8_t*)data)[offset], ns) ;
+     offset += data_item->serial_size() ;
 
-	 uint32_t ns = size - offset ;
-	 ok &= data_item->serialise( &((uint8_t*)data)[offset], ns) ;
-	 offset += ns ;
-
+     if(receipt_item != NULL)
+     {
+         uint32_t ns = size - offset ;
+         ok &= receipt_item->serialise( &((uint8_t*)data)[offset], ns) ;
+         offset += receipt_item->serial_size() ;
+     }
     if (offset != tlvsize)
     {
         ok = false;
@@ -572,51 +668,46 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
 //
-//std::ostream& RsGRouterPublishKeyItem::print(std::ostream& o, uint16_t)
-//{
-//	o << "GRouterPublishKeyItem:" << std::endl ;
-//	o << "  POW bytes    : \""<< RsPgpId(pow_bytes).toStdString() << "\"" << std::endl ;
-//	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-//	o << "  Key:            " << published_key.toStdString() << std::endl ;
-//	o << "  Req. Id:        " << std::hex << diffusion_id << std::dec << std::endl ;
-//	o << "  Srv. Id:        " << std::hex << service_id << std::dec << std::endl ;
-//	o << "  Distance:       " << randomized_distance << std::endl ;
-//	o << "  Description:    " << description_string << std::endl ;
-//	o << "  Fingerprint:    " << fingerprint.toStdString() << std::endl ;
-//
-//	return o ;
-//}
-std::ostream& RsGRouterACKItem::print(std::ostream& o, uint16_t)
+std::ostream& RsGRouterSignedReceiptItem::print(std::ostream& o, uint16_t)
 {
-	o << "RsGRouterACKItem:" << std::endl ;
-	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-	o << "  Mid:            " << mid << std::endl ;
-	o << "  State:          " << state << std::endl ;
+    o << "RsGRouterReceiptItem:" << std::endl ;
+    o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
+    o << "  Mid:            " << std::hex << routing_id << std::dec << std::endl ;
+    o << "  State:          " << flags << std::endl ;
+    o << "  Dest:           " << destination_key << std::endl ;
+    o << "  Sign:           " << signature.keyId << std::endl ;
 
-	return o ;
+    return o ;
 }
 std::ostream& RsGRouterGenericDataItem::print(std::ostream& o, uint16_t)
 {
-	o << "RsGRouterGenericDataItem:" << std::endl ;
-	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-	o << "  Key:            " << destination_key.toStdString() << std::endl ;
-	o << "  Data size:      " << data_size << std::endl ;
+    o << "RsGRouterGenericDataItem:" << std::endl ;
+    o << "  Direct origin: \""<< PeerId() << "\"" << std::endl ;
+    o << "  Routing ID:     " << std::hex << routing_id << std::dec << "\"" << std::endl ;
+    o << "  Key:            " << destination_key.toStdString() << std::endl ;
+    o << "  Data size:      " << data_size << std::endl ;
+    o << "  Data hash:      " << RsDirUtil::sha1sum(data_bytes,data_size)  << std::endl ;
+    o << "  signature key:  " << signature.keyId << std::endl;
+    o << "  randomized dist:" << randomized_distance << std::endl;
+    o << "  flags:          " << flags << std::endl;
 
-	return o ;
+    return o ;
 }
 
 std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
 {
-	o << "RsGRouterRoutingInfoItem:" << std::endl ;
-	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-	o << "  origin:          "<< origin.toStdString() << std::endl ;
-	o << "  recv time:       "<< received_time << std::endl ;
-	o << "  Last sent:       "<< last_sent << std::endl ;
-	o << "  flags:           "<< std::hex << status_flags << std::dec << std::endl ;
-	o << "  Key:             "<< data_item->destination_key.toStdString() << std::endl ;
-	o << "  Data size:       "<< data_item->data_size << std::endl ;
-	o << "  Client id:       "<< client_id << std::endl ;
-	o << "  Tried friends:   "<< tried_friends.size() << std::endl;
+    o << "RsGRouterRoutingInfoItem:" << std::endl ;
+    o << "  direct origin:   "<< PeerId() << std::endl ;
+    o << "  data   status:   "<< std::hex<< data_status << std::dec << std::endl ;
+    o << "  tunnel status:   "<< tunnel_status << std::endl ;
+        o << "  recv time:       "<< received_time_TS << std::endl 	;
+        o << "  Last sent:       "<< last_sent_TS << std::endl ;
+        o << "  Sending attempts:"<< sending_attempts << std::endl ;
+        o << "  destination key: "<< data_item->destination_key << std::endl ;
+    o << "  Client id:       "<< client_id << std::endl ;
+    o << "  tunnel hash:     "<< tunnel_hash << std::endl ;
+        o << "  Data size:       "<< data_item->data_size << std::endl ;
+        o << "  Signed receipt:  "<< (void*)receipt_item << std::endl ;
 
 	return o ;
 }
@@ -631,6 +722,22 @@ std::ostream& RsGRouterMatrixCluesItem::print(std::ostream& o, uint16_t)
 		o << "    " << (*it).friend_id << " " << (*it).time_stamp << " " << (*it).weight << std::endl;
 
 	return o ;
+}
+std::ostream& RsGRouterTransactionChunkItem::print(std::ostream& o, uint16_t)
+{
+    o << "RsGRouterTransactionChunkItem:" << std::endl ;
+    o << "   total_size:  " << total_size << std::endl;
+    o << "   chunk_size:  " << chunk_size << std::endl;
+    o << "  chunk_start:  " << chunk_start << std::endl;
+
+    return o ;
+}
+std::ostream& RsGRouterTransactionAcknItem::print(std::ostream& o, uint16_t)
+{
+    o << "RsGRouterTransactionAcknItem:" << std::endl ;
+    o << "   routing id:  " << propagation_id << std::endl;
+
+    return o ;
 }
 std::ostream& RsGRouterMatrixFriendListItem::print(std::ostream& o, uint16_t)
 {

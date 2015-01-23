@@ -59,7 +59,6 @@ public:
 
 	QString subject(bool noEmpty);
 
-	static bool decryptMsg(const std::string &msgId);
 
 private slots:
 	void reply();
@@ -82,7 +81,6 @@ private slots:
 	void anchorClicked(const QUrl &url);
 
 	void loadImagesAlways();
-	void decrypt();
 
 private:
 	void clearTagLabels();

@@ -310,10 +310,10 @@ void GenExchangeTest::init(RsMsgMetaData& msgMetaData) const
     //randString(SHORT_STR, msgMeta.mAuthorId);
     randString(SHORT_STR, msgMetaData.mMsgName);
     randString(SHORT_STR, msgMetaData.mServiceString);
-    msgMetaData.mOrigMsgId.random();
-    msgMetaData.mParentId.random();
-    msgMetaData.mThreadId.random();
-    msgMetaData.mGroupId.random();
+    msgMetaData.mOrigMsgId = RsGxsMessageId::random();
+    msgMetaData.mParentId = RsGxsMessageId::random();
+    msgMetaData.mThreadId = RsGxsMessageId::random();
+    msgMetaData.mGroupId = RsGxsGroupId::random();
 
     msgMetaData.mChildTs = randNum();
     msgMetaData.mMsgStatus = randNum();
@@ -328,7 +328,7 @@ uint32_t GenExchangeTest::randNum() const
 
 void GenExchangeTest::init(RsGroupMetaData& grpMetaData) const
 {
-    grpMetaData.mGroupId.random();
+    grpMetaData.mGroupId = RsGxsGroupId::random();
     //randString(SHORT_STR, grpMetaData.mAuthorId);
     randString(SHORT_STR, grpMetaData.mGroupName);
     randString(SHORT_STR, grpMetaData.mServiceString);
@@ -337,7 +337,7 @@ void GenExchangeTest::init(RsGroupMetaData& grpMetaData) const
     grpMetaData.mGroupFlags = randNum();
     grpMetaData.mLastPost = randNum();
     grpMetaData.mGroupStatus = randNum();
-    grpMetaData.mMsgCount = randNum();
+    grpMetaData.mVisibleMsgCount = randNum();
     grpMetaData.mPop = randNum();
     grpMetaData.mSignFlags = randNum();
     grpMetaData.mPublishTs = randNum();
@@ -568,7 +568,7 @@ bool operator ==(const RsGroupMetaData& lMeta, const RsGroupMetaData& rMeta)
     if(lMeta.mGroupName != rMeta.mGroupName) return false;
     if(lMeta.mGroupStatus != rMeta.mGroupStatus) return false;
     if(lMeta.mLastPost != rMeta.mLastPost) return false;
-    if(lMeta.mMsgCount != rMeta.mMsgCount) return false;
+    if(lMeta.mVisibleMsgCount != rMeta.mVisibleMsgCount) return false;
     if(lMeta.mPop != rMeta.mPop) return false;
    // if(lMeta.mPublishTs != rMeta.mPublishTs) return false; set in gxs
     if(lMeta.mServiceString != rMeta.mServiceString) return false;
