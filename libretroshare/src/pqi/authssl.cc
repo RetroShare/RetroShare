@@ -1099,17 +1099,14 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
     int     err, depth;
 
     err_cert = X509_STORE_CTX_get_current_cert(ctx);
+#ifdef AUTHSSL_DEBUG
     err = X509_STORE_CTX_get_error(ctx);
     depth = X509_STORE_CTX_get_error_depth(ctx);
+#endif
 
     if(err_cert == NULL)
     {
         std::cerr << "AuthSSLimpl::VerifyX509Callback(): Cannot get certificate. Error!" << std::endl;
-        return false ;
-    }
-    if(err != X509_V_OK)
-    {
-        std::cerr << "AuthSSLimpl::VerifyX509Callback(): get certificate returned error code =" << err << ", error depth=" << depth << std::endl;
         return false ;
     }
 #ifdef AUTHSSL_DEBUG
