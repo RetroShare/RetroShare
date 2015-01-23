@@ -50,7 +50,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
 
-	quickmsgButton->hide();
+	//quickmsgButton->hide();
 	chatButton->hide();
 	removeFriendButton->setEnabled(false);
 	removeFriendButton->hide();
@@ -65,7 +65,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	/* specific ones */
 	connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
 
-	connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
+	//connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
 
 	connect( removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
 	connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
@@ -205,7 +205,7 @@ void SecurityItem::updateItem()
 				connLabel->setText(tr("Unknown Peer"));
 
 				chatButton->hide();
-				quickmsgButton->hide();
+				//quickmsgButton->hide();
 				requestLabel->hide();
 
 				removeFriendButton->setEnabled(false);
@@ -270,7 +270,7 @@ void SecurityItem::updateItem()
 			removeFriendButton->hide();
 		}
 
-		quickmsgButton->show();
+		//quickmsgButton->show();
 	}
 
 	/* slow Tick  */

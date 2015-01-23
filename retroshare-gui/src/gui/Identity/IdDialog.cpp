@@ -32,11 +32,11 @@
 #include "gui/common/UIStateHelper.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/msgs/MessageComposer.h"
 
 #include <retroshare/rspeers.h>
 #include "retroshare/rsgxsflags.h"
-#include "retroshare/rsmsgs.h"
-
+#include "retroshare/rsmsgs.h" 
 #include <iostream>
 #include <algorithm>
 
@@ -940,7 +940,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
 	if(own_identities.size() <= 1)
 	{
-		QAction *action = contextMnu.addAction(QIcon(), tr("Chat with this peer"), this, SLOT(chatIdentity()));
+		QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+
 
 		if(own_identities.empty())
 			action->setEnabled(false) ;
@@ -949,7 +950,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	}
 	else
 	{
-		QMenu *mnu = contextMnu.addMenu(tr("Chat with this peer as...")) ;
+		QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
 
 		for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 		{
@@ -962,6 +963,9 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			action->setData(QString::fromStdString((*it).toStdString())) ;
 		}
 	}
+	
+	contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -986,5 +990,28 @@ void IdDialog::chatIdentity()
 	uint32_t error_code ;
 
 	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), from_gxs_id, error_code))
-		QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this peer.")).arg(tr("Error code")).arg(error_code)) ;
+		QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this person.")).arg(tr("Error code")).arg(error_code)) ;
+}
+
+void IdDialog::sendMsg()
+{
+	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	MessageComposer *nMsgDialog = MessageComposer::newMsg();
+	if (nMsgDialog == NULL) {
+		return;
+	}
+
+	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+
+    nMsgDialog->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
+		nMsgDialog->show();
+		nMsgDialog->activateWindow();
+
+    /* window will destroy itself! */
+
 }

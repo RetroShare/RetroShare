@@ -64,6 +64,8 @@ private slots:
 	void removeIdentity();
 	void editIdentity();
 	void chatIdentity();
+	void sendMsg();
+
 
 	void updateSelection();
 
