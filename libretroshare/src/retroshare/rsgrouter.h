@@ -92,7 +92,7 @@ public:
     //         Communication to other services.          //
     //===================================================//
 
-    virtual bool sendData(const RsGxsId& destination, const GRouterServiceId& client_id, uint8_t *data, uint32_t data_size, const RsGxsId& signing_id, GRouterMsgPropagationId& id) =0;
+    virtual bool sendData(const RsGxsId& destination, const GRouterServiceId& client_id, const uint8_t *data, uint32_t data_size, const RsGxsId& signing_id, GRouterMsgPropagationId& id) =0;
     virtual bool cancel(GRouterMsgPropagationId mid) =0;
 
     virtual bool registerKey(const RsGxsId& authentication_id, const GRouterServiceId& client_id,const std::string& description_string)=0 ;

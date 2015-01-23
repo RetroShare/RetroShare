@@ -1235,7 +1235,7 @@ bool p3GRouter::encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& de
     return false ;
     }
 
-    delete[] item->data_bytes ;
+    free(item->data_bytes) ;
     item->data_bytes = encrypted_data ;
     item->data_size = encrypted_size ;
     item->flags |= RS_GROUTER_DATA_FLAGS_ENCRYPTED ;
@@ -1279,7 +1279,7 @@ bool p3GRouter::decryptDataItem(RsGRouterGenericDataItem *item)
         return false ;
     }
 
-    delete[] item->data_bytes ;
+    free(item->data_bytes) ;
     item->data_bytes = decrypted_data ;
     item->data_size = decrypted_size ;
     item->flags &= ~RS_GROUTER_DATA_FLAGS_ENCRYPTED ;
@@ -1410,7 +1410,7 @@ bool p3GRouter::cancel(GRouterMsgPropagationId mid)
     return true ;
 }
 
-bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& client_id,uint8_t *data, uint32_t data_size,const RsGxsId& signing_id, GRouterMsgPropagationId &propagation_id)
+bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& client_id,const uint8_t *data, uint32_t data_size,const RsGxsId& signing_id, GRouterMsgPropagationId &propagation_id)
 {
     if(data_size > MAX_GROUTER_DATA_SIZE)
     {
@@ -1428,7 +1428,9 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
 
     RsGRouterGenericDataItem *data_item = new RsGRouterGenericDataItem ;
 
-    data_item->data_bytes = data ;
+    data_item->data_bytes = (uint8_t*)malloc(data_size) ;
+    memcpy(data_item->data_bytes,data,data_size) ;
+
     data_item->data_size = data_size ;
     data_item->routing_id = propagation_id  ;
     data_item->randomized_distance = 0 ;

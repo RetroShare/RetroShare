@@ -2263,6 +2263,8 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
     GRouterMsgPropagationId grouter_message_id ;
     mGRouter->sendData(destination_key_id,GROUTER_CLIENT_ID_MESSAGES,msg_serialized_data,msg_serialized_rssize,signing_key_id,grouter_message_id) ;
 
+    delete[] msg_serialized_data ;
+
     // now store the grouter id along with the message id, so that we can keep track of received messages
 
     {

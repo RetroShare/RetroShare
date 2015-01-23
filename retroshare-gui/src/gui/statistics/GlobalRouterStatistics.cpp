@@ -218,6 +218,8 @@ void GlobalRouterStatisticsWidget::updateContent()
 			oy += celly ;
 		}
 	}
+    oy += celly ;
+
     QString prob_string ;
     painter.setFont(times_f) ;
     QString Q = tr("Routing matrix  (") ;
@@ -251,8 +253,6 @@ void GlobalRouterStatisticsWidget::updateContent()
 
         oy += celly ;
     }
-
-    oy += celly ;
 
 
 
