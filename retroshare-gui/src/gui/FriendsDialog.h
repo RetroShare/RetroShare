@@ -26,7 +26,7 @@
 
 #include "ui_FriendsDialog.h"
 
-#define IMAGE_PEERS         	":/images/groupchat.png"
+#define IMAGE_NETWORK         	":/images/logo/logo_32.png"
 
 class QAction;
 class NetworkDialog;
@@ -56,7 +56,7 @@ public:
     /** Default Destructor */
     ~FriendsDialog ();
 
-    virtual QIcon iconPixmap() const { return QIcon(IMAGE_PEERS) ; } //MainPage
+    virtual QIcon iconPixmap() const { return QIcon(IMAGE_NETWORK) ; } //MainPage
     virtual QString pageName() const { return tr("Network") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 

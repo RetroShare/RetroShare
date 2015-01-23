@@ -147,8 +147,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_64.png"));
-	ui->headerFrame->setHeaderText(tr("Identities"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/friends64.png"));
+	ui->headerFrame->setHeaderText(tr("People"));
 
 	/* Initialize splitter */
 	ui->splitter->setStretchFactor(0, 1);

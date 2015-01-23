@@ -78,7 +78,7 @@ QIcon ChatUserNotify::getIcon()
 
 QIcon ChatUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/user/friends24_notify.png") : QIcon(":/images/groupchat.png");
+	return hasNew ? QIcon(":/images/user/friends24_notify.png") : QIcon(":/images/logo/logo_32.png");
 }
 
 unsigned int ChatUserNotify::getNewCount()

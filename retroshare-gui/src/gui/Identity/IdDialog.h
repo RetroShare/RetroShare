@@ -30,7 +30,7 @@
 
 #include "util/TokenQueue.h"
 
-#define IMAGE_IDDIALOG          ":/images/identity/identities_32.png"
+#define IMAGE_IDDIALOG          ":/images/user/friends32.png"
 
 namespace Ui {
 class IdDialog;
@@ -48,7 +48,7 @@ public:
 	~IdDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
-	virtual QString pageName() const { return tr("Identities") ; } //MainPage
+	virtual QString pageName() const { return tr("People") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
