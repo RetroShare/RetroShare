@@ -1474,12 +1474,23 @@ void FriendList::removefriend()
 
     if (rsPeers)
     {
-        if(RsPgpId(getRsId(c)).isNull())
-            return ;
-
-        if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
-        {
-            rsPeers->removeFriend(RsPgpId(getRsId(c)));
+        switch (c->type()) {
+        case TYPE_GPG:
+            if(!RsPgpId(getRsId(c)).isNull()) {
+                if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+                {
+                    rsPeers->removeFriend(RsPgpId(getRsId(c)));
+                }
+            }
+            break;
+        case TYPE_SSL:
+            if (!RsPeerId(getRsId(c)).isNull()) {
+                if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this node?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+                {
+                    rsPeers->removeFriendLocation(RsPeerId(getRsId(c)));
+                }
+            }
+            break;
         }
     }
 }
