@@ -1,4 +1,96 @@
-retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+   Improvements
+      * Global Router
+         - new global router system. Provides secure/authed (sync-ed) data sending between GXS ids.
+
+      * GUI
+         - renaming strings and changed icons for Network/People
+         - added Peer def for Identities.
+         - Removed version files from retroshare-gui. Added version information to Windows executable.
+         - Moved header file with version information to retroshare/rsversion.h.
+         - added code to generate 3072 and 4096 bit PGP keys at startup (Patch from Serhaf)
+         - Fixed removing of a node in friends list.
+         - Moved ID ComboBox at the top, before recipient or Subject fields, to switch faster and easy Identity.
+         - Added a Filter ComboBox for Message Composer, to switch Show types. Moved Search Filter to the top of the Selection Widget.
+         - Changed statusbar hashing label to ElidedLabel
+         - Renamed "location" to "node" in gui (Patch from Henry)
+         - Added a new base class RSTextEdit with placeholder for Qt < 5.2
+         - Fixed when the FriendList columns are hidden, set header sizes to default, Changed profile settings icon.
+
+      * Messages
+         - distant messaging system now uses new GRouter. This provides sync-ed distant messaging.
+         - Show size of attached files in MessageWidget with friendly unit.
+         - Added a info Frame, when adding a Distant Peer to the send list.
+         - added "reply to authors" in forum (needs improvement)
+         - Changed default text color for own group & online status text color
+         - Added to Display File size of the attached files in messages
+         - Changed on the Message Composer when adding GXS Identity to the "To" field, for user friendly display look like a email address.
+         - Enabled to display identity icons for Distant peers on Message Composer and on Friend Selection Widget
+         - Fixed to display mail icon when Distant Message is read.
+
+      * Chat
+         - added missing line when exporting ChatID to std::string (fix by sehraf)
+         - fixed unread chat count in FriendsDialog, fix display of status in distant chat (Patch from electron)
+         - fixed font handling for chat config page (Patch from HM)
+         - Fixed to hide Search Box Action when ChatWidget is used on FriendsDialog
+         - Fixed Incoming Nickname Text color, which looks for your eyes better then green.
+         - simplification of the chat interface to libretroshare using a single unified class for chat IDs. Used a common 
+            chat widget for all chats including broadcast. Opens the way to having plugins send/recv chat messages (Patch from Electron).
+         - Moved Search Filter feature into a frame, to hide by default for a clean Chat Window, optional enable from the menu.
+
+      * NewsFeed
+         - Moved checkbox for news feed sort order from settings to NewsFeed
+         - Fixed reading memory after it was deleted. The error was the reason for the ghost feed items.
+         - clean up security feed item
+
+      * Turtle
+         - added non aggressive mode option to turtle router to make distant chat happy
+
+      * Forums/Channels/Posted
+         - Added Default blue forum icons for own Forums.
+         - Fixed placeholder display on GXS Group Dialog
+         - Changed sign icon on create forum message, added a "Post as:" label before gxs id chooser
+         - Added icons to GxsIdChooser
+         - Fixed display of "Create new Identity" without an identity
+         - Fixed filter of description in group tree of forums, channels and posted.
+         - Display at Header Channel name (Show Mode)
+         - Display Subscribers on Channels
+         - Added a new StackedPage for the Show mode (GXS Group Dialog), clean up the code.
+         - Set the description Text field to read only for the Show Mode
+
+      * Identities
+         - Added fixed size for the splitter in Identity
+         - optimized fill, fixed utf8 issue, added new strings to translation, added load/save of ui state
+         - fixed splitter resize, fixed sensitive state of menu items in context menu
+         - Fixed double (or more) add of own identity to p3IdService::mOwnIds after edit in the gui.
+         - Added Send Message context menu action for Identities List
+         - Added new entry to GxsIdChooser to create a new identity.
+
+      * Packaging
+         - Switched to dynamic linking of openssl for Windows build. Added needed dll's to Windows installer.
+         - renamed Ubuntu/Debian packaging scripts, removed binary package scripts
+         - Added icon, publisher and version to Windows uninstall information.
+         - improved packaging scripts (patch by Heini)
+
+      * Others
+         - Fixed inconsistent code in udprelay.cc (Patch rom G10H4ck)
+         - Code simplification and suppression of a bug in handling Relay connect attempt (Patch rom G10H4ck)
+         - Added missing free() in error handling code (Patch rom G10H4ck)
+         - Few optimizations and code improvements. Also added one missing fclose in error handling code (Patch rom G10H4ck)
+
+      * VOIP
+         - fix memory management issue in voip (patch from electron)
+         - Moved the VoIP Buttons to the top right corner on the Chat Window.
+
+   Bug fixes
+      * fixed fclose before rename in fimonitor.cc, causing some cache file lists to never be deleted.
+      * fixed bug causing a security breach by storing private GXS keys into the public key cache. Added a few asserts 
+        to totally remove that possibility. Ideally we should have 2 incompatible key types.
+      * fixed non saving of checkAttempts for pgp signatures of groups, causing pgp signatures of unknown keys to be re-checked every minute (Patch from HM, modified)
+      * improved RsServer so that join() is called on every running thread at shutdown, hence avoiding SIGSEGV. Removed some unused members of RsServer
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 25 Jan 2015 14:00:00 +0100
+
+retroshare06 (0.6.0-0.7769~precise) precise; urgency=low
 
    Improvements
 
