@@ -143,6 +143,7 @@ private slots:
     void addRecommend();
     void editingRecipientFinished();
     void friendDetails();
+    void identityDetails();
 
     void peerStatusChanged(const QString& peer_id, int status);
 

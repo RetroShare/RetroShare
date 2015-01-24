@@ -1121,13 +1121,16 @@ identities {
 	HEADERS +=  \
 		gui/Identity/IdDialog.h \
 		gui/Identity/IdEditDialog.h \
+		gui/Identity/IdDetailsDialog.h \
 	
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
-	
+		gui/Identity/IdDetailsDialog.ui \
+
 	SOURCES +=  \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
+		gui/Identity/IdDetailsDialog.cpp \
 	
 }
 	

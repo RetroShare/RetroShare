@@ -56,6 +56,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/Identity/IdDetailsDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/DateTime.h"
@@ -599,8 +600,11 @@ void MessageComposer::contextMenuMsgSendList(QPoint)
     contextMnu.addSeparator();
 
     action = contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(friendDetails()));
-    action->setEnabled(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_SSL);
+    action->setVisible(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_SSL);
 
+    action = contextMnu.addAction(QIcon(), tr("Person Details"), this, SLOT(identityDetails()));
+    action->setVisible(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_GXS);
+    
     contextMnu.exec(QCursor::pos());
 }
 
@@ -2445,6 +2449,23 @@ void MessageComposer::friendDetails()
     }
 
     ConfCertDialog::showIt(RsPeerId(id), ConfCertDialog::PageDetails);
+}
+
+void MessageComposer::identityDetails()
+{
+    FriendSelectionWidget::IdType idType;
+    std::string id = ui.friendSelectionWidget->selectedId(idType);
+
+    if (id.empty() || idType != FriendSelectionWidget::IDTYPE_GXS) {
+        return;
+    }
+
+    if (RsGxsGroupId(id).isNull()) {
+        return;
+    }
+
+    IdDetailsDialog dialog(RsGxsGroupId(id), this);
+    dialog.exec(); 
 }
 
 void MessageComposer::tagAboutToShow()
