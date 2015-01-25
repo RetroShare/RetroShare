@@ -136,19 +136,20 @@ void TokenQueue::pollRequests()
 	else
 	{
 
-#define MAX_REQUEST_AGE 30
+// checkForRequest returns also true when the request cannot be found (e.g. removed by a timeout)
+//#define MAX_REQUEST_AGE 30
 
-		/* drop old requests too */
-		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
-		{
+//		/* drop old requests too */
+//		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
+//		{
 			mRequests.push_back(req);
-	}
-		else
-		{
-			std::cerr << "TokenQueue::loadRequest(): ";
-			std::cerr << "Dropping old Token: " << req.mToken << " Type: " << req.mType;
-			std::cerr << std::endl;
-		}
+//		}
+//		else
+//		{
+//			std::cerr << "TokenQueue::loadRequest(): ";
+//			std::cerr << "Dropping old Token: " << req.mToken << " Type: " << req.mType;
+//			std::cerr << std::endl;
+//		}
 	}
 
 	if (mRequests.size() > 0)

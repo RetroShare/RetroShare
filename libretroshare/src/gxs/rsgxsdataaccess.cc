@@ -709,7 +709,7 @@ GxsRequest* RsGxsDataAccess::locked_retrieveRequest(const uint32_t& token)
 	return req;
 }
 
-#define MAX_REQUEST_AGE 30
+#define MAX_REQUEST_AGE 120 // 2 minutes
 
 void RsGxsDataAccess::processRequests()
 {
