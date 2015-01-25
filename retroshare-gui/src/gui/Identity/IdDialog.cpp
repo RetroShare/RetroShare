@@ -290,8 +290,8 @@ void IdDialog::updateSelection()
 void IdDialog::requestIdList()
 {
 	//Disable by default, will be enable by insertIdDetails()
-	ui->removeIdentity->setVisible(false);
-	ui->editIdentity->setVisible(false);
+	ui->removeIdentity->setEnabled(false);
+	ui->editIdentity->setEnabled(false);
 
 	if (!mIdQueue)
 		return;
@@ -634,16 +634,16 @@ void IdDialog::insertIdDetails(uint32_t token)
 	if (isOwnId)
 	{
 		mStateHelper->setWidgetEnabled(ui->toolButton_Reputation, false);
-		ui->editIdentity->setVisible(true);
-		ui->removeIdentity->setVisible(true);
+		ui->editIdentity->setEnabled(true);
+		ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
 	}
 	else
 	{
 		// No Reputation yet!
 		mStateHelper->setWidgetEnabled(ui->toolButton_Reputation, /*true*/ false);
-		ui->editIdentity->setVisible(false);
-		ui->removeIdentity->setVisible(false);
+		ui->editIdentity->setEnabled(false);
+		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
 	}
 
@@ -931,9 +931,6 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 {
 	QMenu contextMnu( this );
 
-	contextMnu.addAction(ui->editIdentity);
-	contextMnu.addAction(ui->removeIdentity);
-
 	std::list<RsGxsId> own_identities ;
 	rsIdentity->getOwnIds(own_identities) ;
 
@@ -964,7 +961,11 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	}
 	
 	contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+	
+	contextMnu.addSeparator();
 
+	contextMnu.addAction(ui->editIdentity);
+	contextMnu.addAction(ui->removeIdentity);
 
 	contextMnu.exec(QCursor::pos());
 }

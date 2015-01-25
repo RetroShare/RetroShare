@@ -600,10 +600,10 @@ void MessageComposer::contextMenuMsgSendList(QPoint)
     contextMnu.addSeparator();
 
     action = contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(friendDetails()));
-    action->setVisible(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_SSL);
+    action->setEnabled(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_SSL);
 
     action = contextMnu.addAction(QIcon(), tr("Person Details"), this, SLOT(identityDetails()));
-    action->setVisible(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_GXS);
+    action->setEnabled(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_GXS);
     
     contextMnu.exec(QCursor::pos());
 }
