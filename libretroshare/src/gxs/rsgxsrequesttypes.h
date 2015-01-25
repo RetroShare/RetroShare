@@ -31,23 +31,24 @@
 
 class GxsRequest
 {
+public:
+	virtual ~GxsRequest() {}
 
 public:
-
-
-	virtual ~GxsRequest() { return; }
 	uint32_t token;
 	uint32_t reqTime;
 
 	uint32_t ansType;
 	uint32_t reqType;
-        RsTokReqOptions Options;
+	RsTokReqOptions Options;
 
 	uint32_t status;
 };
 
 class GroupMetaReq : public GxsRequest
 {
+public:
+	virtual ~GroupMetaReq();
 
 public:
 	std::list<RsGxsGroupId> mGroupIds;
@@ -56,41 +57,42 @@ public:
 
 class GroupIdReq : public GxsRequest
 {
-
 public:
-
 	std::list<RsGxsGroupId> mGroupIds;
 	std::list<RsGxsGroupId> mGroupIdResult;
 };
 
 class GroupDataReq : public GxsRequest
 {
+public:
+	virtual ~GroupDataReq();
 
 public:
-        std::list<RsGxsGroupId> mGroupIds;
+	std::list<RsGxsGroupId> mGroupIds;
 	std::list<RsNxsGrp*> mGroupData;
 };
 
-
 class MsgIdReq : public GxsRequest
 {
-
 public:
-
 	GxsMsgReq mMsgIds;
 	GxsMsgIdResult mMsgIdResult;
 };
 
 class MsgMetaReq : public GxsRequest
 {
+public:
+	virtual ~MsgMetaReq();
 
 public:
 	GxsMsgReq mMsgIds;
-	GxsMsgMetaResult   mMsgMetaData;
+	GxsMsgMetaResult mMsgMetaData;
 };
 
 class MsgDataReq : public GxsRequest
 {
+public:
+	virtual ~MsgDataReq();
 
 public:
 	GxsMsgReq mMsgIds;
@@ -100,30 +102,31 @@ public:
 class ServiceStatisticRequest: public GxsRequest
 {
 public:
-    GxsServiceStatistic mServiceStatistic;
+	GxsServiceStatistic mServiceStatistic;
 };
 
 struct GroupStatisticRequest: public GxsRequest
 {
 public:
-    RsGxsGroupId mGrpId;
-    GxsGroupStatistic mGroupStatistic;
+	RsGxsGroupId mGrpId;
+	GxsGroupStatistic mGroupStatistic;
 };
 
 class MsgRelatedInfoReq : public GxsRequest
 {
+public:
+	virtual ~MsgRelatedInfoReq();
 
 public:
-        std::vector<RsGxsGrpMsgIdPair> mMsgIds;
-        MsgRelatedIdResult mMsgIdResult;
-        MsgRelatedMetaResult mMsgMetaResult;
-        NxsMsgRelatedDataResult mMsgDataResult;
+	std::vector<RsGxsGrpMsgIdPair> mMsgIds;
+	MsgRelatedIdResult mMsgIdResult;
+	MsgRelatedMetaResult mMsgMetaResult;
+	NxsMsgRelatedDataResult mMsgDataResult;
 };
 
 class GroupSetFlagReq : public GxsRequest
 {
 public:
-
 	const static uint32_t FLAG_SUBSCRIBE;
 	const static uint32_t FLAG_STATUS;
 
@@ -131,13 +134,11 @@ public:
 	uint32_t flag;
 	uint32_t flagMask;
 	RsGxsGroupId grpId;
-
 };
 
 class MessageSetFlagReq : public GxsRequest
 {
 public:
-
 	const static uint32_t FLAG_STATUS;
 
 	uint8_t type;
@@ -145,6 +146,5 @@ public:
 	uint32_t flagMask;
 	RsGxsGrpMsgIdPair msgId;
 };
-
 
 #endif /* RSGXSREQUESTTYPES_H_ */

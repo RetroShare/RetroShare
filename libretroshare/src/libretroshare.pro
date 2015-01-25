@@ -452,6 +452,7 @@ HEADERS +=	util/folderiterator.h \
 			util/dnsresolver.h \
 			util/rsprint.h \
 			util/rsstring.h \
+			util/rsstd.h \
 			util/rsthreads.h \
 			util/rsversioninfo.h \
 			util/rswin.h \
@@ -680,7 +681,8 @@ gxs {
 		gxs/rsgxsifacehelper.h \
 		gxs/gxstokenqueue.h \
 		gxs/rsgxsnetutils.h \
-		gxs/rsgxsiface.h
+		gxs/rsgxsiface.h \
+		gxs/rsgxsrequesttypes.h
 
 
 	SOURCES += serialiser/rsnxsitems.cc \
@@ -696,7 +698,8 @@ gxs {
 		gxs/gxssecurity.cc \
 		gxs/gxstokenqueue.cc \
 		gxs/rsgxsnetutils.cc \
-		gxs/rsgxsutil.cc
+		gxs/rsgxsutil.cc \
+		gxs/rsgxsrequesttypes.cc
 
 
 	# Identity Service

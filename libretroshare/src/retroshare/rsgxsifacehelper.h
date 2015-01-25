@@ -178,7 +178,7 @@ public:
      * @param msgInfo the message metadata returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getMsgrelatedSummary(const uint32_t &token, GxsMsgRelatedMetaMap &msgInfo)
+    bool getMsgRelatedSummary(const uint32_t &token, GxsMsgRelatedMetaMap &msgInfo)
     {
         return mGxs->getMsgRelatedMeta(token, msgInfo);
     }

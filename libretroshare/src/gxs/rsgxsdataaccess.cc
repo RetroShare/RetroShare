@@ -412,6 +412,7 @@ bool RsGxsDataAccess::getGroupSummary(const uint32_t& token, std::list<RsGxsGrpM
 		if(gmreq)
 		{
 			groupInfo = gmreq->mGroupMetaData;
+			gmreq->mGroupMetaData.clear();
                         locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupSummary() Req found, failed caste" << std::endl;
@@ -442,6 +443,7 @@ bool RsGxsDataAccess::getGroupData(const uint32_t& token, std::list<RsNxsGrp*>& 
 		if(gmreq)
 		{
 			grpData = gmreq->mGroupData;
+			gmreq->mGroupData.clear();
                         locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 		}else{
 			std::cerr << "RsGxsDataAccess::getGroupData() Req found, failed caste" << std::endl;
@@ -473,6 +475,7 @@ bool RsGxsDataAccess::getMsgData(const uint32_t& token, NxsMsgDataResult& msgDat
 		if(mdreq)
 		{
                      msgData = mdreq->mMsgData;
+                     mdreq->mMsgData.clear();
                      locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
                 }
                 else
@@ -509,6 +512,7 @@ bool RsGxsDataAccess::getMsgRelatedData(const uint32_t &token, NxsMsgRelatedData
                 if(mrireq)
                 {
                     msgData = mrireq->mMsgDataResult;
+                    mrireq->mMsgDataResult.clear();
                     locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
                 }
                 else
@@ -542,6 +546,7 @@ bool RsGxsDataAccess::getMsgSummary(const uint32_t& token, GxsMsgMetaResult& msg
 		if(mmreq)
 		{
                      msgInfo = mmreq->mMsgMetaData;
+                     mmreq->mMsgMetaData.clear();
                      locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 
                 }
@@ -581,6 +586,7 @@ bool RsGxsDataAccess::getMsgRelatedSummary(const uint32_t &token, MsgRelatedMeta
             if(mrireq)
             {
                 msgMeta = mrireq->mMsgMetaResult;
+                mrireq->mMsgMetaResult.clear();
                 locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
             }
             else
@@ -619,6 +625,7 @@ bool RsGxsDataAccess::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResul
             if(mrireq)
             {
                 msgIds = mrireq->mMsgIdResult;
+                mrireq->mMsgIdResult.clear();
                 locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
             }
             else{
@@ -652,6 +659,7 @@ bool RsGxsDataAccess::getMsgList(const uint32_t& token, GxsMsgIdResult& msgIds)
 		if(mireq)
                 {
                     msgIds = mireq->mMsgIdResult;
+                    mireq->mMsgIdResult.clear();
                     locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
                 }
                 else{
@@ -684,6 +692,7 @@ bool RsGxsDataAccess::getGroupList(const uint32_t& token, std::list<RsGxsGroupId
 		if(gireq)
 		{
 		 groupIds = gireq->mGroupIdResult;
+			gireq->mGroupIdResult.clear();
                  locked_updateRequestStatus(token, GXS_REQUEST_V2_STATUS_DONE);
 
 		}else{
