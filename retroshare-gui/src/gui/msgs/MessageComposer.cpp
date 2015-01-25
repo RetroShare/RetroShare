@@ -2464,8 +2464,10 @@ void MessageComposer::identityDetails()
         return;
     }
 
-    IdDetailsDialog dialog(RsGxsGroupId(id), this);
-    dialog.exec(); 
+    IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(id));
+    dialog->show();
+
+    /* Dialog will destroy itself */ 
 }
 
 void MessageComposer::tagAboutToShow()

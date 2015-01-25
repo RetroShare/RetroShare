@@ -42,6 +42,8 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
+	setAttribute (Qt::WA_DeleteOnClose,true);
+
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Nickname);
