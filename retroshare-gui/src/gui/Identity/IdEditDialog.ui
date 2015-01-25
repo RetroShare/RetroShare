@@ -6,15 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
-    <height>480</height>
+    <width>515</width>
+    <height>591</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>64</horstretch>
+    <verstretch>64</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
     <normaloff>:/images/identity/identities_32.png</normaloff>:/images/identity/identities_32.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -22,14 +28,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="HeaderFrame" name="headerFrame">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-    </widget>
+    <widget class="HeaderFrame" name="headerFrame" native="true"/>
    </item>
    <item>
     <widget class="QFrame" name="frame">
@@ -45,97 +44,188 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="2">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Type</string>
-        </property>
-       </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_GpgId">
+          <property name="text">
+           <string>PGP Associated ID</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/tags/pgp-known.png</normaloff>:/images/tags/pgp-known.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_Pseudo">
+          <property name="text">
+           <string>Pseudonym</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/tags/anon.png</normaloff>:/images/tags/anon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>131</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
-      <item row="0" column="2">
-       <widget class="QRadioButton" name="radioButton_GpgId">
-        <property name="text">
-         <string>PGP Associated ID</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/tags/pgp-known.png</normaloff>:/images/tags/pgp-known.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Nickname</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_Nickname"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Key ID</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_KeyId">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>PGP Hash</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEdit_GpgHash">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>PGP Id</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineEdit_GpgId">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>PGP Name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEdit_GpgName">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="avatarLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>128</width>
+              <height>128</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>128</width>
+              <height>128</height>
+             </size>
+            </property>
+            <property name="text">
+             <string extracomment="Click here to change your avatar">TextLabel</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
-      <item row="0" column="3">
-       <widget class="QRadioButton" name="radioButton_Pseudo">
-        <property name="text">
-         <string>Pseudonym</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/tags/anon.png</normaloff>:/images/tags/anon.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>131</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Nickname</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Key ID</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>PGP Hash</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>PGP Id</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>PGP Name</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
+      <item>
        <spacer name="verticalSpacer_2">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -147,37 +237,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="1" column="1" colspan="4">
-       <widget class="QLineEdit" name="lineEdit_Nickname"/>
-      </item>
-      <item row="2" column="1" colspan="4">
-       <widget class="QLineEdit" name="lineEdit_KeyId">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" colspan="4">
-       <widget class="QLineEdit" name="lineEdit_GpgHash">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" colspan="4">
-       <widget class="QLineEdit" name="lineEdit_GpgId">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1" colspan="4">
-       <widget class="QLineEdit" name="lineEdit_GpgName">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -337,9 +396,8 @@
  <customwidgets>
   <customwidget>
    <class>HeaderFrame</class>
-   <extends>QFrame</extends>
+   <extends>QWidget</extends>
    <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

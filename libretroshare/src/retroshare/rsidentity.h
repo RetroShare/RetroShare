@@ -33,6 +33,8 @@
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsids.h"
+#include "serialiser/rstlvimage.h"
+#include "retroshare/rsgxscommon.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
@@ -105,10 +107,13 @@ class RsGxsIdGroup
 	// Recognition Strings. MAX# defined above.
 	std::list<std::string> mRecognTags;
 
-	// Not Serialised - for GUI's benefit.
+    // Avatar
+    RsGxsImage mImage ;
+
+    // Not Serialised - for GUI's benefit.
 	bool mPgpKnown;
 	RsPgpId mPgpId;
-	GxsReputation mReputation; 
+    GxsReputation mReputation;
 };
 
 
@@ -168,7 +173,10 @@ class RsIdentityDetails
 	std::list<RsRecognTag> mRecognTags;
 
 	// reputation details.
-	GxsReputation mReputation;
+    GxsReputation mReputation;
+
+    // avatar
+    RsGxsImage mAvatar ;
 };
 
 
@@ -185,7 +193,8 @@ class RsIdentityParameters
 	public:
 	RsIdentityParameters(): isPgpLinked(false) { return; }
 	bool isPgpLinked;
-	std::string nickname;
+    std::string nickname;
+    RsGxsImage mImage ;
 };
 
 

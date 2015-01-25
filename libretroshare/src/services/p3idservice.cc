@@ -324,7 +324,9 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 
 	RsGxsIdGroup id;
 
-	id.mMeta.mGroupName = params.nickname;
+    id.mMeta.mGroupName = params.nickname;
+    id.mImage = params.mImage;
+
 	if (params.isPgpLinked)
 	{
 		id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
@@ -740,8 +742,8 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
         item->print(std::cerr);
         std::cerr << std::endl;
 #endif // DEBUG_IDS
-        RsGxsIdGroup group = item->group;
-        group.mMeta = item->meta;
+        RsGxsIdGroup group ;
+    item->toGxsIdGroup(group,false) ;
 
         // Decode information from serviceString.
         SSGxsIdGroup ssdata;
@@ -769,7 +771,7 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 				}
 
 				groups.push_back(group);
-				delete(item);
+                delete(item);
 			}
 			else
 			{
@@ -789,19 +791,21 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 
 bool 	p3IdService::createGroup(uint32_t& token, RsGxsIdGroup &group)
 {
-	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
-	item->group = group;
-	item->meta = group.mMeta;
-	RsGenExchange::publishGroup(token, item);
-	return true;
+    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+
+    item->meta = group.mMeta;
+    item->mImage.binData.setBinData(group.mImage.mData, group.mImage.mSize);
+
+    RsGenExchange::publishGroup(token, item);
+    return true;
 }
 
 bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 {
 	RsGxsId id = RsGxsId(group.mMeta.mGroupId.toStdString());
-	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
-	item->group = group;
-	item->meta = group.mMeta;
+    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+
+    item->fromGxsIdGroup(group,false) ;
 
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::updateGroup() Updating RsGxsId: " << id;
@@ -850,9 +854,9 @@ bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
 {
 	RsGxsId id = RsGxsId(group.mMeta.mGroupId.toStdString());
-	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
-	item->group = group;
-	item->meta = group.mMeta;
+    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+
+    item->fromGxsIdGroup(group,false) ;
 
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::deleteGroup() Deleting RsGxsId: " << id;
@@ -1285,7 +1289,9 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
 	mPublishTs = item->meta.mPublishTs;
 	
 	// Save RecognTags.
-	mRecognTags = tagList;
+    mRecognTags = tagList;
+
+           details.mAvatar.copy((uint8_t *) item->mImage.binData.bin_data, item->mImage.binData.bin_len);
 
 	// Fill in Details.
 	details.mNickname = item->meta.mGroupName;
@@ -1396,7 +1402,7 @@ bool p3IdService::recogn_extract_taginfo(const RsGxsIdGroupItem *item, std::list
 
 	std::list<std::string>::const_iterator rit;
 	int count = 0;
-	for(rit = item->group.mRecognTags.begin(); rit != item->group.mRecognTags.end(); ++rit)
+    for(rit = item->mRecognTags.begin(); rit != item->mRecognTags.end(); ++rit)
 	{
 		if (++count > RSRECOGN_MAX_TAGINFO)
 		{
@@ -2179,7 +2185,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	
 		if(pk.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
 		{
-			item->group.mMeta.mGroupId = RsGxsGroupId(pk.keyId);
+            item->meta.mGroupId = RsGxsGroupId(pk.keyId);
 			break;
 		}
 	}
@@ -2195,36 +2201,36 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 
 	// SANITY CHECK.
-	if (item->group.mMeta.mAuthorId != item->meta.mAuthorId)
-	{
-		std::cerr << "p3IdService::service_CreateGroup() AuthorId mismatch(";
-		std::cerr << item->group.mMeta.mAuthorId;
-		std::cerr << " vs ";
-		std::cerr << item->meta.mAuthorId;
-		std::cerr << std::endl;
-	}
-		
-	if (item->group.mMeta.mGroupId != item->meta.mGroupId)
-	{
-		std::cerr << "p3IdService::service_CreateGroup() GroupId mismatch(";
-		std::cerr << item->group.mMeta.mGroupId;
-		std::cerr << " vs ";
-		std::cerr << item->meta.mGroupId;
-		std::cerr << std::endl;
-	}
-		
-		
-	if (item->group.mMeta.mGroupFlags != item->meta.mGroupFlags)
-	{
-		std::cerr << "p3IdService::service_CreateGroup() GroupFlags mismatch(";
-		std::cerr << item->group.mMeta.mGroupFlags;
-		std::cerr << " vs ";
-		std::cerr << item->meta.mGroupFlags;
-		std::cerr << std::endl;
-	}
+//    if (item->mMeta.mAuthorId != item->meta.mAuthorId)
+//	{
+//		std::cerr << "p3IdService::service_CreateGroup() AuthorId mismatch(";
+//        std::cerr << item->mMeta.mAuthorId;
+//		std::cerr << " vs ";
+//		std::cerr << item->meta.mAuthorId;
+//		std::cerr << std::endl;
+//	}
+//
+//	if (item->group.mMeta.mGroupId != item->meta.mGroupId)
+//	{
+//		std::cerr << "p3IdService::service_CreateGroup() GroupId mismatch(";
+//        std::cerr << item->mMeta.mGroupId;
+//		std::cerr << " vs ";
+//		std::cerr << item->meta.mGroupId;
+//		std::cerr << std::endl;
+//	}
+//
+//
+//	if (item->group.mMeta.mGroupFlags != item->meta.mGroupFlags)
+//	{
+//		std::cerr << "p3IdService::service_CreateGroup() GroupFlags mismatch(";
+//        std::cerr << item->mMeta.mGroupFlags;
+//		std::cerr << " vs ";
+//		std::cerr << item->meta.mGroupFlags;
+//		std::cerr << std::endl;
+//	}
 		
 #ifdef DEBUG_IDS
-	std::cerr << "p3IdService::service_CreateGroup() for : " << item->group.mMeta.mGroupId;
+    std::cerr << "p3IdService::service_CreateGroup() for : " << item->mMeta.mGroupId;
 	std::cerr << std::endl;
 	std::cerr << "p3IdService::service_CreateGroup() Alt GroupId : " << item->meta.mGroupId;
 	std::cerr << std::endl;
@@ -2232,7 +2238,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 	ServiceCreate_Return createStatus;
 
-	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) 
+    if (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 	{
 		/* create the hash */
 		Sha1CheckSum hash;
@@ -2265,9 +2271,9 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		std::cerr << std::endl;
 #endif
 
-		RsGxsId gxsId(item->group.mMeta.mGroupId.toStdString());
+        RsGxsId gxsId(item->meta.mGroupId.toStdString());
 		calcPGPHash(gxsId, ownFinger, hash);
-		item->group.mPgpIdHash = hash;
+        item->mPgpIdHash = hash;
 
 #ifdef DEBUG_IDS
 
@@ -2306,13 +2312,13 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 			std::string strout;
 #endif
 			/* push binary into string -> really bad! */
-			item->group.mPgpIdSign = "";
+            item->mPgpIdSign = "";
 			for(unsigned int i = 0; i < sign_size; i++)
 			{
 #ifdef DEBUG_IDS
 				rs_sprintf_append(strout, "%02x", (uint32_t) signarray[i]);
 #endif
-				item->group.mPgpIdSign += signarray[i];
+                item->mPgpIdSign += signarray[i];
 			}
 			createStatus = SERVICE_CREATE_SUCCESS;
 
@@ -2330,7 +2336,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 	// Enforce no AuthorId.
 	item->meta.mAuthorId.clear() ;
-	item->group.mMeta.mAuthorId.clear() ;
+    //item->mMeta.mAuthorId.clear() ;
 	// copy meta data to be sure its all the same.
 	//item->group.mMeta = item->meta;
 

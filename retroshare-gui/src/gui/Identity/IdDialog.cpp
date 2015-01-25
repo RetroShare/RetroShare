@@ -377,11 +377,15 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 		item->setToolTip(RSID_COL_IDTYPE, tooltip) ;
 	 }
 
-	QPixmap pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
 #ifdef ID_DEBUG
 	std::cerr << "Setting item image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 #endif
-	item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
+    QPixmap pixmap ;
+
+    if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
+        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+
+    item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 	{
@@ -545,11 +549,15 @@ void IdDialog::insertIdDetails(uint32_t token)
 	
 	ui->headerFrame->setHeaderText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 
-	QPixmap pix = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+    QPixmap pixmap ;
+
+    if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
+        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
 #endif
-	ui->headerFrame->setHeaderImage(pix);
+    ui->headerFrame->setHeaderImage(pixmap);
 
 	if (data.mPgpKnown)
 	{
@@ -953,7 +961,10 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			RsIdentityDetails idd ;
 			rsIdentity->getIdDetails(*it,idd) ;
 
-			QPixmap pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+            QPixmap pixmap ;
+
+            if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+                pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
 
 			QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
 			action->setData(QString::fromStdString((*it).toStdString())) ;

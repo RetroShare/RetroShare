@@ -34,7 +34,9 @@
 #include "rsgxsitems.h"
 #include "retroshare/rsidentity.h"
 
-const uint8_t RS_PKT_SUBTYPE_GXSID_GROUP_ITEM = 0x02;
+//const uint8_t RS_PKT_SUBTYPE_GXSID_GROUP_ITEM_deprecated   = 0x02;
+
+const uint8_t RS_PKT_SUBTYPE_GXSID_GROUP_ITEM   = 0x02;
 const uint8_t RS_PKT_SUBTYPE_GXSID_OPINION_ITEM = 0x03;
 const uint8_t RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM = 0x04;
 
@@ -43,15 +45,26 @@ class RsGxsIdGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsIdGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,
-			RS_PKT_SUBTYPE_GXSID_GROUP_ITEM) { return;}
-        virtual ~RsGxsIdGroupItem() { return;}
+    RsGxsIdGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,
+                                      RS_PKT_SUBTYPE_GXSID_GROUP_ITEM) { return;}
+    virtual ~RsGxsIdGroupItem() { return;}
 
-        void clear();
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
+    bool fromGxsIdGroup(RsGxsIdGroup &group, bool moveImage);
+    bool toGxsIdGroup(RsGxsIdGroup &group, bool moveImage);
 
-	RsGxsIdGroup group;
+    Sha1CheckSum mPgpIdHash;
+    // Need a signature as proof - otherwise anyone could add others Hashes.
+    // This is a string, as the length is variable.
+    std::string mPgpIdSign;
+
+    // Recognition Strings. MAX# defined above.
+    std::list<std::string> mRecognTags;
+
+    // Avatar
+    RsTlvImage mImage ;
 };
 
 #if 0
@@ -59,7 +72,7 @@ class RsGxsIdOpinionItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsIdOpinionItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
+    RsGxsIdOpinionItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
 			RS_PKT_SUBTYPE_GXSID_OPINION_ITEM) {return; }
         virtual ~RsGxsIdOpinionItem() { return;}
         void clear();

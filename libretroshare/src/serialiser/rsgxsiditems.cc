@@ -131,16 +131,12 @@ RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 
 void RsGxsIdGroupItem::clear()
 {
-	group.mPgpIdHash.clear();
-	group.mPgpIdSign.clear();
+    mPgpIdHash.clear();
+    mPgpIdSign.clear();
 
-	group.mRecognTags.clear();
-
-        group.mPgpKnown = false;
-        group.mPgpId.clear();
-
+    mRecognTags.clear();
+    mImage.TlvClear();
 }
-
 
 std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 {
@@ -150,20 +146,20 @@ std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "MetaData: " << meta << std::endl;
 	printIndent(out, int_Indent);
-	out << "PgpIdHash: " << group.mPgpIdHash << std::endl;
+    out << "PgpIdHash: " << mPgpIdHash << std::endl;
 	printIndent(out, int_Indent);
 
 	std::string signhex;
 	// convert from binary to hex.
-	for(unsigned int i = 0; i < group.mPgpIdSign.length(); i++)
+    for(unsigned int i = 0; i < mPgpIdSign.length(); i++)
 	{
-		rs_sprintf_append(signhex, "%02x", (uint32_t) ((uint8_t) group.mPgpIdSign[i]));
+        rs_sprintf_append(signhex, "%02x", (uint32_t) ((uint8_t) mPgpIdSign[i]));
 	}
 	out << "PgpIdSign: " << signhex << std::endl;
 	printIndent(out, int_Indent);
 	out << "RecognTags:" << std::endl;
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, group.mRecognTags);
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, mRecognTags);
 	set.print(out, int_Indent + 2);
   
 	printRsItemEnd(out ,"RsGxsIdGroupItem", indent);
@@ -173,17 +169,17 @@ std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 
 uint32_t RsGxsIdSerialiser::sizeGxsIdGroupItem(RsGxsIdGroupItem *item)
 {
+    uint32_t s = 8; // header
 
-	const RsGxsIdGroup& group = item->group;
-	uint32_t s = 8; // header
+    s += Sha1CheckSum::SIZE_IN_BYTES;
+    s += GetTlvStringSize(item->mPgpIdSign);
 
-	s += Sha1CheckSum::SIZE_IN_BYTES;
-	s += GetTlvStringSize(group.mPgpIdSign);
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->mRecognTags);
+    s += set.TlvSize();
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
-	s += set.TlvSize();
+    s += item->mImage.TlvSize() ;
 
-	return s;
+    return s;
 }
 
 bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *data, uint32_t *size)
@@ -211,12 +207,14 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	offset += 8;
 	
 	/* GxsIdGroupItem */
-	ok &= item->group.mPgpIdHash.serialise(data, tlvsize, offset);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
+    ok &= item->mPgpIdHash.serialise(data, tlvsize, offset);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_SIGN, item->mPgpIdSign);
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->mRecognTags);
 	ok &= set.SetTlv(data, tlvsize, &offset);
-	
+
+    ok &= item->mImage.SetTlv(data,tlvsize,&offset) ;
+
 	if(offset != tlvsize)
 	{
 #ifdef GXSID_DEBUG
@@ -234,7 +232,48 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	
 	return ok;
 	}
-	
+
+
+bool RsGxsIdGroupItem::fromGxsIdGroup(RsGxsIdGroup &group, bool moveImage)
+{
+        clear();
+        meta = group.mMeta;
+        mPgpIdHash = group.mPgpIdHash;
+        mPgpIdSign = group.mPgpIdSign;
+        mRecognTags = group.mRecognTags;
+
+        if (moveImage)
+        {
+            mImage.binData.bin_data = group.mImage.mData;
+            mImage.binData.bin_len = group.mImage.mSize;
+            group.mImage.shallowClear();
+        }
+        else
+        {
+            mImage.binData.setBinData(group.mImage.mData, group.mImage.mSize);
+        }
+    return true ;
+}
+bool RsGxsIdGroupItem::toGxsIdGroup(RsGxsIdGroup &group, bool moveImage)
+{
+        group.mMeta = meta;
+        group.mPgpIdHash = mPgpIdHash;
+        group.mPgpIdSign = mPgpIdSign;
+        group.mRecognTags = mRecognTags;
+
+        if (moveImage)
+        {
+            group.mImage.take((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+            // mImage doesn't have a ShallowClear at the moment!
+            mImage.binData.TlvShallowClear();
+        }
+        else
+        {
+            group.mImage.copy((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+        }
+    return true ;
+}
+
 RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint32_t *size)
 {
 	/* get the type and size */
@@ -271,14 +310,17 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	/* skip the header */
 	offset += 8;
 	
-	ok &= item->group.mPgpIdHash.deserialise(data, rssize, offset);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
+    ok &= item->mPgpIdHash.deserialise(data, rssize, offset);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_SIGN, item->mPgpIdSign);
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->mRecognTags);
 	ok &= set.GetTlv(data, rssize, &offset);
-	
-	
-	if (offset != rssize)
+
+    // image is optional,so that we can continue reading old items.
+    if(offset < rssize)
+        ok &= item->mImage.GetTlv(data,rssize,&offset) ;
+
+    if (offset != rssize)
 	{
 #ifdef GXSID_DEBUG
 		std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem() FAIL size mismatch" << std::endl;

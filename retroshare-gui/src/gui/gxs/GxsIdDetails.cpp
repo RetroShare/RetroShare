@@ -469,8 +469,12 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 
 void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons)
 {
-	QPixmap pix ;
-	pix.convertFromImage(makeDefaultIcon(details.mId));
+    QPixmap pix ;
+
+    if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
+        pix.convertFromImage(makeDefaultIcon(details.mId));
+
+
 	QIcon idIcon(pix);
 	//CreateIdIcon(id, idIcon);
 	icons.push_back(idIcon);

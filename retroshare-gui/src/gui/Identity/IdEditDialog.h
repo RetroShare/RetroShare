@@ -54,7 +54,8 @@ private slots:
 	void idTypeToggled(bool checked);
 	void submit();
 
-	void addRecognTag();
+    void changeAvatar() ;
+    void addRecognTag();
 	void checkNewTag();
 	void rmTag1();
 	void rmTag2();

@@ -21,9 +21,12 @@
  *
  */
 
+#include <QBuffer>
+
 #include "gui/Identity/IdEditDialog.h"
 #include "gui/common/UIStateHelper.h"
 #include "util/TokenQueue.h"
+#include "util/misc.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
@@ -78,9 +81,20 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	connect(ui.toolButton_Tag3, SIGNAL(clicked(bool)), this, SLOT(rmTag3()));
 	connect(ui.toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
 	connect(ui.toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
+    connect(ui.avatarLabel, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui.pushButton_Tag->setEnabled(false);
+}
+
+void IdEditDialog::changeAvatar()
+{
+        QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), 128, 128);
+
+        if (img.isNull())
+            return;
+
+    ui.avatarLabel->setPixmap(img) ;
 }
 
 IdEditDialog::~IdEditDialog()
@@ -177,8 +191,15 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		ui.lineEdit_KeyId->setText(tr("Error getting key!"));
 		return;
 	}
+    mEditGroup = datavector[0];
+    QPixmap pixmap;
 
-	if (datavector.size() != 1)
+    if(mEditGroup.mImage.mSize > 0 && pixmap.loadFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, "PNG"))
+        ui.avatarLabel->setPixmap(pixmap);
+//  else
+//        ui.avatarLabel->setPixmap(pixmap); // we need to use the default pixmap here, generated from the ID
+
+    if (datavector.size() != 1)
 	{
 		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
 		std::cerr << std::endl;
@@ -191,8 +212,6 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		ui.lineEdit_GpgName->setText(tr("N/A"));
 		return;
 	}
-
-	mEditGroup = datavector[0];
 
 	bool realid = (mEditGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
 
@@ -446,7 +465,22 @@ void IdEditDialog::createId()
 
 	RsIdentityParameters params;
 	params.nickname = groupname;
-	params.isPgpLinked = (ui.radioButton_GpgId->isChecked());
+    params.isPgpLinked = (ui.radioButton_GpgId->isChecked());
+
+        const QPixmap *pixmap = ui.avatarLabel->pixmap();
+
+        if (!pixmap->isNull())
+    {
+            QByteArray ba;
+            QBuffer buffer(&ba);
+
+            buffer.open(QIODevice::WriteOnly);
+            pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
+
+            params.mImage.copy((uint8_t *) ba.data(), ba.size());
+        }
+    else
+            params.mImage.clear();
 
 	uint32_t dummyToken = 0;
 	rsIdentity->createIdentity(dummyToken, params);
