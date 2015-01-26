@@ -25,6 +25,7 @@
 
 #include "gui/Identity/IdEditDialog.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/TokenQueue.h"
 #include "util/misc.h"
 
@@ -81,7 +82,7 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	connect(ui.toolButton_Tag3, SIGNAL(clicked(bool)), this, SLOT(rmTag3()));
 	connect(ui.toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
 	connect(ui.toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
-    connect(ui.avatarLabel, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
+	connect(ui.avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui.pushButton_Tag->setEnabled(false);
@@ -193,11 +194,13 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	}
     mEditGroup = datavector[0];
     QPixmap pixmap;
+    
 
     if(mEditGroup.mImage.mSize > 0 && pixmap.loadFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, "PNG"))
         ui.avatarLabel->setPixmap(pixmap);
-//  else
-//        ui.avatarLabel->setPixmap(pixmap); // we need to use the default pixmap here, generated from the ID
+   else
+        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId))) ;
+        ui.avatarLabel->setPixmap(pixmap); // we need to use the default pixmap here, generated from the ID
 
     if (datavector.size() != 1)
 	{

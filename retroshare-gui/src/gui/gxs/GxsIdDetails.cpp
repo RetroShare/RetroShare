@@ -325,7 +325,7 @@ QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 			pix.setPixel(     i, S-1-j, q) ;
 		}
 
-	image_cache[id] = pix.scaled(64,64,Qt::KeepAspectRatio,Qt::SmoothTransformation) ;
+	image_cache[id] = pix.scaled(128,128,Qt::KeepAspectRatio,Qt::SmoothTransformation) ;
 
 	return image_cache[id] ;
 }
