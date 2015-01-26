@@ -506,6 +506,21 @@ void IdEditDialog::updateId()
 
 	mEditGroup.mMeta.mGroupName = groupname;
 
+        const QPixmap *pixmap = ui.avatarLabel->pixmap();
+
+    if (!pixmap->isNull())
+    {
+        QByteArray ba;
+        QBuffer buffer(&ba);
+
+        buffer.open(QIODevice::WriteOnly);
+        pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
+
+        mEditGroup.mImage.copy((uint8_t *) ba.data(), ba.size());
+    }
+    else
+        mEditGroup.mImage.clear();
+
 	uint32_t dummyToken = 0;
 	rsIdentity->updateIdentity(dummyToken, mEditGroup);
 
