@@ -197,7 +197,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
            <widget class="QLabel" name="avatarLabel">
             <property name="sizePolicy">
@@ -230,20 +230,47 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="avatarButton">
-            <property name="text">
-             <string>Set Avatar</string>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>2</number>
             </property>
-           </widget>
+            <item>
+             <widget class="QPushButton" name="avatarButton">
+              <property name="text">
+               <string>Set Avatar</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="removeButton">
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Remove Avatar</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <spacer name="verticalSpacer_3">
+           <spacer name="verticalSpacer_4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>138</width>
               <height>40</height>
              </size>
             </property>

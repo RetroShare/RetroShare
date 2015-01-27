@@ -83,6 +83,8 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	connect(ui.toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
 	connect(ui.toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
 	connect(ui.avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
+	connect(ui.removeButton, SIGNAL(clicked(bool)), this, SLOT(removeAvatar()));
+
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui.pushButton_Tag->setEnabled(false);
@@ -536,4 +538,17 @@ void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &
 
 	// only one here!
 	loadExistingId(req.mToken);
+}
+
+void IdEditDialog::removeAvatar()
+{
+	/* submit updated details */
+	std::string groupname = ui.lineEdit_Nickname->text().toUtf8().constData();
+	
+	mEditGroup.mMeta.mGroupName = groupname;
+	mEditGroup.mImage.clear();
+	ui.avatarLabel->setPixmap(NULL);
+	
+	uint32_t dummyToken = 0;
+	rsIdentity->updateIdentity(dummyToken, mEditGroup);
 }
