@@ -143,6 +143,12 @@ public:
      */
     virtual bool getGroupNetworkStats(const RsGxsGroupId& id,RsGroupNetworkStats& stats) ;
 
+    /*!
+     * Used to inform the net service that we changed subscription status. That helps
+     * optimising data transfer when e.g. unsubsribed groups are updated less often, etc
+     */
+    virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) ;
+
     /* p3Config methods */
 public:
 

@@ -118,6 +118,8 @@ public:
      */
     virtual bool getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats)=0;
 
+    virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) =0;
+
     /*!
      * Request for this group is sent through to peers on your network
      * and how many hops from them you've indicated
