@@ -547,7 +547,7 @@ void IdEditDialog::removeAvatar()
 	
 	mEditGroup.mMeta.mGroupName = groupname;
 	mEditGroup.mImage.clear();
-	ui.avatarLabel->setPixmap(NULL);
+	ui.avatarLabel->setPixmap(QPixmap());
 	
 	uint32_t dummyToken = 0;
 	rsIdentity->updateIdentity(dummyToken, mEditGroup);
