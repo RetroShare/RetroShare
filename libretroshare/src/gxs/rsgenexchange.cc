@@ -1071,7 +1071,8 @@ bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId,
         setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED,
                                (GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED | GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED));
 
-    mNetService->subscribeStatusChanged(grpId,subscribe) ;
+    if(mNetService != NULL)
+        mNetService->subscribeStatusChanged(grpId,subscribe) ;
 
     return true;
 }
