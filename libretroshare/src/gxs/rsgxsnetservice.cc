@@ -37,7 +37,7 @@
 /***
  * #define NXS_NET_DEBUG	1
  ***/
-// #define NXS_NET_DEBUG_0	1
+//#define NXS_NET_DEBUG_0	1
 // #define NXS_NET_DEBUG_1	1
 
 #define GIXS_CUT_OFF 0
@@ -1805,7 +1805,7 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& r
 void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 {
 
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_0
     std::cerr << "RsGxsNetService::genReqMsgTransaction()" << std::endl;
 #endif
 
@@ -1831,7 +1831,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #endif
         }
     }
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_0
     std::cerr << "  found " << msgItemL.size()<< " messages in this transaction." << std::endl;
 #endif
 
@@ -2914,12 +2914,12 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
 
 #ifdef NXS_NET_DEBUG_0
         std::cerr << "  local time stamp: " << std::dec<< time(NULL) - msui->msgUpdateTS << " secs ago. Update sent: " <<
-                     (item->updateTS == 0 || item->updateTS < msui->msgUpdateTS)  << std::endl;
+                     (item->updateTS == 0 || item->updateTS < msui->msgUpdateTS)  ;
 #endif
         return (item->updateTS < msui->msgUpdateTS || item->updateTS == 0) ;
     }
 #ifdef NXS_NET_DEBUG_0
-    std::cerr << "  no local time stamp for this grp. Client wants to receive the grp list. " << std::endl;
+    std::cerr << "  no local time stamp for this grp. " ;
 #endif
     return true;
 }
@@ -2934,11 +2934,16 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
     const RsPeerId& peer = item->PeerId();
 
 #ifdef NXS_NET_DEBUG_0
-    std::cerr << "handleRecvSyncMsg(): from " << peer << ", grpId=" << item->grpId << ", TS = " << time(NULL) - item->updateTS << " secs ago" << std::endl;
+    std::cerr << "handleRecvSyncMsg(): from " << peer << ", grpId=" << item->grpId << ", TS = " << time(NULL) - item->updateTS << " secs ago." ;
 #endif
 
         if(!locked_CanReceiveUpdate(item))
+    {
+#ifdef NXS_NET_DEBUG_0
+        std::cerr << std::endl;
+#endif
             return;
+    }
 
 	GxsMsgMetaResult metaResult;
 	GxsMsgReq req;
@@ -2948,8 +2953,21 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	mDataStore->retrieveGxsGrpMetaData(grpMetas);
 	RsGxsGrpMetaData* grpMeta = grpMetas[item->grpId];
 
-	if(grpMeta == NULL)
-		return;
+    if(grpMeta == NULL)
+    {
+#ifdef NXS_NET_DEBUG_0
+        std::cerr << " Grp is unknown." << std::endl;
+#endif
+        return;
+    }
+        if(!(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
+    {
+#ifdef NXS_NET_DEBUG_0
+        std::cerr << " Grp is not subscribed." << std::endl;
+#endif
+        delete(grpMeta);
+        return ;
+    }
 
     req[item->grpId] = std::vector<RsGxsMessageId>();
 	mDataStore->retrieveGxsMsgMetaData(req, metaResult);
@@ -2957,9 +2975,15 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 
 	if(req.empty())
 	{
-		delete(grpMeta);
+#ifdef NXS_NET_DEBUG_0
+        std::cerr << " No msg meta data.." << std::endl;
+#endif
+        delete(grpMeta);
 		return;
-	}
+    }
+#ifdef NXS_NET_DEBUG_0
+    std::cerr << "  Sending MSG meta data!" << std::endl;
+#endif
 
 	std::list<RsNxsItem*> itemL;
 
