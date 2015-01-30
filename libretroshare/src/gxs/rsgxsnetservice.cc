@@ -37,6 +37,7 @@
 /***
  * #define NXS_NET_DEBUG	1
  ***/
+//#define NXS_NET_DEBUG	1
 //#define NXS_NET_DEBUG_0	1
 // #define NXS_NET_DEBUG_1	1
 
@@ -236,33 +237,30 @@ void RsGxsNetService::syncWithPeers()
 
     std::set<RsPeerId>::iterator sit = peers.begin();
 
-    if(mGrpAutoSync)
+    // for now just grps
+    for(; sit != peers.end(); ++sit)
     {
-        // for now just grps
-        for(; sit != peers.end(); ++sit)
+
+        const RsPeerId peerId = *sit;
+
+        ClientGrpMap::const_iterator cit = mClientGrpUpdateMap.find(peerId);
+        uint32_t updateTS = 0;
+        if(cit != mClientGrpUpdateMap.end())
         {
+            const RsGxsGrpUpdateItem *gui = cit->second;
+            updateTS = gui->grpUpdateTS;
+        }
+        RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
+        grp->clear();
+        grp->PeerId(*sit);
+        grp->updateTS = updateTS;
 
-            const RsPeerId peerId = *sit;
-
-            ClientGrpMap::const_iterator cit = mClientGrpUpdateMap.find(peerId);
-            uint32_t updateTS = 0;
-            if(cit != mClientGrpUpdateMap.end())
-            {
-                const RsGxsGrpUpdateItem *gui = cit->second;
-                updateTS = gui->grpUpdateTS;
-            }
-            RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
-            grp->clear();
-            grp->PeerId(*sit);
-            grp->updateTS = updateTS;
-
-            NxsBandwidthRecorder::recordEvent(mServType,grp) ;
+        NxsBandwidthRecorder::recordEvent(mServType,grp) ;
 
 #ifdef NXS_NET_DEBUG_0
-            std::cerr << "  sending RsNxsSyncGrp item to peer id: " << *sit << " ts=" << updateTS << std::endl;
+        std::cerr << "  sending RsNxsSyncGrp item to peer id: " << *sit << " ts=" << updateTS << std::endl;
 #endif
-            sendItem(grp);
-        }
+        sendItem(grp);
     }
 
 #ifndef GXS_DISABLE_SYNC_MSGS
@@ -1173,18 +1171,24 @@ void RsGxsNetService::updateServerSyncTS()
 
 	// as a grp list server also note this is the latest item you have
 	if(mGrpServerUpdateItem == NULL)
-	{
         mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
-	}
 
 	bool change = false;
 
 	for(; mit != gxsMap.end(); ++mit)
-	{
+    {
 		const RsGxsGroupId& grpId = mit->first;
 		RsGxsGrpMetaData* grpMeta = mit->second;
 		ServerMsgMap::iterator mapIT = mServerMsgUpdateMap.find(grpId);
 		RsGxsServerMsgUpdateItem* msui = NULL;
+
+        // That accounts for modification of the meta data.
+
+        if(mGrpServerUpdateItem->grpUpdateTS < grpMeta->mPublishTs)
+    {
+        std::cerr << "publish time stamp of group " << grpId << " has changed to " << time(NULL)-grpMeta->mPublishTs << " secs ago. updating!" << std::endl;
+            mGrpServerUpdateItem->grpUpdateTS = grpMeta->mPublishTs;
+    }
 
 		if(mapIT == mServerMsgUpdateMap.end())
 		{
@@ -1205,7 +1209,7 @@ void RsGxsNetService::updateServerSyncTS()
 		// this might be very inefficient with time
 		if(grpMeta->mRecvTS > mGrpServerUpdateItem->grpUpdateTS)
 		{
-			mGrpServerUpdateItem->grpUpdateTS = grpMeta->mRecvTS;
+            mGrpServerUpdateItem->grpUpdateTS = grpMeta->mRecvTS;
 			change = true;
 		}
 	}
@@ -1805,7 +1809,7 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& r
 void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 {
 
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG
     std::cerr << "RsGxsNetService::genReqMsgTransaction()" << std::endl;
 #endif
 
@@ -1831,7 +1835,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #endif
         }
     }
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG
     std::cerr << "  found " << msgItemL.size()<< " messages in this transaction." << std::endl;
 #endif
 
@@ -1866,15 +1870,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         // peer again, unless the peer has new info about it.
         // That needs of course to reset that time to 0 when we subscribe.
 
-        RsGxsMsgUpdateItem *& pitem(mClientMsgUpdateMap[pid]) ;
-
-        if(pitem == NULL)
-        {
-            pitem = new RsGxsMsgUpdateItem(mServType) ;
-            pitem->peerId = pid ;
-        }
-
-        pitem->msgUpdateTS[grpId] = time(NULL) ;
+        locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL)) ;
         return ;
     }
 
@@ -2046,6 +2042,27 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
             mPartialMsgUpdates[tr->mTransaction->PeerId()].erase(item->grpId) ;
         }
     }
+    else
+    {
+        // The list to req is empty. That means we already have all messages that this peer can
+    // provide. So we can stamp the group from this peer to be up to date.
+
+        locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL)) ;
+    }
+}
+
+void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm)
+{
+    RsGxsMsgUpdateItem *& pitem(mClientMsgUpdateMap[pid]) ;
+
+    if(pitem == NULL)
+    {
+        pitem = new RsGxsMsgUpdateItem(mServType) ;
+        pitem->peerId = pid ;
+    }
+
+    pitem->msgUpdateTS[grpId] = time(NULL) ;
+    return ;
 }
 
 void RsGxsNetService::locked_pushGrpTransactionFromList(
@@ -2093,73 +2110,72 @@ void RsGxsNetService::addGroupItemToList(NxsTransaction*& tr,
 
 void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 {
-
-	// to create a transaction you need to know who you are transacting with
-	// then what grps to request
-	// then add an active Transaction for request
+    // to create a transaction you need to know who you are transacting with
+    // then what grps to request
+    // then add an active Transaction for request
 
 #ifdef NXS_NET_DEBUG
     std::cerr << "locked_genReqGrpTransaction(): " << std::endl;
 #endif
 
-	std::list<RsNxsSyncGrpItem*> grpItemL;
-	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
+    std::list<RsNxsSyncGrpItem*> grpItemL;
+    std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
-	for(; lit != tr->mItems.end(); ++lit)
-	{
-		RsNxsSyncGrpItem* item = dynamic_cast<RsNxsSyncGrpItem*>(*lit);
-		if(item)
-		{
-			grpItemL.push_back(item);
-		}else
-		{
+    for(; lit != tr->mItems.end(); ++lit)
+    {
+        RsNxsSyncGrpItem* item = dynamic_cast<RsNxsSyncGrpItem*>(*lit);
+        if(item)
+        {
+            grpItemL.push_back(item);
+        }else
+        {
 #ifdef NXS_NET_DEBUG
-			std::cerr << "RsGxsNetService::genReqGrpTransaction(): item failed to caste to RsNxsSyncMsgItem* "
+            std::cerr << "RsGxsNetService::genReqGrpTransaction(): item failed to caste to RsNxsSyncMsgItem* "
                       << std::endl;
 #endif
-		}
-	}
+        }
+    }
 
     std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaMap;
     std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter;
-	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+    mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
-	// now do compare and add loop
-	std::list<RsNxsSyncGrpItem*>::iterator llit = grpItemL.begin();
-	std::list<RsNxsItem*> reqList;
+    // now do compare and add loop
+    std::list<RsNxsSyncGrpItem*>::iterator llit = grpItemL.begin();
+    std::list<RsNxsItem*> reqList;
 
-	uint32_t transN = locked_getTransactionId();
+    uint32_t transN = locked_getTransactionId();
 
-	GrpAuthorV toVet;
-	std::list<RsPeerId> peers;
-	peers.push_back(tr->mTransaction->PeerId());
+    GrpAuthorV toVet;
+    std::list<RsPeerId> peers;
+    peers.push_back(tr->mTransaction->PeerId());
 
-	for(; llit != grpItemL.end(); ++llit)
-	{
-		RsNxsSyncGrpItem*& grpSyncItem = *llit;
-		const RsGxsGroupId& grpId = grpSyncItem->grpId;
-		metaIter = grpMetaMap.find(grpId);
-		bool haveItem = false;
-		bool latestVersion = false;
-		if (metaIter != grpMetaMap.end())
-		{
-			haveItem = true;
-			latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
+    for(; llit != grpItemL.end(); ++llit)
+    {
+        RsNxsSyncGrpItem*& grpSyncItem = *llit;
+        const RsGxsGroupId& grpId = grpSyncItem->grpId;
+        metaIter = grpMetaMap.find(grpId);
+        bool haveItem = false;
+        bool latestVersion = false;
+        if (metaIter != grpMetaMap.end())
+        {
+            haveItem = true;
+            latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
         }
 
-        if(!haveItem || latestVersion)
-    {
-			// determine if you need to check reputation
-			bool checkRep = !grpSyncItem->authorId.isNull();
+        if( (mGrpAutoSync && !haveItem) || latestVersion)
+        {
+            // determine if you need to check reputation
+            bool checkRep = !grpSyncItem->authorId.isNull();
 
-			// check if you have reputation, if you don't then
-			// place in holding pen
-			if(checkRep)
-			{
-				if(mReputations->haveReputation(grpSyncItem->authorId))
-				{
-					GixsReputation rep;
-					mReputations->getReputation(grpSyncItem->authorId, rep);
+            // check if you have reputation, if you don't then
+            // place in holding pen
+            if(checkRep)
+            {
+                if(mReputations->haveReputation(grpSyncItem->authorId))
+                {
+                    GixsReputation rep;
+                    mReputations->getReputation(grpSyncItem->authorId, rep);
 
                     if(rep.score >= GIXS_CUT_OFF)
                     {
@@ -2169,42 +2185,42 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
                     else
                         std::cerr << "  reputation cut off: limit=" << GIXS_CUT_OFF << " value=" << rep.score << ": you shall not pass." << std::endl;
                 }
-				else
+                else
                 {
-					// preload reputation for later
-					mReputations->loadReputation(grpSyncItem->authorId, peers);
-					GrpAuthEntry entry;
-					entry.mAuthorId = grpSyncItem->authorId;
-					entry.mGrpId = grpSyncItem->grpId;
-					toVet.push_back(entry);
-				}
-			}
-			else
-			{
-				addGroupItemToList(tr, grpId, transN, reqList);
+                    // preload reputation for later
+                    mReputations->loadReputation(grpSyncItem->authorId, peers);
+                    GrpAuthEntry entry;
+                    entry.mAuthorId = grpSyncItem->authorId;
+                    entry.mGrpId = grpSyncItem->grpId;
+                    toVet.push_back(entry);
+                }
             }
-		}
-	}
+            else
+            {
+                addGroupItemToList(tr, grpId, transN, reqList);
+            }
+        }
+    }
 
-	if(!toVet.empty())
-	{
-		RsPeerId peerId = tr->mTransaction->PeerId();
-		GrpRespPending* grp = new GrpRespPending(mReputations, peerId, toVet);
-		mPendingResp.push_back(grp);
-	}
+    if(!toVet.empty())
+    {
+        RsPeerId peerId = tr->mTransaction->PeerId();
+        GrpRespPending* grp = new GrpRespPending(mReputations, peerId, toVet);
+        mPendingResp.push_back(grp);
+    }
 
 
-	if(!reqList.empty())
-	{
-		locked_pushGrpTransactionFromList(reqList, tr->mTransaction->PeerId(), transN);
+    if(!reqList.empty())
+    {
+        locked_pushGrpTransactionFromList(reqList, tr->mTransaction->PeerId(), transN);
 
-	}
+    }
 
-	// clean up meta data
+    // clean up meta data
     std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetaMap.begin();
 
-	for(; mit != grpMetaMap.end(); ++mit)
-		delete mit->second;
+    for(; mit != grpMetaMap.end(); ++mit)
+        delete mit->second;
 }
 
 void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)

@@ -428,6 +428,13 @@ private:
 	 * @param partFragments the partitioned fragments (into message ids)
 	 */
     void collateGrpFragments(GrpFragments fragments, std::map<RsGxsGroupId, GrpFragments>& partFragments) const;
+
+    /*!
+    * stamp the group info from that particular peer at the given time.
+    */
+
+    void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm) ;
+
 private:
 
 
