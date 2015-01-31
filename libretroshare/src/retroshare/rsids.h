@@ -111,7 +111,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 
 		inline std::string toStdString() const { return toStdString(UPPER_CASE) ; }
 
-		inline uint32_t serial_size() const { return SIZE_IN_BYTES ; }
+        inline static uint32_t serial_size() { return SIZE_IN_BYTES ; }
         bool serialise(void *data,uint32_t pktsize,uint32_t& offset) const
 		{
 			if(offset + SIZE_IN_BYTES > pktsize)
