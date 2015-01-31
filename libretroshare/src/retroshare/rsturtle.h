@@ -108,7 +108,10 @@ class RsTurtle
 		// an exception if an error occurs during the initialization process. The
 		// turtle router itself does not initiate downloads, it only maintains
 		// tunnels for the given hash. The download should be driven by the file
-		// transfer module by calling ftServer::FileRequest().
+        // transfer module by calling ftServer::FileRequest().
+        // Aggressive mode causes the turtle router to regularly re-ask tunnels in addition to the ones already
+        // available without replacing them. In non aggressive mode, we wait for all tunnels to die before asking
+        // for new tunnels.
 		//
         virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service,bool use_aggressive_mode) = 0 ;
 
