@@ -1,4 +1,4 @@
-!insertmacro LANG_STRING Section_Main "${APPNAME}"
+﻿!insertmacro LANG_STRING Section_Main "${APPNAME}"
 !insertmacro LANG_STRING Section_Main_Desc "Installe ${APPNAME} et les composants requis."
 !insertmacro LANG_STRING Section_Data "Skins"
 !insertmacro LANG_STRING Section_Data_Desc "Installe des skins."

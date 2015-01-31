@@ -1,4 +1,4 @@
-!insertmacro LANG_STRING Section_Main "${APPNAME}"
+﻿!insertmacro LANG_STRING Section_Main "${APPNAME}"
 !insertmacro LANG_STRING Section_Main_Desc "Установка ${APPNAME} и необходимых компонентов."
 !insertmacro LANG_STRING Section_Data "Оболочки"
 !insertmacro LANG_STRING Section_Data_Desc "Установка оболочек."

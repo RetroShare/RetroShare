@@ -1,4 +1,4 @@
-; Script generated with the Venis Install Wizard & modified by defnax
+﻿; Script generated with the Venis Install Wizard & modified by defnax
 ; Reworked by Thunder
 
 # Needed defines
