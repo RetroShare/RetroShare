@@ -274,9 +274,11 @@ bool     SetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type
 bool     GetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::string &in);
 uint32_t GetTlvStringSize(const std::string &in);
 
+#ifdef REMOVED_CODE
 bool     SetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring out);
 bool     GetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring &in);
 uint32_t GetTlvWideStringSize(std::wstring &in);
+#endif
 
 bool     SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *out);
 bool     GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *in);

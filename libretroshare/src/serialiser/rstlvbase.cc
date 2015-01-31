@@ -547,6 +547,38 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
             in = std::string(strdata, strsize);
         }
 
+    // Check for string content. We want to avoid possible lol bombs as soon as possible.
+
+    static const int number_of_suspiscious_strings = 4 ;
+    static const std::string err_in = "**** String removed (SVG bomb?) ****" ;
+    static std::string suspiscious_strings[number_of_suspiscious_strings] = { "<!e",     // base ingredient of xml bombs
+                                                                              "<!E",
+                                                                      "PD94bW",  // this is the base64 encoding of "<?xml*"
+                                                              "PHN2Zy"   // this is the base64 encoding of "<svg*"
+    } ;
+
+#ifdef TLV_BASE_DEBUG
+    std::cerr << "Checking wide string \"" << in << std::endl;
+#endif
+    // Drop any string with "<!" or "<!"...
+    // TODO: check what happens with partial messages
+    //
+    for(int i=0;i<number_of_suspiscious_strings;++i)
+        if (in.find(suspiscious_strings[i]) != std::string::npos)
+        {
+            std::cerr << "**** suspiscious wstring contains \"" << suspiscious_strings[i] << "\" (SVG bomb suspected). " ;
+            std::cerr << "========== Original string =========" << std::endl;
+            std::cerr << in << std::endl;
+            std::cerr << "=============== END ================" << std::endl;
+
+            for(uint32_t k=0;k<in.length();++k)
+                if(k < err_in.length())
+                    in[k] = err_in[k] ;	// It's important to keep the same size for in than the size it should have,
+                else
+                    in[k] = ' ';		// otherwise the deserialization of derived items that use it might fail
+            break ;
+        }
+
 	*offset += tlvsize; /* step along */
 	return true;
 }
@@ -556,6 +588,7 @@ uint32_t GetTlvStringSize(const std::string &in) {
 }
 
 
+#ifdef REMOVED_CODE
 /* We must use a consistent wchar size for cross platform ness.
  * As unix uses 4bytes, and windows 2bytes? we'll go with 4bytes for maximum flexibility
  */
@@ -692,7 +725,7 @@ bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset,
 uint32_t GetTlvWideStringSize(std::wstring &in) {
 	return TLV_HEADER_SIZE + in.size() * RS_WCHAR_SIZE;
 }
-
+#endif
 
 bool SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 		uint16_t type, struct sockaddr_in *out) {
