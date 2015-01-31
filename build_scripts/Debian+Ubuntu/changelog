@@ -1,3 +1,30 @@
+retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+   Improvements
+      * GXS
+         - group pulish TS is now accounted for in mServerGrpSyncMap, so that modification of metadata is propagated in the network; 
+         - mClientSyncMessageMap is stamped when the server cannot feed any new messages. 
+         - group info for no-auto-update services are still sent, but only groups already present but available with a new 
+            version are sent. This fixes the propagation of GXS avatars.
+         - removed sending of msg list from unsubscribed groups
+         - added more debug info to gxs net service so as to see what's going on
+         - force-updating timestamp of unsubscribed groups to avoid re-asking them indefinitly. This should remove the heavy GXS traffic. 
+         - Fixed memory leak in request handling by adding a destructor the the request classes derived from GxsRequest and delete the result.
+
+      * GUI
+         - Fixed icon to toggle participants frame in chat dialog.
+         - changed from setEnabled to setVisible, to not show up the disabled actions for Own Ids. 
+         - changed dialog to none blocking mode
+         - Added Person details dialog, for popup mode view.
+         - Removed timeout of waiting tokens in TokenQueue (gui) and increased timeout of requests in libretroshare from 30 seconds to 2 minutes.
+
+      * Identities
+         - added avatars to identities.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 31 Jan 2015 14:00:00 +0100
+
+retroshare06 (0.6.0-0.7870~precise) precise; urgency=low
+
    Improvements
       * Global Router
          - new global router system. Provides secure/authed (sync-ed) data sending between GXS ids.
