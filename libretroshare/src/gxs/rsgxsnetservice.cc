@@ -331,10 +331,10 @@ void RsGxsNetService::syncWithPeers()
 
             if(mui)
             {
-                std::map<RsGxsGroupId, uint32_t>::const_iterator cit2 = mui->msgUpdateTS.find(grpId);
+                std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator cit2 = mui->msgUpdateInfos.find(grpId);
 
-                if(cit2 != mui->msgUpdateTS.end())
-                    updateTS = cit2->second;
+                if(cit2 != mui->msgUpdateInfos.end())
+                    updateTS = cit2->second.time_stamp;
             }
 
             RsNxsSyncMsg* msg = new RsNxsSyncMsg(mServType);
@@ -385,10 +385,10 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
 #endif
     for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();++it)
     {
-        std::map<RsGxsGroupId,uint32_t>::iterator it2 = it->second->msgUpdateTS.find(grpId) ;
+        std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::iterator it2 = it->second->msgUpdateInfos.find(grpId) ;
 
-        if(it2 != it->second->msgUpdateTS.end())
-            it->second->msgUpdateTS.erase(it2) ;
+        if(it2 != it->second->msgUpdateInfos.end())
+            it->second->msgUpdateInfos.erase(it2) ;
     }
 }
 
@@ -848,7 +848,18 @@ private:
 
 bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 {
+    RS_STACK_MUTEX(mNxsMutex) ;
+
     std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mGrpServerUpdateItem));
+
+    for(ClientMsgMap::iterator it = mClientMsgUpdateMap.begin();it!=mClientMsgUpdateMap.end();++it)
+        for(std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
+    {
+        RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[it2->first] ;
+
+        gnsr.suppliers.insert(it->first) ;
+        gnsr.max_visible_count = std::max(it2->second.message_count,gnsr.max_visible_count) ;
+    }
     return true;
 }
 
@@ -1130,20 +1141,23 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
         return false;
 }
 
-void RsGxsNetService::run(){
+void RsGxsNetService::run()
+{
     double timeDelta = 0.5;
     int updateCounter = 0;
 
-    while(isRunning()){
+    while(isRunning())
+    {
         //Start waiting as nothing to do in runup
         usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
 
-        if(updateCounter >= 20) {
-        	updateServerSyncTS();
-        	updateCounter = 0;
-        } else {//if(updateCounter >= 20)
-        	updateCounter++;
-        }//else (updateCounter >= 20)
+        if(updateCounter >= 20)
+        {
+            updateServerSyncTS();
+            updateCounter = 0;
+        }
+        else
+            updateCounter++;
 
         // process active transactions
         processTransactions();
@@ -1156,7 +1170,7 @@ void RsGxsNetService::run(){
 
         processExplicitGroupRequests();
 
-    }//while(isRunning())
+    }
 }
 
 void RsGxsNetService::updateServerSyncTS()
@@ -1170,7 +1184,7 @@ void RsGxsNetService::updateServerSyncTS()
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = gxsMap.begin();
 
 	// as a grp list server also note this is the latest item you have
-	if(mGrpServerUpdateItem == NULL)
+    if(mGrpServerUpdateItem == NULL)
         mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
 
 	bool change = false;
@@ -1200,7 +1214,7 @@ void RsGxsNetService::updateServerSyncTS()
 			msui = mapIT->second;
 		}
 
-		if(grpMeta->mLastPost > msui->msgUpdateTS )
+        if(grpMeta->mLastPost > msui->msgUpdateTS )
 		{
 			change = true;
 			msui->msgUpdateTS = grpMeta->mLastPost;
@@ -1595,8 +1609,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             }else
             {
                 item = new RsGxsGrpUpdateItem(mServType);
-                mClientGrpUpdateMap.insert(
-                                        std::make_pair(peerFrom, item));
+                mClientGrpUpdateMap.insert(std::make_pair(peerFrom, item));
             }
 
             item->grpUpdateTS = updateTS;
@@ -1713,7 +1726,7 @@ void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransac *nxsTrans, const
 #ifdef NXS_NET_DEBUG
         std::cerr << "  this is a full update. Updating time stamp." << std::endl;
 #endif
-        mui->msgUpdateTS[grpId] = nxsTrans->updateTS;
+        mui->msgUpdateInfos[grpId].time_stamp = nxsTrans->updateTS;
         IndicateConfigChanged();
     }
 }
@@ -1870,7 +1883,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         // peer again, unless the peer has new info about it.
         // That needs of course to reset that time to 0 when we subscribe.
 
-        locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL)) ;
+        locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL),msgItemL.size()) ;
         return ;
     }
 
@@ -2047,11 +2060,11 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         // The list to req is empty. That means we already have all messages that this peer can
     // provide. So we can stamp the group from this peer to be up to date.
 
-        locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL)) ;
+        locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL),msgItemL.size()) ;
     }
 }
 
-void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm)
+void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages)
 {
     RsGxsMsgUpdateItem *& pitem(mClientMsgUpdateMap[pid]) ;
 
@@ -2061,8 +2074,10 @@ void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const 
         pitem->peerId = pid ;
     }
 
-    pitem->msgUpdateTS[grpId] = time(NULL) ;
-    return ;
+    pitem->msgUpdateInfos[grpId].time_stamp = time(NULL) ;
+    pitem->msgUpdateInfos[grpId].message_count = n_messages ;
+
+    IndicateConfigChanged();
 }
 
 void RsGxsNetService::locked_pushGrpTransactionFromList(

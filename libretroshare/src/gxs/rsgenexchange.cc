@@ -430,7 +430,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
 
     if (!ok)
     {
-		std::cerr << "RsGenExchange::createGroup() ERROR !okay (getSignature error)";
+        std::cerr << "RsGenExchange::createGroup() ERROR !okay (getSignature error)";
 		std::cerr << std::endl;
 		return CREATE_FAIL;
     }
@@ -1240,9 +1240,10 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 	bool ok = mDataAccess->getGroupData(token, nxsGrps);
 
 	std::list<RsNxsGrp*>::iterator lit = nxsGrps.begin();
-
+#ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::getGroupData() RsNxsGrp::len: " << nxsGrps.size();
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	if(ok)
 	{
@@ -1542,7 +1543,7 @@ void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 	mGroupDeletePublish.push_back(GroupDeletePublish(grpItem, token));
 
 #ifdef GEN_EXCH_DEBUG
-	std::cerr << "RsGenExchange::deleteGroup() token: " << token;
+    std::cerr << "RsGenExchange::deleteGroup() token: " << token;
 	std::cerr << std::endl;
 #endif
 }

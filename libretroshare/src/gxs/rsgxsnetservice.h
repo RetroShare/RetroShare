@@ -433,7 +433,7 @@ private:
     * stamp the group info from that particular peer at the given time.
     */
 
-    void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm) ;
+    void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages) ;
 
 private:
 

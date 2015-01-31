@@ -802,7 +802,7 @@ bool 	p3IdService::createGroup(uint32_t& token, RsGxsIdGroup &group)
 
 bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 {
-	RsGxsId id = RsGxsId(group.mMeta.mGroupId.toStdString());
+    RsGxsId id(group.mMeta.mGroupId);
     RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
 
     item->fromGxsIdGroup(group,false) ;
@@ -812,7 +812,7 @@ bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 	std::cerr << std::endl;
 #endif
 	
-	RsGenExchange::updateGroup(token, item);
+    RsGenExchange::updateGroup(token, item);
 
 	// if its in the cache - clear it.
 	{

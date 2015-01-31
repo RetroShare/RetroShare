@@ -26,16 +26,11 @@
 #include "rsgxsupdateitems.h"
 #include "rsbaseserial.h"
 
-
-
-
-
 void RsGxsGrpUpdateItem::clear()
 {
 	grpUpdateTS = 0;
 	peerId.clear();
 }
-
 std::ostream& RsGxsGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 {
     printRsItemBase(out, "RsGxsGrpUpdateItem", indent);
@@ -44,14 +39,14 @@ std::ostream& RsGxsGrpUpdateItem::print(std::ostream& out, uint16_t indent)
     printIndent(out, int_Indent);
     out << "grpUpdateTS: " << grpUpdateTS << std::endl;
     printIndent(out, int_Indent);
-	return out ;
+    return out ;
 }
 
 
 
 void RsGxsMsgUpdateItem::clear()
 {
-    msgUpdateTS.clear();
+    msgUpdateInfos.clear();
     peerId.clear();
 }
 
@@ -65,15 +60,17 @@ std::ostream& RsGxsMsgUpdateItem::print(std::ostream& out, uint16_t indent)
     out << "peerId: " << peerId << std::endl;
     printIndent(out, int_Indent);
 
-    std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
+    std::map<RsGxsGroupId, MsgUpdateInfo>::const_iterator cit = msgUpdateInfos.begin();
     out << "msgUpdateTS map:" << std::endl;
     int_Indent += 2;
-    for(; cit != msgUpdateTS.end(); ++cit)
+    for(; cit != msgUpdateInfos.end(); ++cit)
     {
-    	out << "grpId: " << cit->first << std::endl;
-		printIndent(out, int_Indent);
-		out << "Msg time stamp: " << cit->second << std::endl;
-		printIndent(out, int_Indent);
+        out << "grpId: " << cit->first << std::endl;
+        printIndent(out, int_Indent);
+        out << "Msg time stamp: " << cit->second.time_stamp << std::endl;
+        printIndent(out, int_Indent);
+        out << "posts available: " << cit->second.message_count << std::endl;
+        printIndent(out, int_Indent);
     }
 
 	return out;
@@ -213,8 +210,8 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsGrpUpdate(RsGxsGrpUpdateItem* item)
 {
 	uint32_t s = 8; // header size
     s += item->peerId.serial_size();
-	s += 4;
-	return s;
+    s += 4;	// mUpdateTS
+    return s;
 }
 
 uint32_t RsGxsUpdateSerialiser::sizeGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* /* item */)
@@ -319,9 +316,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsServerGrpUpdate(RsGxsServerGrpUpdateItem
 
     return ok;
 }
-
-RsGxsGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsGrpUpddate(void* data,
-		uint32_t* size)
+RsGxsGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsGrpUpddate(void* data, uint32_t* size)
 {
 #ifdef RSSERIAL_DEBUG
     std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerGrpUpdate()" << std::endl;
@@ -453,21 +448,13 @@ RsGxsServerGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsServerGrpUpddate(voi
 
 uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
 {
-	uint32_t s = 8; // header size
+    uint32_t s = 8; // header size
     s += item->peerId.serial_size() ;//GetTlvStringSize(item->peerId);
 
-    const std::map<RsGxsGroupId, uint32_t>& msgUpdateTS = item->msgUpdateTS;
-    std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
+    s += item->msgUpdateInfos.size() * (4 + 4 + RsGxsGroupId::serial_size());
+    s += 4; // number of map items
 
-	for(; cit != msgUpdateTS.end(); ++cit)
-	{
-		s += cit->first.serial_size();
-        s += 4;
-	}
-
-        s += 4; // number of map items
-
-	return s;
+    return s;
 }
 
 uint32_t RsGxsUpdateSerialiser::sizeGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item)
@@ -510,16 +497,16 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
 
     ok &= item->peerId.serialise(data, *size, offset) ;
 
-    const std::map<RsGxsGroupId, uint32_t>& msgUpdateTS = item->msgUpdateTS;
-    std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
+    std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator cit(item->msgUpdateInfos.begin());
 
-    uint32_t numItems = msgUpdateTS.size();
+    uint32_t numItems = item->msgUpdateInfos.size();
     ok &= setRawUInt32(data, *size, &offset, numItems);
 
-    for(; cit != msgUpdateTS.end(); ++cit)
+    for(; cit != item->msgUpdateInfos.end(); ++cit)
     {
     	ok &= cit->first.serialise(data, *size, offset);
-        ok &= setRawUInt32(data, *size, &offset, cit->second);
+        ok &= setRawUInt32(data, *size, &offset, cit->second.time_stamp);
+    ok &= setRawUInt32(data, *size, &offset, cit->second.message_count);
     }
 
     if(offset != tlvsize){
@@ -632,9 +619,11 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
     ok &= item->peerId.deserialise(data, *size, offset) ;
     uint32_t numUpdateItems;
     ok &= getRawUInt32(data, *size, &offset, &(numUpdateItems));
-    std::map<RsGxsGroupId, uint32_t>& msgUpdateItem = item->msgUpdateTS;
+    std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>& msgUpdateInfos = item->msgUpdateInfos;
     RsGxsGroupId pId;
-    uint32_t updateTS;
+
+    RsGxsMsgUpdateItem::MsgUpdateInfo info ;
+
     for(uint32_t i = 0; i < numUpdateItems; i++)
     {
         ok &= pId.deserialise(data, *size, offset);
@@ -642,12 +631,13 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
         if(!ok)
             break;
 
-        ok &= getRawUInt32(data, *size, &offset, &(updateTS));
+        ok &= getRawUInt32(data, *size, &offset, &(info.time_stamp));
+        ok &= getRawUInt32(data, *size, &offset, &(info.message_count));
 
         if(!ok)
             break;
 
-        msgUpdateItem.insert(std::make_pair(pId, updateTS));
+        msgUpdateInfos.insert(std::make_pair(pId, info));
     }
 
     if (offset != rssize)
