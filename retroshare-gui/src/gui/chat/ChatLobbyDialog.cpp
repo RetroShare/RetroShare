@@ -592,10 +592,10 @@ void ChatLobbyDialog::showParticipantsFrame(bool show)
 
 	if (show) {
 		ui.participantsFrameButton->setToolTip(tr("Hide Participants"));
-		ui.participantsFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
+		ui.participantsFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
 	} else {
 		ui.participantsFrameButton->setToolTip(tr("Show Participants"));
-		ui.participantsFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
+		ui.participantsFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
 	}
 
     PeerSettings->setShowParticipantsFrame(ChatId(lobbyId), show);
