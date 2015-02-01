@@ -29,28 +29,28 @@
 
 class ServicePermissionsPage: public ConfigPage
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		ServicePermissionsPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
-		~ServicePermissionsPage() {}
+public:
+    ServicePermissionsPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+    ~ServicePermissionsPage() {}
 
-		/** Saves the changes on this page */
-		virtual bool save(QString &/*errmsg*/);
-		/** Loads the settings for this page */
-		virtual void load();
+    /** Saves the changes on this page */
+    virtual bool save(QString &/*errmsg*/);
+    /** Loads the settings for this page */
+    virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/admin-24.png") ; }
-	 virtual QString pageName() const { return tr("Permissions") ; }
-		virtual QString helpText() const ;
+    virtual QPixmap iconPixmap() const { return QPixmap(":/images/admin-24.png") ; }
+    virtual QString pageName() const { return tr("Permissions") ; }
+    virtual QString helpText() const ;
 
-	public slots:
-		void tableItemChanged ( QTableWidgetItem * item );
-	private:
+public slots:
+    void tableItemChanged(int row,int col);
+private:
 
-		size_t mStdRowCount;
-		size_t mStdColumnCount;
-		Ui::ServicePermissionsPage ui;
+    size_t mStdRowCount;
+    size_t mStdColumnCount;
+    Ui::ServicePermissionsPage ui;
 };
 
 #endif //SERVICEPERMISSIONSPAGE_H

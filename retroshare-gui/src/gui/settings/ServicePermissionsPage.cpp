@@ -40,8 +40,7 @@ ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-	QObject::connect(ui.tableWidget,SIGNAL(itemChanged(QTableWidgetItem *)), 
-	this, SLOT(tableItemChanged(QTableWidgetItem *))); 
+    //QObject::connect(ui.tableWidget,SIGNAL(itemChanged(QTableWidgetItem *)),  this, SLOT(tableItemChanged(QTableWidgetItem *)));
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -58,6 +57,7 @@ QString ServicePermissionsPage::helpText() const
 	/** Saves the changes on this page */
 bool ServicePermissionsPage::save(QString &/*errmsg*/)
 {
+#ifdef SUSPENDED
 	std::cerr << "ServicePermissionsPage::save()";
 	std::cerr << std::endl;
 	size_t row, column;
@@ -142,8 +142,9 @@ bool ServicePermissionsPage::save(QString &/*errmsg*/)
 			}
 			rsServiceControl->updateServicePermissions(serviceId, permissions);
 		}
-	}	
-	return true;
+    }
+#endif
+    return true;
 }
 
 
@@ -183,6 +184,7 @@ void ServicePermissionsPage::load()
 	std::map<uint32_t, RsServiceInfo>::const_iterator sit;
 	rsServiceControl->getOwnServices(ownServices);
 
+#ifdef SUSPENDED
 	mStdRowCount = ownServices.mServiceList.size();
 	mStdColumnCount = peerList.size() + 1;
      	ui.tableWidget->setRowCount(mStdRowCount);
@@ -363,11 +365,13 @@ void ServicePermissionsPage::load()
 	}
 
 	ui.tableWidget->setHorizontalHeaderLabels(columnHeaders);
-	ui.tableWidget->setVerticalHeaderLabels(rowHeaders);
+    ui.tableWidget->setVerticalHeaderLabels(rowHeaders);
+#endif
 }
 
-void ServicePermissionsPage::tableItemChanged ( QTableWidgetItem * item ) 
+void ServicePermissionsPage::tableItemChanged ( int row, int col )
 {
+#ifdef SUSPENDED
 	std::cerr << "ServicePermissionsPage::tableItemChanged()";
 	std::cerr << std::endl;
 	std::cerr << "\t Node: Row: " << item->row() << " Column: " << item->column();
@@ -397,7 +401,8 @@ void ServicePermissionsPage::tableItemChanged ( QTableWidgetItem * item )
 			bool defaultOn = (Qt::Checked == defitem->checkState());
 			item->setBackground(getColor(defaultOn, item->checkState()));
 		}
-	}
+    }
+#endif
 }
 
 

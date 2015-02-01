@@ -1239,6 +1239,29 @@ bool RsServicePermissions::peerHasPermission(const RsPeerId &peerId) const
 	}
 }
 
+void RsServicePermissions::setPermission(const RsPeerId& peerId)
+{
+    std::set<RsPeerId>::const_iterator it;
+    if (mDefaultAllowed)
+    {
+        it = mPeersDenied.find(peerId);
+        mPeersDenied.erase(it) ;
+    }
+    else
+        mPeersAllowed.insert(peerId);
+}
+void RsServicePermissions::resetPermission(const RsPeerId& peerId)
+{
+    std::set<RsPeerId>::const_iterator it;
+    if (!mDefaultAllowed)
+    {
+        it = mPeersAllowed.find(peerId);
+        mPeersAllowed.erase(it) ;
+    }
+    else
+        mPeersDenied.insert(peerId);
+}
+
 RsServiceInfo::RsServiceInfo(
 		const uint16_t service_type, 
 		const std::string service_name, 

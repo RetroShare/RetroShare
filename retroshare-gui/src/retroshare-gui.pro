@@ -398,6 +398,7 @@ HEADERS +=  rshare.h \
             gui/msgs/textformat.h \
             gui/msgs/MessageUserNotify.h \
             gui/images/retroshare_win.rc.h \
+            gui/settings/RSPermissionMatrixWidget.h \
             gui/settings/rsharesettings.h \
             gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
@@ -780,6 +781,7 @@ SOURCES +=  main.cpp \
             gui/common/StyledElidedLabel.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
+            gui/settings/RSPermissionMatrixWidget.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \

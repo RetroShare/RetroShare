@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/">
+        <file>images/switch.png</file>
+        <file>images/switch00.png</file>
+        <file>images/switch01.png</file>
+        <file>images/switch10.png</file>
+        <file>images/switch11.png</file>
         <file>images/add_chat24.png</file>
         <file>images/RSS_004_32.png</file>
         <file>images/mail-encrypted-full.png</file>

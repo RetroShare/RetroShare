@@ -84,7 +84,10 @@ class RsServicePermissions
 	public:
 	RsServicePermissions();
 
-	bool peerHasPermission(const RsPeerId &peerId) const;
+    bool peerHasPermission(const RsPeerId &peerId) const;
+
+    void setPermission(const RsPeerId& peerId) ;
+    void resetPermission(const RsPeerId& peerId) ;
 
 	uint32_t mServiceId;
 	std::string mServiceName;

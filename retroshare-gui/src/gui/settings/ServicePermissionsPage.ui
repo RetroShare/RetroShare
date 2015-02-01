@@ -58,59 +58,13 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Permission changes are not saved permanently. (TODO)</string>
+        <widget class="RSPermissionMatrixWidget" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTableWidget" name="tableWidget">
-         <row>
-          <property name="text">
-           <string>Chat</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>Row2</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>Shares</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>Channels</string>
-          </property>
-         </row>
-         <column>
-          <property name="text">
-           <string>Default</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Joe</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Sally</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Anne</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Jacki</string>
-          </property>
-         </column>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
         </widget>
        </item>
       </layout>
@@ -119,6 +73,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSPermissionMatrixWidget</class>
+   <extends>QFrame</extends>
+   <header>gui/settings/RSPermissionMatrixWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
