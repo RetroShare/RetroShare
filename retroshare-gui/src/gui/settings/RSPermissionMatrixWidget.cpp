@@ -59,9 +59,17 @@ RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
 
   setMouseTracking(true) ;
 
-  //_timer = new QTimer ;
-  //QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(update())) ;
-  //_timer->start(1000);
+  _timer = new QTimer ;
+  QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateDisplay())) ;
+  _timer->start(5000);
+}
+
+void RSPermissionMatrixWidget::updateDisplay()
+{
+    if(isHidden())
+        return ;
+
+    update() ;
 }
 
 void RSPermissionMatrixWidget::mousePressEvent(QMouseEvent *e)
@@ -123,6 +131,9 @@ void RSPermissionMatrixWidget::mouseMoveEvent(QMouseEvent *e)
 /** Default destructor */
 RSPermissionMatrixWidget::~RSPermissionMatrixWidget()
 {
+    _timer->stop() ;
+
+    delete _timer ;
     delete _painter;
 }
 
@@ -167,7 +178,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       RsPeerDetails details ;
       rsPeers->getPeerDetails(*it,details) ;
 
-      QString name = QString::fromUtf8(details.name.c_str());
+      QString name = QString::fromUtf8(details.name.c_str()) + " (" + QString::fromUtf8(details.location.c_str()) + ")";
       peer_name_size = std::max(peer_name_size, fm.width(name)) ;
       names.push_back(name) ;
   }

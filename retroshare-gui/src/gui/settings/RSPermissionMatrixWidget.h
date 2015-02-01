@@ -63,13 +63,14 @@ public:
 protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
     // if the collection system needs it. Otherwise, the default method will call getValues()
-    void updateDisplay() {}
+    void updateDisplay() ;
 
     void defaultPermissionSwitched(uint32_t ServiceId,bool b);
     void userPermissionSwitched(uint32_t ServiceId,const RsPeerId& friend_id,bool b);
 
     virtual void mousePressEvent(QMouseEvent *e) ;
     virtual void mouseMoveEvent(QMouseEvent *e) ;
+
 protected:
     /** Overloaded QWidget::paintEvent() */
     void paintEvent(QPaintEvent *event);
@@ -89,6 +90,8 @@ private:
 
     /** A QPainter object that handles drawing the various graph elements. */
     QPainter* _painter;
+    QTimer *_timer ;
+
     /** The current dimensions of the graph. */
     QRect _rec;
 
