@@ -49,7 +49,7 @@ const int RSPermissionMatrixWidget::ICON_SIZE_Y    = 40 ;
 const int RSPermissionMatrixWidget::ROW_SIZE       = 42 ;
 const int RSPermissionMatrixWidget::COL_SIZE       = 42 ;
 const int RSPermissionMatrixWidget::MATRIX_START_X =  5 ;
-const int RSPermissionMatrixWidget::MATRIX_START_Y = 55 ;
+const int RSPermissionMatrixWidget::MATRIX_START_Y =100 ;
 
 /** Default contructor */
 RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
@@ -79,17 +79,20 @@ void RSPermissionMatrixWidget::mousePressEvent(QMouseEvent *e)
     uint32_t service_id ;
     RsPeerId peer_id ;
 
-    if(!computeServiceAndPeer(e->x(),e->y(),service_id,peer_id))
+    if(computeServiceAndPeer(e->x(),e->y(),service_id,peer_id))
     {
-        QFrame::mousePressEvent(e) ;
-        return ;
+        std::cerr << "Peer id: " << peer_id << ", service: " << service_id << std::endl;
+
+        switchPermission(service_id,peer_id) ;
+        update() ;
     }
-
-    std::cerr << "Peer id: " << peer_id << ", service: " << service_id << std::endl;
-
-    switchPermission(service_id,peer_id) ;
-
-    update() ;
+    else if(computeServiceGlobalSwitch(e->x(),e->y(),service_id))
+    {
+        switchPermission(service_id) ;
+        update();
+    }
+    else
+        QFrame::mousePressEvent(e) ;
 }
 
 void RSPermissionMatrixWidget::switchPermission(uint32_t service,const RsPeerId& pid)
@@ -106,7 +109,26 @@ void RSPermissionMatrixWidget::switchPermission(uint32_t service,const RsPeerId&
 
     rsServiceControl->updateServicePermissions(service,serv_perms);
 }
+void RSPermissionMatrixWidget::switchPermission(uint32_t service)
+{
+    RsServicePermissions serv_perms ;
 
+    if(!rsServiceControl->getServicePermissions(service,serv_perms))
+        return ;
+
+    if(serv_perms.mDefaultAllowed)
+    {
+        serv_perms.mPeersAllowed.clear() ;
+    serv_perms.mDefaultAllowed = false ;
+    }
+    else
+    {
+        serv_perms.mDefaultAllowed = true ;
+        serv_perms.mPeersDenied.clear() ;
+    }
+
+    rsServiceControl->updateServicePermissions(service,serv_perms);
+}
 void RSPermissionMatrixWidget::mouseMoveEvent(QMouseEvent *e)
 {
     uint32_t service_id ;
@@ -179,6 +201,9 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       rsPeers->getPeerDetails(*it,details) ;
 
       QString name = QString::fromUtf8(details.name.c_str()) + " (" + QString::fromUtf8(details.location.c_str()) + ")";
+      if(name.length() > 20)
+          name = name.left(20)+"..." ;
+
       peer_name_size = std::max(peer_name_size, fm.width(name)) ;
       names.push_back(name) ;
   }
@@ -223,7 +248,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       while(last_width[height_index] > X-5 && height_index < last_width.size()-1)
           ++height_index ;
 
-      int Y = MATRIX_START_Y - 2 - line_height * height_index;
+      int Y = MATRIX_START_Y - ICON_SIZE_Y - 2 - line_height * height_index;
 
       last_width[height_index] = X + text_width ;
        // draw a half-transparent rectangle
@@ -256,7 +281,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawText(QPointF(X,Y),name);
   }
 
-  // Now draw the switches.
+  // Now draw the global switches.
 
   peer_ids.clear() ;
   for(std::list<RsPeerId>::const_iterator it(ssllist.begin());it!=ssllist.end();++it)
@@ -264,6 +289,25 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   service_ids.clear() ;
   for(std::map<uint32_t, RsServiceInfo>::const_iterator sit(ownServices.mServiceList.begin());sit!=ownServices.mServiceList.end();++sit)
       service_ids.push_back(sit->first) ;
+
+  static const std::string global_switch[2] = { ":/images/global_switch_off.png",
+                                                ":/images/global_switch_on.png" } ;
+
+  for(int i=0;i<service_ids.size();++i)
+  {
+      RsServicePermissions serv_perm ;
+      rsServiceControl->getServicePermissions(service_ids[i],serv_perm) ;
+
+      QPixmap pix(global_switch[serv_perm.mDefaultAllowed].c_str()) ;
+      QRect position = computeNodePosition(0,i,false) ;
+
+      position.setY(position.y() - ICON_SIZE_Y + 8) ;
+      position.setX(position.x() + 3) ;
+      position.setHeight(30) ;
+      position.setWidth(30) ;
+
+      _painter->drawPixmap(position,pix,QRect(0,0,30,30)) ;
+  }
 
   // We draw for each service.
 
@@ -420,7 +464,27 @@ bool RSPermissionMatrixWidget::computeServiceAndPeer(int x,int y,uint32_t& servi
 
     return true ;
 }
+bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& service_id) const
+{
+    // 1 - make sure that x and y are on a widget
 
+    x -= matrix_start_x ;
+    y -= MATRIX_START_Y ;
+
+    if(x < 0 || x >= service_ids.size() * COL_SIZE) return false ;
+
+    if( (x % COL_SIZE) < (COL_SIZE - ICON_SIZE_X)/2) return false ;
+    if( (x % COL_SIZE) > (COL_SIZE + ICON_SIZE_X)/2) return false ;
+
+    if( y < -ROW_SIZE ) return false ;
+    if( y >  0        ) return false ;
+
+    // 2 - find which widget, by looking into the service perm matrix
+
+    service_id = service_ids[x / COL_SIZE] ;
+
+    return true ;
+}
 void RSPermissionMatrixWidget::defaultPermissionSwitched(uint32_t ServiceId,bool b)
 {
     NOT_IMPLEMENTED ;

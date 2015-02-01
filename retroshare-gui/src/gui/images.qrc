@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/switch.png</file>
+        <file>images/global_switch_on.png</file>
+        <file>images/global_switch_off.png</file>
         <file>images/switch00.png</file>
         <file>images/switch01.png</file>
         <file>images/switch10.png</file>

@@ -77,9 +77,12 @@ protected:
 
 private:
     bool computeServiceAndPeer(int x,int y,uint32_t& service_id,RsPeerId& peer_id) const ;
+    bool computeServiceGlobalSwitch(int x,int y,uint32_t& service_id) const ;
+
     QRect computeNodePosition(int row,int col,bool selected) const ;
 
     void switchPermission(uint32_t service_id,const RsPeerId& peer_id) ;
+    void switchPermission(uint32_t service_id) ;
 
     std::vector<RsPeerId> peer_ids ;
     std::vector<uint32_t> service_ids ;
