@@ -62,12 +62,18 @@ RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
   _timer = new QTimer ;
   QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateDisplay())) ;
   _timer->start(5000);
+
+  _max_width = 400 ;
+  _max_height = 0 ;
 }
 
 void RSPermissionMatrixWidget::updateDisplay()
 {
     if(isHidden())
         return ;
+
+    setMinimumWidth(_max_width) ;
+    setMinimumHeight(_max_height) ;
 
     update() ;
 }
@@ -82,6 +88,14 @@ void RSPermissionMatrixWidget::mousePressEvent(QMouseEvent *e)
     if(computeServiceAndPeer(e->x(),e->y(),service_id,peer_id))
     {
         std::cerr << "Peer id: " << peer_id << ", service: " << service_id << std::endl;
+
+    // make sure the service is not globally disabled
+
+    RsServicePermissions serv_perms ;
+    rsServiceControl->getServicePermissions(service_id,serv_perms) ;
+
+    if(!serv_perms.mDefaultAllowed)
+        return ;
 
         switchPermission(service_id,peer_id) ;
         update() ;
@@ -273,7 +287,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       //_painter->drawRect(info_pos) ;
 
       _painter->drawLine(QPointF(X,Y+3),QPointF(X+text_width,Y+3)) ;
-      _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,MATRIX_START_Y+5)) ;
+      _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,MATRIX_START_Y+peer_ids.size()*ROW_SIZE - ROW_SIZE+5)) ;
 
       pen.setBrush(Qt::black) ;
       _painter->setPen(pen) ;
@@ -378,11 +392,17 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       RsPeerServiceInfo pserv_info ;
       rsServiceControl->getServicesAllowed(_current_peer_id,pserv_info) ;
 
-      QString local_status = (pserv_info.mServiceList.find(_current_service_id) != pserv_info.mServiceList.end())?tr("Locally enabled"):tr("Locally disabled") ;
+      bool locally_allowed = pserv_info.mServiceList.find(_current_service_id) != pserv_info.mServiceList.end();
+      bool remotely_allowed = false ; // default, if the peer is offline
 
-      rsServiceControl->getServicesProvided(_current_peer_id,pserv_info) ;
+      if(rsServiceControl->getServicesProvided(_current_peer_id,pserv_info))
+          remotely_allowed = pserv_info.mServiceList.find(_current_service_id) != pserv_info.mServiceList.end();
 
-      QString remote_status = (pserv_info.mServiceList.find(_current_service_id) != pserv_info.mServiceList.end())?tr("Enabled by remote peer"):tr("Disabled by remote peer") ;
+      QString local_status  = locally_allowed ?tr("Enabled for this peer") :tr("Disabled for this peer") ;
+      QString remote_status = remotely_allowed?tr("Enabled by remote peer"):tr("Disabled by remote peer") ;
+
+      if(!service_perms.mDefaultAllowed)
+          local_status = tr("Switched Off") ;
 
       const QFont& font(_painter->font()) ;
       QFontMetrics fm(font);
@@ -422,6 +442,9 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawText(QPointF(x,y), remote_status) ; y += line_height ;
       _painter->drawText(QPointF(x,y), local_status)  ; y += line_height ;
   }
+
+  _max_height = MATRIX_START_Y + (peer_ids.size()+3) * ROW_SIZE ;
+  _max_width  = matrix_start_x + (service_ids.size()+3) * COL_SIZE ;
 
   /* Stop the painter */
   _painter->end();

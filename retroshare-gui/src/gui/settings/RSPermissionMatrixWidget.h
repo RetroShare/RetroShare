@@ -94,6 +94,8 @@ private:
     /** A QPainter object that handles drawing the various graph elements. */
     QPainter* _painter;
     QTimer *_timer ;
+    int _max_width;
+    int _max_height;
 
     /** The current dimensions of the graph. */
     QRect _rec;
