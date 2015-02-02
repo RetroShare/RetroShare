@@ -73,26 +73,21 @@ const uint32_t RS_PEER_STATE_ONLINE	= 0x0002;
 const uint32_t RS_PEER_STATE_CONNECTED  = 0x0004;
 const uint32_t RS_PEER_STATE_UNREACHABLE= 0x0008;
 
-// Service permission flags. 
+// Service option flags.
 //
 const ServicePermissionFlags RS_SERVICE_PERM_NONE       ( 0x00000000 ) ;	
-const ServicePermissionFlags RS_SERVICE_PERM_TURTLE     ( 0x00000001 ) ;	
-const ServicePermissionFlags RS_SERVICE_PERM_DISCOVERY  ( 0x00000002 ) ;
-const ServicePermissionFlags RS_SERVICE_PERM_DISTRIB    ( 0x00000004 ) ;
 const ServicePermissionFlags RS_SERVICE_PERM_DIRECT_DL  ( 0x00000008 ) ;
-const ServicePermissionFlags RS_SERVICE_PERM_ALL        =  RS_SERVICE_PERM_TURTLE  | RS_SERVICE_PERM_DISCOVERY 
-																			| RS_SERVICE_PERM_DISTRIB | RS_SERVICE_PERM_DIRECT_DL;
+const ServicePermissionFlags RS_SERVICE_PERM_ALL        =  RS_SERVICE_PERM_DIRECT_DL ;
+
 // ...
 
 /* Connect state */
 const uint32_t RS_PEER_CONNECTSTATE_OFFLINE           = 0;
-
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_TCP        = 2;
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_UDP        = 3;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TCP     = 4;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UDP     = 5;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TOR     = 6;
-
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
 
 /* Error codes for certificate cleaning and cert parsing. Numbers should not overlap. */
@@ -215,10 +210,10 @@ class RsPeerDetails
 
 	bool accept_connection;
 
-	/* Peer permission flags. What services the peer can use (Only valid if friend).*/
-	ServicePermissionFlags service_perm_flags ;
+    /* Peer permission flags. What services the peer can use (Only valid if friend).*/
+    ServicePermissionFlags service_perm_flags ;
 
-	/* Network details (only valid if friend) */
+    /* Network details (only valid if friend) */
 	uint32_t		state;
 
 	std::string				connectAddr ; // current address if connected.
@@ -326,7 +321,7 @@ class RsPeers
 		virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
 
 		/* Add/Remove Friends */
-		virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
+        virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
 		virtual	bool removeFriend(const RsPgpId& pgp_id)  			= 0;
 		virtual bool removeFriendLocation(const RsPeerId& sslId) 			= 0;
 
@@ -397,11 +392,11 @@ class RsPeers
 		//
 		virtual FileSearchFlags computePeerPermissionFlags(const RsPeerId& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
 
-		/* Service permission flags */
+        /* Service permission flags */
 
-		virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) = 0;
-		virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) = 0;
-		virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) = 0;
+        virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) = 0;
+        virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) = 0;
+        virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) = 0;
 };
 
 #endif

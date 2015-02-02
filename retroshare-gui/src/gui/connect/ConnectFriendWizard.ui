@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
+    <width>662</width>
     <height>623</height>
    </rect>
   </property>
@@ -677,36 +677,28 @@
          <item>
           <widget class="QGroupBox" name="groupBox">
            <property name="title">
-            <string>Service permissions</string>
+            <string>Options</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
-            <item>
-             <widget class="QCheckBox" name="_anonymous_routing_CB">
-              <property name="text">
-               <string>Anonymous routing</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_discovery_CB">
-              <property name="text">
-               <string>Discovery</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_forums_channels_CB">
-              <property name="text">
-               <string>Forums/channels</string>
-              </property>
-             </widget>
-            </item>
             <item>
              <widget class="QCheckBox" name="_direct_transfer_CB">
               <property name="text">
                <string>Use as direct source, when available</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>

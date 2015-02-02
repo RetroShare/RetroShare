@@ -95,7 +95,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
 	ui.headerFrame->setHeaderText(tr("Friend Details"));
 
-	ui._chat_CB->hide() ;
+    //ui._chat_CB->hide() ;
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -135,19 +135,6 @@ ConfCertDialog::~ConfCertDialog()
     }
 }
 
-
-void ConfCertDialog::setServiceFlags()
-{
-    ServicePermissionFlags flags(0) ;
-
-    if(ui._anonymous_routing_CB->isChecked()) flags = flags | RS_SERVICE_PERM_TURTLE ;
-    if(        ui._discovery_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISCOVERY ;
-    if(  ui._forums_channels_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISTRIB ;
-    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DIRECT_DL ;
-
-    rsPeers->setServicePermissionFlags(pgpId,flags) ;
-}
-
 void ConfCertDialog::loadAll()
 {
     for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); ++it)  it.value()->load();
@@ -177,11 +164,6 @@ void ConfCertDialog::load()
 		 ui.make_friend_button->setEnabled(true) ;
 		 ui.make_friend_button->setToolTip("") ;
 	 }
-
-	 ui._anonymous_routing_CB->setChecked(detail.service_perm_flags & RS_SERVICE_PERM_TURTLE    ) ;
-	 ui._discovery_CB->setChecked(        detail.service_perm_flags & RS_SERVICE_PERM_DISCOVERY ) ;
-	 ui._forums_channels_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DISTRIB   ) ;
-	 ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL ) ;
 
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
@@ -496,8 +478,6 @@ void ConfCertDialog::applyDialog()
             emit configChanged();
     }
 
-	 setServiceFlags() ;
-
     loadAll();
     close();
 }
@@ -509,7 +489,6 @@ void ConfCertDialog::makeFriend()
     } 
 	
     rsPeers->addFriend(peerId, pgpId);
-	 setServiceFlags() ;
     loadAll();
 
     emit configChanged();

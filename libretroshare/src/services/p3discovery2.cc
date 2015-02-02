@@ -274,25 +274,10 @@ int p3discovery2::handleIncoming()
 		if (NULL != (contact = dynamic_cast<RsDiscContactItem *> (item))) 
 		{
 			if (item->PeerId() == contact->sslId) /* self describing */
-			{
 				recvOwnContactInfo(item->PeerId(), contact);
-			}
-			else if (rsPeers->servicePermissionFlags(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY)
-			{
-				processContactInfo(item->PeerId(), contact);
-			}
-			else
-			{
-				/* not allowed */
-				delete item;
-			}
-			continue;
-		}
+            else
+                processContactInfo(item->PeerId(), contact);
 
-		/* any other packets should be dropped if they don't have permission */
-		if(!(rsPeers->servicePermissionFlags(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY))
-		{
-			delete item;
 			continue;
 		}
 
@@ -795,15 +780,6 @@ void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toI
 	std::cerr << "p3discovery2::sendContactInfo_locked() aboutPGPId: " << aboutId << " toId: " << toId;
 	std::cerr << std::endl;
 #endif
-	if (!(rsPeers->servicePermissionFlags(toId) & RS_SERVICE_PERM_DISCOVERY))
-	{
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3discovery2::sendContactInfo_locked() discovery disabled for SSLID: " << toId;
-		std::cerr << std::endl;
-#endif
-		return;
-	}
-
 	std::map<PGPID, DiscPgpInfo>::const_iterator it;
 	it = mFriendList.find(aboutId);
 	if (it == mFriendList.end())

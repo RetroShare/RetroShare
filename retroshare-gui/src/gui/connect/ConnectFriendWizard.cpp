@@ -256,10 +256,7 @@ void ConnectFriendWizard::initializePage(int id)
 		{
 			std::cerr << "Conclusion page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
-			ui->_anonymous_routing_CB_2->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_TURTLE) ;
-			ui->_discovery_CB_2        ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISCOVERY) ;
-			ui->_forums_channels_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISTRIB) ;
-			ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL) ;
+            ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL) ;
 
 			RsPeerDetails tmp_det ;
 			bool already_in_keyring = rsPeers->getGPGDetails(peerDetails.gpg_id, tmp_det) ;
@@ -277,7 +274,7 @@ void ConnectFriendWizard::initializePage(int id)
 				//gpg key connection is already accepted, don't propose to accept it again
 				ui->signGPGCheckBox->setChecked(false);
 				ui->acceptNoSignGPGCheckBox->hide();
-				ui->acceptNoSignGPGCheckBox->setChecked(false);
+                ui->acceptNoSignGPGCheckBox->setChecked(false);
 			}
 			if (!peerDetails.accept_connection && peerDetails.ownsign) {
 				//gpg key is already signed, don't propose to sign it again
@@ -619,21 +616,15 @@ int ConnectFriendWizard::nextId() const
 
 ServicePermissionFlags ConnectFriendWizard::serviceFlags() const
 {
-	ServicePermissionFlags flags(0) ;
+    ServicePermissionFlags flags(0) ;
 
-	if (hasVisitedPage(Page_FriendRequest))
-	{
-		if(ui->_anonymous_routing_CB->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
-		if(        ui->_discovery_CB->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
-		if(  ui->_forums_channels_CB->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
-		if(  ui->_direct_transfer_CB->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
-	} else if (hasVisitedPage(Page_Conclusion)) {
-		if(ui->_anonymous_routing_CB_2->isChecked()) flags |= RS_SERVICE_PERM_TURTLE ;
-		if(        ui->_discovery_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISCOVERY ;
-		if(  ui->_forums_channels_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DISTRIB ;
-		if(  ui->_direct_transfer_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
-	}
-	return flags ;
+    if (hasVisitedPage(Page_FriendRequest))
+    {
+        if(  ui->_direct_transfer_CB->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
+    } else if (hasVisitedPage(Page_Conclusion)) {
+        if(  ui->_direct_transfer_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
+    }
+    return flags ;
 }
 void ConnectFriendWizard::accept()
 {
@@ -675,8 +666,8 @@ void ConnectFriendWizard::accept()
 	if(accept_connection && !peerDetails.gpg_id.isNull()) 
 	{
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
-		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
-		rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
+        rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
+        rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
 
 		if(sign)
 		{

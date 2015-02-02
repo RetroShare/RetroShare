@@ -80,7 +80,6 @@ private slots:
     void denyFriend();
     void signGPGKey();
     void loadInvitePage();
-    void setServiceFlags();
 
     void showHelpDialog();
     /** Called when a child window requests the given help <b>topic</b>. */

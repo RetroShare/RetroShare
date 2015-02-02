@@ -50,13 +50,7 @@ ServicePermissionDialog::ServicePermissionDialog() :
 	ui->servicePermissionList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_GPG);
 
 	/* add columns */
-	int column = ui->servicePermissionList->addColumn(tr("Anonymous routing"));
-	mColumns[column] = RS_SERVICE_PERM_TURTLE;
-	column = ui->servicePermissionList->addColumn(tr("Discovery"));
-	mColumns[column] = RS_SERVICE_PERM_DISCOVERY;
-	column = ui->servicePermissionList->addColumn(tr("Forums/Channels"));
-	mColumns[column] = RS_SERVICE_PERM_DISTRIB;
-	column = ui->servicePermissionList->addColumn(tr("Use as direct source, when available"));
+    int column = ui->servicePermissionList->addColumn(tr("Use as direct source, when available"));
 	mColumns[column] = RS_SERVICE_PERM_DIRECT_DL;
 
 	ui->servicePermissionList->start();
