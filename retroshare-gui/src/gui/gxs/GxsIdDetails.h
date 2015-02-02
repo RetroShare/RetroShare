@@ -69,7 +69,8 @@ public:
 
 	static bool GenerateCombinedIcon(QIcon &outIcon, const QList<QIcon> &icons);
 
-	static QImage makeDefaultIcon(const RsGxsId& id);
+	//static QImage makeDefaultIcon(const RsGxsId& id);
+    static QImage makeDefaultIcon(const RsGxsId& id);
 
 	/* Processing */
 	static bool process(const RsGxsId &id, GxsIdDetailsCallbackFunction callback, QObject *object, const QVariant &data = QVariant());
@@ -82,6 +83,17 @@ protected:
 
 	/* Timer */
 	virtual void timerEvent(QTimerEvent *event);
+
+private:
+	static QList<qreal> getSprite(quint8 shapeType, quint16 size);
+	static QList<qreal> getCenter(quint8 shapeType, quint16 size);
+	static void fillPoly (QPainter *painter, QList<qreal> sprite);
+	static void drawRotatedPolygon(QPixmap *pixmap,
+	                         QList<qreal> sprite,
+	                         quint16 x, quint16 y,
+	                         qreal shapeangle, qreal angle,
+	                         quint16 size, QColor fillColor);
+	static QImage drawIdentIcon(QString hash, quint16 width, bool rotate);
 
 private slots:
 	void objectDestroyed(QObject *object);
