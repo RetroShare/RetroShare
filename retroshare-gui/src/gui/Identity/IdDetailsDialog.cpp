@@ -153,12 +153,17 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
 	ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
 	
-	QPixmap pix = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+	QPixmap pixmap;
+	
+	 if(data.mImage.mSize > 0 && pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
+        ui->avatarLabel->setPixmap(pixmap);
+   else
+        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+        ui->avatarLabel->setPixmap(pixmap); // we need to use the default pixmap here, generated from the ID
+        
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
 #endif
-	ui->avatarLabel->setPixmap(pix);
-
 
 	if (data.mPgpKnown)
 	{
