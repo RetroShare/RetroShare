@@ -81,23 +81,23 @@ std::ostream &operator<<(std::ostream &out, const RsServiceInfo &info);
 
 class RsServicePermissions
 {
-	public:
-	RsServicePermissions();
+public:
+    RsServicePermissions();
 
     bool peerHasPermission(const RsPeerId &peerId) const;
 
     void setPermission(const RsPeerId& peerId) ;
     void resetPermission(const RsPeerId& peerId) ;
 
-	uint32_t mServiceId;
-	std::string mServiceName;
+    uint32_t mServiceId;
+    std::string mServiceName;
 
-	bool mDefaultAllowed;
-	// note only one of these is checked.
-	// if DefaultAllowed = true,  then only PeersDenied  is checked.
-	// if DefaultAllowed = false, then only PeersAllowed is checked.
-	std::set<RsPeerId> mPeersAllowed;
-	std::set<RsPeerId> mPeersDenied;
+    bool mDefaultAllowed;
+    // note only one of these is checked.
+    // if DefaultAllowed = true,  then only PeersDenied  is checked.
+    // if DefaultAllowed = false, then only PeersAllowed is checked.
+    std::set<RsPeerId> mPeersAllowed;
+    std::set<RsPeerId> mPeersDenied;
 };
 
 class RsServiceControl

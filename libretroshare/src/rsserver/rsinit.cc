@@ -1588,6 +1588,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
+    mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif

@@ -1464,10 +1464,10 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
     RetroShareLink::process(links);
 }
 
-void MainWindow::servicePermission()
-{
-    ServicePermissionDialog::showYourself();
-}
+//void MainWindow::servicePermission()
+//{
+//    ServicePermissionDialog::showYourself();
+//}
 
 SoundStatus *MainWindow::soundStatusInstance()
 {
