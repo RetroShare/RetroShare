@@ -26,6 +26,8 @@
 
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/common/AvatarDialog.h"
+
 #include "util/misc.h"
 
 #include "AvatarWidget.h"
@@ -83,10 +85,8 @@ QString AvatarWidget::frameState()
 void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 {
 	if (mFlag.isOwnId) {
-		QByteArray ba;
-		if (misc::getOpenAvatarPicture(this, ba)) {
-			rsMsgs->setOwnAvatarData((unsigned char*)(ba.data()), ba.size()); // last char 0 included.
-		}
+    AvatarDialog *dialog = new AvatarDialog();
+    dialog->show();
 	}
 }
 
