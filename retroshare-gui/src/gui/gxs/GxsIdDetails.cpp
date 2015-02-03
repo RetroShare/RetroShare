@@ -701,7 +701,7 @@ QImage GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
 
 	/// start with blank 3x3 identicon
 	QPixmap pixmap = QPixmap(totalsize, totalsize);
-    pixmap.fill(QColor::fromRgb(200,200,200));
+    pixmap.fill(QColor::fromRgb(230,230,230));
 
 	// Generate corner sprites
 	QList<qreal> corner = getSprite(csh, size);

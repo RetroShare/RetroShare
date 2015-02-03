@@ -557,7 +557,8 @@ void IdDialog::insertIdDetails(uint32_t token)
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
 #endif
-    ui->headerFrame->setHeaderImage(pixmap);
+    ui->headerFrame->setHeaderImage(QPixmap(":/images/user/personal64.png"));
+    ui->avatarLabel->setPixmap(pixmap);
 
 	if (data.mPgpKnown)
 	{
