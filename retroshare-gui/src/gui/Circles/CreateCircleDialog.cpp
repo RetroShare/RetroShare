@@ -29,6 +29,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 #include "gui/Identity/IdDialog.h"
+#include "gui/Identity/IdEditDialog.h"
 
 #include <algorithm>
 
@@ -68,7 +69,7 @@ CreateCircleDialog::CreateCircleDialog()
 	
 	connect(ui.IdFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
-	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
+	//connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	/* Add filter actions */
 	QTreeWidgetItem *headerItem = ui.treeWidget_IdList->headerItem();
@@ -143,7 +144,7 @@ void CreateCircleDialog::setupForPersonalCircle()
 	ui.frame_Distribution->hide();
 	ui.idChooserLabel->hide();
 	ui.idChooser->hide();
-	ui.toolButton_NewId->hide();
+	//ui.toolButton_NewId->hide();
 
 	getPgpIdentities();
 }
@@ -158,7 +159,7 @@ void CreateCircleDialog::setupForExternalCircle()
 	ui.frame_Distribution->show();
 	ui.idChooserLabel->show();
 	ui.idChooser->show();
-	ui.toolButton_NewId->show();
+	//ui.toolButton_NewId->show();
 	
 	requestGxsIdentities();
 }
