@@ -1,0 +1,65 @@
+List of fixes/improvements before 0.6
+=====================================
+
+   Posted:
+      [ ] it's not possible to create a Posted thread without a Owner. 
+          Bug? If not, then remove "No signature" from selection box
+      [ ] Show an info page for unsubscribed posted threads (same as forums)
+   
+   Forums
+      [ ] it's not possible to create a Forum thread without a Owner. 
+          Bug? If not, then remove "No signature" from selection box
+      [ ] the tooltip over GXS ids should show the avatar on the left side.
+   
+   GUI General
+      [ ] do we keep "Getting Started" ? the look needs to be improved
+   
+   Messages
+      [ ] distant messages should be made async-ed
+      [ ] distant messages are not re-sent when the peer is offline the first time
+      [ ] sent messages to direct peers in the Sent box have inconsistent To field. 
+          Raises an error if you click on it.
+   
+   Channels
+      [ ] Unsubscribed channels should show an info page when selected, like forums
+      [ ] marking all as read in channels takes time. The channel icon should show a waiting clock 
+          during the operation to avoid the user to re-click many times in the hope to get 
+          the posts marked as read.
+   
+   Chat lobbies
+      [ ] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
+   
+   Chat
+      [ ] Distant chat window should show GXS avatars
+      [ ] Distant chat should work with shared identities
+   
+   Identities:
+      [ ] "Owned by you" => "Owned by node [nodename]" 
+      [ ] Bold face should only be used for keys with admin credentials
+      [ ] reputations are not used yet. We should hide them.
+      [ ] Add timeout to Identities that are unused. Need to keep a time stamp list, updated 
+          whenever the identity is used for checking signatures.
+   
+   Network
+      [ ] Friends => Friend nodes
+   
+   News feed
+      [X] remove the Ghost news feed items
+      [ ] remove the double feed publication
+   
+   
+ Post v0.6 release changes
+ =========================
+
+   File transfer
+      [ ] implement a new file list management, with new info such as access time, total upload, popularity, etc
+      [ ] implement a new file list sharing service based on auto-sync system
+      [ ] get rid of the old cache system (remove CacheStrapper, CacheSource,etc)
+
+   Libretroshare
+      [ ] improve serialisation system. Lots of serialisation tasks (header, verifications, serialiser=>template, can be factored)
+
+   Chat
+      [ ] add "chat with this peer" from lobbies to start a private distant conversation with the GXS id of the peer
+
+
