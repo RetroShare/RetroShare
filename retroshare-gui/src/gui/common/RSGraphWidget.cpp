@@ -32,6 +32,7 @@
 #include <QDateTime>
 #include <QTimer>
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include "RSGraphWidget.h"
 
 RSGraphSource::RSGraphSource()
@@ -42,7 +43,7 @@ RSGraphSource::RSGraphSource()
     _timer = new QTimer ;
     _digits = 2 ;
 
-    QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(update())) ;
+    QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 }
 
 RSGraphSource::~RSGraphSource()
@@ -142,6 +143,14 @@ qint64 RSGraphSource::getTime() const
     return QDateTime::currentMSecsSinceEpoch() - _time_orig_msecs ;
 }
 
+void RSGraphSource::updateIfPossible()
+{
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
+	update() ;
+}
+
 void RSGraphSource::update()
 {
     std::map<std::string,float> vals ;
@@ -206,10 +215,21 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _flags = 0;
   _time_scale = 5.0f ; // in pixels per second.
   _timer = new QTimer ;
-  QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(update())) ;
+  QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 
   _y_scale = 1.0f ;
   _timer->start(1000);
+}
+
+void RSGraphWidget::updateIfPossible()
+{
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
+	if(!isVisible())
+		return ;
+
+	update() ;
 }
 
 /** Default destructor */
@@ -235,7 +255,7 @@ RSGraphWidget::resetGraph()
 {
     _source->reset() ;
   _maxValue = MINUSER_SCALE;
-  update();
+  updateIfPossible();
 }
 
 /** Toggles display of respective graph lines and counters. */

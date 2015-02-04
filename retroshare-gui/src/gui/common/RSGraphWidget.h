@@ -93,6 +93,7 @@ protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
     // if the collection system needs it. Otherwise, the default method will call getValues()
     void update() ;
+	 void updateIfPossible() ;
 
 protected:
     virtual void getValues(std::map<std::string,float>& values) const = 0 ;// overload this in your own class to fill in the values you want to display.
@@ -156,7 +157,7 @@ class RSGraphWidget: public QFrame
 		void paintEvent(QPaintEvent *event);
 
 	protected slots:
-        void updateDisplay() {}
+        void updateIfPossible() ;
 
 	private:
 		/** Gets the width of the desktop, the max # of points. */
