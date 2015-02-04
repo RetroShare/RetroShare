@@ -80,6 +80,7 @@ signals:
 
 protected:
 	void connectObject_locked(QObject *object, bool doConnect);
+    QImage makeDefaultIconLocal_locked(const RsGxsId& id);
 
 	/* Timer */
 	virtual void timerEvent(QTimerEvent *event);
@@ -122,10 +123,12 @@ protected:
 
 	/* Pending data */
 	QList<CallbackData> mPendingData;
-	int mCheckTimerId;
+    int mCheckTimerId;
+    std::map<RsGxsId,QImage> image_cache ;
 
 	/* Thread safe */
 	QMutex mMutex;
+    QMutex mMutex2;
 };
 
 #endif

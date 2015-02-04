@@ -60,7 +60,7 @@ const int kRecognTagType_Dev_Patcher     	= 4;
 const int kRecognTagType_Dev_Developer	 	= 5;
 
 /* The global object */
-GxsIdDetails *GxsIdDetails::mInstance = NULL;
+GxsIdDetails *GxsIdDetails::mInstance = NULL ;
 
 GxsIdDetails::GxsIdDetails()
     : QObject()
@@ -207,13 +207,13 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 	}
 
 	details.mId = id;
-	callback(GXS_ID_DETAILS_TYPE_LOADING, details, object, data);
 
 	/* Add id to the pending list */
 	if (!mInstance) {
 		mInstance = new GxsIdDetails;
 		mInstance->moveToThread(qApp->thread());
 	}
+    callback(GXS_ID_DETAILS_TYPE_LOADING, details, object, data);
 
 	CallbackData pendingData;
 	pendingData.mId = id;
@@ -338,18 +338,25 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  * Bring the source code from this adaptation:
  * http://francisshanahan.com/identicon5/test.html
  */
-QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+QImage GxsIdDetails::makeDefaultIconLocal_locked(const RsGxsId& id)
 {
-	static std::map<RsGxsId,QImage> image_cache ;
+    QMutexLocker lock(&mMutex2);
 
-	std::map<RsGxsId,QImage>::const_iterator it = image_cache.find(id) ;
+    std::map<RsGxsId,QImage>::const_iterator it = image_cache.find(id) ;
 
-	if(it != image_cache.end())
+    if(it != image_cache.end())
 		return it->second ;
 
-	image_cache[id] = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    image_cache[id] = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
 
-	return image_cache[id] ;
+    return image_cache[id] ;
+}
+QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+{
+//    if(mInstance != NULL)
+//        return mInstance->makeDefaultIconLocal_locked(id) ;
+ //   else
+        return  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
 }
 
 /**
@@ -846,26 +853,26 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 {
 	QString comment;
 
-	comment = QString("%1: %2\n%3: %4").arg(QApplication::translate("GxsIdDetails", "Identity name"),
+    comment = QString("%1:%2<br/>%3:%4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
 	                                        QString::fromUtf8(details.mNickname.c_str()),
-	                                        QApplication::translate("GxsIdDetails", "Identity Id"),
+                                            QApplication::translate("GxsIdDetails", "Identity&nbsp;Id"),
 	                                        QString::fromStdString(details.mId.toStdString()));
 
 	if (details.mPgpLinked)
 	{
-		comment += QString("\n%1: %2 ").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "signed by"));
+        comment += QString("<br/>%1:%2 ").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "Signed&nbsp;by"));
 
 		if (details.mPgpKnown)
 		{
 			/* look up real name */
 			std::string authorName = rsPeers->getGPGName(details.mPgpId);
-			comment += QString("%1 [%2]").arg(QString::fromUtf8(authorName.c_str()), QString::fromStdString(details.mPgpId.toStdString()));
+            comment += QString("%1&nbsp;[%2]").arg(QString::fromUtf8(authorName.c_str()), QString::fromStdString(details.mPgpId.toStdString()));
 		}
 		else
 			comment += QApplication::translate("GxsIdDetails", "unknown Key");
 	}
 	else
-		comment += QString("\n%1: %2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
+        comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
 
 	return comment;
 }

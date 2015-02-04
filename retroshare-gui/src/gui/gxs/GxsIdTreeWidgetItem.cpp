@@ -23,6 +23,7 @@
 
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsIdDetails.h"
+#include "util/HandleRichText.h"
 
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
@@ -43,40 +44,51 @@ void GxsIdRSTreeWidgetItem::init()
 
 static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
-	GxsIdRSTreeWidgetItem *item = dynamic_cast<GxsIdRSTreeWidgetItem*>(object);
-	if (!item) {
-		return;
-	}
+    GxsIdRSTreeWidgetItem *item = dynamic_cast<GxsIdRSTreeWidgetItem*>(object);
+    if (!item) {
+        return;
+    }
 
-	QString toolTip;
-	QList<QIcon> icons;
+    QString toolTip;
+    QList<QIcon> icons;
 
-	switch (type) {
-	case GXS_ID_DETAILS_TYPE_EMPTY:
-	case GXS_ID_DETAILS_TYPE_FAILED:
-		break;
+    switch (type) {
+    case GXS_ID_DETAILS_TYPE_EMPTY:
+    case GXS_ID_DETAILS_TYPE_FAILED:
+        break;
 
-	case GXS_ID_DETAILS_TYPE_LOADING:
-		icons.push_back(GxsIdDetails::getLoadingIcon(details.mId));
-		break;
+    case GXS_ID_DETAILS_TYPE_LOADING:
+        icons.push_back(GxsIdDetails::getLoadingIcon(details.mId));
+        break;
 
-	case GXS_ID_DETAILS_TYPE_DONE:
-		toolTip = GxsIdDetails::getComment(details);
-		GxsIdDetails::getIcons(details, icons);
-		break;
-	}
+    case GXS_ID_DETAILS_TYPE_DONE:
+        toolTip = GxsIdDetails::getComment(details);
+        GxsIdDetails::getIcons(details, icons);
+        break;
+    }
 
-	int column = item->idColumn();
+    int column = item->idColumn();
 
-	item->setText(column, GxsIdDetails::getNameForType(type, details));
-	item->setToolTip(column, toolTip);
-	item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
+    item->setText(column, GxsIdDetails::getNameForType(type, details));
+    item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
 
-	QIcon combinedIcon;
-	if (!icons.empty()) {
-		GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
-	}
-	item->setIcon(column, combinedIcon);
+    QIcon combinedIcon;
+    if (!icons.empty()) {
+        GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
+    }
+    item->setIcon(column, combinedIcon);
+
+    QImage pix ;
+
+    if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
+        pix = GxsIdDetails::makeDefaultIcon(details.mId);
+
+    QString embeddedImage ;
+
+    if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(64,64),Qt::KeepAspectRatio,Qt::SmoothTransformation),embeddedImage,128*128))
+        toolTip = "<table><tr><td>"+embeddedImage+"</td><td>" +toolTip+ "</td></table>" ;
+
+      item->setToolTip(column, toolTip);
 }
 
 void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
