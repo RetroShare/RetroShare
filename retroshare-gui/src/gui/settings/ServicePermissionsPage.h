@@ -36,20 +36,16 @@ public:
     ~ServicePermissionsPage() {}
 
     /** Saves the changes on this page */
-    virtual bool save(QString &/*errmsg*/);
+    virtual bool save(QString &/*errmsg*/) { return true ;}
     /** Loads the settings for this page */
-    virtual void load();
+    virtual void load() {}
 
     virtual QPixmap iconPixmap() const { return QPixmap(":/images/admin-24.png") ; }
     virtual QString pageName() const { return tr("Permissions") ; }
     virtual QString helpText() const ;
 
-public slots:
-    void tableItemChanged(int row,int col);
 private:
 
-    size_t mStdRowCount;
-    size_t mStdColumnCount;
     Ui::ServicePermissionsPage ui;
 };
 
