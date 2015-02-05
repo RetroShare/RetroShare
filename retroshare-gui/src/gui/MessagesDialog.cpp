@@ -1442,7 +1442,7 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
                 msgFlag &= ~RS_MSG_STAR;
             }
 
-            item->setData(ROLE_MSGFLAGS, COLUMN_DATA, msgFlag);
+            item->setData(COLUMN_DATA, ROLE_MSGFLAGS, msgFlag);
 
             InitIconAndFont(item);
 
