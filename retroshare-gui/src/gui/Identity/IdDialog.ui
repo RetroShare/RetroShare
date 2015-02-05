@@ -184,6 +184,12 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
