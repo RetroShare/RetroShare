@@ -28,8 +28,6 @@
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/AvatarDialog.h"
 
-#include "util/misc.h"
-
 #include "AvatarWidget.h"
 #include "ui_AvatarWidget.h"
 
@@ -84,9 +82,21 @@ QString AvatarWidget::frameState()
 
 void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 {
-	if (mFlag.isOwnId) {
-    AvatarDialog *dialog = new AvatarDialog();
-    dialog->show();
+	if (!mFlag.isOwnId) {
+		return;
+	}
+
+	AvatarDialog dialog(this);
+
+	QPixmap avatar;
+	AvatarDefs::getOwnAvatar(avatar, "");
+
+	dialog.setAvatar(avatar);
+	if (dialog.exec() == QDialog::Accepted) {
+		QByteArray newAvatar;
+		dialog.getAvatar(newAvatar);
+
+		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
 	}
 }
 

@@ -24,20 +24,14 @@
 #ifndef _AVATARDIALOG_H
 #define _AVATARDIALOG_H
 
-#include "ui_AvatarDialog.h"
+#include <QDialog>
 
-#include <inttypes.h>
-
-#include "util/TokenQueue.h"
-#include <retroshare/rsidentity.h>
-#include <retroshare/rsgxsifacetypes.h>
-#include <retroshare/rsgxscommon.h>
-#include <QString>
+class QPixmap;
+class QByteArray;
 
 namespace Ui {
 class AvatarDialog;
 }
-
 
 class AvatarDialog : public QDialog
 {
@@ -46,20 +40,21 @@ class AvatarDialog : public QDialog
 public:
 	AvatarDialog(QWidget *parent = 0);
 	~AvatarDialog();
-	
-    void setAvatar(const RsGxsImage &avatar);
-    void getAvatar(RsGxsImage &avatar);
+
+	void setAvatar(const QPixmap &avatar);
+
+	void getAvatar(QPixmap &avatar);
+	void getAvatar(QByteArray &avatar);
 
 private slots:
-
-    void changeAvatar();
-    void removeAvatar();
-    void saveAvatar();
-    void loadOwnAvatar();
+	void changeAvatar();
+	void removeAvatar();
 
 private:
-	Ui::AvatarDialog ui;
+	void updateInterface();
 
+private:
+	Ui::AvatarDialog *ui;
 };
 
 #endif

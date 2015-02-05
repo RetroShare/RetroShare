@@ -23,8 +23,10 @@
 
 #include <QBuffer>
 
-#include "gui/Identity/IdEditDialog.h"
+#include "IdEditDialog.h"
+#include "ui_IdEditDialog.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/AvatarDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/TokenQueue.h"
 #include "util/misc.h"
@@ -37,72 +39,74 @@
 #define IDEDITDIALOG_LOADID	1
 
 /** Constructor */
-IdEditDialog::IdEditDialog(QWidget *parent)
-: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+IdEditDialog::IdEditDialog(QWidget *parent) :
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+    ui(new(Ui::IdEditDialog))
 {
 	mIsNew = true;
 	mLastIdName="";
 
-	ui.setupUi(this);
-	
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_create_64.png"));
-	ui.headerFrame->setHeaderText(tr("Create New Identity"));
+	ui->setupUi(this);
+
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_create_64.png"));
+	ui->headerFrame->setHeaderText(tr("Create New Identity"));
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
 
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_Nickname);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_KeyId);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_GpgHash);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_GpgId);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_GpgName);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.radioButton_GpgId);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.radioButton_Pseudo);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_Nickname);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_KeyId);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_GpgHash);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_GpgId);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_GpgName);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->radioButton_GpgId);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->radioButton_Pseudo);
 
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_Nickname);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgName);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_KeyId);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgHash);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgId);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgName);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_Nickname);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgName);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_KeyId);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgHash);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgId);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgName);
 
 	/* Initialize recogn tags */
 	loadRecognTags();
 
 	/* Connect signals */
-	connect(ui.radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
-	connect(ui.radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
-	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui->radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
+	connect(ui->radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
+	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-	connect(ui.plainTextEdit_Tag, SIGNAL(textChanged()), this, SLOT(checkNewTag()));
-	connect(ui.pushButton_Tag, SIGNAL(clicked(bool)), this, SLOT(addRecognTag()));
-	connect(ui.toolButton_Tag1, SIGNAL(clicked(bool)), this, SLOT(rmTag1()));
-	connect(ui.toolButton_Tag2, SIGNAL(clicked(bool)), this, SLOT(rmTag2()));
-	connect(ui.toolButton_Tag3, SIGNAL(clicked(bool)), this, SLOT(rmTag3()));
-	connect(ui.toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
-	connect(ui.toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
-	connect(ui.avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
-	connect(ui.removeButton, SIGNAL(clicked(bool)), this, SLOT(removeAvatar()));
-
+	connect(ui->plainTextEdit_Tag, SIGNAL(textChanged()), this, SLOT(checkNewTag()));
+	connect(ui->pushButton_Tag, SIGNAL(clicked(bool)), this, SLOT(addRecognTag()));
+	connect(ui->toolButton_Tag1, SIGNAL(clicked(bool)), this, SLOT(rmTag1()));
+	connect(ui->toolButton_Tag2, SIGNAL(clicked(bool)), this, SLOT(rmTag2()));
+	connect(ui->toolButton_Tag3, SIGNAL(clicked(bool)), this, SLOT(rmTag3()));
+	connect(ui->toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
+	connect(ui->toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
+	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-	ui.pushButton_Tag->setEnabled(false);
-}
-
-void IdEditDialog::changeAvatar()
-{
-        QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), 128, 128);
-
-        if (img.isNull())
-            return;
-
-    ui.avatarLabel->setPixmap(img) ;
+	ui->pushButton_Tag->setEnabled(false);
 }
 
 IdEditDialog::~IdEditDialog()
 {
 	delete(mIdQueue);
+}
+
+void IdEditDialog::changeAvatar()
+{
+	AvatarDialog dialog(this);
+
+	dialog.setAvatar(mAvatar);
+	if (dialog.exec() == QDialog::Accepted) {
+		QPixmap newAvatar;
+		dialog.getAvatar(newAvatar);
+
+		setAvatar(newAvatar);
+	}
 }
 
 void IdEditDialog::setupNewId(bool pseudo)
@@ -111,33 +115,35 @@ void IdEditDialog::setupNewId(bool pseudo)
 
 	mIsNew = true;
 
-	ui.lineEdit_KeyId->setText(tr("To be generated"));
-	ui.lineEdit_Nickname->setText("");
-	ui.radioButton_GpgId->setEnabled(true);
-	ui.radioButton_Pseudo->setEnabled(true);
+	ui->lineEdit_KeyId->setText(tr("To be generated"));
+	ui->lineEdit_Nickname->setText("");
+	ui->radioButton_GpgId->setEnabled(true);
+	ui->radioButton_Pseudo->setEnabled(true);
 
 	if (pseudo)
 	{
-		ui.radioButton_Pseudo->setChecked(true);
+		ui->radioButton_Pseudo->setChecked(true);
 	}
 	else
 	{
-		ui.radioButton_GpgId->setChecked(true);
+		ui->radioButton_GpgId->setChecked(true);
 	}
 
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
 
-	ui.frame_Tags->setHidden(true);
-	ui.radioButton_GpgId->setEnabled(true);
-	ui.radioButton_Pseudo->setEnabled(true);
+	ui->frame_Tags->setHidden(true);
+	ui->radioButton_GpgId->setEnabled(true);
+	ui->radioButton_Pseudo->setEnabled(true);
+
+	setAvatar(QPixmap());
 }
 
 void IdEditDialog::idTypeToggled(bool checked)
 {
 	if (checked)
 	{
-		bool pseudo = ui.radioButton_Pseudo->isChecked();
+		bool pseudo = ui->radioButton_Pseudo->isChecked();
 		updateIdType(pseudo);
 	}
 }
@@ -146,28 +152,40 @@ void IdEditDialog::updateIdType(bool pseudo)
 {
 	if (pseudo)
 	{
-		ui.lineEdit_GpgHash->setText(tr("N/A"));
-		ui.lineEdit_GpgId->setText(tr("N/A"));
-		ui.lineEdit_GpgName->setText(tr("N/A"));
+		ui->lineEdit_GpgHash->setText(tr("N/A"));
+		ui->lineEdit_GpgId->setText(tr("N/A"));
+		ui->lineEdit_GpgName->setText(tr("N/A"));
 	}
 	else
 	{
 		/* get GPG Details from rsPeers */
-        RsPgpId gpgid  = rsPeers->getGPGOwnId();
+		RsPgpId gpgid = rsPeers->getGPGOwnId();
 		RsPeerDetails details;
-        rsPeers->getGPGDetails(gpgid, details);
+		rsPeers->getGPGDetails(gpgid, details);
 
-        ui.lineEdit_GpgId->setText(QString::fromStdString(gpgid.toStdString()));
-		ui.lineEdit_GpgHash->setText(tr("To be generated"));
-		ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
+		ui->lineEdit_GpgId->setText(QString::fromStdString(gpgid.toStdString()));
+		ui->lineEdit_GpgHash->setText(tr("To be generated"));
+		ui->lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
+	}
+}
+
+void IdEditDialog::setAvatar(const QPixmap &avatar)
+{
+	mAvatar = avatar;
+
+	if (!mAvatar.isNull()) {
+		ui->avatarLabel->setPixmap(mAvatar);
+	} else {
+		// we need to use the default pixmap here, generated from the ID
+		ui->avatarLabel->setPixmap(QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId))));
 	}
 }
 
 void IdEditDialog::setupExistingId(std::string keyId)
 {
 	setWindowTitle(tr("Edit identity"));
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_edit_64.png"));
-	ui.headerFrame->setHeaderText(tr("Edit identity"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_edit_64.png"));
+	ui->headerFrame->setHeaderText(tr("Edit identity"));
 
 	mIsNew = false;
 
@@ -191,81 +209,81 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	std::vector<RsGxsIdGroup> datavector;
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
-		ui.lineEdit_KeyId->setText(tr("Error getting key!"));
+		ui->lineEdit_KeyId->setText(tr("Error getting key!"));
 		return;
 	}
-    mEditGroup = datavector[0];
-    QPixmap pixmap;
-    
 
-    if(mEditGroup.mImage.mSize > 0 && pixmap.loadFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, "PNG"))
-        ui.avatarLabel->setPixmap(pixmap);
-   else
-        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId))) ;
-        ui.avatarLabel->setPixmap(pixmap); // we need to use the default pixmap here, generated from the ID
-
-    if (datavector.size() != 1)
+	if (datavector.size() != 1)
 	{
 		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
 		std::cerr << std::endl;
 
-		ui.lineEdit_KeyId->setText(tr("Error KeyID invalid"));
-		ui.lineEdit_Nickname->setText("");
+		ui->lineEdit_KeyId->setText(tr("Error KeyID invalid"));
+		ui->lineEdit_Nickname->setText("");
 
-		ui.lineEdit_GpgHash->setText(tr("N/A"));
-		ui.lineEdit_GpgId->setText(tr("N/A"));
-		ui.lineEdit_GpgName->setText(tr("N/A"));
+		ui->lineEdit_GpgHash->setText(tr("N/A"));
+		ui->lineEdit_GpgId->setText(tr("N/A"));
+		ui->lineEdit_GpgName->setText(tr("N/A"));
 		return;
 	}
+
+	mEditGroup = datavector[0];
+	QPixmap avatar;
+
+	if (mEditGroup.mImage.mSize > 0) {
+		avatar.loadFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, "PNG");
+	}
+
+	setAvatar(avatar);
 
 	bool realid = (mEditGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
 
 	if (realid)
 	{
-		ui.radioButton_GpgId->setChecked(true);
+		ui->radioButton_GpgId->setChecked(true);
 	}
 	else
 	{
-		ui.radioButton_Pseudo->setChecked(true);
+		ui->radioButton_Pseudo->setChecked(true);
 	}
 	// these are not editable for existing Id.
-	ui.radioButton_GpgId->setEnabled(false);
-	ui.radioButton_Pseudo->setEnabled(false);
+	ui->radioButton_GpgId->setEnabled(false);
+	ui->radioButton_Pseudo->setEnabled(false);
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
 
-	ui.lineEdit_Nickname->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()));
-	ui.lineEdit_KeyId->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId.toStdString()));
+	ui->lineEdit_Nickname->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()));
+	ui->lineEdit_KeyId->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId.toStdString()));
 
 	if (realid)
 	{
-		ui.lineEdit_GpgHash->setText(QString::fromStdString(mEditGroup.mPgpIdHash.toStdString()));
+		ui->lineEdit_GpgHash->setText(QString::fromStdString(mEditGroup.mPgpIdHash.toStdString()));
 
 		if (mEditGroup.mPgpKnown)
 		{
 			RsPeerDetails details;
 			rsPeers->getGPGDetails(mEditGroup.mPgpId, details);
-			ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
+			ui->lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 
-			ui.lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId.toStdString()));
+			ui->lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId.toStdString()));
 		}
 		else
 		{
-			ui.lineEdit_GpgId->setText(tr("Unknown GpgId"));
-			ui.lineEdit_GpgName->setText(tr("Unknown real name"));
+			ui->lineEdit_GpgId->setText(tr("Unknown GpgId"));
+			ui->lineEdit_GpgName->setText(tr("Unknown real name"));
 		}
 	}
 	else
 	{
-		ui.lineEdit_GpgHash->setText(tr("N/A"));
-		ui.lineEdit_GpgId->setText(tr("N/A"));
-		ui.lineEdit_GpgName->setText(tr("N/A"));
+		ui->lineEdit_GpgHash->setText(tr("N/A"));
+		ui->lineEdit_GpgId->setText(tr("N/A"));
+		ui->lineEdit_GpgName->setText(tr("N/A"));
 	}
 
 	// RecognTags.
-	ui.frame_Tags->setHidden(false);
+	ui->frame_Tags->setHidden(false);
 
 	loadRecognTags();
 }
@@ -274,13 +292,13 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 void IdEditDialog::checkNewTag()
 {
-	std::string tag = ui.plainTextEdit_Tag->toPlainText().toStdString();
-    RsGxsId id ( ui.lineEdit_KeyId->text().toStdString());
-	std::string name = ui.lineEdit_Nickname->text().toUtf8().data();
+	std::string tag = ui->plainTextEdit_Tag->toPlainText().toStdString();
+    RsGxsId id ( ui->lineEdit_KeyId->text().toStdString());
+	std::string name = ui->lineEdit_Nickname->text().toUtf8().data();
 
 	QString desc;
 	bool ok = tagDetails(id, name, tag, desc);
-	ui.label_TagCheck->setText(desc);
+	ui->label_TagCheck->setText(desc);
 
 	// hack to allow add invalid tags (for testing).
 	if (!tag.empty())
@@ -293,12 +311,12 @@ void IdEditDialog::checkNewTag()
 		ok = false;
 	}
 
-	ui.pushButton_Tag->setEnabled(ok);
+	ui->pushButton_Tag->setEnabled(ok);
 }
 
 void IdEditDialog::addRecognTag()
 {
-	std::string tag = ui.plainTextEdit_Tag->toPlainText().toStdString();
+	std::string tag = ui->plainTextEdit_Tag->toPlainText().toStdString();
 	if (mEditGroup.mRecognTags.size() >= MAX_RECOGN_TAGS)
 	{
 		std::cerr << "IdEditDialog::addRecognTag() Too many Tags, delete one first";
@@ -394,17 +412,17 @@ void IdEditDialog::loadRecognTags()
 	std::cerr << std::endl;
 
 	// delete existing items.
-	ui.label_Tag1->setHidden(true);
-	ui.label_Tag2->setHidden(true);
-	ui.label_Tag3->setHidden(true);
-	ui.label_Tag4->setHidden(true);
-	ui.label_Tag5->setHidden(true);
-	ui.toolButton_Tag1->setHidden(true);
-	ui.toolButton_Tag2->setHidden(true);
-	ui.toolButton_Tag3->setHidden(true);
-	ui.toolButton_Tag4->setHidden(true);
-	ui.toolButton_Tag5->setHidden(true);
-	ui.plainTextEdit_Tag->setPlainText("");
+	ui->label_Tag1->setHidden(true);
+	ui->label_Tag2->setHidden(true);
+	ui->label_Tag3->setHidden(true);
+	ui->label_Tag4->setHidden(true);
+	ui->label_Tag5->setHidden(true);
+	ui->toolButton_Tag1->setHidden(true);
+	ui->toolButton_Tag2->setHidden(true);
+	ui->toolButton_Tag3->setHidden(true);
+	ui->toolButton_Tag4->setHidden(true);
+	ui->toolButton_Tag5->setHidden(true);
+	ui->plainTextEdit_Tag->setPlainText("");
 
 	int i = 0;
 	std::list<std::string>::const_iterator it;
@@ -417,29 +435,29 @@ void IdEditDialog::loadRecognTags()
 		{
 			default:
 			case 0:
-				ui.label_Tag1->setText(recognTag);
-				ui.label_Tag1->setHidden(false);
-				ui.toolButton_Tag1->setHidden(false);
+				ui->label_Tag1->setText(recognTag);
+				ui->label_Tag1->setHidden(false);
+				ui->toolButton_Tag1->setHidden(false);
 				break;
 			case 1:
-				ui.label_Tag2->setText(recognTag);
-				ui.label_Tag2->setHidden(false);
-				ui.toolButton_Tag2->setHidden(false);
+				ui->label_Tag2->setText(recognTag);
+				ui->label_Tag2->setHidden(false);
+				ui->toolButton_Tag2->setHidden(false);
 				break;
 			case 2:
-				ui.label_Tag3->setText(recognTag);
-				ui.label_Tag3->setHidden(false);
-				ui.toolButton_Tag3->setHidden(false);
+				ui->label_Tag3->setText(recognTag);
+				ui->label_Tag3->setHidden(false);
+				ui->toolButton_Tag3->setHidden(false);
 				break;
 			case 3:
-				ui.label_Tag4->setText(recognTag);
-				ui.label_Tag4->setHidden(false);
-				ui.toolButton_Tag4->setHidden(false);
+				ui->label_Tag4->setText(recognTag);
+				ui->label_Tag4->setHidden(false);
+				ui->toolButton_Tag4->setHidden(false);
 				break;
 			case 4:
-				ui.label_Tag5->setText(recognTag);
-				ui.label_Tag5->setHidden(false);
-				ui.toolButton_Tag5->setHidden(false);
+				ui->label_Tag5->setText(recognTag);
+				ui->label_Tag5->setHidden(false);
+				ui->toolButton_Tag5->setHidden(false);
 				break;
 		}
 	}
@@ -459,7 +477,7 @@ void IdEditDialog::submit()
 
 void IdEditDialog::createId()
 {
-	std::string groupname = ui.lineEdit_Nickname->text().toUtf8().constData();
+	std::string groupname = ui->lineEdit_Nickname->text().toUtf8().constData();
 
 	if (groupname.size() < 2)
 	{
@@ -470,17 +488,15 @@ void IdEditDialog::createId()
 
 	RsIdentityParameters params;
 	params.nickname = groupname;
-	params.isPgpLinked = (ui.radioButton_GpgId->isChecked());
+	params.isPgpLinked = (ui->radioButton_GpgId->isChecked());
 
-	const QPixmap *pixmap = ui.avatarLabel->pixmap();
-
-	if (pixmap && !pixmap->isNull())
+	if (!mAvatar.isNull())
 	{
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
 		buffer.open(QIODevice::WriteOnly);
-		pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
+		mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 		params.mImage.copy((uint8_t *) ba.data(), ba.size());
 	}
@@ -497,7 +513,7 @@ void IdEditDialog::createId()
 void IdEditDialog::updateId()
 {
 	/* submit updated details */
-	std::string groupname = ui.lineEdit_Nickname->text().toUtf8().constData();
+	std::string groupname = ui->lineEdit_Nickname->text().toUtf8().constData();
 
 	if (groupname.size() < 2)
 	{
@@ -508,15 +524,13 @@ void IdEditDialog::updateId()
 
 	mEditGroup.mMeta.mGroupName = groupname;
 
-	const QPixmap *pixmap = ui.avatarLabel->pixmap();
-
-	if (pixmap && !pixmap->isNull())
+	if (!mAvatar.isNull())
 	{
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
 		buffer.open(QIODevice::WriteOnly);
-		pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
+		mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 		mEditGroup.mImage.copy((uint8_t *) ba.data(), ba.size());
 	}
@@ -525,7 +539,6 @@ void IdEditDialog::updateId()
 
 	uint32_t dummyToken = 0;
 	rsIdentity->updateIdentity(dummyToken, mEditGroup);
-
 
 	mLastIdName = groupname;
 	close();
@@ -538,17 +551,4 @@ void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &
 
 	// only one here!
 	loadExistingId(req.mToken);
-}
-
-void IdEditDialog::removeAvatar()
-{
-	/* submit updated details */
-	std::string groupname = ui.lineEdit_Nickname->text().toUtf8().constData();
-	
-	mEditGroup.mMeta.mGroupName = groupname;
-	mEditGroup.mImage.clear();
-	ui.avatarLabel->setPixmap(QPixmap());
-	
-	uint32_t dummyToken = 0;
-	rsIdentity->updateIdentity(dummyToken, mEditGroup);
 }

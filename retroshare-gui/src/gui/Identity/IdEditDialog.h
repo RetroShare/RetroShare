@@ -24,16 +24,18 @@
 #ifndef IDEDITDIALOG_H
 #define IDEDITDIALOG_H
 
-#include "ui_IdEditDialog.h"
-
 #include <inttypes.h>
 
 #include "util/TokenQueue.h"
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsgxsifacetypes.h>
-#include <QString>
+#include <QDialog>
 
 class UIStateHelper;
+
+namespace Ui {
+class IdEditDialog;
+}
 
 class IdEditDialog : public QDialog, public TokenResponse
 {
@@ -54,10 +56,9 @@ private slots:
 	void idTypeToggled(bool checked);
 	void submit();
 
-    void changeAvatar() ;
-    void removeAvatar();
+	void changeAvatar();
 
-    void addRecognTag();
+	void addRecognTag();
 	void checkNewTag();
 	void rmTag1();
 	void rmTag2();
@@ -70,21 +71,24 @@ private:
 	void updateId();
 	void updateIdType(bool pseudo);
 	void loadExistingId(uint32_t token);
+	void setAvatar(const QPixmap &avatar);
 
 	void loadRecognTags();
 	// extract details.
-    bool tagDetails(const RsGxsId &id, const std::string &name, const std::string &tag, QString &desc);
+	bool tagDetails(const RsGxsId &id, const std::string &name, const std::string &tag, QString &desc);
 	void rmTag(int idx);
 	
 protected:
-	Ui::IdEditDialog ui;
+	Ui::IdEditDialog *ui;
 	bool mIsNew;
 	UIStateHelper *mStateHelper;
-	
+
 	RsGxsIdGroup mEditGroup;
 
 	TokenQueue *mIdQueue;
 	std::string mLastIdName;
+
+	QPixmap mAvatar; // Avatar from identity (not calculated)
 };
 
 #endif

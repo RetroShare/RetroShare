@@ -23,96 +23,90 @@
 
 #include <QBuffer>
 
-#include "gui/common/AvatarDialog.h"
-#include "gui/common/AvatarDefs.h"
-
-#include "gui/gxs/GxsIdDetails.h"
-#include "util/TokenQueue.h"
+#include "AvatarDialog.h"
+#include "ui_AvatarDialog.h"
+#include "AvatarDefs.h"
 #include "util/misc.h"
 
-#include <retroshare/rsidentity.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
-
-#include <iostream>
-
-
 /** Constructor */
-AvatarDialog::AvatarDialog(QWidget *parent)
-: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+AvatarDialog::AvatarDialog(QWidget *parent) :
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+    ui(new(Ui::AvatarDialog))
 {
 	/* Invoke Qt Designer generated QObject setup routine */
-	ui.setupUi(this);
-	
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/no_avatar_70.png"));
-	ui.headerFrame->setHeaderText(tr("Set your Avatar picture"));
+	ui->setupUi(this);
 
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/no_avatar_70.png"));
+	ui->headerFrame->setHeaderText(tr("Set your Avatar picture"));
 
-	connect(ui.avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
-	connect(ui.removeButton, SIGNAL(clicked(bool)), this, SLOT(removeAvatar()));
-	
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(saveAvatar()));
-	
-	loadOwnAvatar();
+	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
+	connect(ui->removeButton, SIGNAL(clicked(bool)), this, SLOT(removeAvatar()));
 
+	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
+	updateInterface();
 }
 
 AvatarDialog::~AvatarDialog()
 {
+	delete(ui);
 }
 
 void AvatarDialog::changeAvatar()
 {
-  QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), 128, 128);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), 128, 128);
 
-  if (img.isNull())
-    return;
+	if (img.isNull())
+		return;
 
-  ui.avatarLabel->setPixmap(img) ;
-  
-}
-
-void AvatarDialog::loadOwnAvatar()
-{
-    RsPeerDetails pd ;
-    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-      QPixmap avatar;
-      AvatarDefs::getOwnAvatar(avatar);
-      ui.avatarLabel->setPixmap(avatar);
-      return;
-    }
+	ui->avatarLabel->setPixmap(img);
+	updateInterface();
 }
 
 void AvatarDialog::removeAvatar()
 {
-   ui.avatarLabel->setPixmap(NULL);
+	ui->avatarLabel->setPixmap(QPixmap());
+	updateInterface();
 }
 
-void AvatarDialog::saveAvatar()
-{	
-	  const QPixmap *pixmap = ui.avatarLabel->pixmap();
-
-    if (!pixmap->isNull())
-    {
-        QByteArray ba;
-        QBuffer buffer(&ba);
-
-        buffer.open(QIODevice::WriteOnly);
-        pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
-
-        rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size()) ;	// last char 0 included.
-
-    }
-
-    close();
-}
-
-void AvatarDialog::setAvatar(const RsGxsImage &avatar)
-{ 
-
-}
- 
-void AvatarDialog::getAvatar(RsGxsImage &avatar)
+void AvatarDialog::updateInterface()
 {
+	const QPixmap *pixmap = ui->avatarLabel->pixmap();
+	if (pixmap && !pixmap->isNull()) {
+		ui->removeButton->setEnabled(true);
+	} else {
+		ui->removeButton->setEnabled(false);
+	}
+}
 
+void AvatarDialog::setAvatar(const QPixmap &avatar)
+{
+	ui->avatarLabel->setPixmap(avatar);
+	updateInterface();
+}
+
+void AvatarDialog::getAvatar(QPixmap &avatar)
+{
+	const QPixmap *pixmap = ui->avatarLabel->pixmap();
+	if (!pixmap) {
+		avatar = QPixmap();
+		return;
+	}
+
+	avatar = *pixmap;
+}
+
+void AvatarDialog::getAvatar(QByteArray &avatar)
+{
+	const QPixmap *pixmap = ui->avatarLabel->pixmap();
+	if (!pixmap) {
+		avatar.clear();
+		return;
+	}
+
+	QBuffer buffer(&avatar);
+
+	buffer.open(QIODevice::WriteOnly);
+	pixmap->save(&buffer, "PNG"); // writes image into ba in PNG format
 }

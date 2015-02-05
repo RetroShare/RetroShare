@@ -218,17 +218,17 @@
               <height>128</height>
              </size>
             </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
             <property name="text">
              <string extracomment="Click here to change your avatar">Your Avatar</string>
             </property>
-            <property name="scaledContents">
-             <bool>true</bool>
-            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -236,16 +236,6 @@
            <widget class="QPushButton" name="avatarButton">
             <property name="text">
              <string>Set Avatar</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="removeButton">
-            <property name="toolTip">
-             <string>Remove Avatar</string>
-            </property>
-            <property name="text">
-             <string>Remove</string>
             </property>
            </widget>
           </item>
