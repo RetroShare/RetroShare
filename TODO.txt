@@ -9,7 +9,8 @@ List of fixes/improvements before 0.6
    Forums
       [ ] it's not possible to create a Forum thread without a Owner. 
           Bug? If not, then remove "No signature" from selection box
-      [ ] the tooltip over GXS ids should show the avatar on the left side.
+      [X] the tooltip over GXS ids should show the avatar on the left side.
+		[ ] fix data race between GXS ID default icons
    
    GUI General
       [ ] do we keep "Getting Started" ? the look needs to be improved
@@ -32,6 +33,7 @@ List of fixes/improvements before 0.6
    Chat
       [ ] Distant chat window should show GXS avatars
       [ ] Distant chat should work with shared identities
+      [ ] You should not be enabled to distant-chat yourself!
    
    Identities:
       [ ] "Owned by you" => "Owned by node [nodename]" 
