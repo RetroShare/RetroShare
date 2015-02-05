@@ -62,10 +62,11 @@
 #define RSIDREP_COL_COMMENT    2
 #define RSIDREP_COL_REPUTATION 3
 
-#define RSID_FILTER_YOURSELF     0x0001
+#define RSID_FILTER_OWNED_BY_YOU 0x0001
 #define RSID_FILTER_FRIENDS      0x0002
 #define RSID_FILTER_OTHERS       0x0004
 #define RSID_FILTER_PSEUDONYMS   0x0008
+#define RSID_FILTER_YOURSELF     0x0010
 #define RSID_FILTER_ALL          0xffff
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
@@ -154,11 +155,12 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->splitter->setStretchFactor(1, 0);
 
 	/* Add filter types */
-	ui->filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
-	ui->filterComboBox->addItem(tr("Owned by you"), RSID_FILTER_YOURSELF);
-	ui->filterComboBox->addItem(tr("Owned by neighbor nodes"), RSID_FILTER_FRIENDS);
-	ui->filterComboBox->addItem(tr("Owned by distant nodes"), RSID_FILTER_OTHERS);
-	ui->filterComboBox->addItem(tr("Anonymous"), RSID_FILTER_PSEUDONYMS);
+    ui->filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
+    ui->filterComboBox->addItem(tr("Owned by you"), RSID_FILTER_OWNED_BY_YOU);
+    ui->filterComboBox->addItem(tr("Linked to your node"), RSID_FILTER_YOURSELF);
+    ui->filterComboBox->addItem(tr("Linked to neighbor nodes"), RSID_FILTER_FRIENDS);
+    ui->filterComboBox->addItem(tr("Linked to distant nodes"), RSID_FILTER_OTHERS);
+    ui->filterComboBox->addItem(tr("Anonymous"), RSID_FILTER_PSEUDONYMS);
 	ui->filterComboBox->setCurrentIndex(0);
 
 	/* Add filter actions */
@@ -310,62 +312,58 @@ void IdDialog::requestIdList()
 
 bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
 {
-	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+    bool isLinkedToOwnNode = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
+    bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+    uint32_t item_flags = 0 ;
 
 	/* do filtering */
 	bool ok = false;
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		if (isOwnId && (accept & RSID_FILTER_YOURSELF))
-		{
-			ok = true;
-		}
-		else
-		{
-			if (data.mPgpKnown)
-			{
-				if (accept & RSID_FILTER_FRIENDS)
-				{
-					ok = true;
-				}
-			}
-			else
-			{
-				if (accept & RSID_FILTER_OTHERS)
-				{
-					ok = true;
-				}
-			}
-		}
-	}
-	else
-	{
-		if (accept & RSID_FILTER_PSEUDONYMS)
-		{
-			ok = true;
-		}
+    {
+        if (isLinkedToOwnNode && (accept & RSID_FILTER_YOURSELF))
+        {
+            ok = true;
+            item_flags |= RSID_FILTER_YOURSELF ;
+        }
 
-		if (isOwnId && (accept & RSID_FILTER_YOURSELF))
-		{
-			ok = true;
-		}
-	}
+        if (data.mPgpKnown && (accept & RSID_FILTER_FRIENDS))
+        {
+            ok = true;
+            item_flags |= RSID_FILTER_FRIENDS ;
+        }
+
+        if (accept & RSID_FILTER_OTHERS)
+        {
+            ok = true;
+            item_flags |= RSID_FILTER_OTHERS ;
+        }
+    }
+    else if (accept & RSID_FILTER_PSEUDONYMS)
+    {
+            ok = true;
+            item_flags |= RSID_FILTER_PSEUDONYMS ;
+    }
+
+    if (isOwnId && (accept & RSID_FILTER_OWNED_BY_YOU))
+    {
+        ok = true;
+            item_flags |= RSID_FILTER_OWNED_BY_YOU ;
+    }
 
 	if (!ok)
-	{
 		return false;
-	}
 
 	if (!item)
-	{
-		item = new QTreeWidgetItem();
-	}
+        item = new QTreeWidgetItem();
+
 	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()));
-	item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+    item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+
+    item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
 
 	 if(isOwnId)
 	 {
-		QFont font = item->font(RSID_COL_NICKNAME) ;
+        QFont font = item->font(RSID_COL_NICKNAME) ;
 		font.setBold(true) ;
 		item->setFont(RSID_COL_NICKNAME,font) ;
 		item->setFont(RSID_COL_IDTYPE,font) ;
@@ -593,27 +591,28 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->PgpName_LB->show() ;
 	}
 
-	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+    bool isLinkedToOwnPgpId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
+    bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 
-	if(isOwnId)
-		if (data.mPgpKnown)
-			ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
-		else
-			ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
-	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		if (data.mPgpKnown)
-			if (rsPeers->isGPGAccepted(data.mPgpId))
-				ui->lineEdit_Type->setText(tr("Owned by a friend Retroshare node")) ;
-			else
-				ui->lineEdit_Type->setText(tr("Owned by 2-hops Retroshare node")) ;
-		else
-			ui->lineEdit_Type->setText(tr("Owned by unknown Retroshare node")) ;
-	}
-	else
-		ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
+    if(isOwnId)
+        if (isLinkedToOwnPgpId)
+            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
+        else
+            ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
+    else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+    {
+        if (data.mPgpKnown)
+            if (rsPeers->isGPGAccepted(data.mPgpId))
+                ui->lineEdit_Type->setText(tr("Linked to a friend Retroshare node")) ;
+            else
+                ui->lineEdit_Type->setText(tr("Linked to a known Retroshare node")) ;
+        else
+            ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
+    }
+    else
+        ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
 
-//	if (isOwnId)
+    //	if (isOwnId)
 //	{
 //		ui->radioButton_IdYourself->setChecked(true);
 //	}
@@ -941,38 +940,44 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	QMenu contextMnu( this );
 
 	std::list<RsGxsId> own_identities ;
-	rsIdentity->getOwnIds(own_identities) ;
+    rsIdentity->getOwnIds(own_identities) ;
 
-	if(own_identities.size() <= 1)
-	{
-		QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+    QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+    uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
+
+    if(!(item_flags & RSID_FILTER_OWNED_BY_YOU))
+    {
+        if(own_identities.size() <= 1)
+        {
+            QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 
-		if(own_identities.empty())
-			action->setEnabled(false) ;
-		else
-			action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
-	}
-	else
-	{
-		QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+            if(own_identities.empty())
+                action->setEnabled(false) ;
+            else
+                action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+        }
+        else
+        {
+            QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
 
-		for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
-		{
-			RsIdentityDetails idd ;
-			rsIdentity->getIdDetails(*it,idd) ;
+            for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+            {
+                RsIdentityDetails idd ;
+                rsIdentity->getIdDetails(*it,idd) ;
 
-            QPixmap pixmap ;
+                QPixmap pixmap ;
 
-            if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-                pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+                if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+                    pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
 
-			QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
-			action->setData(QString::fromStdString((*it).toStdString())) ;
-		}
-	}
-	
-	contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+                QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
+                action->setData(QString::fromStdString((*it).toStdString())) ;
+            }
+        }
+
+        contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+    }
 	
 	contextMnu.addSeparator();
 
@@ -1018,7 +1023,7 @@ void IdDialog::sendMsg()
 		return;
 	}
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+    std::string keyId = item->text(RSID_COL_KEYID).toStdString();
 
     nMsgDialog->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
 		nMsgDialog->show();
