@@ -80,7 +80,6 @@ signals:
 
 protected:
 	void connectObject_locked(QObject *object, bool doConnect);
-    QImage makeDefaultIconLocal_locked(const RsGxsId& id);
 
 	/* Timer */
 	virtual void timerEvent(QTimerEvent *event);
@@ -128,7 +127,6 @@ protected:
 
 	/* Thread safe */
 	QMutex mMutex;
-    QMutex mMutex2;
 };
 
 #endif

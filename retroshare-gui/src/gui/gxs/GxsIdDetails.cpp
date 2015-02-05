@@ -338,25 +338,9 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  * Bring the source code from this adaptation:
  * http://francisshanahan.com/identicon5/test.html
  */
-QImage GxsIdDetails::makeDefaultIconLocal_locked(const RsGxsId& id)
-{
-    QMutexLocker lock(&mMutex2);
-
-    std::map<RsGxsId,QImage>::const_iterator it = image_cache.find(id) ;
-
-    if(it != image_cache.end())
-		return it->second ;
-
-    image_cache[id] = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
-
-    return image_cache[id] ;
-}
 QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 {
-//    if(mInstance != NULL)
-//        return mInstance->makeDefaultIconLocal_locked(id) ;
- //   else
-        return  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    return  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
 }
 
 /**
