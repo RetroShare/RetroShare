@@ -74,6 +74,9 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+	
+	void setHideIdColumn(bool hide);
+	void setHideIdTypeColumn(bool hide);
 
 private:
 	void processSettings(bool load);
@@ -92,14 +95,21 @@ private:
 
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
+	
+  void initializeHeader(bool);
 
 private:
 	TokenQueue *mIdQueue;
 	UIStateHelper *mStateHelper;
 
 	RsGxsGroupId mId;
+	
+	    /** Defines the actions for the header context menu */
+  QAction* hideIdAct;
+	QAction* hideTypeAct; 
+		int getNumColVisible();
 
-	/* UI - from Designer */
+	/* UI -  Designer */
 	Ui::IdDialog *ui;
 };
 

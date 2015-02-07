@@ -170,13 +170,20 @@ IdDialog::IdDialog(QWidget *parent) :
 	headerText = headerItem->text(RSID_COL_KEYID);
 	ui->filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
 
-	/* Set header resize modes and initial section sizes ID TreeView*/
-	QHeaderView * _idheader = ui->treeWidget_IdList->header () ;
-	_idheader->resizeSection ( RSID_COL_NICKNAME, 170 );
+	initializeHeader(true);
 
 	/* Setup tree */
 	ui->treeWidget_IdList->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
 	ui->treeWidget_IdList->setContextMenuPolicy(Qt::CustomContextMenu) ;
+	
+	/** Setup the actions for the header context menu */
+	hideIdAct= new QAction(headerItem->text(RSID_COL_KEYID),this);
+	hideIdAct->setCheckable(true); hideIdAct->setToolTip(tr("Show ")+hideIdAct->text()+tr(" Column"));
+	connect(hideIdAct,SIGNAL(triggered(bool)),this,SLOT(setHideIdColumn(bool))) ;
+	
+	hideTypeAct= new QAction(headerItem->text(RSID_COL_IDTYPE),this);
+	hideTypeAct->setCheckable(true); hideTypeAct->setToolTip(tr("Show ")+hideTypeAct->text()+tr(" Column"));
+	connect(hideTypeAct,SIGNAL(triggered(bool)),this,SLOT(setHideIdTypeColumn(bool))) ;
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
@@ -220,6 +227,18 @@ IdDialog::~IdDialog()
 
 	delete(ui);
 	delete(mIdQueue);
+}
+
+void IdDialog::initializeHeader(bool )
+{
+    /* Set header resize modes and initial section sizes ID TreeView*/
+    QHeaderView * _idheader = ui->treeWidget_IdList->header () ;
+    _idheader->resizeSection ( RSID_COL_NICKNAME, 170 );
+    _idheader->resizeSection ( RSID_COL_KEYID, 120 );
+    _idheader->resizeSection ( RSID_COL_IDTYPE, 170 );
+  
+
+
 }
 
 void IdDialog::todo()
@@ -983,6 +1002,15 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
 	contextMnu.addAction(ui->editIdentity);
 	contextMnu.addAction(ui->removeIdentity);
+	
+	contextMnu.addSeparator();
+
+	hideIdAct->setChecked(!ui->treeWidget_IdList->isColumnHidden(RSID_COL_KEYID));
+	hideTypeAct->setChecked(!ui->treeWidget_IdList->isColumnHidden(RSID_COL_IDTYPE));
+
+	QMenu *menu = contextMnu.addMenu(tr("Columns"));
+	menu->addAction(hideIdAct);
+	menu->addAction(hideTypeAct);
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -1031,4 +1059,35 @@ void IdDialog::sendMsg()
 
     /* window will destroy itself! */
 
+}
+
+void IdDialog::setHideIdColumn(bool show)
+{
+	if (ui->treeWidget_IdList->isColumnHidden(RSID_COL_KEYID) == show) {
+		ui->treeWidget_IdList->setColumnHidden(RSID_COL_KEYID, !show);
+	}
+	ui->treeWidget_IdList->header()->setVisible(getNumColVisible()>1);
+	
+	initializeHeader(true);
+}
+
+void IdDialog::setHideIdTypeColumn(bool show)
+{
+	if (ui->treeWidget_IdList->isColumnHidden(RSID_COL_IDTYPE) == show) {
+		ui->treeWidget_IdList->setColumnHidden(RSID_COL_IDTYPE, !show);
+	}
+	ui->treeWidget_IdList->header()->setVisible(getNumColVisible()>1);
+	
+	initializeHeader(true);
+}
+
+int IdDialog::getNumColVisible()
+{
+	int iNumColVis=0;
+	for (int iColumn = 0; iColumn <RSID_COL_IDTYPE; ++iColumn) {
+		if (!ui->treeWidget_IdList->isColumnHidden(iColumn)) {
+			++iNumColVis;
+		}
+	}
+    return iNumColVis;
 }
