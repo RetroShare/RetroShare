@@ -23,6 +23,8 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsidentity.h>
+#include <gui/gxs/GxsIdDetails.h>
 
 #include "AvatarDefs.h"
 
@@ -44,37 +46,57 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 
 	delete[] data;
 }
+void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage)
+{
+    unsigned char *data = NULL;
+    int size = 0;
 
-void AvatarDefs::getAvatarFromSslId(const std::string& sslId, QPixmap &avatar, const QString& defaultImage)
+    /* get avatar */
+    rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
+    if (size == 0) {
+        avatar = QPixmap(defaultImage);
+        return;
+    }
+
+    /* load image */
+    avatar.loadFromData(data, size, "PNG") ;
+
+    delete[] data;
+}
+void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
 {
 	unsigned char *data = NULL;
-	int size = 0;
+    int size = 0;
 
-	/* get avatar */
-    rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
-	if (size == 0) {
-		avatar = QPixmap(defaultImage);
-		return;
-	}
+    /* get avatar */
+    RsIdentityDetails details ;
 
-	/* load image */
-	avatar.loadFromData(data, size, "PNG") ;
+    if(!rsIdentity->getIdDetails(gxsId, details))
+    {
+        avatar = QPixmap(defaultImage);
+        return ;
+    }
+
+    /* load image */
+
+        if(details.mAvatar.mSize == 0 || !avatar.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
+            avatar = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(gxsId));
 
 	delete[] data;
 }
 
-void AvatarDefs::getAvatarFromGpgId(const std::string& gpgId, QPixmap &avatar, const QString& defaultImage)
+void AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)
 {
 	unsigned char *data = NULL;
 	int size = 0;
 
-    if (RsPgpId(gpgId) == rsPeers->getGPGOwnId()) {
+    if (gpgId == rsPeers->getGPGOwnId()) {
 		/* Its me */
 		rsMsgs->getOwnAvatarData(data,size);
 	} else {
 		/* get the first available avatar of one of the ssl ids */
         std::list<RsPeerId> sslIds;
-        if (rsPeers->getAssociatedSSLIds(RsPgpId(gpgId), sslIds)) {
+        if (rsPeers->getAssociatedSSLIds(gpgId, sslIds)) {
             std::list<RsPeerId>::iterator sslId;
 			for (sslId = sslIds.begin(); sslId != sslIds.end(); ++sslId) {
 				rsMsgs->getAvatarData(*sslId, data, size);

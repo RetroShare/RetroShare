@@ -58,7 +58,7 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-    RsPeerId mPeerId;
+    ChatId mPeerId;
 	std::string mMsgId;
 
 	bool mIsHome;

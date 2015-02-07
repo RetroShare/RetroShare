@@ -73,7 +73,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 
 	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
-	avatar->setId(mSslId);
+    avatar->setId(ChatId(mSslId));
 
 	expandFrame->hide();
 

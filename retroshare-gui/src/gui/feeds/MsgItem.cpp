@@ -80,18 +80,32 @@ void MsgItem::updateItemStatic()
 	if (!rsMsgs->getMessage(mMsgId, mi))
 		return;
 
-	/* get peer Id */
-    mPeerId = mi.rspeerid_srcId;
+    /* get peer Id */
+
+    if(mi.msgflags & RS_MSG_SIGNED)
+        mPeerId = ChatId(mi.rsgxsid_srcId);
+    else
+        mPeerId = ChatId(mi.rspeerid_srcId);
 
     avatar->setId(mPeerId);
 
 	QString title;
-	QString srcName;
-    if ((mi.msgflags & RS_MSG_SYSTEM) && mi.rspeerid_srcId == rsPeers->getOwnId()) {
+    QString srcName;
+
+    if ((mi.msgflags & RS_MSG_SYSTEM) && mi.rspeerid_srcId == rsPeers->getOwnId())
 		srcName = "RetroShare";
-	} else {
-        srcName = QString::fromUtf8(rsPeers->getPeerName(mi.rspeerid_srcId).c_str());
-	}
+    else
+    {
+        if(mi.msgflags & RS_MSG_SIGNED)
+        {
+            RsIdentityDetails details ;
+            rsIdentity->getIdDetails(mi.rsgxsid_srcId, details) ;
+
+            srcName = QString::fromUtf8(details.mNickname.c_str());
+        }
+        else
+            srcName = QString::fromUtf8(rsPeers->getPeerName(mi.rspeerid_srcId).c_str());
+    }
 
 	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
 
@@ -102,7 +116,7 @@ void MsgItem::updateItemStatic()
 	else
 	{
 		/* subject */
-		uint32_t box = mi.msgflags & RS_MSG_BOXMASK;
+        uint32_t box = mi.msgflags & RS_MSG_BOXMASK;
 		switch(box)
 		{
 			case RS_MSG_SENTBOX:

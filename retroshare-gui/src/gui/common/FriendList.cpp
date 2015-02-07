@@ -562,7 +562,7 @@ void FriendList::updateAvatar(const QString& id)
         if ((*it)->type() == TYPE_SSL && id == (*it)->data(COLUMN_DATA, ROLE_ID).toString()) {
             if ((*it)->parent() != NULL && (*it)->parent()->type() == TYPE_GPG) {
                 QPixmap avatar;
-                AvatarDefs::getAvatarFromSslId(id.toStdString(), avatar);
+                AvatarDefs::getAvatarFromSslId(RsPeerId(id.toStdString()), avatar);
                 QIcon avatar_icon(avatar);
                 (*it)->parent()->setIcon(COLUMN_AVATAR, avatar_icon);
             }
@@ -1145,7 +1145,7 @@ void  FriendList::insertPeers()
                 // only set the avatar image the first time, or when it changed
                 // otherwise getAvatarFromSslId sends request packages to peers.
                 QPixmap avatar;
-                AvatarDefs::getAvatarFromSslId(bestSslId.toStdString(), avatar);
+                AvatarDefs::getAvatarFromSslId(bestSslId, avatar);
                 QIcon avatar_icon(avatar);
                 gpgItem->setIcon(COLUMN_AVATAR, avatar_icon);
             }

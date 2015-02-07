@@ -59,7 +59,7 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
-    avatar->setId(RsPeerId(mPeerId));// TODO: remove unnecesary converstation
+    avatar->setId(ChatId(mPeerId));// TODO: remove unnecesary converstation
 
     expandFrame->hide();
 

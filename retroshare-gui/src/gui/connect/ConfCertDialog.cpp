@@ -189,7 +189,7 @@ void ConfCertDialog::load()
 
     if (!detail.isOnlyGPGdetail) 
 	 {
-		 ui.avatar->setId(peerId);
+         ui.avatar->setId(ChatId(peerId));
 
 		 ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
 		 // Dont Show a timestamp in RS calculate the day

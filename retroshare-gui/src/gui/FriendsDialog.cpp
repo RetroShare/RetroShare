@@ -87,8 +87,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
 
-    ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
+    ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));

@@ -58,9 +58,8 @@ void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
 	/* Hide or show the avatar frames */
     showAvatarFrame(PeerSettings->getShowAvatarFrame(chat_id));
 
-	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-    ui.avatarWidget->setId(chat_id.toPeerId()); // not 100% correct, since this code is also used for distant chat
-                                                // but distance peers don't have a status anyway
+    ui.avatarWidget->setId(chat_id);
+    ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 
 	ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.ownAvatarWidget->setOwnId();
