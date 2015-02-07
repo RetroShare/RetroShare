@@ -36,6 +36,7 @@
 #include "rsgixs.h"
 #include "rsgxsutil.h"
 
+#include <algorithm>
 
 #define PUB_GRP_MASK     0x000f
 #define RESTR_GRP_MASK   0x00f0
@@ -2526,7 +2527,12 @@ void RsGenExchange::processRecvdMessages()
         {
             meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
             msgs.insert(std::make_pair(msg, meta));
-            msgIds[msg->grpId].push_back(msg->msgId);
+
+            std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
+            if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
+            {
+                msgv.push_back(msg->msgId);
+            }
 
             NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
                                                                     getMsgIdPair(*msg));
@@ -2900,7 +2906,13 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 			RsGxsMessageId::std_vector::iterator it2 = std::find(notifyIds.begin(),
 					notifyIds.end(), cit2->second->mMsgId);
 			if(it2 != notifyIds.end())
+			{
 				notifyIds.erase(it2);
+				if (notifyIds.empty())
+				{
+					msgIdsNotify.erase(cit2->second->mGroupId);
+				}
+			}
 #ifdef GEN_EXCH_DEBUG
 			std::cerr << "    discarding " << cit2->second->mMsgId << std::endl;
 #endif

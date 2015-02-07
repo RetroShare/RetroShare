@@ -47,7 +47,7 @@ List of fixes/improvements before 0.6
    
    News feed
       [X] remove the Ghost news feed items
-      [ ] remove the double feed publication
+      [X] remove the double feed publication
    
 	libretroshare
 		[ ] fix the data race in pqissl
