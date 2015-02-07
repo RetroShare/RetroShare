@@ -2606,6 +2606,8 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrp *item)
 
 void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 {
+	if (!item)
+		return;
 
 	RS_STACK_MUTEX(mNxsMutex) ;
 
@@ -2956,6 +2958,9 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
 }
 void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 {
+	if (!item)
+		return;
+
 	RS_STACK_MUTEX(mNxsMutex) ;
 
     // We do that early, so as to get info about who sends data about which group,
@@ -3366,6 +3371,10 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 #ifdef NXS_NET_DEBUG
     std::cerr << "RsGxsNetService::sharePublishKeys() " << std::endl;
 #endif
+
+	if (!item)
+		return;
+
 	RS_STACK_MUTEX(mNxsMutex) ;
 
 #ifdef NXS_NET_DEBUG
