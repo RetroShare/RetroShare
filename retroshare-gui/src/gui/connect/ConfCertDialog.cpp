@@ -135,6 +135,16 @@ ConfCertDialog::~ConfCertDialog()
     }
 }
 
+
+void ConfCertDialog::setServiceFlags()
+{
+    ServicePermissionFlags flags(0) ;
+
+    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DIRECT_DL ;
+
+    rsPeers->setServicePermissionFlags(pgpId,flags) ;
+}
+
 void ConfCertDialog::loadAll()
 {
     for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); ++it)  it.value()->load();
@@ -164,6 +174,8 @@ void ConfCertDialog::load()
 		 ui.make_friend_button->setEnabled(true) ;
 		 ui.make_friend_button->setToolTip("") ;
 	 }
+
+	 ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL ) ;
 
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
@@ -478,6 +490,8 @@ void ConfCertDialog::applyDialog()
             emit configChanged();
     }
 
+	 setServiceFlags() ;
+
     loadAll();
     close();
 }
@@ -489,6 +503,7 @@ void ConfCertDialog::makeFriend()
     } 
 	
     rsPeers->addFriend(peerId, pgpId);
+	 setServiceFlags() ;
     loadAll();
 
     emit configChanged();
