@@ -45,12 +45,14 @@ public:
     virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages) = 0;
 
     /*!
-     * @param messages messages are deleted after function returns
+     * @param groups groups are deleted after function returns
      */
     virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups) = 0;
 
-
-
+    /*!
+     * @param grpId group id
+     */
+    virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId) = 0;
 };
 
 #endif // RSNXSOBSERVER_H

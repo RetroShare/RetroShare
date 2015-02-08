@@ -110,35 +110,59 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			for(it = changes.begin(); it != changes.end(); ++it)
 			{
 				RsGxsNotify *c = *it;
-				if (c->getType() == RsGxsNotify::TYPE_RECEIVE)
+
+				switch (c->getType())
 				{
-					RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
-					if (msgChange)
+					case RsGxsNotify::TYPE_PROCESSED:
+					case RsGxsNotify::TYPE_PUBLISH:
+						break;
+
+					case RsGxsNotify::TYPE_RECEIVE:
 					{
-						std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-						std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-						for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+						RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
+						if (msgChange)
 						{
-							std::vector<RsGxsMessageId>::iterator mit1;
-							for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+							for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 							{
-								notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
+								std::vector<RsGxsMessageId>::iterator mit1;
+								for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+								{
+									notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
+								}
 							}
+							continue;
 						}
-						continue;
+
+						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+						if (grpChange)
+						{
+							/* group received */
+							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+							std::list<RsGxsGroupId>::iterator git;
+							for (git = grpList.begin(); git != grpList.end(); ++git)
+							{
+								notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
+							}
+							continue;
+						}
 					}
 
-					RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
-					if (grpChange)
+					case RsGxsNotify::TYPE_PUBLISHKEY:
 					{
-						/* group received */
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
+						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+						if (grpChange)
 						{
-							notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
+							/* group received */
+							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+							std::list<RsGxsGroupId>::iterator git;
+							for (git = grpList.begin(); git != grpList.end(); ++git)
+							{
+								notify->AddFeedItem(RS_FEED_ITEM_FORUM_PUBLISHKEY, git->toStdString());
+							}
+							continue;
 						}
-						continue;
 					}
 				}
 			}

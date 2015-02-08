@@ -3428,11 +3428,15 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
      it->second = item->key ;
      bool ret = mDataStore->updateGroupKeys(item->grpId,grpMeta->keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
 
-	 if(!ret)
-		 std::cerr << "(EE) could not update database. Something went wrong." << std::endl;
+	if(ret)
+	{
 #ifdef NXS_NET_DEBUG
-	 else
-		 std::cerr << "  updated database with new publish keys." << std::endl;
+		std::cerr << "  updated database with new publish keys." << std::endl;
 #endif
+		mObserver->notifyReceivePublishKey(item->grpId);
+	}
+	else
+	{
+		std::cerr << "(EE) could not update database. Something went wrong." << std::endl;
+	}
 }
-

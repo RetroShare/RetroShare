@@ -144,12 +144,17 @@ public:
     /*!
      * @param messages messages are deleted after function returns
      */
-    void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
+    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
 
     /*!
-     * @param messages messages are deleted after function returns
+     * @param groups groups are deleted after function returns
      */
-    void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+
+    /*!
+     * @param grpId group id
+     */
+    virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
 
     /** E: Observer implementation **/
 

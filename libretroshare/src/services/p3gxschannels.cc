@@ -197,17 +197,38 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		}
 		else
 		{
-			if (notify && (*it)->getType() == RsGxsNotify::TYPE_RECEIVE)
+			if (notify)
 			{
-				RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+				RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
 				if (grpChange)
 				{
-					/* group received */
-					std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-					std::list<RsGxsGroupId>::iterator git;
-					for (git = grpList.begin(); git != grpList.end(); ++git)
+					switch (grpChange->getType())
 					{
-						notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
+						case RsGxsNotify::TYPE_PROCESSED:
+						case RsGxsNotify::TYPE_PUBLISH:
+							break;
+
+						case RsGxsNotify::TYPE_RECEIVE:
+						{
+							/* group received */
+							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+							std::list<RsGxsGroupId>::iterator git;
+							for (git = grpList.begin(); git != grpList.end(); ++git)
+							{
+								notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
+							}
+						}
+
+						case RsGxsNotify::TYPE_PUBLISHKEY:
+						{
+							/* group received */
+							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+							std::list<RsGxsGroupId>::iterator git;
+							for (git = grpList.begin(); git != grpList.end(); ++git)
+							{
+								notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_PUBLISHKEY, git->toStdString());
+							}
+						}
 					}
 				}
 			}

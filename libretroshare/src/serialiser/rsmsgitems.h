@@ -65,7 +65,6 @@ const uint32_t RS_MSG_FLAGS_STAR                  = 0x00000200;
 const uint32_t RS_MSG_FLAGS_PARTIAL               = 0x00000400;
 const uint32_t RS_MSG_FLAGS_USER_REQUEST          = 0x00000800;
 const uint32_t RS_MSG_FLAGS_FRIEND_RECOMMENDATION = 0x00001000;
-const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
 const uint32_t RS_MSG_FLAGS_RETURN_RECEPT         = 0x00002000;
 const uint32_t RS_MSG_FLAGS_ENCRYPTED             = 0x00004000;
 const uint32_t RS_MSG_FLAGS_DISTANT               = 0x00008000;
@@ -74,6 +73,9 @@ const uint32_t RS_MSG_FLAGS_SIGNED                = 0x00020000;
 const uint32_t RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES  = 0x00040000;
 const uint32_t RS_MSG_FLAGS_DECRYPTED             = 0x00080000;
 const uint32_t RS_MSG_FLAGS_ROUTED                = 0x00100000;
+const uint32_t RS_MSG_FLAGS_PUBLISH_KEY           = 0x00200000;
+
+const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION | RS_MSG_FLAGS_PUBLISH_KEY;
 
 class RsMessageItem: public RsItem
 {

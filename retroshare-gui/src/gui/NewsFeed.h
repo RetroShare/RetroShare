@@ -118,9 +118,11 @@ private:
 
 	virtual void loadChannelGroup(const uint32_t &token);
 	virtual void loadChannelPost(const uint32_t &token);
+	virtual void loadChannelPublishKey(const uint32_t &token);
 
 	virtual void loadForumGroup(const uint32_t &token);
 	virtual void loadForumMessage(const uint32_t &token);
+	virtual void loadForumPublishKey(const uint32_t &token);
 
 	virtual void loadPostedGroup(const uint32_t &token);
 	virtual void loadPostedMessage(const uint32_t &token);

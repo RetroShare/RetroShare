@@ -1007,7 +1007,7 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 		}
 		else
 		{
-#warning cyril: very weird code. Why delete an element without removing it from the array??
+#warning cyril: very weird code. Why delete an element without removing it from the array
 			delete n;	
 		}
 	}
@@ -1508,6 +1508,14 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 
 }
 
+void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
+{
+	RS_STACK_MUTEX(mGenMtx);
+
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHKEY, false);
+	gc->mGrpIdList.push_back(grpId);
+	mNotifications.push_back(gc);
+}
 
 void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 {

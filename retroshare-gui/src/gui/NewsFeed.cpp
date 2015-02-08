@@ -79,8 +79,9 @@ const uint32_t NEWSFEED_POSTEDMSGLIST =  0x000c;
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
-#define TOKEN_TYPE_GROUP    1
-#define TOKEN_TYPE_MESSAGE  2
+#define TOKEN_TYPE_GROUP      1
+#define TOKEN_TYPE_MESSAGE    2
+#define TOKEN_TYPE_PUBLISHKEY 3
 
 /*****
  * #define NEWS_DEBUG  1
@@ -255,6 +256,27 @@ void NewsFeed::updateDisplay()
 				if (flags & RS_FEED_TYPE_CHANNEL)
 					addFeedItemChannelMsg(fi);
 				break;
+			case RS_FEED_ITEM_CHANNEL_PUBLISHKEY:
+				{
+					if (!mTokenQueueChannel) {
+						mTokenQueueChannel = new TokenQueue(rsGxsChannels->getTokenService(), instance);
+					}
+
+					RsGxsGroupId grpId(fi.mId1);
+					if (!grpId.isNull()) {
+						RsTokReqOptions opts;
+						opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+						std::list<RsGxsGroupId> grpIds;
+						grpIds.push_back(grpId);
+
+						uint32_t token;
+						mTokenQueueChannel->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_PUBLISHKEY);
+					}
+				}
+//				if (flags & RS_FEED_TYPE_CHANNEL)
+//					addFeedItemChannelPublishKey(fi);
+				break;
 
 			case RS_FEED_ITEM_FORUM_NEW:
 				if (flags & RS_FEED_TYPE_FORUM)
@@ -267,6 +289,27 @@ void NewsFeed::updateDisplay()
 			case RS_FEED_ITEM_FORUM_MSG:
 				if (flags & RS_FEED_TYPE_FORUM)
 					addFeedItemForumMsg(fi);
+				break;
+			case RS_FEED_ITEM_FORUM_PUBLISHKEY:
+				{
+					if (!mTokenQueueForum) {
+						mTokenQueueForum = new TokenQueue(rsGxsForums->getTokenService(), instance);
+					}
+
+					RsGxsGroupId grpId(fi.mId1);
+					if (!grpId.isNull()) {
+						RsTokReqOptions opts;
+						opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+						std::list<RsGxsGroupId> grpIds;
+						grpIds.push_back(grpId);
+
+						uint32_t token;
+						mTokenQueueForum->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_PUBLISHKEY);
+					}
+				}
+//				if (flags & RS_FEED_TYPE_FORUM)
+//					addFeedItemForumPublishKey(fi);
 				break;
 
 			case RS_FEED_ITEM_POSTED_NEW:
@@ -537,6 +580,25 @@ void NewsFeed::loadChannelPost(const uint32_t &token)
 	}
 }
 
+void NewsFeed::loadChannelPublishKey(const uint32_t &token)
+{
+	std::vector<RsGxsChannelGroup> groups;
+	if (!rsGxsChannels->getGroupData(token, groups)) {
+		std::cerr << "NewsFeed::loadChannelPublishKey() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (groups.size() != 1)
+	{
+		std::cerr << "NewsFeed::loadChannelPublishKey() Wrong number of Items";
+		std::cerr << std::endl;
+		return;
+	}
+
+	MessageComposer::sendChannelPublishKey(groups[0]);
+}
+
 void NewsFeed::loadForumGroup(const uint32_t &token)
 {
 	std::vector<RsGxsForumGroup> forums;
@@ -609,6 +671,25 @@ void NewsFeed::loadForumMessage(const uint32_t &token)
 	if (!fi.mId1.empty()) {
 		instance->addFeedItemForumMsg(fi);
 	}
+}
+
+void NewsFeed::loadForumPublishKey(const uint32_t &token)
+{
+	std::vector<RsGxsForumGroup> groups;
+	if (!rsGxsForums->getGroupData(token, groups)) {
+		std::cerr << "NewsFeed::loadForumPublishKey() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (groups.size() != 1)
+	{
+		std::cerr << "NewsFeed::loadForumPublishKey() Wrong number of Items";
+		std::cerr << std::endl;
+		return;
+	}
+
+	MessageComposer::sendForumPublishKey(groups[0]);
 }
 
 void NewsFeed::loadPostedGroup(const uint32_t &token)
@@ -697,6 +778,10 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			loadChannelPost(req.mToken);
 			break;
 
+		case TOKEN_TYPE_PUBLISHKEY:
+			loadChannelPublishKey(req.mToken);
+			break;
+
 		default:
 			std::cerr << "NewsFeed::loadRequest() ERROR: INVALID TYPE";
 			std::cerr << std::endl;
@@ -712,6 +797,10 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 
 		case TOKEN_TYPE_MESSAGE:
 			loadForumMessage(req.mToken);
+			break;
+
+		case TOKEN_TYPE_PUBLISHKEY:
+			loadForumPublishKey(req.mToken);
 			break;
 
 		default:

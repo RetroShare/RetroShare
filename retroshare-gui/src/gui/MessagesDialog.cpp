@@ -783,6 +783,8 @@ static void InitIconAndFont(QTreeWidgetItem *item)
             item->setIcon(COLUMN_SUBJECT, QIcon(":/images/user/user_request16.png"));
         } else if (msgFlags & RS_MSG_FRIEND_RECOMMENDATION) {
             item->setIcon(COLUMN_SUBJECT, QIcon(":/images/user/friend_suggestion16.png"));
+        } else if (msgFlags & RS_MSG_PUBLISH_KEY) {
+            item->setIcon(COLUMN_SUBJECT, QIcon(":/images/share-icon-16.png"));
         } else if (msgFlags & RS_MSG_UNREAD_BY_USER) {
             if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
                 item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-replied.png"));

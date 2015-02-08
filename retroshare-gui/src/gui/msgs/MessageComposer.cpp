@@ -45,6 +45,8 @@
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsgxschannels.h>
+#include <retroshare/rsgxsforums.h>
 
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
@@ -531,6 +533,38 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
     /* create a message */
     QString msgText = tr("Hi %1,<br><br>%2 wants to be friends with you on RetroShare.<br><br>Respond now:<br>%3<br><br>Thanks,<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), sslName, link.toHtml());
     rsMsgs->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_USER_REQUEST);
+}
+
+void MessageComposer::sendChannelPublishKey(RsGxsChannelGroup &group)
+{
+//    QString channelName = QString::fromUtf8(group.mMeta.mGroupName.c_str());
+
+//    RetroShareLink link;
+//    if (!link.createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, group.mMeta.mGroupId, channelName)) {
+//        return;
+//    }
+
+//    QString title = tr("Publish key for channel %1").arg(channelName);
+
+//    /* create a message */
+//    QString msgText = tr("... %1 ...<br>%2").arg(channelName, link.toHtml());
+//    rsMsgs->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
+}
+
+void MessageComposer::sendForumPublishKey(RsGxsForumGroup &group)
+{
+//    QString forumName = QString::fromUtf8(group.mMeta.mGroupName.c_str());
+
+//    RetroShareLink link;
+//    if (!link.createGxsGroupLink(RetroShareLink::TYPE_FORUM, group.mMeta.mGroupId, forumName)) {
+//        return;
+//    }
+
+//    QString title = tr("Publish key for forum %1").arg(forumName);
+
+//    /* create a message */
+//    QString msgText = tr("... %1 ...<br>%2").arg(forumName, link.toHtml());
+//    rsMsgs->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
 }
 
 void MessageComposer::closeEvent (QCloseEvent * event)
