@@ -52,7 +52,7 @@ public:
     //
     bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId &from_gxs_id, uint32_t &error_code) ;
     bool closeDistantChatConnexion(const RsGxsId& pid) ;
-    virtual bool getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status) ;
+    virtual bool getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status, RsGxsId *from_gxs_id=NULL) ;
 
     // derived in p3ChatService
     virtual void handleIncomingItem(RsItem *) = 0;

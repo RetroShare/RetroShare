@@ -272,6 +272,8 @@ public:
     bool operator<(const ChatId& other) const;
     bool isSameEndpoint(const ChatId& other) const;
 
+    bool operator==(const ChatId& other) const { return isSameEndpoint(other) ; }
+
     bool isNotSet() const;
     bool isPeerId() const;
     bool isGxsId()  const;
@@ -465,7 +467,7 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::str
 /****************************************/
 
 virtual bool initiateDistantChatConnexion(const RsGxsId& to_pid,const RsGxsId& from_pid,uint32_t& error_code) = 0;
-virtual bool getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status) = 0;
+virtual bool getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status, RsGxsId *from_gxs_id = NULL) = 0;
 virtual bool closeDistantChatConnexion(const RsGxsId& pid) = 0;
 
 };

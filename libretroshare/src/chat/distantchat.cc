@@ -905,7 +905,7 @@ RsGxsId DistantChatService::gxsIdFromHash(const TurtleFileHash& hash)
 
     return RsGxsId(hash.toByteArray());
 }
-bool DistantChatService::getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status)
+bool DistantChatService::getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status, RsGxsId *from_gxs_id)
 {
     RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -914,10 +914,15 @@ bool DistantChatService::getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& st
     if(it != _distant_chat_contacts.end())
     {
         status = it->second.status ;
+
+    if(from_gxs_id != NULL)
+        *from_gxs_id = it->second.own_gxs_id ;
+
         return true ;
     }
 
     status = RS_DISTANT_CHAT_STATUS_UNKNOWN ;
+
     return false ;
 }
 

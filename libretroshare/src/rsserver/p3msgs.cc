@@ -521,9 +521,9 @@ bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId
 {
     return mChatSrv->initiateDistantChatConnexion(to_gxs_id,from_gxs_id,error_code) ;
 }
-bool p3Msgs::getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status)
+bool p3Msgs::getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status,RsGxsId *from_gxs_id)
 {
-    return mChatSrv->getDistantChatStatus(gxs_id,status) ;
+    return mChatSrv->getDistantChatStatus(gxs_id,status,from_gxs_id) ;
 }
 bool p3Msgs::closeDistantChatConnexion(const RsGxsId& pid)
 {
