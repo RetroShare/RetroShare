@@ -60,7 +60,7 @@ protected:
     virtual void addChatMsg(const ChatMessage& msg);
     //virtual void onChatChanged(int list, int type);
 
-private:
+protected:
 	bool manualDelete;
 
 	/** Qt Designer generated object */

@@ -63,8 +63,11 @@ void PopupDistantChatDialog::init(const RsGxsId &gxs_id,const QString & title)
     _pid = gxs_id ;
     PopupChatDialog::init(ChatId(gxs_id), title) ;
 
-    // hide avatar frame, because it does not have funcntionality for gxs
-    showAvatarFrame(false);
+    RsGxsId own_gxs_id ;
+    uint32_t status ;
+
+    if(rsMsgs->getDistantChatStatus(gxs_id,status,&own_gxs_id))
+        ui.ownAvatarWidget->setOwnId(own_gxs_id);
 }
 
 void PopupDistantChatDialog::updateDisplay()
@@ -164,5 +167,14 @@ QString PopupDistantChatDialog::getPeerName(const ChatId &id) const
 
 QString PopupDistantChatDialog::getOwnName() const
 {
-    return QString("me (TODO: gxs-name)");
+    uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
+    RsGxsId from_gxs_id ;
+
+    rsMsgs->getDistantChatStatus(_pid,status,&from_gxs_id) ;
+
+    RsIdentityDetails details  ;
+    if(rsIdentity->getIdDetails(from_gxs_id,details))
+         return QString::fromUtf8( details.mNickname.c_str() ) ;
+     else
+         return QString::fromStdString(from_gxs_id.toStdString()) ;
 }

@@ -135,7 +135,12 @@ void AvatarWidget::setId(const ChatId &id)
     refreshAvatarImage();
     refreshStatus();
 }
+void AvatarWidget::setOwnId(const RsGxsId& own_gxs_id)
+{
+    mFlag.isOwnId = true;
 
+    setId(ChatId(own_gxs_id));
+}
 void AvatarWidget::setOwnId()
 {
     mFlag.isOwnId = true;
