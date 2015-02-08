@@ -691,15 +691,12 @@ void GxsForumThreadWidget::insertGroupData(const RsGxsForumGroup &group)
 #endif
 
 	mSubscribeFlags = group.mMeta.mSubscribeFlags;
-    ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
-    mForumDescription = QString();
-    mForumDescription += QString("<b>Forum name: \t</b>")+QString::fromUtf8( group.mMeta.mGroupName.c_str())+"<br/>" ;
-    mForumDescription += QString("<b>Subscribers: \t</b>")+QString::number( group.mMeta.mPop)+"<br/>" ;
-    mForumDescription += QString("<b>Posts (at neighbor nodes): \t</b>")+QString::number(group.mMeta.mVisibleMsgCount)+"<br/>" ;
-    mForumDescription += QString("<b>Description: </b>")+"<br/><br/>" ;
-
-    mForumDescription += QString::fromUtf8(group.mDescription.c_str());
+	mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
+	mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
+	mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
+	mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mSubscribeFlags));
 	mStateHelper->setWidgetEnabled(ui->newthreadButton, (IS_GROUP_SUBSCRIBED(mSubscribeFlags)));

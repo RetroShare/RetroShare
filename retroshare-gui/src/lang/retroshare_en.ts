@@ -557,6 +557,33 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AvatarDialog</name>
+    <message>
+        <source>Change Avatar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Avatar Picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Avatar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set your Avatar picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Avatar</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
@@ -1753,36 +1780,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Services</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>User service permissions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1840,18 +1837,6 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use as direct source, when available</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1877,6 +1862,10 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>PGP fingerprint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3102,6 +3091,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Forum Message has not been Sent.
 Do you want to reject this message?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a descriptive subject here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post as</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4345,6 +4342,10 @@ you plug it in.</source>
         <source>Remove Friend Node</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Do you want to remove this node?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
@@ -4735,6 +4736,10 @@ the same identity (PGP key).</source>
         <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>RSA key length</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GeneralPage</name>
@@ -5012,18 +5017,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> by </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> size=</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> Status </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>To: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5040,7 +5033,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 secs ago</source>
+        <source> Size: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Data status: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Tunnel status: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Received: %1 secs ago, Send: %2 secs ago, Tried: %3 secs ago</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6088,6 +6093,22 @@ before you can comment</source>
         <source>On %1, %2 wrote:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Forum name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsForumUserNotify</name>
@@ -6390,19 +6411,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Identity name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Identity Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Authentication</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>signed by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6411,6 +6420,18 @@ before you can comment</source>
     </message>
     <message>
         <source>anonymous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signed&amp;nbsp;by</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6667,11 +6688,127 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>IdDialog</name>
+    <name>IdDetailsDialog</name>
     <message>
-        <source>Identities</source>
+        <source>Person Details</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Identity Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IdDialog</name>
     <message>
         <source>New ID</source>
         <translation type="unfinished"></translation>
@@ -6813,14 +6950,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Owned by neighbor nodes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Owned by distant nodes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Anonymous</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6849,18 +6978,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Owned by a friend Retroshare node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Owned by 2-hops Retroshare node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Owned by unknown Retroshare node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Anonymous identity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6869,19 +6986,72 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Chat with this peer as...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Distant chat cannot work</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Distant chat refused with this peer.</source>
+        <source>Error code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error code</source>
+        <source>People</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linked to your node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linked to neighbor nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linked to distant nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linked to a friend Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linked to a known Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linked to unknown Retroshare node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat with this person</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat with this person as...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send message to this person</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this person.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6965,6 +7135,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Avatar</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7681,23 +7860,43 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only show people you trusted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Respond to:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cannot send distant messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>In order to send distant messages, you need an identity to sign with. Please go to the Identities tab and create one first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend Nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Everyone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Person Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%2 &lt;%2@%1&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7874,34 +8073,6 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Load images always for this message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Decrypt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown (needs decryption)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8787,6 +8958,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>News feed</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Newest on top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Oldest on top</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotifyPage</name>
@@ -8816,10 +8995,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add feeds at end</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9596,10 +9771,6 @@ malicious behavior of crafted plugins.</source>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <source>Distant chat terminated</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9609,6 +9780,18 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Kill the tunnel?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hash Error. No tunnel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because there is no tunnel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10430,10 +10613,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hash error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Distant peer has closed the chat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10746,6 +10925,49 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load images</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RSPermissionMatrixWidget</name>
+    <message>
+        <source>Service name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allowed by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Denied by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Id: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled for this peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disabled for this peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled by remote peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disabled by remote peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switched Off</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11502,10 +11724,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Send Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Peer/node not in friendlist (PGP id=</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11764,18 +11982,6 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Anonymous routing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Service Permissions</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11795,71 +12001,11 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Row2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shares</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Default</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Joe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sally</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anne</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Jacki</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;		   &lt;p&gt;Permissions allow you to control which services are available to which friends &lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Service</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Incompatible</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Permission changes are not saved permanently. (TODO)</source>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
