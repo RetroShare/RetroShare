@@ -340,6 +340,7 @@ bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& issu
 
 	return valid() ;
 }
+
 bool RetroShareLink::createPerson(const RsPgpId& id)
 {
 	clear();
@@ -394,7 +395,7 @@ bool RetroShareLink::createUnknwonSslCertificate(const RsPeerId& sslId, const Rs
 	}
 
 	// then gpg id
-	if (createCertificate(sslId)) {
+	if (createPerson(gpgId)) {
 		if (!_SSLid.isEmpty()) {
 			return false;
 		}
@@ -866,6 +867,7 @@ bool RetroShareLink::checkSSLId(const QString& ssl_id)
 
 	return true ;
 }
+
 bool RetroShareLink::checkPGPId(const QString& pgp_id)
 {
 	if(pgp_id.length() != 16)
@@ -883,6 +885,7 @@ bool RetroShareLink::checkPGPId(const QString& pgp_id)
 
 	return true ;
 }
+
 bool RetroShareLink::checkRadix64(const QString& s)
 {
 	QByteArray qb(s.toLatin1()) ;
@@ -1172,7 +1175,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					needNotifySuccess = true;
 
 					RsPeerDetails detail;
-					if (rsPeers->getPeerDetails(RsPeerId(link.hash().toStdString()), detail))
+					if (rsPeers->getGPGDetails(RsPgpId(link.hash().toStdString()), detail))
 					{
 						if (RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
 							// it's me, do nothing
