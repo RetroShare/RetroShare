@@ -1367,6 +1367,11 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         if(ui.signMessage_CB->isChecked())
             mi.msgflags |= RS_MSG_SIGNED ;
 
+     if(mi.rsgxsid_srcId.isNull() && !(mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty()))
+     {
+            QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove the distant peers fro the destination list."), QMessageBox::Ok);
+            return false; // Don't send if cannot sign.
+     }
         if (rsMsgs->MessageSend(mi) == false) {
             return false;
         }
@@ -2408,7 +2413,7 @@ void MessageComposer::addContact(enumType type)
     std::list<RsGxsId> gxsIds ;
     ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, false);
 
-    if(!gxsIds.empty() && ui.respond_to_CB->hasAvailableIds())
+    if(!gxsIds.empty() && !ui.respond_to_CB->hasAvailableIds())
     {
         QMessageBox::warning(NULL,tr("Cannot send distant messages"),tr("In order to send distant messages, you need an identity to sign with. Please go to the Identities tab and create one first."));
         return ;
