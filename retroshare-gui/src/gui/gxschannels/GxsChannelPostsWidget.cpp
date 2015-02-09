@@ -52,7 +52,6 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	mInProcessSettings = false;
 
 	/* Setup UI helper */
 
@@ -83,6 +82,7 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	/* Initialize view button */
 	//setViewMode(VIEW_MODE_FEEDS); see processSettings
+	ui->infoWidget->hide();
 
 	QSignalMapper *signalMapper = new QSignalMapper(this);
 	connect(ui->feedToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
@@ -133,19 +133,27 @@ GxsChannelPostsWidget::~GxsChannelPostsWidget()
 
 void GxsChannelPostsWidget::processSettings(bool load)
 {
-	mInProcessSettings = true;
 	Settings->beginGroup(QString("ChannelPostsWidget"));
 
 	if (load) {
 		// load settings
+
+		/* Filter */
 		ui->filterLineEdit->setCurrentFilter(Settings->value("filter", FILTER_TITLE).toInt());
+
+		/* View mode */
 		setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
 	} else {
 		// save settings
+
+		/* Filter */
+		Settings->setValue("filter", ui->filterLineEdit->currentFilter());
+
+		/* View mode */
+		Settings->setValue("viewMode", viewMode());
 	}
 
 	Settings->endGroup();
-	mInProcessSettings = false;
 }
 
 void GxsChannelPostsWidget::settingsChanged()
@@ -227,8 +235,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}
 	ui->logoLabel->setPixmap(chanImage);
-	
-	ui->subscribersLabel->setText(QString::number( group.mMeta.mPop)) ;
+
+	ui->subscribersLabel->setText(QString::number(group.mMeta.mPop)) ;
 
 	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
@@ -243,6 +251,39 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 
 	bool autoDownload = rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId);
 	setAutoDownload(autoDownload);
+
+	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
+		ui->feedToolButton->setEnabled(true);
+
+		ui->fileToolButton->setEnabled(true);
+		ui->infoWidget->hide();
+		setViewMode(viewMode());
+
+		ui->infoPosts->clear();
+		ui->infoDescription->clear();
+	} else {
+		ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+		ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
+
+		ui->infoWidget->show();
+		ui->feedWidget->hide();
+		ui->fileWidget->hide();
+
+		ui->feedToolButton->setEnabled(false);
+		ui->fileToolButton->setEnabled(false);
+	}
+}
+
+int GxsChannelPostsWidget::viewMode()
+{
+	if (ui->feedToolButton->isChecked()) {
+		return VIEW_MODE_FEEDS;
+	} else if (ui->fileToolButton->isChecked()) {
+		return VIEW_MODE_FILES;
+	}
+
+	/* Default */
+	return VIEW_MODE_FEEDS;
 }
 
 void GxsChannelPostsWidget::setViewMode(int viewMode)
@@ -268,22 +309,12 @@ void GxsChannelPostsWidget::setViewMode(int viewMode)
 		setViewMode(VIEW_MODE_FEEDS);
 		return;
 	}
-
-	if (!mInProcessSettings) {
-		/* Save view mode */
-		Settings->setValueToGroup("ChannelPostsWidget", "viewMode", viewMode);
-	}
 }
 
 void GxsChannelPostsWidget::filterChanged(int filter)
 {
 	ui->feedWidget->setFilterType(filter);
 	ui->fileWidget->setFilterType(filter);
-
-	if (!mInProcessSettings) {
-		// save index
-		Settings->setValueToGroup("ChannelPostsWidget", "filter", filter);
-	}
 }
 
 /*static*/ bool GxsChannelPostsWidget::filterItem(FeedItem *feedItem, const QString &text, int filter)

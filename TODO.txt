@@ -23,7 +23,7 @@ List of fixes/improvements before 0.6
           Raises an error if you click on it.
    
    Channels
-      [ ] Unsubscribed channels should show an info page when selected, like forums
+      [X] Unsubscribed channels should show an info page when selected, like forums
       [ ] marking all as read in channels takes time. The channel icon should show a waiting clock 
           during the operation to avoid the user to re-click many times in the hope to get 
           the posts marked as read.

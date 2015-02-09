@@ -89,6 +89,8 @@ private:
 	void setAutoDownload(bool autoDl);
 	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);
 
+	int viewMode();
+
 	void insertChannelDetails(const RsGxsChannelGroup &group);
 	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related);
 
@@ -97,7 +99,6 @@ private:
 private:
 	QAction *mAutoDownloadAction;
 
-	bool mInProcessSettings;
 	bool mUseThread;
 
 	/* UI - from Designer */
