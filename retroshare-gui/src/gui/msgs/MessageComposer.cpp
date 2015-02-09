@@ -2413,11 +2413,6 @@ void MessageComposer::addContact(enumType type)
     std::list<RsGxsId> gxsIds ;
     ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, false);
 
-    if(!gxsIds.empty() && !ui.respond_to_CB->hasAvailableIds())
-    {
-        QMessageBox::warning(NULL,tr("Cannot send distant messages"),tr("In order to send distant messages, you need an identity to sign with. Please go to the Identities tab and create one first."));
-        return ;
-    }
 	for (std::list<RsGxsId>::const_iterator idIt = gxsIds.begin(); idIt != gxsIds.end(); ++idIt) 
 		addRecipient(type, *idIt);
 }
