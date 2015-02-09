@@ -32,6 +32,7 @@ class RSTreeWidget : public QTreeWidget
 public:
 	RSTreeWidget(QWidget *parent = 0);
 
+	QString placeholderText() { return mPlaceholderText; }
 	void setPlaceholderText(const QString &text);
 
 	void filterItems(int filterColumn, const QString &text);

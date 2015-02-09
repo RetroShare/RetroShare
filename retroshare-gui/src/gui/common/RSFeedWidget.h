@@ -51,6 +51,9 @@ public:
 	RSFeedWidget(QWidget *parent = 0);
 	virtual ~RSFeedWidget();
 
+	QString placeholderText();
+	void setPlaceholderText(const QString &placeholderText);
+
 	void addFeedItem(FeedItem *feedItem, Qt::ItemDataRole sortRole, const QVariant &value);
 	void addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, QVariant> &sort);
 

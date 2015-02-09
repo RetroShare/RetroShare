@@ -139,6 +139,16 @@ void RSFeedWidget::disconnectSignals(FeedItem *feedItem)
 	disconnect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
 }
 
+QString RSFeedWidget::placeholderText()
+{
+	return ui->treeWidget->placeholderText();
+}
+
+void RSFeedWidget::setPlaceholderText(const QString &placeholderText)
+{
+	ui->treeWidget->setPlaceholderText(placeholderText);
+}
+
 FeedItem *RSFeedWidget::feedItemFromTreeItem(QTreeWidgetItem *treeItem)
 {
 	return dynamic_cast<FeedItem*>(ui->treeWidget->itemWidget(treeItem, COLUMN_FEED));
