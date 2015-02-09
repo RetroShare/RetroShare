@@ -65,7 +65,6 @@ void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
 }
 void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
 {
-	unsigned char *data = NULL;
     int size = 0;
 
     /* get avatar */
@@ -81,8 +80,6 @@ void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const
 
         if(details.mAvatar.mSize == 0 || !avatar.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
             avatar = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(gxsId));
-
-	delete[] data;
 }
 
 void AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)
