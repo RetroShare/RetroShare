@@ -36,7 +36,8 @@
 
 #include <iostream>
 
-#define IDEDITDIALOG_LOADID	1
+#define IDEDITDIALOG_LOADID   1
+#define IDEDITDIALOG_CREATEID 2
 
 /** Constructor */
 IdEditDialog::IdEditDialog(QWidget *parent) :
@@ -44,7 +45,6 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
     ui(new(Ui::IdEditDialog))
 {
 	mIsNew = true;
-	mLastIdName="";
 
 	ui->setupUi(this);
 
@@ -76,7 +76,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui->radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
 	connect(ui->plainTextEdit_Tag, SIGNAL(textChanged()), this, SLOT(checkNewTag()));
 	connect(ui->pushButton_Tag, SIGNAL(clicked(bool)), this, SLOT(addRecognTag()));
@@ -114,6 +114,7 @@ void IdEditDialog::setupNewId(bool pseudo)
 	setWindowTitle(tr("New identity"));
 
 	mIsNew = true;
+	mGroupId.clear();
 
 	ui->lineEdit_KeyId->setText(tr("To be generated"));
 	ui->lineEdit_Nickname->setText("");
@@ -181,13 +182,14 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 	}
 }
 
-void IdEditDialog::setupExistingId(std::string keyId)
+void IdEditDialog::setupExistingId(const RsGxsGroupId &keyId)
 {
 	setWindowTitle(tr("Edit identity"));
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_edit_64.png"));
 	ui->headerFrame->setHeaderText(tr("Edit identity"));
 
 	mIsNew = false;
+	mGroupId.clear();
 
 	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
 
@@ -195,7 +197,7 @@ void IdEditDialog::setupExistingId(std::string keyId)
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(RsGxsGroupId(keyId));
+	groupIds.push_back(keyId);
 
 	uint32_t token;
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
@@ -228,8 +230,9 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	}
 
 	mEditGroup = datavector[0];
-	QPixmap avatar;
+	mGroupId = mEditGroup.mMeta.mGroupId;
 
+	QPixmap avatar;
 	if (mEditGroup.mImage.mSize > 0) {
 		avatar.loadFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, "PNG");
 	}
@@ -503,11 +506,25 @@ void IdEditDialog::createId()
 	else
 		params.mImage.clear();
 
-	uint32_t dummyToken = 0;
-	rsIdentity->createIdentity(dummyToken, params);
+	uint32_t token = 0;
+	rsIdentity->createIdentity(token, params);
 
-	mLastIdName = groupname;
-	close();
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
+	mIdQueue->queueRequest(token, 0, 0, IDEDITDIALOG_CREATEID);
+}
+
+void IdEditDialog::idCreated(uint32_t token)
+{
+	if (!rsIdentity->acknowledgeGrp(token, mGroupId)) {
+		std::cerr << "IdDialog::idCreated() acknowledgeGrp failed";
+		std::cerr << std::endl;
+
+		reject();
+		return;
+	}
+
+	accept();
 }
 
 void IdEditDialog::updateId()
@@ -540,8 +557,7 @@ void IdEditDialog::updateId()
 	uint32_t dummyToken = 0;
 	rsIdentity->updateIdentity(dummyToken, mEditGroup);
 
-	mLastIdName = groupname;
-	close();
+	accept();
 }
 
 void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
@@ -549,6 +565,14 @@ void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
 
-	// only one here!
-	loadExistingId(req.mToken);
+	switch (req.mUserType) {
+	case IDEDITDIALOG_LOADID:
+		loadExistingId(req.mToken);
+		break;
+
+	case IDEDITDIALOG_CREATEID:
+		idCreated(req.mToken);
+		break;
+	}
+
 }

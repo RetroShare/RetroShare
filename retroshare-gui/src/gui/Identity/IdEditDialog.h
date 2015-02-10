@@ -46,11 +46,11 @@ public:
 	~IdEditDialog();
 
 	void setupNewId(bool pseudo);
-	void setupExistingId(std::string keyId);
+	void setupExistingId(const RsGxsGroupId &keyId);
+
+	RsGxsGroupId groupId() { return mGroupId; }
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
-	std::string getLastIdName() {return mLastIdName;}
 
 private slots:
 	void idTypeToggled(bool checked);
@@ -72,6 +72,7 @@ private:
 	void updateIdType(bool pseudo);
 	void loadExistingId(uint32_t token);
 	void setAvatar(const QPixmap &avatar);
+	void idCreated(uint32_t token);
 
 	void loadRecognTags();
 	// extract details.
@@ -86,7 +87,7 @@ protected:
 	RsGxsIdGroup mEditGroup;
 
 	TokenQueue *mIdQueue;
-	std::string mLastIdName;
+	RsGxsGroupId mGroupId;
 
 	QPixmap mAvatar; // Avatar from identity (not calculated)
 };

@@ -33,6 +33,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsidentity.h>
 
 /****
  * #define DEBUG_ITEM 1

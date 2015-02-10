@@ -25,10 +25,7 @@
 #define _GXS_ID_CHOOSER_H
 
 #include <QComboBox>
-#include <QPushButton>
 #include "util/TokenQueue.h"
-#include <retroshare/rsidentity.h>
-#include <retroshare/rsgxsifacetypes.h>
 
 // This class implement a basic RS functionality which is that ComboBox displaying Id
 // should update regularly. They also should update only when visible, to save CPU time.
@@ -52,16 +49,14 @@ public:
 
 	void setFlags(uint32_t flags) ;
 
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);//TokenResponse
+	/* TokenResponse */
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	enum ChosenId_Ret {None, KnowId, UnKnowId, NoId} ;
-	void loadIds(uint32_t chooserFlags, RsGxsId defId);
-	void setDefaultId(RsGxsId defId) {mDefaultId=defId;}
-    void setDefaultId(std::string defIdName) {mDefaultIdName=defIdName;}
+	void loadIds(uint32_t chooserFlags, const RsGxsId &defId);
+	void setDefaultId(const RsGxsId &defId);
 
-    bool hasAvailableIds() const { return !mDefaultId.isNull() ; }
-
-	bool setChosenId(RsGxsId &gxsId);
+	bool setChosenId(const RsGxsId &gxsId);
 	ChosenId_Ret getChosenId(RsGxsId &gxsId);
 
 protected:
@@ -80,9 +75,7 @@ private:
 
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
-	std::string mDefaultIdName;
 	bool mFirstLoad;
-	QPushButton* addNewCxsId;
 
 	TokenQueue *mIdQueue;
 	RsGxsUpdateBroadcastBase *mBase;

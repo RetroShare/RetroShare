@@ -60,7 +60,6 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	mFirstLoad = true;
 
 	mDefaultId.clear() ;
-	mDefaultIdName.clear();
 
 	/* Enable sort with own role */
 	QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
@@ -103,12 +102,17 @@ void GxsIdChooser::showEvent(QShowEvent *event)
 	QComboBox::showEvent(event);
 }
 
-void GxsIdChooser::loadIds(uint32_t chooserFlags, RsGxsId defId)
+void GxsIdChooser::loadIds(uint32_t chooserFlags, const RsGxsId &defId)
 {
 	mFlags = chooserFlags;
 	mDefaultId = defId;
 	clear();
 	mFirstLoad = true;
+}
+
+void GxsIdChooser::setDefaultId(const RsGxsId &defId)
+{
+	mDefaultId = defId;
 }
 
 static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
@@ -174,10 +178,6 @@ void GxsIdChooser::loadPrivateIds(uint32_t token)
 		RsGxsIdGroup data = (*vit);
 		if (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
 			ids.push_back((RsGxsId) data.mMeta.mGroupId);
-		}
-
-		if (mDefaultIdName == data.mMeta.mGroupName) {
-			mDefaultId = (RsGxsId) data.mMeta.mGroupId;
 		}
 	}
 
@@ -256,7 +256,7 @@ void GxsIdChooser::setDefaultItem()
 	}
 }
 
-bool GxsIdChooser::setChosenId(RsGxsId &gxsId)
+bool GxsIdChooser::setChosenId(const RsGxsId &gxsId)
 {
 	QString id = QString::fromStdString(gxsId.toStdString());
 
@@ -313,8 +313,9 @@ void GxsIdChooser::indexActivated(int index)
 	if (type == TYPE_CREATE_ID) {
 		IdEditDialog dlg(this);
 		dlg.setupNewId(false);
-		dlg.exec();
-		setDefaultId(dlg.getLastIdName());
+		if (dlg.exec() == QDialog::Accepted) {
+			setDefaultId(RsGxsId(dlg.groupId()));
+		}
 	}
 }
 

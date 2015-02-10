@@ -843,7 +843,10 @@ void IdDialog::editIdentity()
 		return;
 	}
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+	RsGxsGroupId keyId = RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString());
+	if (keyId.isNull()) {
+		return;
+	}
 
 	IdEditDialog dlg(this);
 	dlg.setupExistingId(keyId);
