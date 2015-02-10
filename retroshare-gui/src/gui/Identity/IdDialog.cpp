@@ -146,9 +146,11 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
+	
+	connect(ui->messageButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/friends64.png"));
-	ui->headerFrame->setHeaderText(tr("People"));
+	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
+	ui->headerTextLabel->setText(tr("People"));
 
 	/* Initialize splitter */
 	ui->splitter->setStretchFactor(0, 1);
@@ -564,7 +566,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
 	ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
 	
-	ui->headerFrame->setHeaderText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
+	ui->headerTextLabel->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 
     QPixmap pixmap ;
 
@@ -574,7 +576,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
 #endif
-    ui->headerFrame->setHeaderImage(QPixmap(":/images/user/personal64.png"));
+    ui->avlabel->setPixmap(pixmap);
     ui->avatarLabel->setPixmap(pixmap);
 
 	if (data.mPgpKnown)
@@ -958,7 +960,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 {
 	QMenu contextMnu( this );
 
-	std::list<RsGxsId> own_identities ;
+
+	  std::list<RsGxsId> own_identities ;
     rsIdentity->getOwnIds(own_identities) ;
 
     QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();

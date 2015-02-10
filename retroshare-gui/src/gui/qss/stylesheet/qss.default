@@ -177,3 +177,8 @@ NetworkDialog
 	qproperty-backgroundColorHasSignedMe: rgb(178, 66, 178);
 	qproperty-backgroundColorDenied: lightGray;
 }
+
+QLabel#headerTextLabel
+{
+	qproperty-fontSizeFactor: 225;
+}
