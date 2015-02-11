@@ -201,10 +201,14 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 	}
 
 	/* Try to get the information */
-	if (rsIdentity && rsIdentity->getIdDetails(id, details)) {
-		callback(GXS_ID_DETAILS_TYPE_DONE, details, object, data);
-		return true;
-	}
+	// the idea behind this was, to call the callback directly when the identity is already loaded in librs
+	// without one timer tick, but it causes the use of Pixmap in avatars within a threat that is different than
+	// the GUI thread, which is not allowed by Qt => some avatars fail to load.
+
+	//	if (rsIdentity && rsIdentity->getIdDetails(id, details)) {
+	//		callback(GXS_ID_DETAILS_TYPE_DONE, details, object, data);
+	//		return true;
+	//	}
 
 	details.mId = id;
 
