@@ -108,9 +108,9 @@ ChatId::ChatId(std::string str):
         {
             uint8_t c = str[i];
             if(c <= '9')
-                c -= '9';
+                c -= '0';
             else
-                c -= 'A';
+                c -= 'A' - 10;
             id = id << 4;
             id |= c;
         }
@@ -157,9 +157,9 @@ std::string ChatId::toStdString() const
         {
             uint8_t c = id >>(64-4);
             if(c > 9)
-                c += 'A';
+                c += 'A' - 10;
             else
-                c += '1';
+                c += '0';
             str += c;
             id = id << 4;
         }
