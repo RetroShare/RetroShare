@@ -28,7 +28,7 @@
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 
 #include <iostream>
-//#include <algorithm>
+#include <algorithm>
 
 /**
  * #define DEBUG_ITEM	1

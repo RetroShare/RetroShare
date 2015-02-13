@@ -35,11 +35,27 @@
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include "RSGraphWidget.h"
 
+#if QT_VERSION < 0x040700
+#include <sys/time.h>
+
+static qint64 getCurrentMSecsSinceEpoch()
+{
+	timeval tv ;
+	gettimeofday(&tv,NULL) ;
+	
+	return (qint64)tv.tv_sec + (qint64)tv.tv_usec/1000 ;
+}
+#endif
+
 RSGraphSource::RSGraphSource()
 {
     _time_limit_msecs    = 10*1000 ;
     _update_period_msecs =  1*1000 ;
+#if QT_VERSION < 0x040700
+    _time_orig_msecs     = getCurrentMSecsSinceEpoch() ;
+#else
     _time_orig_msecs     = QDateTime::currentMSecsSinceEpoch() ;
+#endif
     _timer = new QTimer ;
     _digits = 2 ;
 
@@ -140,7 +156,11 @@ if(_source != NULL)
 
 qint64 RSGraphSource::getTime() const
 {
+#if QT_VERSION < 0x040700
+    return getCurrentMSecsSinceEpoch() - _time_orig_msecs ;
+#else
     return QDateTime::currentMSecsSinceEpoch() - _time_orig_msecs ;
+#endif
 }
 
 void RSGraphSource::updateIfPossible()

@@ -24,7 +24,11 @@
  *
  */
 
+#ifdef NO_SQLCIPHER
+#include <sqlite3.h>
+#else
 #include <sqlcipher/sqlite3.h>
+#endif
 
 #include <string>
 #include <set>

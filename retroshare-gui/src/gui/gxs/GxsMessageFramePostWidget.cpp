@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <algorithm>
 #include <QApplication>
 
 #include "GxsMessageFramePostWidget.h"

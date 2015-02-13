@@ -113,9 +113,6 @@
               </item>
               <item>
                <widget class="QLineEdit" name="groupName">
-                <property name="placeholderText">
-                 <string>Set a descriptive title here</string>
-                </property>
                </widget>
               </item>
              </layout>
@@ -475,9 +472,6 @@
          <layout class="QVBoxLayout">
           <item>
            <widget class="MimeTextEdit" name="groupDesc">
-            <property name="placeholderText" stdset="0">
-             <string/>
-            </property>
            </widget>
           </item>
          </layout>

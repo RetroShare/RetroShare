@@ -33,20 +33,23 @@ linux-* {
 
 	gxs {
 		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-		isEmpty(SQLCIPHER_OK) {
-			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+			isEmpty(SQLCIPHER_OK) {
+# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 
-			! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-				message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
-				error(Please fix this and try again. Will stop now.)
+				exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+
+					LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+						DEPENDPATH += ../../../lib/sqlcipher/src/
+						INCLUDEPATH += ../../../lib/sqlcipher/src/
+				} else {
+					message(libsqlcipher.a not found. Compilation will not use SQLCIPHER. Database will be unencrypted.)
+						DEFINES *= NO_SQLCIPHER
+						LIBS *= -lsqlite3
+				}
+
+			} else {
+				LIBS *= -lsqlcipher
 			}
-
-			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-			DEPENDPATH += ../../../lib/sqlcipher/src/
-			INCLUDEPATH += ../../../lib/sqlcipher/src/
-		} else {
-			LIBS += -lsqlcipher
-		}
 	}
 }
 

@@ -143,6 +143,15 @@ linux-* {
 	target.path = $$LIB_DIR
 	INSTALLS *= target
 
+        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+        isEmpty(SQLCIPHER_OK) {
+# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+		!exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+			message(libsqlcipher.a not found. Compilation will not use SQLCIPER. Database will be unencrypted.)
+				DEFINES *= NO_SQLCIPHER
+		}
+	}
+
 	# where to put the librarys interface
 	include_rsiface.path = $${INC_DIR}
 	include_rsiface.files = $$PUBLIC_HEADERS

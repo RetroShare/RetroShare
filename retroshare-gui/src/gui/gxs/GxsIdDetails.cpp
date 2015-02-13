@@ -870,7 +870,11 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
     QPixmap pix ;
 
     if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
+#if QT_VERSION < 0x040700
+        pix = QPixmap::fromImage(makeDefaultIcon(details.mId));
+#else
         pix.convertFromImage(makeDefaultIcon(details.mId));
+#endif
 
 
 	QIcon idIcon(pix);

@@ -25,6 +25,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
 
+#include <algorithm>
 #include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
 
