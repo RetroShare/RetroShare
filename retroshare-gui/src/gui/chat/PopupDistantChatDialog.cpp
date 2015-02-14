@@ -66,8 +66,11 @@ void PopupDistantChatDialog::init(const RsGxsId &gxs_id,const QString & title)
     RsGxsId own_gxs_id ;
     uint32_t status ;
 
+    // do not use setOwnId, because we don't want the user to change the GXS avatar from the chat window
+    // it will not be transmitted.
+
     if(rsMsgs->getDistantChatStatus(gxs_id,status,&own_gxs_id))
-        ui.ownAvatarWidget->setOwnId(own_gxs_id);
+        ui.ownAvatarWidget->setId(ChatId(own_gxs_id));
 }
 
 void PopupDistantChatDialog::updateDisplay()
@@ -84,6 +87,8 @@ void PopupDistantChatDialog::updateDisplay()
 	
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
     rsMsgs->getDistantChatStatus(_pid,status) ;
+
+        ui.avatarWidget->setId(ChatId(_pid));
 
     QString msg;
 	switch(status)

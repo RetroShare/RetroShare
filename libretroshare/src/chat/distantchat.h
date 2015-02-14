@@ -85,6 +85,8 @@ private:
         DH *dh ;
         RsGxsId gxs_id ;
         RsTurtleGenericTunnelItem::Direction direction ;
+    uint32_t status ;
+    TurtleFileHash hash ;
     };
 
     // This maps contains the current peers to talk to with distant chat.
@@ -105,10 +107,12 @@ private:
     void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
     void markDistantChatAsClosed(const RsGxsId &gxs_id) ;
     void startClientDistantChatConnection(const RsGxsId &to_gxs_id,const RsGxsId& from_gxs_id) ;
+    void locked_restartDHSession(const RsPeerId &virtual_peer_id, const RsGxsId &own_gxs_id) ;
+
     //bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
 
-    static TurtleFileHash hashFromGxsId(const RsGxsId& pid) ;
-    static RsGxsId gxsIdFromHash(const TurtleFileHash& pid) ;
+    static TurtleFileHash hashFromGxsId(const RsGxsId& destination) ;
+    static RsGxsId gxsIdFromHash(const TurtleFileHash& sum) ;
 
     void handleRecvDHPublicKey(RsChatDHPublicKeyItem *item) ;
     bool locked_sendDHPublicKey(const DH *dh, const RsGxsId &own_gxs_id, const RsPeerId &virtual_peer_id) ;
@@ -119,6 +123,8 @@ private:
     // Utility functions
 
     void sendTurtleData(RsChatItem *) ;
+    void sendEncryptedTurtleData(const uint8_t *buff,uint32_t rssize,const RsGxsId &gxs_id) ;
+    bool handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id) ;
 
     static TurtleFileHash hashFromVirtualPeerId(const DistantChatPeerId& peerId) ;	// converts IDs so that we can talk to RsPeerId from outside
 

@@ -59,6 +59,7 @@ const uint16_t RS_SERVICE_TYPE_DIRECT_MAIL   = 0x0023;
 const uint16_t RS_SERVICE_TYPE_DISTANT_MAIL  = 0x0024;
 const uint16_t RS_SERVICE_TYPE_GWEMAIL_MAIL  = 0x0025;
 const uint16_t RS_SERVICE_TYPE_SERVICE_CONTROL= 0x0026;
+const uint16_t RS_SERVICE_TYPE_DISTANT_CHAT  = 0x0027;
 
 // Non essential services.
 const uint16_t RS_SERVICE_TYPE_BANLIST       = 0x0101;

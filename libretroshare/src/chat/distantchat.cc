@@ -45,9 +45,13 @@
 #include <retroshare/rsids.h>
 #include "distantchat.h"
 
-//#define DEBUG_DISTANT_CHAT
+#define DEBUG_DISTANT_CHAT
 
 static const uint32_t DISTANT_CHAT_KEEP_ALIVE_TIMEOUT = 15 ; // send keep alive packet so as to avoid tunnel breaks.
+
+static const uint32_t RS_DISTANT_CHAT_DH_STATUS_UNINITIALIZED = 0x0000 ;
+static const uint32_t RS_DISTANT_CHAT_DH_STATUS_HALF_KEY_DONE = 0x0001 ;
+static const uint32_t RS_DISTANT_CHAT_DH_STATUS_KEY_AVAILABLE = 0x0002 ;
 
 void DistantChatService::connectToTurtleRouter(p3turtle *tr)
 {
@@ -161,6 +165,9 @@ bool DistantChatService::handleTunnelRequest(const RsFileHash& hash,const RsPeer
 	std::list<RsGxsId> own_id_list ;
 	rsIdentity->getOwnIds(own_id_list) ;
 
+    // re-computing the hash from the GXS id allows to dynamically change the hash. That will allow
+    // the use of a contact passphrase, if needed.
+
 	for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
 		if(hashFromGxsId(*it) == hash)
 		{
@@ -184,11 +191,22 @@ void DistantChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleV
     {
         RS_STACK_MUTEX(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
-        if( _distant_chat_virtual_peer_ids.find(virtual_peer_id) != _distant_chat_virtual_peer_ids.end())
-        {
-            std::cerr << "  Tunnel already registered for " << hash << " and virtual peer " << virtual_peer_id << ". Doing nothing." << std::endl;
-            return ;
-        }
+        DistantChatDHInfo& dhinfo( _distant_chat_virtual_peer_ids[virtual_peer_id] ) ;
+    dhinfo.gxs_id.clear() ;
+
+    if(dhinfo.dh != NULL)
+        DH_free(dhinfo.dh) ;
+
+    dhinfo.dh = NULL ;
+    dhinfo.direction = dir ;
+    dhinfo.hash = hash ;
+    dhinfo.status = RS_DISTANT_CHAT_DH_STATUS_UNINITIALIZED ;
+
+        // if( _distant_chat_virtual_peer_ids.find(virtual_peer_id) != _distant_chat_virtual_peer_ids.end())
+        // {
+        //     std::cerr << "  Tunnel already registered for " << hash << " and virtual peer " << virtual_peer_id << ". Doing nothing." << std::endl;
+        //     return ;
+        // }
 
         if(dir == RsTurtleGenericTunnelItem::DIRECTION_CLIENT)
         {
@@ -217,12 +235,10 @@ void DistantChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleV
             own_gxs_id = it->second.own_gxs_id ;
         }
 
-		  std::cerr << "  Creating new virtual peer ID entry and empty DH session key." << std::endl;
+#ifdef DEBUG_DISTANT_CHAT
+          std::cerr << "  Creating new virtual peer ID entry and empty DH session key." << std::endl;
+#endif
 
-        DistantChatDHInfo& dhinfo( _distant_chat_virtual_peer_ids[virtual_peer_id] ) ;
-		  dhinfo.gxs_id.clear() ;
-		  dhinfo.dh = NULL ;
-		  dhinfo.direction = dir ;
     }
 
 #ifdef DEBUG_DISTANT_CHAT
@@ -232,23 +248,27 @@ void DistantChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleV
     // Start a new DH session for this tunnel
     RS_STACK_MUTEX(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
-    DH *& dh(_distant_chat_virtual_peer_ids[virtual_peer_id].dh) ;
+    locked_restartDHSession(virtual_peer_id,own_gxs_id) ;
+}
 
+void DistantChatService::locked_restartDHSession(const RsPeerId& virtual_peer_id,const RsGxsId& own_gxs_id)
+{
 #ifdef DEBUG_DISTANT_CHAT
-    std::cerr << "  Starting new DH session." << std::endl;
+    std::cerr << "Starting new DH session." << std::endl;
 #endif
+    DistantChatDHInfo& dhinfo = _distant_chat_virtual_peer_ids[virtual_peer_id] ;
 
-    if(!locked_initDHSessionKey(dh))
+    dhinfo.status = RS_DISTANT_CHAT_DH_STATUS_UNINITIALIZED ;
+
+    if(!locked_initDHSessionKey(dhinfo.dh))
     {
         std::cerr << "  (EE) Cannot start DH session. Something went wrong." << std::endl;
         return ;
     }
+    dhinfo.status = RS_DISTANT_CHAT_DH_STATUS_HALF_KEY_DONE ;
 
-    if(!locked_sendDHPublicKey(dh,own_gxs_id,virtual_peer_id))
-    {
+    if(!locked_sendDHPublicKey(dhinfo.dh,own_gxs_id,virtual_peer_id))
         std::cerr << "  (EE) Cannot send DH public key. Something went wrong." << std::endl;
-        return ;
-    }
 }
 
 void DistantChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
@@ -319,187 +339,214 @@ void DistantChatService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
                        const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
 #ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "DistantChatService::receiveTurtleData(): Received turtle data. " << std::endl;
+    std::cerr << "DistantChatService::receiveTurtleData(): Received turtle data. " << std::endl;
     std::cerr << "         hash = " << hash << std::endl;
     std::cerr << "         vpid = " << virtual_peer_id << std::endl;
     std::cerr << "    acting as = " << direction << std::endl;
 #endif
 
-	RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+    RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
 
-	if(item == NULL)
-	{
-		std::cerr << "(EE) item is not a data item. That is an error." << std::endl;
-		return ;
-	}
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "   size = " << item->data_size << std::endl;
-	std::cerr << "   data = " << (void*)item->data_bytes << std::endl;
-	std::cerr << "     IV = " << std::hex << *(uint64_t*)item->data_bytes << std::dec << std::endl;
-	std::cerr << "   data = " ;
-
-	printBinaryData(item->data_bytes,item->data_size) ;
-	std::cerr << std::endl;
-#endif
-
-
-	// Call the AES crypto module
-	// - the IV is the first 8 bytes of item->data_bytes
-
-	if(item->data_size < 8)
-	{
-		std::cerr << "(EE) item encrypted data stream is too small: size = " << item->data_size << std::endl;
-		return ;
-	}
-    uint32_t decrypted_size = RsAES::get_buffer_size(item->data_size-8);
-    uint8_t *decrypted_data = new uint8_t[decrypted_size];
-    bool decrypted = false ;
-
-    unsigned char no_key[DISTANT_CHAT_AES_KEY_SIZE] ;
-    memset(no_key,0,DISTANT_CHAT_AES_KEY_SIZE) ;
-
-    if(RsAES::aes_decrypt_8_16((uint8_t*)item->data_bytes+8,item->data_size-8,no_key,(uint8_t*)item->data_bytes,decrypted_data,decrypted_size))
+    if(item == NULL)
     {
-        decrypted = true ;
-
-#ifdef DEBUG_DISTANT_CHAT
-        std::cerr << "   Data is not encrypted. Probably a DH session key." << std::endl;
-#endif
+        std::cerr << "(EE) item is not a data item. That is an error." << std::endl;
+        return ;
     }
-    RsGxsId gxs_id ;
+    // Call the AES crypto module
+    // - the IV is the first 8 bytes of item->data_bytes
 
-    if(!decrypted)
+    if(item->data_size < 8)
     {
-        uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
+        std::cerr << "(EE) item encrypted data stream is too small: size = " << item->data_size << std::endl;
+        return ;
+    }
+    if(*((uint64_t*)item->data_bytes) != 0)
     {
-        RS_STACK_MUTEX(mDistantChatMtx); /********** STACK LOCKED MTX ******/
-        std::map<RsPeerId,DistantChatDHInfo>::const_iterator it = _distant_chat_virtual_peer_ids.find(virtual_peer_id) ;
+        std::cerr << "  Item is encrypted." << std::endl;
 
-        if(it == _distant_chat_virtual_peer_ids.end())
+        // if cannot decrypt, it means the key is wrong. We need to re-negociate a new key.
+
+        handleEncryptedData((uint8_t*)item->data_bytes,item->data_size,hash,virtual_peer_id) ;
+    }
+    else
+    {
+        std::cerr << "  Item is not encrypted." << std::endl;
+
+        // Now try deserialise the decrypted data to make an RsItem out of it.
+        //
+        RsItem *citem = RsChatSerialiser().deserialise(&((uint8_t*)item->data_bytes)[8],&item->data_size) ;
+
+        if(citem == NULL)
         {
-            std::cerr << "(EE) item is not coming out of a registered tunnel. Weird. hash=" << hash << ", peer id = " << virtual_peer_id << std::endl;
+            std::cerr << "(EE) item could not be de-serialized. That is an error." << std::endl;
             return ;
         }
-
-        gxs_id = it->second.gxs_id ;
-        std::map<RsGxsId,DistantChatPeerInfo>::iterator it2 = _distant_chat_contacts.find(gxs_id) ;
-
-        if(it2 == _distant_chat_contacts.end())
-        {
-            std::cerr << "(EE) no GXS id data for ID=" << gxs_id << ". This is a bug." << std::endl;
-            return ;
-        }
-        memcpy(aes_key,it2->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
-
-#ifdef DEBUG_DISTANT_CHAT
-        std::cerr << "   Using IV: " << std::hex << *(uint64_t*)item->data_bytes << std::dec << std::endl;
-        std::cerr << "   Decrypted buffer size: " << decrypted_size << std::endl;
-        std::cerr << "   key  : " ; printBinaryData(aes_key,16) ; std::cerr << std::endl;
-        std::cerr << "   data : " ; printBinaryData(item->data_bytes,item->data_size) ; std::cerr << std::endl;
-#endif
-
-        if(!RsAES::aes_decrypt_8_16((uint8_t*)item->data_bytes+8,item->data_size-8,aes_key,(uint8_t*)item->data_bytes,decrypted_data,decrypted_size))
-        {
-            std::cerr << "(EE) packet decryption failed." << std::endl;
-            delete[] decrypted_data ;
-            return ;
-        }
-        it2->second.status = RS_DISTANT_CHAT_STATUS_CAN_TALK ;
-        it2->second.last_contact = time(NULL) ;
-    }
-    }
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "(II) Decrypted data: size=" << decrypted_size << std::endl;
-#endif
-
-	// Now try deserialise the decrypted data to make an RsItem out of it.
-	//
-	RsItem *citem = RsChatSerialiser().deserialise(decrypted_data,&decrypted_size) ;
-	delete[] decrypted_data ;
-
-	if(citem == NULL)
-	{
-		std::cerr << "(EE) item could not be de-serialized. That is an error." << std::endl;
-		return ;
-	}
 
         // DH key items are sent even before we know who we speak to, so the virtual peer id is used in this
         // case only.
 
         if(dynamic_cast<RsChatDHPublicKeyItem*>(citem) != NULL)
+        {
             citem->PeerId(virtual_peer_id) ;
+            handleIncomingItem(citem) ;
+        }
         else
-            citem->PeerId(RsPeerId(gxs_id)) ;
+            std::cerr << "(EE) Deserialiased item has unexpected type." << std::endl;
+    }
+}
+
+
+bool DistantChatService::handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id)
+{
+#ifdef DEBUG_DISTANT_CHAT
+    std::cerr << "handleEncryptedDataItem()" << std::endl;
+    std::cerr << "   size = " << data_size << std::endl;
+    std::cerr << "   data = " << (void*)data_bytes << std::endl;
+    std::cerr << "     IV = " << std::hex << *(uint64_t*)data_bytes << std::dec << std::endl;
+    std::cerr << "   data = " ;
+
+    printBinaryData((uint8_t*)data_bytes,data_size) ;
+    std::cerr << std::endl;
+#endif
+
+    RsItem *citem = NULL;
+
+    {
+        RS_STACK_MUTEX(mDistantChatMtx); /********** STACK LOCKED MTX ******/
+
+        uint32_t decrypted_size = RsAES::get_buffer_size(data_size-8);
+        uint8_t *decrypted_data = new uint8_t[decrypted_size];
+        uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
+
+        std::map<RsPeerId,DistantChatDHInfo>::iterator it = _distant_chat_virtual_peer_ids.find(virtual_peer_id) ;
+
+        if(it == _distant_chat_virtual_peer_ids.end())
+        {
+            std::cerr << "(EE) item is not coming out of a registered tunnel. Weird. hash=" << hash << ", peer id = " << virtual_peer_id << std::endl;
+            return true ;
+        }
+
+        RsGxsId gxs_id = it->second.gxs_id ;
+        std::map<RsGxsId,DistantChatPeerInfo>::iterator it2 = _distant_chat_contacts.find(gxs_id) ;
+
+        if(it2 == _distant_chat_contacts.end())
+        {
+            std::cerr << "(EE) no GXS id data for ID=" << gxs_id << ". This is a bug." << std::endl;
+            return true ;
+        }
+        memcpy(aes_key,it2->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
+
+#ifdef DEBUG_DISTANT_CHAT
+        std::cerr << "   Using IV: " << std::hex << *(uint64_t*)data_bytes << std::dec << std::endl;
+        std::cerr << "   Decrypted buffer size: " << decrypted_size << std::endl;
+        std::cerr << "   key  : " ; printBinaryData(aes_key,16) ; std::cerr << std::endl;
+        std::cerr << "   data : " ; printBinaryData((uint8_t*)data_bytes,data_size) ; std::cerr << std::endl;
+#endif
+
+        if(!RsAES::aes_decrypt_8_16((uint8_t*)data_bytes+8,data_size-8,aes_key,(uint8_t*)data_bytes,decrypted_data,decrypted_size))
+        {
+            std::cerr << "(EE) packet decryption failed." << std::endl;
+            std::cerr << "(EE) resetting new DH session." << std::endl;
+
+            delete[] decrypted_data ;
+
+            locked_restartDHSession(virtual_peer_id,it2->second.own_gxs_id) ;
+
+            return false ;
+        }
+        it2->second.status = RS_DISTANT_CHAT_STATUS_CAN_TALK ;
+        it2->second.last_contact = time(NULL) ;
+
+#ifdef DEBUG_DISTANT_CHAT
+        std::cerr << "(II) Decrypted data: size=" << decrypted_size << std::endl;
+#endif
+
+        // Now try deserialise the decrypted data to make an RsItem out of it.
+        //
+        citem = RsChatSerialiser().deserialise(decrypted_data,&decrypted_size) ;
+        delete[] decrypted_data ;
+
+        if(citem == NULL)
+        {
+            std::cerr << "(EE) item could not be de-serialized. That is an error." << std::endl;
+            return true;
+        }
+
+        // DH key items are sent even before we know who we speak to, so the virtual peer id is used in this
+        // case only.
+
+        citem->PeerId(RsPeerId(gxs_id)) ;
+    }
 
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "(II) Setting peer id to " << citem->PeerId() << std::endl;
 #endif
-	handleIncomingItem(citem) ; // Treats the item, and deletes it 
+    handleIncomingItem(citem) ; // Treats the item, and deletes it
+
+    return true ;
 }
 
 void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 {
 #ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "DistantChatService:  Received DH public key." << std::endl;
-	item->print(std::cerr, 0) ;
+    std::cerr << "DistantChatService:  Received DH public key." << std::endl;
+    item->print(std::cerr, 0) ;
 #endif
 
-	// Look for the current state of the key agreement.
+    // Look for the current state of the key agreement.
 
-	TurtleVirtualPeerId vpid = item->PeerId() ;
-	TurtleFileHash hash ;
+    TurtleVirtualPeerId vpid = item->PeerId() ;
 
     RS_STACK_MUTEX(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
     std::map<RsPeerId,DistantChatDHInfo>::iterator it = _distant_chat_virtual_peer_ids.find(vpid) ;
 
     if(it == _distant_chat_virtual_peer_ids.end())
-	{
-		std::cerr << "  (EE) Cannot find hash in distant chat peer list!!" << std::endl;
-		return ;
-	}
+    {
+        std::cerr << "  (EE) Cannot find hash in distant chat peer list!!" << std::endl;
+        return ;
+    }
 
-	// Now check the signature of the DH public key item. 
-	
+    // Now check the signature of the DH public key item.
+
 #ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "  Checking signature. " << std::endl;
+    std::cerr << "  Checking signature. " << std::endl;
 #endif
 
-	uint32_t pubkey_size = BN_num_bytes(item->public_key) ;
-	unsigned char *data = (unsigned char *)malloc(pubkey_size) ;
-	BN_bn2bin(item->public_key, data) ;
+    uint32_t pubkey_size = BN_num_bytes(item->public_key) ;
+    unsigned char *data = (unsigned char *)malloc(pubkey_size) ;
+    BN_bn2bin(item->public_key, data) ;
 
-	RsTlvSecurityKey signature_key ;
+    RsTlvSecurityKey signature_key ;
 
-	// We need to get the key of the sender, but if the key is not cached, we
-	// need to get it first. So we let the system work for 2-3 seconds before
-	// giving up. Normally this would only cause a delay for uncached keys,
-	// which is rare. To force the system to cache the key, we first call for
-	// getIdDetails().
-	//
-	RsIdentityDetails details  ;
-	RsGxsId senders_id( item->signature.keyId ) ;
+    // We need to get the key of the sender, but if the key is not cached, we
+    // need to get it first. So we let the system work for 2-3 seconds before
+    // giving up. Normally this would only cause a delay for uncached keys,
+    // which is rare. To force the system to cache the key, we first call for
+    // getIdDetails().
+    //
+    RsIdentityDetails details  ;
+    RsGxsId senders_id( item->signature.keyId ) ;
 
-	mIdService->getIdDetails(senders_id,details);
+    mIdService->getIdDetails(senders_id,details);
 
-	for(int i=0;i<6;++i)
-		if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
-		{
+    for(int i=0;i<6;++i)
+        if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
+        {
 #ifdef DEBUG_DISTANT_CHAT
-			std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
+            std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-			usleep(500 * 1000) ;	// sleep for 500 msec.
-		}
-		else
-			break ;
+            usleep(500 * 1000) ;	// sleep for 500 msec.
+        }
+        else
+            break ;
 
-	if(signature_key.keyData.bin_data == NULL)
-	{
-		std::cerr << "  (EE) Key unknown for checking signature from " << senders_id << ", can't verify signature." << std::endl;
-		std::cerr << "       Using key provided in DH packet." << std::endl;
+    if(signature_key.keyData.bin_data == NULL)
+    {
+        std::cerr << "  (EE) Key unknown for checking signature from " << senders_id << ", can't verify signature." << std::endl;
+        std::cerr << "       Using key provided in DH packet." << std::endl;
 
-		signature_key = item->gxs_key ;
+        signature_key = item->gxs_key ;
 
 #warning At this point, we should check that the key Ids  match!!
     }
@@ -509,14 +556,14 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
         return;
     }
 
-	if(!GxsSecurity::validateSignature((char*)data,pubkey_size,signature_key,item->signature))
-	{
-		std::cerr << "  (EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
-		return ;
-	}
+    if(!GxsSecurity::validateSignature((char*)data,pubkey_size,signature_key,item->signature))
+    {
+        std::cerr << "  (EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
+        return ;
+    }
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  Signature checks! Sender's ID = " << senders_id << std::endl;
-	std::cerr << "  Computing AES key" << std::endl;
+    std::cerr << "  Computing AES key" << std::endl;
 #endif
 
     if(it->second.dh == NULL)
@@ -524,27 +571,37 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
         std::cerr << "  (EE) no DH information for that peer. This is an error." << std::endl;
         return ;
     }
-	// gets current key params. By default, should contain all null pointers.
-	//
-	it->second.gxs_id = senders_id ;
+    if(it->second.status == RS_DISTANT_CHAT_DH_STATUS_KEY_AVAILABLE)
+    {
+#ifdef DEBUG_DISTANT_CHAT
+        std::cerr << "  DH Session already set for this tunnel. Re-initing a new session!" << std::endl;
+#endif
 
-	// Looks for the DH params. If not there yet, create them.
-	//
-	int size = DH_size(it->second.dh) ;
-	unsigned char *key_buff = new unsigned char[size] ;
+        locked_restartDHSession(vpid,_distant_chat_contacts[senders_id].own_gxs_id) ;
+    }
+
+    // gets current key params. By default, should contain all null pointers.
+    //
+    it->second.gxs_id = senders_id ;
+
+    // Looks for the DH params. If not there yet, create them.
+    //
+    int size = DH_size(it->second.dh) ;
+    unsigned char *key_buff = new unsigned char[size] ;
 
     if(size != DH_compute_key(key_buff,item->public_key,it->second.dh))
-	{
-		std::cerr << "  (EE) DH computation failed. Probably a bug. Error code=" << ERR_get_error() << std::endl;
-		return ;
-	}
+    {
+        std::cerr << "  (EE) DH computation failed. Probably a bug. Error code=" << ERR_get_error() << std::endl;
+        return ;
+    }
+    it->second.status == RS_DISTANT_CHAT_DH_STATUS_KEY_AVAILABLE ;
+
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  DH key computation successed. New key in place." << std::endl;
 #endif
-
     DistantChatPeerInfo& pinfo(_distant_chat_contacts[senders_id]) ;
 
-	// Now hash the key buffer into a 16 bytes key.
+    // Now hash the key buffer into a 16 bytes key.
 
     assert(DISTANT_CHAT_AES_KEY_SIZE <= Sha1CheckSum::SIZE_IN_BYTES) ;
     memcpy(pinfo.aes_key, RsDirUtil::sha1sum(key_buff,size).toByteArray(),DISTANT_CHAT_AES_KEY_SIZE) ;
@@ -556,27 +613,30 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
     pinfo.virtual_peer_id = vpid ;
     pinfo.direction = it->second.direction ;
 
+    if(pinfo.direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT)
+        pinfo.own_gxs_id = gxsIdFromHash(it->second.hash) ;
+
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  DH key computed. Tunnel is now secured!" << std::endl;
     std::cerr << "  Key computed: " ; printBinaryData(pinfo.aes_key,16) ; std::cerr << std::endl;
     std::cerr << "  Sending a ACK packet." << std::endl;
 #endif
 
-	// then we send an ACK packet to notify that the tunnel works. That's useful
-	// because it makes the peer at the other end of the tunnel know that all
-	// intermediate peer in the tunnel are able to transmit the data.
+    // then we send an ACK packet to notify that the tunnel works. That's useful
+    // because it makes the peer at the other end of the tunnel know that all
+    // intermediate peer in the tunnel are able to transmit the data.
     // However, it is not possible here to call sendTurtleData(), without dead-locking
-	// the turtle router, so we store the item is a list of items to be sent.
+    // the turtle router, so we store the item is a list of items to be sent.
 
-	RsChatStatusItem *cs = new RsChatStatusItem ;
+    RsChatStatusItem *cs = new RsChatStatusItem ;
 
     cs->status_string = "Tunnel is secured with PFS session. ACK received. You can talk!" ;
-	cs->flags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_ACK_DISTANT_CONNECTION;
+    cs->flags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_ACK_DISTANT_CONNECTION;
     cs->PeerId(RsPeerId(senders_id));
 
-	pendingDistantChatItems.push_back(cs) ;
+    pendingDistantChatItems.push_back(cs) ;
 
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
+    RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 }
 
 bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_gxs_id,const RsPeerId& virtual_peer_id)
@@ -703,62 +763,84 @@ void DistantChatService::sendTurtleData(RsChatItem *item)
     std::cerr << "DistantChatService::sendTurtleData(): try sending item " << (void*)item << " to peer " << item->PeerId() << std::endl;
 #endif
 
-	uint32_t rssize = item->serial_size();
-	uint8_t *buff = new uint8_t[rssize] ;
-
-	if(!item->serialise(buff,rssize))
-	{
-		std::cerr << "(EE) DistantChatService::sendTurtleData(): Could not serialise item!" << std::endl;
-		delete[] buff ;
-		return ;
-	}
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "     Serialized item has size " << rssize << std::endl;
-#endif
-	
-    uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
-    uint64_t IV ;
-    TurtleVirtualPeerId virtual_peer_id ;
-
-    if(dynamic_cast<RsChatDHPublicKeyItem*>(item))
+    if(dynamic_cast<RsChatDHPublicKeyItem*>(item) != NULL)
     {
-#ifdef DEBUG_DISTANT_CHAT
-        std::cerr << "     Packet is a DH session key. Using Peer Id " << item->PeerId() << " as virtual peer id" << std::endl;
-#endif
-        virtual_peer_id = item->PeerId() ;
+        // make a TurtleGenericData item out of it, and send it in clear.
+        //
+        RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
+
+    uint32_t rssize = item->serial_size() ;
+
+        gitem->data_size  = rssize + 8 ;
+        gitem->data_bytes = malloc(rssize+8) ;
+
+        memset(gitem->data_bytes,0,8) ;
+
+        if(!item->serialise(&((uint8_t*)gitem->data_bytes)[8],rssize))
+        {
+            std::cerr << "(EE) Could not serialise item!!!" << std::endl;
+            delete gitem ;
+            delete item ;
+            return ;
+        }
 
 #ifdef DEBUG_DISTANT_CHAT
-        std::cerr << "  Special item DH session key --> will be sent unencrypted." << std::endl ;
+        std::cerr << "   DistantChatService::sendTurtleData(): Sending clear data to virtual peer: " << item->PeerId() << std::endl;
+        std::cerr << "     gitem->data_size = " << gitem->data_size << std::endl;
+        std::cerr << "     data = " ;
+        printBinaryData(gitem->data_bytes,gitem->data_size) ;
+        std::cerr << std::endl;
 #endif
-        memset(aes_key,0,DISTANT_CHAT_AES_KEY_SIZE) ;
-        IV = 0 ;
+        mTurtle->sendTurtleData(item->PeerId(),gitem) ;
     }
     else
     {
+        uint32_t rssize = item->serial_size();
+        uint8_t *buff = (uint8_t*)malloc(rssize) ;
+
+        if(!item->serialise(buff,rssize))
+        {
+            std::cerr << "(EE) DistantChatService::sendTurtleData(): Could not serialise item!" << std::endl;
+            delete[] buff ;
+            delete item ;
+            return ;
+        }
+
+        sendEncryptedTurtleData(buff,rssize,RsGxsId(item->PeerId())) ;
+
+        free(buff) ;
+    }
+    delete item ;
+}
+
+void DistantChatService::sendEncryptedTurtleData(const uint8_t *buff,uint32_t rssize,const RsGxsId& gxs_id)
+{
+    uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
+    uint64_t IV = 0;
+
 #ifdef DEBUG_DISTANT_CHAT
-        std::cerr << "     Packet is a normal chat message. Sending to GXS id " << item->PeerId() << std::endl;
+    std::cerr << "Sending encrypted data to virtual gxs id " << gxs_id << std::endl;
 #endif
-        RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
+    RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
-        std::map<RsGxsId,DistantChatPeerInfo>::iterator it = _distant_chat_contacts.find(RsGxsId(item->PeerId())) ;
+    std::map<RsGxsId,DistantChatPeerInfo>::iterator it = _distant_chat_contacts.find(gxs_id) ;
 
-        if(it == _distant_chat_contacts.end())
-        {
-            std::cerr << "(EE) Cannot find contact key info for ID " << item->PeerId() << ". Cannot send message!" << std::endl;
-            delete[] buff ;
-            return ;
-        }
-        if(it->second.status != RS_DISTANT_CHAT_STATUS_CAN_TALK)
-        {
-            std::cerr << "(EE) Cannot talk to " << item->PeerId() << ". Tunnel status is: " << it->second.status << std::endl;
-            delete[] buff ;
-            return ;
-        }
+    if(it == _distant_chat_contacts.end())
+    {
+        std::cerr << "(EE) Cannot find contact key info for ID " << gxs_id << ". Cannot send message!" << std::endl;
+        return ;
+    }
+    if(it->second.status != RS_DISTANT_CHAT_STATUS_CAN_TALK)
+    {
+        std::cerr << "(EE) Cannot talk to " << gxs_id << ". Tunnel status is: " << it->second.status << std::endl;
+        return ;
+    }
 
-        memcpy(aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
-        virtual_peer_id = it->second.virtual_peer_id ;
-        IV = RSRandom::random_u64() ; // make a random 8 bytes IV
-        }
+    memcpy(aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
+    RsPeerId virtual_peer_id = it->second.virtual_peer_id ;
+
+    while(IV == 0) IV = RSRandom::random_u64() ; // make a random 8 bytes IV, that is not 0
+
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "DistantChatService::sendTurtleData(): tunnel found. Encrypting data." << std::endl;
 #endif
@@ -769,41 +851,38 @@ void DistantChatService::sendTurtleData(RsChatItem *item)
     uint32_t encrypted_size = RsAES::get_buffer_size(rssize);
 
 #ifdef DEBUG_DISTANT_CHAT
-    std::cerr << "   Using IV: " << std::hex << IV << std::dec << std::endl;
+    std::cerr << "   Using  IV: " << std::hex << IV << std::dec << std::endl;
     std::cerr << "   Using Key: " ; printBinaryData(aes_key,16) ; std::cerr << std::endl;
 #endif
     if(!RsAES::aes_crypt_8_16(buff,rssize,aes_key,(uint8_t*)&IV,encrypted_data,encrypted_size))
     {
         std::cerr << "(EE) packet encryption failed." << std::endl;
         delete[] encrypted_data ;
-        delete[] buff ;
         return ;
     }
-    delete[] buff ;
 
-	// make a TurtleGenericData item out of it:
-	//
-	RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
+    // make a TurtleGenericData item out of it:
+    //
+    RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
-	gitem->data_size  = encrypted_size + 8 ;
-	gitem->data_bytes = malloc(gitem->data_size) ;
+    gitem->data_size  = encrypted_size + 8 ;
+    gitem->data_bytes = malloc(gitem->data_size) ;
 
-	memcpy(gitem->data_bytes  ,&IV,8) ;
-	memcpy(& (((uint8_t*)gitem->data_bytes)[8]),encrypted_data,encrypted_size) ;
+    memcpy(gitem->data_bytes  ,&IV,8) ;
+    memcpy(& (((uint8_t*)gitem->data_bytes)[8]),encrypted_data,encrypted_size) ;
 
-	delete[] encrypted_data ;
-	delete item ;
+    delete[] encrypted_data ;
 
 #ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "DistantChatService::sendTurtleData(): Sending through virtual peer: " << virtual_peer_id << std::endl;
-	std::cerr << "   gitem->data_size = " << gitem->data_size << std::endl;
-	std::cerr << "   data = " ;
+    std::cerr << "DistantChatService::sendTurtleData(): Sending encrypted data to virtual peer: " << virtual_peer_id << std::endl;
+    std::cerr << "   gitem->data_size = " << gitem->data_size << std::endl;
+    std::cerr << "   data = " ;
 
-	printBinaryData(gitem->data_bytes,gitem->data_size) ;
-	std::cerr << std::endl;
+    printBinaryData(gitem->data_bytes,gitem->data_size) ;
+    std::cerr << std::endl;
 #endif
 
-	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
+    mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
 bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,uint32_t& error_code)
@@ -882,28 +961,39 @@ void DistantChatService::startClientDistantChatConnection(const RsGxsId& to_gxs_
     handleRecvChatMsgItem(item) ;
 
 }
-
-TurtleFileHash DistantChatService::hashFromGxsId(const RsGxsId& gid)
+TurtleFileHash DistantChatService::hashFromGxsId(const RsGxsId& destination)
 {
-    if(RsGxsId::SIZE_IN_BYTES > Sha1CheckSum::SIZE_IN_BYTES)
-        std::cerr << __PRETTY_FUNCTION__ << ": Serious inconsistency error." << std::endl;
+    // This is in prevision for the "secured GXS tunnel" service, which will need a service ID to register,
+    // just like GRouter does.
 
-    assert(Sha1CheckSum::SIZE_IN_BYTES >= RsGxsId::SIZE_IN_BYTES) ;
+    static const uint32_t client = RS_SERVICE_TYPE_DISTANT_CHAT ;
 
-    unsigned char tmp[Sha1CheckSum::SIZE_IN_BYTES] ;
-    memset(tmp,0,Sha1CheckSum::SIZE_IN_BYTES) ;
-    memcpy(tmp,gid.toByteArray(),RsGxsId::SIZE_IN_BYTES) ;
+    assert(  destination.SIZE_IN_BYTES == 16) ;
+    assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
-    return Sha1CheckSum(tmp);
+    uint8_t bytes[20] ;
+    memcpy(bytes,destination.toByteArray(),16) ;
+    bytes[16] = 0 ;
+    bytes[17] = 0 ;
+    bytes[18] = (client >> 8) & 0xff ;
+    bytes[19] =  client       & 0xff ;
+
+    // We could rehash this, with a secret key to get a HMAC. That would allow to publish secret distant chat
+    // passphrases. I'll do this later if needed.
+
+    return Sha1CheckSum(bytes) ;
 }
-RsGxsId DistantChatService::gxsIdFromHash(const TurtleFileHash& hash)
+RsGxsId DistantChatService::gxsIdFromHash(const TurtleFileHash& sum)
 {
-    if(RsGxsId::SIZE_IN_BYTES > Sha1CheckSum::SIZE_IN_BYTES)
-        std::cerr << __PRETTY_FUNCTION__ << ": Serious inconsistency error." << std::endl;
+    assert(     RsGxsId::SIZE_IN_BYTES == 16) ;
+    assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
-    assert(Sha1CheckSum::SIZE_IN_BYTES >= RsGxsId::SIZE_IN_BYTES) ;
+    uint32_t client_id = sum.toByteArray()[19] + (sum.toByteArray()[18] << 8) ;
 
-    return RsGxsId(hash.toByteArray());
+    if(client_id != RS_SERVICE_TYPE_DISTANT_CHAT)
+        std::cerr << "WARNING: DistantChatService::gxsIdFromHash(). Hash is not a distant file hash. This should not happen." << std::endl;
+
+    return RsGxsId(sum.toByteArray());// takes the first 16 bytes
 }
 bool DistantChatService::getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status, RsGxsId *from_gxs_id)
 {
@@ -978,19 +1068,9 @@ bool DistantChatService::closeDistantChatConnexion(const RsGxsId& gxs_id)
             return false ;
         }
 
-        // remove virtual peer from list
-        std::map<RsPeerId,DistantChatDHInfo>::iterator it2 = _distant_chat_virtual_peer_ids.find(it->second.virtual_peer_id) ;
-
-        if(it2 == _distant_chat_virtual_peer_ids.end())
-    {
-        std::cerr << "(WW) Cannot remove virtual peer id " << it->second.virtual_peer_id << ": unknown! Weird situation." << std::endl;
-        return true ;
-    }
-
-        DH_free(it2->second.dh) ;
-
-        _distant_chat_virtual_peer_ids.erase(it2) ;
     _distant_chat_contacts.erase(it) ;
+
+    // DistantChatService::removeVirtualPeerId() will be called by the turtle service.
     }
     return true ;
 }
@@ -1008,6 +1088,11 @@ void DistantChatService::markDistantChatAsClosed(const RsGxsId& gxs_id)
         }
 
     if(it->second.direction == RsTurtleGenericDataItem::DIRECTION_CLIENT)
+    {
+#ifdef DEBUG_DISTANT_CHAT
+        std::cerr << "  This is server side. Marking distant chat as remotely closed for GXS id " << gxs_id << std::endl;
+#endif
         it->second.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED ;
+    }
 }
 

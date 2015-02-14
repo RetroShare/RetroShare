@@ -21,24 +21,24 @@ List of fixes/improvements before 0.6
       [ ] distant messages are not re-sent when the peer is offline the first time
       [ ] sent messages to direct peers in the Sent box have inconsistent To field. 
           Raises an error if you click on it.
-		[ ] Merge the new messaging format? (or keep this for > 0.6)
+      [ ] Merge the new messaging format? (or keep this for > 0.6)
    
    Channels
       [X] Unsubscribed channels should show an info page when selected, like forums
       [ ] marking all as read in channels takes time. The channel icon should show a waiting clock 
           during the operation to avoid the user to re-click many times in the hope to get 
           the posts marked as read.
-		[ ] channels items show a 0 left to the up/Dn buttons. What is it??
+      [ ] channels items show a 0 left to the up/Dn buttons. What is it??
    
    Chat lobbies
       [ ] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
-		[ ] Remove deprecated code in rschatitems.h
+      [ ] Remove deprecated code in rschatitems.h
    
    Chat
       [X] Distant chat window should show GXS avatars
       [ ] Distant chat should work with shared identities
-      [ ] Distant chat fails (tunnel bullet never gets green) when re-openning a distant chat window after closing a tunnel
-      [ ] Distant chat fails (chat window never appears) when re-openning a distant chat window after closing a tunnel
+      [X] Distant chat fails (tunnel bullet never gets green) when re-openning a distant chat window after closing a tunnel
+      [X] Distant chat fails (chat window never appears) when re-openning a distant chat window after closing a tunnel
       [X] You should not be enabled to distant-chat yourself!
    
    Identities:
@@ -75,16 +75,16 @@ List of fixes/improvements before 0.6
       [ ] implement a new file list sharing service based on auto-sync system
       [ ] get rid of the old cache system (remove CacheStrapper, CacheSource,etc)
 
-	GUI
-		[ ] enable circles for channels/posted/forums
-		[ ] enable people dialog
+   GUI
+      [ ] enable circles for channels/posted/forums
+      [ ] enable people dialog
 
-	GXS
-		[ ] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.
+   GXS
+      [ ] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.
 
    Libretroshare
       [ ] improve serialisation system. Lots of serialisation tasks (header, verifications, serialiser=>template, can be factored)
-		[ ] separate chat stuff from rsmsgs.h into rschat.h
+      [ ] separate chat stuff from rsmsgs.h into rschat.h
 
    Chat
       [ ] add "chat with this peer" from lobbies to start a private distant conversation with the GXS id of the peer
