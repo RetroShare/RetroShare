@@ -45,7 +45,7 @@
 #include <retroshare/rsids.h>
 #include "distantchat.h"
 
-#define DEBUG_DISTANT_CHAT
+//#define DEBUG_DISTANT_CHAT
 
 static const uint32_t DISTANT_CHAT_KEEP_ALIVE_TIMEOUT = 15 ; // send keep alive packet so as to avoid tunnel breaks.
 

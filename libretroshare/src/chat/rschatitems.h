@@ -186,39 +186,6 @@ class RsChatLobbyListRequestItem: public RsChatItem
 
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 };
-class RsChatLobbyListItem_deprecated: public RsChatItem
-{
-	public:
-		RsChatLobbyListItem_deprecated() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated) {}
-		RsChatLobbyListItem_deprecated(void *data,uint32_t size) ; 
-		virtual ~RsChatLobbyListItem_deprecated() {}
-
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ;				 			
-
-		std::vector<ChatLobbyId> lobby_ids ;
-		std::vector<std::string> lobby_names ;
-		std::vector<uint32_t>    lobby_counts ;
-};
-class RsChatLobbyListItem_deprecated2: public RsChatItem
-{
-	public:
-		RsChatLobbyListItem_deprecated2() : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2) {}
-		RsChatLobbyListItem_deprecated2(void *data,uint32_t size) ; 
-		virtual ~RsChatLobbyListItem_deprecated2() {}
-
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ;				 			
-
-		std::vector<ChatLobbyId> lobby_ids ;
-		std::vector<std::string> lobby_names ;
-		std::vector<std::string> lobby_topics ;
-		std::vector<uint32_t>    lobby_counts ;
-};
 class RsChatLobbyListItem: public RsChatItem
 {
 	public:

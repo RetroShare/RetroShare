@@ -11,7 +11,7 @@ List of fixes/improvements before 0.6
       [ ] it's not possible to create a Forum thread without a Owner. 
           Bug? If not, then remove "No signature" from selection box
       [X] the tooltip over GXS ids should show the avatar on the left side.
-      [ ] fix data race between GXS ID default icons
+      [X] fix data race between GXS ID default icons
    
    GUI General
       [ ] do we keep "Getting Started" ? the look needs to be improved
@@ -32,7 +32,7 @@ List of fixes/improvements before 0.6
    
    Chat lobbies
       [ ] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
-      [ ] Remove deprecated code in rschatitems.h
+      [X] Remove deprecated code in rschatitems.h
    
    Chat
       [X] Distant chat window should show GXS avatars
@@ -47,7 +47,7 @@ List of fixes/improvements before 0.6
       [ ] reputations are not used yet. We should hide them.
       [ ] Add timeout to Identities that are unused. Need to keep a time stamp list, updated 
           whenever the identity is used for checking signatures.
-      [ ] Fix avatar loading for identities. When loaded for the first time by forums, the avatar does not show up.
+      [X] Fix avatar loading for identities. When loaded for the first time by forums, the avatar does not show up.
    
    Network
       [ ] Friends => Friend nodes
