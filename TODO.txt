@@ -12,6 +12,7 @@ List of fixes/improvements before 0.6
           Bug? If not, then remove "No signature" from selection box
       [X] the tooltip over GXS ids should show the avatar on the left side.
       [X] fix data race between GXS ID default icons
+      [ ] Share of key shows "Not implemented"
    
    GUI General
       [ ] do we keep "Getting Started" ? the look needs to be improved
