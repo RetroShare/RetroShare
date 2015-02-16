@@ -300,15 +300,7 @@ void PostedListWidget::loadVoteData(const uint32_t &/*token*/)
 
 void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 {
-	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
-	{
-		mStateHelper->setWidgetEnabled(ui->submitPostButton, true);
-	}
-	else
-	{
-		mStateHelper->setWidgetEnabled(ui->submitPostButton, false);
-	}
-
+	mStateHelper->setWidgetEnabled(ui->submitPostButton, IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 }
 
