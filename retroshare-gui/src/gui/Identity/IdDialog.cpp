@@ -666,6 +666,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->editIdentity->setEnabled(true);
 		ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
+		ui->messageButton->setEnabled(false);
 	}
 	else
 	{
@@ -674,6 +675,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->editIdentity->setEnabled(false);
 		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
+		ui->messageButton->setEnabled(true);
 	}
 
 	/* now fill in the reputation information */
