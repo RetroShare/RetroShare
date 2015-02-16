@@ -123,6 +123,8 @@ void GxsChannelPostItem::setup()
 	//connect(ui-> voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	//connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
 
+	ui->scoreLabel->hide();
+
 	ui->downloadButton->hide();
 	ui->playButton->hide();
 	ui->warn_image_label->hide();

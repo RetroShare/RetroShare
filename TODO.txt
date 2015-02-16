@@ -29,7 +29,7 @@ List of fixes/improvements before 0.6
       [ ] marking all as read in channels takes time. The channel icon should show a waiting clock 
           during the operation to avoid the user to re-click many times in the hope to get 
           the posts marked as read.
-      [ ] channels items show a 0 left to the up/Dn buttons. What is it??
+      [X] channels items show a 0 left to the up/Dn buttons. What is it??
    
    Chat lobbies
       [ ] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
