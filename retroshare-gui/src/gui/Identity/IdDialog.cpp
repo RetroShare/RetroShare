@@ -156,6 +156,10 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->splitter->setStretchFactor(0, 1);
 	ui->splitter->setStretchFactor(1, 0);
 
+	QList<int> sizes;
+	sizes << width() << 500; // Qt calculates the right sizes
+	ui->splitter->setSizes(sizes);
+
 	/* Add filter types */
     ui->filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
     ui->filterComboBox->addItem(tr("Owned by you"), RSID_FILTER_OWNED_BY_YOU);
