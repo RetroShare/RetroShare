@@ -552,6 +552,19 @@ bool 	pqissludp::moretoread(uint32_t usec)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 		
+	// Extra Checks to avoid crashes in v0.6 ... pqithreadstreamer calls this function 
+        // when sockfd = -1  during the shutdown of the thread.
+        // NB: it should never reach here if bio->isActive() returns false.
+        // Some mismatch to chase down when we have a chance.
+        // SAME test is at cansend.
+	if (sockfd < 0)
+        {
+		std::cerr << "pqissludp::moretoread() INVALID sockfd PARAMETER ... bad shutdown?";
+		std::cerr << std::endl;
+		return false;
+	}
+
+
 	{
 		std::string out = "pqissludp::moretoread()";
 		rs_sprintf_append(out, "  polling socket (%d)", sockfd);
@@ -625,6 +638,18 @@ bool 	pqissludp::moretoread(uint32_t usec)
 bool 	pqissludp::cansend(uint32_t usec)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
+	// Extra Checks to avoid crashes in v0.6 ... pqithreadstreamer calls this function 
+        // when sockfd = -1  during the shutdown of the thread.
+        // NB: it should never reach here if bio->isActive() returns false.
+        // Some mismatch to chase down when we have a chance.
+        // SAME test is at can moretoread.
+	if (sockfd < 0)
+        {
+		std::cerr << "pqissludp::cansend() INVALID sockfd PARAMETER ... bad shutdown?";
+		std::cerr << std::endl;
+		return false;
+	}
 
 	if (usec)
 	{
