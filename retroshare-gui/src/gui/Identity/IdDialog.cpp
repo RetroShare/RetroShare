@@ -190,11 +190,13 @@ IdDialog::IdDialog(QWidget *parent) :
 	hideTypeAct= new QAction(headerItem->text(RSID_COL_IDTYPE),this);
 	hideTypeAct->setCheckable(true); hideTypeAct->setToolTip(tr("Show ")+hideTypeAct->text()+tr(" Column"));
 	connect(hideTypeAct,SIGNAL(triggered(bool)),this,SLOT(setHideIdTypeColumn(bool))) ;
-
+		
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 	mStateHelper->setActive(IDDIALOG_REPLIST, false);
+
+	ui->treeWidget_IdList->setColumnHidden(RSID_COL_IDTYPE, true);
 
 	// Hiding RepList until that part is finished.
 	//ui->treeWidget_RepList->setVisible(false);
@@ -410,6 +412,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
+    QString tooltip;
+
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 	{
 		if (data.mPgpKnown)
@@ -418,11 +422,18 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			rsPeers->getGPGDetails(data.mPgpId, details);
 			item->setText(RSID_COL_IDTYPE, QString::fromUtf8(details.name.c_str()));
 			item->setToolTip(RSID_COL_IDTYPE,QString::fromStdString(data.mPgpId.toStdString())) ;
+			
+			
+			tooltip += tr("Node name: ") + QString::fromUtf8(details.name.c_str()) + "\n";
+			tooltip += tr("Node Id  : ") + QString::fromStdString(data.mPgpId.toStdString()) ;
+			item->setToolTip(RSID_COL_KEYID,tooltip) ;
 		}
 		else
 		{
 			item->setText(RSID_COL_IDTYPE, tr("Unknown PGP key"));
 			item->setToolTip(RSID_COL_IDTYPE,tr("Unknown key ID")) ;
+			item->setToolTip(RSID_COL_KEYID,tr("Unknown key ID")) ;
+
 		}
 	}
 	else
@@ -679,7 +690,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->editIdentity->setEnabled(false);
 		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
-		ui->messageButton->setEnabled(true);
+    ui->messageButton->setEnabled(true);
 	}
 
 	/* now fill in the reputation information */
