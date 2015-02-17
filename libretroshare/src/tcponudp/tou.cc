@@ -173,10 +173,29 @@ int     tou_socket(uint32_t recvIdx, uint32_t type, int /*protocol*/)
 	return -1;
 }
 
+
+bool tou_stream_check(int sockfd)
+{
+	if (sockfd < 0)
+	{
+		std::cerr << "tou_stream_check() ERROR sockfd < 0";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (tou_streams[sockfd] == NULL)
+	{
+		std::cerr << "tou_stream_check() ERROR tou_streams[sockfd] == NULL";
+		std::cerr << std::endl;
+		return false;
+	}
+	return true;
+}
+
 /* 	bind - opens the udp port */
 int 	tou_bind(int sockfd, const struct sockaddr * /* my_addr */, socklen_t /* addrlen */ )
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -198,7 +217,7 @@ int 	tou_bind(int sockfd, const struct sockaddr * /* my_addr */, socklen_t /* ad
 int 	tou_connect(int sockfd, const struct sockaddr *serv_addr, 
 					socklen_t addrlen, uint32_t conn_period)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -270,7 +289,7 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, 
 					socklen_t addrlen)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -362,7 +381,7 @@ int 	tou_connect_via_relay(int sockfd,
 			const struct sockaddr_in *dest_addr)
 
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -418,7 +437,7 @@ int 	tou_connect_via_relay(int sockfd,
         /* slightly different - returns sockfd on connection */
 int     tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -458,7 +477,7 @@ int     tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 
 int     tou_connected(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -475,7 +494,7 @@ int     tou_connected(int sockfd)
 
 ssize_t tou_read(int sockfd, void *buf, size_t count)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -494,7 +513,7 @@ ssize_t tou_read(int sockfd, void *buf, size_t count)
 
 ssize_t tou_write(int sockfd, const void *buf, size_t count)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -515,7 +534,7 @@ ssize_t tou_write(int sockfd, const void *buf, size_t count)
         /* check stream */
 int     tou_maxread(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -533,7 +552,7 @@ int     tou_maxread(int sockfd)
 
 int     tou_maxwrite(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -556,7 +575,7 @@ int 	tou_close(int sockfd)
 	TcpOnUdp *tous = NULL;
 	{
 		RsStackMutex stack(touMutex); /***** LOCKED ******/
-		if (tou_streams[sockfd] == NULL)
+		if (!tou_stream_check(sockfd))
 		{
 			return -1;
 		}
@@ -624,7 +643,7 @@ int 	tou_close(int sockfd)
 /*	get an error number */
 int	tou_errno(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return ENOTSOCK;
 	}
@@ -634,7 +653,7 @@ int	tou_errno(int sockfd)
 
 int     tou_clear_error(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
