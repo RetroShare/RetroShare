@@ -128,7 +128,7 @@ GxsGroupDialog *GxsForumsDialog::createGroupDialog(TokenQueue *tokenQueue, RsTok
 
 int GxsForumsDialog::shareKeyType()
 {
-	return FORUM_KEY_SHARE;
+	return 0; // Forums are public
 }
 
 GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)

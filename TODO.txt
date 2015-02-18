@@ -20,7 +20,7 @@ E        [ ] it's not possible to create a Forum thread without a Owner.
              Bug? If not, then remove "No signature" from selection box
          [X] the tooltip over GXS ids should show the avatar on the left side.
          [X] fix data race between GXS ID default icons
-M        [ ] Share of key shows "Not implemented". Since forums are public, share key should be hidden.
+         [X] Share of key shows "Not implemented". Since forums are public, share key should be hidden.
       
        GUI General
 E        [ ] do we keep "Getting Started" ? the look needs to be improved
