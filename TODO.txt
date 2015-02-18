@@ -57,7 +57,7 @@ H        [ ] Distant chat should work with shared identities
        Identities:
          [X] "Owned by you" => "Owned by node [nodename]" 
          [X] Bold face should only be used for keys with admin credentials
-E        [ ] reputations are not used yet. We should hide them.
+E        [X] reputations are not used yet. We should hide them.
 H        [ ] Add timeout to Identities that are unused. Need to keep a time stamp list, updated 
              whenever the identity is used for checking signatures. This should
            be extented to any group and stored into meta data. Would allow to

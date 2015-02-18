@@ -226,6 +226,10 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	// load settings
 	processSettings(true);
+
+    // hide reputation sice it's currently unused
+    ui->reputationGroupBox->hide();
+    ui->tweakGroupBox->hide();
 }
 
 IdDialog::~IdDialog()
