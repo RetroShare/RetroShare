@@ -1700,7 +1700,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				std::cerr << std::endl;
 #endif
 				/* ************* */
-				addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_SERVICE_PERM_ALL);
+                addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_DEFAULT);
 				setLocation(pitem->peerId, pitem->location);
 			}
 
@@ -2135,7 +2135,7 @@ ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const RsPeerId& ssl
 		std::map<RsPeerId, peerState>::const_iterator it = mFriendList.find(ssl_id);
 
 		if(it == mFriendList.end())
-			return RS_SERVICE_PERM_ALL ;
+            return RS_NODE_PERM_DEFAULT ;
 
 		gpg_id = it->second.gpg_id ;
 	}
@@ -2152,7 +2152,7 @@ ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const RsPgpId& pgp_
 		std::map<RsPgpId,ServicePermissionFlags>::const_iterator it = mFriendsPermissionFlags.find( pgp_id ) ;
 
 		if(it == mFriendsPermissionFlags.end())
-			return RS_SERVICE_PERM_ALL ;
+            return RS_NODE_PERM_DEFAULT ;
 		else
 			return it->second ;
 	}

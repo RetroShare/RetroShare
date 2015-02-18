@@ -1087,7 +1087,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		pd.location = cert.location_name_string();
 
 		pd.isOnlyGPGdetail = pd.id.isNull();
-		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
+        pd.service_perm_flags = RS_NODE_PERM_DEFAULT ;
 
 		if (!cert.hidden_node_string().empty())
 		{

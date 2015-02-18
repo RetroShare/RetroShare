@@ -75,7 +75,7 @@ virtual bool	getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId> &ids
 virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) ;
 
 	/* Add/Remove Friends */
-virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL);
+virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT);
 virtual	bool removeFriend(const RsPgpId& gpgid);
 virtual bool removeFriendLocation(const RsPeerId& sslId);
 

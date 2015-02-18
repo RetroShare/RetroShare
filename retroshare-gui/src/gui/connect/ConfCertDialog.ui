@@ -813,7 +813,7 @@ p, li { white-space: pre-wrap; }
           <string>Options</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="1" column="0" colspan="2">
+          <item row="2" column="0" colspan="2">
            <spacer name="verticalSpacer_4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -833,6 +833,13 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="text">
              <string>Use as direct source, when available</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="_allow_push_CB">
+            <property name="text">
+             <string>Auto-download recommended files from this node</string>
             </property>
            </widget>
           </item>

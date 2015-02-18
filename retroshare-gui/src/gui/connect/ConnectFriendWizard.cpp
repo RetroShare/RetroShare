@@ -256,7 +256,8 @@ void ConnectFriendWizard::initializePage(int id)
 		{
 			std::cerr << "Conclusion page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
-            ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL) ;
+            ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
+            ui->_allow_push_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
 
 			RsPeerDetails tmp_det ;
 			bool already_in_keyring = rsPeers->getGPGDetails(peerDetails.gpg_id, tmp_det) ;
@@ -620,9 +621,11 @@ ServicePermissionFlags ConnectFriendWizard::serviceFlags() const
 
     if (hasVisitedPage(Page_FriendRequest))
     {
-        if(  ui->_direct_transfer_CB->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
+        if(  ui->_direct_transfer_CB->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
+        if(  ui->_allow_push_CB->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
     } else if (hasVisitedPage(Page_Conclusion)) {
-        if(  ui->_direct_transfer_CB_2->isChecked()) flags |= RS_SERVICE_PERM_DIRECT_DL ;
+        if(  ui->_direct_transfer_CB_2->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
+        if(  ui->_allow_push_CB_2->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
     }
     return flags ;
 }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>662</width>
-    <height>623</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -688,6 +688,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="_allow_push_CB">
+              <property name="text">
+               <string>Auto-download recommended files</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_5">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -996,34 +1003,20 @@
          <item>
           <widget class="QGroupBox" name="groupBox_2">
            <property name="title">
-            <string>Service permissions</string>
+            <string>Options</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
              <widget class="QCheckBox" name="_direct_transfer_CB_2">
               <property name="text">
-               <string>Direct source</string>
+               <string>Can be used as direct source</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_discovery_CB_2">
+             <widget class="QCheckBox" name="_allow_push_CB_2">
               <property name="text">
-               <string>Discovery</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_forums_channels_CB_2">
-              <property name="text">
-               <string>Forums/channels</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_anonymous_routing_CB_2">
-              <property name="text">
-               <string>Anonymous routing</string>
+               <string>Auto-download recommended files</string>
               </property>
              </widget>
             </item>
@@ -1094,15 +1087,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
    <class>FriendSelectionWidget</class>

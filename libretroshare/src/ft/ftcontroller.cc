@@ -292,7 +292,7 @@ void ftController::searchForDirectSources()
 
 				if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit)
-						if(rsPeers->servicePermissionFlags(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
+                        if(rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL)
 							if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
 								setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceId, pit->peerId));
 			}
@@ -1134,7 +1134,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	//
 	if(!(flags & RS_FILE_REQ_CACHE))
         for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
-			if(!(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL))
+            if(!(rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL))
 			{
                 std::list<RsPeerId>::iterator tmp(it) ;
 				++tmp ;
@@ -1190,7 +1190,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 			 */
 
 			for(it = srcIds.begin(); it != srcIds.end(); ++it)
-				if(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL)
+                if(rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL)
 				{
 					uint32_t i, j;
 					if ((dit->second)->mTransfer->getPeerState(*it, i, j))
@@ -1245,7 +1245,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 #endif
 				// Because this is auto-add, we only add sources that we allow to DL from using direct transfers.
 
-				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_SERVICE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags(pit->peerId)))
+                if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_NODE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags(pit->peerId)))
 				{
 					srcIds.push_back(pit->peerId);
 

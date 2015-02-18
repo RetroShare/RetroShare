@@ -196,6 +196,13 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 		mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
+    // If the peer is allowed to push files, then auto-download the recommended files.
+
+    if(rsPeers->servicePermissionFlags(mi->PeerId()) & RS_NODE_PERM_ALLOW_PUSH)
+        for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
+            rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,std::list<RsPeerId>()) ;
+
+
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 

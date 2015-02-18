@@ -27,7 +27,7 @@ E        [ ] do we keep "Getting Started" ? the look needs to be improved
 E        [ ] Recommendation messages do not show complete links. Links show up in some buttons and the text is truncated
 E        [ ] Recommendation messages should not be signed by the retroshare team!!
 E        [ ] when adding a friend through clicking on cert links, the add friend wizard is shown twice!
-M        [ ] add a flag in friends option to allow auto-download of recommended files
+M        [X] add a flag in friends option to allow auto-download of recommended files
       
        Messages
 H        [ ] distant messages should be made async-ed
