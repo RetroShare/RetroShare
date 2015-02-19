@@ -331,7 +331,8 @@ static  int initLib = 0;
 	std::cerr << "SSL Library Init!" << std::endl;
 
 	// setup connection method
-	sslctx = SSL_CTX_new(TLSv1_method());
+	sslctx = SSL_CTX_new(SSLv23_method());
+	SSL_CTX_set_options(sslctx,SSL_OP_NO_SSLv3) ;
 
 	// Setup cipher lists:
 	//
