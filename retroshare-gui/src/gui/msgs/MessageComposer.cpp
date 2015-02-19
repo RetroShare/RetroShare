@@ -474,7 +474,7 @@ void MessageComposer::recommendFriend(const std::list <RsPeerId> &sslIds, const 
     sMsgText += recommendHtml;
     sMsgText += "<br>";
     sMsgText += tr("This friend is suggested by") + " " + link.toHtml() + "<br><br>" ;      
-    sMsgText += tr("Thanks, <br>The RetroShare Team");
+    sMsgText += tr("Thanks, <br>") + QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str());
     composer->setMsgText(sMsgText);
 
     std::list <RsPeerId>::const_iterator peerIt;
