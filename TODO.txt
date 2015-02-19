@@ -13,7 +13,7 @@ E        [ ] it's not possible to create a Posted thread without a Owner.
              Bug? If not, then remove "No signature" from selection box
 E        [ ] Show an info page for unsubscribed posted threads (same as forums)
 M        [ ] Fix the counting of unread messages in Posted. Now it's wrong.
-E        [ ] Make the GUI of Posted more sexy: more compact items, remove unecessary text, use consistent icons,...
+E        [X] Make the GUI of Posted more sexy: more compact items, remove unecessary text, use consistent icons,...
       
        Forums
 E        [ ] it's not possible to create a Forum thread without a Owner. 

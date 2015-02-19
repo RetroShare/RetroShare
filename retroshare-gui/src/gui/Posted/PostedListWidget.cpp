@@ -179,8 +179,7 @@ void PostedListWidget::showPrev()
 
 void PostedListWidget::updateShowText()
 {
-	QString showText = tr("Showing");
-	showText += " ";
+    QString showText ;
 	showText += QString::number(mPostIndex + 1);
 	showText += "-";
 	showText += QString::number(mPostIndex + mPostShow);
