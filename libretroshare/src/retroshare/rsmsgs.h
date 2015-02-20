@@ -59,11 +59,10 @@
 // system message
 #define RS_MSG_USER_REQUEST          0x000400   /* user request */
 #define RS_MSG_FRIEND_RECOMMENDATION 0x000800   /* friend recommendation */
-#define RS_MSG_ENCRYPTED             0x001000	/* message is encrypted */
+#define RS_MSG_DISTANT               0x001000	/* message is distant */
 #define RS_MSG_SIGNATURE_CHECKS      0x002000	/* message was signed, and signature checked */
 #define RS_MSG_SIGNED                0x004000	/* message was signed and signature didn't check */
 #define RS_MSG_LOAD_EMBEDDED_IMAGES  0x008000   /* load embedded images */
-#define RS_MSG_DECRYPTED             0x010000	/* message was previously encrypted, and is now decrypted */
 #define RS_MSG_PUBLISH_KEY           0x020000   /* publish key */
 
 #define RS_MSG_SYSTEM                (RS_MSG_USER_REQUEST | RS_MSG_FRIEND_RECOMMENDATION | RS_MSG_PUBLISH_KEY)

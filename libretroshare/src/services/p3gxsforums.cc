@@ -526,7 +526,7 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 	rsIdentity->getOwnIds(ownIds);
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
-	int i = 0;
+    uint32_t i = 0;
 	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); ++it, i++) ;
 
 	if (it != ownIds.end())

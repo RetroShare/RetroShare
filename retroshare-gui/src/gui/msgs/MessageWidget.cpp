@@ -546,21 +546,22 @@ void MessageWidget::fill(const std::string &msgId)
     RsPeerId ownId = rsPeers->getOwnId();
 	 QString tooltip_string ;
 
-	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) // outgoing message are from me
-	{
-		tooltip_string = PeerDefs::rsidFromId(ownId) ;
-		link.createMessage(ownId, "");
-	} 
-	else if(msgInfo.msgflags & RS_MSG_DECRYPTED || msgInfo.msgflags & RS_MSG_ENCRYPTED)	// distant message
-	{
-		tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
-		link.createMessage(msgInfo.rsgxsid_srcId, "");
-	}
-	else
-	{
-		tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
-		link.createMessage(msgInfo.rspeerid_srcId, "");
-	}
+//	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) // outgoing message are from me
+//	{
+//		tooltip_string = PeerDefs::rsidFromId(ownId) ;
+//		link.createMessage(ownId, "");
+//	}
+
+     if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
+     {
+         tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
+         link.createMessage(msgInfo.rsgxsid_srcId, "");
+     }
+     else
+     {
+         tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
+         link.createMessage(msgInfo.rspeerid_srcId, "");
+     }
 
     if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
 		ui.fromText->setText("RetroShare");

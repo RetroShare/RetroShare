@@ -615,9 +615,6 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
         action->setDisabled(true);
     }
 
-	 if(nCount==1 && (msgInfo.msgflags & RS_MSG_ENCRYPTED))
-		 action = contextMnu.addAction(QIcon(IMAGE_DECRYPTMESSAGE), tr("Decrypt Message"), this, SLOT(decryptSelectedMsg()));
-
     int listrow = ui.listWidget->currentRow();
     if (listrow == ROW_TRASHBOX) {
         action = contextMnu.addAction(tr("Undelete"), this, SLOT(undeletemessage()));
@@ -1104,7 +1101,8 @@ void MessagesDialog::insertMessages()
                     if ((it->msgflags & RS_MSG_SYSTEM) && it->srcId == ownId) {
                         text = "RetroShare";
                     } else {
-                        if (it->msgflags & (RS_MSG_DECRYPTED | RS_MSG_ENCRYPTED)) {
+                        if (it->msgflags & RS_MSG_DISTANT)
+            {
                             // distant message
                             if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
                                 gotInfo = true;
@@ -1148,17 +1146,15 @@ void MessagesDialog::insertMessages()
                         std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
                     }
                 }
-                if ((it->msgflags & (RS_MSG_DECRYPTED | RS_MSG_ENCRYPTED)) == 0) {
+                if(it->msgflags & RS_MSG_DISTANT)
+        {
                     item->setText(COLUMN_FROM, text);
                     item->setData(COLUMN_FROM, ROLE_SORT, text + dateString);
                 }
             }
 
             // Subject
-            if(it->msgflags & RS_MSG_ENCRYPTED)
-                text = tr("Encrypted message. Right-click to decrypt it.") ;
-            else
-                text = QString::fromUtf8(it->title.c_str());
+        text = QString::fromUtf8(it->title.c_str());
 
             item->setText(COLUMN_SUBJECT, text);
             item->setData(COLUMN_SUBJECT, ROLE_SORT, text + dateString);
@@ -1234,16 +1230,10 @@ void MessagesDialog::insertMessages()
                 }
             }
 
-            if(it->msgflags & RS_MSG_ENCRYPTED)
-            {
-                item->setIcon(COLUMN_SIGNATURE, QIcon(":/images/blue_lock.png")) ;
-                item->setToolTip(COLUMN_SIGNATURE, tr("This message is encrypted. Right click to decrypt it.")) ;
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/mail-encrypted-full.png")) ;
-            }
-            else if(it->msgflags & RS_MSG_DECRYPTED)
+            else if(it->msgflags & RS_MSG_DISTANT)
             {
                 item->setIcon(COLUMN_SIGNATURE, QIcon(":/images/blue_lock_open.png")) ;
-                item->setToolTip(COLUMN_SIGNATURE, tr("This message has been successfully decrypted, and is unsigned.")) ;
+                item->setToolTip(COLUMN_SIGNATURE, tr("This message comes from a distant person.")) ;
                 item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-read.png")) ;
 
                 if(it->msgflags & RS_MSG_SIGNED)
