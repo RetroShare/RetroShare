@@ -2,6 +2,57 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    Improvements
       * GUI
+         - Removed not used base class GxsIdTreeWidget.
+            Used QPixmap instead of QIcon to draw the gxs image in GxsIdTreeWidgetItem.
+            Fixed use of transparent background in GxsIdDetails::GenerateCombinedPixmap 
+            (formerly GxsIdDetails::GenerateCombinedIcon).
+         - hide reputations which are not used yet (patch from sehraf)
+
+      * Channels/Forums/Posted
+         - avoid calling rsGxsChannels::setMessageReadStatus() when the message status is already what 
+            we want. Removed one warning that has been cleared.
+         - improved GUI for Posted
+         - Hide share of key in forums
+         - Hide score label in channel post item
+         - Fixed GUI - to allow people to post to subscribed Topics.
+
+      * Messages
+         - removed mentions to encrypted messages. Replaced by distant, with the appropriate flags. Removed old 
+            msg encryption code
+         - fixed recommendation signature (patch from sehraf)
+         - added new flag to allow peers auto-download recommended files from trusted neighbor nodes, which 
+            gives the possibility to push data to other nodes
+            
+      * Identities
+         - Added tooltip on key id column.
+         - Disable Send Message button for own Identities.
+         - Fixed initial size of the splitter in IdDialog.
+
+      * Chat 
+         - removed deprectated items in chat lobbies. Removed debug output in distant chat.
+         - fixed a few bugs in distant chat protocol (allow re-negociation of DH parameters if decryption 
+            fails, correct passing of own gxs id for server side), making the system more reactive. Also 
+            fixed the issue of  avatar not showing up. Changed t he tunnel naming system to something specific 
+            to distant chat. WARNING: this version cannot distant chat with previous versions.
+         - fixed the ChatId::toStdString() method (patch from sehraf)
+
+      * improvement of README file (patch by cave, modified)
+
+      * Connectivity
+         - Allow TLSv1.2 while keeping compatibility with TLS1 and 1.1 (Patch from cave)
+         - Added extra check against invalid sockfds, cansend / moretoread code
+
+      * Packaging
+         - fixed compilation on debian squeeze. Removed placeHolder properties in CreateGxsForumMsg.ui 
+            and GxsGroupDialog.ui which need to be set in the cpp. Added a new DEFINE=NO_SQLCIPHER to compile 
+            without sqlcipher when sqlcipher cannot be found (no sqlcipher is available on debian squeeze).
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 22 Feb 2015 15:00:00 +0100
+
+retroshare06 (0.6.0-0.7939~precise) precise; urgency=low
+
+   Improvements
+      * GUI
          - Fixed loading of avatars
          - Used RsGxsGroupId instead of std:string for id/name in IdEditDialog/GxsidChooser.
          - Added a send message button on header frame.
@@ -20,13 +71,15 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
             * Fixed process of person link
          - added columns context menu entry, to hide optional some columns
          - Fixed double feed publication
-         - separated "owned by you" and "linked to your node" which are two different things; fixed bug showing chat menu for own identity
+         - separated "owned by you" and "linked to your node" which are two different things; fixed bug showing 
+            chat menu for own identity
          - fixed typo in column addressing
          - Fixed Scale QLabel content
          - set item icon size 22x for Identity icons.
          - Used AvatarDialog to choose an avatar for an identity.
          - added avatar to GxsId tooltip (see in forums). 
-         - Removed thread data race due to multiple threads accessing the static data member image_cache, causing avatars to not show up randomly.
+         - Removed thread data race due to multiple threads accessing the static data member image_cache, 
+            causing avatars to not show up randomly.
          - removed unused code in ServicePermissionPage
          - Fixed deadlock in RSGraphWidget 
          - Set Light gray background color for the identicons for better look n feel.
@@ -35,7 +88,8 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
          - Added Avatar Dialog at the moment for own peerid, soon for gxs avatars change.
          - switch to standard identity icon format for defautl icons (patch from Phenom, slightly modified)
          - Enabled display of extern gxs Avatars on ID Details Dialog
-         - implemented dedicated widget for service permission matrix. Permissions are not saved yet, and we also need a default switch
+         - implemented dedicated widget for service permission matrix. Permissions are not saved yet, and we 
+            also need a default switch
          - Moved remove button under the add btn,for better look.
          - Removed "Send" button in CreateGxsForumMsg and used "Ok" button of the buttonbox to send a message.
       
@@ -50,7 +104,7 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       * Packaging
          - Fixed utf8 issue in Windows installer
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 10 Jan 2015 23:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 10 Feb 2015 23:00:00 +0100
 
 retroshare06 (0.6.0-0.7891~precise) precise; urgency=low
 
