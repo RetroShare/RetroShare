@@ -210,7 +210,7 @@
         </layout>
        </item>
        <item>
-        <widget class="GxsIdRSTreeWidget" name="threadTreeWidget">
+        <widget class="RSTreeWidget" name="threadTreeWidget">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -521,9 +521,9 @@
    <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
   <customwidget>
-   <class>GxsIdRSTreeWidget</class>
+   <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>gui/gxs/GxsIdTreeWidget.h</header>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

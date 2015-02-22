@@ -72,12 +72,11 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
     item->setText(column, GxsIdDetails::getNameForType(type, details));
     item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
 
-    QIcon combinedIcon;
+    QPixmap combinedPixmap;
     if (!icons.empty()) {
-        GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
+        GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, 16);
     }
-    item->setIcon(column, combinedIcon);
-
+    item->setData(column, Qt::DecorationRole, combinedPixmap);
     QImage pix ;
 
     if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))

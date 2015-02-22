@@ -1282,7 +1282,6 @@ gxsgui {
 		gui/gxs/GxsIdLabel.h \
 		gui/gxs/GxsCircleChooser.h \
 		gui/gxs/GxsCircleLabel.h \
-		gui/gxs/GxsIdTreeWidget.h \
 		gui/gxs/GxsIdTreeWidgetItem.h \
 		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/GxsCommentContainer.h \
@@ -1320,7 +1319,6 @@ gxsgui {
 		gui/gxs/GxsCircleChooser.cpp \
 		gui/gxs/GxsGroupShareKey.cpp \
 		gui/gxs/GxsCircleLabel.cpp \
-		gui/gxs/GxsIdTreeWidget.cpp \
 		gui/gxs/GxsIdTreeWidgetItem.cpp \
 		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/GxsCommentContainer.cpp \

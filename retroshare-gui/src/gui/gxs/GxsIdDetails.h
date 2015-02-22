@@ -67,7 +67,7 @@ public:
 
 	static QIcon getLoadingIcon(const RsGxsId &id);
 
-	static bool GenerateCombinedIcon(QIcon &outIcon, const QList<QIcon> &icons);
+	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 
 	//static QImage makeDefaultIcon(const RsGxsId& id);
     static QImage makeDefaultIcon(const RsGxsId& id);

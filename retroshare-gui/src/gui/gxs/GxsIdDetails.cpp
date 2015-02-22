@@ -49,8 +49,6 @@
 #define TIMER_INTERVAL 1000
 #define MAX_ATTEMPTS   10
 
-static const int IconSize = 20;
-
 const int kRecognTagClass_DEVELOPMENT = 1;
 
 const int kRecognTagType_Dev_Ambassador 	= 1;
@@ -906,20 +904,22 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 	}
 }
 
-bool GxsIdDetails::GenerateCombinedIcon(QIcon &outIcon, const QList<QIcon> &icons)
+void GxsIdDetails::GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize)
 {
 	int count = icons.size();
-	QPixmap image(IconSize * count, IconSize);
-	QPainter painter(&image);
+	if (count == 0) {
+		pixmap = QPixmap();
+		return;
+	}
 
-	painter.fillRect(0, 0, IconSize * count, IconSize, Qt::transparent);
+	pixmap = QPixmap(iconSize * count, iconSize);
+	pixmap.fill(Qt::transparent);
+	QPainter painter(&pixmap);
+
 	QList<QIcon>::const_iterator it;
 	int i = 0;
 	for(it = icons.begin(); it != icons.end(); ++it, ++i)
 	{
-		it->paint(&painter, IconSize * i, 0, IconSize, IconSize);
+		it->paint(&painter, iconSize * i, 0, iconSize, iconSize);
 	}
-
-	outIcon = QIcon(image);
-	return true;
 }
