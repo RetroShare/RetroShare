@@ -203,10 +203,11 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 	// without one timer tick, but it causes the use of Pixmap in avatars within a threat that is different than
 	// the GUI thread, which is not allowed by Qt => some avatars fail to load.
 
-	//	if (rsIdentity && rsIdentity->getIdDetails(id, details)) {
-	//		callback(GXS_ID_DETAILS_TYPE_DONE, details, object, data);
-	//		return true;
-	//	}
+	bool isGuiThread = (QThread::currentThread() == qApp->thread());
+	if (isGuiThread && rsIdentity && rsIdentity->getIdDetails(id, details)) {
+		callback(GXS_ID_DETAILS_TYPE_DONE, details, object, data);
+		return true;
+	}
 
 	details.mId = id;
 
@@ -233,7 +234,7 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 	}
 
 	/* Start timer */
-	if (QThread::currentThread() == qApp->thread()) {
+	if (isGuiThread) {
 		/* Start timer directly */
 		mInstance->doStartTimer();
 	} else {

@@ -1097,13 +1097,15 @@ void MessagesDialog::insertMessages()
 
             //  From ....
             {
+                bool setText = true;
                 if (msgbox == RS_MSG_INBOX || msgbox == RS_MSG_OUTBOX) {
                     if ((it->msgflags & RS_MSG_SYSTEM) && it->srcId == ownId) {
                         text = "RetroShare";
                     } else {
                         if (it->msgflags & RS_MSG_DISTANT)
-            {
+                        {
                             // distant message
+                            setText = false;
                             if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
                                 gotInfo = true;
                                 item->setId(RsGxsId(msgInfo.rsgxsid_srcId), COLUMN_FROM);
@@ -1146,15 +1148,17 @@ void MessagesDialog::insertMessages()
                         std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
                     }
                 }
-                if(it->msgflags & RS_MSG_DISTANT)
-        {
+                if (setText)
+                {
                     item->setText(COLUMN_FROM, text);
                     item->setData(COLUMN_FROM, ROLE_SORT, text + dateString);
+                } else {
+                    item->setData(COLUMN_FROM, ROLE_SORT, item->text(COLUMN_FROM) + dateString);
                 }
             }
 
             // Subject
-        text = QString::fromUtf8(it->title.c_str());
+            text = QString::fromUtf8(it->title.c_str());
 
             item->setText(COLUMN_SUBJECT, text);
             item->setData(COLUMN_SUBJECT, ROLE_SORT, text + dateString);
