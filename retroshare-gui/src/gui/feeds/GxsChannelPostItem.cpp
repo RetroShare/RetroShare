@@ -86,6 +86,11 @@ GxsChannelPostItem::~GxsChannelPostItem()
 	delete(ui);
 }
 
+bool GxsChannelPostItem::isUnread() const
+{
+    return IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) ;
+}
+
 void GxsChannelPostItem::setup()
 {
 	/* Invoke the Qt Designer generated object setup routine */

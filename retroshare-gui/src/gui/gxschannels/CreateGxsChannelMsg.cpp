@@ -411,10 +411,10 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 
 	rsGxsChannels->ExtraFileHash(path, filename);
 
-#warning: hash is used uninitialized below ?!?
-
-	// only path and filename are valid.
-	// destroyed when fileFrame (this subfileitem) is destroyed
+    // Only path and filename are valid.
+    // Destroyed when fileFrame (this subfileitem) is destroyed
+    // Hash will be retrieved later when the file is finished hashing.
+    //
 	//SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
 	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, RsPeerId()); 
 

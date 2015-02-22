@@ -58,6 +58,8 @@ public:
 	/* FeedItem */
 	virtual void expand(bool open);
 
+    bool isUnread() const ;
+
 protected:
 	/* GxsGroupFeedItem */
 	virtual QString groupName();

@@ -505,15 +505,20 @@ void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
 
 static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 {
-	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	if (!channelPostItem) {
-		return;
-	}
+    GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
+    if (!channelPostItem) {
+        return;
+    }
 
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
+    bool is_not_new = !channelPostItem->isUnread() ;
 
-	uint32_t token;
-	rsGxsChannels->setMessageReadStatus(token, msgPair, *((bool*) data));
+    if(is_not_new == *(bool*)data)
+        return ;
+
+    RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
+
+    uint32_t token;
+    rsGxsChannels->setMessageReadStatus(token, msgPair, *((bool*) data));
 }
 
 void GxsChannelPostsWidget::setAllMessagesRead(bool read)
