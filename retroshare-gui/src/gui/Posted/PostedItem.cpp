@@ -188,15 +188,37 @@ void PostedItem::fill()
 
 	QDateTime qtime;
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
-	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+	QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
 	ui->dateLabel->setText(timestamp);
 	ui->fromLabel->setId(mPost.mMeta.mAuthorId);
-	ui->titleLabel->setText("<a href=" + QString::fromStdString(mPost.mLink) +
-	                        "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-	                        messageName() + "</span></a>");
-	ui->siteLabel->setText("<a href=" + QString::fromStdString(mPost.mLink) +
-	                       "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-	                       QString::fromStdString(mPost.mLink) + "</span></a>");
+
+	// Use QUrl to check/parse our URL
+	QUrl url(QString::fromStdString(mPost.mLink));
+	QString urlstr = "Invalid Link";
+	QString sitestr = "Invalid Link";
+	bool urlOkay = url.isValid();
+	if (urlOkay)
+	{
+		QString scheme = url.scheme();
+		if ((scheme != "https") 
+			&& (scheme != "http")
+			&& (scheme != "ftp")) 
+		{
+			urlOkay = false;
+			sitestr = "Invalid Link Scheme";
+		}
+	}
+    
+	if (urlOkay)
+	{
+		urlstr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(url.toString()).arg(messageName());
+
+		QString siteurl = url.scheme() + "://" + url.host();
+		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+	}
+
+	ui->titleLabel->setText(urlstr);
+	ui->siteLabel->setText(sitestr);
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
 	//score += " Top" + QString::number(post.mTopScore); 

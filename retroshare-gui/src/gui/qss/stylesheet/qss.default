@@ -51,12 +51,12 @@ SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel
 
 PostedItem QLabel#titleLabel
 {
-	qproperty-fontSizeFactor: 150;
+	qproperty-fontSizeFactor: 120; 
 }
 
 PostedItem QLabel#scoreLabel
 {
-	qproperty-fontSizeFactor: 250;
+	qproperty-fontSizeFactor: 140;
 }
 
 GxsChannelPostItem QLabel#titleLabel
