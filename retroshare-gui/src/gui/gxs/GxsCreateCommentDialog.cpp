@@ -35,6 +35,7 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(TokenQueue *tokQ, RsGxsCommentSer
 {
 	ui->setupUi(this);
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createComment()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
 	/* fill in the available OwnIds for signing */
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());

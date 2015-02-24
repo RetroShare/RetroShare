@@ -193,7 +193,10 @@ void PostedItem::fill()
 	ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 
 	// Use QUrl to check/parse our URL
-	QUrl url(QString::fromStdString(mPost.mLink));
+	// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
+	QUrl url;
+	QByteArray urlarray(mPost.mLink.c_str());
+	url.setEncodedUrl(urlarray);
 	QString urlstr = "Invalid Link";
 	QString sitestr = "Invalid Link";
 	bool urlOkay = url.isValid();
@@ -202,7 +205,8 @@ void PostedItem::fill()
 		QString scheme = url.scheme();
 		if ((scheme != "https") 
 			&& (scheme != "http")
-			&& (scheme != "ftp")) 
+			&& (scheme != "ftp") 
+			&& (scheme != "retroshare")) 
 		{
 			urlOkay = false;
 			sitestr = "Invalid Link Scheme";
@@ -211,7 +215,11 @@ void PostedItem::fill()
     
 	if (urlOkay)
 	{
-		urlstr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(url.toString()).arg(messageName());
+		urlstr =  QString("<a href=\"");
+		urlstr += QString(url.toEncoded());
+		urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
+		urlstr += messageName();
+		urlstr += QString(" </span></a>");
 
 		QString siteurl = url.scheme() + "://" + url.host();
 		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
