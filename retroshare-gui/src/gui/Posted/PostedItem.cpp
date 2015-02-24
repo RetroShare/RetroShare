@@ -196,7 +196,7 @@ void PostedItem::fill()
 	// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
 	QUrl url;
 	QByteArray urlarray(mPost.mLink.c_str());
-	url.setEncodedUrl(urlarray);
+	url.setEncodedUrl(urlarray.trimmed());
 	QString urlstr = "Invalid Link";
 	QString sitestr = "Invalid Link";
 	bool urlOkay = url.isValid();
