@@ -75,12 +75,13 @@
 #define ROLE_THREAD_MSGID           Qt::UserRole
 #define ROLE_THREAD_STATUS          Qt::UserRole + 1
 #define ROLE_THREAD_MISSING         Qt::UserRole + 2
+#define ROLE_THREAD_AUTHOR          Qt::UserRole + 3
 // no need to copy, don't count in ROLE_THREAD_COUNT
-#define ROLE_THREAD_READCHILDREN    Qt::UserRole + 3
-#define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 4
-#define ROLE_THREAD_SORT            Qt::UserRole + 5
+#define ROLE_THREAD_READCHILDREN    Qt::UserRole + 4
+#define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 5
+#define ROLE_THREAD_SORT            Qt::UserRole + 6
 
-#define ROLE_THREAD_COUNT           3
+#define ROLE_THREAD_COUNT           4
 
 #define TOKEN_TYPE_GROUPDATA        1
 #define TOKEN_TYPE_INSERT_THREADS   2
@@ -849,7 +850,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, text);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
 
-    item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
+	item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
 //#TODO
 #if 0
 	text = QString::fromUtf8(authorName.c_str());
@@ -1000,6 +1002,33 @@ void GxsForumThreadWidget::insertThreads()
 	emit groupChanged(this);
 }
 
+static void copyItem(QTreeWidgetItem *item, const QTreeWidgetItem *newItem)
+{
+	int i;
+	for (i = 0; i < COLUMN_THREAD_COUNT; ++i) {
+		if (i == COLUMN_THREAD_AUTHOR) {
+			QString authorId = newItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString();
+			if (authorId != item->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString()) {
+				/* Author has changed? */
+				GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
+				if (gxsIdItem) {
+					/* Set new gxs id */
+					gxsIdItem->setId(RsGxsId(authorId.toStdString()), i);
+				} else {
+					/* Copy text */
+					item->setText(i, newItem->text(i));
+				}
+			}
+		} else {
+			/* Copy text */
+			item->setText(i, newItem->text(i));
+		}
+	}
+	for (i = 0; i < ROLE_THREAD_COUNT; ++i) {
+		item->setData(COLUMN_THREAD_DATA, Qt::UserRole + i, newItem->data(COLUMN_THREAD_DATA, Qt::UserRole + i));
+	}
+}
+
 void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
 {
 #ifdef DEBUG_FORUMS
@@ -1046,13 +1075,7 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 
 		if (found >= 0) {
 			// set child data
-			int i;
-			for (i = 0; i < COLUMN_THREAD_COUNT; ++i) {
-				threadItem->setText(i, (*newThread)->text(i));
-			}
-			for (i = 0; i < ROLE_THREAD_COUNT; ++i) {
-				threadItem->setData(COLUMN_THREAD_DATA, Qt::UserRole + i, (*newThread)->data(COLUMN_THREAD_DATA, Qt::UserRole + i));
-			}
+			copyItem(threadItem, *newThread);
 
 			// fill recursive
 			fillChildren(threadItem, *newThread, expandNewMessages, itemToExpand);
@@ -1128,13 +1151,7 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 
 		if (found >= 0) {
 			// set child data
-			int i;
-			for (i = 0; i < COLUMN_THREAD_COUNT; ++i) {
-				childItem->setText(i, newChildItem->text(i));
-			}
-			for (i = 0; i < ROLE_THREAD_COUNT; ++i) {
-				childItem->setData(COLUMN_THREAD_DATA, Qt::UserRole + i, newChildItem->data(COLUMN_THREAD_DATA, Qt::UserRole + i));
-			}
+			copyItem(childItem, newChildItem);
 
 			// fill recursive
 			fillChildren(childItem, newChildItem, expandNewMessages, itemToExpand);

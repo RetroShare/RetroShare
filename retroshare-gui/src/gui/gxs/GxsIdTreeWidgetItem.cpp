@@ -95,6 +95,10 @@ void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
 	//std::cerr << " GxsIdRSTreeWidgetItem::setId(" << id << "," << column << ")";
 	//std::cerr << std::endl;
 
+	if (mColumn == column && mId == id) {
+		return;
+	}
+
 	mId = id;
 	mColumn = column;
 
