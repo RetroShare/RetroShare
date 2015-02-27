@@ -31,6 +31,7 @@
 
 #include "gui/common/PeerDefs.h"
 #include "ChatDialog.h"
+#include "gui/ChatLobbyWidget.h"
 
 CreateLobbyDialog::CreateLobbyDialog(const std::list<RsPeerId>& peer_list, int privacyLevel, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
@@ -41,20 +42,22 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<RsPeerId>& peer_list, int p
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/chat_64.png"));
 	ui->headerFrame->setHeaderText(tr("Create Chat Lobby"));
 
-	std::string default_nick ;
-	rsMsgs->getDefaultNickNameForChatLobby(default_nick) ;
+    RsGxsId default_identity ;
+    rsMsgs->getDefaultIdentityForChatLobby(default_identity) ;
 
-#if QT_VERSION >= 0x040700
-	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
-	ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
-#endif
-	ui->nickName_LE->setText(QString::fromUtf8(default_nick.c_str())) ;
+    ui->idChooser_CB->loadIds(IDCHOOSER_ID_REQUIRED, default_identity);
+
+//#if QT_VERSION >= 0x040700
+//	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
+//	ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
+//#endif
+//	ui->nickName_LE->setText(QString::fromUtf8(default_nick.c_str())) ;
 
 	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(createLobby()));
 	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->lobbyTopic_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
-	connect( ui->nickName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
+    connect( ui->idChooser_CB, SIGNAL( currentChanged ( int ) ), this, SLOT( checkTextFields( ) ) );
 
 	/* initialize key share list */
 	ui->keyShareList->setHeaderText(tr("Contacts:"));
@@ -64,7 +67,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<RsPeerId>& peer_list, int p
     ui->keyShareList->setSelectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peer_list, false);
 
 	if (privacyLevel) {
-		ui->security_CB->setCurrentIndex((privacyLevel == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? 0 : 1);
+        ui->security_CB->setCurrentIndex((privacyLevel == CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? 0 : 1);
 	}
 
 	checkTextFields();
@@ -91,10 +94,17 @@ void CreateLobbyDialog::changeEvent(QEvent *e)
 
 void CreateLobbyDialog::checkTextFields()
 {
-	if(ui->lobbyName_LE->text() == "" || ui->nickName_LE->text() == "")
-		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
-	else
-		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true) ;
+    RsGxsId id ;
+
+    switch(ui->idChooser_CB->getChosenId(id))
+    {
+        case GxsIdChooser::NoId:
+        case GxsIdChooser::None: ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
+                    break ;
+        default:
+                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true) ;
+                    break ;
+    }
 }
 
 void CreateLobbyDialog::createLobby()
@@ -113,15 +123,24 @@ void CreateLobbyDialog::createLobby()
 
 	// add to group
 
-	int lobby_privacy_type = (ui->security_CB->currentIndex() == 0)?RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC:RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE ;
+    ChatLobbyFlags lobby_flags ;
 
-	ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, lobby_topic, shareList, lobby_privacy_type);
+    if(ui->security_CB->currentIndex() == 0)
+        lobby_flags |= RS_CHAT_LOBBY_FLAGS_PUBLIC ;
+
+    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, lobby_topic, shareList, lobby_flags);
 
 	std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
 
-	// set nick name !
-
-	rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toUtf8().constData()) ;
+    // set nick name !
+    RsGxsId gxs_id ;
+    switch(ui->idChooser_CB->getChosenId(gxs_id))
+    {
+    case GxsIdChooser::NoId:
+    case GxsIdChooser::None:
+        return ;
+    }
+    rsMsgs->setNickNameForChatLobby(id,gxs_id) ;
 
 	// open chat window !!
     ChatDialog::chatFriend(ChatId(id)) ;

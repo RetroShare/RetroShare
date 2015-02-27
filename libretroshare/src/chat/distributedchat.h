@@ -65,15 +65,15 @@ class DistributedChatService
 		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 		void invitePeerToLobby(const ChatLobbyId&, const RsPeerId& peer_id,bool connexion_challenge = false) ;
 		void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
-		bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick) ;
-		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
-		bool setDefaultNickNameForChatLobby(const std::string& nick) ;
-		bool getDefaultNickNameForChatLobby(std::string& nick) ;
+        bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& nick) ;
+        bool getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick) ;
+        bool setDefaultIdentityForChatLobby(const RsGxsId& nick) ;
+        bool getDefaultIdentityForChatLobby(RsGxsId& nick) ;
 		void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
 		bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
 
-		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic, const std::list<RsPeerId>& invited_friends,uint32_t privacy_type) ;
+        ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic, const std::list<RsPeerId>& invited_friends,ChatLobbyFlags flags) ;
 
 		void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
 		bool joinVisibleChatLobby(const ChatLobbyId& id) ;
@@ -138,7 +138,6 @@ class DistributedChatService
 				time_t last_connexion_challenge_time ;
 				time_t last_keep_alive_packet_time ;
 				std::set<RsPeerId> previously_known_peers ;
-				uint32_t flags ;
 		};
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
@@ -154,7 +153,7 @@ class DistributedChatService
 		time_t last_lobby_challenge_time ; 					// prevents bruteforce attack
 		time_t last_visible_lobby_info_request_time ;	// allows to ask for updates
 		bool _should_reset_lobby_counts ;
-		std::string _default_nick_name ;
+        RsGxsId _default_identity ;
 
 		uint32_t mServType ;
 		RsMutex mDistributedChatMtx ;

@@ -7,6 +7,9 @@
 
 #define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
 
+#define CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1
+#define CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2
+
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
 class ChatLobbyDialog ;
