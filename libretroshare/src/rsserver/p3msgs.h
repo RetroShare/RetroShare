@@ -140,8 +140,9 @@ class p3Msgs: public RsMsgs
 	  virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
 	  virtual bool getVirtualPeerId(const ChatLobbyId& id,RsPeerId& vpid) ;
 	  virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) ;
-	  virtual void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
-	  virtual void invitePeerToLobby(const ChatLobbyId&, const RsPeerId&) ;
+      virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) ;
+      virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) ;
+      virtual void invitePeerToLobby(const ChatLobbyId&, const RsPeerId&) ;
 	  virtual bool acceptLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void denyLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;

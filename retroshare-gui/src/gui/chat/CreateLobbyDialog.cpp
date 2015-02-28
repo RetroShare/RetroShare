@@ -140,7 +140,7 @@ void CreateLobbyDialog::createLobby()
     case GxsIdChooser::None:
         return ;
     }
-    rsMsgs->setNickNameForChatLobby(id,gxs_id) ;
+    rsMsgs->setIdentityForChatLobby(id,gxs_id) ;
 
 	// open chat window !!
     ChatDialog::chatFriend(ChatId(id)) ;

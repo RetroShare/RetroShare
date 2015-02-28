@@ -892,10 +892,10 @@ void NotifyQt::UpdateGUI()
                             break;
                         }
                         ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
-                        if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(QString::fromUtf8(title.c_str()))) {
-                            // participant is muted
-                            break;
-                        }
+
+                        if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(RsGxsId(title)))
+                            break; // participant is muted
+
                         toaster = new Toaster(new ChatLobbyToaster(lobby_id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;

@@ -24,6 +24,7 @@
 #define _CHATLOBBYDIALOG_H
 
 #include "ui_ChatLobbyDialog.h"
+#include "gui/common/RSTreeWidgetItem.h"
 #include "ChatDialog.h"
 
 class QToolButton;
@@ -35,14 +36,14 @@ class ChatLobbyDialog: public ChatDialog
 	friend class ChatDialog;
 
 public:
-	void displayLobbyEvent(int event_type, const QString& nickname, const QString& str);
+    void displayLobbyEvent(int event_type, const RsGxsId &gxs_id, const QString& str);
 
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return false; }
 	virtual bool notifyBlink();
-	void setNickname(const QString &nickname);
-	bool isParticipantMuted(const QString &participant);
+    void setIdentity(const RsGxsId& gxs_id);
+    bool isParticipantMuted(const RsGxsId &participant);
 	ChatLobbyId id() const { return lobbyId ;}
 
 private slots:
@@ -78,22 +79,24 @@ protected slots:
 private:
 	void updateParticipantsList();
 
-	void muteParticipant(const QString &nickname);
-	void unMuteParticipant(const QString &nickname);
-	bool isNicknameInLobby(const QString &nickname);
+    void muteParticipant(const RsGxsId& nickname);
+    void unMuteParticipant(const RsGxsId& nickname);
+    bool isNicknameInLobby(const RsGxsId& nickname);
 	
 	ChatLobbyId lobbyId;
 	QString _lobby_name ;
 	time_t lastUpdateListTime;
 
-	QToolButton *inviteFriendsButton ;
+        RSTreeWidgetItemCompareRole *mParticipantCompareRole ;
+
+    QToolButton *inviteFriendsButton ;
 	QToolButton *unsubscribeButton ;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;
 	
 	/** Ignored Users in Chatlobby by nickname until we had implemented Peer Ids in ver 0.6 */
-	QStringList *mutedParticipants;
+    std::set<RsGxsId> mutedParticipants;
 
 	QAction *muteAct;
 };

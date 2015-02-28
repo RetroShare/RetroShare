@@ -523,20 +523,10 @@ static bool caseInsensitiveCompare(QString a, QString b)
 void ChatWidget::completeNickname(bool reverse)
 {
 	// Find lobby we belong to
-	const ChatLobbyInfo *lobby = NULL;
-	std::list<ChatLobbyInfo> lobbies;
-	rsMsgs->getChatLobbyList(lobbies);
+    ChatLobbyInfo lobby ;
 
-	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
-	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-        if (chatId.toLobbyId() == lobbyIt->lobby_id) {
-            lobby = &*lobbyIt;
-            break;
-        }
-	}
-
-	if (!lobby)
-		return;
+    if(! rsMsgs->getChatLobbyInfo(chatId.toLobbyId(),lobby))
+        return ;
 
 	QTextCursor cursor = ui->chatTextEdit->textCursor();
 
@@ -567,14 +557,13 @@ void ChatWidget::completeNickname(bool reverse)
 		word.chop(2);
 	}
 
+#warning still need to use real nicknames for nickname completion.
 	if (word.length() > 0) {
 		// Sort participants list
 		std::list<QString> participants;
-		for (	std::map<std::string,time_t>::const_iterator it = lobby->nick_names.begin();
-				it != lobby->nick_names.end();
-				++it) {
-			participants.push_front(QString::fromUtf8(it->first.c_str()));
-		}
+        for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it) {
+            participants.push_front(QString::fromUtf8(it->first.toStdString().c_str()));
+        }
 		participants.sort(caseInsensitiveCompare);
 
 		// Search for a participant nickname that starts with the previous word
@@ -625,32 +614,20 @@ void ChatWidget::completeNickname(bool reverse)
 
 QAbstractItemModel *ChatWidget::modelFromPeers()
 {
-	// Find lobby we belong to
-	const ChatLobbyInfo *lobby = NULL;
-	std::list<ChatLobbyInfo> lobbies;
-	rsMsgs->getChatLobbyList(lobbies);
+    // Find lobby we belong to
+    ChatLobbyInfo lobby ;
 
-	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
-	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-        if (chatId.toLobbyId() == lobbyIt->lobby_id) {
-            lobby = &*lobbyIt;
-            break;
-        }
-	}
-
-	if (!lobby)
-		return new QStringListModel(completer);
+    if(! rsMsgs->getChatLobbyInfo(chatId.toLobbyId(),lobby))
+        return new QStringListModel(completer);
 
 #ifndef QT_NO_CURSOR
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 #endif
-	// Get participants list
+#warning still need to use real nicknames for nickname completion.
+    // Get participants list
 	 QStringList participants;
-	for (	std::map<std::string,time_t>::const_iterator it = lobby->nick_names.begin();
-			it != lobby->nick_names.end();
-			++it) {
-		participants.push_front(QString::fromUtf8(it->first.c_str()));
-	}
+    for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+        participants.push_front(QString::fromUtf8(it->first.toStdString().c_str()));
 
 #ifndef QT_NO_CURSOR
 	QApplication::restoreOverrideCursor();

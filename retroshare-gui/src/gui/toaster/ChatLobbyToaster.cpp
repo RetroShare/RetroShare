@@ -41,14 +41,10 @@ ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const QString &n
 
 	QString lobbyName = RsHtml::plainText(name);
 
-	std::list<ChatLobbyInfo> linfos;
-	rsMsgs->getChatLobbyList(linfos);
-    for (std::list<ChatLobbyInfo>::const_iterator it(linfos.begin()); it != linfos.end(); ++it) {
-        if ((*it).lobby_id == mLobbyId) {
-            lobbyName += "@" + RsHtml::plainText(it->lobby_name);
-            break;
-        }
-    }
+    ChatLobbyInfo clinfo ;
+    if(rsMsgs->getChatLobbyInfo(mLobbyId,clinfo))
+            lobbyName += "@" + RsHtml::plainText(clinfo.lobby_name);
+
 	ui.toasterLabel->setText(lobbyName);
 }
 

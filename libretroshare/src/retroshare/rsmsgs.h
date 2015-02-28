@@ -309,7 +309,7 @@ class ChatMessage
 public:
     ChatId chat_id; // id of chat endpoint
     RsPeerId broadcast_peer_id; // only used for broadcast chat: source peer id
-    std::string lobby_peer_nickname; // only used for lobbys: nickname of message author
+    RsGxsId lobby_peer_gxs_id; // only used for lobbys: nickname of message author
 
     unsigned int chatflags;
     uint32_t sendTime;
@@ -356,7 +356,7 @@ class ChatLobbyInfo
         RsGxsId gxs_id ;						// ID to sign messages
 
         ChatLobbyFlags lobby_flags ;					// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
-        std::map<std::string,time_t> nick_names ;			// list of non direct friend who participate. Used to display only.
+        std::map<RsGxsId,time_t> gxs_ids ;				// list of non direct friend who participate. Used to display only.
         time_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
 };
 
@@ -449,7 +449,8 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id) = 0 ;
 virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
 virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,RsPeerId& vpid) = 0;
-virtual void getChatLobbyList(std::list<ChatLobbyInfo>& cl_info) = 0;
+virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) = 0;
+virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) = 0 ;
 virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) = 0 ;
 virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const RsPeerId& peer_id) = 0;
 virtual bool acceptLobbyInvite(const ChatLobbyId& id) = 0 ;

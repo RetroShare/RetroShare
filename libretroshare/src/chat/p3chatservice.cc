@@ -811,7 +811,7 @@ void p3ChatService::initChatMessage(RsChatMsgItem *c, ChatMessage &m)
     RsChatLobbyMsgItem *lobbyItem = dynamic_cast<RsChatLobbyMsgItem*>(c) ;
     if(lobbyItem != NULL)
     {
-        m.lobby_peer_nickname = lobbyItem->nick;
+        m.lobby_peer_gxs_id = lobbyItem->signature.keyId ;
         m.chat_id = ChatId(lobbyItem->lobby_id);
         return;
     }

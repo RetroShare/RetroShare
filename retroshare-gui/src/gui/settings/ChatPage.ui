@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>606</width>
-    <height>477</height>
+    <width>705</width>
+    <height>517</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -158,7 +158,7 @@
             <item>
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>Default nickname for chat lobbies:</string>
+               <string>Default identity for chat lobbies:</string>
               </property>
              </widget>
             </item>
@@ -181,14 +181,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QLineEdit" name="chatLobbyNick_LE">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
+               <widget class="GxsIdChooser" name="chatLobbyIdentity_IC"/>
               </item>
              </layout>
             </item>
@@ -1188,6 +1181,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

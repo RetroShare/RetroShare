@@ -59,8 +59,9 @@ class DistributedChatService
 		//
 		bool getVirtualPeerId(const ChatLobbyId& lobby_id, RsPeerId& virtual_peer_id) ;
 		bool isLobbyId(const RsPeerId& virtual_peer_id, ChatLobbyId& lobby_id) ;
-		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >& cl_infos) ;
-		bool acceptLobbyInvite(const ChatLobbyId& id) ;
+        void getChatLobbyList(std::list<ChatLobbyId>& clids) ;
+        bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& clinfo) ;
+        bool acceptLobbyInvite(const ChatLobbyId& id) ;
 		void denyLobbyInvite(const ChatLobbyId& id) ;
 		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 		void invitePeerToLobby(const ChatLobbyId&, const RsPeerId& peer_id,bool connexion_challenge = false) ;

@@ -449,9 +449,13 @@ bool p3Msgs::isLobbyId(const RsPeerId& peer_id,ChatLobbyId& id)
 	return mChatSrv->isLobbyId(peer_id,id) ;
 }
 
-void p3Msgs::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 
+bool p3Msgs::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& linfo)
 {
-	mChatSrv->getChatLobbyList(linfos) ;
+    return mChatSrv->getChatLobbyInfo(id,linfo) ;
+}
+void p3Msgs::getChatLobbyList(std::list<ChatLobbyId>& lids)
+{
+    mChatSrv->getChatLobbyList(lids) ;
 }
 void p3Msgs::invitePeerToLobby(const ChatLobbyId& lobby_id, const RsPeerId& peer_id) 
 {

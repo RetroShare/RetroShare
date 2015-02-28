@@ -302,14 +302,11 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 		_lobby_infos[id].last_typing_event = time(NULL) ;
 		_lobby_infos[id].unread_count = 0;
 
-		std::list<ChatLobbyInfo> lobbies;
-		rsMsgs->getChatLobbyList(lobbies);
-
-		for (std::list<ChatLobbyInfo>::const_iterator it = lobbies.begin(); it != lobbies.end();++it) {
-			if (it->lobby_id == id) {
-                _lobby_infos[id].default_icon = (it->lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC):QIcon(IMAGE_PRIVATE) ;
-			}
-		}
+        ChatLobbyInfo linfo ;
+        if(rsMsgs->getChatLobbyInfo(id,linfo))
+            _lobby_infos[id].default_icon = (linfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC):QIcon(IMAGE_PRIVATE) ;
+        else
+            std::cerr << "(EE) cannot find info for lobby " << std::hex << id << std::dec << std::endl;
 	}
 }
 
@@ -334,7 +331,7 @@ void ChatLobbyWidget::updateDisplay()
 	std::vector<VisibleChatLobbyRecord> visibleLobbies;
 	rsMsgs->getListOfNearbyChatLobbies(visibleLobbies);
 
-	std::list<ChatLobbyInfo> lobbies;
+    std::list<ChatLobbyId> lobbies;
 	rsMsgs->getChatLobbyList(lobbies);
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
@@ -344,7 +341,7 @@ void ChatLobbyWidget::updateDisplay()
 	// now, do a nice display of lobbies
 	
     RsPeerId vpid;
-	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
+    std::list<ChatLobbyId>::const_iterator lobbyIt;
 
 	// remove not existing public lobbies
 
@@ -381,7 +378,7 @@ void ChatLobbyWidget::updateDisplay()
 					// Check for participating lobby with public level
 					//
 					for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
-						if(itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobbyIt->lobby_id) 
+                        if(itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == *lobbyIt)
 							break;
 
 					if (lobbyIt == lobbies.end()) 
@@ -507,8 +504,9 @@ void ChatLobbyWidget::updateDisplay()
 	// Now add participating lobbies.
 	//
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
-	{
-		const ChatLobbyInfo &lobby = *lobbyIt;
+    {
+        ChatLobbyInfo lobby ;
+        rsMsgs->getChatLobbyInfo(*lobbyIt,lobby) ;
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
 		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " private " << lobby.nick_names.size() << " peers." << std::endl;
@@ -549,7 +547,7 @@ void ChatLobbyWidget::updateDisplay()
 
 		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true, autoSubscribe);
+        updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.gxs_ids.size(), true, autoSubscribe);
 	}
 	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
 	privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
@@ -826,10 +824,10 @@ void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 	subscribeLobby(item);
 }
 
-void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str)
+void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& gxs_id, const QString& str)
 {
     if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(lobby_id)))) {
-        cld->displayLobbyEvent(event_type, nickname, str);
+        cld->displayLobbyEvent(event_type, RsGxsId(gxs_id.toStdString()), str);
     }
 }
 

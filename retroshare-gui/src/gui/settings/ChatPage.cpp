@@ -151,7 +151,16 @@ ChatPage::save(QString &/*errmsg*/)
     rsHistory->setSaveCount(RS_HISTORY_TYPE_PRIVATE, ui.privateChatSaveCount->value());
     rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
 
-    rsMsgs->setDefaultNickNameForChatLobby(ui.chatLobbyNick_LE->text().toUtf8().constData()) ;
+    RsGxsId chosen_id ;
+    switch(ui.chatLobbyIdentity_IC->getChosenId(chosen_id))
+    {
+        case GxsIdChooser::KnowId:
+        case GxsIdChooser::UnKnowId:
+        rsMsgs->setDefaultIdentityForChatLobby(chosen_id) ;
+        break ;
+
+        default:;
+    }
 
     ChatStyleInfo info;
     QListWidgetItem *item = ui.publicList->currentItem();
@@ -260,9 +269,10 @@ ChatPage::load()
     privateStylePath = loadStyleInfo(ChatStyle::TYPE_PRIVATE, ui.privateList, ui.privateComboBoxVariant, privateStyleVariant);
     historyStylePath = loadStyleInfo(ChatStyle::TYPE_HISTORY, ui.historyList, ui.historyComboBoxVariant, historyStyleVariant);
 
-    std::string nick ;
-    rsMsgs->getDefaultNickNameForChatLobby(nick) ;
-    ui.chatLobbyNick_LE->setText(QString::fromUtf8(nick.c_str())) ;
+    RsGxsId gxs_id ;
+    rsMsgs->getDefaultIdentityForChatLobby(gxs_id) ;
+
+    ui.chatLobbyIdentity_IC->setChosenId(gxs_id);
 
     uint chatflags = Settings->getChatFlags();
 

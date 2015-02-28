@@ -186,7 +186,7 @@ void DistributedChatService::locked_printDebugInfo() const
 
 		std::cerr << "   Participating nick names: " << std::endl;
 
-		for(std::map<std::string,time_t>::const_iterator it2(it->second.nick_names.begin());it2!=it->second.nick_names.end();++it2)
+        for(std::map<RsGxsId,time_t>::const_iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();++it2)
 			std::cerr << "       " << it2->first << ": " << now - it2->second << " secs ago" << std::endl;
 
 	}
@@ -248,7 +248,7 @@ bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObjec
 		std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it = _chat_lobbys.find(obj->lobby_id) ;
 
 		if(it != _chat_lobbys.end())
-			lobby_count = it->second.nick_names.size() ;
+            lobby_count = it->second.gxs_ids.size() ;
 		else
 		{
 			std::cerr << "DistributedChatService::locked_bouncingObjectCheck(): weird situation: cannot find lobby in visible lobbies nor current lobbies. Dropping message. If you see this, contact the developers." << std::endl;
@@ -458,7 +458,7 @@ void DistributedChatService::handleRecvChatLobbyListRequest(RsChatLobbyListReque
                 info.id    = it->first ;
                 info.name  = it->second.lobby_name ;
                 info.topic = it->second.lobby_topic ;
-                info.count = it->second.nick_names.size() ;
+                info.count = it->second.gxs_ids.size() ;
                 info.flags = it->second.lobby_flags ;
 
                 item->lobbies.push_back(info) ;
@@ -650,21 +650,21 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
 
 		if(it != _chat_lobbys.end())
-		{
-			std::map<std::string,time_t>::iterator it2(it->second.nick_names.find(item->nick)) ;
+        {
+            std::map<RsGxsId,time_t>::iterator it2(it->second.gxs_ids.find(item->signature.keyId)) ;
 
-			if(it2 != it->second.nick_names.end())
-			{
-				it->second.nick_names.erase(it2) ;
+            if(it2 != it->second.gxs_ids.end())
+            {
+                it->second.gxs_ids.erase(it2) ;
 #ifdef CHAT_DEBUG
-				std::cerr << "  removed nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+                std::cerr << "  removed id " << item->signature.keyId << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
-			}
+            }
 #ifdef CHAT_DEBUG
-			else
-				std::cerr << "  (EE) nickname " << item->nick << " not in participant nicknames list!" << std::endl;
+            else
+                std::cerr << "  (EE) nickname " << item->nick << " not in participant nicknames list!" << std::endl;
 #endif
-		}
+        }
 	}
 	else if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_JOINED)		// if a joined left. Add its nickname to the list.
 	{
@@ -678,7 +678,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 
 		if(it != _chat_lobbys.end())
 		{
-			it->second.nick_names[item->nick] = time(NULL) ;
+            it->second.gxs_ids[item->signature.keyId] = time(NULL) ;
 #ifdef CHAT_DEBUG
 			std::cerr << "  added nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
@@ -696,7 +696,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 
 		if(it != _chat_lobbys.end())
 		{
-			it->second.nick_names[item->nick] = time(NULL) ;
+            it->second.gxs_ids[item->signature.keyId] = time(NULL) ;
 #ifdef CHAT_DEBUG
 			std::cerr << "  added nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
@@ -770,7 +770,7 @@ bool DistributedChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,c
 	if(peer_id != mServControl->getOwnId())
 		lobby.participating_friends.insert(peer_id) ;
 
-	lobby.nick_names[item->nick] = now ;
+    lobby.gxs_ids[item->signature.keyId] = now ;
 
 	// Checks wether the msg is already recorded or not
 
@@ -940,19 +940,19 @@ bool DistributedChatService::sendLobbyChat(const ChatLobbyId& lobby_id, const st
 
 	RsPeerId ownId = rsPeers->getOwnId();
 
+    bounceLobbyObject(&item, ownId) ;
+
     ChatMessage message;
     message.chatflags = 0;
     message.chat_id = ChatId(lobby_id);
     message.msg = msg;
-    message.lobby_peer_nickname = item.nick;
+    message.lobby_peer_gxs_id = item.signature.keyId;
     message.recvTime = item.recvTime;
     message.sendTime = item.sendTime;
     message.incoming = false;
     message.online = true;
     RsServer::notify()->notifyChatMessage(message);
     mHistMgr->addMessage(message);
-
-	bounceLobbyObject(&item, ownId) ;
 
 	return true ;
 }
@@ -1083,17 +1083,33 @@ uint64_t DistributedChatService::makeConnexionChallengeCode(const RsPeerId& peer
 	}
 	return result ;
 }
+void DistributedChatService::getChatLobbyList(std::list<ChatLobbyId>& clids)
+{
+    // fill up a dummy list for now.
 
-void DistributedChatService::getChatLobbyList(std::list<ChatLobbyInfo>& cl_infos)
+    clids.clear() ;
+
+    RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+
+    for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
+        clids.push_back(it->first) ;
+}
+bool DistributedChatService::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info)
 {
 	// fill up a dummy list for now.
 
 	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
-	cl_infos.clear() ;
 
-	for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
-		cl_infos.push_back(it->second) ;
+    std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it = _chat_lobbys.find(id) ;
+
+    if(it != _chat_lobbys.end())
+    {
+        info = it->second ;
+        return true ;
+    }
+    else
+        return false ;
 }
 void DistributedChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const RsPeerId& peer_id,bool connexion_challenge) 
 {
@@ -1641,16 +1657,16 @@ void DistributedChatService::cleanLobbyCaches()
 
 			bool changed = false ;
 
-			for(std::map<std::string,time_t>::iterator it2(it->second.nick_names.begin());it2!=it->second.nick_names.end();)
+            for(std::map<RsGxsId,time_t>::iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();)
 				if(it2->second + MAX_KEEP_INACTIVE_NICKNAME < now)
 				{
 #ifdef CHAT_DEBUG
 					std::cerr << "  removing inactive nickname 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
 #endif
 
-					std::map<std::string,time_t>::iterator tmp(it2) ;
+                    std::map<RsGxsId,time_t>::iterator tmp(it2) ;
 					++tmp ;
-					it->second.nick_names.erase(it2) ;
+                    it->second.gxs_ids.erase(it2) ;
 					it2 = tmp ;
 					changed = true ;
 				}
