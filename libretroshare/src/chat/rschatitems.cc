@@ -263,20 +263,20 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		case RS_PKT_SUBTYPE_DEFAULT:						return new RsChatMsgItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_DEFAULT:			return new RsChatMsgItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG:	return new RsPrivateChatMsgConfigItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG:	return new RsPrivateChatDistantInviteConfigItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_STATUS:					return new RsChatStatusItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_AVATAR:					return new RsChatAvatarItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_MSG:				return new RsChatLobbyMsgItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:			return new RsChatLobbyInviteItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:		return new RsChatLobbyConnectChallengeItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_CHAT_STATUS:		return new RsChatStatusItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_CHAT_AVATAR:		return new RsChatAvatarItem(data,*pktsize) ;
+            case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG:	return new RsChatLobbyMsgItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:		return new RsChatLobbyInviteItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:	return new RsChatLobbyConnectChallengeItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:	return new RsChatLobbyUnsubscribeItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT:			return new RsChatLobbyEventItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:	return new RsChatLobbyEventItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:	return new RsChatLobbyListRequestItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:        	return new RsChatLobbyListItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:  		return new RsChatLobbyConfigItem(data,*pktsize) ;
-		case RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY:  		return new RsChatDHPublicKeyItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:  	return new RsChatLobbyConfigItem(data,*pktsize) ;
+        case RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY: return new RsChatDHPublicKeyItem(data,*pktsize) ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
@@ -990,7 +990,7 @@ RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/,uint8_t subtype)
 }
 
 RsChatLobbyMsgItem::RsChatLobbyMsgItem(void *data,uint32_t /*size*/)
-	: RsChatMsgItem(data,0,RS_PKT_SUBTYPE_CHAT_LOBBY_MSG)
+    : RsChatMsgItem(data,0,RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG)
 {
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
@@ -1061,11 +1061,13 @@ bool RsChatLobbyBouncingObject::deserialise(void *data,uint32_t rssize,uint32_t&
 	ok &= getRawUInt64(data, rssize, &offset, &msg_id);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, nick);
 
-	return ok ;
+    ok &= signature.GetTlv(data, rssize, &offset);
+
+    return ok ;
 }
 
 RsChatLobbyEventItem::RsChatLobbyEventItem(void *data,uint32_t /*size*/)
-	: RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT)
+    : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT)
 {
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
