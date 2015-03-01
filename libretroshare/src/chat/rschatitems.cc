@@ -307,13 +307,22 @@ uint32_t RsChatLobbyConnectChallengeItem::serial_size()
 	s += 8;			// challenge code
 	return s ;
 }
+uint32_t RsChatLobbyBouncingObject::signed_serial_size()
+{
+    uint32_t s = 0 ;              // no header!
+    s += 8 ;                      // lobby_id
+    s += 8 ;                      // msg_id
+    s += GetTlvStringSize(nick) ; // nick
 
+    return s ;
+}
 uint32_t RsChatLobbyBouncingObject::serial_size()
 {
-	uint32_t s = 0 ;	// no header!
-	s += 8 ; // lobby_id
-	s += 8 ; // msg_id
-	s += GetTlvStringSize(nick) ; // nick
+    uint32_t s = 0 ;              // no header!
+    s += 8 ;                      // lobby_id
+    s += 8 ;                      // msg_id
+    s += GetTlvStringSize(nick) ; // nick
+    s += signature.TlvSize() ;    // signature
 
 	return s ;
 }
@@ -328,7 +337,16 @@ uint32_t RsChatLobbyEventItem::serial_size()
 
 	return s ;
 }
+uint32_t RsChatLobbyEventItem::signed_serial_size()
+{
+    uint32_t s = 8 ;	// header
+    s += 1 ; // event_type
+    s += GetTlvStringSize(string1) ;	// string1
+    s += 4 ; // send time
+    s += RsChatLobbyBouncingObject::signed_serial_size() ;
 
+    return s ;
+}
 uint32_t RsChatLobbyListRequestItem::serial_size()
 {
 	uint32_t s = 8 ;	// header
@@ -336,7 +354,7 @@ uint32_t RsChatLobbyListRequestItem::serial_size()
 }
 uint32_t RsChatLobbyListItem::serial_size()
 {
-	uint32_t s = 8 ;	// header
+    uint32_t s = 8 ;	// header
     s += 4 ; 		// number of elements in the vectors
 
     for(uint32_t i=0;i<lobbies.size();++i)
@@ -347,16 +365,25 @@ uint32_t RsChatLobbyListItem::serial_size()
         s += 4 ;	// lobby_counts
         s += 4 ;	// lobby_flags
     }
-	return s ;
+    return s ;
 }
 uint32_t RsChatLobbyMsgItem::serial_size()
 {
-	uint32_t s = RsChatMsgItem::serial_size() ;		// parent 
-	s += RsChatLobbyBouncingObject::serial_size() ;
-    s += 1;											// subpacket id
-	s += 8;											// parent_msg_id
+    uint32_t s = RsChatMsgItem::serial_size() ;	// parent
+    s += 1;						// subpacket id
+    s += 8;						// parent_msg_id
+    s += RsChatLobbyBouncingObject::serial_size() ;
 
 	return s;
+}
+uint32_t RsChatLobbyMsgItem::signed_serial_size()
+{
+    uint32_t s = RsChatMsgItem::serial_size() ;	// parent
+    s += 1;						// subpacket id
+    s += 8;						// parent_msg_id
+    s += RsChatLobbyBouncingObject::signed_serial_size() ;
+
+    return s;
 }
 uint32_t RsChatLobbyInviteItem::serial_size()
 {
@@ -525,13 +552,15 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 
 bool RsChatLobbyBouncingObject::serialise(void *data,uint32_t tlvsize,uint32_t& offset)
 {
-	bool ok = true ;
+    bool ok = true ;
 
-	ok &= setRawUInt64(data, tlvsize, &offset, lobby_id);
-	ok &= setRawUInt64(data, tlvsize, &offset, msg_id);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, nick);
+    ok &= setRawUInt64(data, tlvsize, &offset, lobby_id);
+    ok &= setRawUInt64(data, tlvsize, &offset, msg_id);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, nick);
 
-	return ok ;
+    ok &= signature.SetTlv(data, tlvsize, &offset);
+
+    return ok ;
 }
 
 /* serialise the data to the buffer */
@@ -549,11 +578,14 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
 	pktsize = tlvsize;
 
-	ok &= RsChatLobbyBouncingObject::serialise(data,tlvsize,offset) ;
 	ok &= setRawUInt8(data, tlvsize, &offset, subpacket_id);
 	ok &= setRawUInt64(data, tlvsize, &offset, parent_msg_id);
 
-	/* add mandatory parts first */
+    // The signature is at the end of the serialised data, so that the signed data is *before* the signature.
+
+    ok &= RsChatLobbyBouncingObject::serialise(data,tlvsize,offset) ;
+
+    /* add mandatory parts first */
 	if (offset != tlvsize)
 	{
 		ok = false;
@@ -965,9 +997,10 @@ RsChatLobbyMsgItem::RsChatLobbyMsgItem(void *data,uint32_t /*size*/)
 
 	uint32_t offset = RsChatMsgItem::serial_size() ;
 
-	ok &= RsChatLobbyBouncingObject::deserialise(data,rssize,offset) ;
 	ok &= getRawUInt8(data, rssize, &offset, &subpacket_id);
 	ok &= getRawUInt64(data, rssize, &offset, &parent_msg_id);
+
+    ok &= RsChatLobbyBouncingObject::deserialise(data,rssize,offset) ;
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat lobby msg item." << std::endl ;

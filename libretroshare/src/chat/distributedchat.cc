@@ -33,6 +33,8 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rsidentity.h"
 #include "rsserver/p3face.h"
+#include "gxs/gxssecurity.h"
+#include "services/p3idservice.h"
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
 static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
@@ -55,14 +57,12 @@ static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration win
 #define IS_CONNEXION_CHALLENGE(flags) (flags & RS_CHAT_LOBBY_FLAGS_CHALLENGE)
 #define  EXTRACT_PRIVACY_FLAGS(flags) (flags & (RS_CHAT_LOBBY_FLAGS_PUBLIC))
 
-DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceControl *sc,p3HistoryMgr *hm)
-	: mServType(serv_type),mDistributedChatMtx("Distributed Chat"), mServControl(sc), mHistMgr(hm)
+DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceControl *sc,p3HistoryMgr *hm, p3IdService *is)
+    : mServType(serv_type),mDistributedChatMtx("Distributed Chat"), mServControl(sc), mHistMgr(hm),mIdService(is)
 {
     _time_shift_average = 0.0f ;
-
-	_should_reset_lobby_counts = false ;
-	
-	last_visible_lobby_info_request_time = 0 ;
+    _should_reset_lobby_counts = false ;
+    last_visible_lobby_info_request_time = 0 ;
 }
 
 void DistributedChatService::flush()
@@ -899,7 +899,7 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
         return false ;
     }
 
-	item.lobby_id = lobby_id ;
+    item.lobby_id = lobby_id ;
     item.nick = details.mNickname ;
     item.signature.TlvClear() ;
     item.signature.keyId = lobby.gxs_id ;
@@ -907,7 +907,45 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
     // now sign the object, if the lobby expects it
 
     if(!IS_ANONYMOUS_LOBBY(lobby.lobby_flags))
-        item.createSignature(lobby.gxs_id) ;
+    {
+        uint32_t size = item.serial_size() ;
+        unsigned char *memory = (unsigned char *)malloc(size) ;
+    uint32_t offset = 0 ;
+
+        if(!item.serialise(memory,size,offset))
+        {
+            std::cerr << "(EE) Cannot sign message item. " << std::endl;
+            return false ;
+        }
+
+        RsTlvSecurityKey signature_private_key ;
+
+        int i ;
+        for(i=0;i<6;++i)
+            if(!mIdService->getPrivateKey(lobby.gxs_id,signature_private_key)
+                            || signature_private_key.keyData.bin_data == NULL)
+            {
+#ifdef DEBUG_DISTANT_CHAT
+                std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
+#endif
+                usleep(500 * 1000) ;	// sleep for 500 msec.
+            }
+            else
+                break ;
+
+        if(i == 6)
+        {
+            std::cerr << "  (EE) Could not retrieve own private key for ID = " << lobby.gxs_id
+                      << ". Giging up sending signed lobby message." << std::endl;
+            return false ;
+        }
+
+        if(!GxsSecurity::getSignature((const char *)memory,item.signed_serial_size(),signature_private_key,item.signature))
+        {
+            std::cerr << "(EE) Cannot sign message item. " << std::endl;
+            return false ;
+        }
+    }
 
     return true ;
 }

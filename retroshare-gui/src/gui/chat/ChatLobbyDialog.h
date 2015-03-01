@@ -72,7 +72,7 @@ protected:
     virtual void addChatMsg(const ChatMessage &msg);
 
 protected slots:
-	void changeNickname();
+    //void changeNickname();
 	void changePartipationState();
 	void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
 

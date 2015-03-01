@@ -101,24 +101,25 @@ class RsChatItem: public RsItem
  */
 class RsChatMsgItem: public RsChatItem
 {
-	public:
-		RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
-		RsChatMsgItem(uint8_t subtype) :RsChatItem(subtype) {}
+public:
+    RsChatMsgItem() :RsChatItem(RS_PKT_SUBTYPE_DEFAULT) {}
+    RsChatMsgItem(uint8_t subtype) :RsChatItem(subtype) {}
 
-		RsChatMsgItem(void *data,uint32_t size,uint8_t subtype = RS_PKT_SUBTYPE_DEFAULT) ; // deserialization
+    RsChatMsgItem(void *data,uint32_t size,uint8_t subtype = RS_PKT_SUBTYPE_DEFAULT) ; // deserialization
 
-		virtual ~RsChatMsgItem() {}
-		virtual void clear() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsChatMsgItem() {}
+    virtual void clear() {}
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-        virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+    virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+    virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 
-        uint32_t chatFlags;
-		uint32_t sendTime;
-		std::string message;
-		/* not serialised */
-        uint32_t recvTime;
+    uint32_t chatFlags;
+    uint32_t sendTime;
+    std::string message;
+
+    /* not serialised */
+    uint32_t recvTime;
 };
 
 // This class contains the info to bounce an object throughout a lobby, while
@@ -126,25 +127,23 @@ class RsChatMsgItem: public RsChatItem
 //
 class RsChatLobbyBouncingObject
 {
-    public:
-		ChatLobbyId lobby_id ;
-		ChatLobbyMsgId msg_id ;
-        ChatLobbyNickName nick ;	// Nickname of sender
+public:
+    ChatLobbyId lobby_id ;
+    ChatLobbyMsgId msg_id ;
+    ChatLobbyNickName nick ;	// Nickname of sender
 
-        RsTlvKeySignature signature ;
+    RsTlvKeySignature signature ;
 
-		virtual RsChatLobbyBouncingObject *duplicate() const = 0 ;
-		virtual uint32_t serial_size() ;
-		virtual bool serialise(void *data,uint32_t tlvsize,uint32_t& offset) ;
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+    virtual RsChatLobbyBouncingObject *duplicate() const = 0 ;
+    virtual uint32_t serial_size() ;
+    virtual bool serialise(void *data,uint32_t tlvsize,uint32_t& offset) ;
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-        bool deserialise(void *data,uint32_t rssize,uint32_t& offset) ;
+    bool deserialise(void *data,uint32_t rssize,uint32_t& offset) ;
 
-        virtual bool serialise_signed_part(void *data,uint32_t& size) =0;
-        virtual uint32_t signed_serial_size() =0;
+    // returns the size in bytes of the data chunk to sign.
 
-        bool createSignature(const RsGxsId& id) ;
-        bool checkSignature(const RsGxsId& gxs_id) ;
+    virtual uint32_t signed_serial_size() =0;
 };
 
 class RsChatLobbyMsgItem: public RsChatMsgItem, public RsChatLobbyBouncingObject
@@ -161,7 +160,6 @@ public:
     virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
     virtual uint32_t serial_size() ;			// deserialise is handled using a constructor
 
-    virtual bool serialise_signed_part(void *data,uint32_t& size) ;
     virtual uint32_t signed_serial_size() ;
 
     uint8_t subpacket_id ;					// this is for proper handling of split packets.
@@ -181,7 +179,6 @@ class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
         virtual bool serialise(void *data,uint32_t& size) ;
         virtual uint32_t serial_size() ;
 
-        virtual bool serialise_signed_part(void *data,uint32_t& size) ;
         virtual uint32_t signed_serial_size() ;
 
         // members.

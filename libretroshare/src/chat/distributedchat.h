@@ -32,6 +32,7 @@ typedef RsPeerId ChatLobbyVirtualPeerId ;
 
 class RsItem ;
 class p3HistoryMgr ;
+class p3IdService ;
 class p3ServiceControl;
 class RsChatLobbyItem ;
 class RsChatLobbyListRequestItem ;
@@ -49,7 +50,7 @@ class RsChatMsgItem ;
 class DistributedChatService
 {
 	public:
-		DistributedChatService(uint32_t service_type,p3ServiceControl *sc,p3HistoryMgr *hm) ;
+        DistributedChatService(uint32_t service_type,p3ServiceControl *sc,p3HistoryMgr *hm,p3IdService *is) ;
 
 		virtual ~DistributedChatService() {}
 
@@ -160,5 +161,6 @@ class DistributedChatService
 		RsMutex mDistributedChatMtx ;
 
 		p3ServiceControl *mServControl; 
-		p3HistoryMgr *mHistMgr; 
+        p3HistoryMgr *mHistMgr;
+        p3IdService *mIdService ;
 };
