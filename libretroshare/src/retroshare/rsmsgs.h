@@ -310,6 +310,7 @@ public:
     ChatId chat_id; // id of chat endpoint
     RsPeerId broadcast_peer_id; // only used for broadcast chat: source peer id
     RsGxsId lobby_peer_gxs_id; // only used for lobbys: nickname of message author
+    std::string peer_alternate_nickname; // only used when key is unknown.
 
     unsigned int chatflags;
     uint32_t sendTime;
@@ -446,7 +447,7 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 /*            Chat lobbies              */
 /****************************************/
 
-virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id) = 0 ;
+virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& own_id) = 0 ;
 virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
 virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,RsPeerId& vpid) = 0;
 virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) = 0;

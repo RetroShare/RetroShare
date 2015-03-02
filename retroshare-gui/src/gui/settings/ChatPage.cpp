@@ -272,6 +272,7 @@ ChatPage::load()
     RsGxsId gxs_id ;
     rsMsgs->getDefaultIdentityForChatLobby(gxs_id) ;
 
+    ui.chatLobbyIdentity_IC->loadIds(IDCHOOSER_ID_REQUIRED, gxs_id);
     ui.chatLobbyIdentity_IC->setChosenId(gxs_id);
 
     uint chatflags = Settings->getChatFlags();

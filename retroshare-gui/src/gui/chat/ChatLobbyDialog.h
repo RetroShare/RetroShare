@@ -74,14 +74,15 @@ protected:
 protected slots:
     //void changeNickname();
 	void changePartipationState();
-	void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
+    void distantChatParticipant();
+    void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
 	void updateParticipantsList();
 
-    void muteParticipant(const RsGxsId& nickname);
-    void unMuteParticipant(const RsGxsId& nickname);
-    bool isNicknameInLobby(const RsGxsId& nickname);
+    void muteParticipant(const RsGxsId& id);
+    void unMuteParticipant(const RsGxsId& id);
+    bool isNicknameInLobby(const RsGxsId& id);
 	
 	ChatLobbyId lobbyId;
 	QString _lobby_name ;
@@ -99,6 +100,7 @@ private:
     std::set<RsGxsId> mutedParticipants;
 
 	QAction *muteAct;
+    QAction *distantChatAct;
 };
 
 #endif

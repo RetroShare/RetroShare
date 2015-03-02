@@ -483,9 +483,9 @@ bool p3Msgs::getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick_n
     return mChatSrv->getIdentityForChatLobby(lobby_id,nick_name) ;
 }
 
-bool p3Msgs::joinVisibleChatLobby(const ChatLobbyId& lobby_id) 
+bool p3Msgs::joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& own_id)
 {
-	return mChatSrv->joinVisibleChatLobby(lobby_id) ;
+    return mChatSrv->joinVisibleChatLobby(lobby_id,own_id) ;
 }
 
 void p3Msgs::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) 

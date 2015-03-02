@@ -136,7 +136,7 @@ class p3Msgs: public RsMsgs
 
 	  /****************************************/
 
-	  virtual bool joinVisibleChatLobby(const ChatLobbyId& id) ;
+      virtual bool joinVisibleChatLobby(const ChatLobbyId& id, const RsGxsId &own_id) ;
 	  virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
 	  virtual bool getVirtualPeerId(const ChatLobbyId& id,RsPeerId& vpid) ;
 	  virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) ;

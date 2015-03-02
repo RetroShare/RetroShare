@@ -586,10 +586,11 @@ static void subscribeLobby(QTreeWidgetItem *item)
 		return;
 	}
 
-	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
-	if (rsMsgs->joinVisibleChatLobby(id)) {
+    ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+    RsGxsId gxs_id ;
+
+    if(rsMsgs->getDefaultIdentityForChatLobby(gxs_id) && !gxs_id.isNull() && rsMsgs->joinVisibleChatLobby(id,gxs_id))
         ChatDialog::chatFriend(ChatId(id),true) ;
-	}
 }
 
 void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)

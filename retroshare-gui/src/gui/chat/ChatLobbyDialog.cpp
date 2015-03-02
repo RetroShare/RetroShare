@@ -41,10 +41,11 @@
 
 #include <time.h>
 
-#define COLUMN_ICON  0
-#define COLUMN_NAME  1
+#define COLUMN_ICON      0
+#define COLUMN_NAME      1
 #define COLUMN_ACTIVITY  2
-#define COLUMN_COUNT     3
+#define COLUMN_ID        3
+#define COLUMN_COUNT     4
 
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
@@ -58,12 +59,16 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
-	ui.participantsList->setColumnCount(COLUMN_COUNT);
-	ui.participantsList->setColumnWidth(COLUMN_ICON, 20);
+    ui.participantsList->setColumnCount(COLUMN_COUNT);
+    ui.participantsList->setColumnWidth(COLUMN_ICON, 20);
     ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
+    ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
 	muteAct = new QAction(QIcon(), tr("Mute participant"), this);
-	connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
+    distantChatAct = new QAction(QIcon(), tr("Start private chat"), this);
+
+    connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
+    connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
 
 	// Add a button to invite friends.
 	//
@@ -140,30 +145,34 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 
 	QMenu contextMnu(this);
 
-	contextMnu.addAction(muteAct);
+    contextMnu.addAction(muteAct);
+    contextMnu.addAction(distantChatAct);
+
 	muteAct->setCheckable(true);
 	muteAct->setEnabled(false);
-	muteAct->setChecked(false);
-	if (selectedItems.size()) {
+    muteAct->setChecked(false);
 
+    if (selectedItems.size())
+    {
         RsGxsId nickName;
         rsMsgs->getIdentityForChatLobby(lobbyId, nickName);
 
-        if(selectedItems.count()>1 || (RsGxsId(selectedItems.at(0)->text(COLUMN_NAME).toStdString())!=nickName))
+        if(selectedItems.count()>1 || (RsGxsId(selectedItems.at(0)->text(COLUMN_ID).toStdString())!=nickName))
         {
-		muteAct->setEnabled(true);
+            muteAct->setEnabled(true);
 
-		QList<QTreeWidgetItem*>::iterator item;
-        for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+            QList<QTreeWidgetItem*>::iterator item;
+            for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
 
-            RsGxsId gxsid ;
-            if ( dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(gxsid) && isParticipantMuted(gxsid))
-            {
-				muteAct->setChecked(true);
-				break;
-			}
-		}
-	}
+                RsGxsId gxsid ;
+                if ( dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(gxsid) && isParticipantMuted(gxsid))
+                {
+                    muteAct->setChecked(true);
+                    break;
+                }
+            }
+        }
+    distantChatAct->setEnabled(selectedItems.count()==1 && RsGxsId(selectedItems.front()->text(COLUMN_ID).toStdString())!=nickName) ;
     }
 
 	contextMnu.exec(QCursor::pos());
@@ -306,8 +315,16 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
     RsGxsId gxs_id = msg.lobby_peer_gxs_id ;
 	
     if(!isParticipantMuted(gxs_id)) {
-#warning name conversion missing for gxs_id
-      ui.chatWidget->addChatMsg(msg.incoming, QString::fromStdString(gxs_id.toStdString()), sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+#warning We could change addChatMsg to display the peer's icon, passing a ChatId
+        RsIdentityDetails details ;
+
+        QString name ;
+        if(rsIdentity->getIdDetails(gxs_id,details))
+            name = QString::fromUtf8(details.mNickname.c_str()) ;
+        else
+            name = QString::fromUtf8(msg.peer_alternate_nickname.c_str()) + " (" + QString::fromStdString(gxs_id.toStdString()) + ")" ;
+
+      ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 		emit messageReceived(id()) ;
 	}
 	
@@ -325,8 +342,7 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
 
 	time_t now = time(NULL);
 
-#warning check that addChatMessage() correctly updates participant activity
-   QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly,COLUMN_NAME);
+   QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly,COLUMN_ID);
     if (qlFoundParticipants.count()!=0) qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(now));
 
 	if (now > lastUpdateListTime) {
@@ -347,75 +363,69 @@ void ChatLobbyDialog::updateParticipantsList()
     if(rsMsgs->getChatLobbyInfo(lobbyId,linfo))
     {
         ChatLobbyInfo cliInfo=linfo;
-        QList<QTreeWidgetItem*>  qlOldParticipants=ui.participantsList->findItems("*",Qt::MatchWildcard,COLUMN_NAME);
+        QList<QTreeWidgetItem*>  qlOldParticipants=ui.participantsList->findItems("*",Qt::MatchWildcard,COLUMN_ID);
 
-        foreach(QTreeWidgetItem *qtwiCur,qlOldParticipants){
-            QString qsOldParticipant = qtwiCur->text(COLUMN_NAME);
-            QByteArray qbaPart=qsOldParticipant.toUtf8();
-            std::string strTemp=std::string(qbaPart.begin(),qbaPart.end());
-
-            std::map<RsGxsId,time_t>::iterator itFound(cliInfo.gxs_ids.find(RsGxsId(strTemp))) ;
-
-            if(itFound == cliInfo.gxs_ids.end())
+        foreach(QTreeWidgetItem *qtwiCur,qlOldParticipants)
+            if(cliInfo.gxs_ids.find(RsGxsId((*qtwiCur).text(COLUMN_ID).toStdString())) == cliInfo.gxs_ids.end())
             {
                 //Old Participant go out, remove it
                 int index = ui.participantsList->indexOfTopLevelItem(qtwiCur);
                 delete ui.participantsList->takeTopLevelItem(index);
             }
-        }
 
-
-
-    for (std::map<RsGxsId,time_t>::const_iterator it2(linfo.gxs_ids.begin()); it2 != linfo.gxs_ids.end(); ++it2)
-    {
-        QString participant = QString::fromUtf8( (it2->first).toStdString().c_str() );
-
-        QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(participant,Qt::MatchExactly,COLUMN_NAME);
-        GxsIdRSTreeWidgetItem *widgetitem;
-
-        if (qlFoundParticipants.count()==0)
+        for (std::map<RsGxsId,time_t>::const_iterator it2(linfo.gxs_ids.begin()); it2 != linfo.gxs_ids.end(); ++it2)
         {
-            // TE: Add Wigdet to participantsList with Checkbox, to mute Participant
+            QString participant = QString::fromUtf8( (it2->first).toStdString().c_str() );
 
-            widgetitem = new GxsIdRSTreeWidgetItem(mParticipantCompareRole);
-            widgetitem->setId(it2->first,0) ;
-            //widgetitem->setText(COLUMN_NAME, participant);
-            //widgetitem->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
-            ui.participantsList->addTopLevelItem(widgetitem);
-        }
+            QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(participant,Qt::MatchExactly,COLUMN_ID);
+            GxsIdRSTreeWidgetItem *widgetitem;
+
+            if (qlFoundParticipants.count()==0)
+            {
+                // TE: Add Wigdet to participantsList with Checkbox, to mute Participant
+
+                widgetitem = new GxsIdRSTreeWidgetItem(mParticipantCompareRole);
+                widgetitem->setId(it2->first,COLUMN_NAME) ;
+                //widgetitem->setText(COLUMN_NAME, participant);
+                widgetitem->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
+                widgetitem->setText(COLUMN_ID,QString::fromStdString(it2->first.toStdString()));
+
+                ui.participantsList->addTopLevelItem(widgetitem);
+            }
+            else
+                widgetitem = dynamic_cast<GxsIdRSTreeWidgetItem*>(qlFoundParticipants.at(0));
+
+            if (isParticipantMuted(it2->first)) {
+                widgetitem->setTextColor(COLUMN_NAME,QColor(255,0,0));
+            } else {
+                widgetitem->setTextColor(COLUMN_NAME,ui.participantsList->palette().color(QPalette::Active, QPalette::Text));
+            }
+
+            time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
+            time_t now = time(NULL);
+
+            if(isParticipantMuted(it2->first))
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/ledoff1.png")) ;
+            else if (tLastAct<now-60*30)
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/grayled.png"));
         else
-            widgetitem = dynamic_cast<GxsIdRSTreeWidgetItem*>(qlFoundParticipants.at(0));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/ledon1.png"));
 
-#warning finish updating the colors of GXS ids in participant list
-        if (isParticipantMuted(it2->first)) {
-            //widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/redled.png"));
-            widgetitem->setTextColor(COLUMN_NAME,QColor(255,0,0));
-        } else {
-            //widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/greenled.png"));
-            widgetitem->setTextColor(COLUMN_NAME,ui.participantsList->palette().color(QPalette::Active, QPalette::Text));
+            RsGxsId gxs_id;
+            rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
+
+            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/yellowled.png"));
+
+            QTime qtLastAct=QTime(0,0,0).addSecs(now-tLastAct);
+            widgetitem->setToolTip(COLUMN_ICON,tr("Right click to mute/unmute participants<br/>Double click to address this person<br/>")
+                                   +tr("This participant is not active since:")
+                                   +qtLastAct.toString()
+                                   +tr(" seconds")
+                                   );
         }
-
-        time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
-        time_t now = time(NULL);
-        if (tLastAct<now-60*30)
-            widgetitem->setIcon(COLUMN_ICON, QIcon(isParticipantMuted(it2->first)?":/images/ledoff1.png":":/images/grayled.png"));
-
-        RsGxsId gxs_id;
-        rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
-
-        if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/yellowled.png"));
-
-
-        QTime qtLastAct=QTime(0,0,0).addSecs(now-tLastAct);
-        widgetitem->setToolTip(COLUMN_NAME,tr("Right click to mute/unmute participants<br/>Double click to address this person<br/>")
-                               +tr("This participant is not active since:")
-                               +qtLastAct.toString()
-                               +tr(" seconds")
-                               );
     }
-	}
-	ui.participantsList->setSortingEnabled(true);
-	ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
+    ui.participantsList->setSortingEnabled(true);
+    ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 }
 
 /**
@@ -481,6 +491,38 @@ void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item,
 //	updateParticipantsList();
 }
 
+void ChatLobbyDialog::distantChatParticipant()
+{
+    std::cerr << " initiating distant chat" << std::endl;
+
+    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+
+    if (selectedItems.isEmpty())
+        return;
+
+    if(selectedItems.size() != 1)
+        return ;
+
+    GxsIdRSTreeWidgetItem *item = dynamic_cast<GxsIdRSTreeWidgetItem*>(selectedItems.front());
+
+    if(!item)
+        return ;
+
+    RsGxsId gxs_id ;
+    item->getId(gxs_id) ;
+    RsGxsId own_id;
+
+    rsMsgs->getIdentityForChatLobby(lobbyId, own_id);
+
+    uint32_t error_code ;
+
+#warning add proper error messages for distant chat from lobbies
+    if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,error_code))
+        QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant cannot be initiated. Error code: ")
+                             +QString::number(error_code)) ;
+}
+
+
 void ChatLobbyDialog::muteParticipant(const RsGxsId& nickname)
 {
     std::cerr << " Mute " << std::endl;
@@ -544,13 +586,23 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
         emit peerJoined(id()) ;
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
-#warning peer name not handled yet here.
+    {
+        RsIdentityDetails details ;
+
+        QString name ;
+        if(rsIdentity->getIdDetails(gxs_id,details))
+            name = QString::fromUtf8(details.mNickname.c_str()) ;
+        else
+            name = QString::fromUtf8("[] (") + QString::fromStdString(gxs_id.toStdString()) + ")" ;
+
         qsParticipant=QString::fromStdString(gxs_id.toStdString());
-        ui.chatWidget->updateStatusString(RsHtml::plainText(QString::fromStdString(gxs_id.toStdString())) + " %1", RsHtml::plainText(str));
+
+        ui.chatWidget->updateStatusString(RsHtml::plainText(name) + " %1", RsHtml::plainText(str));
 
         if (!isParticipantMuted(gxs_id))
             emit typingEventReceived(id()) ;
 
+    }
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
         qsParticipant=str;

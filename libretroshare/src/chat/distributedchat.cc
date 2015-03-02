@@ -543,7 +543,7 @@ void DistributedChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
     std::list<ChatLobbyId>::iterator it;
     for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); ++it)
-        joinVisibleChatLobby(*it);
+        joinVisibleChatLobby(*it,_default_identity);
 
 	 for(std::list<ChatLobbyId>::const_iterator it = invitationNeeded.begin();it!=invitationNeeded.end();++it)
 		 invitePeerToLobby(*it,item->PeerId(),false) ;
@@ -1349,8 +1349,15 @@ void DistributedChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 	_lobby_invites_queue.erase(it) ;
 }
 
-bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id)
+bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& gxs_id)
 {
+    RsIdentityDetails details ;
+
+    if(gxs_id.isNull() || !mIdService->getIdDetails(gxs_id,details) || !details.mIsOwnId)
+    {
+        std::cerr << "(EE) Cannot lobby using gxs id " << gxs_id << std::endl;
+        return false ;
+    }
 #ifdef CHAT_DEBUG
 	std::cerr << "Joining public chat lobby " << std::hex << lobby_id << std::dec << std::endl;
 #endif
@@ -1390,7 +1397,7 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id)
 
         entry.lobby_flags = it->second.lobby_flags ;//RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
 		entry.participating_friends.clear() ;
-        entry.gxs_id = _default_identity ;
+        entry.gxs_id = gxs_id ;
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
 		entry.lobby_topic = it->second.lobby_topic ;
