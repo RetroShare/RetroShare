@@ -27,6 +27,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "ChatDialog.h"
 
+class GxsIdChooser ;
 class QToolButton;
 
 class ChatLobbyDialog: public ChatDialog
@@ -72,7 +73,7 @@ protected:
     virtual void addChatMsg(const ChatMessage &msg);
 
 protected slots:
-    //void changeNickname();
+    void changeNickname();
 	void changePartipationState();
     void distantChatParticipant();
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
@@ -101,6 +102,8 @@ private:
 
 	QAction *muteAct;
     QAction *distantChatAct;
+
+    GxsIdChooser *ownIdChooser ;
 };
 
 #endif

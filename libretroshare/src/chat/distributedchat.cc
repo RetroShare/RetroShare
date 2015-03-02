@@ -416,9 +416,9 @@ bool DistributedChatService::handleRecvItem(RsChatItem *item)
 {
 	switch(item->PacketSubType())
 	{
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:          handleRecvLobbyInvite           (dynamic_cast<RsChatLobbyInviteItem           *>(item)) ; break ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT:    handleRecvChatLobbyEventItem    (dynamic_cast<RsChatLobbyEventItem            *>(item)) ; break ;
+        case RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE:          handleRecvLobbyInvite           (dynamic_cast<RsChatLobbyInviteItem           *>(item)) ; break ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE:       handleConnectionChallenge       (dynamic_cast<RsChatLobbyConnectChallengeItem *>(item)) ; break ;
-		case RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT:           handleRecvChatLobbyEventItem    (dynamic_cast<RsChatLobbyEventItem            *>(item)) ; break ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:     handleFriendUnsubscribeLobby    (dynamic_cast<RsChatLobbyUnsubscribeItem      *>(item)) ; break ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST:    handleRecvChatLobbyListRequest  (dynamic_cast<RsChatLobbyListRequestItem      *>(item)) ; break ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:            handleRecvChatLobbyList         (dynamic_cast<RsChatLobbyListItem             *>(item)) ; break ;
@@ -640,16 +640,16 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 
 	if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_LEFT)		// if a peer left. Remove its nickname from the list.
-	{
+    {
 #ifdef CHAT_DEBUG
-		std::cerr << "  removing nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
+        std::cerr << "  removing nickname " << item->nick << " from lobby " << std::hex << item->lobby_id << std::dec << std::endl;
 #endif
 
-		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+        RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
-		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
+        std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(item->lobby_id) ;
 
-		if(it != _chat_lobbys.end())
+        if(it != _chat_lobbys.end())
         {
             std::map<RsGxsId,time_t>::iterator it2(it->second.gxs_ids.find(item->signature.keyId)) ;
 
@@ -665,7 +665,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
                 std::cerr << "  (EE) nickname " << item->nick << " not in participant nicknames list!" << std::endl;
 #endif
         }
-	}
+    }
 	else if(item->event_type == RS_CHAT_LOBBY_EVENT_PEER_JOINED)		// if a joined left. Add its nickname to the list.
 	{
 #ifdef CHAT_DEBUG
@@ -702,7 +702,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 		}
 	}
-	RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->nick,item->string1) ;
+    RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId.toStdString(),item->string1) ;
 }
 void DistributedChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& visible_lobbies)
 {

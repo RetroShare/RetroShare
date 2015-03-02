@@ -35,6 +35,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/FriendSelectionDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/gxs/GxsIdChooser.h"
 #include "util/HandleRichText.h"
 
 #include <retroshare/rsnotify.h>
@@ -55,7 +56,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	ui.setupUi(this);
 
 	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
-    //connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
+        //connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
 	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
@@ -91,7 +92,17 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
 
-	getChatWidget()->addChatBarWidget(inviteFriendsButton) ;
+    getChatWidget()->addChatBarWidget(inviteFriendsButton) ;
+
+    RsGxsId current_id;
+    rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
+
+    ownIdChooser = new GxsIdChooser() ;
+    ownIdChooser->loadIds(IDCHOOSER_ID_REQUIRED,current_id) ;
+
+    connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
+
+    getChatWidget()->addChatBarWidget(ownIdChooser) ;
 
 	unsubscribeButton = new QToolButton ;
 	unsubscribeButton->setMinimumSize(QSize(28,28)) ;
@@ -287,20 +298,17 @@ void ChatLobbyDialog::setIdentity(const RsGxsId& gxs_id)
 /**
  * Dialog: Change your Nickname in the ChatLobby
  */
-//void ChatLobbyDialog::changeNickname()
-//{
-//	QInputDialog dialog;
-//	dialog.setWindowTitle(tr("Change nick name"));
-//	dialog.setLabelText(tr("Please enter your new nick name"));
-//
-//	std::string nickName;
-//	rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
-//	dialog.setTextValue(QString::fromUtf8(nickName.c_str()));
-//
-//	if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
-//		setNickname(dialog.textValue());
-//	}
-//}
+void ChatLobbyDialog::changeNickname()
+{
+    RsGxsId current_id;
+    rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
+
+    RsGxsId new_id ;
+    ownIdChooser->getChosenId(new_id) ;
+
+    if(!new_id.isNull() && new_id != current_id)
+        setIdentity(new_id);
+}
 
 /**
  * We get a new Message from a chat participant
@@ -516,10 +524,21 @@ void ChatLobbyDialog::distantChatParticipant()
 
     uint32_t error_code ;
 
-#warning add proper error messages for distant chat from lobbies
     if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,error_code))
-        QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant cannot be initiated. Error code: ")
+    {
+        QString error_str ;
+        switch(error_code)
+        {
+        case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED   : error_str = tr("Decryption failed.") ; break ;
+        case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH  : error_str = tr("Signature mismatch") ; break ;
+        case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY         : error_str = tr("Unknown key") ; break ;
+        case RS_DISTANT_CHAT_ERROR_UNKNOWN_HASH        : error_str = tr("Unknown hash") ; break ;
+        default:
+            error_str = tr("Unknown error.") ;
+        }
+        QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant cannot be initiated: ")+error_str
                              +QString::number(error_code)) ;
+    }
 }
 
 
@@ -572,32 +591,34 @@ bool ChatLobbyDialog::isParticipantMuted(const RsGxsId& participant)
 
 void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, const QString& str)
 {
-    QString qsParticipant="";
+    RsIdentityDetails details ;
+
+    QString name ;
+    if(rsIdentity->getIdDetails(gxs_id,details))
+        name = QString::fromUtf8(details.mNickname.c_str()) ;
+    else
+        name = QString::fromUtf8("[Unknown] (") + QString::fromStdString(gxs_id.toStdString()) + ")" ;
+
+    RsGxsId qsParticipant;
+
     switch (event_type)
     {
     case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
-        qsParticipant=str;
-        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(RsHtml::plainText(str)), ChatWidget::MSGTYPE_SYSTEM);
+        qsParticipant=gxs_id;
+        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerLeft(id()) ;
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
-        qsParticipant=str;
-        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(RsHtml::plainText(str)), ChatWidget::MSGTYPE_SYSTEM);
+        qsParticipant=gxs_id;
+        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerJoined(id()) ;
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
     {
-        RsIdentityDetails details ;
 
-        QString name ;
-        if(rsIdentity->getIdDetails(gxs_id,details))
-            name = QString::fromUtf8(details.mNickname.c_str()) ;
-        else
-            name = QString::fromUtf8("[] (") + QString::fromStdString(gxs_id.toStdString()) + ")" ;
+        qsParticipant=gxs_id;
 
-        qsParticipant=QString::fromStdString(gxs_id.toStdString());
-
-        ui.chatWidget->updateStatusString(RsHtml::plainText(name) + " %1", RsHtml::plainText(str));
+        ui.chatWidget->updateStatusString(RsHtml::plainText(name) + " %1", RsHtml::plainText(name));
 
         if (!isParticipantMuted(gxs_id))
             emit typingEventReceived(id()) ;
@@ -605,16 +626,15 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
     }
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
-        qsParticipant=str;
+        qsParticipant=gxs_id;
         ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(),
                               QDateTime::currentDateTime(),
                               tr("%1 changed his name to: %2").arg(RsHtml::plainText(QString::fromStdString(gxs_id.toStdString()))),
                               ChatWidget::MSGTYPE_SYSTEM);
 
         // TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
-        if (isParticipantMuted(gxs_id) && !isNicknameInLobby(RsGxsId(str.toStdString()))) {
-            muteParticipant(gxs_id);
-        }
+        if (isParticipantMuted(gxs_id))
+            muteParticipant(RsGxsId(str.toStdString())) ;
 
         break;
     case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
@@ -624,9 +644,12 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
         std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
     }
 
-    if (qsParticipant!=""){
-        QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(str,Qt::MatchExactly,COLUMN_NAME);
-        if (qlFoundParticipants.count()!=0) qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
+    if (!qsParticipant.isNull())
+    {
+        QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(qsParticipant.toStdString()),Qt::MatchExactly,COLUMN_ID);
+
+        if (qlFoundParticipants.count()!=0)
+        qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
     }
 
     updateParticipantsList() ;
