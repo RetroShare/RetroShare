@@ -135,15 +135,21 @@ public:
     RsTlvKeySignature signature ;
 
     virtual RsChatLobbyBouncingObject *duplicate() const = 0 ;
-    virtual uint32_t serial_size() ;
-    virtual bool serialise(void *data,uint32_t tlvsize,uint32_t& offset) ;
     virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-
-    bool deserialise(void *data,uint32_t rssize,uint32_t& offset) ;
 
     // returns the size in bytes of the data chunk to sign.
 
     virtual uint32_t signed_serial_size() =0;
+    virtual bool serialise_signed_part(void *data,uint32_t& size) = 0;
+
+protected:
+    // The functions below handle the serialisation of data that is specific to the bouncing object level.
+    // They are called by serial_size() and serialise() from children, but should not overload the serial_size() and
+    // serialise() methods, otherwise the wrong method will be called when serialising from this top level class.
+
+    uint32_t serialized_size(bool include_signature) ;
+    bool serialise_to_memory(void *data,uint32_t tlvsize,uint32_t& offset,bool include_signature) ;
+    bool deserialise_from_memory(void *data,uint32_t rssize,uint32_t& offset) ;
 };
 
 class RsChatLobbyMsgItem: public RsChatMsgItem, public RsChatLobbyBouncingObject
@@ -161,6 +167,7 @@ public:
     virtual uint32_t serial_size() ;			// deserialise is handled using a constructor
 
     virtual uint32_t signed_serial_size() ;
+    virtual bool serialise_signed_part(void *data,uint32_t& size) ;// Isn't it better that items can serialize themselves ?
 
     uint8_t subpacket_id ;					// this is for proper handling of split packets.
     ChatLobbyMsgId parent_msg_id ;				// Used for threaded chat.
@@ -180,6 +187,7 @@ class RsChatLobbyEventItem: public RsChatItem, public RsChatLobbyBouncingObject
         virtual uint32_t serial_size() ;
 
         virtual uint32_t signed_serial_size() ;
+    virtual bool serialise_signed_part(void *data,uint32_t& size) ;
 
         // members.
         //

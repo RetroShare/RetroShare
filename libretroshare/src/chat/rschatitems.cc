@@ -89,6 +89,7 @@ std::ostream& RsChatLobbyBouncingObject::print(std::ostream &out, uint16_t inden
 	printIndent(out, indent); out << "Lobby ID: " << std::hex << lobby_id << std::endl;
 	printIndent(out, indent); out << "Msg ID: " << std::hex << msg_id << std::dec << std::endl;
 	printIndent(out, indent); out << "Nick: " << nick << std::dec << std::endl;
+    printIndent(out, indent); out << "Sign: " << signature.keyId << std::dec << std::endl;
 
 	return out;
 }
@@ -307,33 +308,15 @@ uint32_t RsChatLobbyConnectChallengeItem::serial_size()
 	s += 8;			// challenge code
 	return s ;
 }
-uint32_t RsChatLobbyBouncingObject::signed_serial_size()
+uint32_t RsChatLobbyBouncingObject::serialized_size(bool include_signature)
 {
     uint32_t s = 0 ;              // no header!
     s += 8 ;                      // lobby_id
     s += 8 ;                      // msg_id
     s += GetTlvStringSize(nick) ; // nick
 
-    return s ;
-}
-uint32_t RsChatLobbyBouncingObject::serial_size()
-{
-    uint32_t s = 0 ;              // no header!
-    s += 8 ;                      // lobby_id
-    s += 8 ;                      // msg_id
-    s += GetTlvStringSize(nick) ; // nick
-    s += signature.TlvSize() ;    // signature
-
-	return s ;
-}
-
-uint32_t RsChatLobbyEventItem::serial_size()
-{
-	uint32_t s = 8 ;	// header
-	s += RsChatLobbyBouncingObject::serial_size() ;
-	s += 1 ; // event_type
-	s += GetTlvStringSize(string1) ;	// string1
-	s += 4 ; // send time
+    if(include_signature)
+        s += signature.TlvSize() ;    // signature
 
 	return s ;
 }
@@ -343,9 +326,19 @@ uint32_t RsChatLobbyEventItem::signed_serial_size()
     s += 1 ; // event_type
     s += GetTlvStringSize(string1) ;	// string1
     s += 4 ; // send time
-    s += RsChatLobbyBouncingObject::signed_serial_size() ;
+    s += RsChatLobbyBouncingObject::serialized_size(false) ;
 
     return s ;
+}
+uint32_t RsChatLobbyEventItem::serial_size()
+{
+	uint32_t s = 8 ;	// header
+	s += 1 ; // event_type
+	s += GetTlvStringSize(string1) ;	// string1
+	s += 4 ; // send time
+    s += RsChatLobbyBouncingObject::serialized_size(true) ;
+
+	return s ;
 }
 uint32_t RsChatLobbyListRequestItem::serial_size()
 {
@@ -372,7 +365,7 @@ uint32_t RsChatLobbyMsgItem::serial_size()
     uint32_t s = RsChatMsgItem::serial_size() ;	// parent
     s += 1;						// subpacket id
     s += 8;						// parent_msg_id
-    s += RsChatLobbyBouncingObject::serial_size() ;
+    s += RsChatLobbyBouncingObject::serialized_size(true) ;
 
 	return s;
 }
@@ -381,7 +374,7 @@ uint32_t RsChatLobbyMsgItem::signed_serial_size()
     uint32_t s = RsChatMsgItem::serial_size() ;	// parent
     s += 1;						// subpacket id
     s += 8;						// parent_msg_id
-    s += RsChatLobbyBouncingObject::signed_serial_size() ;
+    s += RsChatLobbyBouncingObject::serialized_size(false) ;
 
     return s;
 }
@@ -550,7 +543,7 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 	return ok ;
 }
 
-bool RsChatLobbyBouncingObject::serialise(void *data,uint32_t tlvsize,uint32_t& offset)
+bool RsChatLobbyBouncingObject::serialise_to_memory(void *data,uint32_t tlvsize,uint32_t& offset,bool include_signature)
 {
     bool ok = true ;
 
@@ -558,7 +551,8 @@ bool RsChatLobbyBouncingObject::serialise(void *data,uint32_t tlvsize,uint32_t& 
     ok &= setRawUInt64(data, tlvsize, &offset, msg_id);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, nick);
 
-    ok &= signature.SetTlv(data, tlvsize, &offset);
+    if(include_signature)
+        ok &= signature.SetTlv(data, tlvsize, &offset);
 
     return ok ;
 }
@@ -583,7 +577,7 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 
     // The signature is at the end of the serialised data, so that the signed data is *before* the signature.
 
-    ok &= RsChatLobbyBouncingObject::serialise(data,tlvsize,offset) ;
+    ok &= RsChatLobbyBouncingObject::serialise_to_memory(data,tlvsize,offset,true) ;
 
     /* add mandatory parts first */
 	if (offset != tlvsize)
@@ -596,6 +590,40 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 #endif
 	return ok ;
 }
+/* serialise the data to the buffer */
+bool RsChatLobbyMsgItem::serialise_signed_part(void *data, uint32_t& pktsize)
+{
+    uint32_t tlvsize = signed_serial_size() ;
+
+    if (pktsize < tlvsize)
+        return false; /* not enough space */
+
+    bool ok = true;
+    ok &= RsChatMsgItem::serialise(data,pktsize) ;						// first, serialize parent
+
+    uint32_t offset = pktsize;
+    ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
+    pktsize = tlvsize;
+
+    ok &= setRawUInt8(data, tlvsize, &offset, subpacket_id);
+    ok &= setRawUInt64(data, tlvsize, &offset, parent_msg_id);
+
+    // The signature is at the end of the serialised data, so that the signed data is *before* the signature.
+
+    ok &= RsChatLobbyBouncingObject::serialise_to_memory(data,tlvsize,offset,false) ;
+
+    /* add mandatory parts first */
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+    }
+#ifdef CHAT_DEBUG
+    std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
+#endif
+    return ok ;
+}
+
 
 bool RsChatLobbyListRequestItem::serialise(void *data, uint32_t& pktsize)
 {
@@ -640,7 +668,37 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 }
 bool RsChatLobbyEventItem::serialise(void *data, uint32_t& pktsize)
 {
-	uint32_t tlvsize = serial_size() ;
+    uint32_t tlvsize = serial_size() ;
+    bool ok = true ;
+    ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
+
+    if (pktsize < tlvsize)
+        return false; /* not enough space */
+
+    uint32_t offset = 8 ;
+
+    ok &= setRawUInt8(data, tlvsize, &offset, event_type);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, string1);
+    ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
+
+    ok &= RsChatLobbyBouncingObject::serialise_to_memory(data,tlvsize,offset,true) ;	// at the end, serialize parent
+
+    pktsize = tlvsize ;
+
+    /* add mandatory parts first */
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
+    }
+#ifdef CHAT_DEBUG
+    std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
+#endif
+    return ok ;
+}
+bool RsChatLobbyEventItem::serialise_signed_part(void *data, uint32_t& pktsize)
+{
+    uint32_t tlvsize = signed_serial_size() ;
 	bool ok = true ;
 	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
 
@@ -649,12 +707,13 @@ bool RsChatLobbyEventItem::serialise(void *data, uint32_t& pktsize)
 
 	uint32_t offset = 8 ;
 
-	ok &= RsChatLobbyBouncingObject::serialise(data,tlvsize,offset) ;		// first, serialize parent
 	ok &= setRawUInt8(data, tlvsize, &offset, event_type);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, string1);
 	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
 
-	pktsize = tlvsize ;
+    ok &= RsChatLobbyBouncingObject::serialise_to_memory(data,tlvsize,offset,false) ;	// at the end, serialize parent
+
+    pktsize = tlvsize ;
 
 	/* add mandatory parts first */
 	if (offset != tlvsize)
@@ -1000,7 +1059,7 @@ RsChatLobbyMsgItem::RsChatLobbyMsgItem(void *data,uint32_t /*size*/)
 	ok &= getRawUInt8(data, rssize, &offset, &subpacket_id);
 	ok &= getRawUInt64(data, rssize, &offset, &parent_msg_id);
 
-    ok &= RsChatLobbyBouncingObject::deserialise(data,rssize,offset) ;
+    ok &= RsChatLobbyBouncingObject::deserialise_from_memory(data,rssize,offset) ;
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat lobby msg item." << std::endl ;
@@ -1053,7 +1112,7 @@ RsChatLobbyListItem::RsChatLobbyListItem(void *data,uint32_t)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 	
-bool RsChatLobbyBouncingObject::deserialise(void *data,uint32_t rssize,uint32_t& offset)
+bool RsChatLobbyBouncingObject::deserialise_from_memory(void *data,uint32_t rssize,uint32_t& offset)
 {
 	bool ok = true ;
 	/* get mandatory parts first */
@@ -1074,11 +1133,11 @@ RsChatLobbyEventItem::RsChatLobbyEventItem(void *data,uint32_t /*size*/)
 
 	uint32_t offset = 8 ;
 
-	ok &= RsChatLobbyBouncingObject::deserialise(data,rssize,offset) ;
-
 	ok &= getRawUInt8(data, rssize, &offset, &event_type);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, string1);
 	ok &= getRawUInt32(data, rssize, &offset, &sendTime);
+
+    ok &= RsChatLobbyBouncingObject::deserialise_from_memory(data,rssize,offset) ;
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat lobby status item." << std::endl ;

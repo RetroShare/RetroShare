@@ -81,6 +81,7 @@ protected slots:
 private:
 	void updateParticipantsList();
 
+    QString getParticipantName(const RsGxsId& id) const;
     void muteParticipant(const RsGxsId& id);
     void unMuteParticipant(const RsGxsId& id);
     bool isNicknameInLobby(const RsGxsId& id);

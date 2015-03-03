@@ -589,7 +589,7 @@ bool ChatLobbyDialog::isParticipantMuted(const RsGxsId& participant)
     return mutedParticipants.find(participant) != mutedParticipants.end();
 }
 
-void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, const QString& str)
+QString ChatLobbyDialog::getParticipantName(const RsGxsId& gxs_id) const
 {
     RsIdentityDetails details ;
 
@@ -599,7 +599,15 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
     else
         name = QString::fromUtf8("[Unknown] (") + QString::fromStdString(gxs_id.toStdString()) + ")" ;
 
+    return name ;
+}
+
+
+void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, const QString& str)
+{
     RsGxsId qsParticipant;
+
+    QString name= getParticipantName(gxs_id) ;
 
     switch (event_type)
     {
@@ -626,16 +634,20 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
     }
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
+    {
         qsParticipant=gxs_id;
+
+        QString newname= getParticipantName(RsGxsId(str.toStdString())) ;
+
         ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(),
-                              QDateTime::currentDateTime(),
-                              tr("%1 changed his name to: %2").arg(RsHtml::plainText(QString::fromStdString(gxs_id.toStdString()))),
-                              ChatWidget::MSGTYPE_SYSTEM);
+                                  QDateTime::currentDateTime(),
+                                  tr("%1 changed his name to: %2").arg(name).arg(newname),
+                                  ChatWidget::MSGTYPE_SYSTEM);
 
         // TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
         if (isParticipantMuted(gxs_id))
             muteParticipant(RsGxsId(str.toStdString())) ;
-
+    }
         break;
     case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
         //std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in lobby " << getPeerId() << std::endl;

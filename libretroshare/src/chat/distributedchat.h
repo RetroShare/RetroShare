@@ -96,6 +96,8 @@ class DistributedChatService
         bool sendLobbyChat(const ChatLobbyId &lobby_id, const std::string&) ;
         bool handleRecvChatLobbyMsgItem(RsChatMsgItem *item) ;
 
+    bool checkSignature(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id) ;
+
     private:
 		/// make some statistics about time shifts, to prevent various issues. 
 		void addTimeShiftStatistics(int shift) ;
