@@ -354,124 +354,27 @@ bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObjec
 // This function should be used for all types of chat messages. But this requires a non backward compatible change in
 // chat protocol. To be done for version 0.6
 //
-void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatLobbyMsgItem *msg)
+void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatItem *msg)
 {
-    // We check the message item, and possibly split it into multiple messages, if the message is too big.
+    // Multiple-parts messaging has been disabled in lobbies, because of the following issues:
+    //    1 - it breaks signatures because the subid of each sub-item is changed (can be fixed)
+    //    2 - it breaks (can be fixed as well)
+    //    3 - it is unreliable since items are not guarrantied to all arrive in the end (cannot be fixed)
+    //    4 - large objects can be used to corrupt end peers (cannot be fixed)
+    //
+    static const uint32_t MAX_ITEM_SIZE = 32000 ;
 
-    static const uint32_t MAX_STRING_SIZE = 15000 ;
-    int n=0 ;
-
-    while(msg->message.size() > MAX_STRING_SIZE)
+    if(msg->serial_size() > MAX_ITEM_SIZE)
     {
-        // chop off the first 15000 wchars
-
-        RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem(*msg) ;
-
-        item->message = item->message.substr(0,MAX_STRING_SIZE) ;
-        msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
-
-        // Clear out any one time flags that should not be copied into multiple objects. This is
-        // a precaution, in case the receivign peer does not yet handle split messages transparently.
-        //
-        item->chatFlags &= (RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_PUBLIC | RS_CHAT_FLAG_LOBBY) ;
-
-        // Indicate that the message is to be continued.
-        //
-        item->chatFlags |= RS_CHAT_FLAG_PARTIAL_MESSAGE ;
-        item->subpacket_id = n++ ;
-
-        sendChatItem(item) ;
+        std::cerr << "(EE) Chat item exceeds maximum serial size. It will be dropped." << std::endl;
+        delete msg ;
     }
-    msg->subpacket_id = n ;
     sendChatItem(msg) ;
 }
 
 bool DistributedChatService::locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *ci)
 {
-    if(ci == NULL)		// null item, should be treated normally.
-        return true ;
-
-    // Check is the item is ending an incomplete item.
-    //
-    std::map<ChatLobbyMsgId,std::vector<RsChatLobbyMsgItem*> >::iterator it = _pendingPartialLobbyMessages.find(ci->msg_id) ;
-
-#ifdef DEBUG_CHAT_LOBBIES
-    std::cerr << "Checking chat message for completeness:" << std::endl;
-#endif
-    bool ci_is_incomplete = ci->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE ;
-
-    if(it != _pendingPartialLobbyMessages.end())
-    {
-#ifdef DEBUG_CHAT_LOBBIES
-        std::cerr << "  Pending message found. Appending it." << std::endl;
-#endif
-        // Yes, there is. Add the item to the list of stored sub-items
-
-        if(ci->subpacket_id >= it->second.size() )
-            it->second.resize(ci->subpacket_id+1,NULL) ;
-
-        it->second[ci->subpacket_id] = ci ;
-#ifdef DEBUG_CHAT_LOBBIES
-        std::cerr << "  Checking for completeness." << std::endl;
-#endif
-        // Now check wether we have a complete item or not.
-        //
-        bool complete = true ;
-        for(uint32_t i=0;i<it->second.size() && complete;++i)
-            complete = complete && (it->second[i] != NULL) ;
-
-        complete = complete && !(it->second.back()->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE) ;
-
-        if(complete)
-        {
-#ifdef DEBUG_CHAT_LOBBIES
-            std::cerr << "  Message is complete ! Re-forming it and returning true." << std::endl;
-#endif
-            std::string msg ;
-            uint32_t flags = 0 ;
-
-            for(uint32_t i=0;i<it->second.size();++i)
-            {
-                msg += it->second[i]->message ;
-                flags |= it->second[i]->chatFlags ;
-
-                if(i != ci->subpacket_id)	// don't delete ci itself !!
-                    delete it->second[i] ;
-            }
-            _pendingPartialLobbyMessages.erase(it) ;
-
-            ci->chatFlags = flags ;
-            ci->message = msg ;
-            ci->chatFlags &= ~RS_CHAT_FLAG_PARTIAL_MESSAGE ;	// remove partial flag form message.
-
-            return true ;
-        }
-        else
-        {
-#ifdef DEBUG_CHAT_LOBBIES
-            std::cerr << "  Not complete: returning" << std::endl ;
-#endif
-            return false ;
-        }
-    }
-    else if(ci_is_incomplete || ci->subpacket_id > 0)	// the message id might not yet be recorded
-    {
-#ifdef DEBUG_CHAT_LOBBIES
-        std::cerr << "  Message is partial, but not recorded. Adding it. " << std::endl;
-#endif
-
-        _pendingPartialLobbyMessages[ci->msg_id].resize(ci->subpacket_id+1,NULL) ;
-        _pendingPartialLobbyMessages[ci->msg_id][ci->subpacket_id] = ci ;
-
-        return false ;
-    }
-    else
-    {
-#ifdef DEBUG_CHAT_LOBBIES
-        std::cerr << "  Message is not partial. Returning it as is." << std::endl;
-#endif
-        return true ;
-    }
+    return true ;
 }
 
 bool DistributedChatService::handleRecvItem(RsChatItem *item)
@@ -880,10 +783,7 @@ bool DistributedChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,c
 
 			item2->PeerId(*it) ;	// replaces the virtual peer id with the actual destination.
 
-			if(is_message)
-                checkSizeAndSendLobbyMessage(static_cast<RsChatLobbyMsgItem*>(item2)) ;
-			else
-				sendChatItem(item2);
+            checkSizeAndSendLobbyMessage(item2) ;
 		}
 
 	++lobby.connexion_challenge_count ;
@@ -992,8 +892,7 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 
         int i ;
         for(i=0;i<6;++i)
-            if(!mIdService->getPrivateKey(lobby.gxs_id,signature_private_key)
-                            || signature_private_key.keyData.bin_data == NULL)
+            if(!mIdService->getPrivateKey(lobby.gxs_id,signature_private_key) || signature_private_key.keyData.bin_data == NULL)
             {
 #ifdef DEBUG_CHAT_LOBBIES
                 std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
@@ -1010,18 +909,20 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
             return false ;
         }
 
+#ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "Signing item." << std::endl;
     std::cerr << "  data hash: " << RsDirUtil::sha1sum(memory,item.signed_serial_size()) << std::endl;
     std::cerr << "  signed data: " << RsUtil::BinToHex((char*)memory,item.signed_serial_size()) << std::endl;
+#endif
 
         if(!GxsSecurity::getSignature((const char *)memory,item.signed_serial_size(),signature_private_key,item.signature))
         {
             std::cerr << "(EE) Cannot sign message item. " << std::endl;
             return false ;
         }
+#ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature done." << std::endl;
 
-#ifdef DEBUG_CHAT_LOBBIES
     // check signature
     RsTlvSecurityKey public_key ;
         GxsSecurity::extractPublicKey(signature_private_key,public_key) ;
@@ -1059,6 +960,7 @@ bool DistributedChatService::sendLobbyChat(const ChatLobbyId& lobby_id, const st
         item.sendTime = time(NULL);
         item.recvTime = item.sendTime;
         item.message = msg;
+        item.parent_msg_id = 0;
 
         // gives a random msg id, setup the nickname, and signs the item.
 
@@ -1066,7 +968,7 @@ bool DistributedChatService::sendLobbyChat(const ChatLobbyId& lobby_id, const st
             return false;
     }
 
-	RsPeerId ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 
     bounceLobbyObject(&item, ownId) ;
 
@@ -1337,9 +1239,9 @@ void DistributedChatService::getPendingChatLobbyInvites(std::list<ChatLobbyInvit
 }
 
 
-bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id) 
+bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const RsGxsId& identity)
 {
-	{
+    {
 		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
 #ifdef DEBUG_CHAT_LOBBIES
@@ -1360,6 +1262,16 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 			return true ;
 		}
 
+        RsIdentityDetails details ;
+
+        // This is our own identity. We force the loading from the cache.
+
+        for(int i=0;i<6;++i)
+            if(mIdService->getIdDetails(identity,details))
+                break ;
+            else
+                usleep(500*1000) ;
+
 #ifdef DEBUG_CHAT_LOBBIES
 		std::cerr << "  Creating new Lobby entry." << std::endl;
 #endif
@@ -1368,7 +1280,7 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
         entry.lobby_flags = it->second.lobby_flags ;
-        entry.gxs_id = _default_identity ;
+        entry.gxs_id = identity ;
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = it->second.lobby_name ;
 		entry.lobby_topic = it->second.lobby_topic ;
@@ -1391,7 +1303,8 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 		RsChatLobbyMsgItem *item = new RsChatLobbyMsgItem;
 		item->lobby_id = entry.lobby_id ;
 		item->msg_id = 0 ;
-		item->nick = "Lobby management" ;
+        item->parent_msg_id = 0 ;
+        item->nick = "Lobby management" ;
 		item->message = std::string("Welcome to chat lobby") ;
 		item->PeerId(entry.virtual_peer_id) ;
 		item->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_LOBBY ;
@@ -1443,7 +1356,15 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 {
     RsIdentityDetails details ;
 
-    if(gxs_id.isNull() || !mIdService->getIdDetails(gxs_id,details) || !details.mIsOwnId)
+    // This is our own identity. We force the loading from the cache.
+
+    for(int i=0;i<6;++i)
+        if(mIdService->getIdDetails(gxs_id,details))
+            break ;
+        else
+            usleep(500*1000) ;
+
+    if(gxs_id.isNull() || !details.mIsOwnId)
     {
         std::cerr << "(EE) Cannot lobby using gxs id " << gxs_id << std::endl;
         return false ;
@@ -1516,7 +1437,7 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 	return true ;
 }
 
-ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags lobby_flags)
+ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags lobby_flags)
 {
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "Creating a new Chat lobby !!" << std::endl;
@@ -1537,7 +1458,7 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 		ChatLobbyEntry entry ;
         entry.lobby_flags = lobby_flags ;
 		entry.participating_friends.clear() ;
-        entry.gxs_id = _default_identity ;	// to be changed. For debug only!!
+        entry.gxs_id = lobby_identity ;	// to be changed. For debug only!!
 		entry.lobby_id = lobby_id ;
 		entry.lobby_name = lobby_name ;
 		entry.lobby_topic = lobby_topic ;

@@ -493,9 +493,9 @@ void p3Msgs::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& pub
 	mChatSrv->getListOfNearbyChatLobbies(public_lobbies) ;
 }
 
-ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type)
+ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type)
 {
-	return mChatSrv->createChatLobby(lobby_name,lobby_topic,invited_friends,privacy_type) ;
+    return mChatSrv->createChatLobby(lobby_name,lobby_identity,lobby_topic,invited_friends,privacy_type) ;
 }
 
 void p3Msgs::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
@@ -509,9 +509,9 @@ bool p3Msgs::getLobbyAutoSubscribe(const ChatLobbyId& lobby_id)
 }
 
 
-bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id) 
+bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& gxs_id)
 {
-	return mChatSrv->acceptLobbyInvite(id) ;
+    return mChatSrv->acceptLobbyInvite(id,gxs_id) ;
 }
 void p3Msgs::denyLobbyInvite(const ChatLobbyId& id) 
 {

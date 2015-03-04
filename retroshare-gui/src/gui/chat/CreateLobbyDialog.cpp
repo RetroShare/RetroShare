@@ -112,25 +112,14 @@ void CreateLobbyDialog::createLobby()
     std::list<RsPeerId> shareList;
     ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
 
-//	if (shareList.empty()) {
-//		QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
-//		return;
-//	}
+    //	if (shareList.empty()) {
+    //		QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
+    //		return;
+    //	}
 
-	// create chat lobby !!
-	std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
-	std::string lobby_topic = ui->lobbyTopic_LE->text().toUtf8().constData() ;
-
-	// add to group
-
-    ChatLobbyFlags lobby_flags ;
-
-    if(ui->security_CB->currentIndex() == 0)
-        lobby_flags |= RS_CHAT_LOBBY_FLAGS_PUBLIC ;
-
-    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name, lobby_topic, shareList, lobby_flags);
-
-	std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
+    // create chat lobby !!
+    std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
+    std::string lobby_topic = ui->lobbyTopic_LE->text().toUtf8().constData() ;
 
     // set nick name !
     RsGxsId gxs_id ;
@@ -140,10 +129,19 @@ void CreateLobbyDialog::createLobby()
     case GxsIdChooser::None:
         return ;
     }
-    rsMsgs->setIdentityForChatLobby(id,gxs_id) ;
+    // add to group
 
-	// open chat window !!
+    ChatLobbyFlags lobby_flags ;
+
+    if(ui->security_CB->currentIndex() == 0)
+        lobby_flags |= RS_CHAT_LOBBY_FLAGS_PUBLIC ;
+
+    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
+
+    std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
+
+    // open chat window !!
     ChatDialog::chatFriend(ChatId(id)) ;
 
-	close();
+    close();
 }

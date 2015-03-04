@@ -169,7 +169,6 @@ public:
     virtual uint32_t signed_serial_size() ;
     virtual bool serialise_signed_part(void *data,uint32_t& size) ;// Isn't it better that items can serialize themselves ?
 
-    uint8_t subpacket_id ;					// this is for proper handling of split packets.
     ChatLobbyMsgId parent_msg_id ;				// Used for threaded chat.
 };
 

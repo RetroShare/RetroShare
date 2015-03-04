@@ -143,7 +143,7 @@ class p3Msgs: public RsMsgs
       virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) ;
       virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) ;
       virtual void invitePeerToLobby(const ChatLobbyId&, const RsPeerId&) ;
-	  virtual bool acceptLobbyInvite(const ChatLobbyId& id) ;
+      virtual bool acceptLobbyInvite(const ChatLobbyId& id, const RsGxsId &gxs_id) ;
 	  virtual void denyLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 	  virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
@@ -153,7 +153,7 @@ class p3Msgs: public RsMsgs
       virtual bool getDefaultIdentityForChatLobby(RsGxsId& nick) ;
     virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
-      virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type) ;
+      virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type) ;
 
       virtual bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,uint32_t& error_code) ;
       virtual bool getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status, RsGxsId *from_gxs_id=NULL) ;

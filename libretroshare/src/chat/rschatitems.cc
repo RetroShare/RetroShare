@@ -363,7 +363,6 @@ uint32_t RsChatLobbyListItem::serial_size()
 uint32_t RsChatLobbyMsgItem::serial_size()
 {
     uint32_t s = RsChatMsgItem::serial_size() ;	// parent
-    s += 1;						// subpacket id
     s += 8;						// parent_msg_id
     s += RsChatLobbyBouncingObject::serialized_size(true) ;
 
@@ -372,7 +371,6 @@ uint32_t RsChatLobbyMsgItem::serial_size()
 uint32_t RsChatLobbyMsgItem::signed_serial_size()
 {
     uint32_t s = RsChatMsgItem::serial_size() ;	// parent
-    s += 1;						// subpacket id
     s += 8;						// parent_msg_id
     s += RsChatLobbyBouncingObject::serialized_size(false) ;
 
@@ -572,7 +570,6 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
 	pktsize = tlvsize;
 
-	ok &= setRawUInt8(data, tlvsize, &offset, subpacket_id);
 	ok &= setRawUInt64(data, tlvsize, &offset, parent_msg_id);
 
     // The signature is at the end of the serialised data, so that the signed data is *before* the signature.
@@ -605,7 +602,7 @@ bool RsChatLobbyMsgItem::serialise_signed_part(void *data, uint32_t& pktsize)
     ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);		// correct header!
     pktsize = tlvsize;
 
-    ok &= setRawUInt8(data, tlvsize, &offset, subpacket_id);
+    //ok &= setRawUInt8(data, tlvsize, &offset, subpacket_id);	// don't serialise sub-part id.
     ok &= setRawUInt64(data, tlvsize, &offset, parent_msg_id);
 
     // The signature is at the end of the serialised data, so that the signed data is *before* the signature.
@@ -1056,7 +1053,6 @@ RsChatLobbyMsgItem::RsChatLobbyMsgItem(void *data,uint32_t /*size*/)
 
 	uint32_t offset = RsChatMsgItem::serial_size() ;
 
-	ok &= getRawUInt8(data, rssize, &offset, &subpacket_id);
 	ok &= getRawUInt64(data, rssize, &offset, &parent_msg_id);
 
     ok &= RsChatLobbyBouncingObject::deserialise_from_memory(data,rssize,offset) ;

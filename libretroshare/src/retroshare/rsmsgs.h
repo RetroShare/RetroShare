@@ -454,7 +454,7 @@ virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) = 0;
 virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) = 0 ;
 virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) = 0 ;
 virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const RsPeerId& peer_id) = 0;
-virtual bool acceptLobbyInvite(const ChatLobbyId& id) = 0 ;
+virtual bool acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& identity) = 0 ;
 virtual void denyLobbyInvite(const ChatLobbyId& id) = 0 ;
 virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) = 0;
 virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) = 0;
@@ -464,7 +464,7 @@ virtual bool setDefaultIdentityForChatLobby(const RsGxsId& nick) = 0;
 virtual bool getDefaultIdentityForChatLobby(RsGxsId& id) = 0 ;
     virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe) = 0 ;
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id) = 0 ;
-virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags lobby_privacy_type) = 0 ;
+virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags lobby_privacy_type) = 0 ;
 
 /****************************************/
 /*            Distant chat              */

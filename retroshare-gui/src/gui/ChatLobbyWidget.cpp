@@ -837,22 +837,28 @@ void ChatLobbyWidget::readChatLobbyInvites()
 	std::list<ChatLobbyInvite> invites;
 	rsMsgs->getPendingChatLobbyInvites(invites);
 
-	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it) {
-		if (QMessageBox::Ok == QMessageBox::question(this, tr("Invitation to chat lobby"), tr("%1 invites you to chat lobby named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)), QMessageBox::Ok, QMessageBox::Ignore)) {
-			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
+    for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
+    {
+#warning We need here a QDialog that also asks for the identity to use.
+#ifdef REMOVED_CODE
+        QDialog dialog ;
 
-			rsMsgs->acceptLobbyInvite((*it).lobby_id);
+        if (QMessageBox::Ok == QMessageBox::question(this, tr("Invitation to chat lobby"), tr("%1 invites you to chat lobby named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)), QMessageBox::Ok, QMessageBox::Ignore)) {
+            std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
+
+            rsMsgs->acceptLobbyInvite((*it).lobby_id);
 
             RsPeerId vpid;
-			if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid )) {
+            if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid )) {
                 ChatDialog::chatFriend(ChatId((*it).lobby_id),true);
-			} else {
-				std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
-			}
-		} else {
-			rsMsgs->denyLobbyInvite((*it).lobby_id);
-		}
-	}
+            } else {
+                std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
+            }
+        } else {
+            rsMsgs->denyLobbyInvite((*it).lobby_id);
+        }
+#endif
+    }
 }
 
 void ChatLobbyWidget::filterColumnChanged(int)

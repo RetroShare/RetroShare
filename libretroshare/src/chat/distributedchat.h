@@ -62,7 +62,7 @@ class DistributedChatService
 		bool isLobbyId(const RsPeerId& virtual_peer_id, ChatLobbyId& lobby_id) ;
         void getChatLobbyList(std::list<ChatLobbyId>& clids) ;
         bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& clinfo) ;
-        bool acceptLobbyInvite(const ChatLobbyId& id) ;
+        bool acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& identity) ;
 		void denyLobbyInvite(const ChatLobbyId& id) ;
 		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 		void invitePeerToLobby(const ChatLobbyId&, const RsPeerId& peer_id,bool connexion_challenge = false) ;
@@ -75,7 +75,7 @@ class DistributedChatService
 		bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
 
-        ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic, const std::list<RsPeerId>& invited_friends,ChatLobbyFlags flags) ;
+        ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic, const std::list<RsPeerId>& invited_friends,ChatLobbyFlags flags) ;
 
 		void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
         bool joinVisibleChatLobby(const ChatLobbyId& id, const RsGxsId &gxs_id) ;
@@ -91,7 +91,7 @@ class DistributedChatService
         bool processLoadListItem(const RsItem *item) ;
 
         bool locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *) ;
-        void checkSizeAndSendLobbyMessage(RsChatLobbyMsgItem *) ;
+        void checkSizeAndSendLobbyMessage(RsChatItem *) ;
 
         bool sendLobbyChat(const ChatLobbyId &lobby_id, const std::string&) ;
         bool handleRecvChatLobbyMsgItem(RsChatMsgItem *item) ;

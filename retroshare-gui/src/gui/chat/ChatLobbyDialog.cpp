@@ -626,7 +626,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
 
         qsParticipant=gxs_id;
 
-        ui.chatWidget->updateStatusString(RsHtml::plainText(name) + " %1", RsHtml::plainText(name));
+        ui.chatWidget->updateStatusString(RsHtml::plainText(name) + " %1", RsHtml::plainText(str));
 
         if (!isParticipantMuted(gxs_id))
             emit typingEventReceived(id()) ;
