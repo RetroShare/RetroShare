@@ -594,7 +594,7 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
         std::cerr << "  (EE) DH computation failed. Probably a bug. Error code=" << ERR_get_error() << std::endl;
         return ;
     }
-    it->second.status == RS_DISTANT_CHAT_DH_STATUS_KEY_AVAILABLE ;
+    it->second.status = RS_DISTANT_CHAT_DH_STATUS_KEY_AVAILABLE ;
 
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  DH key computation successed. New key in place." << std::endl;
