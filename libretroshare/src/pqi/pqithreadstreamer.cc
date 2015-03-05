@@ -88,7 +88,7 @@ void pqithreadstreamer::run()
 
 void pqithreadstreamer::stop()
 {
-//	RsStackMutex stack(mThreadMutex);
+    //RsStackMutex stack(mThreadMutex);
 
 	std::cerr << "pqithreadstream::stop()";
 	std::cerr << std::endl;
@@ -98,17 +98,20 @@ void pqithreadstreamer::stop()
 
 void pqithreadstreamer::fullstop()
 {
-	stop();
-
 	while(1)
-	{
-		RsStackMutex stack(mThreadMutex);
-		if (!mRunning)
-		{
-			std::cerr << "pqithreadstream::fullstop() complete";
-			std::cerr << std::endl;
-			return;
-		}
+    {
+        {
+            RsStackMutex stack(mThreadMutex);
+
+            mToRun = false ;
+
+            if (!mRunning)
+            {
+                std::cerr << "pqithreadstream::fullstop() complete";
+                std::cerr << std::endl;
+                return;
+            }
+        }
 		usleep(1000);
 	}
 }
