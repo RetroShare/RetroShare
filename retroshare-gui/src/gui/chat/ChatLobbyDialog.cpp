@@ -322,8 +322,7 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
     QString message = QString::fromUtf8(msg.msg.c_str());
     RsGxsId gxs_id = msg.lobby_peer_gxs_id ;
 	
-    if(!isParticipantMuted(gxs_id)) {
-#warning We could change addChatMsg to display the peer's icon, passing a ChatId
+    if(!isParticipantMuted(gxs_id)) { // We could change addChatMsg to display the peers icon, passing a ChatId
         RsIdentityDetails details ;
 
         QString name ;
