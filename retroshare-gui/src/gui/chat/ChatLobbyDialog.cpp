@@ -100,11 +100,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     ownIdChooser = new GxsIdChooser() ;
     ownIdChooser->loadIds(IDCHOOSER_ID_REQUIRED,current_id) ;
 
-    connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
-
     getChatWidget()->addChatBarWidget(ownIdChooser) ;
 
-	unsubscribeButton = new QToolButton ;
+    connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
+
+    unsubscribeButton = new QToolButton ;
 	unsubscribeButton->setMinimumSize(QSize(28,28)) ;
 	unsubscribeButton->setMaximumSize(QSize(28,28)) ;
 	unsubscribeButton->setText(QString()) ;

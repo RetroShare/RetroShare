@@ -1630,7 +1630,7 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 			return false;
 		}
 
-        if (it->second.gxs_id != nick)
+        if (!it->second.gxs_id.isNull() && it->second.gxs_id != nick)
 		{
 			changed = true;
 		}
