@@ -25,6 +25,7 @@
 
 #include <sstream>
 #include <math.h>
+#include <unistd.h>
 
 #include "util/rsprint.h"
 #include "distributedchat.h"
