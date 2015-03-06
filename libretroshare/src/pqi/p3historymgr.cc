@@ -95,7 +95,7 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
             enabled = true;
         }
         if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
-            peerName = cm.lobby_peer_nickname;
+            peerName = cm.lobby_peer_gxs_id.toStdString();
             enabled = true;
         }
 

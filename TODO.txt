@@ -12,6 +12,7 @@ Level |  What
 E        [ ] it's not possible to create a Posted thread without a Owner. 
              Bug? If not, then remove "No signature" from selection box
 E        [ ] Show an info page for unsubscribed posted threads (same as forums)
+E        [ ] Links in Posted cannot be clicked.
 M        [ ] Fix the counting of unread messages in Posted. Now it's wrong.
 E        [X] Make the GUI of Posted more sexy: more compact items, remove unecessary text, use consistent icons,...
       
@@ -28,13 +29,18 @@ E        [ ] Recommendation messages do not show complete links. Links show up i
 E        [X] Recommendation messages should not be signed by the retroshare team!!
 E        [ ] when adding a friend through clicking on cert links, the add friend wizard is shown twice!
 M        [X] add a flag in friends option to allow auto-download of recommended files
+M        [ ] sound is not working for some users on linux. We also need a "test sound" button in config->sound
+E        [ ] some widgets in the GUI do not follow the system style => GUI looks bad on these systems
+E        [ ] display version ID in windows version
+E        [ ] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
       
        Messages
 H        [ ] distant messages should be made async-ed
 M        [ ] distant messages are not re-sent when the peer is offline the first time
-M        [ ] sent messages to direct peers in the Sent box have inconsistent To field. 
+M        [X] sent messages to direct peers in the Sent box have inconsistent To field. 
              Raises an error if you click on it.
 H        [ ] Merge the new messaging format? (or keep this for > 0.6)
+M        [ ] icons for GxsTreeWidgetItem are too small in distant messages list widget
       
        Channels
          [X] Unsubscribed channels should show an info page when selected, like forums
@@ -42,9 +48,10 @@ H        [ ] marking all as read in channels takes time. The channel icon should
              during the operation to avoid the user to re-click many times in the hope to get 
              the posts marked as read.
          [X] channels items show a 0 left to the up/Dn buttons. What is it??
+         [ ] allow to post on channels when attachment is not in shared files. Just display a warning.
       
        Chat lobbies
-H        [ ] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
+H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
          [X] Remove deprecated code in rschatitems.
       
        Chat
@@ -67,6 +74,7 @@ M        [ ] allow to share identities between locations.
       
        Network
 E        [ ] Friends => Friend nodes
+E        [ ] remove TCP, TOR, UDP from the status column, and move it in front of IP
       
        News feed
          [X] remove the Ghost news feed items

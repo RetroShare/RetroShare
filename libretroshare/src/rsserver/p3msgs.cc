@@ -449,9 +449,13 @@ bool p3Msgs::isLobbyId(const RsPeerId& peer_id,ChatLobbyId& id)
 	return mChatSrv->isLobbyId(peer_id,id) ;
 }
 
-void p3Msgs::getChatLobbyList(std::list<ChatLobbyInfo>& linfos) 
+bool p3Msgs::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& linfo)
 {
-	mChatSrv->getChatLobbyList(linfos) ;
+    return mChatSrv->getChatLobbyInfo(id,linfo) ;
+}
+void p3Msgs::getChatLobbyList(std::list<ChatLobbyId>& lids)
+{
+    mChatSrv->getChatLobbyList(lids) ;
 }
 void p3Msgs::invitePeerToLobby(const ChatLobbyId& lobby_id, const RsPeerId& peer_id) 
 {
@@ -461,27 +465,27 @@ void p3Msgs::unsubscribeChatLobby(const ChatLobbyId& lobby_id)
 {
 	mChatSrv->unsubscribeChatLobby(lobby_id) ;
 }
-bool p3Msgs::setDefaultNickNameForChatLobby(const std::string& nick)
+bool p3Msgs::setDefaultIdentityForChatLobby(const RsGxsId& nick)
 {
-	return mChatSrv->setDefaultNickNameForChatLobby(nick) ;
+    return mChatSrv->setDefaultIdentityForChatLobby(nick) ;
 }
-bool p3Msgs::getDefaultNickNameForChatLobby(std::string& nick_name)
+bool p3Msgs::getDefaultIdentityForChatLobby(RsGxsId& nick_name)
 {
-	return mChatSrv->getDefaultNickNameForChatLobby(nick_name) ;
-}
-
-bool p3Msgs::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string& nick)
-{
-	return mChatSrv->setNickNameForChatLobby(lobby_id,nick) ;
-}
-bool p3Msgs::getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick_name)
-{
-	return mChatSrv->getNickNameForChatLobby(lobby_id,nick_name) ;
+    return mChatSrv->getDefaultIdentityForChatLobby(nick_name) ;
 }
 
-bool p3Msgs::joinVisibleChatLobby(const ChatLobbyId& lobby_id) 
+bool p3Msgs::setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& nick)
 {
-	return mChatSrv->joinVisibleChatLobby(lobby_id) ;
+    return mChatSrv->setIdentityForChatLobby(lobby_id,nick) ;
+}
+bool p3Msgs::getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick_name)
+{
+    return mChatSrv->getIdentityForChatLobby(lobby_id,nick_name) ;
+}
+
+bool p3Msgs::joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& own_id)
+{
+    return mChatSrv->joinVisibleChatLobby(lobby_id,own_id) ;
 }
 
 void p3Msgs::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) 
@@ -489,9 +493,9 @@ void p3Msgs::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& pub
 	mChatSrv->getListOfNearbyChatLobbies(public_lobbies) ;
 }
 
-ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,uint32_t privacy_type) 
+ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type)
 {
-	return mChatSrv->createChatLobby(lobby_name,lobby_topic,invited_friends,privacy_type) ;
+    return mChatSrv->createChatLobby(lobby_name,lobby_identity,lobby_topic,invited_friends,privacy_type) ;
 }
 
 void p3Msgs::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
@@ -505,9 +509,9 @@ bool p3Msgs::getLobbyAutoSubscribe(const ChatLobbyId& lobby_id)
 }
 
 
-bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id) 
+bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& gxs_id)
 {
-	return mChatSrv->acceptLobbyInvite(id) ;
+    return mChatSrv->acceptLobbyInvite(id,gxs_id) ;
 }
 void p3Msgs::denyLobbyInvite(const ChatLobbyId& id) 
 {

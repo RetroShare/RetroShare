@@ -54,7 +54,7 @@ static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size
 																					  // Images are 96x96, which makes approx. 27000 bytes uncompressed.
 
 p3ChatService::p3ChatService(p3ServiceControl *sc,p3IdService *pids, p3LinkMgr *lm, p3HistoryMgr *historyMgr)
-    :DistantChatService(pids),DistributedChatService(getServiceInfo().mServiceType,sc,historyMgr), mChatMtx("p3ChatService"),mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
+    :DistantChatService(pids),DistributedChatService(getServiceInfo().mServiceType,sc,historyMgr,pids), mChatMtx("p3ChatService"),mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
 	_serializer = new RsChatSerialiser() ;
 
@@ -811,7 +811,7 @@ void p3ChatService::initChatMessage(RsChatMsgItem *c, ChatMessage &m)
     RsChatLobbyMsgItem *lobbyItem = dynamic_cast<RsChatLobbyMsgItem*>(c) ;
     if(lobbyItem != NULL)
     {
-        m.lobby_peer_nickname = lobbyItem->nick;
+        m.lobby_peer_gxs_id = lobbyItem->signature.keyId ;
         m.chat_id = ChatId(lobbyItem->lobby_id);
         return;
     }

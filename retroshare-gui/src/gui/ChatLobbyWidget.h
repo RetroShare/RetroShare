@@ -7,6 +7,9 @@
 
 #define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
 
+#define CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1
+#define CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2
+
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
 class ChatLobbyDialog ;
@@ -55,12 +58,13 @@ protected slots:
 	void unsubscribeItem();
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
 	void updateCurrentLobby() ;
-	void displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str);
+    void displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& gxs_id, const QString& str);
 	void readChatLobbyInvites();
 	void showLobby(QTreeWidgetItem *lobby_item) ;
 	void showBlankPage(ChatLobbyId id) ;
-	void unsubscribeChatLobby(ChatLobbyId id) ;
-	void updateTypingStatus(ChatLobbyId id) ;
+    void unsubscribeChatLobby(ChatLobbyId id) ;
+    void subscribeChatLobbyAs() ;
+    void updateTypingStatus(ChatLobbyId id) ;
 	void resetLobbyTreeIcons() ;
 	void updateMessageChanged(ChatLobbyId);
 	void updatePeerEntering(ChatLobbyId);
@@ -78,6 +82,8 @@ private slots:
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
+    void subscribeChatLobby(ChatLobbyId id) ;
+    void subscribeChatLobbyAtItem(QTreeWidgetItem *item) ;
 
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 

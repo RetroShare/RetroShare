@@ -122,6 +122,10 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		return;
 	}
 
+    // this prevents the objects that depend on what's in the combo-box to activate and
+    // perform any change.Only user-changes should cause this.
+    chooser->blockSignals(true) ;
+
 	QString text = GxsIdDetails::getNameForType(type, details);
 	QString id = QString::fromStdString(details.mId.toStdString());
 
@@ -156,7 +160,9 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	chooser->setItemData(index, (type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
 	chooser->setItemIcon(index, icons.empty() ? QIcon() : icons[0]);
 
-	chooser->model()->sort(0);
+    chooser->model()->sort(0);
+
+    chooser->blockSignals(false) ;
 }
 
 void GxsIdChooser::loadPrivateIds(uint32_t token)

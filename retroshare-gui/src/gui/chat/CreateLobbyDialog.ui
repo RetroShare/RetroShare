@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
+    <width>787</width>
     <height>486</height>
    </rect>
   </property>
@@ -76,15 +76,12 @@
              <item row="2" column="0">
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>Your nick name:</string>
+                <string>Identity to use:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLineEdit" name="nickName_LE"/>
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="label_6">
@@ -109,6 +106,9 @@
                 </property>
                </item>
               </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="GxsIdChooser" name="idChooser_CB"/>
              </item>
             </layout>
            </item>
@@ -264,6 +264,11 @@
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>
