@@ -13,11 +13,13 @@
 #include "chat/ChatLobbyUserNotify.h"
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
-#include <gui/settings/rsharesettings.h>
+#include "gui/settings/rsharesettings.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsnotify.h"
+#include "retroshare/rsidentity.h"
 
 #define COLUMN_NAME       0
 #define COLUMN_USER_COUNT 1
@@ -212,31 +214,66 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 		action->setData(item->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt());
 	}
 
-	if (item && item->type() == TYPE_LOBBY) {
-		if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
-			contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeItem()));
-		} else {
-			contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeItem()));
-		}
-        if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool()) {
-            contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
-        } else {
-            contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+    if (item && item->type() == TYPE_LOBBY)
+    {
+        if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
+            contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Leave this lobby"), this, SLOT(unsubscribeItem()));
+        else
+        {
+            std::list<RsGxsId> own_identities ;
+            rsIdentity->getOwnIds(own_identities) ;
+
+            QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
+            uint32_t item_flags = item->data(COLUMN_DATA,ROLE_ID).toUInt() ;
+
+            if(own_identities.size() <= 1)
+            {
+                QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Enter this lobby"), this, SLOT(subscribeChatLobbyAs()));
+
+                if(own_identities.empty())
+                    action->setEnabled(false) ;
+                else
+                    action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+            }
+            else
+            {
+                QMenu *mnu = contextMnu.addMenu(QIcon(IMAGE_SUBSCRIBE),tr("Enter this lobby as...")) ;
+
+                for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+                {
+                    RsIdentityDetails idd ;
+                    rsIdentity->getIdDetails(*it,idd) ;
+
+                    QPixmap pixmap ;
+
+                    if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+                        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+
+                    QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(subscribeChatLobbyAs()));
+                    action->setData(QString::fromStdString((*it).toStdString())) ;
+                }
+            }
+
+            if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool())
+                contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+            else
+                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+
         }
-	}
+    }
 
-	contextMnu.addSeparator();//-------------------------------------------------------------------
+        contextMnu.addSeparator();//-------------------------------------------------------------------
 
-	showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
-	showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
-	showSubscribeAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
+        showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+        showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+        showSubscribeAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
 
-	QMenu *menu = contextMnu.addMenu(tr("Columns"));
-	menu->addAction(showUserCountAct);
-    menu->addAction(showTopicAct);
-    menu->addAction(showSubscribeAct);
+        QMenu *menu = contextMnu.addMenu(tr("Columns"));
+        menu->addAction(showUserCountAct);
+        menu->addAction(showTopicAct);
+        menu->addAction(showSubscribeAct);
 
-    contextMnu.exec(QCursor::pos());
+        contextMnu.exec(QCursor::pos());
 }
 
 void ChatLobbyWidget::lobbyChanged()
@@ -579,12 +616,30 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 	else
 		ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
 }
-
-static void subscribeLobby(QTreeWidgetItem *item)
+void ChatLobbyWidget::subscribeChatLobbyAs()
 {
-	if (item == NULL || item->type() != TYPE_LOBBY) {
-		return;
-	}
+    QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
+
+    if(!item)
+        return ;
+
+    ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+
+    QAction *action = qobject_cast<QAction *>(QObject::sender());
+    if (!action)
+        return ;
+
+    RsGxsId gxs_id(action->data().toString().toStdString());
+        uint32_t error_code ;
+
+    if(rsMsgs->joinVisibleChatLobby(id,gxs_id))
+        ChatDialog::chatFriend(ChatId(id),true) ;
+}
+void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
+{
+    if (item == NULL || item->type() != TYPE_LOBBY) {
+        return;
+    }
 
     ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
     RsGxsId gxs_id ;
@@ -602,7 +657,7 @@ void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
     ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
     bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
     rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
-    if (!isAutoSubscribe) subscribeLobby(item);
+    if (!isAutoSubscribe) subscribeChatLobbyAtItem(item);
 }
 
 void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
@@ -639,12 +694,12 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 
 void ChatLobbyWidget::subscribeItem()
 {
-	subscribeLobby(ui.lobbyTreeWidget->currentItem());
+    subscribeChatLobbyAtItem(ui.lobbyTreeWidget->currentItem());
 }
 
 void ChatLobbyWidget::autoSubscribeItem()
 {
-	autoSubscribeLobby(ui.lobbyTreeWidget->currentItem());
+    autoSubscribeLobby(ui.lobbyTreeWidget->currentItem());
 }
 
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
@@ -822,7 +877,7 @@ void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
 
 void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 {
-	subscribeLobby(item);
+    subscribeChatLobbyAtItem(item);
 }
 
 void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& gxs_id, const QString& str)

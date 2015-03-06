@@ -37,7 +37,7 @@
 #include "gxs/gxssecurity.h"
 #include "services/p3idservice.h"
 
-#define DEBUG_CHAT_LOBBIES 1
+//#define DEBUG_CHAT_LOBBIES 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
 static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
@@ -122,7 +122,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     }
     if(!checkSignature(cli,cli->PeerId()))	// check the object's signature and possibly request missing keys
     {
-        std::cerr << "Signature mismatched for this lobby event item: " << std::endl;
+        std::cerr << "Signature mismatched for this lobby event item. Item will be dropped: " << std::endl;
         cli->print(std::cerr) ;
         std::cerr << std::endl;
         return false;
@@ -152,13 +152,17 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     std::list<RsPeerId> peer_list ;
     peer_list.push_back(peer_id) ;
 
-    bool key_available = mIdService->requestKey(obj->signature.keyId,peer_list);
+    // network pre-request key to allow message authentication.
+
+    mIdService->requestKey(obj->signature.keyId,peer_list);
 
     uint32_t size = obj->signed_serial_size() ;
         unsigned char *memory = (unsigned char *)malloc(size) ;
 
+#ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "Checking object signature: " << std::endl;
     std::cerr << "   signature id: " << obj->signature.keyId << std::endl;
+#endif
 
         if(!obj->serialise_signed_part(memory,size))
         {
@@ -178,20 +182,26 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
             return true ;
         }
+#ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  key available. " << key_available << std::endl;
     std::cerr << "  data hash: " << RsDirUtil::sha1sum(memory,obj->signed_serial_size()) << std::endl;
     std::cerr << "  signed data: " << RsUtil::BinToHex((char*)memory,obj->signed_serial_size()) << std::endl;
+#endif
 
         if(!GxsSecurity::validateSignature((const char *)memory,obj->signed_serial_size(),signature_public_key,obj->signature))
         {
+#ifdef DEBUG_CHAT_LOBBIES
             std::cerr << "  Signature: FAILS." << std::endl;
+#endif
         free(memory) ;
 
             return false ;
         }
     free(memory) ;
 
+#ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature: CHECKS" << std::endl;
+#endif
 
     return true ;
 }
@@ -768,8 +778,6 @@ bool DistributedChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,c
 	// Check that if we have a lobby bouncing object, it's not flooding the lobby
 	if(!locked_bouncingObjectCheck(item,peer_id,lobby.participating_friends.size()))
 		return false;
-
-	bool is_message =  (NULL != dynamic_cast<RsChatLobbyMsgItem*>(item)) ;
 
 	// Forward to allparticipating friends, except this peer.
 

@@ -62,8 +62,9 @@ protected slots:
 	void readChatLobbyInvites();
 	void showLobby(QTreeWidgetItem *lobby_item) ;
 	void showBlankPage(ChatLobbyId id) ;
-	void unsubscribeChatLobby(ChatLobbyId id) ;
-	void updateTypingStatus(ChatLobbyId id) ;
+    void unsubscribeChatLobby(ChatLobbyId id) ;
+    void subscribeChatLobbyAs() ;
+    void updateTypingStatus(ChatLobbyId id) ;
 	void resetLobbyTreeIcons() ;
 	void updateMessageChanged(ChatLobbyId);
 	void updatePeerEntering(ChatLobbyId);
@@ -81,6 +82,8 @@ private slots:
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
+    void subscribeChatLobby(ChatLobbyId id) ;
+    void subscribeChatLobbyAtItem(QTreeWidgetItem *item) ;
 
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
