@@ -12,7 +12,7 @@ Level |  What
 E        [ ] it's not possible to create a Posted thread without a Owner. 
              Bug? If not, then remove "No signature" from selection box
 E        [ ] Show an info page for unsubscribed posted threads (same as forums)
-E        [ ] Links in Posted cannot be clicked.
+E        [X] Links in Posted cannot be clicked.
 M        [ ] Fix the counting of unread messages in Posted. Now it's wrong.
 E        [X] Make the GUI of Posted more sexy: more compact items, remove unecessary text, use consistent icons,...
       
@@ -40,7 +40,7 @@ M        [ ] distant messages are not re-sent when the peer is offline the first
 M        [X] sent messages to direct peers in the Sent box have inconsistent To field. 
              Raises an error if you click on it.
 H        [ ] Merge the new messaging format? (or keep this for > 0.6)
-M        [ ] icons for GxsTreeWidgetItem are too small in distant messages list widget
+M        [X] icons for GxsTreeWidgetItem are too small in distant messages list widget
       
        Channels
          [X] Unsubscribed channels should show an info page when selected, like forums
