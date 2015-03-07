@@ -62,10 +62,10 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
         break;
 
     case GXS_ID_DETAILS_TYPE_DONE:
-        toolTip = GxsIdDetails::getComment(details);
         GxsIdDetails::getIcons(details, icons);
         break;
     }
+    toolTip = GxsIdDetails::getComment(details);
 
     int column = item->idColumn();
 

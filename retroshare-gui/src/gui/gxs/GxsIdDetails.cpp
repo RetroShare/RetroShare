@@ -840,8 +840,10 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 {
 	QString comment;
 
+QString nickname = details.mNickname.empty()?tr("[Unknown]"):QString::fromUtf8(details.mNickname.c_str()) ;
+
     comment = QString("%1:%2<br/>%3:%4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
-	                                        QString::fromUtf8(details.mNickname.c_str()),
+                                             nickname,
                                             QApplication::translate("GxsIdDetails", "Identity&nbsp;Id"),
 	                                        QString::fromStdString(details.mId.toStdString()));
 
