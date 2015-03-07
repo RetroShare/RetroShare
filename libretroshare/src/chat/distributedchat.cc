@@ -59,7 +59,8 @@ static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration win
 #define        IS_PUBLIC_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC   )
 #define     IS_ANONYMOUS_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_ANONYMOUS)
 #define IS_CONNEXION_CHALLENGE(flags) (flags & RS_CHAT_LOBBY_FLAGS_CHALLENGE)
-#define  EXTRACT_PRIVACY_FLAGS(flags) (flags & (RS_CHAT_LOBBY_FLAGS_PUBLIC))
+
+#define  EXTRACT_PRIVACY_FLAGS(flags) (ChatLobbyFlags(flags.toUInt32()) & RS_CHAT_LOBBY_FLAGS_PUBLIC)
 
 DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceControl *sc,p3HistoryMgr *hm, p3IdService *is)
     : mServType(serv_type),mDistributedChatMtx("Distributed Chat"), mServControl(sc), mHistMgr(hm),mIdService(is)
