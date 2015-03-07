@@ -322,7 +322,10 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
     QString message = QString::fromUtf8(msg.msg.c_str());
     RsGxsId gxs_id = msg.lobby_peer_gxs_id ;
 	
-    if(!isParticipantMuted(gxs_id)) { // We could change addChatMsg to display the peers icon, passing a ChatId
+    if(!isParticipantMuted(gxs_id))
+    {
+        // We could change addChatMsg to display the peers icon, passing a ChatId
+
         RsIdentityDetails details ;
 
         QString name ;
@@ -331,19 +334,19 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
         else
             name = QString::fromUtf8(msg.peer_alternate_nickname.c_str()) + " (" + QString::fromStdString(gxs_id.toStdString()) + ")" ;
 
-      ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-		emit messageReceived(id()) ;
-	}
-	
-	// This is a trick to translate HTML into text.
-	QTextEdit editor;
-	editor.setHtml(message);
-    QString notifyMsg = QString::fromStdString(gxs_id.toStdString()) + ": " + editor.toPlainText();
+        ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+        emit messageReceived(id()) ;
 
-	if(notifyMsg.length() > 30)
-		MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
-	else
-		MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg);
+        // This is a trick to translate HTML into text.
+        QTextEdit editor;
+        editor.setHtml(message);
+        QString notifyMsg = name + ": " + editor.toPlainText();
+
+        if(notifyMsg.length() > 30)
+            MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
+        else
+            MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg);
+    }
 
 	// also update peer list.
 
