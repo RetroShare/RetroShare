@@ -257,7 +257,10 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool())
                 contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
             else
-                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+        {
+        if(!own_identities.empty())
+            contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+        }
 
         }
     }
@@ -667,7 +670,10 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 
 	// Update information
 	std::vector<VisibleChatLobbyRecord> lobbies;
-	rsMsgs->getListOfNearbyChatLobbies(lobbies);
+    rsMsgs->getListOfNearbyChatLobbies(lobbies);
+
+    std::list<RsGxsId> my_ids ;
+    rsIdentity->getOwnIds(my_ids) ;
 
 	for(std::vector<VisibleChatLobbyRecord>::const_iterator it(lobbies.begin());it!=lobbies.end();++it)
 		if( (*it).lobby_id == id)
@@ -678,7 +684,11 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
             ui.lobbytype_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)?tr("Public"):tr("Private")) );
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
-			ui.lobbyInfoLabel->setText(tr("You're not subscribed to this lobby; Double click-it to enter and chat.") );
+            QString text = tr("You're not subscribed to this lobby; Double click-it to enter and chat.") ;
+            if(my_ids.empty())
+                text += "\n\n"+tr("You will need to create an identity in order to join chat lobbies.") ;
+
+            ui.lobbyInfoLabel->setText(text);
 			return ;
 		}
 
