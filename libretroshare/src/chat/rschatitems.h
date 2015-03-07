@@ -63,7 +63,7 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT_DEPREC      = 0x0B ;	// don't use 
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	  = 0x0C ;	// will be deprecated when only signed messages are accepted (02/2015)
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	  = 0x0D ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated   = 0x0E ;	// to be removed
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	  = 0x0F ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_deprecated = 0x0F ;	// to be removed
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	  = 0x10 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2  = 0x11 ;	// to be removed (deprecated since 02 Dec. 2012)
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated3  = 0x12 ;
@@ -73,6 +73,7 @@ const uint8_t RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY   = 0x16 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG     	  = 0x17 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT      = 0x18 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST              = 0x19 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	  = 0x1A ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
