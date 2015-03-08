@@ -49,6 +49,7 @@ int clearDebugCrashLog();
 int setDebugFile(const char *fname);
 int setOutputLevel(int lvl);
 int setZoneLevel(int lvl, int zone);
+int getZoneLevel(int zone);
 int rslog(unsigned int lvl, int zone, const std::string &msg);
 
 

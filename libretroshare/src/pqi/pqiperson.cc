@@ -70,23 +70,34 @@ int     pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 {
 	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
 
-	std::string out = "pqiperson::SendItem()";
 	if (active)
 	{
-		out += " Active: Sending On\n";
-		i->print_string(out, 5);
+		// every outgoing item goes through this function, so try to not waste cpu cycles
+		// check if debug output is wanted, to avoid unecessary work
+		// getZoneLevel() locks a global mutex and does a lookup in a map or returns a default value
+		// (not sure if this is a performance problem)
+		if (PQL_DEBUG_BASIC <= getZoneLevel(pqipersonzone))
+		{
+			std::string out = "pqiperson::SendItem() Active: Sending On\n";
+			i->print_string(out, 5); // this can be very expensive
 #ifdef PERSON_DEBUG
-		std::cerr << out << std::endl;
+			std::cerr << out << std::endl;
 #endif
+			pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out);
+		}
 		return activepqi -> SendItem(i,serialized_size);
 	}
 	else
 	{
-		out += " Not Active: Used to put in ToGo Store\n";
-		out += " Now deleting...";
+		if (PQL_DEBUG_BASIC <= getZoneLevel(pqipersonzone))
+		{
+			std::string out = "pqiperson::SendItem()";
+			out += " Not Active: Used to put in ToGo Store\n";
+			out += " Now deleting...";
+			pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out);
+		}
 		delete i;
 	}
-	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out);
 	return 0; // queued.	
 }
 
