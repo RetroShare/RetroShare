@@ -1845,7 +1845,7 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 		return true ;
 	}
 
-    if(_default_identity.isNull())
+    if(_default_identity.isNull() && rsIdentity!=NULL)
     {
         std::list<RsGxsId> own_ids ;
         rsIdentity->getOwnIds(own_ids) ;
