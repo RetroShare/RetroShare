@@ -38,7 +38,7 @@
 class UdpStack
 {
 	public:
-        rsUdpStack(int testmode, struct sockaddr_in &local) { return; }
+		UdpStack(int testmode, struct sockaddr_in &local) { return; }
 	UdpStack(struct sockaddr_in &local) { return; }
 
 	/* from pqiNetListener */
