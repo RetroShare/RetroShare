@@ -88,9 +88,13 @@ cp $workdir/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui $workdir/src/plug
 # handling of libssh
 #LIBSSH_VERSION=0.5.4
 #LIBSSH_DIR=41
+#LIBSSH_LOCATION=https://red.libssh.org/attachments/download/${LIBSSH_DIR}/libssh-${LIBSSH_VERSION}.tar.gz
+
 LIBSSH_VERSION=0.6.4
 LIBSSH_DIR=107
-[ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz https://red.libssh.org/attachments/download/${LIBSSH_DIR}/libssh-${LIBSSH_VERSION}.tar.gz
+LIBSSH_LOCATION=https://git.libssh.org/projects/libssh.git/snapshot/libssh-${LIBSSH_VERSION}.tar.gz
+
+[ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz $LIBSSH_LOCATION 
 cd $workdir
 tar zxvf ../libssh-${LIBSSH_VERSION}.tar.gz
 cd ..

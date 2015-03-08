@@ -2,6 +2,8 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    Improvements
       * GUI
+         - Fixed display of version information.
+         - Optimized GxsIdDetails::process to load the gxs details directly when the caller is the gui thread.
          - Removed not used base class GxsIdTreeWidget.
             Used QPixmap instead of QIcon to draw the gxs image in GxsIdTreeWidgetItem.
             Fixed use of transparent background in GxsIdDetails::GenerateCombinedPixmap 
@@ -9,6 +11,10 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
          - hide reputations which are not used yet (patch from sehraf)
 
       * Channels/Forums/Posted
+         - Fixed refill of author column in forums.
+         - Trimmed whitespace from URL to fix internal retroshare links.
+         - Added Retroshare links support to PostedItems (don't seem to work yet).
+         - Enabled cancel button in CreateComment Dialog.
          - avoid calling rsGxsChannels::setMessageReadStatus() when the message status is already what 
             we want. Removed one warning that has been cleared.
          - improved GUI for Posted
@@ -24,11 +30,16 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
             gives the possibility to push data to other nodes
             
       * Identities
+         - fixed message tooltip for loading ids
          - Added tooltip on key id column.
          - Disable Send Message button for own Identities.
          - Fixed initial size of the splitter in IdDialog.
 
       * Chat 
+         - Fixed missing spaces in chat style.
+         - merged in new lobbies with GXS ids. Old peers and new peers cannot see each others lobby lists. 
+           Invitations and Messages of old and new peers will not be visible to each other.
+         - fixed mistake in distant chat (== instead of =)
          - removed deprectated items in chat lobbies. Removed debug output in distant chat.
          - fixed a few bugs in distant chat protocol (allow re-negociation of DH parameters if decryption 
             fails, correct passing of own gxs id for server side), making the system more reactive. Also 
@@ -39,8 +50,15 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       * improvement of README file (patch by cave, modified)
 
       * Connectivity
+         - removed systematic printout of outgoing items which killed performance (patch from electron)
+         - Removed debug info fom bdnet (Patch from electron)
+         - attempt to fix never ending thread. To be tested.
          - Allow TLSv1.2 while keeping compatibility with TLS1 and 1.1 (Patch from cave)
          - Added extra check against invalid sockfds, cansend / moretoread code
+
+      * Others
+         - added method in ftServer to allow retrieving data from shared/downloaded files (patch from electron, modified)
+         - fixed typo preventing compilation without RS_USE_BITDHT flag
 
       * Packaging
          - fixed compilation on debian squeeze. Removed placeHolder properties in CreateGxsForumMsg.ui 
