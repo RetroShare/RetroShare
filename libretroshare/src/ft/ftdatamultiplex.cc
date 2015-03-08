@@ -77,6 +77,42 @@ ftDataMultiplex::ftDataMultiplex(const RsPeerId& ownId, ftDataSend *server, ftSe
 	return;
 }
 
+bool ftDataMultiplex::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size, uint8_t *data)
+{
+    RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+    ftFileProvider* provider = 0;
+
+    std::map<RsFileHash, ftClient>::iterator cit;
+    std::map<RsFileHash, ftFileProvider *>::iterator sit;
+
+    // check if file is currently downloading
+    if (mClients.end() != (cit = mClients.find(hash)))
+        provider = (cit->second).mCreator;
+
+    // else check if its already uploading
+    else if (mServers.end() != (sit = mServers.find(hash)))
+        provider = sit->second;
+
+    // else create a new provider
+    else
+    {
+        FileInfo info;
+        FileSearchFlags hintflags =   RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_NETWORK_WIDE;
+        if(mSearch->search(hash, hintflags, info))
+        {
+            provider = new ftFileProvider(info.path, info.size, hash);
+            mServers[hash] = provider;
+        }
+    }
+
+    if(!provider || ! provider->getFileData(mOwnId, offset, requested_size, data, true))
+    {
+        requested_size = 0 ;
+        return false ;
+    }
+    return true ;
+}
+
 bool	ftDataMultiplex::addTransferModule(ftTransferModule *mod, ftFileCreator *f)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/

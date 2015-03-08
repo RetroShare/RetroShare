@@ -52,7 +52,7 @@ class ftFileCreator: public ftFileProvider
 		~ftFileCreator();
 
 		/* overloaded from FileProvider */
-		virtual bool 	getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
+        virtual bool 	getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data, bool allow_unverified = false);
 		bool	finished() ;
 		uint64_t getRecvd();
 

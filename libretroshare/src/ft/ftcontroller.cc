@@ -1524,7 +1524,7 @@ bool 	ftController::FileClearCompleted()
 }
 
 	/* get Details of File Transfers */
-bool 	ftController::FileDownloads(std::list<RsFileHash> &hashs)
+void 	ftController::FileDownloads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
@@ -1537,7 +1537,6 @@ bool 	ftController::FileDownloads(std::list<RsFileHash> &hashs)
 	{
 		hashs.push_back(it->second->mHash);
 	}
-	return true;
 }
 
 

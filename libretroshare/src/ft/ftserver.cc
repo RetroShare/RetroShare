@@ -262,6 +262,11 @@ bool ftServer::checkHash(const RsFileHash& hash,std::string& error_string)
     return true ;
 }
 
+bool ftServer::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data)
+{
+    return mFtDataplex->getFileData(hash, offset, requested_size,data);
+}
+
 bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 {
 	return mFtController->alreadyHaveFile(hash, info);
@@ -403,9 +408,9 @@ std::string ftServer::getPartialsDirectory()
 	/************************* Other Access ************************/
 	/***************************************************************/
 
-bool ftServer::FileDownloads(std::list<RsFileHash> &hashs)
+void ftServer::FileDownloads(std::list<RsFileHash> &hashs)
 {
-	return mFtController->FileDownloads(hashs);
+    mFtController->FileDownloads(hashs);
 	/* this only contains downloads.... not completed */
 	//return mFtDataplex->FileDownloads(hashs);
 }

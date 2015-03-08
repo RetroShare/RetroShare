@@ -139,7 +139,7 @@ void ftFileProvider::getAvailabilityMap(CompressedChunkMap& cmap)
 }
 
 
-bool ftFileProvider::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
+bool ftFileProvider::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data, bool /*allow_unverified*/)
 {
 	/* dodgey checking outside of mutex...
 	 * much check again inside FileAttrs().

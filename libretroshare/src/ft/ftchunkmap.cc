@@ -402,7 +402,17 @@ void ChunkMap::removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove)
 			++it ;
 }
 
-bool ChunkMap::isChunkAvailable(uint64_t offset, uint32_t chunk_size) const 
+bool ChunkMap::isChunkAvailable(uint64_t offset, uint32_t chunk_size) const
+{
+    return hasChunkState(offset, chunk_size, FileChunksInfo::CHUNK_DONE);
+}
+
+bool ChunkMap::isChunkOutstanding(uint64_t offset, uint32_t chunk_size) const
+{
+    return hasChunkState(offset, chunk_size, FileChunksInfo::CHUNK_OUTSTANDING);
+}
+
+bool ChunkMap::hasChunkState(uint64_t offset, uint32_t chunk_size, FileChunksInfo::ChunkState state) const
 {
 	uint32_t chunk_number_start = offset/(uint64_t)_chunk_size ;
 	uint32_t chunk_number_end = (offset+(uint64_t)chunk_size)/(uint64_t)_chunk_size ;
@@ -414,16 +424,16 @@ bool ChunkMap::isChunkAvailable(uint64_t offset, uint32_t chunk_size) const
 	// chunk_size=0, and offset%_chunk_size=0, so the response "true" is still valid.
 	//
 	for(uint32_t i=chunk_number_start;i<chunk_number_end;++i)
-		if(_map[i] != FileChunksInfo::CHUNK_DONE)
+        if(_map[i] != state)
 		{
 #ifdef DEBUG_FTCHUNK
-			std::cerr << "ChunkMap::isChunkAvailable(): (" << offset << "," << chunk_size << ") is not available" << std::endl; 
+            std::cerr << "ChunkMap::hasChunkState(): (" << offset << "," << chunk_size << ") has different state" << std::endl;
 #endif
 			return false ;
 		}
 
 #ifdef DEBUG_FTCHUNK
-	std::cerr << "ChunkMap::isChunkAvailable(): (" << offset << "," << chunk_size << ") is available" << std::endl; 
+    std::cerr << "ChunkMap::hasChunkState(): (" << offset << "," << chunk_size << ") check returns true" << std::endl;
 #endif
 	return true ;
 }

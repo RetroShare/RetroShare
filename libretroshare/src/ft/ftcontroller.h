@@ -167,7 +167,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiServiceMoni
 		uint32_t getMinPrioritizedTransfers() ;
 
 		/* get Details of File Transfers */
-        bool 	FileDownloads(std::list<RsFileHash> &hashs);
+        void FileDownloads(std::list<RsFileHash> &hashs);
 
 		/* Directory Handling */
         bool 	setDownloadDirectory(std::string path);

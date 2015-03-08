@@ -65,7 +65,7 @@ ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const RsFil
 #endif
 }
 
-bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
+bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data, bool allow_unverified)
 {
 	// Only send the data if we actually have it.
 	//
@@ -77,6 +77,37 @@ bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_
 		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 		have_it = chunkMap.isChunkAvailable(offset, chunk_size) ;
+
+#define ENABLE_SLICES
+#ifdef ENABLE_SLICES
+        // try if we have data from an incomplete or not veryfied chunk
+        if(!have_it && allow_unverified)
+        {
+            std::map<uint64_t, ftChunk>::iterator it;
+            have_it = true;
+            // this map contains chunks which are currently being downloaded
+            for(std::map<uint64_t,ftChunk>::iterator it=mChunks.begin(); it!=mChunks.end(); ++it)
+            {
+                ftChunk chunk = it->second;
+                // begin of slice is in requested range
+                if(chunk.offset >= offset && chunk.offset < (offset+chunk_size))
+                {
+                    // reduce the requested size
+                    chunk_size = chunk.offset - offset;
+                }
+                // end of slice is in requested range
+                if((chunk.offset+chunk.size) >= offset && (chunk.offset+chunk.size) < (offset+chunk_size))
+                {
+                    // can do nothing about this
+                    have_it = false;
+                }
+            }
+            // check if the chunk was already started to download
+            // if not, we don't have it
+            if(chunkMap.isChunkOutstanding(offset, chunk_size))
+                have_it = false;
+        }
+#endif
 	}
 #ifdef FILE_DEBUG
 	if(have_it)

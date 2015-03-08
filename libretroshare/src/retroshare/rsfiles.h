@@ -109,9 +109,22 @@ class RsFiles
 		RsFiles() { return; }
 		virtual ~RsFiles() { return; }
 
-		/****************************************/
-		/* download */
-
+        /**
+         * Provides file data for the gui: media streaming or rpc clients.
+         * It may return unverified chunks. This allows streaming without having to wait for hashes or completion of the file.
+         * This function returns an unspecified amount of bytes. Either as much data as available or a sensible maximum. Expect a block size of around 1MiB.
+         * To get more data, call this function repeatedly with different offsets.
+         * Returns false in case
+         * - the files is not available on the local node
+         * - not downloading
+         * - the requested data was not downloaded yet
+         * - end of file was reached
+         * @param hash hash of a file. The file has to be available on this node or it has to be in downloading state.
+         * @param offset where the desired block starts
+     * @param requested_size size of pre-allocated data. Will be updated by the function.
+         * @param data pre-allocated memory chunk of size 'requested_size' by the client
+         */
+        virtual bool getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data)=0;
 
 		/***
 		 *  Control of Downloads.
@@ -147,7 +160,7 @@ class RsFiles
 		/***
 		 * Download / Upload Details.
 		 ***/
-		virtual bool FileDownloads(std::list<RsFileHash> &hashs) = 0;
+        virtual void FileDownloads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileUploads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) = 0;
 

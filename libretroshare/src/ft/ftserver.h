@@ -124,6 +124,11 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		ftDataMultiplex *getMultiplexer() const { return mFtDataplex ; }
 		ftController *getController() const { return mFtController ; }
 
+        /**
+         * @see RsFiles::getFileData
+         */
+        bool getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data);
+
 		/***
 		 * Control of Downloads
 		 ***/
@@ -157,7 +162,7 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		/***
 		 * Download/Upload Details
 		 ***/
-		virtual bool FileDownloads(std::list<RsFileHash> &hashs);
+        virtual void FileDownloads(std::list<RsFileHash> &hashs);
 		virtual bool FileUploads(std::list<RsFileHash> &hashs);
 		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info);
 		virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) ;
