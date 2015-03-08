@@ -1818,6 +1818,7 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 bool DistributedChatService::processLoadListItem(const RsItem *item)
 {
     const RsConfigKeyValueSet *vitem = NULL ;
+    _default_identity.clear() ;
 
 	if(NULL != (vitem = dynamic_cast<const RsConfigKeyValueSet*>(item)))
 		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
@@ -1844,6 +1845,14 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 		return true ;
 	}
 
+    if(_default_identity.isNull())
+    {
+        std::list<RsGxsId> own_ids ;
+        rsIdentity->getOwnIds(own_ids) ;
+
+        if(!own_ids.empty())
+            _default_identity = own_ids.front() ;
+    }
 	return false ;
 }
 
