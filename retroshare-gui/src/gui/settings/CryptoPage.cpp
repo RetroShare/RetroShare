@@ -77,9 +77,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
         /* set retroshare version */
-        std::string version;
-        rsDisc->getPeerVersion(detail.id, version);
-		ui.version->setText(QString::fromStdString(version));
+        ui.version->setText(Rshare::retroshareVersion(true));
 
         std::list<RsPgpId> ids;
         ids.clear();

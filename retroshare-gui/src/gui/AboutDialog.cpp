@@ -22,6 +22,7 @@
 
 #include "AboutDialog.h"
 #include "HelpDialog.h"
+#include "rshare.h"
 
 #include <retroshare/rsdisc.h>
 #include <retroshare/rspeers.h>
@@ -47,17 +48,9 @@ AboutDialog::AboutDialog(QWidget* parent)
     frame->setLayout(l);
     tWidget = NULL;
     installAWidget();
-    
-	QString title = tr("About RetroShare ");    
-	
-    /* get libretroshare version */
-    std::string version;
-    if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
-    {
-		title += QString::fromStdString(version);
-    }
-	setWindowTitle(title);
-        
+
+    updateTitle();
+
 #ifdef Q_OS_WIN
     setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
 #endif
@@ -130,22 +123,14 @@ void AboutDialog::sl_levelChanged(int level) {
     emit si_levelChanged(tr("Level: %1").arg(level));
 }
 
-
-void AboutDialog::updateTitle() {
+void AboutDialog::updateTitle()
+{
     if (tWidget == NULL) 
-	{
-		QString title = tr("About RetroShare ");    
-		
-		/* get libretroshare version */
-		std::string version;
-		if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
-		{
-			title += QString::fromStdString(version);
-		}
-		setWindowTitle(title);
-	} 
-	else 
-	{
+    {
+        setWindowTitle(QString("%1 %2").arg(tr("About RetroShare"), Rshare::retroshareVersion(true)));
+    }
+    else
+    {
         setWindowTitle(tr("Have fun ;-)"));
     }
 }
@@ -182,25 +167,17 @@ AWidget::AWidget() {
     p.setPen(Qt::black);
     QFont font = p.font();
     font.setBold(true);
-    font.setPointSizeF(11);
+    font.setPointSizeF(font.pointSizeF() + 2);
     p.setFont(font);
 
-	QString title = tr("About RetroShare ");    
-	
-	/* get libretroshare version */
-	std::string version;
-	if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
-    {
-	    QString versionq = QString::fromStdString("RetroShare version : \n") + QString::fromStdString(version);
-        p.drawText(QRect(10, 10, width()-10, 60), versionq);
-		
-    }
+    /* Draw RetroShare version */
+    p.drawText(QRect(10, 10, width()-10, 60), QString("%1 : \n%2").arg(tr("RetroShare version"), Rshare::retroshareVersion(true)));
 
     /* Draw Qt's version number */
     p.drawText(QRect(10, 50, width()-10, 60), QString("Qt %1 : \n%2").arg(tr("version"), QT_VERSION_STR));
 
     p.end();
-	
+
     image1 = image2 = image;
     setFixedSize(image1.size());
 

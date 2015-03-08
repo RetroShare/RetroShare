@@ -31,7 +31,7 @@ E        [ ] when adding a friend through clicking on cert links, the add friend
 M        [X] add a flag in friends option to allow auto-download of recommended files
 M        [ ] sound is not working for some users on linux. We also need a "test sound" button in config->sound
 E        [ ] some widgets in the GUI do not follow the system style => GUI looks bad on these systems
-E        [ ] display version ID in windows version
+         [X] display version ID in windows version
 E        [ ] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
       
        Messages

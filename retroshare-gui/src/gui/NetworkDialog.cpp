@@ -139,16 +139,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
 //    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
 //    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
-    
+
     ui.onlyTrustedKeys->setMinimumWidth(20);
-     
-    QString version = "-";
-    std::string rsversion;
-    if (rsDisc->getPeerVersion(rsPeers->getOwnId(), rsversion))
-	{
-    	version	= QString::fromStdString(rsversion);
-    }
-      
+
     QMenu *menu = new QMenu();
     //menu->addAction(ui.actionAddFriend); 
     //menu->addAction(ui.actionCopyKey);

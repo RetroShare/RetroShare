@@ -163,9 +163,14 @@ Rshare::~Rshare()
 
 }
 
-QString Rshare::retroshareVersion()
+QString Rshare::retroshareVersion(bool withRevision)
 {
-	return QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
+	QString version = QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
+	if (withRevision) {
+		version += QString(" %1 %2").arg(tr("Revision")).arg(RS_REVISION_NUMBER);
+	}
+
+	return version;
 }
 
 /** Enters the main event loop and waits until exit() is called. The signal

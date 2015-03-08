@@ -50,6 +50,9 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WindowFlags flags)
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
 {
+    /* set retroshare version */
+    ui.version->setText(Rshare::retroshareVersion(true));
+
     RsPeerDetails detail;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
     {
@@ -57,11 +60,6 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
         ui.country->setText(QString::fromUtf8(detail.location.c_str()));
 
         ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
-
-        /* set retroshare version */
-        std::string version;
-        rsDisc->getPeerVersion(detail.id, version);
-		ui.version->setText(QString::fromStdString(version));
 
         ui.ipAddressList->clear();
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)

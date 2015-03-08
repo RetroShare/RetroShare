@@ -26,6 +26,7 @@
 #include "retroshare/rsconfig.h"
 
 #include "retroshare-gui/RsAutoUpdatePage.h"
+#include "rshare.h"
 
 #include <QDesktopServices>
 
@@ -330,12 +331,10 @@ void GetStartedDialog::emailSupport()
 		return;
 	}
 
-	std::string versionString;
 	uint32_t    userLevel;
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
-		rsDisc->getPeerVersion(rsPeers->getOwnId(), versionString);
 		userLevel = rsConfig->getUserLevel();
 
 		RsAutoUpdatePage::unlockAllEvents() ;
@@ -434,7 +433,7 @@ void GetStartedDialog::emailSupport()
 	sysVersion = "Linux";
   #endif
 #endif
-    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(QString::fromStdString(versionString)).arg(sysVersion).arg(userLevel) + "\n";
+    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(userLevel) + "\n";
     text += "\n";
 
 	text += QString("I am having trouble with RetroShare.");
