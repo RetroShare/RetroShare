@@ -336,7 +336,6 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
             style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%time%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
 		}
 
-		style = style.replace("\r","").replace("\n","").replace("\t","") ;
         m_style[type] = style;
 	}
 
