@@ -621,18 +621,23 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
         return new QStringListModel(completer);
 
 #ifndef QT_NO_CURSOR
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 #endif
-#warning still need to use real nicknames for nickname completion.
     // Get participants list
-	 QStringList participants;
-    for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
-        participants.push_front(QString::fromUtf8(it->first.toStdString().c_str()));
+    QStringList participants;
+
+    for (std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+    {
+        RsIdentityDetails details ;
+        rsIdentity->getIdDetails(it->first,details) ;
+
+        participants.push_front(QString::fromUtf8(details.mNickname.c_str()));
+    }
 
 #ifndef QT_NO_CURSOR
-	QApplication::restoreOverrideCursor();
+    QApplication::restoreOverrideCursor();
 #endif
-	return new QStringListModel(participants, completer);
+    return new QStringListModel(participants, completer);
 }
 
 void ChatWidget::addToolsAction(QAction *action)
