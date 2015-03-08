@@ -11,7 +11,7 @@ build: build-stamp
 build-stamp: builddir/Makefile
 	dh_testdir
 	# Add here commands to compile the package.
-	cd libssh-0.6.4 && mkdir build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
+	cd libssh-0.6.4 && mkdir -p build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
 	#cd sqlcipher && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto" && make
 	mkdir lib
 	cp -r libssh-0.6.4 lib/
