@@ -415,11 +415,11 @@ void ChatLobbyDialog::updateParticipantsList()
             time_t now = time(NULL);
 
             if(isParticipantMuted(it2->first))
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/ledoff1.png")) ;
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/redled.png")) ;
             else if (tLastAct<now-60*30)
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/grayled.png"));
         else
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/ledon1.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/greenled.png"));
 
             RsGxsId gxs_id;
             rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
