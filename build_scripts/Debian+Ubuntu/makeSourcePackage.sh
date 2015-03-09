@@ -110,10 +110,10 @@ cd ..
 echo Setting version numbers...
 
 # setup version numbers
-cat $workdir/src/libretroshare/src/util/rsversion.h | grep -v SVN_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto2342
-echo \#define SVN_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto2342
-echo \#define SVN_REVISION_NUMBER $svnrev >> /tmp/toto2342
-cp /tmp/toto2342 $workdir/src/libretroshare/src/util/rsversion.h
+cat $workdir/src/libretroshare/src/retroshare/rsversion.h | grep -v RS_REVISION | grep -v RS_REVISION_NUMBER > /tmp/toto2342
+echo \#define RS_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto2342
+echo \#define RS_REVISION_NUMBER $svnrev >> /tmp/toto2342
+cp /tmp/toto2342 $workdir/src/libretroshare/src/retroshare/rsversion.h
 
 cat $workdir/src/retroshare-gui/src/util/rsguiversion.h | grep -v GUI_REVISION | grep -v GUI_VERSION > /tmp/toto4463
 echo \#define GUI_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto4463
