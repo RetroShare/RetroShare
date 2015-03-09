@@ -84,7 +84,7 @@ std::string rs_inet_ntoa(struct in_addr in);
 
 // Standard bind, on OSX anyway will not accept a longer socklen for IPv4.
 // so hidding details behind function.
-int     universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen);
+int universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen);
 
 void sockaddr_storage_clear(struct sockaddr_storage &addr);
 

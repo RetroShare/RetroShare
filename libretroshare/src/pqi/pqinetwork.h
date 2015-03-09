@@ -94,20 +94,11 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 #include <list>
 
 // Same def - different functions...
-
 void showSocketError(std::string &out);
 
 std::string socket_errorType(int err);
-int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
-int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 );
-int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
-bool getPreferredInterface(struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr); // returns best addr.
-bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct sockaddr_storage> &addrs); // returns all possible addrs.
-
-in_addr_t pqi_inet_netof(struct in_addr addr); // our implementation.
-
-bool LookupDNSAddr(std::string name, struct sockaddr_in &addr);
+bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs);
 
 /* universal socket interface */
 

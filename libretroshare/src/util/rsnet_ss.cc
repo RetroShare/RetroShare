@@ -155,8 +155,7 @@ bool sockaddr_storage_zeroip(struct sockaddr_storage &addr)
 bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr_storage &src)
 {
 #ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_copyip()";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_copyip()" << std::endl;
 #endif
 
 	switch(src.ss_family)
@@ -169,8 +168,7 @@ bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr
 			break;
 		default:
 #ifdef SS_DEBUG
-            std::cerr << "sockaddr_storage_copyip() invalid addr.ss_family";
-            std::cerr << std::endl;
+			std::cerr << "sockaddr_storage_copyip() Unknown ss_family: " << src.ss_family << std::endl;
 #endif
 			break;
 	}
@@ -192,11 +190,9 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 		case AF_INET6:
 			return sockaddr_storage_ipv6_port(addr);
 			break;
-        default:
-#ifdef SS_DEBUG
-            std::cerr << "sockaddr_storage_port() invalid addr.ss_family: " << addr.ss_family;
-            std::cerr << std::endl;
-#endif
+		default:
+			std::cerr << "sockaddr_storage_port() invalid addr.ss_family" << std::endl;
+			//sockaddr_storage_dump(addr); // This function is implemented in IPv6 branch but not here
 			break;
 	}
 	return 0;
@@ -205,8 +201,7 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port)
 {
 #ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_setport()";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_setport()" << std::endl;
 #endif
 
 	switch(addr.ss_family)
@@ -218,10 +213,7 @@ bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port)
 			return sockaddr_storage_ipv6_setport(addr, port);
 			break;
 		default:
-#ifdef SS_DEBUG
-            std::cerr << "sockaddr_storage_setport() invalid addr.ss_family";
-            std::cerr << std::endl;
-#endif
+			std::cerr << "sockaddr_storage_setport() invalid addr.ss_family" << std::endl;
 			break;
 	}
 	return false;
@@ -247,8 +239,7 @@ bool sockaddr_storage_setipv4(struct sockaddr_storage &addr, const sockaddr_in *
 
 bool sockaddr_storage_setipv6(struct sockaddr_storage &addr, const sockaddr_in6 *addr_ipv6)
 {
-	std::cerr << "sockaddr_storage_setipv6()";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_setipv6()" << std::endl;
 
 	sockaddr_storage_clear(addr);
 	struct sockaddr_in6 *ipv6_ptr = to_ipv6_ptr(addr);
@@ -670,8 +661,7 @@ bool sockaddr_storage_ipv6_zeroip(struct sockaddr_storage &addr)
 bool sockaddr_storage_ipv6_copyip(struct sockaddr_storage &dst, const struct sockaddr_storage &src)
 {
 #ifdef SS_DEBUG
-    std::cerr << "sockaddr_storage_ipv6_copyip()";
-    std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_ipv6_copyip()" << std::endl;
 #endif
 
 	struct sockaddr_in6 *dst_ptr = to_ipv6_ptr(dst);
@@ -829,9 +819,6 @@ std::string sockaddr_storage_ipv6_iptostring(const struct sockaddr_storage & /* 
 	output += "IPv6-ADDRESS-TODO";
 	return output;
 }
-
-
-
 
 
 /********************************* Net Checks ***********************************/
