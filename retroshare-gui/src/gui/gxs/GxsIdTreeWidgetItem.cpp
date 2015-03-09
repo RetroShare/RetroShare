@@ -21,6 +21,7 @@
  *
  */
 
+#include "rshare.h"
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsIdDetails.h"
 #include "util/HandleRichText.h"
@@ -40,67 +41,88 @@ GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *
 
 void GxsIdRSTreeWidgetItem::init()
 {
+	mIdFound = false;
+	mRetryWhenFailed = false;
 }
 
 static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
-    GxsIdRSTreeWidgetItem *item = dynamic_cast<GxsIdRSTreeWidgetItem*>(object);
-    if (!item) {
-        return;
-    }
+	GxsIdRSTreeWidgetItem *item = dynamic_cast<GxsIdRSTreeWidgetItem*>(object);
+	if (!item) {
+		return;
+	}
 
-    QString toolTip;
-    QList<QIcon> icons;
+	QString toolTip;
+	QList<QIcon> icons;
 
-    switch (type) {
-    case GXS_ID_DETAILS_TYPE_EMPTY:
-    case GXS_ID_DETAILS_TYPE_FAILED:
-        break;
+	switch (type) {
+	case GXS_ID_DETAILS_TYPE_EMPTY:
+		item->processResult(true);
+		break;
 
-    case GXS_ID_DETAILS_TYPE_LOADING:
-        icons.push_back(GxsIdDetails::getLoadingIcon(details.mId));
-        break;
+	case GXS_ID_DETAILS_TYPE_FAILED:
+		item->processResult(false);
+		break;
 
-    case GXS_ID_DETAILS_TYPE_DONE:
-        GxsIdDetails::getIcons(details, icons);
-        break;
-    }
-    toolTip = GxsIdDetails::getComment(details);
+	case GXS_ID_DETAILS_TYPE_LOADING:
+		icons.push_back(GxsIdDetails::getLoadingIcon(details.mId));
+		break;
 
-    int column = item->idColumn();
+	case GXS_ID_DETAILS_TYPE_DONE:
+		GxsIdDetails::getIcons(details, icons);
+		item->processResult(true);
+		break;
+	}
+	toolTip = GxsIdDetails::getComment(details);
 
-    item->setText(column, GxsIdDetails::getNameForType(type, details));
-    item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
+	int column = item->idColumn();
 
-    QPixmap combinedPixmap;
-    if (!icons.empty()) {
-        GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, 16);
-    }
-    item->setData(column, Qt::DecorationRole, combinedPixmap);
-    QImage pix ;
+	item->setText(column, GxsIdDetails::getNameForType(type, details));
+	item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
 
-    if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
-        pix = GxsIdDetails::makeDefaultIcon(details.mId);
+	QPixmap combinedPixmap;
+	if (!icons.empty()) {
+		GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, 16);
+	}
+	item->setData(column, Qt::DecorationRole, combinedPixmap);
+	QImage pix ;
 
-    QString embeddedImage ;
+	if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
+		pix = GxsIdDetails::makeDefaultIcon(details.mId);
 
-    if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(64,64),Qt::KeepAspectRatio,Qt::SmoothTransformation),embeddedImage,128*128))
-        toolTip = "<table><tr><td>"+embeddedImage+"</td><td>" +toolTip+ "</td></table>" ;
+	QString embeddedImage ;
 
-      item->setToolTip(column, toolTip);
+	if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(64,64),Qt::KeepAspectRatio,Qt::SmoothTransformation),embeddedImage,128*128))
+		toolTip = "<table><tr><td>"+embeddedImage+"</td><td>" +toolTip+ "</td></table>" ;
+
+	item->setToolTip(column, toolTip);
 }
 
-void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
+void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenFailed)
 {
 	//std::cerr << " GxsIdRSTreeWidgetItem::setId(" << id << "," << column << ")";
 	//std::cerr << std::endl;
 
-	if (mColumn == column && mId == id) {
-		return;
+	if (mIdFound) {
+		if (mColumn == column && mId == id) {
+			return;
+		}
 	}
+
+	mIdFound = false;
+	mRetryWhenFailed = retryWhenFailed;
 
 	mId = id;
 	mColumn = column;
+
+	startProcess();
+}
+
+void GxsIdRSTreeWidgetItem::startProcess()
+{
+	if (mRetryWhenFailed) {
+		disconnect(rApp, SIGNAL(minuteTick()), this, SLOT(startProcess()));
+	}
 
 	GxsIdDetails::process(mId, fillGxsIdRSTreeWidgetItemCallback, this);
 }
@@ -109,4 +131,14 @@ bool GxsIdRSTreeWidgetItem::getId(RsGxsId &id)
 {
 	id = mId;
 	return true;
+}
+
+void GxsIdRSTreeWidgetItem::processResult(bool success)
+{
+	mIdFound = success;
+
+	if (!mIdFound && mRetryWhenFailed) {
+		/* Try again */
+		connect(rApp, SIGNAL(minuteTick()), this, SLOT(startProcess()));
+	}
 }

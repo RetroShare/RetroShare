@@ -142,6 +142,8 @@ signals:
   void blink(bool on);
   /** Global timer every second */
   void secondTick();
+  /** Global timer every minute */
+  void minuteTick();
 
 private slots:
   /** Called when the application's main event loop has started. This method

@@ -42,16 +42,22 @@ public:
 	GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent = NULL);
 	GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent);
 
-	void setId(const RsGxsId &id, int column);
+	void setId(const RsGxsId &id, int column, bool retryWhenFailed);
 	bool getId(RsGxsId &id);
 
 	int idColumn() { return mColumn; }
+	void processResult(bool success);
+
+private slots:
+	void startProcess();
 
 private:
 	void init();
 
 	RsGxsId mId;
 	int mColumn;
+	bool mIdFound;
+	bool mRetryWhenFailed;
 };
 
 #endif

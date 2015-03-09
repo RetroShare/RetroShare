@@ -430,7 +430,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 		item->setText(PCITEM_COLUMN_COMMENT, text);
 
 		RsGxsId authorId = comment.mMeta.mAuthorId;
-		item->setId(authorId, PCITEM_COLUMN_AUTHOR);
+		item->setId(authorId, PCITEM_COLUMN_AUTHOR, false);
 
 		text = QString::number(comment.mScore);
 		item->setText(PCITEM_COLUMN_SCORE, text);

@@ -1108,7 +1108,7 @@ void MessagesDialog::insertMessages()
                             setText = false;
                             if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
                                 gotInfo = true;
-                                item->setId(RsGxsId(msgInfo.rsgxsid_srcId), COLUMN_FROM);
+                                item->setId(RsGxsId(msgInfo.rsgxsid_srcId), COLUMN_FROM, false);
                             } else {
                                 std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
                             }

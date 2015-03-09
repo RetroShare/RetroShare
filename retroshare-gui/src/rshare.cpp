@@ -120,6 +120,11 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
   connect(timer, SIGNAL(timeout()), this, SLOT(blinkTimer()));
   timer->start();
 
+  timer = new QTimer(this);
+  timer->setInterval(60000);
+  connect(timer, SIGNAL(timeout()), this, SIGNAL(minuteTick()));
+  timer->start();
+
   /* Read in all our command-line arguments. */
   parseArguments(args);
 

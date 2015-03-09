@@ -395,7 +395,7 @@ void ChatLobbyDialog::updateParticipantsList()
                 // TE: Add Wigdet to participantsList with Checkbox, to mute Participant
 
                 widgetitem = new GxsIdRSTreeWidgetItem(mParticipantCompareRole);
-                widgetitem->setId(it2->first,COLUMN_NAME) ;
+                widgetitem->setId(it2->first,COLUMN_NAME, true) ;
                 //widgetitem->setText(COLUMN_NAME, participant);
                 widgetitem->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
                 widgetitem->setText(COLUMN_ID,QString::fromStdString(it2->first.toStdString()));

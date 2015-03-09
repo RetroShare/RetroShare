@@ -850,7 +850,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, text);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
 
-	item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
+	item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR, false);
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
 //#TODO
 #if 0
@@ -1013,7 +1013,7 @@ static void copyItem(QTreeWidgetItem *item, const QTreeWidgetItem *newItem)
 				GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
 				if (gxsIdItem) {
 					/* Set new gxs id */
-					gxsIdItem->setId(RsGxsId(authorId.toStdString()), i);
+					gxsIdItem->setId(RsGxsId(authorId.toStdString()), i, false);
 				} else {
 					/* Copy text */
 					item->setText(i, newItem->text(i));

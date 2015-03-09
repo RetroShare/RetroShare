@@ -28,6 +28,7 @@
 
 #include <math.h>
 #include "GxsIdDetails.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 
 #include <retroshare/rspeers.h>
 
@@ -119,57 +120,59 @@ void GxsIdDetails::connectObject_locked(QObject *object, bool doConnect)
 void GxsIdDetails::timerEvent(QTimerEvent *event)
 {
 	if (event->timerId() == mCheckTimerId) {
-		/* Stop timer */
-		killTimer(mCheckTimerId);
-		mCheckTimerId = 0;
+		if (!RsAutoUpdatePage::eventsLocked()) {
+			/* Stop timer */
+			killTimer(mCheckTimerId);
+			mCheckTimerId = 0;
 
-		if (rsIdentity) {
-			QMutexLocker lock(&mMutex);
+			if (rsIdentity) {
+				QMutexLocker lock(&mMutex);
 
-			if (!mPendingData.empty()) {
-				/* Check pending id's */
-				QList<CallbackData>::iterator dataIt;
-				for (dataIt = mPendingData.begin(); dataIt != mPendingData.end(); ) {
-					CallbackData &pendingData = *dataIt;
+				if (!mPendingData.empty()) {
+					/* Check pending id's */
+					QList<CallbackData>::iterator dataIt;
+					for (dataIt = mPendingData.begin(); dataIt != mPendingData.end(); ) {
+						CallbackData &pendingData = *dataIt;
 
-					RsIdentityDetails details;
-					if (rsIdentity->getIdDetails(pendingData.mId, details)) {
-						/* Got details */
-						pendingData.mCallback(GXS_ID_DETAILS_TYPE_DONE, details, pendingData.mObject, pendingData.mData);
+						RsIdentityDetails details;
+						if (rsIdentity->getIdDetails(pendingData.mId, details)) {
+							/* Got details */
+							pendingData.mCallback(GXS_ID_DETAILS_TYPE_DONE, details, pendingData.mObject, pendingData.mData);
 
-						QObject *object = pendingData.mObject;
-						dataIt = mPendingData.erase(dataIt);
-						connectObject_locked(object, false);
+							QObject *object = pendingData.mObject;
+							dataIt = mPendingData.erase(dataIt);
+							connectObject_locked(object, false);
 
-						continue;
+							continue;
+						}
+
+						if (++pendingData.mAttempt > MAX_ATTEMPTS) {
+							/* Max attempts reached, stop trying */
+							details.mId = pendingData.mId;
+							pendingData.mCallback(GXS_ID_DETAILS_TYPE_FAILED, details, pendingData.mObject, pendingData.mData);
+
+							QObject *object = pendingData.mObject;
+							dataIt = mPendingData.erase(dataIt);
+							connectObject_locked(object, false);
+
+							continue;
+						}
+
+						++dataIt;
 					}
-
-					if (++pendingData.mAttempt > MAX_ATTEMPTS) {
-						/* Max attempts reached, stop trying */
-						details.mId = pendingData.mId;
-						pendingData.mCallback(GXS_ID_DETAILS_TYPE_FAILED, details, pendingData.mObject, pendingData.mData);
-
-						QObject *object = pendingData.mObject;
-						dataIt = mPendingData.erase(dataIt);
-						connectObject_locked(object, false);
-
-						continue;
-					}
-
-					++dataIt;
 				}
 			}
-		}
 
-		QMutexLocker lock(&mMutex);
+			QMutexLocker lock(&mMutex);
 
-		if (mPendingData.empty()) {
-			/* All done */
-			mInstance = NULL;
-			deleteLater();
-		} else {
-			/* Start timer */
-			doStartTimer();
+			if (mPendingData.empty()) {
+				/* All done */
+				mInstance = NULL;
+				deleteLater();
+			} else {
+				/* Start timer */
+				doStartTimer();
+			}
 		}
 	}
 
