@@ -26,6 +26,7 @@
 #ifndef MRK_PQI_THREAD_STREAMER_HEADER
 #define MRK_PQI_THREAD_STREAMER_HEADER
 
+#include <semaphore.h>
 #include "pqi/pqistreamer.h"
 #include "util/rsthreads.h"
 
@@ -36,9 +37,9 @@ class pqithreadstreamer: public pqistreamer, public RsThread
 
 virtual void run(); 
 virtual void start(); 
-virtual void stop(); 
+virtual void shutdown();
 virtual void fullstop(); 
-virtual bool threadrunning();
+//virtual bool threadrunning();
 
 virtual bool RecvItem(RsItem *item);
 virtual int  tick();
@@ -54,9 +55,8 @@ int  data_tick();
 private:
 	/* thread variables */
 	RsMutex mThreadMutex;
-	bool mRunning;
-	bool mToRun;
-
+    sem_t mShouldStopSemaphore;
+    sem_t mHasStoppedSemaphore;
 };
 
 #endif //MRK_PQI_THREAD_STREAMER_HEADER

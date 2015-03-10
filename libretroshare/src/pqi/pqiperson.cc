@@ -365,7 +365,7 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 			{
 				pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::notifyEvent() Id: " + PeerId().toStdString() + " CONNECT_FAILED->marking so!");
 
-				activepqi->stop(); // STOP THREAD.
+                activepqi->shutdown(); // STOP THREAD.
 				active = false;
 				activepqi = NULL;
 			}
@@ -410,7 +410,7 @@ int 	pqiperson::reset_locked()
 	std::map<uint32_t, pqiconnect *>::iterator it;
 	for(it = kids.begin(); it != kids.end(); ++it)
 	{
-		(it->second) -> stop(); // STOP THREAD.
+		(it->second) -> shutdown(); // STOP THREAD.
 		(it->second) -> reset();
 	}		
 
