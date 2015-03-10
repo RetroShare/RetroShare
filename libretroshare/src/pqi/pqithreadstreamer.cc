@@ -76,38 +76,21 @@ void pqithreadstreamer::run()
 
     while(1)
     {
-        {
-            int sval =0;
-            sem_getvalue(&mShouldStopSemaphore,&sval) ;
+        int sval =0;
+        sem_getvalue(&mShouldStopSemaphore,&sval) ;
 
-            if(sval > 0)
-            {
+        if(sval > 0)
+        {
             std::cerr << "pqithreadstreamer::run(): asked to stop." << std::endl;
             std::cerr << "  setting hasStopped=1" << std::endl;
-                sem_post(&mHasStoppedSemaphore) ;
-                return ;
-            }
-
-//            RsStackMutex stack(mThreadMutex);
-//
-//            if (!mToRun)
-//            {
-//                std::cerr << "pqithreadstream::run() stopping";
-//                std::cerr << std::endl;
-//
-//                mRunning = false;
-//                return;
-//            }
+            sem_post(&mHasStoppedSemaphore) ;
+            return ;
         }
+
         data_tick();
     }
 }
 
-//bool pqithreadstreamer::threadrunning()
-//{
-//    RsStackMutex stack(mThreadMutex);
-//    return mRunning ;
-//}
 void pqithreadstreamer::shutdown()
 {
     std::cerr << "pqithreadstreamer::stop()" << std::endl;
@@ -121,7 +104,6 @@ void pqithreadstreamer::shutdown()
         return ;
     }
 
-
     std::cerr << "  calling stop" << std::endl;
     sem_post(&mShouldStopSemaphore) ;
 }
@@ -133,36 +115,10 @@ void pqithreadstreamer::fullstop()
     std::cerr << "  waiting stop" << std::endl;
     sem_wait(&mHasStoppedSemaphore) ;
     std::cerr << "  finished!" << std::endl;
-
-// 		while(1)
-// 		{
-// 			{
-// 				RsStackMutex stack(mThreadMutex);
-//
-// 				mToRun = false ;
-// 	//			if (!mRunning)
-// 	//			{
-// 	//				std::cerr << "pqithreadstream::fullstop() complete";
-// 	//				std::cerr << std::endl;
-// 	//				return;
-// 	//			} ;
-// 			}
-// 			usleep(1000);
-// 		}
 }
-
-//bool pqithreadstreamer::threadrunning()
-//{
-//	RsStackMutex stack(mThreadMutex);
-//	return mRunning;
-//}
-
 
 int	pqithreadstreamer::data_tick()
 {
-	//std::cerr << "pqithreadstream::data_tick()";
-	//std::cerr << std::endl;
-
 	uint32_t recv_timeout = 0;
 	uint32_t sleep_period = 0;
 	bool isactive = false;
@@ -179,10 +135,6 @@ int	pqithreadstreamer::data_tick()
 		return 0;
 	}
 
-
-	//std::cerr << "pqithreadstream::data_tick() tick_recv";
-	//std::cerr << std::endl;
-
     {
         RsStackMutex stack(mThreadMutex);
     tick_recv(recv_timeout);
@@ -195,9 +147,6 @@ int	pqithreadstreamer::data_tick()
 		RecvItem(incoming);
 	}
 
-	//std::cerr << "pqithreadstream::data_tick() tick_send";
-	//std::cerr << std::endl;
-
     {
         RsStackMutex stack(mThreadMutex);
     tick_send(0);
@@ -205,9 +154,6 @@ int	pqithreadstreamer::data_tick()
 
 	if (sleep_period)
 	{
-		//std::cerr << "pqithreadstream::data_tick() usleep";
-		//std::cerr << std::endl;
-
 		usleep(sleep_period);
 	}
 	return 1;
