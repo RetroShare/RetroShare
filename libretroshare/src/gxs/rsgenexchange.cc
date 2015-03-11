@@ -1014,6 +1014,27 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 
 }
 
+static void addMessageChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs, const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChanged)
+{
+	if (msgs.empty()) {
+		msgs = msgChanged;
+	} else {
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mapIt;
+		for (mapIt = msgChanged.begin(); mapIt != msgChanged.end(); ++mapIt) {
+			const RsGxsGroupId &grpId = mapIt->first;
+			const std::vector<RsGxsMessageId> &srcMsgIds = mapIt->second;
+			std::vector<RsGxsMessageId> &destMsgIds = msgs[grpId];
+
+			std::vector<RsGxsMessageId>::const_iterator msgIt;
+			for (msgIt = srcMsgIds.begin(); msgIt != srcMsgIds.end(); ++msgIt) {
+				if (std::find(destMsgIds.begin(), destMsgIds.end(), *msgIt) == destMsgIds.end()) {
+					destMsgIds.push_back(*msgIt);
+				}
+			}
+		}
+	}
+}
+
 void RsGenExchange::msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta)
 {
 	if(mGenMtx.trylock())
@@ -1023,11 +1044,11 @@ void RsGenExchange::msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageI
 			RsGxsMsgChange* mc = mMsgChange.back();
 			if (mc->metaChange())
 			{
-				msgsMeta = mc->msgChangeMap;
+				addMessageChanged(msgsMeta, mc->msgChangeMap);
 			}
 			else
 			{
-				msgs = mc->msgChangeMap;
+				addMessageChanged(msgs, mc->msgChangeMap);
 			}
 			mMsgChange.pop_back();
 			delete mc;
