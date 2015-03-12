@@ -26,14 +26,11 @@
 #include <QWidget>
 #include <QMap>
 
-#include "retroshare/rsgxsifacetypes.h"
-
 #define FEED_TREEWIDGET_SORTROLE Qt::UserRole
 
 class FeedItem;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
-class GxsFeedItem;
 
 namespace Ui {
 class RSFeedWidget;
@@ -79,9 +76,6 @@ public:
 
 	void selectedFeedItems(QList<FeedItem*> &feedItems);
 
-	/* Convenience functions */
-	GxsFeedItem *findGxsFeedItem(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId);
-
 signals:
 	void feedCountChanged();
 
@@ -93,6 +87,9 @@ public slots:
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
+	virtual void feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem);
+	virtual void feedRemoved(FeedItem *feedItem);
+	virtual void feedsCleared();
 
 private slots:
 	void feedItemDestroyed(FeedItem *feedItem);
@@ -120,6 +117,9 @@ private:
 
 	/* Options */
 	int mCountChangedDisabled;
+
+	/* Items */
+	QMap<FeedItem*, QTreeWidgetItem*> mItems;
 
 	Ui::RSFeedWidget *ui;
 };

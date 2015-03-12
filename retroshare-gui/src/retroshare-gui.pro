@@ -1297,6 +1297,7 @@ gxsgui {
 		gui/gxs/RsGxsUpdateBroadcastPage.h \
 		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
+		gui/gxs/GxsFeedWidget.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
 	
@@ -1333,6 +1334,7 @@ gxsgui {
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
 		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 		gui/gxs/GxsUserNotify.cpp \
+		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
 		util/RsGxsUpdateBroadcast.cpp \
 	

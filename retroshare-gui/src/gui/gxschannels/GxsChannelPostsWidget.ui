@@ -454,7 +454,7 @@
     </widget>
    </item>
    <item>
-    <widget class="RSFeedWidget" name="feedWidget" native="true">
+    <widget class="GxsFeedWidget" name="feedWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -497,9 +497,9 @@
    <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
-   <class>RSFeedWidget</class>
+   <class>GxsFeedWidget</class>
    <extends>QWidget</extends>
-   <header>gui/common/RSFeedWidget.h</header>
+   <header>gui/gxs/GxsFeedWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

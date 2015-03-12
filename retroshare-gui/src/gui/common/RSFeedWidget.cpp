@@ -26,7 +26,8 @@
 #include "ui_RSFeedWidget.h"
 #include "RSTreeWidgetItem.h"
 #include "gui/feeds/FeedItem.h"
-#include "gui/gxs/GxsFeedItem.h"
+
+#include <iostream>
 
 #define COLUMN_FEED 0
 
@@ -108,6 +109,7 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 						FeedItem *feedItem = feedItemFromTreeItem(treeItem);
 						if (feedItem) {
 							disconnectSignals(feedItem);
+							feedRemoved(feedItem);
 							delete(feedItem);
 						}
 						delete(treeItem);
@@ -125,6 +127,21 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 
 	/* Pass the event on to the parent class */
 	return QWidget::eventFilter(object, event);
+}
+
+void RSFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
+{
+	mItems.insert(feedItem, treeItem);
+}
+
+void RSFeedWidget::feedRemoved(FeedItem *feedItem)
+{
+	mItems.remove(feedItem);
+}
+
+void RSFeedWidget::feedsCleared()
+{
+	mItems.clear();
 }
 
 void RSFeedWidget::connectSignals(FeedItem *feedItem)
@@ -167,6 +184,8 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, Qt::ItemDataRole sortRole, co
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
 
+	feedAdded(feedItem, treeItem);
+
 	connectSignals(feedItem);
 
 	filterItem(treeItem, feedItem);
@@ -191,6 +210,8 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, 
 
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
+
+	feedAdded(feedItem, treeItem);
 
 	connectSignals(feedItem);
 
@@ -245,6 +266,8 @@ void RSFeedWidget::clear()
 			disconnectSignals(feedItem);
 		}
 	}
+
+	feedsCleared();
 
 	/* Clear items */
 	ui->treeWidget->clear();
@@ -369,6 +392,7 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 	disconnectSignals(feedItem);
 
 	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
+	feedRemoved(feedItem);
 	if (treeItem) {
 		delete(treeItem);
 	}
@@ -396,6 +420,7 @@ void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
 	/* No need to disconnect when object will be destroyed */
 
 	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
+	feedRemoved(feedItem);
 	if (treeItem) {
 		delete(treeItem);
 	}
@@ -407,16 +432,12 @@ void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
 
 QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(FeedItem *feedItem)
 {
-	QTreeWidgetItemIterator it(ui->treeWidget);
-	QTreeWidgetItem *treeItem;
-	while ((treeItem = *it) != NULL) {
-		++it;
-		if (feedItemFromTreeItem(treeItem) == feedItem) {
-			return treeItem;
-		}
+	QMap<FeedItem*, QTreeWidgetItem*>::iterator it = mItems.find(feedItem);
+	if (it == mItems.end()) {
+		return NULL;
 	}
 
-	return NULL;
+	return it.value();
 }
 
 bool RSFeedWidget::scrollTo(FeedItem *feedItem, bool focus)
@@ -490,39 +511,4 @@ void RSFeedWidget::selectedFeedItems(QList<FeedItem*> &feedItems)
 
 		feedItems.push_back(feedItem);
 	}
-}
-
-struct FindGxsFeedItemData
-{
-	FindGxsFeedItemData(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId) : mGroupId(groupId), mMessageId(messageId) {}
-
-	const RsGxsGroupId &mGroupId;
-	const RsGxsMessageId &mMessageId;
-};
-
-static bool findGxsFeedItemCallback(FeedItem *feedItem, void *data)
-{
-	FindGxsFeedItemData *findData = (FindGxsFeedItemData*) data;
-	if (!findData || findData->mGroupId.isNull() || findData->mMessageId.isNull()) {
-		return false;
-	}
-
-	GxsFeedItem *item = dynamic_cast<GxsFeedItem*>(feedItem);
-	if (!item) {
-		return false;
-	}
-
-	if (item->groupId() != findData->mGroupId ||
-	    item->messageId() != findData->mMessageId) {
-		return false;
-	}
-
-	return true;
-}
-
-GxsFeedItem *RSFeedWidget::findGxsFeedItem(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId)
-{
-	FindGxsFeedItemData data(groupId, messageId);
-	FeedItem *feedItem = findFeedItem(findGxsFeedItemCallback, &data);
-	return dynamic_cast<GxsFeedItem*>(feedItem);
 }
