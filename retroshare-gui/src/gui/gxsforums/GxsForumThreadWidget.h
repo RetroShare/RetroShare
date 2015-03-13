@@ -2,20 +2,18 @@
 #define GXSFORUMTHREADWIDGET_H
 
 #include "gui/gxs/GxsMessageFrameWidget.h"
-#include "util/TokenQueue.h"
 
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
 class GxsForumsFillThread;
-class UIStateHelper;
 class RsGxsForumGroup;
 
 namespace Ui {
 class GxsForumThreadWidget;
 }
 
-class GxsForumThreadWidget : public GxsMessageFrameWidget, public TokenResponse
+class GxsForumThreadWidget : public GxsMessageFrameWidget
 {
 	Q_OBJECT
 
@@ -42,8 +40,7 @@ public:
 	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
 	/* GxsMessageFrameWidget */
-	virtual RsGxsGroupId groupId() { return mForumId; }
-	virtual void setGroupId(const RsGxsGroupId &forumId);
+	virtual void groupIdChanged();
 	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
 	virtual void setAllMessagesRead(bool read);
@@ -137,7 +134,6 @@ private:
 	void loadMsgData_ReplyMessage(const uint32_t &token);
 
 private:
-	RsGxsGroupId mForumId;
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
 	QString mForumDescription;
@@ -146,10 +142,14 @@ private:
 	bool mInMsgAsReadUnread;
 	int mLastViewType;
 	RSTreeWidgetItemCompareRole *mThreadCompareRole;
-	TokenQueue *mTokenQueue;
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
+
+	uint32_t mTokenTypeGroupData;
+	uint32_t mTokenTypeInsertThreads;
+	uint32_t mTokenTypeMessageData;
+	uint32_t mTokenTypeReplyMessage;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;
@@ -157,8 +157,6 @@ private:
 	QColor mTextColorUnreadChildren;
 	QColor mTextColorNotSubscribed;
 	QColor mTextColorMissing;
-
-	UIStateHelper *mStateHelper;
 
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;

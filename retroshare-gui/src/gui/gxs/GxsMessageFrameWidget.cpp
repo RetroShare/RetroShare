@@ -20,8 +20,44 @@
  ****************************************************************/
 
 #include "GxsMessageFrameWidget.h"
+#include "gui/common/UIStateHelper.h"
+
+#include <retroshare/rsgxsifacehelper.h>
 
 GxsMessageFrameWidget::GxsMessageFrameWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent)
     : RsGxsUpdateBroadcastWidget(ifaceImpl, parent)
 {
+	mNextTokenType = 0;
+
+	mTokenQueue = new TokenQueue(ifaceImpl->getTokenService(), this);
+	mStateHelper = new UIStateHelper(this);
+}
+
+GxsMessageFrameWidget::~GxsMessageFrameWidget()
+{
+	delete(mTokenQueue);
+}
+
+const RsGxsGroupId &GxsMessageFrameWidget::groupId()
+{
+	return mGroupId;
+}
+
+void GxsMessageFrameWidget::setGroupId(const RsGxsGroupId &groupId)
+{
+	if (mGroupId == groupId) {
+		if (!groupId.isNull()) {
+			return;
+		}
+	}
+
+	mGroupId = groupId;
+
+	groupIdChanged();
+}
+
+void GxsMessageFrameWidget::loadRequest(const TokenQueue */*queue*/, const TokenRequest &/*req*/)
+{
+	std::cerr << "GxsMessageFrameWidget::loadRequest() ERROR: INVALID TYPE";
+	std::cerr << std::endl;
 }

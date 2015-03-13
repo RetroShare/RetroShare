@@ -85,7 +85,7 @@ protected:
 	virtual void showEvent(QShowEvent *event);
 	virtual void updateDisplay(bool complete);
 
-	RsGxsGroupId groupId() { return mGroupId; }
+	const RsGxsGroupId &groupId() { return mGroupId; }
 	void setSingleTab(bool singleTab);
 	void setHideTabBarWithOneTab(bool hideTabBarWithOneTab);
 	bool getCurrentGroupName(QString& name);

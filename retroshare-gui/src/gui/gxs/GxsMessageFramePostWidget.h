@@ -25,12 +25,10 @@
 #include <QThread>
 
 #include "GxsMessageFrameWidget.h"
-#include "util/TokenQueue.h"
 
-class UIStateHelper;
 class GxsMessageFramePostThread;
 
-class GxsMessageFramePostWidget : public GxsMessageFrameWidget, public TokenResponse
+class GxsMessageFramePostWidget : public GxsMessageFrameWidget
 {
 	Q_OBJECT
 
@@ -41,14 +39,12 @@ public:
 	virtual ~GxsMessageFramePostWidget();
 
 	/* GxsMessageFrameWidget */
-	virtual RsGxsGroupId groupId();
-	virtual void setGroupId(const RsGxsGroupId &groupId);
+	virtual void groupIdChanged();
 	virtual QString groupName(bool withUnreadCount);
 //	virtual QIcon groupIcon() = 0;
 	virtual bool navigate(const RsGxsMessageId& msgId);
 
 	/* GXS functions */
-	uint32_t nextTokenType() { return ++mNextTokenType; }
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	int subscribeFlags() { return mSubscribeFlags; }
@@ -82,18 +78,14 @@ private slots:
 	void fillThreadAddPost(const QVariant &post, bool related, int current, int count);
 
 protected:
-	TokenQueue *mTokenQueue;
 	uint32_t mTokenTypeGroupData;
 	uint32_t mTokenTypePosts;
 	uint32_t mTokenTypeRelatedPosts;
-	UIStateHelper *mStateHelper;
 	RsGxsMessageId mNavigatePendingMsgId;
 
 private:
-	RsGxsGroupId mGroupId; /* current group */
 	QString mGroupName;
 	int mSubscribeFlags;
-	uint32_t mNextTokenType;
 	GxsMessageFramePostThread *mFillThread;
 };
 

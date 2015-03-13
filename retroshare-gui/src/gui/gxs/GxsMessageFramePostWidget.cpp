@@ -32,18 +32,12 @@
 GxsMessageFramePostWidget::GxsMessageFramePostWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent)
     : GxsMessageFrameWidget(ifaceImpl, parent)
 {
-	mTokenQueue = new TokenQueue(ifaceImpl->getTokenService(), this);
-
 	mSubscribeFlags = 0;
-	mNextTokenType = 0;
 	mFillThread = NULL;
 
 	mTokenTypeGroupData = nextTokenType();
 	mTokenTypePosts = nextTokenType();
 	mTokenTypeRelatedPosts = nextTokenType();
-
-	/* Setup UI helper */
-	mStateHelper = new UIStateHelper(this);
 }
 
 GxsMessageFramePostWidget::~GxsMessageFramePostWidget()
@@ -53,19 +47,11 @@ GxsMessageFramePostWidget::~GxsMessageFramePostWidget()
 		delete(mFillThread);
 		mFillThread = NULL;
 	}
-	delete(mTokenQueue);
 }
 
-void GxsMessageFramePostWidget::setGroupId(const RsGxsGroupId &groupId)
+void GxsMessageFramePostWidget::groupIdChanged()
 {
-	if (mGroupId == groupId) {
-		if (!groupId.isNull()) {
-			return;
-		}
-	}
-
-	mGroupId = groupId;
-	mGroupName = mGroupId.isNull () ? "" : tr("Loading");
+	mGroupName = groupId().isNull () ? "" : tr("Loading");
 	groupNameChanged(mGroupName);
 
 	emit groupChanged(this);
@@ -73,14 +59,9 @@ void GxsMessageFramePostWidget::setGroupId(const RsGxsGroupId &groupId)
 	fillComplete();
 }
 
-RsGxsGroupId GxsMessageFramePostWidget::groupId()
-{
-	return mGroupId;
-}
-
 QString GxsMessageFramePostWidget::groupName(bool withUnreadCount)
 {
-	QString name = mGroupId.isNull () ? tr("No name") : mGroupName;
+	QString name = groupId().isNull () ? tr("No name") : mGroupName;
 
 //	if (withUnreadCount && mUnreadCount) {
 //		name += QString(" (%1)").arg(mUnreadCount);
@@ -114,18 +95,18 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 		return;
 	}
 
-	if (mGroupId.isNull()) {
+	if (groupId().isNull()) {
 		return;
 	}
 
 	bool updateGroup = false;
 	const std::list<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), mGroupId) != grpIdsMeta.end()) {
+	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), groupId()) != grpIdsMeta.end()) {
 		updateGroup = true;
 	}
 
 	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
-	if (!mGroupId.isNull() && std::find(grpIds.begin(), grpIds.end(), mGroupId) != grpIds.end()) {
+	if (!groupId().isNull() && std::find(grpIds.begin(), grpIds.end(), groupId()) != grpIds.end()) {
 		updateGroup = true;
 		/* Do we need to fill all posts? */
 		requestPosts();
@@ -133,7 +114,7 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
 		getAllMsgIds(msgs);
 		if (!msgs.empty()) {
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(mGroupId);
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
 			if (mit != msgs.end()) {
 				requestRelatedPosts(mit->second);
 			}
@@ -210,7 +191,7 @@ void GxsMessageFramePostWidget::requestGroupData()
 
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypeGroupData);
 
-	if (mGroupId.isNull()) {
+	if (groupId().isNull()) {
 		mStateHelper->setActive(mTokenTypeGroupData, false);
 		mStateHelper->setLoading(mTokenTypeGroupData, false);
 		mStateHelper->clear(mTokenTypeGroupData);
@@ -227,7 +208,7 @@ void GxsMessageFramePostWidget::requestGroupData()
 	emit groupChanged(this);
 
 	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mGroupId);
+	groupIds.push_back(groupId());
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
@@ -292,7 +273,7 @@ void GxsMessageFramePostWidget::requestPosts()
 
 	clearPosts();
 
-	if (mGroupId.isNull()) {
+	if (groupId().isNull()) {
 		mStateHelper->setActive(mTokenTypePosts, false);
 		mStateHelper->setLoading(mTokenTypePosts, false);
 		mStateHelper->clear(mTokenTypePosts);
@@ -304,7 +285,7 @@ void GxsMessageFramePostWidget::requestPosts()
 	emit groupChanged(this);
 
 	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mGroupId);
+	groupIds.push_back(groupId());
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
@@ -362,7 +343,7 @@ void GxsMessageFramePostWidget::requestRelatedPosts(const std::vector<RsGxsMessa
 
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypeRelatedPosts);
 
-	if (mGroupId.isNull()) {
+	if (groupId().isNull()) {
 		mStateHelper->setActive(mTokenTypeRelatedPosts, false);
 		mStateHelper->setLoading(mTokenTypeRelatedPosts, false);
 		mStateHelper->clear(mTokenTypeRelatedPosts);
@@ -384,7 +365,7 @@ void GxsMessageFramePostWidget::requestRelatedPosts(const std::vector<RsGxsMessa
 	uint32_t token;
 	std::vector<RsGxsGrpMsgIdPair> relatedMsgIds;
 	for (std::vector<RsGxsMessageId>::const_iterator msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
-		relatedMsgIds.push_back(RsGxsGrpMsgIdPair(mGroupId, *msgIt));
+		relatedMsgIds.push_back(RsGxsGrpMsgIdPair(groupId(), *msgIt));
 	}
 	mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, relatedMsgIds, mTokenTypeRelatedPosts);
 }
@@ -421,15 +402,21 @@ void GxsMessageFramePostWidget::loadRequest(const TokenQueue *queue, const Token
 	{
 		if (req.mUserType == mTokenTypeGroupData) {
 			loadGroupData(req.mToken);
-		} else if (req.mUserType == mTokenTypePosts) {
+			return;
+		}
+
+		if (req.mUserType == mTokenTypePosts) {
 			loadPosts(req.mToken);
-		} else if (req.mUserType == mTokenTypeRelatedPosts) {
+			return;
+		}
+
+		if (req.mUserType == mTokenTypeRelatedPosts) {
 			loadRelatedPosts(req.mToken);
-		} else {
-			std::cerr << "GxsMessageFramePostWidget::loadRequest() ERROR: INVALID TYPE";
-			std::cerr << std::endl;
+			return;
 		}
 	}
+
+	GxsMessageFrameWidget::loadRequest(queue, req);
 }
 
 /**************************************************************/
