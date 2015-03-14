@@ -36,6 +36,7 @@
 #include "gui/common/FriendSelectionDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/gxs/GxsIdChooser.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
 
 #include <retroshare/rsnotify.h>
@@ -394,7 +395,7 @@ void ChatLobbyDialog::updateParticipantsList()
             {
                 // TE: Add Wigdet to participantsList with Checkbox, to mute Participant
 
-                widgetitem = new GxsIdRSTreeWidgetItem(mParticipantCompareRole);
+                widgetitem = new GxsIdRSTreeWidgetItem(mParticipantCompareRole,GxsIdDetails::ICON_TYPE_AVATAR);
                 widgetitem->setId(it2->first,COLUMN_NAME, true) ;
                 //widgetitem->setText(COLUMN_NAME, participant);
                 widgetitem->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));

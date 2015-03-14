@@ -49,6 +49,11 @@ class GxsIdDetails : public QObject
 	Q_OBJECT
 
 public:
+    static const int ICON_TYPE_AVATAR = 0x0001 ;
+    static const int ICON_TYPE_PGP    = 0x0002 ;
+    static const int ICON_TYPE_RECOGN = 0x0004 ;
+    static const int ICON_TYPE_ALL    = 0x0007 ;
+
 	GxsIdDetails();
 	virtual ~GxsIdDetails();
 
@@ -57,7 +62,7 @@ public:
 
 	static QString getName(const RsIdentityDetails &details);
 	static QString getComment(const RsIdentityDetails &details);
-	static void getIcons(const RsIdentityDetails &details, QList<QIcon> &icons);
+    static void getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types=ICON_TYPE_ALL);
 
 	static QString getEmptyIdText();
 	static QString getLoadingText(const RsGxsId &id);

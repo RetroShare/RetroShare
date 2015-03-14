@@ -869,45 +869,55 @@ QString nickname = details.mNickname.empty()?tr("[Unknown]"):QString::fromUtf8(d
 	return comment;
 }
 
-void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons)
+void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types)
 {
     QPixmap pix ;
 
-    if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
+    if(icon_types & ICON_TYPE_AVATAR)
+    {
+        if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
 #if QT_VERSION < 0x040700
-        pix = QPixmap::fromImage(makeDefaultIcon(details.mId));
+            pix = QPixmap::fromImage(makeDefaultIcon(details.mId));
 #else
-        pix.convertFromImage(makeDefaultIcon(details.mId));
+            pix.convertFromImage(makeDefaultIcon(details.mId));
 #endif
 
 
-	QIcon idIcon(pix);
-	//CreateIdIcon(id, idIcon);
-	icons.push_back(idIcon);
+        QIcon idIcon(pix);
+        //CreateIdIcon(id, idIcon);
+        icons.push_back(idIcon);
+    }
 
-	// ICON Logic.
-	QIcon baseIcon;
-	if (details.mPgpLinked)
-	{
-		if (details.mPgpKnown)
-			baseIcon = QIcon(IMAGE_PGPKNOWN);
-		else
-			baseIcon = QIcon(IMAGE_PGPUNKNOWN);
-	}
-	else
-		baseIcon = QIcon(IMAGE_ANON);
+    if(icon_types & ICON_TYPE_PGP)
+    {
+        // ICON Logic.
+        QIcon baseIcon;
+        if (details.mPgpLinked)
+        {
+            if (details.mPgpKnown)
+                baseIcon = QIcon(IMAGE_PGPKNOWN);
+            else
+                baseIcon = QIcon(IMAGE_PGPUNKNOWN);
+        }
+        else
+            baseIcon = QIcon(IMAGE_ANON);
 
-	icons.push_back(baseIcon);
-	// Add In RecognTags Icons.
-	std::list<RsRecognTag>::const_iterator it;
-	for (it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
-	{
-		QIcon tagIcon;
-		if (findTagIcon(it->tag_class, it->tag_type, tagIcon))
-		{
-			icons.push_back(tagIcon);
-		}
-	}
+        icons.push_back(baseIcon);
+    }
+
+    if(icon_types & ICON_TYPE_RECOGN)
+    {
+        // Add In RecognTags Icons.
+        std::list<RsRecognTag>::const_iterator it;
+        for (it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
+        {
+            QIcon tagIcon;
+            if (findTagIcon(it->tag_class, it->tag_type, tagIcon))
+            {
+                icons.push_back(tagIcon);
+            }
+        }
+    }
 }
 
 void GxsIdDetails::GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize)

@@ -32,6 +32,7 @@
 #include "gui/common/RSItemDelegate.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
 #include "CreateGxsForumMsg.h"
 #include "gui/msgs/MessageComposer.h"
@@ -810,7 +811,7 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
 {
-    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
+    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL);
 	item->moveToThread(ui->threadTreeWidget->thread());
 
 	QString text;
@@ -893,7 +894,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId &msgId)
 {
-	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
+    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL);
 	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId.toStdString()));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, true);

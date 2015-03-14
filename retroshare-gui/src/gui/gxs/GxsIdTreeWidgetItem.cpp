@@ -27,14 +27,14 @@
 #include "util/HandleRichText.h"
 
 /** Constructor */
-GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
-    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent)
+    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask)
 {
 	init();
 }
 
-GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent)
-    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidgetItem *parent)
+    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask)
 {
 	init();
 }
@@ -69,7 +69,7 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 		break;
 
 	case GXS_ID_DETAILS_TYPE_DONE:
-		GxsIdDetails::getIcons(details, icons);
+        GxsIdDetails::getIcons(details, icons, item->iconTypeMask());
 		item->processResult(true);
 		break;
 	}

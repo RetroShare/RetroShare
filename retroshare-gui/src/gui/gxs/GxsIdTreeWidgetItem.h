@@ -27,6 +27,7 @@
 #include <retroshare/rsidentity.h>
 
 #include "gui/common/RSTreeWidgetItem.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 /*****
  * NOTE: When the tree item is created within a thread you have to move the object
@@ -39,15 +40,15 @@ class GxsIdRSTreeWidgetItem : public QObject, public RSTreeWidgetItem
 	Q_OBJECT
 
 public:
-	GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent = NULL);
-	GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent);
+    GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask=GxsIdDetails::ICON_TYPE_ALL,QTreeWidget *parent = NULL);
+    GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidgetItem *parent);
 
 	void setId(const RsGxsId &id, int column, bool retryWhenFailed);
 	bool getId(RsGxsId &id);
 
 	int idColumn() { return mColumn; }
-	void processResult(bool success);
-
+    void processResult(bool success);
+    uint32_t iconTypeMask() const { return mIconTypeMask ;}
 private slots:
 	void startProcess();
 
@@ -58,6 +59,7 @@ private:
 	int mColumn;
 	bool mIdFound;
 	bool mRetryWhenFailed;
+    uint32_t mIconTypeMask;
 };
 
 #endif

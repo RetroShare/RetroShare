@@ -36,6 +36,7 @@
 #include "common/PeerDefs.h"
 #include "common/RSItemDelegate.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/DateTime.h"
 #include "util/RsProtectedTimer.h"
 #include "util/QtVersion.h"
@@ -1058,7 +1059,7 @@ void MessagesDialog::insertMessages()
                     continue;
                 }
             } else {
-                item = new GxsIdRSTreeWidgetItem(mMessageCompareRole);
+                item = new GxsIdRSTreeWidgetItem(mMessageCompareRole,GxsIdDetails::ICON_TYPE_AVATAR);
                 insertItem = true;
             }
 
