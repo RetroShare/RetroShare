@@ -204,35 +204,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
         }
     free(memory) ;
 
-#ifdef SUSPENDED
-        RsTlvSecurityKey signature_public_key ;
 
-    if(!mIdService->getKey(obj->signature.keyId,signature_public_key) || signature_public_key.keyData.bin_data == NULL)
-        {
-            std::cerr << "  (EE) Could not retrieve public key for ID = " << obj->signature.keyId << ". Lobby message is not authenticated." << std::endl;
-        free(memory) ;
-
-        // no public key. We continue. If the lobby has strict authentication, we should return false.
-
-            return true ;
-        }
-#ifdef DEBUG_CHAT_LOBBIES
-    std::cerr << "  key available. " << key_available << std::endl;
-    std::cerr << "  data hash: " << RsDirUtil::sha1sum(memory,obj->signed_serial_size()) << std::endl;
-    std::cerr << "  signed data: " << RsUtil::BinToHex((char*)memory,obj->signed_serial_size()) << std::endl;
-#endif
-
-        if(!GxsSecurity::validateSignature((const char *)memory,obj->signed_serial_size(),signature_public_key,obj->signature))
-        {
-#ifdef DEBUG_CHAT_LOBBIES
-            std::cerr << "  Signature: FAILS." << std::endl;
-#endif
-        free(memory) ;
-
-            return false ;
-        }
-    free(memory) ;
-#endif
 
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature: CHECKS" << std::endl;
@@ -946,40 +918,7 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
         return false ;
     }
 
-#ifdef SUSPENDED
-        RsTlvSecurityKey signature_private_key ;
 
-        int i ;
-        for(i=0;i<6;++i)
-            if(!mIdService->getPrivateKey(lobby.gxs_id,signature_private_key) || signature_private_key.keyData.bin_data == NULL)
-            {
-#ifdef DEBUG_CHAT_LOBBIES
-                std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
-#endif
-                usleep(500 * 1000) ;	// sleep for 500 msec.
-            }
-            else
-                break ;
-
-        if(i == 6)
-        {
-            std::cerr << "  (EE) Could not retrieve own private key for ID = " << lobby.gxs_id
-                      << ". Giging up sending signed lobby message." << std::endl;
-            return false ;
-        }
-
-#ifdef DEBUG_CHAT_LOBBIES
-    std::cerr << "Signing item." << std::endl;
-    std::cerr << "  data hash: " << RsDirUtil::sha1sum(memory,item.signed_serial_size()) << std::endl;
-    std::cerr << "  signed data: " << RsUtil::BinToHex((char*)memory,item.signed_serial_size()) << std::endl;
-#endif
-
-        if(!GxsSecurity::getSignature((const char *)memory,item.signed_serial_size(),signature_private_key,item.signature))
-        {
-            std::cerr << "(EE) Cannot sign message item. " << std::endl;
-            return false ;
-        }
-#endif
 
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature done." << std::endl;
@@ -1321,17 +1260,6 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 			return true ;
 		}
 
-#ifdef SUSPENDED
-        RsIdentityDetails details ;
-
-        // This is our own identity. We force the loading from the cache.
-
-        for(int i=0;i<6;++i)
-            if(mIdService->getIdDetails(identity,details))
-                break ;
-            else
-                usleep(500*1000) ;
-#endif
 
 #ifdef DEBUG_CHAT_LOBBIES
 		std::cerr << "  Creating new Lobby entry." << std::endl;
@@ -1415,23 +1343,6 @@ void DistributedChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 
 bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& gxs_id)
 {
-#ifdef SUSPENDED
-    RsIdentityDetails details ;
-
-    // This is our own identity. We force the loading from the cache.
-
-    for(int i=0;i<6;++i)
-        if(mIdService->getIdDetails(gxs_id,details))
-            break ;
-        else
-            usleep(500*1000) ;
-
-    if(gxs_id.isNull() || !details.mIsOwnId)
-    {
-        std::cerr << "(EE) Cannot lobby using gxs id " << gxs_id << std::endl;
-        return false ;
-    }
-#endif
     if(!mGixs->isOwnId(gxs_id))
     {
         std::cerr << "(EE) Cannot lobby using gxs id " << gxs_id << std::endl;
