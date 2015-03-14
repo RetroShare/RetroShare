@@ -23,6 +23,8 @@
  *
  */
 
+#include <unistd.h>
+
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
 #include "serialiser/rsgxsiditems.h"

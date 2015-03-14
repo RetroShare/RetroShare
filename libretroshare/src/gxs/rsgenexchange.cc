@@ -847,7 +847,8 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
 				{
 
 	                RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
-	                idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
+                    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
+            mGixs->timeStampKey(metaData.mAuthorId) ;
 				}
 				else
 				{
