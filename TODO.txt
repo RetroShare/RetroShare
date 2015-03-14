@@ -44,9 +44,8 @@ M        [X] icons for GxsTreeWidgetItem are too small in distant messages list 
       
        Channels
          [X] Unsubscribed channels should show an info page when selected, like forums
-H        [ ] marking all as read in channels takes time. The channel icon should show a waiting clock 
-             during the operation to avoid the user to re-click many times in the hope to get 
-             the posts marked as read.
+H        [X] marking all as read in channels takes time. The channel icon should show a waiting clock 
+             during the operation to avoid the user to re-click many times in the hope to get the posts marked as read.
          [X] channels items show a 0 left to the up/Dn buttons. What is it??
          [ ] allow to post on channels when attachment is not in shared files. Just display a warning.
       
@@ -65,10 +64,7 @@ H        [ ] Distant chat should work with shared identities
          [X] "Owned by you" => "Owned by node [nodename]" 
          [X] Bold face should only be used for keys with admin credentials
 E        [X] reputations are not used yet. We should hide them.
-H        [ ] Add timeout to Identities that are unused. Need to keep a time stamp list, updated 
-             whenever the identity is used for checking signatures. This should
-           be extented to any group and stored into meta data. Would allow to
-           remove unused forums etc.
+H        [X] Add timeout to Identities that are unused. Need to keep a time stamp list, updated whenever the identity is used for checking signatures. 
          [X] Fix avatar loading for identities. When loaded for the first time by forums, the avatar does not show up.
 M        [ ] allow to share identities between locations. 
       
