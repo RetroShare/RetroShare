@@ -49,7 +49,7 @@ static const uint32_t RS_GROUTER_DATA_FLAGS_ENCRYPTED = 0x0001 ;
 
 class p3LinkMgr ;
 class p3turtle ;
-class p3IdService ;
+class RsGixs ;
 class RsGRouterItem ;
 class RsGRouterGenericDataItem ;
 class RsGRouterTransactionChunkItem ;
@@ -79,7 +79,7 @@ public:
 class p3GRouter: public RsGRouter, public RsTurtleClientService, public p3Service, public p3Config
 {
 public:
-    p3GRouter(p3ServiceControl *sc,p3IdService *is) ;
+    p3GRouter(p3ServiceControl *sc,RsGixs *is) ;
 
     //===================================================//
     //         Router clients business                   //
@@ -298,7 +298,7 @@ private:
     //
     p3ServiceControl *mServiceControl ;
     p3turtle *mTurtle ;
-    p3IdService *mIdService ;
+    RsGixs *mGixs ;
 
     // Multi-thread protection mutex.
     //

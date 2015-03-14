@@ -104,7 +104,8 @@ class RsItem: public RsMemoryManagement::SmallObject
 		void    setPacketService(uint16_t service);
 
 		inline uint8_t priority_level() const { return _priority_level ;}
-		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
+        inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
+
 	private:
 		uint32_t type;
 		RsPeerId peerId;

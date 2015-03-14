@@ -213,8 +213,7 @@ void	updateServiceString(std::string serviceString);
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
-class p3IdService: public RsGxsIdExchange, public RsIdentity, 
-		public GxsTokenQueue, public RsTickEvent
+class p3IdService: public RsGxsIdExchange, public RsIdentity,  public GxsTokenQueue, public RsTickEvent, public p3Config
 {
 	public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, PgpAuxUtils *pgpUtils);
@@ -254,12 +253,8 @@ virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
 	 * Also need to handle Cache updates / invalidation from internal changes.
 	 * 
 	 */
-
 //virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
 virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
-virtual void  getOwnIds(std::list<RsGxsId> &ownIds);
-
-
 
         // 
 virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
@@ -274,25 +269,32 @@ virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
 virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
 			uint16_t tag_class, uint16_t tag_type, std::string &tag);
 
+    /**************** RsGixs Implementation ***************/
 
-	/**************** RsGixs Implementation 
-	 * Notes:
-	 *   Interface is only suggestion at the moment, will be changed as necessary.
-	 *   Results should be cached / preloaded for maximum speed.
-	 *
-	 */
-virtual bool haveKey(const RsGxsId &id);
-virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
-virtual bool  getKey(const RsGxsId &id, RsTlvSecurityKey &key);
+    virtual void getOwnIds(std::list<RsGxsId> &ownIds);
 
-virtual bool havePrivateKey(const RsGxsId &id);
-virtual bool requestPrivateKey(const RsGxsId &id);
-virtual bool getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
+    //virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
+    //virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
 
-	/**************** RsGixsReputation Implementation 
-	 * Notes:
-	 *   Again should be cached if possible.
-	 */
+    virtual bool isOwnId(const RsGxsId& key_id) ;
+
+    virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) ;
+    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error) ;
+
+    virtual bool encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) ;
+    virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) ;
+
+    virtual bool haveKey(const RsGxsId &id);
+    virtual bool havePrivateKey(const RsGxsId &id);
+
+    virtual bool getKey(const RsGxsId &id, RsTlvSecurityKey &key);
+    virtual bool getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
+
+    virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
+    virtual bool requestPrivateKey(const RsGxsId &id);
+
+
+    /**************** RsGixsReputation Implementation ****************/
 
         // get Reputation.
 virtual bool haveReputation(const RsGxsId &id);
@@ -300,9 +302,8 @@ virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers)
 virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
 
 
-	protected:
-
-	/** Notifications **/
+    protected:
+    /** Notifications **/
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
 	/** Overloaded to add PgpIdHash to Group Definition **/
@@ -313,6 +314,18 @@ virtual void handleResponse(uint32_t token, uint32_t req_type);
 
         // Overloaded from RsTickEvent.
 virtual void handle_event(uint32_t event_type, const std::string &elabel);
+
+        //===================================================//
+        //                  p3Config methods                 //
+        //===================================================//
+
+        // Load/save the routing info, the pending items in transit, and the config variables.
+        //
+        virtual bool loadList(std::list<RsItem*>& items) ;
+        virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) ;
+
+        virtual RsSerialiser *setupSerialiser() ;
+
 
 	private:
 
@@ -441,6 +454,10 @@ virtual void generateDummyData();
 	void generateDummy_UnknownPGP();
 	void generateDummy_UnknownPseudo();
 
+    void cleanUnusedKeys() ;
+    virtual void timeStampKey(const RsGxsId& id) ;
+    time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
+
 std::string genRandomId(int len = 20);
 
 #if 0
@@ -480,7 +497,8 @@ std::string genRandomId(int len = 20);
 
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
-	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
+    std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
+    std::map<RsGxsId,time_t> mKeysTS ;
 	RsNetworkExchangeService* mNes;
 
 	/**************************
@@ -488,7 +506,9 @@ std::string genRandomId(int len = 20);
 	 * without depending directly on all these classes.
 	 */
 
-	PgpAuxUtils *mPgpUtils;
+    PgpAuxUtils *mPgpUtils;
+
+    time_t mLastKeyCleaningTime ;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER

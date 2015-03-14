@@ -338,7 +338,7 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
 	return false;
 }
 
-bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key)
+bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "GxsSecurity::encrypt() " << std::endl;
@@ -441,7 +441,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 }
 
 
-bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key)
+bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
 {
 
 #ifdef DISTRIB_DEBUG
@@ -519,7 +519,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 		 return false;
 	 }
 
-    outlen += out_currOffset;
+    outlen = out_currOffset;
 
     if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) 
 	 {

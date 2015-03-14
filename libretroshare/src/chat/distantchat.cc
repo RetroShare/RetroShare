@@ -528,10 +528,8 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
     RsIdentityDetails details  ;
     RsGxsId senders_id( item->signature.keyId ) ;
 
-    mIdService->getIdDetails(senders_id,details);
-
     for(int i=0;i<6;++i)
-        if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
+        if(!mGixs->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
         {
 #ifdef DEBUG_DISTANT_CHAT
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
@@ -561,6 +559,28 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
         std::cerr << "  (EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         return ;
     }
+#ifdef SUSPENDED
+    if(signature_key.keyId != item->gxs_key.keyId)
+    {
+        std::cerr << "(EE) DH session key is signed by an ID that is not the ID of the key provided inthe packet. Refusing distant chat with this peer." << std::endl;
+        return;
+    }
+    uint32_t error_status ;
+
+    if(!mGixs->validateData((unsigned char*)data,pubkey_size,item->signature,true,error_status))
+    {
+        switch(error_status)
+        {
+            case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot verify." << std::endl;
+                                    break ;
+            case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/MITM?." << std::endl;
+                                    break ;
+        default: break ;
+        }
+        return ;
+    }
+#endif
+
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  Signature checks! Sender's ID = " << senders_id << std::endl;
     std::cerr << "  Computing AES key" << std::endl;
@@ -652,12 +672,38 @@ bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 
     dhitem->public_key = BN_dup(dh->pub_key) ;
 
-	// we should also sign the data and check the signature on the other end.
+    // we should also sign the data and check the signature on the other end.
 	//
 	RsTlvKeySignature signature ;
 	RsTlvSecurityKey  signature_key ;
 	RsTlvSecurityKey  signature_key_public ;
 
+        uint32_t error_status ;
+
+    uint32_t size = BN_num_bytes(dhitem->public_key) ;
+    unsigned char *data = (unsigned char *)malloc(size) ;
+    BN_bn2bin(dhitem->public_key, data) ;
+
+        if(!mGixs->signData((unsigned char*)data,size,own_gxs_id,signature,error_status))
+    {
+        switch(error_status)
+        {
+        case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot sign." << std::endl;
+            break ;
+        default: std::cerr << "(EE) Unknown error when signing" << std::endl;
+            break ;
+        }
+        free(data) ;
+        return false;
+    }
+    free(data) ;
+
+    if(!mGixs->getKey(own_gxs_id,signature_key_public))
+    {
+        std::cerr << "  (EE) Could not retrieve own public key for ID = " << own_gxs_id << ". Giging up sending DH session params." << std::endl;
+        return false ;
+    }
+#ifdef SUSPENDED
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  Getting key material for signature with GXS id " << own_gxs_id << std::endl;
 #endif
@@ -699,11 +745,12 @@ bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 	{
         std::cerr << "  (EE) Cannot sign for id " << own_gxs_id << ". Signature call failed." << std::endl;
 		return false ;
-	}
+    }
+#endif
 
-	free(data) ;
+    assert(!(signature_key_public.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
 
-	dhitem->signature = signature ;
+    dhitem->signature = signature ;
 	dhitem->gxs_key = signature_key_public ;
     dhitem->PeerId(RsPeerId(virtual_peer_id)) ;	// special case for DH items
 
@@ -890,7 +937,7 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,c
     // should be a parameter.
 	
     std::list<RsGxsId> lst ;
-    mIdService->getOwnIds(lst) ;
+    mGixs->getOwnIds(lst) ;
 
     bool found = false ;
     for(std::list<RsGxsId>::const_iterator it = lst.begin();it!=lst.end();++it)

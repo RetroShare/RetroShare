@@ -186,8 +186,8 @@
 #include "util/rsprint.h"
 #include "serialiser/rsconfigitems.h"
 #include "services/p3idservice.h"
-#include "gxs/gxssecurity.h"
 #include "turtle/p3turtle.h"
+#include "gxs/rsgixs.h"
 
 #include "p3grouter.h"
 #include "grouteritems.h"
@@ -207,8 +207,8 @@ static const uint32_t MAX_RECEIPT_WAIT_TIME      = 20          ; // wait for at 
 
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
 
-p3GRouter::p3GRouter(p3ServiceControl *sc, p3IdService *is)
-    : p3Service(), p3Config(), mServiceControl(sc), mIdService(is), grMtx("GRouter")
+p3GRouter::p3GRouter(p3ServiceControl *sc, RsGixs *is)
+    : p3Service(), p3Config(), mServiceControl(sc), mGixs(is), grMtx("GRouter")
 {
 	addSerialType(new RsGRouterSerialiser()) ;
 
@@ -1211,6 +1211,8 @@ bool p3GRouter::encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& de
     std::cerr << "  Encrypting data for key " << destination_key << std::endl;
     std::cerr << "    Decrypted size = " << item->data_size << std::endl;
 #endif
+
+#ifdef SUSPENDED
     RsTlvSecurityKey encryption_key ;
 
     // get the key, and let the cache find it.
@@ -1234,6 +1236,19 @@ bool p3GRouter::encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& de
     std::cerr << "    (EE) Encryption failed." << std::endl;
     return false ;
     }
+#endif
+    uint8_t *encrypted_data =NULL;
+    uint32_t encrypted_size =0;
+    uint32_t error_status ;
+
+    if(!mGixs->encryptData(item->data_bytes,item->data_size,encrypted_data,encrypted_size,destination_key,true,error_status))
+    {
+        std::cerr << "(EE) Cannot encrypt: " ;
+        if(error_status == RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE) std::cerr << " key not available for ID = " << destination_key << std::endl;
+        if(error_status == RsGixs::RS_GIXS_ERROR_UNKNOWN          ) std::cerr << " unknown error for ID = " << destination_key << std::endl;
+
+        return false ;
+    }
 
     free(item->data_bytes) ;
     item->data_bytes = encrypted_data ;
@@ -1255,6 +1270,19 @@ bool p3GRouter::decryptDataItem(RsGRouterGenericDataItem *item)
     std::cerr << "  decrypting data for key " << item->destination_key << std::endl;
     std::cerr << "  encrypted size = " << item->data_size << std::endl;
 #endif
+
+    uint8_t *decrypted_data =NULL;
+    uint32_t decrypted_size =0;
+    uint32_t error_status ;
+
+    if(mGixs->decryptData(item->data_bytes,item->data_size,decrypted_data,decrypted_size,item->destination_key,error_status))
+    {
+        if(error_status == RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE)
+            std::cerr << "(EE) Cannot decrypt incoming message. Key " << item->destination_key << " unknown." << std::endl;
+        else
+            std::cerr << "(EE) Cannot decrypt incoming message. Unknown error. " << std::endl;
+    }
+#ifdef SUSPENDED
     RsTlvSecurityKey encryption_key ;
 
     // get the key, and let the cache find it.
@@ -1278,6 +1306,7 @@ bool p3GRouter::decryptDataItem(RsGRouterGenericDataItem *item)
         std::cerr << "  (EE) Decryption failed." << std::endl;
         return false ;
     }
+#endif
 
     free(item->data_bytes) ;
     item->data_bytes = decrypted_data ;
@@ -1303,12 +1332,12 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         uint32_t data_size = item->signed_data_size() ;
         uint8_t *data = (uint8_t*)malloc(data_size) ;
 
-        if(!item->serialise_signed_data(data,data_size))
-            throw std::runtime_error("Cannot serialise signed data.") ;
-
         if(data == NULL)
             throw std::runtime_error("Cannot allocate memory for signing data.") ;
 
+        if(!item->serialise_signed_data(data,data_size))
+            throw std::runtime_error("Cannot serialise signed data.") ;
+#ifdef SUSPENDED
         if(!mIdService->getPrivateKey(signing_id,signature_key))
             throw std::runtime_error("Cannot get signature key for id " + signing_id.toStdString()) ;
 
@@ -1318,6 +1347,11 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
 #endif
 
         if(!GxsSecurity::getSignature((char *)data,data_size,signature_key,item->signature))
+            throw std::runtime_error("Cannot sign for id " + signing_id.toStdString() + ". Signature call failed.") ;
+#endif
+    uint32_t error_status ;
+
+    if(!mGixs->signData(data,data_size,signing_id,item->signature,error_status))
             throw std::runtime_error("Cannot sign for id " + signing_id.toStdString() + ". Signature call failed.") ;
 
 #ifdef GROUTER_DEBUG
@@ -1331,6 +1365,7 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         std::cerr << "  signing failed. Error: " << e.what() << std::endl;
         if(data != NULL)
             free(data) ;
+
         item->signature.TlvClear() ;
         return false ;
     }
@@ -1349,6 +1384,7 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
         if(!item->serialise_signed_data(data,data_size))
             throw std::runtime_error("Cannot serialise signed data.") ;
 
+#ifdef SUSPENDED
         for(int i=0;i<6;++i)
             if(!mIdService->getKey(item->signature.keyId,signature_key) || signature_key.keyData.bin_data == NULL)
             {
@@ -1368,6 +1404,22 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
 
         if(!GxsSecurity::validateSignature((char*)data,data_size,signature_key,item->signature))
             throw std::runtime_error("Signature was verified and it doesn't check! This is a security issue!") ;
+#endif
+        uint32_t error_status ;
+
+        if(!mGixs->validateData(data,data_size,item->signature,true,error_status))
+        {
+            switch(error_status)
+            {
+                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot verify." << std::endl;
+                                        break ;
+                case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/Corrupted/MITM?." << std::endl;
+                                        break ;
+            default: break ;
+            }
+        free(data) ;
+            return false;
+        }
 
     free(data) ;
         return true ;

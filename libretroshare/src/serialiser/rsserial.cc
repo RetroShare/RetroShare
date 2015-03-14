@@ -52,7 +52,8 @@ RsItem::RsItem(uint32_t t)
 {
 	_priority_level = QOS_PRIORITY_UNKNOWN ;	// This value triggers PQIInterface to complain about undefined priorities
 }
-	
+
+
 #ifdef DO_STATISTICS
 class Counter
 {

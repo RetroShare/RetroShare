@@ -29,16 +29,15 @@
 #include <chat/rschatitems.h>
 #include <retroshare/rsmsgs.h>
 
-
-class p3IdService ;
+class RsGixs ;
 
 static const uint32_t DISTANT_CHAT_AES_KEY_SIZE = 16 ;
 
 class DistantChatService: public RsTurtleClientService
 {
 public:
-    DistantChatService(p3IdService *pids)
-            : mIdService(pids), mDistantChatMtx("distant chat")
+    DistantChatService(RsGixs *pids)
+            : mGixs(pids), mDistantChatMtx("distant chat")
     {
         mTurtle = NULL ;
     }
@@ -129,7 +128,7 @@ private:
     static TurtleFileHash hashFromVirtualPeerId(const DistantChatPeerId& peerId) ;	// converts IDs so that we can talk to RsPeerId from outside
 
     p3turtle *mTurtle ;
-    p3IdService *mIdService ;
+    RsGixs *mGixs ;
 
     RsMutex mDistantChatMtx ;
 };

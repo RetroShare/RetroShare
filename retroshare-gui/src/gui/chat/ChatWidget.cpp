@@ -557,7 +557,6 @@ void ChatWidget::completeNickname(bool reverse)
 		word.chop(2);
 	}
 
-#warning still need to use real nicknames for nickname completion.
 	if (word.length() > 0) {
 		// Sort participants list
 		std::list<QString> participants;

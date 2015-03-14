@@ -1476,7 +1476,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mDisc,true);
 	pqih -> addService(msgSrv,true);
 	pqih -> addService(chatSrv,true);
-	pqih ->addService(mStatusSrv,true);
+    pqih -> addService(mStatusSrv,true);
 
 
 	// set interfaces for plugins
@@ -1592,6 +1592,7 @@ int RsServer::StartupRetroShare()
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
+    mConfigMgr->addConfiguration("identity.cfg", mGxsIdService);
 
 #ifdef RS_USE_BITDHT
 	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);

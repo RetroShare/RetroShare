@@ -99,30 +99,39 @@
 typedef RsPeerId  PeerId; // SHOULD BE REMOVED => RsPeerId (SSLID)
 typedef PGPIdType RsPgpId;
 
-//
-//// External Interface - 
-//class RsIdentityService
-//{
-//    enum IdentityType { Pseudonym, Signed, Anonymous };
-//
-//    virtual bool loadId(const GxsId &id) = 0;	
-//
-//    virtual bool getNickname(const GxsId &id, std::string &nickname) = 0;	
-//
-//    virtual bool createKey(RsGixsProfile& profile, uint32_t type) = 0; /* fills in mKeyId, and signature */
-//
-//    virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
-//
-//	// modify reputation.
-//
-//};
-
-
 /* Identity Interface for GXS Message Verification.
  */
 class RsGixs
 {
 public:
+
+    static const uint32_t RS_GIXS_ERROR_NO_ERROR           = 0x0000 ;
+    static const uint32_t RS_GIXS_ERROR_UNKNOWN            = 0x0001 ;
+    static const uint32_t RS_GIXS_ERROR_KEY_NOT_AVAILABLE  = 0x0002 ;
+    static const uint32_t RS_GIXS_ERROR_SIGNATURE_MISMATCH = 0x0003 ;
+
+     /* Performs/validate a signature with the given key ID. The key must be available, otherwise the signature error
+     * will report it. Each time a key is used to validate a signature, its usage timestamp is updated.
+     *
+     * If force_load is true, the key will be forced loaded from the cache. If not, uncached keys will return
+     * with error_status=RS_GIXS_SIGNATURE_ERROR_KEY_NOT_AVAILABLE, but will likely be cached on the next call.
+     */
+
+    virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) = 0 ;
+    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error) = 0 ;
+
+    virtual bool encryptData(const uint8_t *clear_data,uint32_t clear_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) = 0 ;
+    virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& clear_data,uint32_t& clear_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) = 0 ;
+
+//    virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
+
+    virtual void getOwnIds(std::list<RsGxsId>& ids) = 0;
+    virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
+
+    virtual void timeStampKey(const RsGxsId& key_id) = 0 ;
+
+ //   virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) = 0 ;
+
 	// Key related interface - used for validating msgs and groups.
     /*!
      * Use to query a whether given key is available by its key reference
@@ -157,7 +166,8 @@ public:
      */
     virtual bool  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
     virtual bool  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
-
+#ifdef SUSPENDED
+#endif
 
 };
 

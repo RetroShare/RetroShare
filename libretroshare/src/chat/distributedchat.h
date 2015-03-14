@@ -46,11 +46,12 @@ class RsChatLobbyUnsubscribeItem ;
 
 class RsChatItem ;
 class RsChatMsgItem ;
+class RsGixs ;
 
 class DistributedChatService
 {
 	public:
-        DistributedChatService(uint32_t service_type,p3ServiceControl *sc,p3HistoryMgr *hm,p3IdService *is) ;
+        DistributedChatService(uint32_t service_type,p3ServiceControl *sc,p3HistoryMgr *hm,RsGixs *is) ;
 
 		virtual ~DistributedChatService() {}
 
@@ -164,5 +165,5 @@ class DistributedChatService
 
 		p3ServiceControl *mServControl; 
         p3HistoryMgr *mHistMgr;
-        p3IdService *mIdService ;
+        RsGixs *mGixs ;
 };

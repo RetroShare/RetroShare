@@ -307,6 +307,26 @@
             <property name="margin">
              <number>6</number>
             </property>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Identity name :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item row="2" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
@@ -321,19 +341,6 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item row="1" column="1">
              <widget class="QLineEdit" name="lineEdit_Nickname">
               <property name="enabled">
@@ -344,15 +351,18 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Identity name :</string>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEdit_KeyId">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEdit_KeyId">
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="lineEdit_GpgId">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -378,16 +388,6 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="lineEdit_GpgId">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_3">
               <property name="text">
@@ -397,6 +397,16 @@
             </item>
             <item row="3" column="1">
              <widget class="QLineEdit" name="lineEdit_Type"/>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Last used:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QLineEdit" name="lineEdit_LastUsed"/>
             </item>
            </layout>
           </item>
@@ -693,6 +703,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
@@ -701,11 +716,6 @@
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

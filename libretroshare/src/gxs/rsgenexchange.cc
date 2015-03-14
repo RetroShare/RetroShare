@@ -919,7 +919,9 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 				{
 
 					RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
-					idValidate = GxsSecurity::validateNxsGrp(*grp, sign, authorKey);
+                    idValidate = GxsSecurity::validateNxsGrp(*grp, sign, authorKey);
+
+                    mGixs->timeStampKey(metaData.mAuthorId) ;
 				}
 				else
 				{
@@ -2887,7 +2889,8 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 	// also check this is the latest published group
 	bool latest = newGrp.metaData->mPublishTs > oldGrpMeta.mPublishTs;
 
-	return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
+    mGixs->timeStampKey(newGrp.metaData->mAuthorId) ;
+    return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
 }
 
 void RsGenExchange::setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff)

@@ -92,7 +92,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->toolButton_Reputation);
+    mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+    mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->toolButton_Reputation);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
@@ -112,7 +113,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
+    mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+    mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
@@ -122,8 +124,9 @@ IdDialog::IdDialog(QWidget *parent) :
 //	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
+    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
+    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
@@ -542,6 +545,18 @@ void IdDialog::requestIdDetails()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
 }
 
+static QString getHumanReadableDuration(uint32_t seconds)
+{
+    if(seconds < 60)
+        return QString::number(seconds) + QObject::tr(" seconds ago") ;
+    else if(seconds < 3600)
+        return QString::number(seconds/60) + QObject::tr(" minute(s) ago") ;
+    else if(seconds < 24*3600)
+        return QString::number(seconds/3600) + QObject::tr(" hour(s) ago") ;
+    else
+        return QString::number(seconds/86400) + QObject::tr(" day(s) ago") ;
+}
+
 void IdDialog::insertIdDetails(uint32_t token)
 {
 	mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
@@ -583,9 +598,11 @@ void IdDialog::insertIdDetails(uint32_t token)
 	ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
-	ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
-	
-	ui->headerTextLabel->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
+    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+
+    time_t now = time(NULL) ;
+    ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
+    ui->headerTextLabel->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 
     QPixmap pixmap ;
 

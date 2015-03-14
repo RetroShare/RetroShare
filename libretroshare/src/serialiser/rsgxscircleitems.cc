@@ -44,8 +44,9 @@ uint32_t RsGxsCircleSerialiser::size(RsItem *item)
 	else if((snap_item = dynamic_cast<RsGxsCircleMsgItem*>(item)) != NULL)
 	{
 		return sizeGxsCircleMsgItem(snap_item);
-	}
-	return NULL;
+    }
+    else
+        return 0 ;
 }
 
 bool RsGxsCircleSerialiser::serialise(RsItem *item, void *data, uint32_t *size)

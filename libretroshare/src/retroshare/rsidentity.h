@@ -109,6 +109,7 @@ class RsGxsIdGroup
 
     // Avatar
     RsGxsImage mImage ;
+    time_t mLastUsageTS ;
 
     // Not Serialised - for GUI's benefit.
 	bool mPgpKnown;
@@ -153,30 +154,33 @@ class RsRecognTagDetails
 
 class RsIdentityDetails
 {
-	public:
-	RsIdentityDetails()
-	:mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
-	mReputation() { return; }
+public:
+    RsIdentityDetails()
+            :mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
+              mReputation() { return; }
 
-	RsGxsId mId;
+    RsGxsId mId;
 
-	// identity details.
-	std::string mNickname;
-	bool mIsOwnId;
+    // identity details.
+    std::string mNickname;
+    bool mIsOwnId;
 
-	// PGP Stuff.
-	bool mPgpLinked;
-	bool mPgpKnown;
-	RsPgpId mPgpId;
+    // PGP Stuff.
+    bool mPgpLinked;
+    bool mPgpKnown;
+    RsPgpId mPgpId;
 
-	// Recogn details.
-	std::list<RsRecognTag> mRecognTags;
+    // Recogn details.
+    std::list<RsRecognTag> mRecognTags;
 
-	// reputation details.
+    // reputation details.
     GxsReputation mReputation;
 
     // avatar
     RsGxsImage mAvatar ;
+
+    // last usage
+    time_t mLastUsageTS ;
 };
 
 

@@ -26,6 +26,7 @@
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
 #include "serialiser/rsgxsiditems.h"
+#include "serialiser/rsconfigitems.h"
 #include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
@@ -52,9 +53,10 @@
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	0x0004
 
+static const uint32_t MAX_KEEP_UNUSED_KEYS      = 30*86400 ; // remove unused keys after 30 days
+static const uint32_t MAX_DELAY_BEFORE_CLEANING =     3601 ; // clean old keys every hour
 
 RsIdentity *rsIdentity = NULL;
-
 
 /******
  * Some notes:
@@ -144,7 +146,8 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	mPgpUtils(pgpUtils)
 {
 	mBgSchedule_Mode = 0;
-	mBgSchedule_Active = false;
+    mBgSchedule_Active = false;
+    mLastKeyCleaningTime = time(NULL) ;
 
 	// Kick off Cache Testing, + Others.
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
@@ -201,12 +204,86 @@ uint32_t p3IdService::idAuthenPolicy()
 
 	return policy;
 }
+time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
+{
+    std::map<RsGxsId,time_t>::const_iterator it = mKeysTS.find(gxs_id) ;
 
+    if(it == mKeysTS.end())
+    {
+        IndicateConfigChanged() ;
+        return mKeysTS[gxs_id] = time(NULL) ;
+    }
+    else
+        return it->second ;
+}
+void p3IdService::timeStampKey(const RsGxsId& gxs_id)
+{
+    RS_STACK_MUTEX(mIdMtx) ;
+
+    mKeysTS[gxs_id] = time(NULL) ;
+
+    IndicateConfigChanged() ;
+}
+
+bool p3IdService::loadList(std::list<RsItem*>& items)
+{
+    RS_STACK_MUTEX(mIdMtx) ;
+    RsGxsIdLocalInfoItem *lii;
+
+    for(std::list<RsItem*>::const_iterator it = items.begin();it!=items.end();++it)
+        if( (lii = dynamic_cast<RsGxsIdLocalInfoItem*>(*it)) != NULL)
+            for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
+                mKeysTS.insert(*it2) ;
+    return true ;
+}
+
+bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
+{
+    std::cerr << "p3IdService::saveList()" << std::endl;
+
+    RS_STACK_MUTEX(mIdMtx) ;
+    cleanup = true ;
+    RsGxsIdLocalInfoItem *item = new RsGxsIdLocalInfoItem ;
+    item->mTimeStamps = mKeysTS ;
+
+    items.push_back(item) ;
+    return true ;
+}
+void p3IdService::cleanUnusedKeys()
+{
+    RS_STACK_MUTEX(mIdMtx) ;
+
+    time_t now = time(NULL) ;
+
+    for(std::map<RsGxsId,time_t>::iterator it(mKeysTS.begin());it!=mKeysTS.end();)
+        if(it->second + MAX_KEEP_UNUSED_KEYS < now && !isOwnId(it->first))
+        {
+            std::cerr << "Deleting identity " << it->first << " which is too old." << std::endl;
+            uint32_t token ;
+            RsGxsIdGroup group;
+            group.mMeta.mGroupId=RsGxsGroupId(it->first);
+            rsIdentity->deleteIdentity(token, group);
+
+            std::map<RsGxsId,time_t>::iterator tmp = it ;
+            ++tmp ;
+            mKeysTS.erase(it) ;
+        }
+        else
+            ++it ;
+}
 
 void	p3IdService::service_tick()
 {
 	RsTickEvent::tick_events();
-	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
+    GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
+
+    time_t now = time(NULL) ;
+
+    if(mLastKeyCleaningTime + MAX_DELAY_BEFORE_CLEANING < now)
+    {
+        cleanUnusedKeys() ;
+        mLastKeyCleaningTime = now ;
+    }
 	return;
 }
 
@@ -288,22 +365,25 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 	std::cerr << std::endl;
 #endif
 
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		RsGxsIdCache data;
-		if (mPublicKeyCache.fetch(id, data))
-		{
-			details = data.details;
-			return true;
-		}
-	
-		/* try private cache too */
-		if (mPrivateKeyCache.fetch(id, data))
-		{
-			details = data.details;
-			return true;
-		}
-	}
+    {
+        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+        RsGxsIdCache data;
+        if (mPublicKeyCache.fetch(id, data))
+        {
+            details = data.details;
+
+            details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            return true;
+        }
+
+        /* try private cache too */
+        if (mPrivateKeyCache.fetch(id, data))
+        {
+            details = data.details;
+            details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            return true;
+        }
+    }
 
 	/* it isn't there - add to public requests */
     cache_request_load(id);
@@ -312,6 +392,12 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 }
 
 
+bool p3IdService::isOwnId(const RsGxsId& id)
+{
+    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+    return std::find(mOwnIds.begin(),mOwnIds.end(),id) != mOwnIds.end() ;
+}
 void p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -524,6 +610,144 @@ bool p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
 }
 
 
+bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId& own_gxs_id,RsTlvKeySignature& signature,uint32_t& error_status)
+{
+    //RsIdentityDetails details  ;
+    RsTlvSecurityKey signature_key ;
+
+    //getIdDetails(own_gxs_id,details);
+
+    int i ;
+    for(i=0;i<6;++i)
+        if(!getPrivateKey(own_gxs_id,signature_key) || signature_key.keyData.bin_data == NULL)
+        {
+#ifdef DEBUG_IDS
+            std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
+#endif
+            usleep(500 * 1000) ;	// sleep for 500 msec.
+        }
+        else
+            break ;
+
+    if(i == 6)
+    {
+        std::cerr << "  (EE) Could not retrieve own private key for ID = " << own_gxs_id << ". Giging up sending DH session params. This should not happen." << std::endl;
+    error_status = RS_GIXS_ERROR_KEY_NOT_AVAILABLE ;
+        return false ;
+    }
+
+#ifdef DEBUG_IDS
+    std::cerr << "  Signing..." << std::endl;
+#endif
+
+    if(!GxsSecurity::getSignature((char *)data,data_size,signature_key,signature))
+    {
+        std::cerr << "  (EE) Cannot sign for id " << own_gxs_id << ". Signature call failed." << std::endl;
+    error_status = RS_GIXS_ERROR_UNKNOWN ;
+        return false ;
+    }
+    error_status = RS_GIXS_ERROR_NO_ERROR ;
+    timeStampKey(own_gxs_id) ;
+    return true ;
+}
+bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error)
+{
+   // RsIdentityDetails details ;
+   // getIdDetails(signature.keyId,details);
+    RsTlvSecurityKey signature_key ;
+
+    for(int i=0;i< (force_load?6:1);++i)
+        if(!getKey(signature.keyId,signature_key) || signature_key.keyData.bin_data == NULL)
+        {
+#ifdef DEBUG_IDS
+            std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
+#endif
+            usleep(500 * 1000) ;	// sleep for 500 msec.
+        }
+        else
+            break ;
+
+    if(signature_key.keyData.bin_data == NULL)
+    {
+        std::cerr << "(EE) Cannot validate signature for unknown key " << signature.keyId << std::endl;
+        signing_error = RS_GIXS_ERROR_KEY_NOT_AVAILABLE ;
+        return false;
+    }
+
+    if(!GxsSecurity::validateSignature((char*)data,data_size,signature_key,signature))
+    {
+        std::cerr << "(EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
+        signing_error = RS_GIXS_ERROR_SIGNATURE_MISMATCH ;
+        return false;
+    }
+    signing_error = RS_GIXS_ERROR_NO_ERROR ;
+
+    timeStampKey(signature.keyId) ;
+    return true ;
+}
+bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& error_status)
+{
+    RsTlvSecurityKey encryption_key ;
+
+    // get the key, and let the cache find it.
+    for(int i=0;i<(force_load?6:1);++i)
+        if(getKey(encryption_key_id,encryption_key))
+            break ;
+        else
+            usleep(500*1000) ; // sleep half a sec.
+
+    if(encryption_key.keyId.isNull())
+    {
+        std::cerr << "    (EE) Cannot get encryption key for id " << encryption_key_id << std::endl;
+        error_status = RS_GIXS_ERROR_KEY_NOT_AVAILABLE ;
+        return false ;
+    }
+
+    if(!GxsSecurity::encrypt(encrypted_data,encrypted_data_size,decrypted_data,decrypted_data_size,encryption_key))
+    {
+        std::cerr << "    (EE) Encryption failed." << std::endl;
+        error_status = RS_GIXS_ERROR_UNKNOWN ;
+        return false ;
+    }
+    error_status = RS_GIXS_ERROR_NO_ERROR ;
+    timeStampKey(encryption_key_id) ;
+
+    return true ;
+}
+
+bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_size,const RsGxsId& key_id,uint32_t& error_status)
+{
+    RsTlvSecurityKey encryption_key ;
+
+    // Get the key, and let the cache find it. It's our own key, so we should be able to find it, even if it takes
+    // some seconds.
+
+    for(int i=0;i<4;++i)
+        if(getPrivateKey(key_id,encryption_key))
+            break ;
+        else
+            usleep(500*1000) ; // sleep half a sec.
+
+    if(encryption_key.keyId.isNull())
+    {
+        std::cerr << "  (EE) Cannot get own encryption key for id " << key_id << " to decrypt data. This should not happen." << std::endl;
+        error_status = RS_GIXS_ERROR_KEY_NOT_AVAILABLE;
+        return false ;
+    }
+
+    if(!GxsSecurity::decrypt(decrypted_data,decrypted_size,encrypted_data,encrypted_data_size,encryption_key))
+    {
+        std::cerr << "  (EE) Decryption failed." << std::endl;
+        error_status = RS_GIXS_ERROR_UNKNOWN ;
+        return false ;
+    }
+    error_status = RS_GIXS_ERROR_NO_ERROR ;
+    timeStampKey(key_id) ;
+
+    return true ;
+}
+
+
 /********************************************************************************/
 /******************* RsGixsReputation     ***************************************/
 /********************************************************************************/
@@ -722,6 +946,16 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
 /******************* Get/Set Data      ******************************************/
 /********************************************************************************/
 
+RsSerialiser *p3IdService::setupSerialiser()
+{
+        RsSerialiser *rss = new RsSerialiser ;
+
+        rss->addSerialType(new RsGxsIdSerialiser()) ;
+        rss->addSerialType(new RsGeneralConfigSerialiser());
+
+        return rss ;
+}
+
 bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups)
 {
 	std::vector<RsGxsGrpItem*> grpData;
@@ -744,6 +978,11 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 #endif // DEBUG_IDS
         RsGxsIdGroup group ;
     item->toGxsIdGroup(group,false) ;
+
+    {
+        RS_STACK_MUTEX(mIdMtx) ;
+    group.mLastUsageTS = locked_getLastUsageTS(RsGxsId(group.mMeta.mGroupId)) ;
+    }
 
         // Decode information from serviceString.
         SSGxsIdGroup ssdata;
@@ -1282,32 +1521,31 @@ RsGxsIdCache::RsGxsIdCache()
 
 RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey, const std::list<RsRecognTag> &tagList)
 {
-	// Save Keys.
-	pubkey = in_pkey;
+    // Save Keys.
+    pubkey = in_pkey;
 
-	// Save Time for ServiceString comparisions.
-	mPublishTs = item->meta.mPublishTs;
-	
-	// Save RecognTags.
+    // Save Time for ServiceString comparisions.
+    mPublishTs = item->meta.mPublishTs;
+
+    // Save RecognTags.
     mRecognTags = tagList;
 
-           details.mAvatar.copy((uint8_t *) item->mImage.binData.bin_data, item->mImage.binData.bin_len);
+    details.mAvatar.copy((uint8_t *) item->mImage.binData.bin_data, item->mImage.binData.bin_len);
 
-	// Fill in Details.
-	details.mNickname = item->meta.mGroupName;
-	details.mId = RsGxsId(item->meta.mGroupId);
+    // Fill in Details.
+    details.mNickname = item->meta.mGroupName;
+    details.mId = RsGxsId(item->meta.mGroupId);
 
 #ifdef DEBUG_IDS
-	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
-	std::cerr << std::endl;
+    std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
+    std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-	details.mIsOwnId = (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+    details.mIsOwnId   = (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+    details.mPgpLinked = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
 
-	details.mPgpLinked = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
-
-	/* rest must be retrived from ServiceString */
-	updateServiceString(item->meta.mServiceString);
+    /* rest must be retrived from ServiceString */
+    updateServiceString(item->meta.mServiceString);
 }
 
 void RsGxsIdCache::updateServiceString(std::string serviceString)
@@ -1729,7 +1967,7 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 
 
 			{
-				// remove identities that are present
+                // remove identities that are present
 				RsStackMutex stack(mIdMtx);
 				mPendingCache.erase(RsGxsId(item->meta.mGroupId.toStdString()));
 			}
@@ -2005,7 +2243,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				else
 				{
 					RsTlvSecurityKey seckey;
-					if (getKey(*vit, seckey))
+                    if (getKey(*vit, seckey))
 					{
 #ifdef DEBUG_IDS
 						std::cerr << "p3IdService::cachetest_request() Got Key OK Id: " << *vit;
@@ -2195,8 +2433,8 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		std::cerr << "p3IdService::service_CreateGroup() ERROR no admin key";
 		std::cerr << std::endl;
 		return SERVICE_CREATE_FAIL;
-	}
-	
+    }
+    mKeysTS[RsGxsId(item->meta.mGroupId)] = time(NULL) ;
 		
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 

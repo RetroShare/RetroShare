@@ -35,7 +35,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rsidentity.h"
 #include "rsserver/p3face.h"
-#include "gxs/gxssecurity.h"
+#include "gxs/rsgixs.h"
 #include "services/p3idservice.h"
 
 //#define DEBUG_CHAT_LOBBIES 1
@@ -62,8 +62,8 @@ static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration win
 
 #define  EXTRACT_PRIVACY_FLAGS(flags) (ChatLobbyFlags(flags.toUInt32()) & RS_CHAT_LOBBY_FLAGS_PUBLIC)
 
-DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceControl *sc,p3HistoryMgr *hm, p3IdService *is)
-    : mServType(serv_type),mDistributedChatMtx("Distributed Chat"), mServControl(sc), mHistMgr(hm),mIdService(is)
+DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceControl *sc,p3HistoryMgr *hm, RsGixs *is)
+    : mServType(serv_type),mDistributedChatMtx("Distributed Chat"), mServControl(sc), mHistMgr(hm),mGixs(is)
 {
     _time_shift_average = 0.0f ;
     _should_reset_lobby_counts = false ;
@@ -80,7 +80,21 @@ void DistributedChatService::flush()
 	if(last_clean_time_lobby + LOBBY_CACHE_CLEANING_PERIOD < now)
 	{
 		cleanLobbyCaches() ;
-		last_clean_time_lobby = now ;
+        last_clean_time_lobby = now ;
+
+        // also make sure that the default identity is not null
+
+        if(_default_identity.isNull())
+        {
+            std::list<RsGxsId> ids ;
+            mGixs->getOwnIds(ids) ;
+
+            if(!ids.empty())
+            {
+                _default_identity = ids.front() ;
+                triggerConfigSave() ;
+            }
+        }
 	}
 	if(last_req_chat_lobby_list + LOBBY_LIST_AUTO_UPDATE_TIME < now)
 	{
@@ -156,7 +170,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     // network pre-request key to allow message authentication.
 
-    mIdService->requestKey(obj->signature.keyId,peer_list);
+    mGixs->requestKey(obj->signature.keyId,peer_list);
 
     uint32_t size = obj->signed_serial_size() ;
         unsigned char *memory = (unsigned char *)malloc(size) ;
@@ -173,11 +187,29 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
             return false ;
         }
 
+        uint32_t error_status ;
+
+        if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,error_status))
+        {
+            switch(error_status)
+            {
+                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot verify." << std::endl;
+                                        break ;
+                case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/MITM?." << std::endl;
+                                        break ;
+            default: break ;
+            }
+        free(memory) ;
+            return false;
+        }
+    free(memory) ;
+
+#ifdef SUSPENDED
         RsTlvSecurityKey signature_public_key ;
 
     if(!mIdService->getKey(obj->signature.keyId,signature_public_key) || signature_public_key.keyData.bin_data == NULL)
         {
-            std::cerr << "  (EE) Could not retrieve public key for ID = " << obj->signature.keyId << ". Giging up sending signed lobby message." << std::endl;
+            std::cerr << "  (EE) Could not retrieve public key for ID = " << obj->signature.keyId << ". Lobby message is not authenticated." << std::endl;
         free(memory) ;
 
         // no public key. We continue. If the lobby has strict authentication, we should return false.
@@ -200,6 +232,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
             return false ;
         }
     free(memory) ;
+#endif
 
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature: CHECKS" << std::endl;
@@ -898,6 +931,22 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
             return false ;
         }
 
+    uint32_t error_status ;
+
+    if(!mGixs->signData(memory,size,lobby.gxs_id,item.signature,error_status))
+    {
+        switch(error_status)
+        {
+            case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Cannot sign item: key not available for ID " << lobby.gxs_id << std::endl;
+                                        break ;
+            default: std::cerr << "(EE) Cannot sign item: unknown error" << std::endl;
+                                        break ;
+        }
+        free(memory) ;
+        return false ;
+    }
+
+#ifdef SUSPENDED
         RsTlvSecurityKey signature_private_key ;
 
         int i ;
@@ -930,22 +979,22 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
             std::cerr << "(EE) Cannot sign message item. " << std::endl;
             return false ;
         }
+#endif
+
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature done." << std::endl;
 
     // check signature
-    RsTlvSecurityKey public_key ;
-        GxsSecurity::extractPublicKey(signature_private_key,public_key) ;
-
-        if(!GxsSecurity::validateSignature((const char *)memory,item.signed_serial_size(),public_key,item.signature))
+        if(!mGixs->validateSignature((const char *)memory,item.signed_serial_size(),lobby.gxs_id,item.signature,true,error_status))
         {
-            std::cerr << "(EE) Cannot sign message item. " << std::endl;
+            std::cerr << "(EE) Cannot check message item. " << std::endl;
             return false ;
         }
     std::cerr << "  signature checks!" << std::endl;
     std::cerr << "  Item dump:" << std::endl;
     item.print(std::cerr,2) ;
 #endif
+    free(memory) ;
     }
 
     return true ;
@@ -1272,6 +1321,7 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 			return true ;
 		}
 
+#ifdef SUSPENDED
         RsIdentityDetails details ;
 
         // This is our own identity. We force the loading from the cache.
@@ -1281,6 +1331,7 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
                 break ;
             else
                 usleep(500*1000) ;
+#endif
 
 #ifdef DEBUG_CHAT_LOBBIES
 		std::cerr << "  Creating new Lobby entry." << std::endl;
@@ -1364,6 +1415,7 @@ void DistributedChatService::denyLobbyInvite(const ChatLobbyId& lobby_id)
 
 bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& gxs_id)
 {
+#ifdef SUSPENDED
     RsIdentityDetails details ;
 
     // This is our own identity. We force the loading from the cache.
@@ -1379,6 +1431,13 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
         std::cerr << "(EE) Cannot lobby using gxs id " << gxs_id << std::endl;
         return false ;
     }
+#endif
+    if(!mGixs->isOwnId(gxs_id))
+    {
+        std::cerr << "(EE) Cannot lobby using gxs id " << gxs_id << std::endl;
+        return false ;
+    }
+
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "Joining public chat lobby " << std::hex << lobby_id << std::dec << std::endl;
 #endif
