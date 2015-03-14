@@ -1,6 +1,34 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    Improvements
+      * Identities
+         - moved signature validation and encryption one level up into p3IdService. 
+         - Added timestamp for GXS identities and auto-removal after 30 days. Updated display in IdDialog
+
+      * GUI
+         - Moved TokenQueue, TokenResponse, UIStateHelper and mGroupId from the classes GxsMessageFramePostWidget/GxsForumThreadWidget 
+           to the base class GxsMessageFrameWidget.
+         - Optimized search of feed items in RSFeedWidget by using a map instead of QTreeWidgetItemIterator.
+         - Fixed missing notify of changed message ids to the gui.
+         - use right status ions
+
+      * GXS
+         - Reduced locking time of mutex in RsGenExchange::processMsgMetaChanges and RsGenExchange::processGrpMetaChanges.
+
+      * Chat lobbies
+         - Added re-check of "Not found" identities for chat lobby participants list.
+         - Added check of RsAutoUpdatePage::eventsLocked to GxsIdDetails::timerEvent.
+
+      * Packaging
+         - fixed packaging script modifying wrong version file
+   Bugs
+      * attempt to fix the deadlock situations in pqithreadstreamer. Also solves the crash when quitting
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 14 Mar 2015 16:00:00 +0100
+
+retroshare06 (0.6.0-0.8004~precise) precise; urgency=low
+
+   Improvements
       * GUI
          - Fixed display of version information.
          - Optimized GxsIdDetails::process to load the gxs details directly when the caller is the gui thread.
