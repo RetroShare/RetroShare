@@ -119,7 +119,8 @@ RsIdentity *rsIdentity = NULL;
 
 /* delays */
 
-#define CACHETEST_PERIOD	60
+#define CACHETEST_PERIOD	        60
+#define DELAY_BETWEEN_CONFIG_UPDATES   300
 
 #define OWNID_RELOAD_DELAY		10
 
@@ -150,6 +151,7 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	mBgSchedule_Mode = 0;
     mBgSchedule_Active = false;
     mLastKeyCleaningTime = time(NULL) ;
+    mLastConfigUpdate = 0 ;
 
 	// Kick off Cache Testing, + Others.
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
@@ -206,13 +208,23 @@ uint32_t p3IdService::idAuthenPolicy()
 
 	return policy;
 }
+void p3IdService::slowIndicateConfigChanged()
+{
+    time_t now = time(NULL) ;
+
+    if(mLastConfigUpdate + DELAY_BETWEEN_CONFIG_UPDATES < now)
+    {
+        IndicateConfigChanged() ;
+    mLastConfigUpdate = now ;
+    }
+}
 time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
 {
     std::map<RsGxsId,time_t>::const_iterator it = mKeysTS.find(gxs_id) ;
 
     if(it == mKeysTS.end())
     {
-        IndicateConfigChanged() ;
+        slowIndicateConfigChanged() ;
         return mKeysTS[gxs_id] = time(NULL) ;
     }
     else
@@ -224,7 +236,7 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id)
 
     mKeysTS[gxs_id] = time(NULL) ;
 
-    IndicateConfigChanged() ;
+        slowIndicateConfigChanged() ;
 }
 
 bool p3IdService::loadList(std::list<RsItem*>& items)

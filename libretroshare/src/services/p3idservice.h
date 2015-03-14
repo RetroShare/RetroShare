@@ -455,6 +455,8 @@ virtual void generateDummyData();
 	void generateDummy_UnknownPseudo();
 
     void cleanUnusedKeys() ;
+    void slowIndicateConfigChanged() ;
+
     virtual void timeStampKey(const RsGxsId& id) ;
     time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
 
@@ -509,6 +511,7 @@ std::string genRandomId(int len = 20);
     PgpAuxUtils *mPgpUtils;
 
     time_t mLastKeyCleaningTime ;
+    time_t mLastConfigUpdate ;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER
