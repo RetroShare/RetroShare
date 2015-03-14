@@ -43,8 +43,8 @@ public:
 	virtual void groupIdChanged();
 	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
-	virtual void setAllMessagesRead(bool read);
 	virtual bool navigate(const RsGxsMessageId& msgId);
+	virtual bool isLoading();
 
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
@@ -58,7 +58,12 @@ public:
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 	void changeEvent(QEvent *e);
+
+	/* RsGxsUpdateBroadcastWidget */
 	virtual void updateDisplay(bool complete);
+
+	/* GxsMessageFrameWidget */
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
 
 private slots:
 	/** Create the context popup menu and it's submenus */

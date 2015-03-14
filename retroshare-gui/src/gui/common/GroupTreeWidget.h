@@ -94,6 +94,8 @@ public:
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
 
+	bool setWaiting(const QString &id, bool wait);
+
 	RSTreeWidget *treeWidget();
 
 	QColor textColorCategory() const { return mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY]; }

@@ -462,8 +462,9 @@
         <file>images/trustsettings.png</file>
         <file>images/uploads.png</file>
         <file>images/headerFrame.png</file>
-        <file>images/loader/16-loader.gif</file>
-        <file>images/loader/32-loader.gif</file>
+        <file>images/loader/indicator-16.gif</file>
+        <file>images/loader/indicator-32.gif</file>
+        <file>images/loader/circleball-16.gif</file>
         <file>images/loader/progress.gif</file>
         <file>images/mimetypes/pdf.png</file>
         <file>images/mimetypes/rscollection-16.png</file>

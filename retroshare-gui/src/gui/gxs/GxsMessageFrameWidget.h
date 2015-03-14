@@ -38,12 +38,14 @@ public:
 
 	const RsGxsGroupId &groupId();
 	void setGroupId(const RsGxsGroupId &groupId);
+	void setAllMessagesRead(bool read);
 
 	virtual void groupIdChanged() = 0;
 	virtual QString groupName(bool withUnreadCount) = 0;
 	virtual QIcon groupIcon() = 0;
-	virtual void setAllMessagesRead(bool read) = 0;
 	virtual bool navigate(const RsGxsMessageId& msgId) = 0;
+	virtual bool isLoading();
+	virtual bool isWaiting();
 
 	/* GXS functions */
 	uint32_t nextTokenType() { return ++mNextTokenType; }
@@ -51,11 +53,19 @@ public:
 
 signals:
 	void groupChanged(QWidget *widget);
+	void waitingChanged(QWidget *widget);
 	void loadComment(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
+
+protected:
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token) = 0;
 
 protected:
 	TokenQueue *mTokenQueue;
 	UIStateHelper *mStateHelper;
+
+	/* Set read status */
+	uint32_t mTokenTypeAcknowledgeReadStatus;
+	uint32_t mAcknowledgeReadStatusToken;
 
 private:
 	RsGxsGroupId mGroupId; /* current group */

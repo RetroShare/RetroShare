@@ -56,7 +56,6 @@ public:
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
-	virtual void setAllMessagesRead(bool read);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
@@ -74,6 +73,9 @@ protected:
 	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
+
+	/* GxsMessageFrameWidget */
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
 
 private slots:
 	void createMsg();

@@ -86,6 +86,15 @@ bool GxsMessageFramePostWidget::navigate(const RsGxsMessageId &msgId)
 	return navigatePostItem(msgId);
 }
 
+bool GxsMessageFramePostWidget::isLoading()
+{
+	if (mStateHelper->isLoading(mTokenTypePosts) || mStateHelper->isLoading(mTokenTypeRelatedPosts)) {
+		return true;
+	}
+
+	return GxsMessageFrameWidget::isLoading();
+}
+
 void GxsMessageFramePostWidget::updateDisplay(bool complete)
 {
 	if (complete) {

@@ -534,6 +534,7 @@ GxsMessageFrameWidget *GxsGroupFrameDialog::createMessageWidget(const RsGxsGroup
 	ui->messageTabWidget->setTabIcon(index, msgWidget->groupIcon());
 
 	connect(msgWidget, SIGNAL(groupChanged(QWidget*)), this, SLOT(messageTabInfoChanged(QWidget*)));
+	connect(msgWidget, SIGNAL(waitingChanged(QWidget*)), this, SLOT(messageTabWaitingChanged(QWidget*)));
 	connect(msgWidget, SIGNAL(loadComment(RsGxsGroupId,RsGxsMessageId,QString)), this, SLOT(loadComment(RsGxsGroupId,RsGxsMessageId,QString)));
 
 	return msgWidget;
@@ -642,6 +643,21 @@ void GxsGroupFrameDialog::messageTabInfoChanged(QWidget *widget)
 
 	ui->messageTabWidget->setTabText(index, msgWidget->groupName(true));
 	ui->messageTabWidget->setTabIcon(index, msgWidget->groupIcon());
+}
+
+void GxsGroupFrameDialog::messageTabWaitingChanged(QWidget *widget)
+{
+	int index = ui->messageTabWidget->indexOf(widget);
+	if (index < 0) {
+		return;
+	}
+
+	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
+	if (!msgWidget) {
+		return;
+	}
+
+	ui->groupTreeWidget->setWaiting(QString::fromStdString(msgWidget->groupId().toStdString()), msgWidget->isWaiting());
 }
 
 ///***** INSERT GROUP LISTS *****/

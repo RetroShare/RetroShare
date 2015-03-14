@@ -578,7 +578,7 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 	applyRanking();
 }
 
-void PostedListWidget::setAllMessagesRead(bool read)
+void PostedListWidget::setAllMessagesReadDo(bool read, uint32_t &token)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
 		return;
@@ -587,7 +587,6 @@ void PostedListWidget::setAllMessagesRead(bool read)
 	foreach (PostedItem *item, mPostItems) {
 		RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
 
-		uint32_t token;
 		rsPosted->setMessageReadStatus(token, msgPair, read);
 	}
 }

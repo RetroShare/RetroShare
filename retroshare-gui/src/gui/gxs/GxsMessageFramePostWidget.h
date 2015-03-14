@@ -43,6 +43,7 @@ public:
 	virtual QString groupName(bool withUnreadCount);
 //	virtual QIcon groupIcon() = 0;
 	virtual bool navigate(const RsGxsMessageId& msgId);
+	virtual bool isLoading();
 
 	/* GXS functions */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -50,7 +51,9 @@ public:
 	int subscribeFlags() { return mSubscribeFlags; }
 
 protected:
+	/* RsGxsUpdateBroadcastWidget */
 	virtual void updateDisplay(bool complete);
+
 	virtual void groupNameChanged(const QString &/*name*/) {}
 
 	virtual void clearPosts() = 0;

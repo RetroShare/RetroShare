@@ -47,7 +47,6 @@ public:
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
-	virtual void setAllMessagesRead(bool read);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
@@ -65,6 +64,9 @@ protected:
 	virtual void insertRelatedPosts(const uint32_t &token);
 	virtual void clearPosts();
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
+
+	/* GxsMessageFrameWidget */
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
 
 private slots:
 	void newPost();

@@ -1511,7 +1511,7 @@ void GxsForumThreadWidget::markMsgAsUnreadChildren()
 	markMsgAsReadUnread(false, true, false);
 }
 
-void GxsForumThreadWidget::setAllMessagesRead(bool read)
+void GxsForumThreadWidget::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
 {
 	markMsgAsReadUnread(read, true, true);
 }
@@ -1541,6 +1541,15 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 	}
 
 	return false;
+}
+
+bool GxsForumThreadWidget::isLoading()
+{
+	if (mStateHelper->isLoading(mTokenTypeGroupData) || mFillThread) {
+		return true;
+	}
+
+	return GxsMessageFrameWidget::isLoading();
 }
 
 void GxsForumThreadWidget::copyMessageLink()

@@ -34,7 +34,7 @@ HashingStatus::HashingStatus(QWidget *parent)
     hbox->setMargin(0);
     hbox->setSpacing(6);
         
-    movie = new QMovie(":/images/loader/16-loader.gif");
+    movie = new QMovie(":/images/loader/indicator-16.gif");
     movie->setSpeed(80); // 2x speed
     hashloader = new QLabel(this);
     hashloader->setMovie(movie);

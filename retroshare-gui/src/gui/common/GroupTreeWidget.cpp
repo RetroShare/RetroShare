@@ -21,6 +21,8 @@
 
 #include <QMenu>
 #include <QToolButton>
+#include <QLabel>
+#include <QMovie>
 
 #include "retroshare/rsgxsflags.h"
 #include "GroupTreeWidget.h"
@@ -47,6 +49,7 @@
 #define ROLE_SEARCH_SCORE    Qt::UserRole + 5
 #define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 6
 #define ROLE_COLOR           Qt::UserRole + 7
+#define ROLE_SAVED_ICON      Qt::UserRole + 8
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -351,7 +354,12 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
 
 		/* Set icon */
-		item->setIcon(COLUMN_NAME, itemInfo.icon);
+		if (ui->treeWidget->itemWidget(item, COLUMN_NAME)) {
+			/* Item is waiting, save icon in role */
+			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, itemInfo.icon);
+		} else {
+			item->setIcon(COLUMN_NAME, itemInfo.icon);
+		}
 
 		/* Set popularity */
         QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
@@ -463,6 +471,50 @@ QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
 		ui->treeWidget->setFocus();
 	}
 	return item;
+}
+
+bool GroupTreeWidget::setWaiting(const QString &id, bool wait)
+{
+	QTreeWidgetItem *item = getItemFromId(id);
+	if (!item) {
+		return false;
+	}
+
+	QWidget *w = ui->treeWidget->itemWidget(item, COLUMN_NAME);
+	if (wait) {
+		if (w) {
+			/* Allready waiting */
+		} else {
+			/* Save icon in role */
+			QIcon icon = item->icon(COLUMN_NAME);
+			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, icon);
+
+			/* Create empty icon of the same size */
+			QPixmap pixmap(ui->treeWidget->iconSize());
+			pixmap.fill(Qt::transparent);
+
+			item->setIcon(COLUMN_NAME, QIcon(pixmap));
+
+			QLabel *label = new QLabel(this);
+			QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
+			label->setMovie(movie);
+
+			ui->treeWidget->setItemWidget(item, COLUMN_NAME, label);
+
+			movie->start();
+		}
+	} else {
+		if (w) {
+			ui->treeWidget->setItemWidget(item, COLUMN_NAME, NULL);
+			delete(w);
+
+			/* Set icon saved in role */
+			item->setIcon(COLUMN_NAME, item->data(COLUMN_DATA, ROLE_SAVED_ICON).value<QIcon>());
+			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, QIcon());
+		}
+	}
+
+	return true;
 }
 
 RSTreeWidget *GroupTreeWidget::treeWidget()

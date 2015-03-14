@@ -503,29 +503,45 @@ void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
 	insertChannelPosts(posts, NULL, true);
 }
 
+class GxsChannelPostsReadData
+{
+public:
+	GxsChannelPostsReadData(bool read)
+	{
+		mRead = read;
+		mLastToken = 0;
+	}
+
+public:
+	bool mRead;
+	uint32_t mLastToken;
+};
+
 static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 {
-    GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
-    if (!channelPostItem) {
-        return;
-    }
+	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
+	if (!channelPostItem) {
+		return;
+	}
 
-    bool is_not_new = !channelPostItem->isUnread() ;
+	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
+	bool is_not_new = !channelPostItem->isUnread() ;
 
-    if(is_not_new == *(bool*)data)
-        return ;
+	if(is_not_new == readData->mRead)
+		return ;
 
-    RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
-
-    uint32_t token;
-    rsGxsChannels->setMessageReadStatus(token, msgPair, *((bool*) data));
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
+	rsGxsChannels->setMessageReadStatus(readData->mLastToken, msgPair, readData->mRead);
 }
 
-void GxsChannelPostsWidget::setAllMessagesRead(bool read)
+void GxsChannelPostsWidget::setAllMessagesReadDo(bool read, uint32_t &token)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
 		return;
 	}
 
-	ui->feedWidget->withAll(setAllMessagesReadCallback, &read);
+	GxsChannelPostsReadData data(read);
+	ui->feedWidget->withAll(setAllMessagesReadCallback, &data);
+
+	token = data.mLastToken;
 }

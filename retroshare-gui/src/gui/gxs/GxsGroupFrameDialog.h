@@ -109,6 +109,7 @@ private slots:
 	void messageTabCloseRequested(int index);
 	void messageTabChanged(int index);
 	void messageTabInfoChanged(QWidget *widget);
+	void messageTabWaitingChanged(QWidget *widget);
 
 	void copyGroupLink();
 
