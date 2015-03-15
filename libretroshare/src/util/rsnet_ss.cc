@@ -220,7 +220,6 @@ bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port)
 	return false;
 }
 
-
 bool sockaddr_storage_setipv4(struct sockaddr_storage &addr, const sockaddr_in *addr_ipv4)
 {
 #ifdef SS_DEBUG
@@ -253,7 +252,6 @@ bool sockaddr_storage_setipv6(struct sockaddr_storage &addr, const sockaddr_in6 
 	return true;
 }
 
-
 bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name)
 {
 #ifdef SS_DEBUG
@@ -266,6 +264,31 @@ bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name)
 	return (1 == inet_aton(name, &(ipv4_ptr->sin_addr)));
 }
 
+bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)
+{
+	std::cerr << "sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)" << std::endl;
+
+	if ( addr.ss_family == AF_INET6 ) return true;
+
+	if ( addr.ss_family == AF_INET )
+	{
+		sockaddr_in & addr_ipv4 = (sockaddr_in &) addr;
+		sockaddr_in6 & addr_ipv6 =  (sockaddr_in6 &) addr;
+
+		u_int32_t ip = addr_ipv4.sin_addr.s_addr;
+		u_int16_t port = addr_ipv4.sin_port;
+
+		sockaddr_storage_clear(addr);
+		addr_ipv6.sin6_family = AF_INET6;
+		addr_ipv6.sin6_port = port;
+		addr_ipv6.sin6_addr.s6_addr32[3] = ip;
+		addr_ipv6.sin6_addr.s6_addr16[5] = (u_int16_t) 0xffff;
+
+		return true;
+	}
+
+	return false;
+}
 
 /******************************** Comparisions **********************************/
 
@@ -292,7 +315,6 @@ bool operator<(const struct sockaddr_storage &a, const struct sockaddr_storage &
 	return false;
 }
 
-
 bool sockaddr_storage_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
 {
 #ifdef SS_DEBUG
@@ -318,7 +340,6 @@ bool sockaddr_storage_same(const struct sockaddr_storage &addr, const struct soc
 	}
 	return false;
 }
-
 
 bool sockaddr_storage_samefamily(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
 {
@@ -378,9 +399,6 @@ std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr)
 	}
 	return output;
 }
-
-
-
 
 std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr)
 {
