@@ -304,9 +304,9 @@ bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)
 
 bool sockaddr_storage_ipv6_to_ipv4(sockaddr_storage &addr)
 {
-//#ifdef SS_DEBUG
+#ifdef SS_DEBUG
 	std::cerr << "sockaddr_storage_ipv6_to_ipv4(sockaddr_storage &addr)" << std::endl;
-//#endif
+#endif
 
 	if ( addr.ss_family == AF_INET ) return true;
 
@@ -801,8 +801,9 @@ bool sockaddr_storage_ipv6_lessthan(const struct sockaddr_storage &addr, const s
 
 bool sockaddr_storage_ipv6_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
 {
-	std::cerr << "sockaddr_storage_ipv6_same()";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+	std::cerr << "sockaddr_storage_ipv6_same()" << std::endl;
+#endif
 	const struct sockaddr_in6 *ptr1 = to_const_ipv6_ptr(addr);
 	const struct sockaddr_in6 *ptr2 = to_const_ipv6_ptr(addr2);
 
