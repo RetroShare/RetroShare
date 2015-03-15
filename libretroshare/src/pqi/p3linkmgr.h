@@ -336,7 +336,11 @@ private:
 	std::list<RsPeerGroupItem *> groupList;
 	uint32_t lastGroupId;
 
-	/* relatively static list of banned ip addresses */
+	/* Relatively static list of banned ip addresses
+	 * TODO: We should use a real bad ip lists, and an appropriated
+	 * data structure to access them, list access is linear time while
+	 * constant or at least logaritmic is possible with hashtable or tree
+	 */
 	std::list<struct sockaddr_storage> mBannedIpList;
 };
 

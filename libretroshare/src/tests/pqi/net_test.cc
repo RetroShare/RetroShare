@@ -227,12 +227,7 @@ bool    isExternalNet(struct in_addr *addr); // if Valid & is not Private or Loo
 bool	isPrivateNet(struct in_addr *addr); // if inside 10.0.0.0 or 
 						// other then firewalled.
 bool	isLoopbackNet(struct in_addr *addr); 
-bool	sameNet(struct in_addr *addr, struct in_addr *addr2); 
 bool	isValidNet(struct in_addr *addr);
-
-	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
-bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);
-					
 
 struct in_addr getPreferredInterface(); // returns best addr.
 

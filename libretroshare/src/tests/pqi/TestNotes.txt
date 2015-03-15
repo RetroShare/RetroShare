@@ -70,9 +70,7 @@ Description:
 (1) isExternalNet()
 (2) isPrivateNet()
 (3) isLoopbackNet()
-(4) sameNet()
 (5) isValidNet()
-(6) isSameSubnet()
 (7) pqi_inet_netof()
 
 ------------------------------------------------------------
