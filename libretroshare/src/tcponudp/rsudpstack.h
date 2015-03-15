@@ -54,30 +54,33 @@ virtual bool resetAddress(struct sockaddr_in &local) { return false; }
 
 class rsUdpStack: public UdpStack, public pqiNetListener
 {
-	public:
-	rsUdpStack(struct sockaddr_in &local)
-	:UdpStack(local) { return; }
+public:
+	rsUdpStack(struct sockaddr_in &local) :UdpStack(local) {}
 
-        rsUdpStack(int testmode, struct sockaddr_in &local)
-	:UdpStack(testmode, local) { return; }
+	rsUdpStack(int testmode, struct sockaddr_in &local) :UdpStack(testmode, local) {}
 
 	/* from pqiNetListener */
-virtual bool resetListener(const struct sockaddr_storage &local)
+	virtual bool resetListener(const struct sockaddr_storage &local)
 	{
 		std::cerr << "rsUdpStack::resetListener(" << sockaddr_storage_tostring(local) << ")";
 		std::cerr << std::endl;
 
-		if (local.ss_family != AF_INET)
+		if ( local.ss_family != AF_INET )
 		{
-			std::cerr << "rsUdpStack::resetListener() NOT IPv4 ERROR";
-			std::cerr << std::endl;
-			abort();
+			std::cerr << "rsUdpStack::resetListener() got non AF_INET sockaddr_storage, attempt to convert" << std::endl;
+
+			// FORCING NON CONST CHANGE THIS AS SOON AS POSSIBLE // TODO:IPV6
+			if(!sockaddr_storage_ipv6_to_ipv4((sockaddr_storage &)local))
+			{
+				std::cerr << "rsUdpStack::resetListener() NOT IPv4 ERROR";
+				std::cerr << std::endl;
+				return false; // TODO:IPV6
+			}
 		}
 
 		struct sockaddr_in *addr = (struct sockaddr_in *) &local;
 		return resetAddress(*addr);
 	}
-
 };
 
 class rsFixedUdpStack: public UdpStack, public pqiNetListener

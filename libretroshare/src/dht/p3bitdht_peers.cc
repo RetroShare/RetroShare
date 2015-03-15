@@ -193,7 +193,7 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 	{
 		std::cerr << "p3BitDht::addBadPeer() cannot handle IPV6 Yet, aborting";
 		std::cerr << std::endl;
-		abort();
+		return 0; // TODO:IPV6
 	}
 	struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
 
@@ -226,14 +226,14 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
 		std::cerr << std::endl;
 		sockaddr_clear(&addrv4);
 
-#if 0
+
 		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
 		{
 			std::cerr << "p3BitDht::addKnownPeer() Non IPv4 Address & ONLINE. Abort()ing.";
 			std::cerr << std::endl;
-			abort();
+			return 0; // TODO:IPV6
 		}
-#endif
+
 
 	}
 	else

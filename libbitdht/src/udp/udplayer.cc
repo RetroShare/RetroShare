@@ -181,7 +181,7 @@ int UdpLayer::reset(struct sockaddr_in &local)
 
 	/* stop the old thread */
 	{
-		bdStackMutex stack(sockMtx);   /********** LOCK MUTEX *********/
+		bdStackMutex stack(sockMtx); (void)stack;   /********** LOCK MUTEX *********/
 #ifdef DEBUG_UDP_LAYER
 		std::cerr << "UdpLayer::reset() setting stopThread flag" << std::endl;
 #endif
@@ -322,7 +322,7 @@ int UdpLayer::sendPkt(const void *data, int size, const sockaddr_in &to, int ttl
 }
 
 /* setup connections */
-int UdpLayer::openSocket()	
+int UdpLayer::openSocket()
 {
 	sockMtx.lock();   /********** LOCK MUTEX *********/
 
@@ -391,13 +391,12 @@ int UdpLayer::openSocket()
 
 	// start up our thread.
 	{
-		bdStackMutex stack(sockMtx);   /********** LOCK MUTEX *********/
+		bdStackMutex stack(sockMtx); (void)stack;   /********** LOCK MUTEX *********/
 		stopThread = false;
 	}
 	start();
 
 	return 1;
-
 }
 
 int UdpLayer::setTTL(int t)

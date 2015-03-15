@@ -701,8 +701,7 @@ bool getPreferredInterface(const struct sockaddr_storage & existAddr, struct soc
 		if (eaddr->sin_family != AF_INET)
 		{
 			std::cerr << "getPreferredInterface() ERROR only valid for IPv4 for now";
-			abort();
-			return false;
+			return false; // TODO:IPV6
 		}
 		existing_addr = eaddr->sin_addr;
 	}
@@ -732,8 +731,7 @@ bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct soc
 		if (eaddr->sin_family != AF_INET)
 		{
 			std::cerr << "getLocalInterfaces() ERROR only valid for IPv4 for now";
-			abort();
-			return false;
+			return false; // TODO:IPV6
 		}
 		existing_addr = eaddr->sin_addr;
 	}
