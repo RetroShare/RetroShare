@@ -47,7 +47,7 @@
 
 //#define DEBUG_DISTANT_CHAT
 
-static const uint32_t DISTANT_CHAT_KEEP_ALIVE_TIMEOUT = 15 ; // send keep alive packet so as to avoid tunnel breaks.
+static const uint32_t DISTANT_CHAT_KEEP_ALIVE_TIMEOUT = 6 ; // send keep alive packet so as to avoid tunnel breaks.
 
 static const uint32_t RS_DISTANT_CHAT_DH_STATUS_UNINITIALIZED = 0x0000 ;
 static const uint32_t RS_DISTANT_CHAT_DH_STATUS_HALF_KEY_DONE = 0x0001 ;
@@ -77,12 +77,19 @@ void DistantChatService::flush()
 
     for(std::map<RsGxsId,DistantChatPeerInfo>::iterator it(_distant_chat_contacts.begin());it!=_distant_chat_contacts.end();++it)
     {
-        if(it->second.last_contact+10+DISTANT_CHAT_KEEP_ALIVE_TIMEOUT < now && it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
-        {
-            std::cerr << "(II) DistantChatService:: connexion interrupted with peer." << std::endl;
-            it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
-            it->second.virtual_peer_id.clear() ;
-        }
+        if(it->second.last_contact+8+DISTANT_CHAT_KEEP_ALIVE_TIMEOUT < now && it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
+    {
+        std::cerr << "(II) DistantChatService:: connexion interrupted with peer." << std::endl;
+        it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
+        it->second.virtual_peer_id.clear() ;
+
+        // Also reset turtle router monitoring so as to make the tunnel handling more responsive. If we don't do that,
+        // the TR will wait 60 secs for the tunnel to die, which causes a significant waiting time in the chat window.
+
+        std::cerr << "(II) DistantChatService:: forcing new tunnel campain." << std::endl;
+
+        mTurtle->forceReDiggTunnels( hashFromGxsId(it->first) );
+    }
         if(it->second.last_keep_alive_sent + DISTANT_CHAT_KEEP_ALIVE_TIMEOUT < now && it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
         {
             RsChatStatusItem *cs = new RsChatStatusItem ;
@@ -559,27 +566,7 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
         std::cerr << "  (EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         return ;
     }
-#ifdef SUSPENDED
-    if(signature_key.keyId != item->gxs_key.keyId)
-    {
-        std::cerr << "(EE) DH session key is signed by an ID that is not the ID of the key provided inthe packet. Refusing distant chat with this peer." << std::endl;
-        return;
-    }
-    uint32_t error_status ;
-
-    if(!mGixs->validateData((unsigned char*)data,pubkey_size,item->signature,true,error_status))
-    {
-        switch(error_status)
-        {
-            case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot verify." << std::endl;
-                                    break ;
-            case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/MITM?." << std::endl;
-                                    break ;
-        default: break ;
-        }
-        return ;
-    }
-#endif
+    mGixs->timeStampKey(item->signature.keyId) ;
 
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "  Signature checks! Sender's ID = " << senders_id << std::endl;
@@ -703,50 +690,7 @@ bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
         std::cerr << "  (EE) Could not retrieve own public key for ID = " << own_gxs_id << ". Giging up sending DH session params." << std::endl;
         return false ;
     }
-#ifdef SUSPENDED
-#ifdef DEBUG_DISTANT_CHAT
-    std::cerr << "  Getting key material for signature with GXS id " << own_gxs_id << std::endl;
-#endif
-	// The following code is only here to force caching the keys. 
-	//
-	RsIdentityDetails details  ;
-    mIdService->getIdDetails(own_gxs_id,details);
 
-    int i ;
-    for(i=0;i<6;++i)
-        if(!mIdService->getPrivateKey(own_gxs_id,signature_key) || signature_key.keyData.bin_data == NULL)
-        {
-#ifdef DEBUG_DISTANT_CHAT
-            std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
-#endif
-            usleep(500 * 1000) ;	// sleep for 500 msec.
-        }
-        else
-            break ;
-
-    if(i == 6)
-    {
-        std::cerr << "  (EE) Could not retrieve own private key for ID = " << own_gxs_id << ". Giging up sending DH session params." << std::endl;
-        return false ;
-    }
-
-	GxsSecurity::extractPublicKey(signature_key,signature_key_public) ;
-
-	assert(!(signature_key_public.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "  Signing..." << std::endl;
-#endif
-	uint32_t size = BN_num_bytes(dhitem->public_key) ;
-	unsigned char *data = (unsigned char *)malloc(size) ;
-	BN_bn2bin(dhitem->public_key, data) ;
-
-	if(!GxsSecurity::getSignature((char *)data,size,signature_key,signature))
-	{
-        std::cerr << "  (EE) Cannot sign for id " << own_gxs_id << ". Signature call failed." << std::endl;
-		return false ;
-    }
-#endif
 
     assert(!(signature_key_public.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
 

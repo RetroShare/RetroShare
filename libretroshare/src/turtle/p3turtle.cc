@@ -359,7 +359,7 @@ void p3turtle::manageTunnels()
 		// digg new tunnels if no tunnels are available and force digg new tunnels at regular (large) interval
 		//
 		for(std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
-		{
+        {
 			// get total tunnel speed.
 			//
 			uint32_t total_speed = 0 ;
@@ -539,6 +539,21 @@ void p3turtle::autoWash()
 #endif
 		services_vpids_to_remove[i].first->removeVirtualPeer(services_vpids_to_remove[i].second.first,services_vpids_to_remove[i].second.second) ;
 	}
+}
+
+void p3turtle::forceReDiggTunnels(const TurtleFileHash& hash)
+{
+    {
+        RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+        if( _incoming_file_hashes.find(hash) == _incoming_file_hashes.end())
+        {
+            std::cerr << "(EE) p3turtle::forceReDiggTunnels(): hash " << hash << " is not currently handled by turtle." << std::endl;
+            return ;
+        }
+    }
+
+    diggTunnel(hash) ;
 }
 
 void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> > >& sources_to_remove)

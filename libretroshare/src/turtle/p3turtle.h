@@ -259,7 +259,13 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		///
 		virtual void stopMonitoringTunnels(const RsFileHash& file_hash) ;
 
-		/// Adds a client tunnel service. This means that the service will be added 
+        /// This is provided to turtle clients to force the TR to ask tunnels again. To be used wisely:
+        /// too many tunnel requests will kill the network. This might be useful to speed-up the re-establishment
+        /// of tunnels that have become irresponsive.
+
+        virtual void forceReDiggTunnels(const TurtleFileHash& hash) ;
+
+        /// Adds a client tunnel service. This means that the service will be added
 		/// to the list of services that might respond to tunnel requests.
 		/// Example tunnel services include:
 		///
