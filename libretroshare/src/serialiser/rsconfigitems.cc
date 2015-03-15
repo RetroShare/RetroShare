@@ -924,9 +924,9 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_disc); /* Mandatory */
 	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_dht); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
-	ok &= item->localAddrV4.SetTlv(data, tlvsize, &offset); 
+	ok &= item->localAddrV4.SetTlv(data, tlvsize, &offset);
 	ok &= item->extAddrV4.SetTlv(data, tlvsize, &offset);
-	ok &= item->localAddrV6.SetTlv(data, tlvsize, &offset); 
+	ok &= item->localAddrV6.SetTlv(data, tlvsize, &offset);
 	ok &= item->extAddrV6.SetTlv(data, tlvsize, &offset);
 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
@@ -941,7 +941,7 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	if(offset != tlvsize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
-		std::cerr << "RsPeerConfigSerialiser::serialiseNet() Size Error! " << std::endl;
+		std::cerr << "RsPeerConfigSerialiser::serialiseNet() Size Error! " << offset << " != " << tlvsize << std::endl;
 #endif
 		ok = false;
 	}

@@ -23,6 +23,8 @@
  *
  */
 
+#include <sstream>
+
 #include "util/rsnet.h"
 #include "util/rsstring.h"
 #include "pqi/pqinetwork.h"
@@ -84,7 +86,7 @@ bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &addr);
 /******************************** Socket Fns  ***********************************/
 // Standard bind, on OSX anyway will not accept a longer socklen for IPv4.
 // so hidding details behind function.
-int     universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen)
+int universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen)
 {
 #ifdef SS_DEBUG
 	std::cerr << "universal_bind()";
@@ -192,6 +194,7 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 		default:
 			std::cerr << "sockaddr_storage_port() invalid addr.ss_family";
 			std::cerr << std::endl;
+			sockaddr_storage_dump(addr);
 			break;
 	}
 	return 0;
@@ -252,16 +255,27 @@ bool sockaddr_storage_setipv6(struct sockaddr_storage &addr, const sockaddr_in6 
 	return true;
 }
 
-bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name)
+bool sockaddr_storage_inet_pton(struct sockaddr_storage &addr, const char * ip_str)
 {
 #ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_ipv4_aton()";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_inet_pton" << std::endl;
 #endif
 
-	struct sockaddr_in *ipv4_ptr = to_ipv4_ptr(addr);
-	ipv4_ptr->sin_family = AF_INET;
-	return (1 == inet_aton(name, &(ipv4_ptr->sin_addr)));
+	struct sockaddr_in6 * addrv6p = (struct sockaddr_in6 *) &addr;
+	struct sockaddr_in * addrv4p = (struct sockaddr_in *) &addr;
+
+	if ( 1 == inet_pton(AF_INET6, ip_str, &(addrv6p->sin6_addr)) )
+	{
+		addr.ss_family = AF_INET6;
+		return true;
+	}
+	else if ( 1 == inet_pton(AF_INET, ip_str, &(addrv4p->sin_addr)) )
+	{
+		addr.ss_family = AF_INET;
+		return sockaddr_storage_ipv4_to_ipv6(addr);
+	}
+
+	return false;
 }
 
 bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)
@@ -418,24 +432,6 @@ std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr)
 	return output;
 }
 
-std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr)
-{
-	std::string output;
-	switch(addr.ss_family)
-	{
-		case AF_INET:
-			output = sockaddr_storage_ipv4_iptostring(addr);
-			break;
-		case AF_INET6:
-			output = sockaddr_storage_ipv6_iptostring(addr);
-			break;
-		default:
-			output = "INVALID_IP";
-			break;
-	}
-	return output;
-}
-
 std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr)
 {
 	std::string output;
@@ -487,8 +483,8 @@ bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isValidNet(addr);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_isValidNet() INVALID Family - error";
-			std::cerr << std::endl;
+			std::cerr << "sockaddr_storage_isValidNet() INVALID Family"
+					  << addr.ss_family << " - error"<< std::endl;
 			break;
 	}
 	return false;
@@ -678,9 +674,10 @@ bool sockaddr_storage_ipv6_copyip(struct sockaddr_storage &dst, const struct soc
 
 uint16_t sockaddr_storage_ipv6_port(const struct sockaddr_storage &addr)
 {
+#ifdef SS_DEBUG
 	std::cerr << "sockaddr_storage_ipv6_port()";
 	std::cerr << std::endl;
-
+#endif
 	const struct sockaddr_in6 *ipv6_ptr = to_const_ipv6_ptr(addr);
 	uint16_t port = ntohs(ipv6_ptr->sin6_port);
 	return port;
@@ -809,13 +806,75 @@ std::string sockaddr_storage_ipv4_iptostring(const struct sockaddr_storage &addr
 	return output;
 }
 
-std::string sockaddr_storage_ipv6_iptostring(const struct sockaddr_storage & /* addr */)
+std::string sockaddr_storage_iptostring(const struct sockaddr_storage & addr)
 {
 	std::string output;
-	output += "IPv6-ADDRESS-TODO";
+
+	switch (addr.ss_family){
+	case AF_INET:
+	{
+		output = sockaddr_storage_ipv4_iptostring(addr);
+		break;
+	}
+	case AF_INET6:
+	{
+		char addrStr[INET6_ADDRSTRLEN+1];
+		struct sockaddr_in6 * addrv6p = (struct sockaddr_in6 *) &addr;
+		inet_ntop(addr.ss_family, &(addrv6p->sin6_addr), addrStr, INET6_ADDRSTRLEN);
+		output = addrStr;
+		break;
+	}
+	default:
+	{
+		output = "INVALID_IP";
+		sockaddr_storage_dump(addr);
+	}}
+
 	return output;
 }
 
+void sockaddr_storage_dump(const sockaddr_storage & addr)
+{
+	// This function must not rely on others sockaddr_storage_*
+
+	std::stringstream output;
+	output << "sockaddr_storage_dump(addr) ";
+
+	switch (addr.ss_family){
+	case AF_INET:
+	{
+		const sockaddr_in * in = (const sockaddr_in *) & addr;
+		output << "addr.ss_family = AF_INET";
+		output << " in->sin_addr = ";
+		output << inet_ntoa(in->sin_addr);
+		output << " in->sin_port = ";
+		output << in->sin_port;
+		break;
+	}
+	case AF_INET6:
+	{
+		char addrStr[INET6_ADDRSTRLEN+1];
+		struct sockaddr_in6 * in6 = (struct sockaddr_in6 *) & addr;
+		inet_ntop(addr.ss_family, &(in6->sin6_addr), addrStr, INET6_ADDRSTRLEN);
+		output << "addr.ss_family = AF_INET6";
+		output << " in6->sin6_addr = ";
+		output << addrStr;
+		output << " in6->sin6_port = ";
+		output << in6->sin6_port;
+		break;
+	}
+	default:
+	{
+		output << "unknown addr.ss_family = ";
+		output << addr.ss_family;
+		output << " addr.__ss_align = ";
+		output << addr.__ss_align;
+		output << " addr.__ss_padding = ";
+		output << addr.__ss_padding;
+	}}
+
+	std::cout << output.str() << std::endl;
+}
 
 
 
@@ -904,23 +963,21 @@ bool sockaddr_storage_ipv4_isExternalNet(const struct sockaddr_storage &addr)
 }
 
 
-bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage & )
 {
-	std::cerr << "sockaddr_storage_ipv6_isnull() TODO";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_ipv6_isnull() TODO" << std::endl;
 
 	return false;
 }
 
-bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage & )
 {
-	std::cerr << "sockaddr_storage_ipv6_isValidNet() TODO";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_ipv6_isValidNet() TODO" << std::endl;
 
-	return false;
+	return true;
 }
 
-bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage & )
 {
 	std::cerr << "sockaddr_storage_ipv6_isLoopbackNet() TODO";
 	std::cerr << std::endl;
@@ -928,20 +985,18 @@ bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage &addr)
 	return false;
 }
 
-bool sockaddr_storage_ipv6_isPrivateNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isPrivateNet(const struct sockaddr_storage &)
 {
-	std::cerr << "sockaddr_storage_ipv6_isPrivateNet() TODO";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_ipv6_isPrivateNet() TODO" << std::endl;
 
 	return false;
 }
 
-bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &)
 {
-	std::cerr << "sockaddr_storage_ipv6_isExternalNet() TODO";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_ipv6_isExternalNet() TODO" << std::endl;
 
-	return false;
+	return true;
 }
 
 

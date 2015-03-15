@@ -92,7 +92,7 @@ bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port);
 bool sockaddr_storage_setipv4(struct sockaddr_storage &addr, const sockaddr_in *addr_ipv4);
 bool sockaddr_storage_setipv6(struct sockaddr_storage &addr, const sockaddr_in6 *addr_ipv6);
 
-bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name);
+bool sockaddr_storage_inet_pton(struct sockaddr_storage &addr, const char * ip_str);
 bool sockaddr_storage_ipv4_setport(struct sockaddr_storage &addr, const uint16_t port);
 
 bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr);
@@ -109,6 +109,7 @@ std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr);
+void sockaddr_storage_dump(const sockaddr_storage & addr);
 
 // output
 //void sockaddr_storage_output(const struct sockaddr_storage &addr, std::ostream &out);

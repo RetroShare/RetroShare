@@ -812,56 +812,31 @@ bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uin
 	return true;
 }
 
-bool 	p3Peers::setLocalAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
+bool p3Peers::setLocalAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
+	std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
 #endif
 
 	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
+	if ( sockaddr_storage_inet_pton(addr, addr_str.c_str()) )
+		if ( sockaddr_storage_setport(addr, port) )
+			return mPeerMgr->setLocalAddress(id, addr);
 
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setLocalAddress(id, addr);
-	}
 	return false;
 }
 
 bool 	p3Peers::setExtAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
+	std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
 #endif
 
-	// NOTE THIS IS IPV4 FOR NOW.
 	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
+	if ( sockaddr_storage_inet_pton(addr, addr_str.c_str()) )
+		if ( sockaddr_storage_setport(addr, port) )
+			return mPeerMgr->setExtAddress(id, addr);
 
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setExtAddress(id, addr);
-	}
 	return false;
 }
 

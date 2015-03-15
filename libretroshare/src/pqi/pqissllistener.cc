@@ -94,22 +94,28 @@ int 	pqissllistenbase::status()
 
 int	pqissllistenbase::setuplisten()
 {
-        int err;
-	if (active)
-		return -1;
+	int err;
 
-        lsock = socket(PF_INET, SOCK_STREAM, 0);
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+	if (active) return -1;
+
+	lsock = socket(PF_INET6, SOCK_STREAM, 0);
+
+#ifdef IPV6_V6ONLY
+	int no = 0;
+	err = setsockopt(lsock, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&no, sizeof(no));
+	if (err) std::cerr << "pqissl::Initiate_Connection: Error setting IPv6 socket dual stack" << std::endl;
+	else std::cerr << "pqissl::Initiate_Connection: Setting IPv6 socket dual stack" << std::endl;
+#endif // IPV6_V6ONLY
+
+
 #ifndef WINDOWS_SYS // ie UNIX
-        if (lsock < 0)
-        {
-		pqioutput(PQL_ALERT, pqissllistenzone, 
-		 "pqissllistenbase::setuplisten() Cannot Open Socket!");
-
+	if (lsock < 0)
+	{
+		pqioutput(PQL_ALERT, pqissllistenzone, "pqissllistenbase::setuplisten() Cannot Open Socket!");
 		return -1;
 	}
 
-        err = fcntl(lsock, F_SETFL, O_NONBLOCK);
+	err = fcntl(lsock, F_SETFL, O_NONBLOCK);
 	if (err < 0)
 	{
 		std::string out;
@@ -118,14 +124,12 @@ int	pqissllistenbase::setuplisten()
 
 		return -1;
 	}
-
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#else //WINDOWS_SYS 
-        if ((unsigned) lsock == INVALID_SOCKET)
-        {
-        std::string out = "pqissllistenbase::setuplisten() Cannot Open Socket!\n";
-        out += "Socket Error: "+ socket_errorType(WSAGetLastError());
-        pqioutput(PQL_ALERT, pqissllistenzone, out);
+#else // WINDOWS_SYS
+	if ((unsigned) lsock == INVALID_SOCKET)
+	{
+		std::string out = "pqissllistenbase::setuplisten() Cannot Open Socket!\n";
+		out += "Socket Error: "+ socket_errorType(WSAGetLastError());
+		pqioutput(PQL_ALERT, pqissllistenzone, out);
 
 		return -1;
 	}
@@ -141,8 +145,8 @@ int	pqissllistenbase::setuplisten()
 
 		return -1;
 	}
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#endif // WINDOWS_SYS
+
 
 	// setup listening address.
 
@@ -151,7 +155,7 @@ int	pqissllistenbase::setuplisten()
 		out += "\t FAMILY: " + sockaddr_storage_familytostring(laddr);
 		out += "\t ADDRESS: " + sockaddr_storage_tostring(laddr);
 		
-        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
                 //std::cerr << out.str() << std::endl;
 	}
 	
@@ -159,28 +163,28 @@ int	pqissllistenbase::setuplisten()
 	 * when we restart_listener.
 	 */
 
-    	{
-      		int on = 1;
+	{
+		int on = 1;
 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
       		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
-#else //WINDOWS_SYS 
+#else // WINDOWS_SYS
       		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on)) < 0)
-#endif 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-        	{
-            std::string out = "pqissllistenbase::setuplisten() Cannot setsockopt SO_REUSEADDR!\n";
-			showSocketError(out);
-			pqioutput(PQL_ALERT, pqissllistenzone, out);
-			std::cerr << out << std::endl;
+#endif // WINDOWS_SYS
 
-			exit(1); 
-        	}
-    	}
+			{
+				std::string out = "pqissllistenbase::setuplisten() Cannot setsockopt SO_REUSEADDR!\n";
+				showSocketError(out);
+				pqioutput(PQL_ALERT, pqissllistenzone, out);
+				std::cerr << out << std::endl;
+
+				exit(1);
+			}
+	}
 
 #ifdef OPEN_UNIVERSAL_PORT
 	struct sockaddr_storage tmpaddr = laddr;
+	tmpaddr.ss_family = PF_INET6;
 	sockaddr_storage_zeroip(tmpaddr);
 	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
 #else
