@@ -832,7 +832,7 @@ bool SetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset,
 	if (!data)
 		return false;
 
-	uint32_t tlvsize = GetTlvIpAddrPortV4Size();
+    uint32_t tlvsize = GetTlvIpAddrPortV6Size();
 	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
 
 	if (size < tlvend)
