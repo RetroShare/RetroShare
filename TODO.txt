@@ -29,7 +29,7 @@ E        [ ] Recommendation messages do not show complete links. Links show up i
 E        [X] Recommendation messages should not be signed by the retroshare team!!
 E        [X] when adding a friend through clicking on cert links, the add friend wizard is shown twice!
 M        [X] add a flag in friends option to allow auto-download of recommended files
-M        [ ] sound is not working for some users on linux. We also need a "test sound" button in config->sound
+M        [ ] sound is not working for some users on linux. We also need a "test sound" button in config->sound. 
 E        [ ] some widgets in the GUI do not follow the system style => GUI looks bad on these systems
          [X] display version ID in windows version
 E        [ ] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
@@ -77,7 +77,7 @@ E        [ ] remove TCP, TOR, UDP from the status column, and move it in front o
          [X] remove the double feed publication
       
        libretroshare
-H        [ ] fix the data race in pqissl
+H        [X] fix the data race in pqissl
 H        [ ] valgrind pass for data races
 H        [ ] valgrind pass for memory leaks 
 H        [ ] valgrind pass for memory errors 
@@ -90,6 +90,7 @@ H        [ ] RsGxsDataAccess::processRequests locks mDataMutex until all request
        Packaging
          [X] check compilation on debian
          [X] check compilation on ARM
+			[ ] Sound files should be part of the install package
 
  Post v0.6 release changes
  =========================
