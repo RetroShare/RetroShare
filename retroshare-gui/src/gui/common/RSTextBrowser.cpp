@@ -12,12 +12,17 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 
 	mShowImages = true;
 	mImageBlockWidget = NULL;
+	mLinkClickActive = true;
 
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 }
 
 void RSTextBrowser::linkClicked(const QUrl &url)
 {
+	if (!mLinkClickActive) {
+		return;
+	}
+
 	// some links are opened directly in the QTextBrowser with open external links set to true,
 	// so we handle links by our own
 
@@ -123,4 +128,9 @@ void RSTextBrowser::resetImagesStatus(bool load)
 		mImageBlockWidget->hide();
 	}
 	mShowImages = load;
+}
+
+void RSTextBrowser::activateLinkClick(bool active)
+{
+	mLinkClickActive = active;
 }

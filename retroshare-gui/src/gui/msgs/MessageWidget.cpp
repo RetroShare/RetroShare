@@ -164,6 +164,8 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 
 	ui.tagsLabel->setVisible(false);
 
+	ui.msgText->activateLinkClick(false);
+
 	if (isControlled == false) {
 		processSettings("MessageWidget", true);
 	}
