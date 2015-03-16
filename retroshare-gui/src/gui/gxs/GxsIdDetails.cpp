@@ -207,7 +207,7 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 	// the GUI thread, which is not allowed by Qt => some avatars fail to load.
 
 	bool isGuiThread = (QThread::currentThread() == qApp->thread());
-	if (isGuiThread && rsIdentity && rsIdentity->getIdDetails(id, details)) {
+	if (isGuiThread && !RsAutoUpdatePage::eventsLocked() && rsIdentity && rsIdentity->getIdDetails(id, details)) {
 		callback(GXS_ID_DETAILS_TYPE_DONE, details, object, data);
 		return true;
 	}
