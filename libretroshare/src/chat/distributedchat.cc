@@ -191,16 +191,20 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
         if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,error_status))
         {
+        bool res = false ;
+
             switch(error_status)
             {
                 case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot verify." << std::endl;
+                    res =true ;
                                         break ;
                 case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/MITM?." << std::endl;
+                    res =false ;
                                         break ;
             default: break ;
             }
         free(memory) ;
-            return false;
+            return res;
         }
     free(memory) ;
 
