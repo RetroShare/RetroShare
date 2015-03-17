@@ -77,19 +77,22 @@ void DistantChatService::flush()
 
     for(std::map<RsGxsId,DistantChatPeerInfo>::iterator it(_distant_chat_contacts.begin());it!=_distant_chat_contacts.end();++it)
     {
-        if(it->second.last_contact+8+DISTANT_CHAT_KEEP_ALIVE_TIMEOUT < now && it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
-    {
-        std::cerr << "(II) DistantChatService:: connexion interrupted with peer." << std::endl;
-        it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
-        it->second.virtual_peer_id.clear() ;
+        if(it->second.last_contact+20+DISTANT_CHAT_KEEP_ALIVE_TIMEOUT < now && it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
+        {
+            std::cerr << "(II) DistantChatService:: connexion interrupted with peer." << std::endl;
+            it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
+            it->second.virtual_peer_id.clear() ;
 
-        // Also reset turtle router monitoring so as to make the tunnel handling more responsive. If we don't do that,
-        // the TR will wait 60 secs for the tunnel to die, which causes a significant waiting time in the chat window.
+            // Also reset turtle router monitoring so as to make the tunnel handling more responsive. If we don't do that,
+            // the TR will wait 60 secs for the tunnel to die, which causes a significant waiting time in the chat window.
 
-        std::cerr << "(II) DistantChatService:: forcing new tunnel campain." << std::endl;
+            if(it->second.direction == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+            {
+                std::cerr << "(II) DistantChatService:: forcing new tunnel campain." << std::endl;
 
-        mTurtle->forceReDiggTunnels( hashFromGxsId(it->first) );
-    }
+                mTurtle->forceReDiggTunnels( hashFromGxsId(it->first) );
+            }
+        }
         if(it->second.last_keep_alive_sent + DISTANT_CHAT_KEEP_ALIVE_TIMEOUT < now && it->second.status == RS_DISTANT_CHAT_STATUS_CAN_TALK)
         {
             RsChatStatusItem *cs = new RsChatStatusItem ;
