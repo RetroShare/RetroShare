@@ -33,6 +33,8 @@ M        [ ] sound is not working for some users on linux. We also need a "test 
 E        [ ] some widgets in the GUI do not follow the system style => GUI looks bad on these systems
          [X] display version ID in windows version
 E        [ ] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
+E        [ ] "Friends details" should show both PGP key and RS certs in different tabs with appropriate names.
+             It should specify clearly which one should be used to make friends.
       
        Messages
 H        [ ] distant messages should be made async-ed
@@ -41,6 +43,9 @@ M        [X] sent messages to direct peers in the Sent box have inconsistent To 
              Raises an error if you click on it.
 H        [ ] Merge the new messaging format? (or keep this for > 0.6)
 M        [X] icons for GxsTreeWidgetItem are too small in distant messages list widget
+E        [ ] "from" should be disabled until we actually use a GXS id in the destination list.
+E        [ ] "show all" and "show everyone" in destination list are duplicate names for different things. 
+             Either remove one of them, or use appropriate names.
       
        Channels
          [X] Unsubscribed channels should show an info page when selected, like forums
@@ -90,7 +95,7 @@ H        [ ] RsGxsDataAccess::processRequests locks mDataMutex until all request
        Packaging
          [X] check compilation on debian
          [X] check compilation on ARM
-			[ ] Sound files should be part of the install package
+         [ ] Sound files should be part of the install package
 
  Post v0.6 release changes
  =========================
