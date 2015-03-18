@@ -55,6 +55,7 @@ void generatePasswordHash() ;
 #endif
 
 #ifdef ENABLE_WEBUI
+#include <stdarg.h>
 #include "api/ApiServerMHD.h"
 #include "api/RsControlModule.h"
 #endif

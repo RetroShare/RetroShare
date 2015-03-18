@@ -1,5 +1,9 @@
 #pragma once
 
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdarg.h>
 #include <microhttpd.h>
 #include <string>
 
