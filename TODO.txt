@@ -35,6 +35,8 @@ E        [ ] some widgets in the GUI do not follow the system style => GUI looks
 E        [ ] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
 E        [ ] "Friends details" should show both PGP key and RS certs in different tabs with appropriate names.
              It should specify clearly which one should be used to make friends.
+E        [ ] addFriend does not work when the cert contains signatures.
+E        [ ] PGP signatures are not transmited by discovery2. 
       
        Messages
 H        [ ] distant messages should be made async-ed
