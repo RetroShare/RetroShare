@@ -52,7 +52,7 @@ E        [ ] "show all" and "show everyone" in destination list are duplicate na
 H        [X] marking all as read in channels takes time. The channel icon should show a waiting clock 
              during the operation to avoid the user to re-click many times in the hope to get the posts marked as read.
          [X] channels items show a 0 left to the up/Dn buttons. What is it??
-         [ ] allow to post on channels when attachment is not in shared files. Just display a warning.
+         [X] allow to post on channels when attachment is not in shared files. Just display a warning.
       
        Chat lobbies
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
