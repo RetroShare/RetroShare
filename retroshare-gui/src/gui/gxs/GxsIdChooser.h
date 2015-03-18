@@ -25,7 +25,7 @@
 #define _GXS_ID_CHOOSER_H
 
 #include <QComboBox>
-#include "util/TokenQueue.h"
+#include <retroshare/rsgxsifacetypes.h>
 
 // This class implement a basic RS functionality which is that ComboBox displaying Id
 // should update regularly. They also should update only when visible, to save CPU time.
@@ -38,7 +38,7 @@ class RsGxsUpdateBroadcastBase;
 #define IDCHOOSER_ANON_DEFAULT  0x0002
 #define IDCHOOSER_NO_CREATE     0x0004
 
-class GxsIdChooser : public QComboBox, public TokenResponse
+class GxsIdChooser : public QComboBox
 {
 	Q_OBJECT
 
@@ -48,9 +48,6 @@ public:
 	virtual ~GxsIdChooser();
 
 	void setFlags(uint32_t flags) ;
-
-	/* TokenResponse */
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	enum ChosenId_Ret {None, KnowId, UnKnowId, NoId} ;
 	void loadIds(uint32_t chooserFlags, const RsGxsId &defId);
@@ -69,15 +66,13 @@ private slots:
 	void indexActivated(int index);
 
 private:
-	void requestIdList() ;
-	void loadPrivateIds(uint32_t token);
+    void loadPrivateIds();
 	void setDefaultItem();
 
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
 	bool mFirstLoad;
 
-	TokenQueue *mIdQueue;
 	RsGxsUpdateBroadcastBase *mBase;
 };
 

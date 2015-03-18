@@ -56,7 +56,6 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	/* Initialize ui */
 	setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
-	mIdQueue = NULL;
 	mFirstLoad = true;
 
 	mDefaultId.clear() ;
@@ -72,8 +71,6 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	/* Connect signals */
 	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myCurrentIndexChanged(int)));
 	connect(this, SIGNAL(activated(int)), this, SLOT(indexActivated(int)));
-
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 }
 
 void GxsIdChooser::setFlags(uint32_t flags)
@@ -84,10 +81,6 @@ void GxsIdChooser::setFlags(uint32_t flags)
 
 GxsIdChooser::~GxsIdChooser()
 {
-	if (mIdQueue) {
-		delete(mIdQueue);
-		mIdQueue = NULL;
-	}
 }
 
 void GxsIdChooser::fillDisplay(bool complete)
@@ -165,27 +158,14 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
     chooser->blockSignals(false) ;
 }
 
-void GxsIdChooser::loadPrivateIds(uint32_t token)
+void GxsIdChooser::loadPrivateIds()
 {
 	if (mFirstLoad) {
 		clear();
 	}
 
 	std::list<RsGxsId> ids;
-	//rsIdentity->getOwnIds(ids);
-	std::vector<RsGxsIdGroup> datavector;
-	if (!rsIdentity->getGroupData(token, datavector)) {
-		std::cerr << "GxsIdChooser::loadPrivateIds() Error getting GroupData";
-		std::cerr << std::endl;
-		return;
-	}
-
-	for (std::vector<RsGxsIdGroup>::iterator vit = datavector.begin(); vit != datavector.end(); ++vit) {
-		RsGxsIdGroup data = (*vit);
-		if (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
-			ids.push_back((RsGxsId) data.mMeta.mGroupId);
-		}
-	}
+    rsIdentity->getOwnIds(ids);
 
 	//rsIdentity->getDefaultId(defId);
 	// Prefer to use an application specific default???
@@ -330,41 +310,5 @@ void GxsIdChooser::updateDisplay(bool complete)
 	Q_UNUSED(complete)
 
 	/* Update identity list */
-	requestIdList();
-}
-
-void GxsIdChooser::requestIdList()
-{
-	if (!mIdQueue) {
-		return;
-	}
-
-	mIdQueue->cancelActiveRequestTokens(IDCHOOSER_REFRESH);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	uint32_t token;
-
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDCHOOSER_REFRESH);
-}
-
-void GxsIdChooser::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	Q_UNUSED(queue)
-
-#ifdef IDCHOOSER_DEBUG
-	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-
-	switch(req.mUserType) {
-	case IDCHOOSER_REFRESH:
-		loadPrivateIds(req.mToken);
-		break;
-	default:
-		std::cerr << "IdDialog::loadRequest() ERROR";
-		std::cerr << std::endl;
-		break;
-	}
+    loadPrivateIds();
 }
