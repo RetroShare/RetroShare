@@ -3,6 +3,8 @@ TARGET = retroshare-nogui
 CONFIG += bitdht
 #CONFIG += introserver
 #CONFIG += sshserver
+# webinterface, requires libmicrohttpd
+CONFIG += webui
 CONFIG -= qt xml gui
 
 # if you are linking against the libretroshare with gxs.
@@ -197,6 +199,11 @@ introserver {
 	DEFINES *= RS_INTRO_SERVER
 }
 
+webui {
+	DEFINES *= ENABLE_WEBUI
+	LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+	INCLUDEPATH += ../../libresapi/src
+}
 
 sshserver {
 

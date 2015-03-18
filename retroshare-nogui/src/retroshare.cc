@@ -51,10 +51,12 @@
 // NASTY GLOBAL VARIABLE HACK - NEED TO THINK OF A BETTER SYSTEM.
 #include "rpc/proto/rpcprotosystem.h"
 
+void generatePasswordHash() ;
 #endif
 
-#ifdef RS_SSH_SERVER
-void generatePasswordHash() ;
+#ifdef ENABLE_WEBUI
+#include "api/ApiServerMHD.h"
+#include "api/RsControlModule.h"
 #endif
 
 /* Basic instructions for running libretroshare as background thread.
@@ -69,6 +71,33 @@ void generatePasswordHash() ;
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_WEBUI
+
+    std::string docroot;
+    bool is_portable = false;
+#ifdef WINDOWS_SYS
+    // test for portable version
+    if (GetFileAttributes(L"portable") != (DWORD) -1) {
+        is_portable = true;
+    }
+#endif
+
+    resource_api::ApiServerMHD httpd(docroot, 9090);
+
+    resource_api::RsControlModule ctrl_mod(argc, argv, httpd.getApiServer().getStateTokenServer(), &httpd.getApiServer());
+    httpd.getApiServer().addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
+
+    httpd.start();
+
+    while(ctrl_mod.processShouldExit() == false)
+    {
+        usleep(20*1000);
+    }
+    httpd.stop();
+
+    return 1;
+#endif
+
 	/* Retroshare startup is configured using an RsInit object.
 	 * This is an opaque class, which the user cannot directly tweak
 	 * If you want to peek at whats happening underneath look in

@@ -8,5 +8,6 @@ SUBDIRS += \
         libbitdht/src/libbitdht.pro \
         libretroshare/src/libretroshare.pro \
         retroshare-gui/src/retroshare-gui.pro \
+		libresapi/src/libresapi.pro	\
         retroshare-nogui/src/retroshare-nogui.pro \
         plugins/plugins.pro
