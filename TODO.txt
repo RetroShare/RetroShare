@@ -9,7 +9,7 @@ Legend:
 Level |  What
 -------------------------------------------------------------------------------------------------------------------
        Posted:
-E        [ ] it's not possible to create a Posted thread without a Owner. 
+E        [X] it's not possible to create a Posted thread without a Owner. 
              Bug? If not, then remove "No signature" from selection box
 E        [ ] Show an info page for unsubscribed posted threads (same as forums)
 E        [X] Links in Posted cannot be clicked.
@@ -17,7 +17,7 @@ M        [ ] Fix the counting of unread messages in Posted. Now it's wrong.
 E        [X] Make the GUI of Posted more sexy: more compact items, remove unecessary text, use consistent icons,...
       
        Forums
-E        [ ] it's not possible to create a Forum thread without a Owner. 
+E        [X] it's not possible to create a Forum thread without a Owner. 
              Bug? If not, then remove "No signature" from selection box
          [X] the tooltip over GXS ids should show the avatar on the left side.
          [X] fix data race between GXS ID default icons

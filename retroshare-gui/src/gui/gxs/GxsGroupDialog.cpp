@@ -500,15 +500,9 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 	std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 	std::cerr << std::endl;
 
-	switch (ui.idChooser->getChosenId(meta.mAuthorId)) {
-	case GxsIdChooser::KnowId:
-	case GxsIdChooser::UnKnowId:
-		break;
-	case GxsIdChooser::NoId:
-	case GxsIdChooser::None:
-	default:
-		return false;
-	}//switch (ui.idChooser->getChosenId(meta.mAuthorId))
+    // here would be the place to check for empty author id
+    // but GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN is currently not used by any service
+    ui.idChooser->getChosenId(meta.mAuthorId);
 
 	QString name = getName();
 	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
