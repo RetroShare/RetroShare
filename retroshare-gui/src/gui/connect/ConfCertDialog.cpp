@@ -84,13 +84,13 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-	 if(id.isNull())
-		 ui._useOldFormat_CB->setChecked(true) ;
-	 else
-	 {
-		 ui._useOldFormat_CB->setChecked(false) ;
-		 ui._useOldFormat_CB->setEnabled(false) ;
-	 }
+//	 if(id.isNull())
+//		 ui._useOldFormat_CB->setChecked(true) ;
+//	 else
+//	 {
+//		 ui._useOldFormat_CB->setChecked(false) ;
+//		 ui._useOldFormat_CB->setEnabled(false) ;
+//	 }
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
 	ui.headerFrame->setHeaderText(tr("Friend Details"));
@@ -106,10 +106,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
     connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
-    connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
-    // connect(ui._anonymous_routing_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
-    // connect(ui._discovery_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
-    // connect(ui._forums_channels_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
+    connect(ui._shouldAddSignatures_CB_2, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
@@ -168,13 +165,14 @@ void ConfCertDialog::load()
     if(detail.isOnlyGPGdetail && !rsPeers->isKeySupported(pgpId))
 	 {
 		 ui.make_friend_button->setEnabled(false) ;
-		 ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
+         ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
 	 }
 	 else
 	 {
-		 ui.make_friend_button->setEnabled(true) ;
+         ui.make_friend_button->setEnabled(true) ;
 		 ui.make_friend_button->setToolTip("") ;
 	 }
+
 
      ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
      ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
@@ -261,7 +259,8 @@ void ConfCertDialog::load()
 		 ui.pgpfingerprint_label->show();
 
 		  ui.stabWidget->setTabEnabled(2,true) ;
-		  ui.stabWidget->setTabEnabled(3,true) ;
+        ui.stabWidget->setTabEnabled(3,true) ;
+          ui.stabWidget->setTabEnabled(4,true) ;
 	 } 
 	 else 
 	 {
@@ -289,8 +288,9 @@ void ConfCertDialog::load()
         ui.tabWidget->hide();
 
 		  ui.stabWidget->setTabEnabled(2,true) ;
-		  ui.stabWidget->setTabEnabled(3,false) ;
-		  ui._useOldFormat_CB->setEnabled(false) ;
+        ui.stabWidget->setTabEnabled(3,false) ;
+          ui.stabWidget->setTabEnabled(4,false) ;
+          //ui._useOldFormat_CB->setEnabled(false) ;
     }
 
     if (detail.gpg_id == rsPeers->getGPGOwnId()) {
@@ -419,21 +419,31 @@ void ConfCertDialog::loadInvitePage()
         close();
         return;
     }
-	 std::string invite ;
+     std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB_2->isChecked()) ; // this needs to be a SSL id
 
-	 if(detail.isOnlyGPGdetail)
-		 invite = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
-	 else
-		 invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
-
-    ui.userCertificateText->setReadOnly(true);
-    ui.userCertificateText->setMinimumHeight(200);
-    ui.userCertificateText->setMinimumWidth(530);
+    ui.userCertificateText_2->setReadOnly(true);
+    ui.userCertificateText_2->setMinimumHeight(200);
+    ui.userCertificateText_2->setMinimumWidth(530);
     QFont font("Courier New",10,50,false);
     font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
     font.setStyle(QFont::StyleNormal);
-    ui.userCertificateText->setFont(font);
-    ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
+    ui.userCertificateText_2->setFont(font);
+    ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
+
+     if(!detail.isOnlyGPGdetail)
+     {
+         std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+
+         ui.userCertificateText->setReadOnly(true);
+         ui.userCertificateText->setMinimumHeight(200);
+         ui.userCertificateText->setMinimumWidth(530);
+         QFont font("Courier New",10,50,false);
+         font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+         font.setStyle(QFont::StyleNormal);
+         ui.userCertificateText->setFont(font);
+         ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
+     }
+
 }
 
 

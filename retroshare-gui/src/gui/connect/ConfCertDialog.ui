@@ -60,7 +60,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="stabWidget">
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="icon">
@@ -759,6 +759,40 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="tab_7">
+         <attribute name="title">
+          <string>PGP Key</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QTextEdit" name="userCertificateText_2"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QCheckBox" name="_shouldAddSignatures_CB_2">
+              <property name="text">
+               <string>Include signatures</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
         <widget class="QWidget" name="tab_3">
          <attribute name="icon">
           <iconset resource="../images.qrc">
@@ -777,13 +811,6 @@ p, li { white-space: pre-wrap; }
              <widget class="QCheckBox" name="_shouldAddSignatures_CB">
               <property name="text">
                <string>Include signatures</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_useOldFormat_CB">
-              <property name="text">
-               <string>Use old key format</string>
               </property>
              </widget>
             </item>
