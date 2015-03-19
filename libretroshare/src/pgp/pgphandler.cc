@@ -987,12 +987,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& 
 	//
 	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
 
-	if(!ops_validate_key_signatures(result,keydata,tmp_keyring,cb_get_passphrase)) 
-	{
-		std::cerr << "Cannot validate self-signature for this certificate. Format error?" << std::endl;
-		error_string = "Cannot validate self signature for this certificate. Format error?" ;
-		return false ;
-	}
+    ops_validate_key_signatures(result,keydata,tmp_keyring,cb_get_passphrase) ;
 
 	bool found = false ;
 
@@ -1265,7 +1260,7 @@ bool PGPHandler::decryptTextFromFile(const RsPgpId&,std::string& text,const std:
 
 	if (f == NULL)
 	{
-		std::cerr << "Cannot open file " << inputfile << " for read." << std::endl;
+        std::cerr << "Cannot open file " << inputfile << " for read." << std::endl;
 		return false;
 	}
 
