@@ -1,6 +1,7 @@
 #include "IdentityHandler.h"
 
 #include <retroshare/rsidentity.h>
+#include <time.h>
 
 #include "Operators.h"
 #include "ApiTypes.h"
