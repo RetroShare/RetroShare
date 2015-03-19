@@ -477,23 +477,23 @@ bool	AuthGPG::getGPGSignedList(std::list<RsPgpId> &ids)
 	return getGPGFilteredList(ids,&filter_OwnSigned);
 }
 
-bool	AuthGPG::getCachedGPGCertificate(const RsPgpId &id, std::string &certificate)
-{
-	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-#ifdef LIMIT_CERTIFICATE_SIZE
-	certificate = PGPHandler::SaveCertificateToString(RsPgpId(id),false) ;
-#else
-	certificate = PGPHandler::SaveCertificateToString(RsPgpId(id),true) ;
-#endif
-
+// bool	AuthGPG::getCachedGPGCertificate(const RsPgpId &id, std::string &certificate)
+// {
+// 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 // #ifdef LIMIT_CERTIFICATE_SIZE
-// 	std::string cleaned_key ;
-// 	if(PGPKeyManagement::createMinimalKey(certificate,cleaned_key))
-// 		certificate = cleaned_key ;
+// 	certificate = PGPHandler::SaveCertificateToString(RsPgpId(id),false) ;
+// #else
+// 	certificate = PGPHandler::SaveCertificateToString(RsPgpId(id),true) ;
 // #endif
-
-	return certificate.length() > 0 ;
-}
+// 
+// // #ifdef LIMIT_CERTIFICATE_SIZE
+// // 	std::string cleaned_key ;
+// // 	if(PGPKeyManagement::createMinimalKey(certificate,cleaned_key))
+// // 		certificate = cleaned_key ;
+// // #endif
+// 
+// 	return certificate.length() > 0 ;
+// }
 
 /*****************************************************************
  * Loading and Saving Certificates - this has to 

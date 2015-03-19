@@ -179,7 +179,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual std::string SaveCertificateToString(const RsPgpId &id,bool include_signatures) ;
 
 		// Cached certificates.
-		bool   getCachedGPGCertificate(const RsPgpId &id, std::string &certificate);
+		//bool   getCachedGPGCertificate(const RsPgpId &id, std::string &certificate);
 
 		/*********************************************************************************/
 		/************************* STAGE 6 ***********************************************/
