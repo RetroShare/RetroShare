@@ -10,11 +10,9 @@
 
 #include "api/JsonStream.h"
 
-#ifndef MHD_CONTENT_READER_END_OF_STREAM
-#define MHD_CONTENT_READER_END_OF_STREAM ((size_t) -1LL)
-#endif
 
-#ifndef MHD_create_response_from_fd
+#if MHD_VERSION < 0x00092000
+#define MHD_CONTENT_READER_END_OF_STREAM ((size_t) -1LL)
 /**
  * Create a response object. The response object can be extended with
  * header information and then be used any number of times.
@@ -23,11 +21,6 @@
  * @param fd file descriptor referring to a file on disk with the
  * data; will be closed when response is destroyed;
  * fd should be in 'blocking' mode
- * @param offset offset to start reading from in the file;
- * Be careful! `off_t` may have been compiled to be a
- * 64-bit variable for MHD, in which case your application
- * also has to be compiled using the same options! Read
- * the MHD manual for more details.
  * @return NULL on error (i.e. invalid arguments, out of memory)
  * @ingroup response
  */
@@ -35,14 +28,18 @@ struct MHD_Response * MHD_create_response_from_fd(size_t size, int fd)
 {
 	unsigned char *buf = (unsigned char *)malloc(size) ;
 
-	if(read(fd,buf,size) != size)
+    if(buf == 0 || read(fd,buf,size) != size)
 	{
-		std::cerr << "READ error in file descriptor " << fd << std::endl;
+        std::cerr << "malloc failed or READ error in file descriptor " << fd <<  " requested read size was " << size << std::endl;
+        fclose(fd);
 		free(buf) ;
 		return NULL ;
 	}
 	else
-		return MHD_create_response_from_data(size, buf,0,1) ;
+    {
+        fclose(fd);
+        return MHD_create_response_from_data(size, buf,1,0) ;
+    }
 }
 #endif
 
@@ -204,8 +201,11 @@ public:
         MHD_destroy_response(resp);
         return MHD_YES;
     }
-
+#if MHD_VERSION >= 0x00092000
+    static ssize_t contentReadercallback(void *cls, uint64_t pos, char *buf, size_t max)
+#else // old version
     static int contentReadercallback(void *cls, uint64_t pos, char *buf, int max)
+#endif
     {
         MHDFilestreamerHandler* handler = (MHDFilestreamerHandler*)cls;
         if(pos >= handler->mSize)
