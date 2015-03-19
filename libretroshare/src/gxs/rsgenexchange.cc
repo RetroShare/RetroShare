@@ -470,7 +470,13 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
 
     if (needIdentitySign)
     {
-        if(mGixs)
+        if(grpMeta.mAuthorId.isNull())
+        {
+            std::cerr << "RsGenExchange::createGroupSignatures() ";
+            std::cerr << "Group signature is required by service, but the author id is null." << std::endl;
+            id_ret = SIGN_FAIL;
+        }
+        else if(mGixs)
         {
             bool haveKey = mGixs->havePrivateKey(grpMeta.mAuthorId);
 
