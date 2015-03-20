@@ -1,5 +1,52 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   GUI
+      - Fixed content of GxsIdChooser for Qt 5 by setting dynamicSortFilter to false.
+      - Change in the default value (Qt 4 = false, Qt 5 = true)
+      - made 2 different pages in ConfCertDialog for PGP key and RS certificate. Removed the old format checkbox.
+      - fixed update of info in ShareDialog (patch from Sentry). Updated the text to replace 
+        Friends by friend nodes
+      - added check for empty author id in gxs group creation
+      - GxsIdChooser: request only data for own ids (was requesting all ids before)
+      - Click on a certificate in a message (MessageWidget) shows the add friend wizard only once.
+      - Added one more check of RsAutoUpdatePage::eventsLocked to GxsIdDetails::process
+      - added mask to select which icons to show in RsGxsIdTreeWidgetItem. Kept only avatar in 
+        ChatLobby participant list
+
+   GXS   
+      - use notify for gxs events. Removed the previous polling based system. Now multiple clients 
+        can receive gxs changes. This also fixes the always growing changes queue in rs-nogui.
+      - GxsGroupDialog: allow to create groups (e.g. channels, forums, posted) without an author
+
+   Chat
+      - made signature verification pass when no key is present in the cache for lobby events
+      - increased responsivness of distant chat by forcing tunnel re-digging when no activity is 
+        detected. WARNING: the new timestamps make the communication break will peers not up to date, 
+        since they will not send keep alive packets on the same delay basis.
+      - removed dead code in chat lobbies
+      
+   Channels
+      - removed the constraint of sharing own files only in channels. Replaced it by a warning, 
+         to allow peers to post from other locations etc. (port from v0.5.5 rev. 6198)
+      - Added waiting indicator to group tree for channels/posted when using "Mark all as read/unread".
+
+   PGP
+      - commented out unused (and buggy) function in authgpg
+      - fixed self-signature checking for imported keys, previously causing imported certificates 
+         with signatures to be rejected. Also fixes bug preventing discovery to send signatures.
+
+   WebUI
+      - added resource_api and rs-nogui-webui (requires libmicrohttpd, Html files are not included)
+      - added microhttpd-dev as an additional dependency in packaging script
+      
+   Other
+      - fixed compile with different versions of libmicrohttpd       
+      - fixed serialisation bug likely causing the loss of peers.cfg (Thx G10H4ck for finding this)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 14 Mar 2015 16:00:00 +0100
+
+retroshare06 (0.6.0-0.8018~precise) precise; urgency=low
+
    Improvements
       * Identities
          - moved signature validation and encryption one level up into p3IdService. 
