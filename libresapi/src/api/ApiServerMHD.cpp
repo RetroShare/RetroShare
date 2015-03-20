@@ -10,8 +10,10 @@
 
 #include "api/JsonStream.h"
 
-
-#if MHD_VERSION < 0x00092000
+// old version number use hex, new ones use decimal numbers
+// this is a hex number: 0x14 = 20
+// -> 0.9.20
+#if MHD_VERSION < 0x00091400
 #define MHD_CONTENT_READER_END_OF_STREAM ((size_t) -1LL)
 /**
  * Create a response object. The response object can be extended with
@@ -201,7 +203,7 @@ public:
         MHD_destroy_response(resp);
         return MHD_YES;
     }
-#if MHD_VERSION >= 0x00092000
+#if MHD_VERSION >= 0x00091400
     static ssize_t contentReadercallback(void *cls, uint64_t pos, char *buf, size_t max)
 #else // old version
     static int contentReadercallback(void *cls, uint64_t pos, char *buf, int max)
