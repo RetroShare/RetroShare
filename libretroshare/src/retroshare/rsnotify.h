@@ -34,9 +34,11 @@
 #include <stdint.h>
 
 #include "rsturtle.h"
+#include "rsgxsifacetypes.h"
 
 class ChatId;
 class ChatMessage;
+class RsGxsChanges;
 
 class RsNotify;
 extern RsNotify   *rsNotify;
@@ -215,6 +217,7 @@ class NotifyClient
 		virtual void notifyOwnStatusMessageChanged    () {}
 		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
 		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
+        virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
 
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary   () {}

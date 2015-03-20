@@ -57,6 +57,9 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary();
+
+        virtual void notifyGxsChange(const RsGxsChanges& change);
+
 #ifdef REMOVE
 		virtual void notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status);
 		virtual void notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status);
@@ -121,6 +124,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void diskFull(int,int) const ;
 		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
 		void peerStatusChangedSummary() const;
+        void gxsChange(const RsGxsChanges& /* changes  */);
 #ifdef REMOVE
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int list, int type) const ;

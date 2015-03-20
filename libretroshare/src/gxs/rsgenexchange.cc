@@ -35,6 +35,7 @@
 #include "retroshare/rsgrouter.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
+#include "rsserver/p3face.h"
 
 #include <algorithm>
 
@@ -992,105 +993,67 @@ bool RsGenExchange::checkAuthenFlag(const PrivacyBitPos& pos, const uint8_t& fla
     }
 }
 
-void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
-{
-	RS_STACK_MUTEX(mGenMtx) ;
-
-#ifdef GEN_EXCH_DEBUG
-	std::cerr << "RsGenExchange::receiveChanges()" << std::endl;
-#endif
-	std::vector<RsGxsNotify*>::iterator vit = changes.begin();
-
-	for(; vit != changes.end(); ++vit)
-	{
-		RsGxsNotify* n = *vit;
-		RsGxsGroupChange* gc;
-		RsGxsMsgChange* mc;
-		if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
-		{
-				mMsgChange.push_back(mc);
-		}
-		else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != NULL)
-		{
-				mGroupChange.push_back(gc);
-		}
-		else
-		{
-#warning cyril: very weird code. Why delete an element without removing it from the array
-			delete n;	
-		}
-	}
-
-}
-
 static void addMessageChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs, const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChanged)
 {
-	if (msgs.empty()) {
-		msgs = msgChanged;
-	} else {
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mapIt;
-		for (mapIt = msgChanged.begin(); mapIt != msgChanged.end(); ++mapIt) {
-			const RsGxsGroupId &grpId = mapIt->first;
-			const std::vector<RsGxsMessageId> &srcMsgIds = mapIt->second;
-			std::vector<RsGxsMessageId> &destMsgIds = msgs[grpId];
+    if (msgs.empty()) {
+        msgs = msgChanged;
+    } else {
+        std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mapIt;
+        for (mapIt = msgChanged.begin(); mapIt != msgChanged.end(); ++mapIt) {
+            const RsGxsGroupId &grpId = mapIt->first;
+            const std::vector<RsGxsMessageId> &srcMsgIds = mapIt->second;
+            std::vector<RsGxsMessageId> &destMsgIds = msgs[grpId];
 
-			std::vector<RsGxsMessageId>::const_iterator msgIt;
-			for (msgIt = srcMsgIds.begin(); msgIt != srcMsgIds.end(); ++msgIt) {
-				if (std::find(destMsgIds.begin(), destMsgIds.end(), *msgIt) == destMsgIds.end()) {
-					destMsgIds.push_back(*msgIt);
-				}
-			}
-		}
-	}
+            std::vector<RsGxsMessageId>::const_iterator msgIt;
+            for (msgIt = srcMsgIds.begin(); msgIt != srcMsgIds.end(); ++msgIt) {
+                if (std::find(destMsgIds.begin(), destMsgIds.end(), *msgIt) == destMsgIds.end()) {
+                    destMsgIds.push_back(*msgIt);
+                }
+            }
+        }
+    }
 }
 
-void RsGenExchange::msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta)
+void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 {
-	if(mGenMtx.trylock())
-	{
-		while(!mMsgChange.empty())
-		{
-			RsGxsMsgChange* mc = mMsgChange.back();
-			if (mc->metaChange())
-			{
-				addMessageChanged(msgsMeta, mc->msgChangeMap);
-			}
-			else
-			{
-				addMessageChanged(msgs, mc->msgChangeMap);
-			}
-			mMsgChange.pop_back();
-			delete mc;
-		}
-            mGenMtx.unlock();
-	}
-}
+#ifdef GEN_EXCH_DEBUG
+    std::cerr << "RsGenExchange::receiveChanges()" << std::endl;
+#endif
+    RsGxsChanges out;
+    out.mService = getTokenService();
 
-void RsGenExchange::groupsChanged(std::list<RsGxsGroupId>& grpIds, std::list<RsGxsGroupId>& grpIdsMeta)
-{
-
-	if(mGenMtx.trylock())
-	{
-		while(!mGroupChange.empty())
-		{
-			RsGxsGroupChange* gc = mGroupChange.back();
-			std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
-			std::list<RsGxsGroupId>::iterator lit = gList.begin();
-			for(; lit != gList.end(); ++lit)
-				if (gc->metaChange())
-				{
-					grpIdsMeta.push_back(*lit);
-				}
-				else
-				{
-					grpIds.push_back(*lit);
-				}
-
-			mGroupChange.pop_back();
-			delete gc;
-		}
-            mGenMtx.unlock();
-	}
+    // collect all changes in one GxsChanges object
+    std::vector<RsGxsNotify*>::iterator vit = changes.begin();
+    for(; vit != changes.end(); ++vit)
+    {
+        RsGxsNotify* n = *vit;
+        RsGxsGroupChange* gc;
+        RsGxsMsgChange* mc;
+        if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != NULL)
+        {
+            if (mc->metaChange())
+            {
+                addMessageChanged(out.mMsgsMeta, mc->msgChangeMap);
+            }
+            else
+            {
+                addMessageChanged(out.mMsgs, mc->msgChangeMap);
+            }
+        }
+        else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != NULL)
+        {
+            if(gc->metaChange())
+            {
+                out.mGrpsMeta.splice(out.mGrpsMeta.end(), gc->mGrpIdList);
+            }
+            else
+            {
+                out.mGrps.splice(out.mGrps.end(), gc->mGrpIdList);
+            }
+        }
+        delete n;
+    }
+    RsServer::notify()->notifyGxsChange(out);
 }
 
 bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
@@ -1116,40 +1079,6 @@ bool RsGenExchange::getGroupStatistic(const uint32_t& token, GxsGroupStatistic& 
 bool RsGenExchange::getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats)
 {
     return mDataAccess->getServiceStatistic(token, stats);
-}
-
-bool RsGenExchange::updated(bool willCallGrpChanged, bool willCallMsgChanged)
-{
-	bool changed = false;
-
-	if(mGenMtx.trylock())
-	{
-		changed =  (!mGroupChange.empty() || !mMsgChange.empty());
-
-		if(!willCallGrpChanged)
-		{
-			while(!mGroupChange.empty())
-			{
-				RsGxsGroupChange* gc = mGroupChange.back();
-				mGroupChange.pop_back();
-				delete gc;
-			}
-		}
-
-		if(!willCallMsgChanged)
-		{
-			while(!mMsgChange.empty())
-			{
-				RsGxsMsgChange* mc = mMsgChange.back();
-				mMsgChange.pop_back();
-				delete mc;
-			}
-		}
-
-		mGenMtx.unlock();
-	}
-
-	return changed;
 }
 
 bool RsGenExchange::getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds)

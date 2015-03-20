@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  *************************************************************************/
+#include <retroshare/rsgxsifacehelper.h>
 
 #include <QInputDialog>
 #include <QMessageBox>
@@ -140,6 +141,7 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     // register to allow sending over Qt::QueuedConnection
     qRegisterMetaType<ChatId>("ChatId");
     qRegisterMetaType<ChatMessage>("ChatMessage");
+    qRegisterMetaType<RsGxsChanges>("RsGxsChanges");
 }
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
@@ -417,6 +419,22 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 
 	emit peerStatusChangedSummary();
 }
+
+void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
+{
+    {
+        QMutexLocker m(&_mutex) ;
+        if(!_enabled)
+            return ;
+    }
+
+#ifdef NOTIFY_DEBUG
+    std::cerr << "Notifyqt:: notified that gxs has changes" << std::endl;
+#endif
+
+    emit gxsChange(changes);
+}
+
 #ifdef REMOVE
 void NotifyQt::notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status)
 {

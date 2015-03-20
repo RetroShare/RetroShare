@@ -255,44 +255,6 @@ public:
      */
     virtual void receiveChanges(std::vector<RsGxsNotify*>& changes);
 
-    /*!
-     * Checks to see if a change has been received for
-     * for a message or group
-     * @param willCallGrpChanged if this is set to true, group changed function will return list
-     *        groups that have changed, if false, the group changed list is cleared
-     * @param willCallMsgChanged if this is set to true, msgChanged function will return map
-     *        messages that have changed, if false, the message changed map is cleared
-     * @return true if a change has occured for msg or group
-     * @see groupsChanged
-     * @see msgsChanged
-     */
-    bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false);
-
-    /*!
-     * The groups changed. \n
-     * class can reimplement to use to tailor
-     * the group actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param grpIds returns list of grpIds that have changed
-     * @param grpIdsMeta returns list of grpIds with meta data changes
-     * @see updated
-     */
-    void groupsChanged(std::list<RsGxsGroupId>& grpIds, std::list<RsGxsGroupId>& grpIdsMeta);
-
-    /*!
-     * The msg changed. \n
-     * class can reimplement to use to tailor
-     * the msg actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param msgs returns map of message ids that have changed
-     * @param msgsMeta returns map of message ids with meta data changes
-     * @see updated
-     */
-    void msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta);
-
-
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 
 	/*!
@@ -877,9 +839,6 @@ private:
     RsGxsIntegrityCheck* mIntegrityCheck;
 
 private:
-
-    std::vector<RsGxsGroupChange*> mGroupChange;
-    std::vector<RsGxsMsgChange*> mMsgChange;
 
     const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_ATTEMPTS;
     const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;

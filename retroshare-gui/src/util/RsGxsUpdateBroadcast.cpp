@@ -1,20 +1,21 @@
-//#include <QTimer>
 #include <QMap>
 
 #include "RsGxsUpdateBroadcast.h"
-#include "RsProtectedTimer.h"
+#include "gui/notifyqt.h"
 
 #include <retroshare/rsgxsifacehelper.h>
+
+// previously gxs allowed only one event consumer to poll for changes
+// this required a single broadcast instance per service
+// now the update notify works through rsnotify and notifyqt
+// so the single instance per service is not really needed anymore
 
 QMap<RsGxsIfaceHelper*, RsGxsUpdateBroadcast*> updateBroadcastMap;
 
 RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl) :
 	QObject(NULL), mIfaceImpl(ifaceImpl)
 {
-	mTimer = new RsProtectedTimer(this);
-	mTimer->setInterval(1000);
-	mTimer->setSingleShot(true);
-	connect(mTimer, SIGNAL(timeout()), this, SLOT(poll()));
+    connect(NotifyQt::getInstance(), SIGNAL(gxsChange(RsGxsChanges)), this, SLOT(onChangesReceived(RsGxsChanges)));
 }
 
 void RsGxsUpdateBroadcast::cleanup()
@@ -36,34 +37,24 @@ RsGxsUpdateBroadcast *RsGxsUpdateBroadcast::get(RsGxsIfaceHelper *ifaceImpl)
 
 	RsGxsUpdateBroadcast *updateBroadcast = new RsGxsUpdateBroadcast(ifaceImpl);
 	updateBroadcastMap.insert(ifaceImpl, updateBroadcast);
-	updateBroadcast->poll();
 
 	return updateBroadcast;
 }
 
-void RsGxsUpdateBroadcast::poll()
+void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
 {
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgsMeta;
-	std::list<RsGxsGroupId> grps;
-	std::list<RsGxsGroupId> grpsMeta;
+    if(changes.mService != mIfaceImpl->getTokenService())
+        return;
 
-	if (mIfaceImpl->updated(true, true))
-	{
-		mIfaceImpl->msgsChanged(msgs, msgsMeta);
-		if (!msgs.empty() || !msgsMeta.empty())
-		{
-			emit msgsChanged(msgs, msgsMeta);
-		}
+    if (!changes.mMsgs.empty() || !changes.mMsgsMeta.empty())
+    {
+        emit msgsChanged(changes.mMsgs, changes.mMsgsMeta);
+    }
 
-		mIfaceImpl->groupsChanged(grps, grpsMeta);
-		if (!grps.empty() || !grpsMeta.empty())
-		{
-			emit grpsChanged(grps, grpsMeta);
-		}
+    if (!changes.mGrps.empty() || !changes.mGrpsMeta.empty())
+    {
+        emit grpsChanged(changes.mGrps, changes.mGrpsMeta);
+    }
 
-		emit changed();
-	}
-
-	mTimer->start();
+    emit changed();
 }
