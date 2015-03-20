@@ -63,6 +63,7 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	/* Enable sort with own role */
 	QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
 	proxy->setSourceModel(model());
+	proxy->setDynamicSortFilter(false);
 	model()->setParent(proxy);
 	setModel(proxy);
 
