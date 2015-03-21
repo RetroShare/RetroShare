@@ -33,13 +33,13 @@ struct MHD_Response * MHD_create_response_from_fd(size_t size, int fd)
     if(buf == 0 || read(fd,buf,size) != size)
 	{
         std::cerr << "malloc failed or READ error in file descriptor " << fd <<  " requested read size was " << size << std::endl;
-        fclose(fd);
+        close(fd);
 		free(buf) ;
 		return NULL ;
 	}
 	else
     {
-        fclose(fd);
+        close(fd);
         return MHD_create_response_from_data(size, buf,1,0) ;
     }
 }
