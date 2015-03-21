@@ -32,11 +32,11 @@ M        [X] add a flag in friends option to allow auto-download of recommended 
 M        [ ] sound is not working for some users on linux. We also need a "test sound" button in config->sound. 
 E        [ ] some widgets in the GUI do not follow the system style => GUI looks bad on these systems
          [X] display version ID in windows version
-E        [ ] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
+E        [X] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
 E        [ ] "Friends details" should show both PGP key and RS certs in different tabs with appropriate names.
              It should specify clearly which one should be used to make friends.
 E        [X] addFriend does not work when the cert contains signatures.
-E        [ ] PGP signatures are not transmited by discovery2. 
+E        [X] PGP signatures are not transmited by discovery2. 
       
        Messages
 H        [ ] distant messages should be made async-ed
