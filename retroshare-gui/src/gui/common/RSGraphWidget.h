@@ -159,6 +159,7 @@ class RSGraphWidget: public QFrame
 	protected slots:
         void updateIfPossible() ;
 
+		virtual void wheelEvent(QWheelEvent *e);
 	private:
 		/** Gets the width of the desktop, the max # of points. */
 		int getNumPoints();

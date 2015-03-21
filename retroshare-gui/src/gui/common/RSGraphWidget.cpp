@@ -30,6 +30,7 @@
 #include <QtGlobal>
 #include <QPainter>
 #include <QDateTime>
+#include <QWheelEvent>
 #include <QTimer>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
@@ -392,44 +393,44 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
     float last_py = 0.0f ;
 
     for (uint i = 0; i < values.size(); ++i)
-    {
-        //std::cerr << "Value: (" << values[i].x() << " , " << values[i].y() << ")" << std::endl;
+	 {
+		 //std::cerr << "Value: (" << values[i].x() << " , " << values[i].y() << ")" << std::endl;
 
-        // compute point in pixels
+		 // compute point in pixels
 
-        qreal px = x - (values[i].x()-last)*_time_scale ;
-    qreal py = y -  valueToPixels(values[i].y()) ;
+		 qreal px = x - (values[i].x()-last)*_time_scale ;
+		 qreal py = y -  valueToPixels(values[i].y()) ;
 
-        if(px >= SCALE_WIDTH && last_px < SCALE_WIDTH)
-        {
-            float alpha = (SCALE_WIDTH - last_px)/(px - last_px) ;
-            float ipx = SCALE_WIDTH ;
-            float ipy = (1-alpha)*last_py + alpha*py ;
+		 if(px >= SCALE_WIDTH && last_px < SCALE_WIDTH)
+		 {
+			 float alpha = (SCALE_WIDTH - last_px)/(px - last_px) ;
+			 float ipx = SCALE_WIDTH ;
+			 float ipy = (1-alpha)*last_py + alpha*py ;
 
-            points << QPointF(ipx,y) ;
-            points << QPointF(ipx,ipy) ;
-        }
-        else if(i==0)
-            points << QPointF(px,y) ;
+			 points << QPointF(ipx,y) ;
+			 points << QPointF(ipx,ipy) ;
+		 }
+		 else if(i==0)
+			 points << QPointF(px,y) ;
 
-        last_px = px ;
-        last_py = py ;
+		 last_px = px ;
+		 last_py = py ;
 
-        if(px < SCALE_WIDTH)
-            continue ;
+		 if(px < SCALE_WIDTH)
+			 continue ;
 
-    _maxValue = std::max(_maxValue,values[i].y()) ;
+		 _maxValue = std::max(_maxValue,values[i].y()) ;
 
-        // remove midle point when 3 consecutive points have the same value.
+		 // remove midle point when 3 consecutive points have the same value.
 
-        if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
-            points.pop_back() ;
+		 if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
+			 points.pop_back() ;
 
-        points << QPointF(px,py) ;
+		 points << QPointF(px,py) ;
 
-        if(i==values.size()-1)
-            points << QPointF(px,y) ;
-    }
+		 if(i==values.size()-1)
+			 points << QPointF(px,y) ;
+	 }
 }
 
 qreal RSGraphWidget::valueToPixels(qreal val)
@@ -482,13 +483,6 @@ void RSGraphWidget::paintTotals()
   /* On Mac, we don't need vertical spacing between the text rows. */
   rowHeight += 5;
 #endif
-
-//  /* If total received is selected */
-//    y = rowHeight;
-//    _painter->setPen(RSDHT_COLOR);
-//    _painter->drawText(x, y,
-//        tr("RetroShare users in DHT: ")+
-//        " ("+tr("%1").arg(_rsDHT->first(), 0, 'f', 0)+")");
 }
 
 /** Returns a formatted string with the correct size suffix. */
@@ -510,35 +504,60 @@ QString RSGraphWidget::totalToStr(qreal total)
 /** Paints the scale on the graph. */
 void RSGraphWidget::paintScale()
 {
-  int top = _rec.y();
-  int bottom = _rec.height();
-  qreal paintStep = (bottom - (bottom/10)) / 4;
-  
-  /* Draw the other marks in their correctly scaled locations */
-  qreal scale;
-  qreal pos;
+	int top = _rec.y();
+	int bottom = _rec.height();
+	qreal paintStep = (bottom - (bottom/10)) / 4;
 
-  if(_source == NULL)
-      return ;
+	/* Draw the other marks in their correctly scaled locations */
+	qreal scale;
+	qreal pos;
 
-  QString unit_name = _source->unitName() ;
+	if(_source == NULL)
+		return ;
 
-  for (int i = 1; i < 5; i++)
-  {
-      pos = bottom - (i * paintStep);
+	QString unit_name = _source->unitName() ;
 
-      scale = pixelsToValue(i * paintStep);
+	for (int i = 1; i < 5; i++)
+	{
+		pos = bottom - (i * paintStep);
 
-      QString text = _source->displayValue(scale) ;
+		scale = pixelsToValue(i * paintStep);
 
-      _painter->setPen(SCALE_COLOR);
-      _painter->drawText(QPointF(5, pos+0.5*FONT_SIZE),  text);
-      _painter->setPen(GRID_COLOR);
-      _painter->drawLine(QPointF(SCALE_WIDTH, pos),  QPointF(_rec.width(), pos));
-  }
-  
-  /* Draw vertical separator */
-  _painter->drawLine(SCALE_WIDTH, top, SCALE_WIDTH, bottom);
+		QString text = _source->displayValue(scale) ;
+
+		_painter->setPen(SCALE_COLOR);
+		_painter->drawText(QPointF(5, pos+0.5*FONT_SIZE),  text);
+		_painter->setPen(GRID_COLOR);
+		_painter->drawLine(QPointF(SCALE_WIDTH, pos),  QPointF(_rec.width(), pos));
+	}
+
+	/* Draw vertical separator */
+	_painter->drawLine(SCALE_WIDTH, top, SCALE_WIDTH, bottom);
+
+	// draw time below the graph
+
+	static const int npix = 100 ;
+
+	for(int i=_rec.width();i>SCALE_WIDTH;i-=npix)
+	{
+		pos = bottom - FONT_SIZE;
+
+		int seconds = (_rec.width()-i)/_time_scale ;	// pixels / (pixels per second) => seconds
+		QString text = QString::number(seconds)+ " secs";
+
+		_painter->setPen(SCALE_COLOR);
+		_painter->drawText(QPointF(i, _rec.height()-0.5*FONT_SIZE),  text);
+	}
+}
+
+void RSGraphWidget::wheelEvent(QWheelEvent *e)
+{
+	if(e->delta() > 0)
+		_time_scale *= 1.1 ;
+	else
+		_time_scale /= 1.1 ;
+
+	update() ;
 }
 
 void RSGraphWidget::paintLegend()
