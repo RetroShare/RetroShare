@@ -200,3 +200,56 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 
 	return stateString;
 }
+
+QString StatusDefs::connectStateWithoutTransportTypeString(RsPeerDetails &details)
+{
+	QString stateString;
+
+	switch (details.connectState) {
+	case 0:
+		stateString = peerStateString(details.state);
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_TCP:
+		stateString = qApp->translate("StatusDefs", "Trying TCP");
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_UDP:
+		stateString = qApp->translate("StatusDefs", "Trying UDP");
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
+		stateString = qApp->translate("StatusDefs", "Connected");
+		break;
+	}
+
+	return stateString;
+}
+
+QString StatusDefs::connectStateIpString(RsPeerDetails &details)
+{
+	QString stateString = QString(details.connectAddr.c_str()) + QString(" [");
+
+	switch (details.connectState) {
+	case 0:
+		stateString = peerStateString(details.state);
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_TCP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
+		stateString += qApp->translate("StatusDefs", "TCP");
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_UDP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
+		stateString += qApp->translate("StatusDefs", "UDP");
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+		stateString += qApp->translate("StatusDefs", "TOR");
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
+		stateString += qApp->translate("StatusDefs", "unkown");
+		break;
+	}
+	stateString += QString("]");
+
+	return stateString;
+}

@@ -928,11 +928,11 @@ void  FriendList::insertPeers()
                     sText += " - " + customStateString;
                 }
 
-                QString connectStateString = StatusDefs::connectStateString(sslDetail);
+				QString connectStateString = StatusDefs::connectStateWithoutTransportTypeString(sslDetail);
                 if (!isStatusColumnHidden) {
                     sslItem->setText(COLUMN_STATE, connectStateString);
                 } else if (!mHideState && connectStateString.isEmpty() == false) {
-                    sText += " [" + StatusDefs::connectStateString(sslDetail) + "]";
+					sText += " [" + connectStateString + "]";
                 }
                 sslItem->setText( COLUMN_NAME, sText);
 
@@ -956,7 +956,7 @@ void  FriendList::insertPeers()
 
                 /* IP */
 					 
-                QString sslItemIP = (sslDetail.state & RS_PEER_STATE_CONNECTED)?QString(sslDetail.connectAddr.c_str()):QString("---");
+				QString sslItemIP = (sslDetail.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(sslDetail) : QString("---");
 
                 sslItem->setData(COLUMN_IP, Qt::DisplayRole, QVariant(sslItemIP));
                 sslItem->setData(COLUMN_IP, ROLE_SORT, sslItemIP);

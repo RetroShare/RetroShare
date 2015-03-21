@@ -41,6 +41,8 @@ public:
 
 	static QString     peerStateString(int peerState);
 	static QString     connectStateString(RsPeerDetails &details);
+	static QString     connectStateWithoutTransportTypeString(RsPeerDetails &details);
+	static QString     connectStateIpString(RsPeerDetails &details);
 };
 
 #endif
