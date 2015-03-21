@@ -62,7 +62,7 @@
  *****/
 
 ChatWidget::ChatWidget(QWidget *parent) :
-    QWidget(parent), ui(new Ui::ChatWidget), sendingBlocked(false)
+    QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
 
@@ -217,6 +217,16 @@ void ChatWidget::addVOIPBarWidget(QWidget *w)
 	ui->titleBarFrame->layout()->addWidget(w) ;
 }
 
+RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()
+{
+	return new RSButtonOnText(ui->textBrowser);
+}
+
+RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
+{
+	return new RSButtonOnText(text, ui->textBrowser);
+}
+
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
 {
@@ -255,7 +265,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 	}
 
     uint32_t hist_chat_type = 0xFFFF; // a value larger than the biggest RS_HISTORY_TYPE_* value
-	int messageCount;
+	int messageCount=0;
 
 	if (chatType() == CHATTYPE_LOBBY) {
 		hist_chat_type = RS_HISTORY_TYPE_LOBBY;

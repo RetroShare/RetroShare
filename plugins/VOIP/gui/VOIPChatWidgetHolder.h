@@ -2,6 +2,7 @@
 #include <QGraphicsEffect>
 #include <gui/SpeexProcessor.h>
 #include <gui/chat/ChatWidget.h>
+#include <gui/common/RsButtonOnText.h>
 
 class QToolButton;
 class QAudioInput;
@@ -31,7 +32,10 @@ private slots:
 	void toggleAudioListen();
 	void toggleAudioCapture();
 	void toggleVideoCapture();
+	void startVideoCapture();
 	void hangupCall() ;
+	void botMouseEnter();
+	void botMouseLeave();
 
 public slots:
 	void sendAudioData();
@@ -60,5 +64,8 @@ protected:
 	QToolButton *audioCaptureToggleButton ;
 	QToolButton *videoCaptureToggleButton ;
 	QToolButton *hangupButton ;
+
+	typedef QMap<QString, RSButtonOnText*> button_map;
+	button_map buttonMapTakeVideo;
 };
 

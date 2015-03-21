@@ -135,6 +135,11 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 	delete inputVideoDevice ;
 	delete inputVideoProcessor ;
 	delete outputVideoProcessor ;
+
+	button_map::iterator it = buttonMapTakeVideo.begin();
+	while (it != buttonMapTakeVideo.end()) {
+		it = buttonMapTakeVideo.erase(it);
+  }
 }
 
 void VOIPChatWidgetHolder::toggleAudioListen()
@@ -204,6 +209,13 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
         hangupButton->hide();
     }
 }
+
+void VOIPChatWidgetHolder::startVideoCapture()
+{
+	videoCaptureToggleButton->setChecked(true);
+	toggleVideoCapture();
+}
+
 void VOIPChatWidgetHolder::toggleVideoCapture()
 {
 	if (videoCaptureToggleButton->isChecked()) 
@@ -216,7 +228,15 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 		videoCaptureToggleButton->setToolTip(tr("Shut camera off"));
 
 		if (mChatWidget) 
-			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("you're now sending video..."), ChatWidget::MSGTYPE_SYSTEM);
+			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			                        , tr("You're now sending video..."), ChatWidget::MSGTYPE_SYSTEM);
+
+		button_map::iterator it = buttonMapTakeVideo.begin();
+		while (it != buttonMapTakeVideo.end()) {
+			RSButtonOnText *button = it.value();
+			delete button;
+			it = buttonMapTakeVideo.erase(it);
+	  }
 	} 
 	else 
 	{
@@ -226,13 +246,69 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 		videoWidget->hide();
 		
 		if (mChatWidget) 
-			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
+			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			                        , tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
 	}
 }
 
 void VOIPChatWidgetHolder::addVideoData(const QString name, QByteArray* array)
 {
 	outputVideoProcessor->receiveEncodedData((unsigned char *)array->data(),array->size()) ;
+	if (!videoCaptureToggleButton->isChecked()) {
+		if (mChatWidget) {
+			QString buttonName = name;
+			if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
+			button_map::iterator it = buttonMapTakeVideo.find(buttonName);
+			if (it == buttonMapTakeVideo.end()){
+				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+				                        , tr("Video call from: %1").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+				RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Take Video Call"));
+				button->setToolTip(tr("Activate camera"));
+				button->setStyleSheet(QString("background-color: green;")
+				                      .append("border-style: outset;")
+				                      .append("border-width: 5px;")
+				                      .append("border-radius: 5px;")
+				                      .append("border-color: beige;")
+				                      );
+
+				button->updateImage();
+
+				connect(button,SIGNAL(clicked()),this,SLOT(startVideoCapture()));
+				connect(button,SIGNAL(mouseEnter()),this,SLOT(botMouseEnter()));
+				connect(button,SIGNAL(mouseLeave()),this,SLOT(botMouseLeave()));
+
+				buttonMapTakeVideo.insert(buttonName, button);
+			}
+		}
+	}
+}
+
+void VOIPChatWidgetHolder::botMouseEnter()
+{
+	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
+	if (source){
+		source->setStyleSheet(QString("background-color: red;")
+		                      .append("border-style: outset;")
+		                      .append("border-width: 5px;")
+		                      .append("border-radius: 5px;")
+		                      .append("border-color: beige;")
+		                      );
+		//source->setDown(true);
+	}
+}
+
+void VOIPChatWidgetHolder::botMouseLeave()
+{
+	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
+	if (source){
+		source->setStyleSheet(QString("background-color: green;")
+		                      .append("border-style: outset;")
+		                      .append("border-width: 5px;")
+		                      .append("border-radius: 5px;")
+		                      .append("border-color: beige;")
+		                      );
+		//source->setDown(false);
+	}
 }
 
 void VOIPChatWidgetHolder::setAcceptedBandwidth(const QString name, uint32_t bytes_per_sec)

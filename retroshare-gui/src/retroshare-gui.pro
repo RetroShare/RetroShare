@@ -435,6 +435,7 @@ HEADERS +=  rshare.h \
             gui/toaster/GroupChatToaster.h \
             gui/toaster/ChatLobbyToaster.h \
             gui/toaster/FriendRequestToaster.h \
+            gui/common/RsButtonOnText.h \
             gui/common/RSGraphWidget.h \
             gui/common/ElidedLabel.h \
             gui/common/vmessagebox.h \
@@ -735,6 +736,7 @@ SOURCES +=  main.cpp \
             gui/msgs/MessageWindow.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/msgs/MessageUserNotify.cpp \
+            gui/common/RsButtonOnText.cpp \
             gui/common/RSGraphWidget.cpp \
             gui/common/ElidedLabel.cpp \
             gui/common/vmessagebox.cpp \

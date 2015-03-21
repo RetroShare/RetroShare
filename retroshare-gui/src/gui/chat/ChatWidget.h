@@ -28,6 +28,7 @@
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include "gui/common/HashBox.h"
+#include "gui/common/RsButtonOnText.h"
 #include "ChatStyle.h"
 #include "gui/style/RSStyle.h"
 
@@ -105,6 +106,8 @@ public:
 	
 	
 	void addVOIPBarWidget(QWidget *w);
+	RSButtonOnText* getNewButtonOnTextBrowser();
+	RSButtonOnText* getNewButtonOnTextBrowser(QString text);
 
 	// Adds a new horizonal widget in the layout of the chat window.
 	void addChatHorizontalWidget(QWidget *w) ;
