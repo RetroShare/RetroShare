@@ -10,50 +10,67 @@
 RSButtonOnText::RSButtonOnText(QWidget *parent)
   : QPushButton(parent)
 {
-	_uuid = QUuid::createUuid();
+	_uuid = QUuid::createUuid().toString();
 	_lenght = -1;
 	_mouseOver = false;
 	_pressed = false;
 }
 RSButtonOnText::RSButtonOnText(const QString &text, QWidget *parent)
   : QPushButton(parent)
+  //: RSButtonOnText(parent)//delegating constructors only available with -std=c++11 or -std=gnu++11
 {
+	_uuid = QUuid::createUuid().toString();
+	_lenght = -1;
+	_mouseOver = false;
+	_pressed = false;
 	setText(text);
 }
 
 RSButtonOnText::RSButtonOnText(const QIcon& icon, const QString &text, QWidget *parent)
-  : QPushButton(text, parent)
+  : QPushButton(parent)
+  //: RSButtonOnText(text, parent)//delegating constructors only available with -std=c++11 or -std=gnu++11
 {
+	_uuid = QUuid::createUuid().toString();
+	_lenght = -1;
+	_mouseOver = false;
+	_pressed = false;
 	setIcon(icon);
+	setText(text);
 }
 
 RSButtonOnText::RSButtonOnText(QTextEdit *textEdit, QWidget *parent)
   : QPushButton(parent)
+  //: RSButtonOnText(parent)//delegating constructors only available with -std=c++11 or -std=gnu++11
 {
-	appendToText(textEdit);
-}
-/*RSButtonOnText::RSButtonOnText(QTextEdit *textEdit, QWidget *parent)
-		: QPushButton(parent)
-{
-		_uuid = QUuid::createUuid();
+	_uuid = QUuid::createUuid().toString();
 		_lenght = -1;
 		_mouseOver = false;
 		_pressed = false;
 		appendToText(textEdit);
-}*/
+}
 
 RSButtonOnText::RSButtonOnText(const QString &text, QTextEdit *textEdit, QWidget *parent)
   : QPushButton(parent)
+  //: RSButtonOnText(parent)//delegating constructors only available with -std=c++11 or -std=gnu++11
 {
+	_uuid = QUuid::createUuid().toString();
+	_lenght = -1;
+	_mouseOver = false;
+	_pressed = false;
 	setText(text);
 	appendToText(textEdit);
 }
 
 RSButtonOnText::RSButtonOnText(const QIcon& icon, const QString &text, QTextEdit *textEdit, QWidget *parent)
   : QPushButton(parent)
+  //: RSButtonOnText(parent)//delegating constructors only available with -std=c++11 or -std=gnu++11
 {
-	setText(text);
+	_uuid = QUuid::createUuid().toString();
+	_lenght = -1;
+	_mouseOver = false;
+	_pressed = false;
 	setIcon(icon);
+	setText(text);
 	appendToText(textEdit);
 }
 
