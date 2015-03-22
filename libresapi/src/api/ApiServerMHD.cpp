@@ -80,7 +80,7 @@ public:
             if(strcmp(method, "POST") == 0)
             {
                 mState = WAITING_DATA;
-                // first time there is no data, do nohtin and return
+                // first time there is no data, do nothing and return
                 return MHD_YES;
             }
         }
@@ -223,7 +223,11 @@ ApiServerMHD::ApiServerMHD(std::string root_dir, uint16_t port):
     mRootDir(root_dir), mPort(port),
     mDaemon(0)
 {
-
+    // make sure the docroot dir ends with a slash
+    if(mRootDir.empty())
+        mRootDir = "./";
+    else if (mRootDir[mRootDir.size()-1] != '/' && mRootDir[mRootDir.size()-1] != '\\')
+        mRootDir += "/";
 }
 
 ApiServerMHD::~ApiServerMHD()
@@ -245,7 +249,7 @@ bool ApiServerMHD::start()
                                MHD_OPTION_END);
     if(mDaemon)
     {
-        std::cerr << "ApiServerMHD::start() SUCCESS. Started server on port " << mPort << ". mRootDir=\"" << mRootDir << "\"" << std::endl;
+        std::cerr << "ApiServerMHD::start() SUCCESS. Started server on port " << mPort << ". Serving files from \"" << mRootDir << "\" at /" << std::endl;
         return true;
     }
     else
@@ -348,7 +352,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
     }
 
     // else server static files
-    std::string filename = std::string(".") + url;
+    std::string filename = mRootDir + url;
     // important: binary open mode,
     // else libmicrohttpd will replace crlf with lf and add garbage at the end of the file
     FILE* fd = fopen(filename.c_str(), "rb");

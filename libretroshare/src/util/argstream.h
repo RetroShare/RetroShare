@@ -116,7 +116,7 @@ namespace
 				const char* desc="",
 				bool mandatory = true)
 		{
-			return ValueHolder<T>(l,b,desc,mandatory);
+            return ValueHolder<T>(l,b,valueName,desc,mandatory);
 		}
 	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// Interface of OptionHolder

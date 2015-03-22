@@ -74,29 +74,36 @@ int main(int argc, char **argv)
 {
 #ifdef ENABLE_WEBUI
 
-    std::string docroot;
-    bool is_portable = false;
-#ifdef WINDOWS_SYS
-    // test for portable version
-    if (GetFileAttributes(L"portable") != (DWORD) -1) {
-        is_portable = true;
-    }
-#endif
+    std::string docroot = "./";
+    uint16_t httpPort = 0;
 
-    resource_api::ApiServerMHD httpd(docroot, 9090);
+    argstream args(argc, argv);
+    args >> parameter("webinterface", httpPort, "port", "Enable webinterface on the specified port", false);
+    args >> parameter("docroot",      docroot,  "path", "Serve static files from this path.", false);
+    args >> help();
 
-    resource_api::RsControlModule ctrl_mod(argc, argv, httpd.getApiServer().getStateTokenServer(), &httpd.getApiServer());
-    httpd.getApiServer().addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
-
-    httpd.start();
-
-    while(ctrl_mod.processShouldExit() == false)
+    if (args.helpRequested())
     {
-        usleep(20*1000);
+        std::cerr << args.usage() << std::endl;
     }
-    httpd.stop();
 
-    return 1;
+    if(httpPort != 0)
+    {
+        resource_api::ApiServerMHD httpd(docroot, httpPort);
+
+        resource_api::RsControlModule ctrl_mod(argc, argv, httpd.getApiServer().getStateTokenServer(), &httpd.getApiServer());
+        httpd.getApiServer().addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
+
+        httpd.start();
+
+        while(ctrl_mod.processShouldExit() == false)
+        {
+            usleep(20*1000);
+        }
+        httpd.stop();
+
+        return 1;
+    }
 #endif
 
 	/* Retroshare startup is configured using an RsInit object.
