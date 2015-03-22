@@ -23,7 +23,7 @@
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 
-#include <retroshare/rsmsgs.h>
+#include "gui/msgs/MessageInterface.h"
 
 MessageUserNotify::MessageUserNotify(QObject *parent) :
 	UserNotify(parent)
@@ -52,7 +52,7 @@ QIcon MessageUserNotify::getMainIcon(bool hasNew)
 unsigned int MessageUserNotify::getNewCount()
 {
 	unsigned int newInboxCount = 0;
-	rsMsgs->getMessageCount(NULL, &newInboxCount, NULL, NULL, NULL, NULL);
+	rsMail->getMessageCount(NULL, &newInboxCount, NULL, NULL, NULL, NULL);
 
 	return newInboxCount;
 }

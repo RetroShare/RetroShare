@@ -394,6 +394,7 @@ HEADERS +=  rshare.h \
             gui/chat/ChatUserNotify.h \
             gui/chat/ChatLobbyUserNotify.h \
             gui/connect/ConfCertDialog.h \
+            gui/msgs/MessageInterface.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
             gui/msgs/MessageWidget.h \

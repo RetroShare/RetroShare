@@ -57,6 +57,8 @@
 #define COLUMN_FILE_HASH   2
 #define COLUMN_FILE_COUNT  3
 
+#include "gui/msgs/MessageInterface.h"
+
 class RsHtmlMsg : public RsHtml
 {
 public:
@@ -93,7 +95,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 	}
 
 	MessageInfo msgInfo;
-	if (!rsMsgs->getMessage(msgId, msgInfo)) {
+	if (!rsMail->getMessage(msgId, msgInfo)) {
 		std::cerr << "MessageWidget::openMsg() Couldn't find Msg" << std::endl;
 		return NULL;
 	}
@@ -300,7 +302,7 @@ void MessageWidget::togglefileview()
 void MessageWidget::getcurrentrecommended()
 {
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		return;
 	}
 
@@ -342,7 +344,7 @@ void MessageWidget::getallrecommended()
 {
 	/* get Message */
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		return;
 	}
 
@@ -372,7 +374,7 @@ void MessageWidget::messagesChanged()
 
 	/* test Message */
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		/* messages was removed */
 		if (isWindow) {
 			window()->close();
@@ -405,13 +407,13 @@ void MessageWidget::showTagLabels()
 	}
 
 	MsgTagInfo tagInfo;
-	rsMsgs->getMessageTag(currMsgId, tagInfo);
+	rsMail->getMessageTag(currMsgId, tagInfo);
 
 	if (tagInfo.tagIds.empty() == false) {
 		ui.tagsLabel->setVisible(true);
 
 		MsgTagType Tags;
-		rsMsgs->getMessageTagTypes(Tags);
+		rsMail->getMessageTagTypes(Tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
 		for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
@@ -477,7 +479,7 @@ void MessageWidget::fill(const std::string &msgId)
 	clearTagLabels();
 
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		std::cerr << "MessageWidget::fill() Couldn't find Msg" << std::endl;
 		return;
 	}
@@ -589,7 +591,7 @@ void MessageWidget::fill(const std::string &msgId)
 void MessageWidget::remove()
 {
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		std::cerr << "MessageWidget::fill() Couldn't find Msg" << std::endl;
 		return;
 	}
@@ -604,9 +606,9 @@ void MessageWidget::remove()
 	}
 
 	if (deleteReal) {
-		rsMsgs->MessageDelete(currMsgId);
+		rsMail->MessageDelete(currMsgId);
 	} else {
-		rsMsgs->MessageToTrash(currMsgId, true);
+		rsMail->MessageToTrash(currMsgId, true);
 	}
 
 	if (isWindow) {
@@ -736,5 +738,5 @@ void MessageWidget::loadImagesAlways()
 		return;
 	}
 
-	rsMsgs->MessageLoadEmbeddedImages(currMsgId, true);
+	rsMail->MessageLoadEmbeddedImages(currMsgId, true);
 }

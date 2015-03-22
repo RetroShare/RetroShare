@@ -36,6 +36,8 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
+#include "gui/msgs/MessageInterface.h"
+
 /*****
  * #define DEBUG_ITEM 1
  ****/
@@ -249,7 +251,7 @@ void ChatMsgItem::sendMessage()
     mi.msg =   quickmsgText->toHtml().toUtf8().constData();
     mi.rspeerid_msgto.push_back(mPeerId);
     
-    rsMsgs->MessageSend(mi);
+    rsMail->MessageSend(mi);
 
     quickmsgText->clear();
     messageFrame->setVisible(false);

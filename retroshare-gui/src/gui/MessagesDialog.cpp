@@ -46,6 +46,8 @@
 
 #include <algorithm>
 
+#include "gui/msgs/MessageInterface.h"
+
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/folder-draft.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
@@ -410,7 +412,7 @@ void MessagesDialog::changeEvent(QEvent *e)
 void MessagesDialog::fillQuickView()
 {
 	MsgTagType tags;
-	rsMsgs->getMessageTagTypes(tags);
+	rsMail->getMessageTagTypes(tags);
 	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
 
 	// fill tags
@@ -543,7 +545,7 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 
     MessageInfo msgInfo;
     if (getCurrentMsg(cid, mid)) {
-        rsMsgs->getMessage(mid, msgInfo);
+        rsMail->getMessage(mid, msgInfo);
     }
 
     QList<QTreeWidgetItem*> itemsRead;
@@ -851,7 +853,7 @@ void MessagesDialog::insertMessages()
 
     RsPeerId ownId = rsPeers->getOwnId();
 
-    rsMsgs -> getMessageSummaries(msgList);
+    rsMail -> getMessageSummaries(msgList);
 
     std::cerr << "MessagesDialog::insertMessages()" << std::endl;
 
@@ -960,7 +962,7 @@ void MessagesDialog::insertMessages()
 
     if (doFill) {
         MsgTagType Tags;
-        rsMsgs->getMessageTagTypes(Tags);
+        rsMail->getMessageTagTypes(Tags);
 
         /* search messages */
         std::list<MsgInfoSummary> msgToShow;
@@ -980,7 +982,7 @@ void MessagesDialog::insertMessages()
                 }
             } else if (listMode == LIST_QUICKVIEW && quickViewType == QUICKVIEW_TYPE_TAG) {
                 MsgTagInfo tagInfo;
-                rsMsgs->getMessageTag(it->msgId, tagInfo);
+                rsMail->getMessageTag(it->msgId, tagInfo);
                 if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), quickViewId) == tagInfo.tagIds.end()) {
                     continue;
                 }
@@ -1107,7 +1109,7 @@ void MessagesDialog::insertMessages()
                         {
                             // distant message
                             setText = false;
-                            if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
+                            if (gotInfo || rsMail->getMessage(it->msgId, msgInfo)) {
                                 gotInfo = true;
                                 item->setId(RsGxsId(msgInfo.rsgxsid_srcId), COLUMN_FROM, false);
                             } else {
@@ -1118,7 +1120,7 @@ void MessagesDialog::insertMessages()
                         }
                     }
                 } else {
-                    if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
+                    if (gotInfo || rsMail->getMessage(it->msgId, msgInfo)) {
                         gotInfo = true;
 
                         text.clear();
@@ -1175,7 +1177,7 @@ void MessagesDialog::insertMessages()
 
             // Tags
             MsgTagInfo tagInfo;
-            rsMsgs->getMessageTag(it->msgId, tagInfo);
+            rsMail->getMessageTag(it->msgId, tagInfo);
 
             text.clear();
 
@@ -1190,7 +1192,7 @@ void MessagesDialog::insertMessages()
                     text += TagDefs::name(Tag->first, Tag->second.first);
                 } else {
                     // clean tagId
-                    rsMsgs->setMessageTag(it->msgId, *tagId, false);
+                    rsMail->setMessageTag(it->msgId, *tagId, false);
                 }
             }
             item->setText(COLUMN_TAGS, text);
@@ -1204,7 +1206,7 @@ void MessagesDialog::insertMessages()
                     color = Tag->second.second;
                 } else {
                     // clean tagId
-                    rsMsgs->setMessageTag(it->msgId, tagInfo.tagIds.front(), false);
+                    rsMail->setMessageTag(it->msgId, tagInfo.tagIds.front(), false);
                 }
             }
             if (!color.isValid()) {
@@ -1224,7 +1226,7 @@ void MessagesDialog::insertMessages()
 
             if (filterColumn == COLUMN_CONTENT) {
                 // need content for filter
-                if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
+                if (gotInfo || rsMail->getMessage(it->msgId, msgInfo)) {
                     gotInfo = true;
                     QTextDocument doc;
                     doc.setHtml(QString::fromUtf8(msgInfo.msg.c_str()));
@@ -1343,7 +1345,7 @@ void MessagesDialog::doubleClicked(QTreeWidgetItem *item, int column)
         return ;
 
     MessageInfo msgInfo;
-    if (!rsMsgs->getMessage(mid, msgInfo)) {
+    if (!rsMail->getMessage(mid, msgInfo)) {
         return;
     }
 
@@ -1377,7 +1379,7 @@ void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bo
     foreach (QTreeWidgetItem *item, items) {
         std::string mid = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
 
-        if (rsMsgs->MessageRead(mid, !read)) {
+        if (rsMail->MessageRead(mid, !read)) {
             int msgFlag = item->data(COLUMN_DATA, ROLE_MSGFLAGS).toInt();
             msgFlag &= ~RS_MSG_NEW;
 
@@ -1429,7 +1431,7 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
     foreach (QTreeWidgetItem *item, items) {
         std::string mid = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
 
-        if (rsMsgs->MessageStar(mid, star)) {
+        if (rsMail->MessageStar(mid, star)) {
             int msgFlag = item->data(COLUMN_DATA, ROLE_MSGFLAGS).toInt();
             msgFlag &= ~RS_MSG_STAR;
 
@@ -1487,7 +1489,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead
     mCurrMsgId = mid;
 
     MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mid, msgInfo)) {
+    if (!rsMail -> getMessage(mid, msgInfo)) {
         std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
         return;
     }
@@ -1563,9 +1565,9 @@ void MessagesDialog::removemessage()
 //      closeTab(mid.toStdString());
 
         if (doDelete) {
-            rsMsgs->MessageDelete(mid.toStdString());
+            rsMail->MessageDelete(mid.toStdString());
         } else {
-            rsMsgs->MessageToTrash(mid.toStdString(), true);
+            rsMail->MessageToTrash(mid.toStdString(), true);
         }
     }
 
@@ -1580,7 +1582,7 @@ void MessagesDialog::undeletemessage()
     getSelectedMsgCount (&items, NULL, NULL, NULL);
     foreach (QTreeWidgetItem *item, items) {
         QString mid = item->data(COLUMN_DATA, ROLE_MSGID).toString();
-        rsMsgs->MessageToTrash(mid.toStdString(), false);
+        rsMail->MessageToTrash(mid.toStdString(), false);
     }
 
     // LockUpdate -> insertMessages();
@@ -1636,12 +1638,12 @@ void MessagesDialog::updateMessageSummaryList()
     unsigned int systemCount = 0;
 
     /* calculating the new messages */
-//    rsMsgs->getMessageCount (&inboxCount, &newInboxCount, &newOutboxCount, &newDraftCount, &newSentboxCount);
+//    rsMail->getMessageCount (&inboxCount, &newInboxCount, &newOutboxCount, &newDraftCount, &newSentboxCount);
 
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
 
-    rsMsgs->getMessageSummaries(msgList);
+    rsMail->getMessageSummaries(msgList);
 
     QMap<int, int> tagCount;
 
@@ -1649,7 +1651,7 @@ void MessagesDialog::updateMessageSummaryList()
     for (it = msgList.begin(); it != msgList.end(); ++it) {
         /* calcluate tag count */
         MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(it->msgId, tagInfo);
+        rsMail->getMessageTag(it->msgId, tagInfo);
         for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
             int nCount = tagCount [*tagId];
             ++nCount;
@@ -1848,7 +1850,7 @@ void MessagesDialog::tagAboutToShow()
     if (items.size()) {
         std::string msgId = items.front()->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
 
-		rsMsgs->getMessageTag(msgId, tagInfo);
+		rsMail->getMessageTag(msgId, tagInfo);
 	}
 
 	menu->activateActions(tagInfo.tagIds);
@@ -1863,7 +1865,7 @@ void MessagesDialog::tagRemoveAll()
     foreach (QTreeWidgetItem *item, items) {
         std::string msgId = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
 
-		rsMsgs->setMessageTag(msgId, 0, false);
+		rsMail->setMessageTag(msgId, 0, false);
 		Lock.setUpdate(true);
 	}
 
@@ -1883,7 +1885,7 @@ void MessagesDialog::tagSet(int tagId, bool set)
     foreach (QTreeWidgetItem *item, items) {
         std::string msgId = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
 
-		if (rsMsgs->setMessageTag(msgId, tagId, set)) {
+		if (rsMail->setMessageTag(msgId, tagId, set)) {
 			Lock.setUpdate(true);
 		}
 	}
@@ -1896,12 +1898,12 @@ void MessagesDialog::emptyTrash()
     LockUpdate Lock (this, true);
 
     std::list<MsgInfoSummary> msgList;
-    rsMsgs->getMessageSummaries(msgList);
+    rsMail->getMessageSummaries(msgList);
 
     std::list<MsgInfoSummary>::const_iterator it;
     for (it = msgList.begin(); it != msgList.end(); ++it) {
         if (it->msgflags & RS_MSG_TRASH) {
-            rsMsgs->MessageDelete(it->msgId);
+            rsMail->MessageDelete(it->msgId);
         }
     }
 

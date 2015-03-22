@@ -60,6 +60,8 @@
 #include "common/FeedNotify.h"
 #include "notifyqt.h"
 
+#include "gui/msgs/MessageInterface.h"
+
 const uint32_t NEWSFEED_PEERLIST =       0x0001;
 
 const uint32_t NEWSFEED_FORUMNEWLIST =   0x0002;
@@ -470,7 +472,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 		case RS_FEED_TYPE_MSG:
 		{
 			std::list<MsgInfoSummary> msgList;
-			rsMsgs->getMessageSummaries(msgList);
+			rsMail->getMessageSummaries(msgList);
 
 			std::list<MsgInfoSummary>::const_iterator msgIt;
 			for (msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt) {

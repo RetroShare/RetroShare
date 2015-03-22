@@ -514,7 +514,7 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
 
-    rsMsgs->getMessageSummaries(msgList);
+    rsMail->getMessageSummaries(msgList);
     for(it = msgList.begin(); it != msgList.end(); ++it) {
         if (it->msgflags & RS_MSG_TRASH) {
             continue;
@@ -532,7 +532,7 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
 
     /* create a message */
     QString msgText = tr("Hi %1,<br><br>%2 wants to be friends with you on RetroShare.<br><br>Respond now:<br>%3<br><br>Thanks,<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), sslName, link.toHtml());
-    rsMsgs->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_USER_REQUEST);
+    rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_USER_REQUEST);
 }
 
 void MessageComposer::sendChannelPublishKey(RsGxsChannelGroup &group)
@@ -548,7 +548,7 @@ void MessageComposer::sendChannelPublishKey(RsGxsChannelGroup &group)
 
 //    /* create a message */
 //    QString msgText = tr("... %1 ...<br>%2").arg(channelName, link.toHtml());
-//    rsMsgs->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
+//    rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
 }
 
 void MessageComposer::sendForumPublishKey(RsGxsForumGroup &group)
@@ -564,7 +564,7 @@ void MessageComposer::sendForumPublishKey(RsGxsForumGroup &group)
 
 //    /* create a message */
 //    QString msgText = tr("... %1 ...<br>%2").arg(forumName, link.toHtml());
-//    rsMsgs->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
+//    rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
 }
 
 void MessageComposer::closeEvent (QCloseEvent * event)
@@ -907,7 +907,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
     if (msgId.empty() == false) {
         // fill existing message
         MessageInfo msgInfo;
-        if (!rsMsgs->getMessage(msgId, msgInfo)) {
+        if (!rsMail->getMessage(msgId, msgInfo)) {
             std::cerr << "MessageComposer::newMsg() Couldn't find Msg" << std::endl;
             delete msgComposer;
             return NULL;
@@ -916,7 +916,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         if (msgInfo.msgflags & RS_MSG_DRAFT) {
             msgComposer->m_sDraftMsgId = msgId;
 
-            rsMsgs->getMsgParentId(msgId,  msgComposer->m_msgParentId);
+            rsMail->getMsgParentId(msgId,  msgComposer->m_msgParentId);
 
             if (msgInfo.msgflags & RS_MSG_REPLIED) {
                 msgComposer->m_msgType = REPLY;
@@ -962,7 +962,7 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
 
         MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(msgId, tagInfo);
+        rsMail->getMessageTag(msgId, tagInfo);
 
         msgComposer->m_tagIds = tagInfo.tagIds;
         msgComposer->showTagLabels();
@@ -1074,7 +1074,7 @@ void MessageComposer::setQuotedMsg(const QString &msg, const QString &header)
 MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 {
     MessageInfo msgInfo;
-    if (!rsMsgs->getMessage(msgId, msgInfo)) {
+    if (!rsMail->getMessage(msgId, msgInfo)) {
         return NULL;
     }
 
@@ -1124,7 +1124,7 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
 {
     MessageInfo msgInfo;
-    if (!rsMsgs->getMessage(msgId, msgInfo)) {
+    if (!rsMail->getMessage(msgId, msgInfo)) {
         return NULL;
     }
 
@@ -1339,7 +1339,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     {
         mi.msgId = m_sDraftMsgId;
 
-        rsMsgs->MessageToDraft(mi, m_msgParentId);
+        rsMail->MessageToDraft(mi, m_msgParentId);
 
         // use new message id
         m_sDraftMsgId = mi.msgId;
@@ -1348,10 +1348,10 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         case NORMAL:
             break;
         case REPLY:
-            rsMsgs->MessageReplied(m_sDraftMsgId, true);
+            rsMail->MessageReplied(m_sDraftMsgId, true);
             break;
         case FORWARD:
-            rsMsgs->MessageForwarded(m_sDraftMsgId, true);
+            rsMail->MessageForwarded(m_sDraftMsgId, true);
             break;
         }
     }
@@ -1372,7 +1372,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove the distant peers fro the destination list."), QMessageBox::Ok);
             return false; // Don't send if cannot sign.
      }
-        if (rsMsgs->MessageSend(mi) == false) {
+        if (rsMail->MessageSend(mi) == false) {
             return false;
         }
 
@@ -1381,10 +1381,10 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             case NORMAL:
                 break;
             case REPLY:
-                rsMsgs->MessageReplied(m_msgParentId, true);
+                rsMail->MessageReplied(m_msgParentId, true);
                 break;
             case FORWARD:
-                rsMsgs->MessageForwarded(m_msgParentId, true);
+                rsMail->MessageForwarded(m_msgParentId, true);
                 break;
             }
         }
@@ -1392,13 +1392,13 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
     if (mi.msgId.empty() == false) {
         MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(mi.msgId, tagInfo);
+        rsMail->getMessageTag(mi.msgId, tagInfo);
 
         /* insert new tags */
         std::list<uint32_t>::iterator tag;
         for (tag = m_tagIds.begin(); tag != m_tagIds.end(); ++tag) {
             if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), *tag) == tagInfo.tagIds.end()) {
-                rsMsgs->setMessageTag(mi.msgId, *tag, true);
+                rsMail->setMessageTag(mi.msgId, *tag, true);
             } else {
                 tagInfo.tagIds.remove(*tag);
             }
@@ -1406,7 +1406,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
         /* remove deleted tags */
         for (tag = tagInfo.tagIds.begin(); tag != tagInfo.tagIds.end(); ++tag) {
-            rsMsgs->setMessageTag(mi.msgId, *tag, false);
+            rsMail->setMessageTag(mi.msgId, *tag, false);
         }
     }
     ui.msgText->document()->setModified(false);
@@ -2561,7 +2561,7 @@ void MessageComposer::showTagLabels()
 
 	if (m_tagIds.empty() == false) {
 		MsgTagType tags;
-		rsMsgs->getMessageTagTypes(tags);
+		rsMail->getMessageTagTypes(tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
 		for (std::list<uint32_t>::iterator tagId = m_tagIds.begin(); tagId != m_tagIds.end(); ++tagId) {

@@ -32,6 +32,8 @@
 #include "gui/settings/NewTag.h"
 #include "gui/notifyqt.h"
 
+#include "gui/msgs/MessageInterface.h"
+
 #define ACTION_TAGSINDEX_SIZE  3
 #define ACTION_TAGSINDEX_TYPE  "Type"
 #define ACTION_TAGSINDEX_ID    "ID"
@@ -93,7 +95,7 @@ void TagsMenu::fillTags()
 	clear();
 
 	MsgTagType tags;
-	rsMsgs->getMessageTagTypes(tags);
+	rsMail->getMessageTagTypes(tags);
 	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag;
 
 	bool user = false;
@@ -179,13 +181,13 @@ void TagsMenu::tagTriggered(QAction *action)
 	} else if (values [ACTION_TAGSINDEX_TYPE] == ACTION_TAGS_NEWTAG) {
 		// new tag
 		MsgTagType tags;
-		rsMsgs->getMessageTagTypes(tags);
+		rsMail->getMessageTagTypes(tags);
 
 		NewTag tagDlg(tags);
 		if (tagDlg.exec() == QDialog::Accepted && tagDlg.m_nId) {
 			std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tag = tags.types.find(tagDlg.m_nId);
 			if (tag != tags.types.end()) {
-				if (rsMsgs->setMessageTagType(tag->first, tag->second.first, tag->second.second)) {
+				if (rsMail->setMessageTagType(tag->first, tag->second.first, tag->second.second)) {
 					emit tagSet(tagDlg.m_nId, true);
 				}
 			}

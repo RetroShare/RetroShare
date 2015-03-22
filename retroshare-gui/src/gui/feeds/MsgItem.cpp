@@ -35,6 +35,8 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
+#include "gui/msgs/MessageInterface.h"
+
 /****
  * #define DEBUG_ITEM 1
  ****/
@@ -75,10 +77,10 @@ void MsgItem::updateItemStatic()
 
 	MessageInfo mi;
 
-	if (!rsMsgs) 
+	if (!rsMail) 
 		return;
 
-	if (!rsMsgs->getMessage(mMsgId, mi))
+	if (!rsMail->getMessage(mMsgId, mi))
 		return;
 
     /* get peer Id */
@@ -263,9 +265,9 @@ void MsgItem::deleteMsg()
 	std::cerr << "MsgItem::deleteMsg()";
 	std::cerr << std::endl;
 #endif
-	if (rsMsgs)
+	if (rsMail)
 	{
-		rsMsgs->MessageDelete(mMsgId);
+		rsMail->MessageDelete(mMsgId);
 
 		hide(); /* will be cleaned up next refresh */
 	}

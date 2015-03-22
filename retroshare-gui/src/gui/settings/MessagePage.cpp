@@ -59,7 +59,7 @@ MessagePage::~MessagePage()
 
 void MessagePage::toggleEnableEncryptedDistantMsgs(bool b)
 {
-	rsMsgs->enableDistantMessaging(b) ;
+	rsMail->enableDistantMessaging(b) ;
 }
 
 /** Saves the changes on this page */
@@ -78,11 +78,11 @@ MessagePage::save(QString &/*errmsg*/)
             if (*changedTagId == Tag->first) {
                 if (Tag->second.first.empty()) {
                     // delete tag
-                    rsMsgs->removeMessageTagType(Tag->first);
+                    rsMail->removeMessageTagType(Tag->first);
                     continue;
                 }
 
-                rsMsgs->setMessageTagType(Tag->first, Tag->second.first, Tag->second.second);
+                rsMail->setMessageTagType(Tag->first, Tag->second.first, Tag->second.second);
                 break;
             }
         }
@@ -99,9 +99,9 @@ MessagePage::load()
     ui.loadEmbeddedImages->setChecked(Settings->getMsgLoadEmbeddedImages());
     ui.openComboBox->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
 
-	 ui.encryptedMsgs_CB->setChecked(rsMsgs->distantMessagingEnabled()) ;
+	 ui.encryptedMsgs_CB->setChecked(rsMail->distantMessagingEnabled()) ;
     // fill items
-    rsMsgs->getMessageTagTypes(*m_pTags);
+    rsMail->getMessageTagTypes(*m_pTags);
     fillTags();
 }
 
@@ -202,7 +202,7 @@ void MessagePage::deleteTag()
 
 void MessagePage::defaultTag()
 {
-    rsMsgs->resetMessageStandardTagTypes(*m_pTags);
+    rsMail->resetMessageStandardTagTypes(*m_pTags);
 
     // add all standard items to changed list
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;

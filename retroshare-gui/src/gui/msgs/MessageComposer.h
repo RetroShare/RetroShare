@@ -27,13 +27,14 @@
 #include <retroshare/rsmsgs.h>
 #include "ui_MessageComposer.h"
 
+#include "gui/msgs/MessageInterface.h"
+
 class QAction;
 class QComboBox;
 class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
 class RSTreeWidgetItemCompareRole;
-struct MessageInfo;
 class RsGxsChannelGroup;
 class RsGxsForumGroup;
 

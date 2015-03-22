@@ -27,7 +27,7 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_MessagePage.h"
 
-class MsgTagType;
+#include "gui/msgs/MessageInterface.h"
 
 class MessagePage : public ConfigPage
 {
