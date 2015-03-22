@@ -54,13 +54,13 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * @param msgList ref to list summarising client's msgs
 	   */
-	  virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-	  virtual bool getMessage(const std::string &mId, MessageInfo &msg);
+	  virtual bool getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
+	  virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg);
 	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
-	  virtual bool MessageSend(MessageInfo &info);
+	  virtual bool MessageSend(Rs::Msgs::MessageInfo &info);
 	  virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
-	  virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId);
+	  virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
 	  virtual bool MessageToTrash(const std::string &mid, bool bTrash);
 	  virtual bool MessageDelete(const std::string &mid);
 	  virtual bool MessageRead(const std::string &mid, bool unreadByUser);
@@ -70,15 +70,15 @@ class p3Msgs: public RsMsgs
 	  virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load);
 	  virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId);
 
-	  virtual bool getMessageTagTypes(MsgTagType& tags);
+	  virtual bool getMessageTagTypes(Rs::Msgs::MsgTagType& tags);
 	  virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
 	  virtual bool removeMessageTagType(uint32_t tagId);
 
-	  virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info);
+	  virtual bool getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
 	  /* set == false && tagId == 0 --> remove all */
 	  virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
-	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
+	  virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags);
 
 	  virtual void enableDistantMessaging(bool b) ;
 	  virtual bool distantMessagingEnabled() ;

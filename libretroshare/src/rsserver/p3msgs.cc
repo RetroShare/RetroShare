@@ -43,6 +43,8 @@ const int p3facemsgzone = 11453;
 
 #include "pqi/authgpg.h"
 
+using namespace Rs::Msgs;
+
 /* external reference point */
 RsMsgs *rsMsgs = NULL;
 

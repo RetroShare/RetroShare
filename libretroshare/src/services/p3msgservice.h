@@ -61,8 +61,8 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		virtual RsServiceInfo getServiceInfo();
 
 		/* External Interface */
-		bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-		bool 	getMessage(const std::string &mid, MessageInfo &msg);
+		bool 	getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
+		bool 	getMessage(const std::string &mid, Rs::Msgs::MessageInfo &msg);
 		void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
 		bool decryptMessage(const std::string& mid) ;
@@ -73,20 +73,20 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		// msgParentId == 0 --> remove
 		bool    setMsgParentId(uint32_t msgId, uint32_t msgParentId);
 
-		bool    MessageSend(MessageInfo &info);
+		bool    MessageSend(Rs::Msgs::MessageInfo &info);
 		bool    SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
-		bool    MessageToDraft(MessageInfo &info, const std::string &msgParentId);
+		bool    MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
 		bool    MessageToTrash(const std::string &mid, bool bTrash);
 
-		bool 	getMessageTagTypes(MsgTagType& tags);
+		bool 	getMessageTagTypes(Rs::Msgs::MsgTagType& tags);
 		bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
 		bool    removeMessageTagType(uint32_t tagId);
 
-		bool 	getMessageTag(const std::string &msgId, MsgTagInfo& info);
+		bool 	getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
 		/* set == false && tagId == 0 --> remove all */
 		bool 	setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
-		bool    resetMessageStandardTagTypes(MsgTagType& tags);
+		bool    resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags);
 
 		void    loadWelcomeMsg(); /* startup message */
 
@@ -158,12 +158,12 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		void    processMsg(RsMsgItem *mi, bool incoming);
 		bool checkAndRebuildPartialMessage(RsMsgItem*) ;
 
-		void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
-		void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
+		void 	initRsMI(RsMsgItem *msg, Rs::Msgs::MessageInfo &mi);
+		void 	initRsMIS(RsMsgItem *msg, Rs::Msgs::MsgInfoSummary &mis);
 
-		RsMsgItem *initMIRsMsg(const MessageInfo &info, const RsPeerId& to);
-		RsMsgItem *initMIRsMsg(const MessageInfo &info, const RsGxsId& to);
-		void initMIRsMsg(RsMsgItem *item,const MessageInfo &info) ;
+		RsMsgItem *initMIRsMsg(const Rs::Msgs::MessageInfo &info, const RsPeerId& to);
+		RsMsgItem *initMIRsMsg(const Rs::Msgs::MessageInfo &info, const RsGxsId& to);
+		void initMIRsMsg(RsMsgItem *item,const Rs::Msgs::MessageInfo &info) ;
 
 		void    initStandardTagTypes();
 

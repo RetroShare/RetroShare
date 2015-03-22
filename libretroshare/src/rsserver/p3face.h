@@ -127,8 +127,6 @@ class RsServer: public RsControl, public RsThread
 
 	private:
 
-		void initRsMI(RsMsgItem *msg, MessageInfo &mi);
-
 		/****************************************/
 		/****************************************/
 		/****************************************/

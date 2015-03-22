@@ -63,6 +63,8 @@
 //#define DISABLE_DISTANT_MESSAGES 
 //#define DEBUG_DISTANT_MSG
 
+using namespace Rs::Msgs;
+
 const int msgservicezone = 54319;
 
 /* Another little hack ..... unique message Ids
@@ -1500,6 +1502,10 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 
 	mi.title = msg->subject;
 	mi.msg   = msg->message;
+	{
+		//msg->msgId;
+		rs_sprintf(mi.msgId, "%lu", msg->msgId);
+	}
 
 	mi.attach_title = msg->attachment.title;
 	mi.attach_comment = msg->attachment.comment;

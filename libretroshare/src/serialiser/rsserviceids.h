@@ -91,10 +91,13 @@ const uint16_t RS_SERVICE_TYPE_RTT         = 0x1011;
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
 // 2000+
 
-const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID   = 0x2001;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID  = 0x2002;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER = 0x2003;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID    = 0x2001;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID   = 0x2002;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER  = 0x2003;
 
+// Nabu's services.
+const uint16_t RS_SERVICE_TYPE_PLUGIN_FIDO_GW     = 0xF1D0;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_ZERORESERVE = 0xBEEF;
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
 /*

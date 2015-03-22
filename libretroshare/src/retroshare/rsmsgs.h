@@ -103,6 +103,12 @@ typedef RsPeerId	DistantChatPeerId ;
 
 typedef uint64_t     MessageId ;
 
+
+namespace Rs
+{
+namespace Msgs
+{
+
 class MsgAddress
 {
 	public:
@@ -238,6 +244,10 @@ public:
 
 };
 
+} //namespace Rs
+} //namespace Msgs
+
+
 #define RS_CHAT_PUBLIC 			0x0001
 #define RS_CHAT_PRIVATE 		0x0002
 #define RS_CHAT_AVATAR_AVAILABLE 	0x0004
@@ -370,7 +380,7 @@ struct DistantChatInviteInfo
 	uint32_t    invite_flags ;								// used to keep track of wether signature was ok or not.
 };
 
-std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
+std::ostream &operator<<(std::ostream &out, const Rs::Msgs::MessageInfo &info);
 
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
@@ -386,13 +396,13 @@ virtual ~RsMsgs() { return; }
 /*             Message Items            */
 /****************************************/
 
-virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
-virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
+virtual bool getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList) = 0;
+virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
 
-virtual bool MessageSend(MessageInfo &info) = 0;
+virtual bool MessageSend(Rs::Msgs::MessageInfo &info) = 0;
 virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;
-virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId) = 0;
+virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId) = 0;
 virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
 virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
 
@@ -405,15 +415,15 @@ virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load) = 0;
 
 /* message tagging */
 
-virtual bool getMessageTagTypes(MsgTagType& tags) = 0;
+virtual bool getMessageTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
 /* set == false && tagId == 0 --> remove all */
 virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color) = 0;
 virtual bool removeMessageTagType(uint32_t tagId) = 0;
 
-virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info) = 0;
+virtual bool getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info) = 0;
 virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) = 0;
 
-virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
+virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
 
 /****************************************/
 /*        Private distant messages      */
