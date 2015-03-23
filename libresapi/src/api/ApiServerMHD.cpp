@@ -10,10 +10,20 @@
 
 #include "api/JsonStream.h"
 
-// old version number use hex, new ones use decimal numbers
-// this is a hex number: 0x14 = 20
-// -> 0.9.20
-#if MHD_VERSION < 0x00091400
+#if MHD_VERSION < 0x00090000
+    // very old version, probably v0.4.x on old debian/ubuntu
+    #define OLD_04_MHD_FIX
+#endif
+
+// filestreamer only works if a content reader callback is allowed to return 0
+// this is allowed since libmicrohttpd revision 30402
+#if MHD_VERSION >= 0x00093101 // 0.9.31-1
+    #define ENABLE_FILESTREAMER
+#else
+    #warning libmicrohttpd is too old to support file streaming. upgrade to a newer version.
+#endif
+
+#ifdef OLD_04_MHD_FIX
 #define MHD_CONTENT_READER_END_OF_STREAM ((size_t) -1LL)
 /**
  * Create a response object. The response object can be extended with
@@ -163,6 +173,7 @@ public:
     ApiServer* mApiServer;
 };
 
+#ifdef ENABLE_FILESTREAMER
 class MHDFilestreamerHandler: public MHDHandlerBase
 {
 public:
@@ -203,11 +214,8 @@ public:
         MHD_destroy_response(resp);
         return MHD_YES;
     }
-#if MHD_VERSION >= 0x00091400
+
     static ssize_t contentReadercallback(void *cls, uint64_t pos, char *buf, size_t max)
-#else // old version
-    static int contentReadercallback(void *cls, uint64_t pos, char *buf, int max)
-#endif
     {
         MHDFilestreamerHandler* handler = (MHDFilestreamerHandler*)cls;
         if(pos >= handler->mSize)
@@ -218,6 +226,7 @@ public:
         return size_to_send;
     }
 };
+#endif // ENABLE_FILESTREAMER
 
 ApiServerMHD::ApiServerMHD(std::string root_dir, uint16_t port):
     mRootDir(root_dir), mPort(port),
@@ -345,10 +354,15 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
     // is it a call to the filestreamer?
     if(strstr(url, FILESTREAMER_ENTRY_PATH) == url)
     {
+#ifdef ENABLE_FILESTREAMER
         // create a new handler and store it in con_cls
         MHDHandlerBase* handler = new MHDFilestreamerHandler();
         *con_cls = (void*) handler;
         return handler->handleRequest(connection, url, method, version, upload_data, upload_data_size);
+#else
+        sendMessage(connection, MHD_HTTP_NOT_FOUND, "The filestreamer is not available, because this executable was compiled with a too old version of libmicrohttpd.");
+        return MHD_YES;
+#endif
     }
 
     // else server static files
