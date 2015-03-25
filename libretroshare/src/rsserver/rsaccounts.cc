@@ -756,7 +756,7 @@ std::string RsAccountsDetail::PathDataDirectory()
 
   #else
 	/* For Linux, we have a fixed standard data directory  */
-	dataDirectory = "/usr/share/RetroShare";
+    dataDirectory = "/usr/share/RetroShare06";
 	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory;
 
   #endif
