@@ -84,6 +84,7 @@ class RsAccountsDetail
 		std::string 	PathAccountKeysDirectory();
 		std::string 	PathKeyFile();
 		std::string 	PathCertFile();
+        std::string     LocationName();
 
 		// PGP Accounts.
 

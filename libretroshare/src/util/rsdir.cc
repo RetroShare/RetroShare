@@ -41,6 +41,7 @@
 #include <dirent.h>
 #include <openssl/sha.h>
 #include <iomanip>
+#include <sstream>
 
 #include <fstream>
 #include <stdexcept>
@@ -720,6 +721,31 @@ Sha1CheckSum RsDirUtil::sha1sum(const unsigned char *data, uint32_t size)
 	SHA1_Final(&sha_buf[0], &sha_ctx);
 
 	return Sha1CheckSum(sha_buf) ;
+}
+
+bool RsDirUtil::saveStringToFile(const std::string &file, const std::string &str)
+{
+    std::ofstream out(file.c_str(), std::ios_base::out | std::ios_base::binary);
+    if(!out.is_open())
+    {
+        std::cerr << "RsDirUtil::saveStringToFile() ERROR: can't open file " << file << std::endl;
+        return false;
+    }
+    out << str;
+}
+
+bool RsDirUtil::loadStringFromFile(const std::string &file, std::string &str)
+{
+    std::ifstream in(file.c_str(), std::ios_base::in | std::ios_base::binary);
+    if(!in.is_open())
+    {
+        std::cerr << "RsDirUtil::loadStringFromFile() ERROR: can't open file " << file << std::endl;
+        return false;
+    }
+    std::stringstream buffer;
+    buffer << in.rdbuf();
+    str = buffer.str();
+    return true;
 }
 
 bool RsDirUtil::renameFile(const std::string& from, const std::string& to)

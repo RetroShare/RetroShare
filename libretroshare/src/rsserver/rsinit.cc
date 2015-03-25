@@ -503,7 +503,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 */
 	/* create singletons */
 	AuthSSL::AuthSSLInit();
-	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
+    AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
 
 	rsAccounts = new RsAccountsDetail() ;
 
@@ -708,7 +708,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	std::cerr << "rsAccounts->PathKeyFile() : " << rsAccounts->PathKeyFile() << std::endl;
 
-	if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts->PathCertFile().c_str(), rsAccounts->PathKeyFile().c_str(), rsInitConfig->passwd.c_str()))
+    if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts->PathCertFile().c_str(), rsAccounts->PathKeyFile().c_str(), rsInitConfig->passwd.c_str(), rsAccounts->LocationName()))
 	{
 		std::cerr << "SSL Auth Failed!";
 		return 0 ;
@@ -955,7 +955,7 @@ int RsServer::StartupRetroShare()
 	/* (1) Load up own certificate (DONE ALREADY) - just CHECK */
 	/**************************************************************************/
 
-	if (1 != AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL))
+    if (1 != AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, ""))
 	{
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;

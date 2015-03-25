@@ -96,7 +96,7 @@ virtual bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) = 0;
 
 virtual bool	active() = 0;
 virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
-					const char *passwd) = 0;
+                    const char *passwd, std::string alternative_location_name) = 0;
 virtual bool	CloseAuth() = 0;
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
@@ -156,7 +156,7 @@ bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey);
 
 virtual bool	active();
 virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
-					const char *passwd);
+                     const char *passwd, std::string alternative_location_name);
 virtual bool	CloseAuth();
 
 	/*********** Overloaded Functions from p3AuthMgr **********/

@@ -97,6 +97,9 @@ bool 		getFileHash(const std::string& filepath,RsFileHash &hash, uint64_t &size,
 
 Sha1CheckSum sha1sum(const uint8_t *data,uint32_t size) ;
 
+bool saveStringToFile(const std::string& file, const std::string& str);
+bool loadStringFromFile(const std::string& file, std::string& str);
+
 // Creates a lock file with given path, and returns the lock handle
 // returns:
 // 	0: Success

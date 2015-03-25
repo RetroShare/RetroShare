@@ -187,6 +187,7 @@ const std::string kPathConfigDirectory = "config";
 const std::string kFilenamePreferredAccount = "default_cert.txt";
 const std::string kFilenameKey = "user_pk.pem";
 const std::string kFilenameCert = "user_cert.pem";
+const std::string kFilenameLocation = "location_name.txt";
 
 
 /*********************************************************************
@@ -250,12 +251,22 @@ std::string RsAccountsDetail::PathCertFile()
 	std::string path = PathAccountKeysDirectory();
 	if (path.empty())
 	{
-		return path;	
+        return path;
 	}
 	path += "/" + kFilenameCert;
 	return path;
 }
 
+std::string RsAccountsDetail::LocationName()
+{
+    std::map<RsPeerId, AccountDetails>::const_iterator it;
+    it = mAccounts.find(mPreferredId);
+    if (it == mAccounts.end())
+    {
+        return "";
+    }
+    return it->second.mLocation;
+}
 
 
 /*********************************************************************
@@ -621,9 +632,10 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	/* check if the cert/key file exists */
 
 	// Create the filename.
+    // TODO: use kFilenameKey
 	std::string basename = accountdir + "/";
 	basename += kPathKeyDirectory + "/";
-	basename += "user";
+    basename += "user";
 
 	std::string cert_name = basename + "_cert.pem";
 	std::string userName;
@@ -636,6 +648,10 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	/* check against authmanagers private keys */
 	if (LoadCheckX509(cert_name.c_str(), account.mPgpId, account.mLocation, account.mSslId))
 	{
+        // new locations store the name in an extra file
+        if(account.mLocation == "")
+            RsDirUtil::loadStringFromFile(accountdir + "/" + kPathKeyDirectory + "/" + kFilenameLocation,
+                                          account.mLocation);
 #ifdef AUTHSSL_DEBUG
 		std::cerr << "location: " << account.mLocation << " id: " << account.mSslId << std::endl;
 		std::cerr << "issuerName: " << account.mPgpId << " id: " << account.mSslId << std::endl;
@@ -968,10 +984,10 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	X509_REQ *req = GenerateX509Req(
 			key_name.c_str(),
 			passwd.c_str(),
-			pgp_name.c_str(),
+            "-", //pgp_name.c_str(), // does not allow empty name, set to constant instead
 			"", //ui -> gen_email -> value(),
 			org.c_str(),
-			loc.c_str(),
+            "", //loc.c_str(),
 			"", //ui -> gen_state -> value(),
 			country.c_str(),
 			nbits, errString);
@@ -1037,6 +1053,10 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	
 		fclose(out);
 		X509_free(x509);
+
+        // store location name in a file
+        if(!RsDirUtil::saveStringToFile(keypath + kFilenameLocation, loc))
+            std::cerr << "RsInit::GenerateSSLCertificate() failed to save location name to into file." << std::endl;
 	}
 
 	if (!gen_ok)

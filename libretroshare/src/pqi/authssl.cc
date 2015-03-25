@@ -288,7 +288,7 @@ bool AuthSSLimpl::active()
 
 
 int	AuthSSLimpl::InitAuth(const char *cert_file, const char *priv_key_file,
-			const char *passwd)
+            const char *passwd, std::string alternative_location_name)
 {
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSLimpl::InitAuth()";
@@ -468,6 +468,11 @@ static  int initLib = 0;
 	std::cerr << "SSL Verification Set" << std::endl;
 
 	mOwnCert = new sslcert(x509, mOwnId);
+
+    // new locations don't store the name in the cert
+    // if empty, use the external supplied value
+    if(mOwnCert->location == "")
+        mOwnCert->location = alternative_location_name;
 
 	std::cerr << "Inited SSL context: " << std::endl;
 	std::cerr << "    Certificate: " << mOwnId << std::endl;
@@ -728,7 +733,13 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         }
         X509_NAME_free(issuer_name);
 
+        // NEW code, set validity time between null and null
+        // (does not leak the key creation date to the outside anymore. for more privacy)
+        ASN1_TIME_set(X509_get_notBefore(x509), 0);
+        ASN1_TIME_set(X509_get_notAfter(x509), 0);
 
+        // OLD code, sets validity time of cert to be between now and some days in the future
+        /*
         if (!X509_gmtime_adj(X509_get_notBefore(x509),0))
         {
                 std::cerr << "AuthSSLimpl::SignX509Req() notbefore FAIL" << std::endl;
@@ -740,6 +751,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
                 std::cerr << "AuthSSLimpl::SignX509Req() notafter FAIL" << std::endl;
                 return NULL;
         }
+        */
 
         if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
         {
