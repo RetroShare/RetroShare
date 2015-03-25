@@ -14,7 +14,7 @@
 
 namespace resource_api{
 
-RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, ApiServer *apiserver):
+RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, ApiServer *apiserver, bool full_control):
     mStateTokenServer(sts),
     mApiServer(apiserver),
     mExitFlagMtx("RsControlModule::mExitFlagMtx"),
@@ -28,7 +28,10 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     this->argc = argc;
     this->argv = argv;
     // start worker thread
-    start();
+    if(full_control)
+        start();
+    else
+        mRunState = RUNNING_OK;
 
     addResourceHandler("runstate", this, &RsControlModule::handleRunState);
     addResourceHandler("identities", this, &RsControlModule::handleIdentities);

@@ -24,7 +24,9 @@ class RsControlModule: public ResourceRouter, NotifyClient,
 {
 public:
     // ApiServer will be called once RS is started, to load additional api modules
-    RsControlModule(int argc, char **argv, StateTokenServer* sts, ApiServer* apiserver);
+    // full_control: set to true if this module should handle rsinit and login
+    // set to false if rsinit is handled by the Qt gui
+    RsControlModule(int argc, char **argv, StateTokenServer* sts, ApiServer* apiserver, bool full_control);
     ~RsControlModule();
 
     // returns true if the process should terminate

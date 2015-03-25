@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     {
         resource_api::ApiServerMHD httpd(docroot, httpPort);
 
-        resource_api::RsControlModule ctrl_mod(argc, argv, httpd.getApiServer().getStateTokenServer(), &httpd.getApiServer());
+        resource_api::RsControlModule ctrl_mod(argc, argv, httpd.getApiServer().getStateTokenServer(), &httpd.getApiServer(), true);
         httpd.getApiServer().addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
 
         httpd.start();
