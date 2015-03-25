@@ -175,7 +175,16 @@ void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 		std::cerr << "\tIgnoring new filename " << filename;
 		std::cerr << std::endl;
 		return;
-	}
+    }
+    // also check that the filename is not already registered for another config
+
+    for(std::list<pqiConfig*>::const_iterator it = mConfigs.begin();it!= mConfigs.end();++it)
+        if( (*it)->filename == filename )
+        {
+            std::cerr << "!!!!!!!!!!! Trying to register a config for file \"" << filename << "\" that is already registered" << std::endl;
+            std::cerr << "!!!!!!!!!!! Please correct the code !" << std::endl;
+            return ;
+        }
 
 	conf->setFilename(filename);
 	mConfigs.push_back(conf);

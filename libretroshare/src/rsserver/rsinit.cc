@@ -1592,7 +1592,7 @@ int RsServer::StartupRetroShare()
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
-    mConfigMgr->addConfiguration("identity.cfg", mGxsIdService);
+    mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
 
 #ifdef RS_USE_BITDHT
 	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);

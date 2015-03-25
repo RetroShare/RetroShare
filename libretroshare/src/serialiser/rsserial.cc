@@ -28,6 +28,7 @@
 #include "serialiser/rsserial.h"
 #include "util/rsthreads.h"
 #include "util/rsstring.h"
+#include "util/rsprint.h"
 
 #include <math.h>
 #include <map>
@@ -424,7 +425,9 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << "RsSerialiser::deserialise() ERROR Failed!";
 		std::cerr << std::endl;
 		std::cerr << "RsSerialiser::deserialise() pkt_size: " << pkt_size << " vs *size: " << *size;
-		std::cerr << std::endl;
+        std::cerr << std::endl;
+
+        RsItem *item2 = (it->second)->deserialise(data, &pkt_size);
 
 		uint32_t failedtype = getRsItemId(data);
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";
@@ -435,7 +438,8 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;
 		std::cerr << " Type: " << std::hex << (uint32_t) getRsItemType(failedtype) << std::dec;
 		std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
-		std::cerr << std::endl;
+        std::cerr << " Data: " << RsUtil::BinToHex((char*)data,pkt_size) << std::endl;
+        std::cerr << std::endl;
 #endif
 		return NULL;
 	}
@@ -456,7 +460,8 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << " Version: " << std::hex << (uint32_t) getRsItemVersion(failedtype) << std::dec;
 		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;
 		std::cerr << " Type: " << std::hex << (uint32_t) getRsItemType(failedtype) << std::dec;
-		std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
+        std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
+        std::cerr << " Data: " << RsUtil::BinToHex((char*)data,pkt_size) << std::endl;
 		std::cerr << std::endl;
 #endif
 	}
