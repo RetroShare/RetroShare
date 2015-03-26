@@ -76,10 +76,15 @@ int main(int argc, char **argv)
 
     std::string docroot = "./";
     uint16_t httpPort = 0;
+    std::string listenAddress;
+    bool allowAllIps = false;
 
     argstream args(argc, argv);
     args >> parameter("webinterface", httpPort, "port", "Enable webinterface on the specified port", false);
     args >> parameter("docroot",      docroot,  "path", "Serve static files from this path.", false);
+    // unfinished
+    //args >> parameter("http-listen", listenAddress, "ipv6 address", "Listen only on the specified address.", false);
+    args >> option("http-allow-all", allowAllIps, "allow connections from all IP adresses (default: localhost only)");
     args >> help();
 
     if (args.helpRequested())
@@ -89,7 +94,13 @@ int main(int argc, char **argv)
 
     if(httpPort != 0)
     {
-        resource_api::ApiServerMHD httpd(docroot, httpPort);
+        resource_api::ApiServerMHD httpd;
+
+        if(!httpd.configure(docroot, httpPort, listenAddress, allowAllIps))
+        {
+            std::cerr << "Failed to configure the http server. Check your parameters." << std::endl;
+            return 1;
+        }
 
         resource_api::RsControlModule ctrl_mod(argc, argv, httpd.getApiServer().getStateTokenServer(), &httpd.getApiServer(), true);
         httpd.getApiServer().addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
@@ -102,7 +113,7 @@ int main(int argc, char **argv)
         }
         httpd.stop();
 
-        return 1;
+        return 0;
     }
 #endif
 
