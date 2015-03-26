@@ -7,6 +7,10 @@
 #include <microhttpd.h>
 #include <string>
 
+#ifndef WINDOWS_SYS
+#include <netinet/in.h>
+#endif
+
 #include "api/ApiServer.h"
 
 namespace resource_api{

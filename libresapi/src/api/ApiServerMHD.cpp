@@ -262,12 +262,12 @@ bool ApiServerMHD::configure(std::string docroot, uint16_t port, std::string bin
     }
     else*/ if(allow_from_all)
     {
-        mListenAddr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+        mListenAddr.sin_addr.s_addr = htonl(INADDR_ANY);
         std::cerr << "ApiServerMHD::configure(): will serve the webinterface to ALL IP adresses." << std::endl;
     }
     else
     {
-        mListenAddr.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
+        mListenAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         std::cerr << "ApiServerMHD::configure(): will serve the webinterface to LOCALHOST only." << std::endl;
     }
 
