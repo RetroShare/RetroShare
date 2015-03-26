@@ -202,6 +202,9 @@ public:
 	bool getChatSendMessageWithCtrlReturn();
 	void setChatSendMessageWithCtrlReturn(bool bValue);
 
+	bool getChatSearchShowBarByDefault();
+	void setChatSearchShowBarByDefault(bool bValue);
+
 	void setChatSearchCharToStartSearch(int iValue);
 	int getChatSearchCharToStartSearch();
 

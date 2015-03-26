@@ -115,7 +115,7 @@
            <property name="margin">
             <number>0</number>
            </property>
-           <item row="0" column="4">
+           <item row="0" column="5">
             <widget class="QToolButton" name="searchButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -159,7 +159,68 @@
              </property>
             </widget>
            </item>
+           <item row="0" column="0">
+            <widget class="QToolButton" name="notifyButton">
+             <property name="minimumSize">
+              <size>
+               <width>28</width>
+               <height>28</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>28</width>
+               <height>28</height>
+              </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/chat_red24.png</normaloff>:/images/chat_red24.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="3">
+            <widget class="QToolButton" name="searchAfter">
+             <property name="minimumSize">
+              <size>
+               <width>14</width>
+               <height>28</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>14</width>
+               <height>28</height>
+              </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="LineEditClear" name="leSearch"/>
+           </item>
+           <item row="0" column="4">
             <widget class="QToolButton" name="searchBefore">
              <property name="minimumSize">
               <size>
@@ -185,7 +246,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
+           <item row="0" column="1">
             <widget class="QToolButton" name="markButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -220,35 +281,6 @@
              </property>
              <property name="checkable">
               <bool>true</bool>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="LineEditClear" name="leSearch"/>
-           </item>
-           <item row="0" column="2">
-            <widget class="QToolButton" name="searchAfter">
-             <property name="minimumSize">
-              <size>
-               <width>14</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>14</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
              </property>
              <property name="autoRaise">
               <bool>true</bool>

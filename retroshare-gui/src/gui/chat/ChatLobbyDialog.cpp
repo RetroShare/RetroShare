@@ -336,7 +336,7 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
             name = QString::fromUtf8(msg.peer_alternate_nickname.c_str()) + " (" + QString::fromStdString(gxs_id.toStdString()) + ")" ;
 
         ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-        emit messageReceived(id()) ;
+		emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
 
         // This is a trick to translate HTML into text.
         QTextEdit editor;

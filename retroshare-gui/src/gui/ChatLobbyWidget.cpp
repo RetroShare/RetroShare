@@ -55,6 +55,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.setupUi(this);
 
 	m_bProcessSettings = false;
+	myChatLobbyUserNotify = NULL;
 
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
@@ -194,12 +195,29 @@ ChatLobbyWidget::~ChatLobbyWidget()
 
 UserNotify *ChatLobbyWidget::getUserNotify(QObject *parent)
 {
-	ChatLobbyUserNotify *notify = new ChatLobbyUserNotify(parent);
-	connect(this, SIGNAL(unreadCountChanged(uint)), notify, SLOT(unreadCountChanged(uint)));
+	if (!myChatLobbyUserNotify){
+		myChatLobbyUserNotify = new ChatLobbyUserNotify(parent);
+		connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId, unsigned int)), this, SLOT(updateNotify(ChatLobbyId, unsigned int)));
+	}
+	return myChatLobbyUserNotify;
+}
 
-	notify->unreadCountChanged(unreadCount());
+void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
+{
+	ChatLobbyDialog *dialog=NULL;
+	dialog=_lobby_infos[id].dialog;
+	if(!dialog) return;
 
-	return notify;
+	QToolButton* notifyButton=dialog->getChatWidget()->getNotifyButton();
+	if (!notifyButton) return;
+	dialog->getChatWidget()->setNotify(myChatLobbyUserNotify);
+	if (count>0){
+		notifyButton->setVisible(true);
+		notifyButton->setIcon(_lobby_infos[id].default_icon);
+		notifyButton->setToolTip(QString("(%1)").arg(count));
+	} else {
+		notifyButton->setVisible(false);
+	}
 }
 
 void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
@@ -332,7 +350,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 
 		connect(d,SIGNAL(lobbyLeave(ChatLobbyId)),this,SLOT(unsubscribeChatLobby(ChatLobbyId))) ;
 		connect(d,SIGNAL(typingEventReceived(ChatLobbyId)),this,SLOT(updateTypingStatus(ChatLobbyId))) ;
-		connect(d,SIGNAL(messageReceived(ChatLobbyId)),this,SLOT(updateMessageChanged(ChatLobbyId))) ;
+		connect(d,SIGNAL(messageReceived(bool,ChatLobbyId,QDateTime,QString,QString)),this,SLOT(updateMessageChanged(bool,ChatLobbyId,QDateTime,QString,QString))) ;
 		connect(d,SIGNAL(peerJoined(ChatLobbyId)),this,SLOT(updatePeerEntering(ChatLobbyId))) ;
 		connect(d,SIGNAL(peerLeft(ChatLobbyId)),this,SLOT(updatePeerLeaving(ChatLobbyId))) ;
 
@@ -340,7 +358,6 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 		_lobby_infos[id].dialog = d ;
 		_lobby_infos[id].default_icon = QIcon() ;
 		_lobby_infos[id].last_typing_event = time(NULL) ;
-		_lobby_infos[id].unread_count = 0;
 
         ChatLobbyInfo linfo ;
         if(rsMsgs->getChatLobbyInfo(id,linfo))
@@ -619,6 +636,7 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 	else
 		ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
 }
+
 void ChatLobbyWidget::subscribeChatLobbyAs()
 {
     QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
@@ -638,6 +656,31 @@ void ChatLobbyWidget::subscribeChatLobbyAs()
     if(rsMsgs->joinVisibleChatLobby(id,gxs_id))
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
+
+void ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
+{
+	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
+
+	if(item != NULL) {
+		if(item->type() == TYPE_LOBBY) {
+
+			if(_lobby_infos.find(id) == _lobby_infos.end()) {
+				showBlankPage(id) ;
+			} else {
+				//ChatLobbyDialog cldChatLobby =_lobby_infos[id].dialog;
+				ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
+				ChatLobbyDialog *cldCW=NULL ;
+				if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(ui.stackedWidget->currentWidget())))
+					cldCW->getChatWidget()->scrollToAnchor(anchor);
+
+				ui.lobbyTreeWidget->setCurrentItem(item);
+			}
+
+		}
+	}
+
+}
+
 void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
 {
     if (item == NULL || item->type() != TYPE_LOBBY) {
@@ -810,9 +853,12 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 
 	if(it != _lobby_infos.end())
 	{
+		if (myChatLobbyUserNotify){
+			myChatLobbyUserNotify->chatLobbyCleared(id, "");
+		}
+
 		ui.stackedWidget->removeWidget(it->second.dialog) ;
 		_lobby_infos.erase(it) ;
-		emit unreadCountChanged(unreadCount());
 	}
 
 	// Unsubscribe the chat lobby
@@ -852,10 +898,7 @@ void ChatLobbyWidget::updateCurrentLobby()
             int iPrivacyLevel= item->parent()->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt();
             QIcon icon = (iPrivacyLevel==CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
 			_lobby_infos[id].default_icon = icon ;
-			_lobby_infos[id].unread_count = 0;
 			item->setIcon(COLUMN_NAME, icon) ;
-
-			emit unreadCountChanged(unreadCount());
 		}
 	}
 
@@ -863,19 +906,21 @@ void ChatLobbyWidget::updateCurrentLobby()
 		filterItems(ui.filterLineEdit->text());
 	}
 }
-void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
+void ChatLobbyWidget::updateMessageChanged(bool incoming, ChatLobbyId id, QDateTime time, QString senderName, QString msg)
 {
 	QTreeWidgetItem *current_item = ui.lobbyTreeWidget->currentItem();
+	bool bIsCurrentItem = (current_item != NULL && current_item->data(COLUMN_DATA, ROLE_ID).toULongLong() == id);
+
+	if (myChatLobbyUserNotify){
+		if (incoming) myChatLobbyUserNotify->chatLobbyNewMessage(id, time, senderName, msg);
+	}
 
 	// Don't show anything for current lobby.
 	//
-	if(current_item != NULL && current_item->data(COLUMN_DATA, ROLE_ID).toULongLong() == id)
+	if(bIsCurrentItem)
 		return ;
 
 	_lobby_infos[id].default_icon = QIcon(IMAGE_MESSAGE) ;
-	++_lobby_infos[id].unread_count;
-
-	emit unreadCountChanged(unreadCount());
 
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 
@@ -1053,15 +1098,4 @@ int ChatLobbyWidget::getNumColVisible()
 		}
 	}
     return iNumColVis;
-}
-
-uint ChatLobbyWidget::unreadCount()
-{
-	uint count = 0;
-
-	for (std::map<ChatLobbyId,ChatLobbyInfoStruct>::iterator it = _lobby_infos.begin(); it != _lobby_infos.end(); ++it) {
-		count += it->second.unread_count;
-	}
-
-	return count;
 }

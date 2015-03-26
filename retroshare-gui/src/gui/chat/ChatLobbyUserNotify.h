@@ -23,6 +23,22 @@
 #define CHATLOBBYUSERNOTIFY_H
 
 #include "gui/common/UserNotify.h"
+#include <retroshare/rsmsgs.h>
+#include <QDateTime>
+#include <QMetaType>
+
+struct ActionTag {
+	ChatLobbyId cli;
+	QString timeStamp;
+	bool removeALL;
+};
+Q_DECLARE_METATYPE(ActionTag)
+
+struct MsgData {
+	QString text;
+	bool unread;
+};
+Q_DECLARE_METATYPE(MsgData)
 
 class ChatLobbyUserNotify : public UserNotify
 {
@@ -32,18 +48,46 @@ public:
 	ChatLobbyUserNotify(QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
+	void makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString strLobbyName, ChatLobbyId id);
+	void chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime time, QString senderName, QString msg);
+	void chatLobbyCleared(ChatLobbyId lobby_id, QString anchor, bool onlyUnread=false);
+	void setCheckForNickName(bool value);
+	bool isCheckForNickName() { return _bCheckForNickName;}
+	void setCountUnRead(bool value);
+	bool isCountUnRead() { return _bCountUnRead;}
+    void setCountSpecificText(bool value);
+    bool isCountSpecificText() { return _bCountSpecificText;}
+    void setTextToNotify(QStringList);
+	void setTextToNotify(QString);
+	QString textToNotify() { return _textToNotify.join("\n");}
 
-public slots:
-	void unreadCountChanged(uint unreadCount);
+signals:
+	void countChanged(ChatLobbyId id, unsigned int count);
+
+private slots:
+	void subMenuClicked(QAction* action);
+	void subMenuHovered(QAction* action);
 
 private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);
 	virtual unsigned int getNewCount();
+	virtual QString getTrayMessage(bool plural);
+	virtual QString getNotifyMessage(bool plural);
 	virtual void iconClicked();
+	virtual void iconHovered();
+	bool checkWord(QString msg, QString word);
 
-private:
-	uint mUnreadCount;
+	QString _name;
+	QString _group;
+
+	typedef std::map<QString, MsgData> msg_map;
+	typedef	std::map<ChatLobbyId, msg_map> lobby_map;
+	lobby_map _listMsg;
+	QStringList _textToNotify;
+	bool _bCheckForNickName;
+	bool _bCountUnRead;
+    bool _bCountSpecificText;
 };
 
 #endif // CHATLOBBYUSERNOTIFY_H

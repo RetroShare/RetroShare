@@ -131,6 +131,7 @@ ChatPage::save(QString &/*errmsg*/)
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 
+		Settings->setChatSearchShowBarByDefault(ui.cbSearch_ShowBar->isChecked());
     Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
     Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
     Settings->setChatSearchWholeWords(ui.cbSearch_WholeWords->isChecked());
@@ -233,6 +234,7 @@ ChatPage::load()
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
 
+		ui.cbSearch_ShowBar->setChecked(Settings->getChatSearchShowBarByDefault());
     ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
     ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());
     ui.cbSearch_WholeWords->setChecked(Settings->getChatSearchWholeWords());

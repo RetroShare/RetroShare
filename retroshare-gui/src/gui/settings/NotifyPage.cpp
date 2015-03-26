@@ -43,6 +43,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
   connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
   connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
+    connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool))) ;
 
   ui.notify_Blogs->hide();
 
@@ -74,6 +75,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList();
   QList<UserNotify*>::const_iterator it;
   row = 0;
+  mChatLobbyUserNotify = 0;
   for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
       UserNotify *userNotify = *it;
 
@@ -96,6 +98,9 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
       ui.notifyLayout->addWidget(blinkCheckBox, row++, 2);
 
       mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
+
+      //To get ChatLobbyUserNotify Settings
+      if (!mChatLobbyUserNotify) mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
   }
 
   /* Hide platform specific features */
@@ -205,6 +210,12 @@ NotifyPage::save(QString &/*errmsg*/)
 
     Settings->setToasterMargin(QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value()));
 
+    if (mChatLobbyUserNotify){
+        mChatLobbyUserNotify->setCountUnRead(ui.chatLobbies_CountUnRead->isChecked()) ;
+        mChatLobbyUserNotify->setCheckForNickName(ui.chatLobbies_CheckNickName->isChecked()) ;
+        mChatLobbyUserNotify->setCountSpecificText(ui.chatLobbies_CountFollowingText->isChecked()) ;
+        mChatLobbyUserNotify->setTextToNotify(ui.chatLobbies_TextToNotify->document()->toPlainText());
+    }
     load();
     return true;
 }
@@ -282,6 +293,15 @@ void NotifyPage::load()
     }
 
     notifyToggled();
+
+    ui.chatLobbies_TextToNotify->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
+    ui.chatLobbies_CountFollowingText->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
+
+    if (mChatLobbyUserNotify){
+        ui.chatLobbies_CountUnRead->setChecked(mChatLobbyUserNotify->isCountUnRead());
+        ui.chatLobbies_CheckNickName->setChecked(mChatLobbyUserNotify->isCheckForNickName());
+        ui.chatLobbies_TextToNotify->setPlainText(mChatLobbyUserNotify->textToNotify());
+    }
 }
 
 void NotifyPage::notifyToggled()

@@ -56,7 +56,7 @@ private slots:
 signals:
 	void lobbyLeave(ChatLobbyId) ;
 	void typingEventReceived(ChatLobbyId) ;
-	void messageReceived(ChatLobbyId) ;
+	void messageReceived(bool incoming, ChatLobbyId lobby_id, QDateTime time, QString senderName, QString msg) ;
 	void peerJoined(ChatLobbyId) ;
 	void peerLeft(ChatLobbyId) ;
 

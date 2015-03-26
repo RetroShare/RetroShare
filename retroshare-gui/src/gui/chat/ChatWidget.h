@@ -27,10 +27,12 @@
 #include <QCompleter>
 #include <QTextCursor>
 #include <QTextCharFormat>
+#include <QToolButton>
 #include "gui/common/HashBox.h"
 #include "gui/common/RsButtonOnText.h"
 #include "ChatStyle.h"
 #include "gui/style/RSStyle.h"
+#include "ChatLobbyUserNotify.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
@@ -84,6 +86,9 @@ public:
 	bool isTyping() { return typing; }
 
 	void focusDialog();
+	QToolButton* getNotifyButton();
+	void setNotify(ChatLobbyUserNotify* clun);
+	void scrollToAnchor(QString anchor);
 	void addToParent(QWidget *newParent);
 	void removeFromParent(QWidget *oldParent);
 
@@ -162,6 +167,8 @@ private slots:
 	void toogle_MoveToCursor();
 	void toogle_SeachWithoutLimit();
 
+	void on_notifyButton_clicked();
+
 	void on_markButton_clicked(bool bValue);
 
 	void chooseColor();
@@ -237,6 +244,7 @@ private:
     QCompleter *completer;
 
 	QList<ChatWidgetHolder*> mChatWidgetHolder;
+	ChatLobbyUserNotify* notify;
 
 	Ui::ChatWidget *ui;
 };

@@ -4,6 +4,7 @@
 #include <retroshare/rsmsgs.h>
 #include "ui_ChatLobbyWidget.h"
 #include "RsAutoUpdatePage.h"
+#include "chat/ChatLobbyUserNotify.h"
 
 #define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
 
@@ -20,7 +21,6 @@ struct ChatLobbyInfoStruct
 	QIcon default_icon ;
 	ChatLobbyDialog *dialog ;
 	time_t last_typing_event ;
-	uint unread_count;
 };
 
 class ChatLobbyWidget : public RsAutoUpdatePage
@@ -38,12 +38,13 @@ public:
 	virtual QString pageName() const { return tr("Chat Lobbies") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	virtual UserNotify *getUserNotify(QObject *parent);
+	virtual UserNotify *getUserNotify(QObject *parent); //MainPage
 
 	virtual void updateDisplay();
 
 	void setCurrentChatPage(ChatLobbyDialog *) ;	// used by ChatLobbyDialog to raise.
 	void addChatPage(ChatLobbyDialog *) ;
+	void showLobbyAnchor(ChatLobbyId id, QString anchor) ;
 
 	uint unreadCount();
 
@@ -66,7 +67,7 @@ protected slots:
     void subscribeChatLobbyAs() ;
     void updateTypingStatus(ChatLobbyId id) ;
 	void resetLobbyTreeIcons() ;
-	void updateMessageChanged(ChatLobbyId);
+	void updateMessageChanged(bool incoming, ChatLobbyId, QDateTime time, QString senderName, QString msg);
 	void updatePeerEntering(ChatLobbyId);
 	void updatePeerLeaving(ChatLobbyId);
 	void autoSubscribeItem();
@@ -75,10 +76,11 @@ private slots:
 	void filterColumnChanged(int);
 	void filterItems(const QString &text);
 	
-
     void setShowUserCountColumn(bool show);
     void setShowTopicColumn(bool show);
     void setShowSubscribeColumn(bool show);
+
+	void updateNotify(ChatLobbyId id, unsigned int count) ;
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
@@ -108,6 +110,8 @@ private:
 	QAction* showTopicAct;
 	QAction* showSubscribeAct;
 	int getNumColVisible();
+
+	ChatLobbyUserNotify* myChatLobbyUserNotify;
 
 	/* UI - from Designer */
 	Ui::ChatLobbyWidget ui;

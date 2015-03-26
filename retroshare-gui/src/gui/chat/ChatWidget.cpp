@@ -31,10 +31,12 @@
 #include <QTextCodec>
 #include <QTimer>
 #include <QTextDocumentFragment>
+#include <QToolTip>
 #include <QStringListModel>
 
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
+#include "gui/MainWindow.h"
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
@@ -44,9 +46,11 @@
 #include "gui/common/StatusDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
+#include "gui/chat/ChatLobbyDialog.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
-#include "gui/chat/ChatUserNotify.h"
+#include "gui/chat/ChatUserNotify.h"//For BradCast
+#include "util/DateTime.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -104,6 +108,9 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
 	connect(ui->actionSearch_History, SIGNAL(triggered()), this, SLOT(searchHistory()));
 
+	notify=NULL;
+	ui->notifyButton->setVisible(false);
+
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
@@ -135,7 +142,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
 	
-	ui->searchframe->hide();
+	ui->actionSearch_History->setChecked(Settings->getChatSearchShowBarByDefault());
+	searchHistory();
 
 	setAcceptDrops(true);
 	ui->chatTextEdit->setAcceptDrops(false);
@@ -156,8 +164,11 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionSearch_History);
 	ui->pushtoolsButton->setMenu(menu);
 
-	ui->chatTextEdit->installEventFilter(this);
 	ui->textBrowser->installEventFilter(this);
+	ui->textBrowser->viewport()->installEventFilter(this);
+	ui->chatTextEdit->installEventFilter(this);
+	//ui->textBrowser->setMouseTracking(true);
+	//ui->chatTextEdit->setMouseTracking(true);
 
 #if QT_VERSION < 0x040700
 	// embedded images are not supported before QT 4.7.0
@@ -375,7 +386,8 @@ void ChatWidget::processSettings(bool load)
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
-	if (obj == ui->textBrowser || obj == ui->leSearch || obj == ui->chatTextEdit) {
+	if (obj == ui->textBrowser || obj == ui->textBrowser->viewport()
+	    || obj == ui->leSearch || obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
 
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -419,24 +431,109 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 			}
 		}
+
+		if (chatType() == CHATTYPE_LOBBY) {
+			if ((event->type() == QEvent::KeyPress)
+			    || (event->type() == QEvent::MouseMove)
+			    || (event->type() == QEvent::Enter)
+			    || (event->type() == QEvent::Leave)
+			    || (event->type() == QEvent::Wheel)
+			    || (event->type() == QEvent::ToolTip) ) {
+
+				QTextCursor cursor = ui->textBrowser->cursorForPosition(QPoint(0, 0));
+				QPoint bottom_right(ui->textBrowser->viewport()->width() - 1, ui->textBrowser->viewport()->height() - 1);
+				int end_pos = ui->textBrowser->cursorForPosition(bottom_right).position();
+				cursor.setPosition(end_pos, QTextCursor::KeepAnchor);
+
+				if (!cursor.selectedText().isEmpty()){
+					QRegExp rx("<a\\s+name\\s*=\\s*\"(.*)\"",Qt::CaseInsensitive, QRegExp::RegExp2);
+					rx.setMinimal(true);
+					QString sel=cursor.selection().toHtml();
+					QStringList anchors;
+					int pos=0;
+					while ((pos = rx.indexIn(sel,pos)) != -1) {
+						anchors << rx.cap(1);
+						pos += rx.matchedLength();
+					}
+					if (!anchors.isEmpty()){
+						for (QStringList::iterator it=anchors.begin();it!=anchors.end();++it) {
+							QByteArray bytArray=it->toUtf8();
+							std::string stdString=std::string(bytArray.begin(),bytArray.end());
+							if (notify) notify->chatLobbyCleared(chatId.toLobbyId()
+							                                     ,QString::fromUtf8(stdString.c_str())
+							                                     ,obj != ui->textBrowser && obj != ui->textBrowser->viewport());//, true);
+						}
 	}
+				}
+			}
+		}
+	}
+
     if (obj == ui->textBrowser) {
         if (event->type() == QEvent::KeyPress) {
 
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent) {
                 if (keyEvent->key() == Qt::Key_Delete ) {
-                    // Delete pressed
-                    if (ui->textBrowser->textCursor().selectedText().length()>0)
+					// Delete key pressed
+					if (ui->textBrowser->textCursor().selectedText().length() > 0) {
+						if (chatType() == CHATTYPE_LOBBY) {
+							QRegExp rx("<a\\s+name\\s*=\\s*\"(.*)\"",Qt::CaseInsensitive, QRegExp::RegExp2);
+							rx.setMinimal(true);
+							QString sel=ui->textBrowser->textCursor().selection().toHtml();
+							QStringList anchors;
+							int pos=0;
+							while ((pos = rx.indexIn(sel,pos)) != -1) {
+								anchors << rx.cap(1);
+								pos += rx.matchedLength();
+							}
+
+							for (QStringList::iterator it=anchors.begin();it!=anchors.end();++it) {
+								QByteArray bytArray=it->toUtf8();
+								std::string stdString=std::string(bytArray.begin(),bytArray.end());
+								if (notify) notify->chatLobbyCleared(chatId.toLobbyId(), QString::fromUtf8(stdString.c_str()));
+							}
+
+						}
                         ui->textBrowser->textCursor().deleteChar();
 
                 }
+				}
+
 				if (keyEvent->key() == Qt::Key_M && keyEvent->modifiers() == Qt::ControlModifier)
 				{
 					on_markButton_clicked(!ui->markButton->isChecked());
 				}
             }
         }
+
+		if (event->type() == QEvent::ToolTip)	{
+			QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
+			QTextCursor cursor = ui->textBrowser->cursorForPosition(helpEvent->pos());
+			cursor.select(QTextCursor::WordUnderCursor);
+			QString toolTipText = "";
+			if (!cursor.selectedText().isEmpty()){
+				QRegExp rx("<a\\s+name\\s*=\\s*\"(.*)\"",Qt::CaseInsensitive, QRegExp::RegExp2);
+				rx.setMinimal(true);
+				QString sel=cursor.selection().toHtml();
+				QStringList anchors;
+				int pos=0;
+				while ((pos = rx.indexIn(sel,pos)) != -1) {
+					anchors << rx.cap(1);
+					pos += rx.matchedLength();
+				}
+				if (!anchors.isEmpty()){
+					toolTipText = anchors.at(0);
+				}
+			}
+			if (!toolTipText.isEmpty()){
+				QToolTip::showText(helpEvent->globalPos(), toolTipText);
+				return true;
+			} else {
+				QToolTip::hideText();
+			}
+		}
+
     } else if (obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
 
@@ -691,6 +788,35 @@ void ChatWidget::focusDialog()
 	ui->chatTextEdit->setFocus();
 }
 
+QToolButton* ChatWidget::getNotifyButton()
+{
+	if (ui) if (ui->notifyButton) return ui->notifyButton;
+	return NULL;
+}
+
+void ChatWidget::setNotify(ChatLobbyUserNotify *clun)
+{
+	if(clun) notify=clun;
+}
+
+void ChatWidget::on_notifyButton_clicked()
+{
+	if(!notify) return;
+	if (chatType() != CHATTYPE_LOBBY) return;
+
+	QMenu* menu = new QMenu(MainWindow::getInstance());
+	QIcon icoLobby=(ui->notifyButton->icon());
+
+	notify->makeSubMenu(menu, icoLobby, title, chatId.toLobbyId());
+	menu->exec(ui->notifyButton->mapToGlobal(ui->notifyButton->geometry().bottomLeft()));
+
+}
+
+void ChatWidget::scrollToAnchor(QString anchor)
+{
+	ui->textBrowser->scrollToAnchor(anchor);
+}
+
 void ChatWidget::setWelcomeMessage(QString &text)
 {
 	ui->textBrowser->setText(text);
@@ -752,8 +878,12 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	}
 
 	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast);
-	QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, formattedMessage, formatFlag);
+	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
+	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
+	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
 
+	formatMsg.prepend(QString("<a name=\"%1_%2\"/>").arg(timeStamp).arg(name));
+	//To call this anchor do:    ui->textBrowser->scrollToAnchor(QString("%1_%2").arg(timeStamp).arg(name));
     ui->textBrowser->textCursor().setBlockFormat(QTextBlockFormat ());
 	ui->textBrowser->append(formatMsg);
 
@@ -1074,13 +1204,13 @@ bool ChatWidget::findText(const QString& qsStringToFind, bool bBackWard, bool bF
 					qtcCurrent=qtcHighLight;
 					if (bMoveToCursor || bForceMove) ui->textBrowser->setTextCursor(qtcHighLight);
 
-				}//if (bFirstFound && (qtcHighLight.position()>qtcCurrent.position()))
+				}
 
 
 				if (uiFoundCount<UINT_MAX)
 					uiFoundCount+=1;
-			}//if(!qtcHighLight.isNull())
-		}//while(!qtcHighLight.isNull() && !qtcHighLight.atEnd())
+			}
+		}
 
 		if (bFound)
 		{
@@ -1218,6 +1348,9 @@ void ChatWidget::clearChatHistory()
 	ui->textBrowser->clear();
 	on_searchButton_clicked(false);
 	ui->markButton->setChecked(false);
+	if (chatType() == CHATTYPE_LOBBY) {
+		if (notify) notify->chatLobbyCleared(chatId.toLobbyId(),"");
+	}
 }
 
 void ChatWidget::deleteChatHistory()
@@ -1434,7 +1567,7 @@ void ChatWidget::updateTitle()
 	ui->titleLabel->setText(RsHtml::plainText(name) + "@" + RsHtml::plainText(title));
 }
 
-void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
+void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const QString& /*status_string*/)
 {
 	QString status_text;
 

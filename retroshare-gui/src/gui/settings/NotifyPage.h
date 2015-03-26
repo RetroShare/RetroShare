@@ -25,6 +25,8 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_NotifyPage.h"
 
+#include "gui/chat/ChatLobbyUserNotify.h"
+
 class UserNotify;
 class FeedNotify;
 
@@ -79,6 +81,7 @@ private slots:
 private:
 	uint getNewsFlags();
 	uint getNotifyFlags();
+	ChatLobbyUserNotify* mChatLobbyUserNotify;
 
     QList<FeedNotifySetting> mFeedNotifySettingList;
     QList<UserNotifySetting> mUserNotifySettingList;
