@@ -732,6 +732,7 @@ bool RsDirUtil::saveStringToFile(const std::string &file, const std::string &str
         return false;
     }
     out << str;
+    return true;
 }
 
 bool RsDirUtil::loadStringFromFile(const std::string &file, std::string &str)
