@@ -1565,9 +1565,27 @@ bool DistributedChatService::setDefaultIdentityForChatLobby(const RsGxsId& nick)
 }
 bool DistributedChatService::getDefaultIdentityForChatLobby(RsGxsId& nick)
 {
-	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-    nick = _default_identity ;
-	return true ;
+    RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+
+    nick = locked_getDefaultIdentity() ;
+
+    return true ;
+}
+
+RsGxsId DistributedChatService::locked_getDefaultIdentity()
+{
+    if(_default_identity.isNull() && rsIdentity!=NULL)
+    {
+        std::list<RsGxsId> own_ids ;
+        rsIdentity->getOwnIds(own_ids) ;
+
+        if(!own_ids.empty())
+        {
+            _default_identity = own_ids.front() ;
+            triggerConfigSave();
+        }
+    }
+    return _default_identity ;
 }
 bool DistributedChatService::getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick)
 {

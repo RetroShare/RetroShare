@@ -130,6 +130,7 @@ class DistributedChatService
 
 		bool locked_initLobbyBouncableObject(const ChatLobbyId& id,RsChatLobbyBouncingObject&) ;
         void locked_printDebugInfo() const ;
+        RsGxsId locked_getDefaultIdentity();
 
 		static ChatLobbyVirtualPeerId makeVirtualPeerId(ChatLobbyId) ;
 		static uint64_t makeConnexionChallengeCode(const RsPeerId& peer_id,ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;

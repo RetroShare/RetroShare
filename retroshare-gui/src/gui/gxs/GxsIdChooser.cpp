@@ -306,9 +306,10 @@ void GxsIdChooser::indexActivated(int index)
 	}
 }
 
-void GxsIdChooser::updateDisplay(bool complete)
+void GxsIdChooser::updateDisplay(bool reset)
 {
-	Q_UNUSED(complete)
+    if(reset)
+        mFirstLoad = true ;
 
 	/* Update identity list */
     loadPrivateIds();

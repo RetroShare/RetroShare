@@ -66,6 +66,7 @@ H        [ ] Distant chat should work with shared identities
          [X] Distant chat fails (tunnel bullet never gets green) when re-openning a distant chat window after closing a tunnel
          [X] Distant chat fails (chat window never appears) when re-openning a distant chat window after closing a tunnel
          [X] You should not be enabled to distant-chat yourself!
+			[ ] Nickname completion is broken. It only works with @
       
        Identities:
          [X] "Owned by you" => "Owned by node [nodename]" 

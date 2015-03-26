@@ -58,7 +58,7 @@ public:
 
 protected:
 	virtual void showEvent(QShowEvent *event);
-	void updateDisplay(bool complete);
+    void updateDisplay(bool reset);
 
 private slots:
 	void fillDisplay(bool complete);
