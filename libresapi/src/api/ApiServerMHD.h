@@ -14,8 +14,17 @@ namespace resource_api{
 class ApiServerMHD
 {
 public:
-    ApiServerMHD(std::string root_dir, uint16_t port);
+    ApiServerMHD();
     ~ApiServerMHD();
+    /**
+     * @brief configure the http server
+     * @param docroot sets the directory from which static files should be served. default = ./
+     * @param port the port to listen on. The server will listen on ipv4 and ipv6.
+     * @param bind_address NOT IMPLEMENTED optional, specifies an ipv6 adress to listen on.
+     * @param allow_from_all when true, listen on all ips. (only when bind_adress is empty)
+     * @return true on success
+     */
+    bool configure(std::string docroot, uint16_t port, std::string bind_address, bool allow_from_all);
     bool start();
     void stop();
 
@@ -32,8 +41,9 @@ private:
     int acceptPolicyCallback(const struct sockaddr * addr, socklen_t addrlen);
     int accessHandlerCallback(struct MHD_Connection * connection, const char *url, const char *method, const char *version, const char *upload_data, size_t *upload_data_size, void **con_cls);
     void requestCompletedCallback(struct MHD_Connection *connection, void **con_cls, MHD_RequestTerminationCode toe);
+    bool mConfigOk;
     std::string mRootDir;
-    uint16_t mPort;
+    struct sockaddr_in mListenAddr;
     MHD_Daemon* mDaemon;
     ApiServer mApiServer;
 };

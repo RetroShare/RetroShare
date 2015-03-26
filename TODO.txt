@@ -90,6 +90,7 @@ H        [ ] valgrind pass for memory leaks
 H        [ ] valgrind pass for memory errors 
 H        [ ] valgrind pass for performance
 E        [ ] remove mktemp => use mkstemp
+             note: mkstemp is not available on Windows
 H        [ ] RsGxsDataAccess::processRequests locks mDataMutex until all requests are processed.
              Adding a new request or poll for the request status are freezing until the mutex is available.
 

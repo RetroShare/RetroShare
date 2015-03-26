@@ -228,15 +228,9 @@ public:
 };
 #endif // ENABLE_FILESTREAMER
 
-ApiServerMHD::ApiServerMHD(std::string root_dir, uint16_t port):
-    mRootDir(root_dir), mPort(port),
-    mDaemon(0)
+ApiServerMHD::ApiServerMHD():
+    mConfigOk(false), mDaemon(0)
 {
-    // make sure the docroot dir ends with a slash
-    if(mRootDir.empty())
-        mRootDir = "./";
-    else if (mRootDir[mRootDir.size()-1] != '/' && mRootDir[mRootDir.size()-1] != '\\')
-        mRootDir += "/";
 }
 
 ApiServerMHD::~ApiServerMHD()
@@ -244,21 +238,64 @@ ApiServerMHD::~ApiServerMHD()
     stop();
 }
 
+bool ApiServerMHD::configure(std::string docroot, uint16_t port, std::string bind_address, bool allow_from_all)
+{
+    mRootDir = docroot;
+    // make sure the docroot dir ends with a slash
+    if(mRootDir.empty())
+        mRootDir = "./";
+    else if (mRootDir[mRootDir.size()-1] != '/' && mRootDir[mRootDir.size()-1] != '\\')
+        mRootDir += "/";
+
+    mListenAddr.sin_family = AF_INET;
+    mListenAddr.sin_port = htons(port);
+
+    // untested
+    /*
+    if(!bind_address.empty())
+    {
+        if(!inet_pton(AF_INET6, bind_address.c_str(), &mListenAddr.sin6_addr))
+        {
+            std::cerr << "ApiServerMHD::configure() invalid bind address: \"" << bind_address << "\"" << std::endl;
+            return false;
+        }
+    }
+    else*/ if(allow_from_all)
+    {
+        mListenAddr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+        std::cerr << "ApiServerMHD::configure(): will serve the webinterface to ALL IP adresses." << std::endl;
+    }
+    else
+    {
+        mListenAddr.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
+        std::cerr << "ApiServerMHD::configure(): will serve the webinterface to LOCALHOST only." << std::endl;
+    }
+
+    mConfigOk = true;
+    return true;
+}
+
 bool ApiServerMHD::start()
 {
+    if(!mConfigOk)
+    {
+        std::cerr << "ApiServerMHD::start() ERROR: server not configured. You have to call configure() first." << std::endl;
+        return false;
+    }
     if(mDaemon)
     {
         std::cerr << "ApiServerMHD::start() ERROR: server already started. You have to call stop() first." << std::endl;
         return false;
     }
-    mDaemon = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY, mPort,
+    mDaemon = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY, 9999, // port will be overwritten by MHD_OPTION_SOCK_ADDR
                                &static_acceptPolicyCallback, this,
                                &static_accessHandlerCallback, this,
                                MHD_OPTION_NOTIFY_COMPLETED, &static_requestCompletedCallback, this,
+                               MHD_OPTION_SOCK_ADDR, &mListenAddr,
                                MHD_OPTION_END);
     if(mDaemon)
     {
-        std::cerr << "ApiServerMHD::start() SUCCESS. Started server on port " << mPort << ". Serving files from \"" << mRootDir << "\" at /" << std::endl;
+        std::cerr << "ApiServerMHD::start() SUCCESS. Started server on port " << ntohs(mListenAddr.sin_port) << ". Serving files from \"" << mRootDir << "\" at /" << std::endl;
         return true;
     }
     else
@@ -306,16 +343,9 @@ void ApiServerMHD::static_requestCompletedCallback(void *cls, MHD_Connection* co
 }
 
 
-int ApiServerMHD::acceptPolicyCallback(const sockaddr *addr, socklen_t addrlen)
+int ApiServerMHD::acceptPolicyCallback(const sockaddr* /*addr*/, socklen_t /*addrlen*/)
 {
-    // limit to localhost
-    // denies from localhost, TODO
-    /*
-    if(addr->sa_family == AF_INET && ((sockaddr_in*)addr)->sin_addr.s_addr == INADDR_LOOPBACK)
-        return MHD_YES;
-    else
-        return MHD_NO;
-        */
+    // accept all connetions
     return MHD_YES;
 }
 
