@@ -50,7 +50,9 @@ typedef uint32_t in_addr_t;
 int inet_aton(const char *name, struct in_addr *addr);
 
 // Missing defines in MinGW
+#ifndef MSG_WAITALL
 #define MSG_WAITALL  8
+#endif
 
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
