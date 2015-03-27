@@ -1,3 +1,5 @@
+#define nullptr 0
+
 #include "json.h"
 #include <stdlib.h>
 #include <string>
@@ -9,6 +11,7 @@
 #include <functional>
 #include <cctype>
 #include <stack>
+#include <cerrno>
 
 #ifndef WIN32
 #define _stricmp strcasecmp
@@ -108,37 +111,49 @@ Value& Value::operator =(const Value& v)
 
 Value& Value::operator [](size_t idx)
 {
-	assert(mValueType == ArrayVal);
+	if (mValueType != ArrayVal)
+		throw std::runtime_error("json mValueType==ArrayVal required");
+
 	return mArrayVal[idx];
 }
 
 const Value& Value::operator [](size_t idx) const
 {
-	assert(mValueType == ArrayVal);
+	if (mValueType != ArrayVal)
+		throw std::runtime_error("json mValueType==ArrayVal required");
+
 	return mArrayVal[idx];
 }
 
 Value& Value::operator [](const std::string& key)
 {
-	assert(mValueType == ObjectVal);
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
 	return mObjectVal[key];
 }
 
 Value& Value::operator [](const char* key)
 {
-	assert(mValueType == ObjectVal);
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
 	return mObjectVal[key];
 }
 
 const Value& Value::operator [](const char* key) const
 {
-	assert(mValueType == ObjectVal);
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
 	return mObjectVal[key];
 }
 
 const Value& Value::operator [](const std::string& key) const
 {
-	assert(mValueType == ObjectVal);
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
 	return mObjectVal[key];
 }
 
@@ -157,20 +172,138 @@ size_t Value::size() const
 
 bool Value::HasKey(const std::string &key) const
 {
-	assert(mValueType == ObjectVal);
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
 	return mObjectVal.HasKey(key);
 }
 
 int Value::HasKeys(const std::vector<std::string> &keys) const
 {
-	assert(mValueType == ObjectVal);
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
 	return mObjectVal.HasKeys(keys);
 }
 
 int Value::HasKeys(const char **keys, int key_count) const
 {
-	assert(mValueType == ObjectVal);
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
 	return mObjectVal.HasKeys(keys, key_count);
+}
+
+int Value::ToInt() const		
+{
+	if (!IsNumeric())
+		throw std::runtime_error("json mValueType==IsNumeric() required");
+
+	return mIntVal;
+}
+
+float Value::ToFloat() const		
+{
+	if (!IsNumeric())
+		throw std::runtime_error("json mValueType==IsNumeric() required");
+	
+	return mFloatVal;
+}
+
+double Value::ToDouble() const	
+{
+	if (!IsNumeric())
+		throw std::runtime_error("json mValueType==IsNumeric() required");
+
+	return mDoubleVal;
+}
+
+bool Value::ToBool() const		
+{
+	if (mValueType != BoolVal)
+		throw std::runtime_error("json mValueType==BoolVal required");
+	
+	return mBoolVal;
+}
+
+const std::string& Value::ToString() const	
+{
+	if (mValueType != StringVal)
+		throw std::runtime_error("json mValueType==StringVal required");
+	
+	return mStringVal;
+}
+
+Object Value::ToObject() const	
+{
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
+	return mObjectVal;
+}
+
+Array Value::ToArray() const		
+{
+	if (mValueType != ArrayVal)
+		throw std::runtime_error("json mValueType==ArrayVal required");
+
+	return mArrayVal;
+}
+
+Value::operator int() const
+{ 
+	if (!IsNumeric())
+		throw std::runtime_error("json mValueType==IsNumeric() required");
+
+	return mIntVal;
+}
+
+Value::operator float() const 			
+{	
+	if (!IsNumeric())
+		throw std::runtime_error("json mValueType==IsNumeric() required");
+
+	return mFloatVal;
+}
+
+Value::operator double() const
+{
+	if (!IsNumeric())
+		throw std::runtime_error("json mValueType==IsNumeric() required");
+
+	return mDoubleVal;
+}
+
+Value::operator bool() const 			
+{
+	if (mValueType != BoolVal)
+		throw std::runtime_error("json mValueType==BoolVal required");
+
+	return mBoolVal;
+}
+
+Value::operator std::string() const 	
+{
+	if (mValueType != StringVal)
+		throw std::runtime_error("json mValueType==StringVal required");
+
+	return mStringVal;
+}
+
+Value::operator Object() const 		
+{
+	if (mValueType != ObjectVal)
+		throw std::runtime_error("json mValueType==ObjectVal required");
+
+	return mObjectVal;
+}
+
+Value::operator Array() const 			
+{
+	if (mValueType != ArrayVal)
+		throw std::runtime_error("json mValueType==ArrayVal required");
+
+	return mArrayVal;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -420,7 +553,7 @@ std::string json::Serialize(const Value& v)
 	{
 		str = "{";
 		Object obj = v.ToObject();
-		for (Object::ValueMap::const_iterator it = obj.begin(); it != obj.end(); it++)
+		for (Object::ValueMap::const_iterator it = obj.begin(); it != obj.end(); ++it)
 		{
 			if (!first)
 				str += std::string(",");
@@ -435,7 +568,7 @@ std::string json::Serialize(const Value& v)
 	{
 		str = "[";
 		Array a = v.ToArray();
-		for (Array::ValueVector::const_iterator it = a.begin(); it != a.end(); it++)
+		for (Array::ValueVector::const_iterator it = a.begin(); it != a.end(); ++it)
 		{
 			if (!first)
 				str += std::string(",");
@@ -447,7 +580,8 @@ std::string json::Serialize(const Value& v)
 		str += "]";
 			
 	}
-	//else error
+	// else it's not valid JSON, as a JSON data structure must be an array or an object. We'll return an empty string.
+		
 	
 	return str;
 }
@@ -556,7 +690,7 @@ static std::string UnescapeJSONString(const std::string& str)
 {
 	std::string s = "";
 	
-	for (int i = 0; i < str.length(); i++)
+	for (std::string::size_type i = 0; i < str.length(); i++)
 	{
 		char c = str[i];
 		if ((c == '\\') && (i + 1 < str.length()))
@@ -577,7 +711,7 @@ static std::string UnescapeJSONString(const std::string& str)
 				case 'f' : 	s.push_back('\f'); break;
 				case 'u' : 	skip_ahead = 5;
 					hex_str = str.substr(i + 4, 2);
-                    hex = (unsigned int)std::strtoul(hex_str.c_str(), NULL, 16);
+					hex = (unsigned int)std::strtoul(hex_str.c_str(), nullptr, 16);
 					s.push_back((char)hex);
 					break;
 					
@@ -605,6 +739,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 
 	if (str[0] == '[')
 	{
+		// This value is an array, determine the end of it and then deserialize the array
 		depth_stack.push(InArray);
 		size_t i = GetEndOfArrayOrObj(str, depth_stack);
 		if (i == std::string::npos)
@@ -619,6 +754,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 	}
 	else if (str[0] == '{')
 	{
+		// This value is an object, determine the end of it and then deserialize the object
 		depth_stack.push(InObject);
 		size_t i = GetEndOfArrayOrObj(str, depth_stack);
 
@@ -634,6 +770,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 	}
 	else if (str[0] == '\"')
 	{
+		// This value is a string
 		size_t end_quote = GetQuotePos(str, 1);
 		if (end_quote == std::string::npos)
 		{
@@ -646,19 +783,52 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 	}
 	else
 	{
+		// it's not an object, string, or array so it's either a boolean or a number or null.
+		// Numbers can contain an exponent indicator ('e') or a decimal point.
 		bool has_dot = false;
 		bool has_e = false;
 		std::string temp_val;
 		size_t i = 0;
+		bool found_digit = false;
+		bool found_first_valid_char = false;
+
 		for (; i < str.length(); i++)
 		{
 			if (str[i] == '.')
+			{
+				if (!found_digit)
+				{
+					// As per JSON standards, there must be a digit preceding a decimal point
+					*had_error = true;
+					return Value();
+				}
+
 				has_dot = true;
-			else if (str[i] == 'e')
-				has_e = true;
+			}
+			else if ((str[i] == 'e') || (str[i] == 'E'))
+			{		
+				if ((_stricmp(temp_val.c_str(), "fals") != 0) && (_stricmp(temp_val.c_str(), "tru") != 0))
+				{
+					// it's not a boolean, check for scientific notation validity. This will also trap booleans with extra 'e' characters like falsee/truee
+					if (!found_digit)
+					{
+						// As per JSON standards, a digit must precede the 'e' notation
+						*had_error = true;
+						return Value();
+					}
+					else if (has_e)
+					{
+						// multiple 'e' characters not allowed
+						*had_error = true;
+						return Value();
+					}
+
+					has_e = true;
+				}
+			}
 			else if (str[i] == ']')
 			{
-				if (depth_stack.top() != InArray)
+				if (depth_stack.empty() || (depth_stack.top() != InArray))
 				{
 					*had_error = true;
 					return Value();
@@ -668,7 +838,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 			}
 			else if (str[i] == '}')
 			{
-				if (depth_stack.top() != InObject)
+				if (depth_stack.empty() || (depth_stack.top() != InObject))
 				{
 					*had_error = true;
 					return Value();
@@ -677,10 +847,22 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 				depth_stack.pop();
 			}
 			else if (str[i] == ',')
-				break;
+				break;			
+			else if ((str[i] == '[') || (str[i] == '{'))
+			{
+				// error, we're supposed to be processing things besides arrays/objects in here
+				*had_error = true;
+				return Value();
+			}
 
 			if (!std::isspace(str[i]))
+			{
+				if (std::isdigit(str[i]))
+					found_digit = true;
+
+				found_first_valid_char = true;
 				temp_val += str[i];
+			}
 		}
 
 		// store all floating point as doubles. This will also set the float and int values as well.
@@ -689,17 +871,61 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 		else if (_stricmp(temp_val.c_str(), "false") == 0)
 			v = Value(false);
 		else if (has_e || has_dot)
-			v = Value(atof(temp_val.c_str()));
+		{
+			char* end_char;
+			errno = 0;
+			double d = strtod(temp_val.c_str(), &end_char);
+			if ((errno != 0) || (*end_char != '\0'))
+			{
+				// invalid conversion or out of range
+				*had_error = true;
+				return Value();
+			}
+
+			v = Value(d);
+		}
 		else if (_stricmp(temp_val.c_str(), "null") == 0)
 			v = Value();
 		else
 		{
 			// Check if the value is beyond the size of an int and if so, store it as a double
-			double tmp_val = atof(temp_val.c_str());
-			if ((tmp_val >= (double)INT_MIN) && (tmp_val <= (double)INT_MAX))
-				v = Value(atoi(temp_val.c_str()));
+			char* end_char;
+			errno = 0;
+			long int ival = strtol(temp_val.c_str(), &end_char, 10);
+			if (*end_char != '\0')
+			{
+				// invalid character sequence, not a number
+				*had_error = true;
+				return Value();
+			}
+			else if ((errno == ERANGE) && ((ival == LONG_MAX) || (ival == LONG_MIN)))
+			{
+				// value is out of range for a long int, should be a double then. See if we can convert it correctly.
+				errno = 0;
+				double dval = strtod(temp_val.c_str(), &end_char);
+				if ((errno != 0) || (*end_char != '\0'))
+				{
+					// error in conversion or it's too big for a double
+					*had_error = true;
+					return Value();
+				}
+
+				v = Value(dval);
+			}
+			else if ((ival >= INT_MIN) && (ival <= INT_MAX))
+			{
+				// valid integer range
+				v = Value((int)ival);
+			}
 			else
-				v = Value(tmp_val);
+			{
+				// probably running on a very old OS since this block implies that long isn't the same size as int.
+				// int is guaranteed to be at least 16 bits and long 32 bits...however nowadays they're almost
+				// always the same 32 bit size. But it's possible someone is running this on a very old architecture
+				// so for correctness, we'll error out here
+				*had_error = true;
+				return Value();
+			}
 		}
 
 		str = str.substr(i, str.length());
@@ -715,11 +941,13 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 
 	str = Trim(str);
 
+	// Arrays begin and end with [], so if we don't find one, it's an error
 	if ((str[0] == '[') && (str[str.length() - 1] == ']'))
 		str = str.substr(1, str.length() - 2);
 	else
 		return Value();
 
+	// extract out all values from the array (remember, a value can also be an array or an object)
 	while (str.length() > 0)
 	{
 		std::string tmp;
@@ -776,11 +1004,13 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 
 	std::string str = Trim(_str);
 
+	// Objects begin and end with {} so if we don't find a pair, it's an error
 	if ((str[0] != '{') && (str[str.length() - 1] != '}'))
 		return Value();
 	else
 		str = str.substr(1, str.length() - 2);
 
+	// Get all key/value pairs in this object...
 	while (str.length() > 0)
 	{
 		// Get the key name
@@ -797,6 +1027,8 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 
 		bool had_error = false;
 		str = str.substr(colon_idx + 1, str.length());
+
+		// We have the key, now extract the value from the string
 		obj[key] = DeserializeValue(str, &had_error, depth_stack);
 		if (had_error)
 			return Value();
