@@ -295,7 +295,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.recipientWidget->setColumnCount(COLUMN_RECIPIENT_COUNT);
 
     QHeaderView *header = ui.recipientWidget->horizontalHeader();
-    header->resizeSection(COLUMN_RECIPIENT_TYPE, 120);
+    header->resizeSection(COLUMN_RECIPIENT_TYPE, 60);
     header->resizeSection(COLUMN_RECIPIENT_ICON, 22);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
@@ -716,15 +716,22 @@ void MessageComposer::buildCompleter()
     rsPeers->getFriendList(peers);
     
     std::list<RsGxsId> gxsIds;
-    std::list<RsGxsId>::iterator idIt;    
+    QList<QTreeWidgetItem*> gxsitems ;
+
+    ui.friendSelectionWidget->items(gxsitems,FriendSelectionWidget::IDTYPE_GXS) ;
 
     // create completer list for friends
     QStringList completerList;
     QStringList completerGroupList;
     
-    /*for (std::list<RsGxsId>::const_iterator idIt = gxsIds.begin(); idIt != gxsIds.end(); ++idIt) {
-    		completerList.append(*idIt);
-    }*/
+    for (QList<QTreeWidgetItem*>::const_iterator idIt = gxsitems.begin(); idIt != gxsitems.end(); ++idIt)
+    {
+        RsGxsId id ( ui.friendSelectionWidget->idFromItem( *idIt ) );
+        RsIdentityDetails detail;
+
+        if(rsIdentity->getIdDetails(id, detail))
+            completerList.append( getGxsRecipientName(id,detail)) ;
+    }
 
     for (peerIt = peers.begin(); peerIt != peers.end(); ++peerIt) {
         RsPeerDetails detail;
@@ -750,6 +757,7 @@ void MessageComposer::buildCompleter()
 
     m_completer = new QCompleter(completerList, this);
     m_completer->setCaseSensitivity(Qt::CaseInsensitive);
+
     setNewCompleter(ui.recipientWidget, m_completer);
 }
 
@@ -1489,6 +1497,10 @@ bool MessageComposer::getRecipientFromRow(int row, enumType &type, destinationTy
     return true;
 }
 
+QString MessageComposer::getGxsRecipientName(const RsGxsId& id,const RsIdentityDetails& detail)
+{
+    return QString("%2 <%2@%1>").arg(QString::fromStdString(id.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
+}
 void MessageComposer::setRecipientToRow(int row, enumType type, destinationType dest_type, const std::string &id)
 {
     if (row + 1 > ui.recipientWidget->rowCount()) {
@@ -1555,7 +1567,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
         QList<QIcon> icons ;
         GxsIdDetails::getIcons(detail,icons,GxsIdDetails::ICON_TYPE_AVATAR) ;
 
-            name = tr("%2 <%2@%1>").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
+            name = getGxsRecipientName(gid,detail) ;
 
         if(!icons.empty())
             icon = icons.front() ;

@@ -30,6 +30,7 @@
 #include "gui/msgs/MessageInterface.h"
 
 class QAction;
+class RsIdentityDetails;
 class QComboBox;
 class QFontComboBox;
 class QTextEdit;
@@ -164,6 +165,7 @@ private:
 
     void processSettings(bool bLoad);
 
+    QString getGxsRecipientName(const RsGxsId& id,const RsIdentityDetails& detail) ;
     void addContact(enumType type);
     void setTextColor(const QColor& col) ;
     void setupFileActions();
