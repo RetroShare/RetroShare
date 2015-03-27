@@ -528,7 +528,9 @@ void FriendSelectionWidget::secured_fillList()
 				if (!rsIdentity->getIdDetails(RsGxsId(*gxsIt), detail)) 
 					continue; /* BAD */
 					
-				QPixmap identicon = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(*gxsIt))) ;
+                QList<QIcon> icons ;
+                GxsIdDetails::getIcons(detail,icons,GxsIdDetails::ICON_TYPE_AVATAR) ;
+                QIcon identicon = icons.front() ;
 
 				// make a widget per friend
 				gxsItem = new RSTreeWidgetItem(mCompareRole, IDTYPE_GXS);
@@ -538,7 +540,7 @@ void FriendSelectionWidget::secured_fillList()
 
 				//gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
 				gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
-				gxsItem->setIcon(COLUMN_NAME, QIcon(identicon));
+                gxsItem->setIcon(COLUMN_NAME, identicon);
 				gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
 				gxsItem->setData(COLUMN_DATA, ROLE_SORT, "2 " + name);
 

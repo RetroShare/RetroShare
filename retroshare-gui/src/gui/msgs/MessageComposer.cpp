@@ -135,14 +135,14 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     m_completer = NULL;
     
     ui.distantFrame->hide();
+    ui.respond_to_CB->setEnabled(false) ;
+    ui.fromLabel->setEnabled(false) ;
 
     Settings->loadWidgetInformation(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
 
     ui.hashBox->hide();
-    ui.signMessage_CB->setChecked(true) ;
-    ui.signMessage_CB->setEnabled(false) ;
 
     // connect up the buttons.
     connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
@@ -217,8 +217,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
-                                          | FriendSelectionWidget::SHOW_SSL
+    ui.friendSelectionWidget->setShowType(//FriendSelectionWidget::SHOW_GROUP	// removed this because it's too confusing.
+                                            FriendSelectionWidget::SHOW_SSL
                                           | FriendSelectionWidget::SHOW_GXS);
     ui.friendSelectionWidget->start();
 
@@ -295,16 +295,18 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.recipientWidget->setColumnCount(COLUMN_RECIPIENT_COUNT);
 
     QHeaderView *header = ui.recipientWidget->horizontalHeader();
-    header->resizeSection(COLUMN_RECIPIENT_TYPE, 70);
+    header->resizeSection(COLUMN_RECIPIENT_TYPE, 120);
     header->resizeSection(COLUMN_RECIPIENT_ICON, 22);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_NAME, QHeaderView::Fixed);
     header->setStretchLastSection(true);
 
     /* Set own item delegate */
     QItemDelegate *delegate = new MessageItemDelegate(this);
     ui.recipientWidget->setItemDelegateForColumn(COLUMN_RECIPIENT_ICON, delegate);
+
+    connect(ui.recipientWidget,SIGNAL(cellChanged(int,int)),this,SLOT(updateCells(int,int))) ;
 
     addEmptyRecipient();
 
@@ -342,6 +344,36 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 MessageComposer::~MessageComposer()
 {
     delete(m_compareRole);
+}
+
+void MessageComposer::updateCells(int,int)
+{
+    int rowCount = ui.recipientWidget->rowCount();
+    int row;
+    bool has_gxs = false ;
+
+    for (row = 0; row < rowCount; ++row)
+    {
+        enumType type;
+        destinationType dtype ;
+        std::string id;
+
+        if (getRecipientFromRow(row, type,dtype, id) && !id.empty() )
+            if(dtype == PEER_TYPE_GXS)
+                has_gxs = true ;
+    }
+    if(has_gxs)
+    {
+        ui.respond_to_CB->setEnabled(true) ;
+        ui.distantFrame->show();
+        ui.fromLabel->setEnabled(true);
+    }
+    else
+    {
+        ui.respond_to_CB->setEnabled(false) ;
+        ui.distantFrame->hide() ;
+        ui.fromLabel->setEnabled(false);
+    }
 }
 
 void MessageComposer::processSettings(bool bLoad)
@@ -740,6 +772,8 @@ void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
             }
         }
     }
+
+
 }
 
 void MessageComposer::setFileList(const std::list<DirDetails>& dir_info)
@@ -1364,8 +1398,6 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
         }
-        if(ui.signMessage_CB->isChecked())
-            mi.msgflags |= RS_MSG_SIGNED ;
 
      if(mi.rsgxsid_srcId.isNull() && !(mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty()))
      {
@@ -1519,13 +1551,14 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
                 std::cerr << "Can't get peer details from " << gid << std::endl;
                 return ;
             }
-            
-            QPixmap identicon = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(gid))) ;
+
+        QList<QIcon> icons ;
+        GxsIdDetails::getIcons(detail,icons,GxsIdDetails::ICON_TYPE_AVATAR) ;
 
             name = tr("%2 <%2@%1>").arg(QString::fromStdString(gid.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
-            icon = QIcon(identicon);
-            
-            ui.distantFrame->show();
+
+        if(!icons.empty())
+            icon = icons.front() ;
         }
             break ;
 

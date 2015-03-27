@@ -99,6 +99,7 @@ private slots:
     void toggleContacts();
     void buildCompleter();
     void updatecontactsviewicons();
+    void updateCells(int,int) ;
 
 	void filterComboBoxChanged(int);
 

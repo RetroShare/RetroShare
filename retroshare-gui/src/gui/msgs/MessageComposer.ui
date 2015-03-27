@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>814</width>
-    <height>696</height>
+    <width>925</width>
+    <height>747</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -220,6 +220,47 @@
               <property name="horizontalSpacing">
                <number>1</number>
               </property>
+              <item row="0" column="8">
+               <widget class="QToolButton" name="italicbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>Italic</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="12">
                <widget class="QToolButton" name="imagebtn">
                 <property name="minimumSize">
@@ -445,47 +486,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="8">
-               <widget class="QToolButton" name="italicbtn">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>167</width>
-                  <height>167</height>
-                 </size>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="toolTip">
-                 <string>Italic</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="10">
                <widget class="QToolButton" name="colorbtn">
                 <property name="minimumSize">
@@ -577,7 +577,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="16">
+              <item row="0" column="15">
                <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -647,23 +647,6 @@
                  </size>
                 </property>
                 <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="14">
-               <widget class="QPushButton" name="signMessage_CB">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/stock_signature_ok.png</normaloff>:/images/stock_signature_ok.png</iconset>
-                </property>
-                <property name="checkable">
                  <bool>true</bool>
                 </property>
                </widget>
@@ -1046,8 +1029,8 @@ border-image: url(:/images/closepressed.png)
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>814</width>
-     <height>21</height>
+     <width>925</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
