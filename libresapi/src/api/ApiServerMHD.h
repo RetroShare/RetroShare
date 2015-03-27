@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
-#include <netinet/in.h>
 #include <microhttpd.h>
 #include <string>
 
