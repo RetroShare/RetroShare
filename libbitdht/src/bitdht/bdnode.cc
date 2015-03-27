@@ -766,9 +766,9 @@ void bdNode::processRemoteQuery()
 				std::cerr << "bdNode::processRemoteQuery() Query Too Old: Discarding: ";
 			}
 #endif
+#ifdef DEBUG_NODE_MSGS
 			mFns->bdPrintId(std::cerr, &(query.mId));
 			std::cerr << std::endl;
-#ifdef DEBUG_NODE_MSGS 
 #endif
 		}
 

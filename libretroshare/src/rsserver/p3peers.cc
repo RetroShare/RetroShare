@@ -919,7 +919,9 @@ bool p3Peers::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 
 bool p3Peers::getProxyServer(std::string &addr, uint16_t &port, uint32_t &status)
 {
+	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getProxyServer()" << std::endl;
+    #endif
 
 	struct sockaddr_storage proxy_addr;
 	mPeerMgr->getProxyServerAddress(proxy_addr);
@@ -931,9 +933,9 @@ bool p3Peers::getProxyServer(std::string &addr, uint16_t &port, uint32_t &status
 
 bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 {
-#ifdef P3PEERS_DEBUG
-#endif
+	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setProxyServer() " << std::endl;
+    #endif
 
 	struct sockaddr_storage addr;
 	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;

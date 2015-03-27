@@ -105,7 +105,7 @@ bool	p3ServiceServer::recvItem(RsRawItem *item)
 	// This doesn't need to be in Mutex.
 	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
 	{
-		std::cerr << "p3ServiceServer::recvItem() Fails Filtering";
+		std::cerr << "p3ServiceServer::recvItem() Fails Filtering " << std::endl;
 		delete item;
 		return false;
 	}

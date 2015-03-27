@@ -802,7 +802,7 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 	QImage image;
 
 	if (image.load (fileName) == false) {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load", fileName.toLatin1().constData());
+		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
 	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels);
@@ -845,11 +845,11 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 			embeddedImage.append(encodedByteArray);
 			embeddedImage.append("\">");
 		} else {
-			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer");
+			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer\n");
 			return false;
 		}
 	} else {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened");
+		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened\n");
 		return false;
 	}
 	return true;
