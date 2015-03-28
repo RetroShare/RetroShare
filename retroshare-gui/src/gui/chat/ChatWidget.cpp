@@ -667,8 +667,12 @@ void ChatWidget::completeNickname(bool reverse)
 	if (word.length() > 0) {
 		// Sort participants list
 		std::list<QString> participants;
-        for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it) {
-            participants.push_front(QString::fromUtf8(it->first.toStdString().c_str()));
+        RsIdentityDetails details ;
+
+        for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+    {
+        if(rsIdentity->getIdDetails(it->first,details))
+            participants.push_front(QString::fromUtf8(details.mNickname.c_str()));
         }
 		participants.sort(caseInsensitiveCompare);
 
