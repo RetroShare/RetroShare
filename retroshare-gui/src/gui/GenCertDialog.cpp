@@ -218,7 +218,7 @@ void GenCertDialog::init()
 		genNewGPGKey = true;
 	}
 
-	QString text = ui.header_label->text() + "\n";
+	QString text; /*= ui.header_label->text() + "\n";*/
 	text += tr("You can create a new identity with this form.");
 
 	if (mOnlyGenerateIdentity) {
