@@ -730,19 +730,20 @@ void MessageComposer::buildCompleter()
         RsIdentityDetails detail;
 
         if(rsIdentity->getIdDetails(id, detail))
-            completerList.append( getGxsRecipientName(id,detail)) ;
+            completerList.append( getRecipientEmailAddress(id,detail)) ;
     }
 
-    for (peerIt = peers.begin(); peerIt != peers.end(); ++peerIt) {
+    for (peerIt = peers.begin(); peerIt != peers.end(); ++peerIt)
+    {
         RsPeerDetails detail;
-        if (!rsPeers->getPeerDetails(*peerIt, detail)) {
-            continue; /* BAD */
-        }
 
-        QString name = PeerDefs::nameWithLocation(detail);
-        if (completerList.indexOf(name) == -1) {
-            completerList.append(name);
-        }
+        if (rsPeers->getPeerDetails(*peerIt, detail))
+        completerList.append( getRecipientEmailAddress(*peerIt,detail)) ;
+
+//        QString name = PeerDefs::nameWithLocation(detail);
+//        if (completerList.indexOf(name) == -1) {
+//            completerList.append(name);
+//        }
     }
 
     completerList.sort();
@@ -1497,10 +1498,20 @@ bool MessageComposer::getRecipientFromRow(int row, enumType &type, destinationTy
     return true;
 }
 
-QString MessageComposer::getGxsRecipientName(const RsGxsId& id,const RsIdentityDetails& detail)
+QString MessageComposer::getRecipientEmailAddress(const RsGxsId& id,const RsIdentityDetails& detail)
 {
-    return QString("%2 <%2@%1>").arg(QString::fromStdString(id.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
+    return (QString("%2 <")+tr("Distant identity:")+" %2@%1>").arg(QString::fromStdString(id.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
 }
+
+QString MessageComposer::getRecipientEmailAddress(const RsPeerId& id,const RsPeerDetails& detail)
+{
+    QString location_name = detail.location.empty()?tr("[Missing]"):QString::fromUtf8(detail.location.c_str()) ;
+
+    return (QString("%1 (")+tr("Friend node & location:")+" %2, %3)").arg(QString::fromUtf8(detail.name.c_str()))
+                 .arg(location_name)
+                 .arg(QString::fromUtf8(detail.id.toStdString().c_str())) ;
+}
+
 void MessageComposer::setRecipientToRow(int row, enumType type, destinationType dest_type, const std::string &id)
 {
     if (row + 1 > ui.recipientWidget->rowCount()) {
@@ -1567,7 +1578,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
         QList<QIcon> icons ;
         GxsIdDetails::getIcons(detail,icons,GxsIdDetails::ICON_TYPE_AVATAR) ;
 
-            name = getGxsRecipientName(gid,detail) ;
+            name = getRecipientEmailAddress(gid,detail) ;
 
         if(!icons.empty())
             icon = icons.front() ;
@@ -1582,7 +1593,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
                 std::cerr << "Can't get peer details from " << id << std::endl;
                 return ;
             }
-            name = PeerDefs::nameWithLocation(details);
+            name = getRecipientEmailAddress(RsPeerId(id),details) ;
 
             StatusInfo peerStatusInfo;
             // No check of return value. Non existing status info is handled as offline.
@@ -1655,24 +1666,21 @@ bool MessageComposer::eventFilter(QObject *obj, QEvent *event)
 void MessageComposer::editingRecipientFinished()
 {
     QLineEdit *lineEdit = dynamic_cast<QLineEdit*>(QObject::sender());
-    if (lineEdit == NULL) {
+
+    if (lineEdit == NULL)
         return;
-    }
 
     lineEdit->setStyleSheet(QString(STYLE_NORMAL).arg(lineEdit->objectName()));
 
     // find row of the widget
     int rowCount = ui.recipientWidget->rowCount();
     int row;
-    for (row = 0; row < rowCount; ++row) {
-        if (ui.recipientWidget->cellWidget(row, COLUMN_RECIPIENT_NAME) == lineEdit) {
+    for (row = 0; row < rowCount; ++row)
+        if (ui.recipientWidget->cellWidget(row, COLUMN_RECIPIENT_NAME) == lineEdit)
             break;
-        }
-    }
-    if (row >= rowCount) {
-        // not found
+
+    if (row >= rowCount)  // not found
         return;
-    }
 
     enumType type;
     std::string id; // dummy
@@ -1690,21 +1698,30 @@ void MessageComposer::editingRecipientFinished()
     // start with peers
     std::list<RsPeerId> peers;
     rsPeers->getFriendList(peers);
+    RsPeerDetails details;
 
-    std::list<RsPeerId>::iterator peerIt;
-    for (peerIt = peers.begin(); peerIt != peers.end(); ++peerIt) {
-        RsPeerDetails details;
-        if (!rsPeers->getPeerDetails(*peerIt, details)) {
-            continue; /* BAD */
-        }
-
-        QString name = PeerDefs::nameWithLocation(details);
-        if (text.compare(name, Qt::CaseSensitive) == 0) {
-            // found it
-            setRecipientToRow(row, type, PEER_TYPE_SSL, details.id.toStdString());
-            return;
-        }
+    for (std::list<RsPeerId>::iterator  peerIt = peers.begin(); peerIt != peers.end(); ++peerIt)
+        if (rsPeers->getPeerDetails(*peerIt, details) && text == getRecipientEmailAddress(*peerIt,details))
+    {
+        setRecipientToRow(row, type, PEER_TYPE_SSL, details.id.toStdString());
+        return ;
     }
+
+    QList<QTreeWidgetItem*> gxsitems ;
+    ui.friendSelectionWidget->items(gxsitems,FriendSelectionWidget::IDTYPE_GXS) ;
+    RsIdentityDetails detail;
+
+    for (QList<QTreeWidgetItem*>::const_iterator idIt = gxsitems.begin(); idIt != gxsitems.end(); ++idIt)
+    {
+        RsGxsId id ( ui.friendSelectionWidget->idFromItem( *idIt ) );
+
+        if(rsIdentity->getIdDetails(id, detail) && text == getRecipientEmailAddress(id,detail))
+    {
+            setRecipientToRow(row, type, PEER_TYPE_GXS, id.toStdString());
+        return ;
+    }
+    }
+
 
     // then groups
     std::list<RsGroupInfo> groupInfoList;
@@ -1724,6 +1741,7 @@ void MessageComposer::editingRecipientFinished()
     lineEdit->setStyleSheet(QString(STYLE_FAIL).arg(lineEdit->objectName()));
     lineEdit->setText(text);
 }
+
 void MessageComposer::addRecipient(enumType type, const RsPeerId& pid)
 {
     int rowCount = ui.recipientWidget->rowCount();

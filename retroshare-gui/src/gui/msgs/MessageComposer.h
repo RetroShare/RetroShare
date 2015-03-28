@@ -25,6 +25,7 @@
 #include <QMainWindow>
 #include <retroshare/rstypes.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rspeers.h>
 #include "ui_MessageComposer.h"
 
 #include "gui/msgs/MessageInterface.h"
@@ -165,7 +166,9 @@ private:
 
     void processSettings(bool bLoad);
 
-    QString getGxsRecipientName(const RsGxsId& id,const RsIdentityDetails& detail) ;
+    static QString getRecipientEmailAddress(const RsGxsId& id,const RsIdentityDetails& detail) ;
+    static QString getRecipientEmailAddress(const RsPeerId& id,const RsPeerDetails& detail) ;
+
     void addContact(enumType type);
     void setTextColor(const QColor& col) ;
     void setupFileActions();
