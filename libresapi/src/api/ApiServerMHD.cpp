@@ -59,6 +59,10 @@ namespace resource_api{
 
 const char* API_ENTRY_PATH = "/api/v2";
 const char* FILESTREAMER_ENTRY_PATH = "/fstream/";
+const char* STATIC_FILES_ENTRY_PATH = "/static/";
+
+static void secure_queue_response(MHD_Connection *connection, unsigned int status_code, struct MHD_Response* response);
+static void sendMessage(MHD_Connection *connection, unsigned int status, std::string message);
 
 // interface for request handler classes
 class MHDHandlerBase
@@ -161,9 +165,9 @@ public:
         if(result[0] != '{')
             MHD_add_response_header(resp, "Content-Type", "image/png");
         else
-            MHD_add_response_header(resp, "Content-Type", "text/plain");
+            MHD_add_response_header(resp, "Content-Type", "application/json");
 
-        MHD_queue_response(connection, MHD_HTTP_OK, resp);
+        secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
         return MHD_YES;
     }
@@ -190,12 +194,12 @@ public:
     {
         if(rsFiles == 0)
         {
-            ApiServerMHD::sendMessage(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, "Error: rsFiles is null. Retroshare is probably not yet started.");
+            sendMessage(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, "Error: rsFiles is null. Retroshare is probably not yet started.");
             return MHD_YES;
         }
         if(url[0] == 0 || (mHash=RsFileHash(url+strlen(FILESTREAMER_ENTRY_PATH))).isNull())
         {
-            ApiServerMHD::sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: URL is not a valid file hash");
+            sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: URL is not a valid file hash");
             return MHD_YES;
         }
         FileInfo info;
@@ -203,14 +207,17 @@ public:
         rsFiles->FileDownloads(dls);
         if(!(rsFiles->alreadyHaveFile(mHash, info) || std::find(dls.begin(), dls.end(), mHash) != dls.end()))
         {
-            ApiServerMHD::sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: file not existing on local peer and not downloading. Start the download before streaming it.");
+            sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: file not existing on local peer and not downloading. Start the download before streaming it.");
             return MHD_YES;
         }
         mSize = info.size;
 
         struct MHD_Response* resp = MHD_create_response_from_callback(
                     mSize, 1024*1024, &contentReadercallback, this, NULL);
-        MHD_queue_response(connection, MHD_HTTP_OK, resp);
+
+        // only mp3 at the moment
+        MHD_add_response_header(resp, "Content-Type", "audio/mpeg3");
+        secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
         return MHD_YES;
     }
@@ -227,6 +234,98 @@ public:
     }
 };
 #endif // ENABLE_FILESTREAMER
+
+// MHD will call this for each element of the http header
+static int _extract_host_header_it_cb(void *cls,
+                         enum MHD_ValueKind kind,
+                         const char *key,
+                         const char *value)
+{
+    if(kind == MHD_HEADER_KIND)
+    {
+        // check if key is host
+        const char* h = "host";
+        while(*key && *h)
+        {
+            if(tolower(*key) != *h)
+                return MHD_YES;
+            key++;
+            h++;
+        }
+        // strings have same length and content
+        if(*key == 0 && *h == 0)
+        {
+            *((std::string*)cls) = value;
+        }
+    }
+    return MHD_YES;
+}
+
+// add security related headers and send the response on the given connection
+// the reference counter is not touched
+// this function is a wrapper around MHD_queue_response
+// MHD_queue_response should be replaced with this function
+static void secure_queue_response(MHD_Connection *connection, unsigned int status_code, struct MHD_Response* response)
+{
+    // TODO: protect againts handling untrusted content to the browser
+    // see:
+    // http://www.dotnetnoob.com/2012/09/security-through-http-response-headers.html
+    // http://www.w3.org/TR/CSP2/
+    // https://code.google.com/p/doctype-mirror/wiki/ArticleContentSniffing
+
+    // check content type
+    // don't server when no type or no whitelisted type is given
+    // TODO sending invalid mime types is as bad as not sending them TODO
+    /*
+    std::vector<std::string> allowed_types;
+    allowed_types.push_back("text/html");
+    allowed_types.push_back("application/json");
+    allowed_types.push_back("image/png");
+    */
+    const char* type = MHD_get_response_header(response, "Content-Type");
+    if(type == 0 /*|| std::find(allowed_types.begin(), allowed_types.end(), std::string(type)) == allowed_types.end()*/)
+    {
+        std::string page;
+        if(type == 0)
+            page = "<html><body><p>Fatal Error: no content type was set on this response. This is a bug.</p></body></html>";
+        else
+            page = "<html><body><p>Fatal Error: this content type is not allowed. This is a bug.<br/> Content-Type: "+std::string(type)+"</p></body></html>";
+        struct MHD_Response* resp = MHD_create_response_from_data(page.size(), (void*)page.data(), 0, 1);
+        MHD_add_response_header(resp, "Content-Type", "text/html");
+        MHD_queue_response(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, resp);
+        MHD_destroy_response(resp);
+    }
+
+    // tell Internet Explorer to not do content sniffing
+    MHD_add_response_header(response, "X-Content-Type-Options", "nosniff");
+
+    // Content security policy header, its a new technology and not implemented everywhere
+
+    // get own host name as the browser sees it
+    std::string host;
+    MHD_get_connection_values(connection, MHD_HEADER_KIND, _extract_host_header_it_cb, (void*)&host);
+
+    std::string csp;
+    csp += "default-src 'none';";
+    csp += "script-src '"+host+STATIC_FILES_ENTRY_PATH+"';";
+    csp += "font-src '"+host+STATIC_FILES_ENTRY_PATH+"';";
+    csp += "img-src 'self';"; // allow images from all paths on this server
+    csp += "media-src 'self';"; // allow media files from all paths on this server
+
+    MHD_add_response_header(response, "X-Content-Security-Policy", csp.c_str());
+
+    MHD_queue_response(connection, status_code, response);
+}
+
+// wraps the given string in a html page and sends it as response with the given status code
+static void sendMessage(MHD_Connection *connection, unsigned int status, std::string message)
+{
+    std::string page = "<html><body><p>"+message+"</p></body></html>";
+    struct MHD_Response* resp = MHD_create_response_from_data(page.size(), (void*)page.data(), 0, 1);
+    MHD_add_response_header(resp, "Content-Type", "text/html");
+    secure_queue_response(connection, status, resp);
+    MHD_destroy_response(resp);
+}
 
 ApiServerMHD::ApiServerMHD():
     mConfigOk(false), mDaemon(0)
@@ -313,15 +412,6 @@ void ApiServerMHD::stop()
     mDaemon = 0;
 }
 
-/*static*/ void ApiServerMHD::sendMessage(MHD_Connection *connection, unsigned int status, std::string message)
-{
-    std::string page = "<html><body><p>"+message+"</p></body></html>";
-    struct MHD_Response* resp = MHD_create_response_from_data(page.size(), (void*)page.data(), 0, 1);
-    MHD_add_response_header(resp, "Content-Type", "text/html");
-    MHD_queue_response(connection, status, resp);
-    MHD_destroy_response(resp);
-}
-
 int ApiServerMHD::static_acceptPolicyCallback(void *cls, const sockaddr *addr, socklen_t addrlen)
 {
     return ((ApiServerMHD*)cls)->acceptPolicyCallback(addr, addrlen);
@@ -360,7 +450,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         return ((MHDHandlerBase*)(*con_cls))->handleRequest(connection, url, method, version, upload_data, upload_data_size);
     }
 
-    // these characters are not allowe in the url, raise an error if they occour
+    // these characters are not allowe in the url, raise an error if they occur
     // reason: don't want to serve files outside the current document root
     const char *double_dots = "..";
     if(strstr(url, double_dots))
@@ -368,11 +458,24 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         const char *error = "<html><body><p>Fatal error: found double dots (\"..\") in the url. This is not allowed</p></body></html>";
         struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
         MHD_add_response_header(resp, "Content-Type", "text/html");
-        MHD_queue_response(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, resp);
+        secure_queue_response(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, resp);
         MHD_destroy_response(resp);
         return MHD_YES;
     }
 
+    // if no path is given, redirect to index.html in static files directory
+    if(strlen(url) == 1 && url[0] == '/')
+    {
+        std::string location = std::string(STATIC_FILES_ENTRY_PATH) + "index.html";
+        std::string errstr = "<html><body><p>Webinterface is at <a href=\""+location+"\">"+location+"</a></p></body></html>";
+        const char *error = errstr.c_str();
+        struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
+        MHD_add_response_header(resp, "Content-Type", "text/html");
+        MHD_add_response_header(resp, "Location", location.c_str());
+        secure_queue_response(connection, MHD_HTTP_FOUND, resp);
+        MHD_destroy_response(resp);
+        return MHD_YES;
+    }
     // is it a call to the resource api?
     if(strstr(url, API_ENTRY_PATH) == url)
     {
@@ -393,37 +496,80 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         sendMessage(connection, MHD_HTTP_NOT_FOUND, "The filestreamer is not available, because this executable was compiled with a too old version of libmicrohttpd.");
         return MHD_YES;
 #endif
-    }
-
-    // else server static files
-    std::string filename = mRootDir + url;
-    // important: binary open mode,
-    // else libmicrohttpd will replace crlf with lf and add garbage at the end of the file
-    FILE* fd = fopen(filename.c_str(), "rb");
-    if(fd == 0)
+    } 
+    // is it a path to the static files?
+    if(strstr(url, STATIC_FILES_ENTRY_PATH) == url)
     {
-        const char *error = "<html><body><p>Error: can't open the requested file.</p></body></html>";
-        struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
-        MHD_add_response_header(resp, "Content-Type", "text/html");
-        MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, resp);
+        url = url + strlen(STATIC_FILES_ENTRY_PATH);
+        // else server static files
+        std::string filename = mRootDir + url;
+        // important: binary open mode,
+        // else libmicrohttpd will replace crlf with lf and add garbage at the end of the file
+        FILE* fd = fopen(filename.c_str(), "rb");
+        if(fd == 0)
+        {
+            const char *error = "<html><body><p>Error: can't open the requested file.</p></body></html>";
+            struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
+            MHD_add_response_header(resp, "Content-Type", "text/html");
+            secure_queue_response(connection, MHD_HTTP_NOT_FOUND, resp);
+            MHD_destroy_response(resp);
+            return MHD_YES;
+        }
+
+        struct stat s;
+        if(fstat(fileno(fd), &s) == -1)
+        {
+            const char *error = "<html><body><p>Error: file was opened but stat failed.</p></body></html>";
+            struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
+            MHD_add_response_header(resp, "Content-Type", "text/html");
+            secure_queue_response(connection, MHD_HTTP_NOT_FOUND, resp);
+            MHD_destroy_response(resp);
+            return MHD_YES;
+        }
+
+        // find the file extension and the content type
+        std::string extension;
+        int i = filename.size()-1;
+        while(i >= 0 && filename[i] != '.')
+        {
+            extension = filename[i] + extension;
+            i--;
+        }
+        const char* type = 0;
+        if(extension == "html")
+            type = "text/html";
+        else if(extension == "css")
+            type = "text/css";
+        else if(extension == "js")
+            type = "text/javascript";
+        else if(extension == "jsx") // react.js jsx files
+            type = "text/jsx";
+        else if(extension == "png")
+            type = "image/png";
+        else if(extension == "jpg" || extension == "jpeg")
+            type = "image/jpeg";
+        else if(extension == "gif")
+            type = "image/gif";
+        else
+            type = "application/octet-stream";
+
+        struct MHD_Response* resp = MHD_create_response_from_fd(s.st_size, fileno(fd));
+        MHD_add_response_header(resp, "Content-Type", type);
+        secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
         return MHD_YES;
     }
 
-    struct stat s;
-    if(fstat(fileno(fd), &s) == -1)
-    {
-        const char *error = "<html><body><p>Error: file was opened but stat failed.</p></body></html>";
-        struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
-        MHD_add_response_header(resp, "Content-Type", "text/html");
-        MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, resp);
-        MHD_destroy_response(resp);
-        return MHD_YES;
-    }
-
-    struct MHD_Response* resp = MHD_create_response_from_fd(s.st_size, fileno(fd));
-    MHD_queue_response(connection, MHD_HTTP_OK, resp);
-    MHD_destroy_response(resp);
+    // if url is not a valid path, then serve a help page
+    sendMessage(connection, MHD_HTTP_NOT_FOUND,
+                "This address is invalid. Try one of the adresses below:<br/>"
+                "<ul>"
+                "<li>/ <br/>Retroshare webinterface</li>"
+                "<li>"+std::string(API_ENTRY_PATH)+" <br/>JSON over http api</li>"
+                "<li>"+std::string(FILESTREAMER_ENTRY_PATH)+" <br/>file streamer</li>"
+                "<li>"+std::string(STATIC_FILES_ENTRY_PATH)+" <br/>static files</li>"
+                "</ul>"
+                );
     return MHD_YES;
 }
 

@@ -34,9 +34,6 @@ public:
 
     ApiServer& getApiServer(){ return mApiServer; }
 
-
-    // internal helper
-    static void sendMessage(struct MHD_Connection* connection, unsigned int status, std::string message);
 private:
     // static callbacks for libmicrohttpd, they call the members below
     static int static_acceptPolicyCallback(void* cls, const struct sockaddr * addr, socklen_t addrlen);
