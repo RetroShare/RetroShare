@@ -8,22 +8,28 @@
 // Usage:
 //
 // {
-// 	unsigned char *mem = NULL ;
-// 	TemporaryMemoryHolder mem_holder(mem,size) ;
+// 	TemporaryMemoryHolder mem(size) ;
+//
+//		if(mem != NULL)
+//			[ do something ] ;
+//
+//    memcopy(mem, some_other_memory, size) ;
 //
 // 	[do something]
+//
 // }	// mem gets freed automatically
 //
-class TemporaryMemoryHolder
+class RsTemporaryMemory
 {
 	public:
-		TemporaryMemoryHolder(unsigned char *& mem,size_t s)
-			: _mem(mem)
+		RsTemporaryMemory(size_t s)
 		{
 			_mem = (unsigned char *)malloc(s) ;
 		}
 
-		~TemporaryMemoryHolder()
+		operator unsigned char *() { return _mem ; }
+
+		~RsTemporaryMemory()
 		{
 			if(_mem != NULL)
 			{
@@ -33,7 +39,11 @@ class TemporaryMemoryHolder
 		}
 
 	private:
-		unsigned char *& _mem ;
+		unsigned char *_mem ;
+
+		// make it noncopyable
+		RsTemporaryMemory& operator=(const RsTemporaryMemory&) { return *this ;}
+		RsTemporaryMemory(const RsTemporaryMemory&) {}
 };
 
 

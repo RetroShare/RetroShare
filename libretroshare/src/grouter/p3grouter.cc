@@ -922,9 +922,8 @@ bool p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterAbstra
 #endif
 
     uint32_t size = item->serial_size();
-	 unsigned char *data = NULL ;
 
-	 TemporaryMemoryHolder f(data,size) ;	// data will be freed on return, whatever the route taken.
+     RsTemporaryMemory data(size) ;	// data will be freed on return, whatever the route taken.
 
     if(data == NULL)
     {
@@ -1384,9 +1383,7 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
         RsTlvSecurityKey signature_key ;
 
         uint32_t data_size = item->signed_data_size() ;
-		  uint8_t *data = NULL;
-
-		  TemporaryMemoryHolder f(data,data_size) ;
+          RsTemporaryMemory data(data_size) ;
 
 		  if(data == NULL)
             throw std::runtime_error("Cannot allocate data.") ;

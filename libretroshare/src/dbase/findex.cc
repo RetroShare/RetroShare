@@ -22,6 +22,7 @@
  */
 
 #include <util/rswin.h>
+#include <util/rsmemory.h>
 #include "dbase/findex.h"
 #include "retroshare/rsexpr.h"
 #include "util/rsdir.h"
@@ -767,69 +768,72 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 		return 0;
 	}
 
-	/* load file into memory, close file */
-	uint8_t *compressed_data = new uint8_t[size] ;
-	if(!compressed_data)
+	std::string s ;
+
 	{
-		std::cerr << "FileIndex::loadIndex(): can't allocate memory for " << size << " bytes." << std::endl;
+		/* load file into memory, close file */
+        RsTemporaryMemory compressed_data(size) ;
+
+		if(!compressed_data)
+		{
+			std::cerr << "FileIndex::loadIndex(): can't allocate memory for " << size << " bytes." << std::endl;
+			fclose(file);
+			return 0;
+		}
+		int bytesread = 0 ;
+		if(size != (bytesread = fread(compressed_data,1,size,file)))
+		{
+			std::cerr << "FileIndex::loadIndex(): can't read " << size << " bytes from file " << filename << ". Only " << bytesread << " actually read." << std::endl;
+			fclose(file);
+			return 0;
+		}
 		fclose(file);
-		return 0;
-	}
-	int bytesread = 0 ;
-	if(size != (bytesread = fread(compressed_data,1,size,file)))
-	{
-		std::cerr << "FileIndex::loadIndex(): can't read " << size << " bytes from file " << filename << ". Only " << bytesread << " actually read." << std::endl;
-		fclose(file);
-		delete[] compressed_data;
-		return 0;
-	}
-	fclose(file);
 
-	RsFileHash tmpout = RsDirUtil::sha1sum((unsigned char *)(compressed_data),size);
+		RsFileHash tmpout = RsDirUtil::sha1sum((unsigned char *)(compressed_data),size);
 
-//	/* calculate hash */
-//	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-//	SHA_CTX *sha_ctx = new SHA_CTX;
-//	SHA1_Init(sha_ctx);
-//	SHA1_Update(sha_ctx, s.c_str(), s.length());
-//	SHA1_Final(&sha_buf[0], sha_ctx);
-//	delete sha_ctx;
-//
-//	std::string tmpout;
-//	for(int i = 0; i < SHA_DIGEST_LENGTH; ++i)
-//	{
-//		rs_sprintf_append(tmpout, "%02x", (unsigned int) (sha_buf[i]));
-//	}
+		//	/* calculate hash */
+		//	unsigned char sha_buf[SHA_DIGEST_LENGTH];
+		//	SHA_CTX *sha_ctx = new SHA_CTX;
+		//	SHA1_Init(sha_ctx);
+		//	SHA1_Update(sha_ctx, s.c_str(), s.length());
+		//	SHA1_Final(&sha_buf[0], sha_ctx);
+		//	delete sha_ctx;
+		//
+		//	std::string tmpout;
+		//	for(int i = 0; i < SHA_DIGEST_LENGTH; ++i)
+		//	{
+		//		rs_sprintf_append(tmpout, "%02x", (unsigned int) (sha_buf[i]));
+		//	}
 
-    if (!expectedHash.isNull() && expectedHash != tmpout)
-	{
+		if (!expectedHash.isNull() && expectedHash != tmpout)
+		{
 #ifdef FI_DEBUG
-		std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl;
-		std::cerr << "Expected hash: " << expectedHash << std::endl;
-		std::cerr << "Hash found:    " << tmpout << std::endl;
+			std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl;
+			std::cerr << "Expected hash: " << expectedHash << std::endl;
+			std::cerr << "Hash found:    " << tmpout << std::endl;
 #endif
-		return 0;
+			return 0;
+		}
+		// now uncompress the string
+		//
+
+		uint8_t *uncompressed_data = NULL ;
+		unsigned int uncompressed_data_size = 0 ;
+
+		if(!RsCompress::uncompress_memory_chunk(compressed_data,size,uncompressed_data,uncompressed_data_size))
+		{
+			std::cerr << "FileIndex::loadIndex() Decompression failed! Fileindex can't be read." << std::endl;
+			return 0 ;
+		}
+		s = std::string((char *)uncompressed_data,uncompressed_data_size) ;
+
+		std::cerr << "   file = " << filename << std::endl;
+		std::cerr << "   uncompressed size = " << uncompressed_data_size << std::endl;
+		std::cerr << "   compressed size = " << size << std::endl;
+		std::cerr << "   hash     = " << tmpout << std::endl;
+
+		free(uncompressed_data) ;
 	}
-	// now uncompress the string
-	//
-	
-	uint8_t *uncompressed_data = NULL ;
-	unsigned int uncompressed_data_size = 0 ;
-
-	if(!RsCompress::uncompress_memory_chunk(compressed_data,size,uncompressed_data,uncompressed_data_size))
-	{
-		std::cerr << "FileIndex::loadIndex() Decompression failed! Fileindex can't be read." << std::endl;
-		return 0 ;
-	}
-	std::string s((char *)uncompressed_data,uncompressed_data_size) ;
-
-	std::cerr << "   file = " << filename << std::endl;
-	std::cerr << "   uncompressed size = " << uncompressed_data_size << std::endl;
-	std::cerr << "   compressed size = " << size << std::endl;
-	std::cerr << "   hash     = " << tmpout << std::endl;
-
-	delete[] compressed_data ;
-	free(uncompressed_data) ;
 
 #define FIND_NEXT(s,start,end,c) end = s.find(c, start); if (end == std::string::npos) end = s.length();
 
