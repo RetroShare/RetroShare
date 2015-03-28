@@ -184,6 +184,7 @@
 
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
+#include "util/rsmemory.h"
 #include "serialiser/rsconfigitems.h"
 #include "services/p3idservice.h"
 #include "turtle/p3turtle.h"
@@ -467,6 +468,7 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileH
         if(! ackn_item.serialise(turtle_data_item->data_bytes,turtle_data_item->data_size))
         {
             std::cerr << "  ERROR: Cannot serialise ACKN item." << std::endl;
+	    delete turtle_data_item;
             return ;
         }
 
@@ -920,7 +922,9 @@ bool p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterAbstra
 #endif
 
     uint32_t size = item->serial_size();
-    uint8_t *data = (uint8_t*)malloc(size) ;
+	 unsigned char *data = NULL ;
+
+	 TemporaryMemoryHolder f(data,size) ;	// data will be freed on return, whatever the route taken.
 
     if(data == NULL)
     {
@@ -930,7 +934,6 @@ bool p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterAbstra
 
     if(!item->serialise(data,size))
     {
-        free(data) ;
         std::cerr << "  ERROR: cannot serialise." << std::endl;
         return false;
     }
@@ -939,58 +942,60 @@ bool p3GRouter::sendDataInTunnel(const TurtleVirtualPeerId& vpid,RsGRouterAbstra
     static const uint32_t CHUNK_SIZE = 15000 ;
 
     while(offset < size)
-    {
-        uint32_t chunk_size = std::min(size - offset, CHUNK_SIZE) ;
+	 {
+		 uint32_t chunk_size = std::min(size - offset, CHUNK_SIZE) ;
 
-        RsGRouterTransactionChunkItem *chunk_item = new RsGRouterTransactionChunkItem ;
-        chunk_item->propagation_id = item->routing_id ;
-        chunk_item->total_size = size;
-        chunk_item->chunk_start= offset;
-        chunk_item->chunk_size = chunk_size ;
-        chunk_item->chunk_data = (uint8_t*)malloc(chunk_size) ;
-
-#ifdef GROUTER_DEBUG
-        std::cerr << "  preparing to send a chunk [" << offset << " -> " << offset + chunk_size << " / " << size << "]" << std::endl;
-#endif
-
-        if(chunk_item->chunk_data == NULL)
-        {
-            std::cerr << "  ERROR: Cannot allocate memory for size " << chunk_size << std::endl;
-        return false;
-        }
-        memcpy(chunk_item->chunk_data,&data[offset],chunk_size) ;
-
-        offset += chunk_size ;
-
-        RsTurtleGenericDataItem *turtle_item = new RsTurtleGenericDataItem ;
-
-        uint32_t turtle_data_size = chunk_item->serial_size() ;
-        uint8_t *turtle_data = (uint8_t*)malloc(turtle_data_size) ;
-
-        if(turtle_data == NULL)
-        {
-            std::cerr << "  ERROR: Cannot allocate turtle data memory for size " << turtle_data_size << std::endl;
-            return false;
-        }
-        if(!chunk_item->serialise(turtle_data,turtle_data_size))
-        {
-            std::cerr << "  ERROR: cannot serialise RsGRouterTransactionChunkItem." << std::endl;
-            free(turtle_data) ;
-            return false;
-        }
-
-        delete chunk_item ;
-
-        turtle_item->data_size  = turtle_data_size ;
-        turtle_item->data_bytes = turtle_data ;
+		 RsGRouterTransactionChunkItem *chunk_item = new RsGRouterTransactionChunkItem ;
+		 chunk_item->propagation_id = item->routing_id ;
+		 chunk_item->total_size = size;
+		 chunk_item->chunk_start= offset;
+		 chunk_item->chunk_size = chunk_size ;
+		 chunk_item->chunk_data = (uint8_t*)malloc(chunk_size) ;
 
 #ifdef GROUTER_DEBUG
-        std::cerr << "  sending to vpid " << vpid << std::endl;
+		 std::cerr << "  preparing to send a chunk [" << offset << " -> " << offset + chunk_size << " / " << size << "]" << std::endl;
 #endif
-        mTurtle->sendTurtleData(vpid,turtle_item) ;
-    }
 
-    free(data) ;
+		 if(chunk_item->chunk_data == NULL)
+		 {
+			 std::cerr << "  ERROR: Cannot allocate memory for size " << chunk_size << std::endl;
+			 delete chunk_item;
+			 return false;
+		 }
+		 memcpy(chunk_item->chunk_data,&data[offset],chunk_size) ;
+
+		 offset += chunk_size ;
+
+		 RsTurtleGenericDataItem *turtle_item = new RsTurtleGenericDataItem ;
+
+		 uint32_t turtle_data_size = chunk_item->serial_size() ;
+		 uint8_t *turtle_data = (uint8_t*)malloc(turtle_data_size) ;
+
+		 if(turtle_data == NULL)
+		 {
+			 std::cerr << "  ERROR: Cannot allocate turtle data memory for size " << turtle_data_size << std::endl;
+			 delete chunk_item;
+			 return false;
+		 }
+		 if(!chunk_item->serialise(turtle_data,turtle_data_size))
+		 {
+			 std::cerr << "  ERROR: cannot serialise RsGRouterTransactionChunkItem." << std::endl;
+			 delete chunk_item;
+			 free(turtle_data) ;
+			 return false;
+		 }
+
+		 delete chunk_item ;
+
+		 turtle_item->data_size  = turtle_data_size ;
+		 turtle_item->data_bytes = turtle_data ;
+
+#ifdef GROUTER_DEBUG
+		 std::cerr << "  sending to vpid " << vpid << std::endl;
+#endif
+		 mTurtle->sendTurtleData(vpid,turtle_item) ;
+	 }
+
     return true ;
 }
 
@@ -1136,6 +1141,7 @@ void p3GRouter::handleIncomingDataItem(const TurtleFileHash& hash,RsGRouterGener
 
     if(!signDataItem(receipt_item,generic_item->destination_key))
     {
+      delete receipt_item;
         std::cerr << "  signing: FAILED. Receipt dropped. ERROR." << std::endl;
         return ;
     }
@@ -1156,6 +1162,7 @@ void p3GRouter::handleIncomingDataItem(const TurtleFileHash& hash,RsGRouterGener
 #ifdef GROUTER_DEBUG
     std::cerr << "  sent signed receipt in tunnel " << generic_item->PeerId() << std::endl;
 #endif
+    delete receipt_item;
 }
 
 bool p3GRouter::locked_getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id)
@@ -1372,14 +1379,17 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
 }
 bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
 {
-    uint8_t *data = NULL;
-
     try
     {
         RsTlvSecurityKey signature_key ;
 
         uint32_t data_size = item->signed_data_size() ;
-        uint8_t *data = (uint8_t*)malloc(data_size) ;
+		  uint8_t *data = NULL;
+
+		  TemporaryMemoryHolder f(data,data_size) ;
+
+		  if(data == NULL)
+            throw std::runtime_error("Cannot allocate data.") ;
 
         if(!item->serialise_signed_data(data,data_size))
             throw std::runtime_error("Cannot serialise signed data.") ;
@@ -1417,18 +1427,14 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
                                         break ;
             default: break ;
             }
-        free(data) ;
             return false;
         }
 
-    free(data) ;
         return true ;
     }
     catch(std::exception& e)
     {
         std::cerr << "  signature verification failed. Error: " << e.what() << std::endl;
-        if(data != NULL)
-            free(data) ;
         return false ;
     }
 }
@@ -1494,6 +1500,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     if(!encryptDataItem(data_item,destination))
     {
         std::cerr << "Cannot encrypt data item. Some error occured!" << std::endl;
+	delete data_item;
         return false;
     }
 
@@ -1502,6 +1509,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     if(!signDataItem(data_item,signing_id))
     {
         std::cerr << "Cannot sign data item. Some error occured!" << std::endl;
+	delete data_item;
         return false;
     }
 
@@ -1510,6 +1518,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     if(!verifySignedDataItem(data_item))
     {
         std::cerr << "Cannot verify data item that was just signed. Some error occured!" << std::endl;
+	delete data_item;
         return false;
     }
     // push the item into pending messages.

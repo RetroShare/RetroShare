@@ -340,6 +340,7 @@ HEADERS += chat/distantchat.h \
 
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
+			pqi/rsmemory.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
 			pgp/rsaes.h \

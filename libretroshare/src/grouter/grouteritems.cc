@@ -76,11 +76,13 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
     if( NULL == (item->chunk_data = (uint8_t*)malloc(item->chunk_size)))
     {
         std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->chunk_size << std::endl;
+	delete item;
         return NULL ;
     }
     if(item->chunk_size + offset > rssize)
     {
         std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+	delete item;
         return NULL ;
     }
 
@@ -90,6 +92,7 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
     if (offset != rssize || !ok)
     {
         std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+	delete item;
         return NULL ;
     }
 
@@ -109,6 +112,7 @@ RsGRouterTransactionAcknItem *RsGRouterSerialiser::deserialise_RsGRouterTransact
     if (offset != rssize || !ok)
     {
         std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+	delete item;
         return NULL ;
     }
 
@@ -129,12 +133,14 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
     if( NULL == (item->data_bytes = (uint8_t*)malloc(item->data_size)))
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->data_size << std::endl;
+		delete item;
 		return NULL ;
 	}
 
     if(item->data_size + offset > rssize)
     {
         std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+	delete item;
         return NULL ;
     }
 
@@ -149,6 +155,7 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
     if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		delete item;
 		return NULL ;
 	}
 
@@ -172,6 +179,7 @@ RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedRece
 	if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		delete item;
 		return NULL ;
 	}
 
@@ -224,6 +232,7 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		delete item;
 		return NULL ;
 	}
 
@@ -248,6 +257,7 @@ RsGRouterMatrixFriendListItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixF
 	if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		delete item;
 		return NULL ;
 	}
 
@@ -282,6 +292,7 @@ RsGRouterMatrixCluesItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixCluesI
 	if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		delete item;
 		return NULL ;
 	}
 
