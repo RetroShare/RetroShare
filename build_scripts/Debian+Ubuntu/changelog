@@ -1,6 +1,62 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    GUI
+      * improved profile creation wizard: Hide by default key length combobox, for advanced users get visible 
+         via advanced checkbox; Set stylesheet for a Info Label; Changed Window icon to higher resolution;
+         Not show too much technical detail on a info Label.
+      * Fixed path of config file RSPeers.conf
+      * improvement of FriendList (Patch from Sehraf)
+      * added scale and wheel-event resizing to RSGraphWidget
+
+   Chat lobbies
+      * fixed up nickname completion in chat lobbies
+      * new notify capability of chat lobbies: message counting, nickname occurrence counting and specific text 
+        counting. Also sorts out notify tab in Settings (Patch from Phenom, slightly modified: gui layout/text 
+        + added a flag to enable/disable user defined text grep)
+      * fixed bug with default chat lobby identity causing settings to show an empty list. Also fixed up GxsIdChooser
+
+   WebUI (not enabled yet)
+      * added Content-Type headers, added redirect to index.html
+      * updated SuperEasyJSON
+      * fixed redefinition warning of MSG_WAITALL on windows/mingw491
+      * limited webinterface to localhost by default, added command line option to listen on all interfaces
+      * allow RsControlModule to work without control over RsInit (e.g. with rs-gui)
+      * disabled file streaming for libmicrohttpd < 0.9.31-1
+      * added command line parameters for webui port and base directory.
+
+   Div.
+      * fixed a few missing deletes when handling errors in grouter. Experimenting a new scope guard to hold 
+        temporary memory. (Patch from GuessWho, modified)
+      * disabled debug print of DHT requests, disabled debug print in p3Peers::getProxyServer(), added missing 
+         newlines in debug prints (modified patch from Hypfer)
+      * added missing return statement in RsDirUtil::saveStringToFile() (thx to sehraf)
+      * don't store name, location name and date in new SSL certs. Location name is now stored in an extra file. 
+         Backward compatible to old locations and old peers.
+      * fix data directory on Linux, use new path /usr/share/RetroShare06
+      * fixed constructors in button-on-text widget (Patch from Phenom)
+
+   Messages
+      * fixed distant peer naming in combo box for recipient selection.
+      * fixed naming and completion in recipient addresses in MessageComposer
+      * fixed icons in FriendSelectionWidget and MsgComposer. Also added disable/enable for From field 
+        depending on which type of recipient is used
+      * Updated GUI to use new Message / Mail interface. Configuration is in MessageInterface.h for the moment
+      * Modify Messages with additional namespace - to allow switching to new Mail.
+      * use RSLinks to handle recommendation message (Patch from Sehraf)
+
+   VOIP
+      * added notification for VOIP calls (Patch from Phenom)
+
+   Bug fixes
+      * added test to prevent using twice the same config file; changed duplicate config file name causing 
+         deserialisation errors and loss of some config files; added printout of hex code for RsItems that 
+         fail deserialisation
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 14 Mar 2015 16:00:00 +0100
+
+retroshare06 (0.6.0-0.8060~utopic) utopic; urgency=low
+
+   GUI
       - Fixed content of GxsIdChooser for Qt 5 by setting dynamicSortFilter to false.
       - Change in the default value (Qt 4 = false, Qt 5 = true)
       - made 2 different pages in ConfCertDialog for PGP key and RS certificate. Removed the old format checkbox.
