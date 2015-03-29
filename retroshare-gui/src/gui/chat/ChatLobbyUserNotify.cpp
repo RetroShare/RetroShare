@@ -82,11 +82,8 @@ void ChatLobbyUserNotify::setTextToNotify(QStringList value)
 
 void ChatLobbyUserNotify::setTextToNotify(QString value)
 {
-	QRegExp regExp("([ ~!@#$%^&*()_+{}|:\"<>?,./;'[\\]\\\\\\-=\\t\\n\\r])"); //RegExp for End of Word
-	QStringList list = value.split(regExp);
-	QString newValue = list.join("\n");
-	while(newValue.contains("\n\n")) newValue.replace("\n\n","\n");
-	list = newValue.split("\n");
+	while(value.contains("\n\n")) value.replace("\n\n","\n");
+	QStringList list = value.split("\n");
 	setTextToNotify(list);
 }
 
