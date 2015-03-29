@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
+    <normaloff>:/images/logo/logo_48.png</normaloff>:/images/logo/logo_48.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="margin">
@@ -119,7 +119,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="hidden_checkbox">
+            <widget class="QCheckBox" name="adv_checkbox">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
@@ -130,11 +130,11 @@
               <string>Your profile is associated with a PGP key</string>
              </property>
              <property name="text">
-              <string>Create a hidden node.</string>
+              <string>Advanced</string>
              </property>
              <property name="icon">
               <iconset resource="images.qrc">
-               <normaloff>:/images/tor-logo.png</normaloff>:/images/tor-logo.png</iconset>
+               <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -376,6 +376,11 @@ anonymous, you can use a fake email.</string>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="entropy_label">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
@@ -482,7 +487,7 @@ anonymous, you can use a fake email.</string>
   <tabstop>hiddenport_spinBox</tabstop>
   <tabstop>genButton</tabstop>
   <tabstop>new_gpg_key_checkbox</tabstop>
-  <tabstop>hidden_checkbox</tabstop>
+  <tabstop>adv_checkbox</tabstop>
   <tabstop>importIdentity_PB</tabstop>
   <tabstop>exportIdentity_PB</tabstop>
  </tabstops>

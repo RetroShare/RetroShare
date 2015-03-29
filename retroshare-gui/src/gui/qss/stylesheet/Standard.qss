@@ -20,7 +20,7 @@ HeaderFrame > QFrame#frame > QLabel#headerLabel {
 
 /* GenCertDialog */
 
-GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label
+GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label, QLabel#entropy_label
 {
 	border: 1px solid #DCDC41;
 	border-radius: 6px;
