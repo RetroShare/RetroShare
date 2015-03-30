@@ -184,7 +184,7 @@ const std::string kPathPGPDirectory = "pgp";
 const std::string kPathKeyDirectory = "keys";
 const std::string kPathConfigDirectory = "config";
 
-const std::string kFilenamePreferredAccount = "default_cert.txt";
+const std::string kFilenamePreferredAccount = "default_cert_06.txt";
 const std::string kFilenameKey = "user_pk.pem";
 const std::string kFilenameCert = "user_cert.pem";
 const std::string kFilenameLocation = "location_name.txt";
