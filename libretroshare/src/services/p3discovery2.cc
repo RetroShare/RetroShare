@@ -855,6 +855,7 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 		std::cerr << item->pgpId << " Ignoring Info on self";
 		std::cerr << std::endl;
 #endif		
+        delete item;
 		return;
 	}
 
@@ -885,6 +886,7 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 			mNetMgr->netAssistKnownPeer(item->sslId, item->extAddrV4.addr,
 				NETASSIST_KNOWN_PEER_FOF | NETASSIST_KNOWN_PEER_OFFLINE);
 		}
+        delete item;
 		return;
 	}
 
@@ -923,6 +925,8 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 
 	if(should_notify_discovery)
 		RsServer::notify()->notifyDiscInfoChanged();
+
+    delete item;
 }
 
 
