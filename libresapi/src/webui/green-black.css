@@ -1,0 +1,64 @@
+body {
+	background-color: black;
+	color: lime;
+	font-family: monospace;
+	margin: 0em;
+	padding: 1.5em;
+	font-size: 1.1em;
+}
+
+.nav{
+	list-style-type: none;
+	padding: 0em;
+	margin: 0em;
+}
+
+.nav li{
+	display: inline;
+	padding: 0.1em;
+	margin-right: 1em;
+	border-width: 0.1em;
+	border-color: blue;
+	border-bottom-style: solid;
+	cursor: pointer;
+}
+td{
+	padding: 0.3em;
+	border-style: solid;
+	border-width: 0.1em;
+	border-color: lime;
+}
+.btn{
+	border-style: solid;
+	border-color: lime;
+	border-width: 0.1em;
+	cursor: pointer;
+	padding: 0.1em;
+}
+
+input, textarea{
+	color: lime;
+	font-family: monospace;
+	background-color: black;
+	border-color: lime;
+}
+#logo_splash{
+    -webkit-animation-fill-mode: forwards; /* Chrome, Safari, Opera */
+    animation-fill-mode: forwards;
+    -webkit-animation-name: logo_splash; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 3s; /* Chrome, Safari, Opera */
+    animation-name: logo_splash;
+    animation-duration: 3s;
+	text-align: center;
+}
+/* Chrome, Safari, Opera */
+@-webkit-keyframes logo_splash {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes logo_splash {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
