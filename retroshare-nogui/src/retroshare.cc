@@ -58,6 +58,7 @@ void generatePasswordHash() ;
 #include <stdarg.h>
 #include "api/ApiServerMHD.h"
 #include "api/RsControlModule.h"
+#include "TerminalApiClient.h"
 #endif
 
 /* Basic instructions for running libretroshare as background thread.
@@ -92,29 +93,35 @@ int main(int argc, char **argv)
         std::cerr << args.usage() << std::endl;
     }
 
+    resource_api::ApiServer api;
+    resource_api::RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
+    api.addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
+
+    resource_api::ApiServerMHD* httpd = 0;
     if(httpPort != 0)
     {
-        resource_api::ApiServerMHD httpd;
-
-        if(!httpd.configure(docroot, httpPort, listenAddress, allowAllIps))
+        httpd = new resource_api::ApiServerMHD(&api);
+        if(!httpd->configure(docroot, httpPort, listenAddress, allowAllIps))
         {
             std::cerr << "Failed to configure the http server. Check your parameters." << std::endl;
             return 1;
         }
-
-        resource_api::RsControlModule ctrl_mod(argc, argv, httpd.getApiServer().getStateTokenServer(), &httpd.getApiServer(), true);
-        httpd.getApiServer().addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod), &resource_api::RsControlModule::handleRequest);
-
-        httpd.start();
-
-        while(ctrl_mod.processShouldExit() == false)
-        {
-            usleep(20*1000);
-        }
-        httpd.stop();
-
-        return 0;
+        httpd->start();
     }
+
+    resource_api::TerminalApiClient tac(&api);
+    while(ctrl_mod.processShouldExit() == false)
+    {
+        usleep(20*1000);
+    }
+
+    if(httpd)
+    {
+        httpd->stop();
+        delete httpd;
+    }
+
+    return 0;
 #endif
 
 	/* Retroshare startup is configured using an RsInit object.

@@ -5,9 +5,6 @@
 #include "ApiTypes.h"
 #include "PeersHandler.h"
 #include "IdentityHandler.h"
-#ifdef FIXME
-#include "WallHandler.h"
-#endif
 #include "ServiceControlHandler.h"
 #include "StateTokenServer.h"
 #include "FileSearchHandler.h"
@@ -16,40 +13,56 @@
 namespace resource_api{
 
 class ApiServerMainModules;
-class ApiServerWallModule;
 
-// main entry point for all resource api calls
+// main entry point for all resource_api calls
+// general part of the api server
+// should work with any http library or a different transport protocol (e.g. SSH)
 
 // call chain is like this:
-// Wt -> ApiServerWt -> ApiServer -> different handlers
-// later i want to replace the parts with Wt with something else
-// (Wt is a too large framework, a simple http server would be enough)
-// maybe use libmicrohttpd
-// the other use case for this api is a qt webkit view
-// this works without html, the webkitview calls directly into our c++ code
+// HTTP server -> ApiServer -> different handlers
+// or
+// GUI -> ApiServer -> different handlers
+// multiple clients can use the same ApiServer instance at the same time
 
-// general part of the api server
-// should work with any http library or a different transport protocol
+// ALL public methods in this class are thread safe
+// this allows differen threads to send requests
 class ApiServer
 {
 public:
     ApiServer();
     ~ApiServer();
 
-    // it is currently hard to separate into http and non http stuff
-    // mainly because the http path is used in the api
-    // this has to change later
-    // for now let the http part make the request object
-    // and the general apiserver part makes the response
+    class RequestId{
+    public:
+        RequestId(): done(false), task(0), request(0), response(0){}
+        bool operator ==(const RequestId& r){
+            const RequestId& l = *this;
+            return (l.done==r.done)&&(l.task==r.task)&&(l.request==r.request)&&(l.response&&r.response);
+        }
+    private:
+        friend class ApiServer;
+        bool done; // this flag will be set to true, to signal the task id is valid and the task is done
+                   // (in case there was no ResponseTask and task was zero)
+        ResponseTask* task; // null when the task id is invalid or when there was no task
+        Request* request;
+        Response* response;
+    };
+
+    // process the requestgiven by request and return the response as json string
+    // blocks until the request was processed
     std::string handleRequest(Request& request);
+
+    // request and response must stay valid until isRequestDone returns true
+    // this method may do some work but it does not block
+    RequestId handleRequest(Request& request, Response& response);
+
+    // ticks the request
+    // returns true if the request is done or the id is invalid
+    // this method may do some work but it does not block
+    bool isRequestDone(RequestId id);
 
     // load the main api modules
     void loadMainModules(const RsPlugInInterfaces& ifaces);
-
-    // only after rswall was started!
-#ifdef FIXME
-    void loadWallModule(const RsPlugInInterfaces& ifaces, RsWall::RsWall* wall);
-#endif
 
     // allows to add more handlers
     // make sure the livetime of the handlers is longer than the api server
@@ -61,25 +74,29 @@ public:
     StateTokenServer* getStateTokenServer(){ return &mStateTokenServer; }
 
 private:
+    RsMutex mMtx;
     StateTokenServer mStateTokenServer; // goes first, as others may depend on it
                                         // is always loaded, because it has no dependencies
 
     // only pointers here, to load/unload modules at runtime
     ApiServerMainModules* mMainModules; // loaded when RS is started
-    ApiServerWallModule* mWallModule; // only loaded in rssocialnet plugin
 
     ResourceRouter mRouter;
+
+    std::vector<RequestId> mRequests;
 };
 
 // implementations
 template <class T>
 void ApiServer::addResourceHandler(std::string name, T* instance, ResponseTask* (T::*callback)(Request& req, Response& resp))
 {
+    RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     mRouter.addResourceHandler(name, instance, callback);
 }
 template <class T>
 void ApiServer::addResourceHandler(std::string name, T* instance, void (T::*callback)(Request& req, Response& resp))
 {
+    RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     mRouter.addResourceHandler(name, instance, callback);
 }
 

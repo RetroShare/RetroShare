@@ -46,6 +46,12 @@ std::string JsonStream::getJsonString()
     return "";
 }
 
+void JsonStream::switchToDeserialisation()
+{
+    deleteCurrentChild();
+    mSerialise = false;
+}
+
 
 //----------Stream Interface ---------------
 
@@ -132,6 +138,7 @@ StreamBase& JsonStream::getStreamToMember()
         if(checkDeserialisation() && arrayBoundsOk())
         {
             mChild->mValue = mArray[mArrayNextRead];
+            mChild->mSerialise = false;
             mArrayNextRead++;
         }
     }

@@ -5,6 +5,7 @@
 namespace resource_api
 {
 // a base class for routing requests to handler methods
+// nothing is thread safe here
 class ResourceRouter
 {
 public:
@@ -23,6 +24,7 @@ private:
     class HandlerBase
     {
     public:
+        virtual ~HandlerBase(){}
         virtual ResponseTask* handleRequest(Request& req, Response& resp) = 0;
     };
     template <class T>

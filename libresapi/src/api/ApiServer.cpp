@@ -6,12 +6,10 @@
 #include <time.h>
 #include <unistd.h>
 #include <sstream>
+#include <algorithm>
 #include "json.h"
 
 #include <retroshare/rsservicecontrol.h>
-#ifdef FIXME
-#include "rswall.h"
-#endif
 #include "JsonStream.h"
 #include "StateTokenServer.h" // for the state token serialisers
 
@@ -253,24 +251,11 @@ public:
     FileSearchHandler mFileSearchHandler;
     TransfersHandler mTransfersHandler;
 };
-#ifdef FIXME
-class ApiServerWallModule
-{
-public:
-    ApiServerWallModule(ResourceRouter& router, const RsPlugInInterfaces& ifaces, RsWall::RsWall* wall):
-        mWallHandler(wall, ifaces.mIdentity)
-    {
-        router.addResourceHandler("wall", dynamic_cast<ResourceRouter*>(&mWallHandler),
-                                   &WallHandler::handleRequest);
-    }
 
-    WallHandler mWallHandler;
-};
-#endif
 ApiServer::ApiServer():
+    mMtx("ApiServer mMtx"),
     mStateTokenServer(),
-    mMainModules(0),
-    mWallModule(0)
+    mMainModules(0)
 {
     mRouter.addResourceHandler("statetokenservice", dynamic_cast<ResourceRouter*>(&mStateTokenServer),
                                &StateTokenServer::handleRequest);
@@ -278,24 +263,22 @@ ApiServer::ApiServer():
 
 ApiServer::~ApiServer()
 {
+    RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+    for(std::vector<RequestId>::iterator vit = mRequests.begin(); vit != mRequests.end(); ++vit)
+        delete vit->task;
+    mRequests.clear();
+
     if(mMainModules)
         delete mMainModules;
-    if(mWallModule)
-        delete mWallModule;
 }
 
 void ApiServer::loadMainModules(const RsPlugInInterfaces &ifaces)
 {
+    RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     if(mMainModules == 0)
         mMainModules = new ApiServerMainModules(mRouter, &mStateTokenServer, ifaces);
 }
-#ifdef FIXME
-void ApiServer::loadWallModule(const RsPlugInInterfaces &ifaces, RsWall::RsWall* wall)
-{
-    if(mWallModule == 0)
-        mWallModule = new ApiServerWallModule(mRouter, ifaces, wall);
-}
-#endif
+
 std::string ApiServer::handleRequest(Request &request)
 {
     resource_api::JsonStream outstream;
@@ -304,12 +287,22 @@ std::string ApiServer::handleRequest(Request &request)
     StreamBase& data = outstream.getStreamToMember("data");
     resource_api::Response resp(data, debugString);
 
-    ResponseTask* task = mRouter.handleRequest(request, resp);
+    ResponseTask* task = 0;
+    {
+        RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+        task = mRouter.handleRequest(request, resp);
+    }
 
     time_t start = time(NULL);
-    while(task && task->doWork(request, resp))
+    bool morework = true;
+    while(task && morework)
     {
-        usleep(10*1000);
+        {
+            RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+            morework = task->doWork(request, resp);
+        }
+        if(morework)
+            usleep(10*1000);
         /*if(time(NULL) > (start+5))
         {
             std::cerr << "ApiServer::handleRequest() Error: task timed out" << std::endl;
@@ -346,6 +339,55 @@ std::string ApiServer::handleRequest(Request &request)
     if(!resp.mStateToken.isNull())
         outstream << resource_api::makeKeyValueReference("statetoken", resp.mStateToken);
     return outstream.getJsonString();
+}
+
+ApiServer::RequestId ApiServer::handleRequest(Request &request, Response &response)
+{
+    RequestId id;
+    ResponseTask* task = 0;
+    {
+        RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+        task = mRouter.handleRequest(request, response);
+    }
+    if(task == 0)
+    {
+        id.done = true;
+        return id;
+    }
+    id.done = false,
+    id.task = task;
+    id.request = &request;
+    id.response = &response;
+    {
+        RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+        mRequests.push_back(id);
+    }
+    return id;
+}
+
+bool ApiServer::isRequestDone(RequestId id)
+{
+    if(id.done)
+        return true;
+
+    RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+    std::vector<RequestId>::iterator vit = std::find(mRequests.begin(), mRequests.end(), id);
+    // Request id not found, maybe the id is old and was removed from the list
+    if(vit == mRequests.end())
+        return true;
+
+    if(id.task->doWork(*id.request, *id.response))
+        return false;
+
+    // if we reach this point, the request is in the list and done
+    // remove the id from the list of valid ids
+    // delete the ResponseTask object
+
+    *vit = mRequests.back();
+    mRequests.pop_back();
+
+    delete id.task;
+    return true;
 }
 
 } // namespace resource_api

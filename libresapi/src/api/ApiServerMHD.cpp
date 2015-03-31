@@ -8,7 +8,8 @@
 // for filestreamer
 #include <retroshare/rsfiles.h>
 
-#include "api/JsonStream.h"
+#include "JsonStream.h"
+#include "ApiServer.h"
 
 #if MHD_VERSION < 0x00090000
     // very old version, probably v0.4.x on old debian/ubuntu
@@ -327,8 +328,8 @@ static void sendMessage(MHD_Connection *connection, unsigned int status, std::st
     MHD_destroy_response(resp);
 }
 
-ApiServerMHD::ApiServerMHD():
-    mConfigOk(false), mDaemon(0)
+ApiServerMHD::ApiServerMHD(ApiServer *server):
+    mConfigOk(false), mDaemon(0), mApiServer(server)
 {
 }
 
@@ -394,7 +395,7 @@ bool ApiServerMHD::start()
                                MHD_OPTION_END);
     if(mDaemon)
     {
-        std::cerr << "ApiServerMHD::start() SUCCESS. Started server on port " << ntohs(mListenAddr.sin_port) << ". Serving files from \"" << mRootDir << "\" at /" << std::endl;
+        std::cerr << "ApiServerMHD::start() SUCCESS. Started server on port " << ntohs(mListenAddr.sin_port) << ". Serving files from \"" << mRootDir << "\" at " << STATIC_FILES_ENTRY_PATH << std::endl;
         return true;
     }
     else
@@ -480,7 +481,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
     if(strstr(url, API_ENTRY_PATH) == url)
     {
         // create a new handler and store it in con_cls
-        MHDHandlerBase* handler = new MHDApiHandler(&mApiServer);
+        MHDHandlerBase* handler = new MHDApiHandler(mApiServer);
         *con_cls = (void*) handler;
         return handler->handleRequest(connection, url, method, version, upload_data, upload_data_size);
     }

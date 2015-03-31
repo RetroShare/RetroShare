@@ -189,9 +189,9 @@ DEPENDPATH += . ../../libretroshare/src
 INCLUDEPATH += . ../../libretroshare/src
 
 # Input
-HEADERS +=  notifytxt.h 
+HEADERS +=  notifytxt.h
 SOURCES +=  notifytxt.cc \
-            retroshare.cc 
+            retroshare.cc
 
 introserver {
 	HEADERS += introserver.h
@@ -201,8 +201,14 @@ introserver {
 
 webui {
 	DEFINES *= ENABLE_WEBUI
+        PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
 	LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+        DEPENDPATH += ../../libresapi/src
 	INCLUDEPATH += ../../libresapi/src
+        HEADERS += \
+            TerminalApiClient.h
+        SOURCES +=  \
+            TerminalApiClient.cpp
 }
 
 sshserver {

@@ -11,14 +11,13 @@
 #include <netinet/in.h>
 #endif
 
-#include "api/ApiServer.h"
-
 namespace resource_api{
+class ApiServer;
 
 class ApiServerMHD
 {
 public:
-    ApiServerMHD();
+    ApiServerMHD(ApiServer* server);
     ~ApiServerMHD();
     /**
      * @brief configure the http server
@@ -32,8 +31,6 @@ public:
     bool start();
     void stop();
 
-    ApiServer& getApiServer(){ return mApiServer; }
-
 private:
     // static callbacks for libmicrohttpd, they call the members below
     static int static_acceptPolicyCallback(void* cls, const struct sockaddr * addr, socklen_t addrlen);
@@ -46,7 +43,7 @@ private:
     std::string mRootDir;
     struct sockaddr_in mListenAddr;
     MHD_Daemon* mDaemon;
-    ApiServer mApiServer;
+    ApiServer* mApiServer;
 };
 
 } // namespace resource_api

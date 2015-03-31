@@ -15,6 +15,11 @@ public:
     void setJsonString(std::string jsonStr);
     std::string getJsonString();
 
+    // it is possible to use this class as buffer
+    // first use as serialiser and fill with values
+    // then call this method to deserialise the values
+    void switchToDeserialisation();
+
 
     //----------Stream Interface ---------------
 

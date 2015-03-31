@@ -51,6 +51,7 @@ ResponseTask* ResourceRouter::handleRequest(Request& req, Response& resp)
             return vit->second->handleRequest(req, resp);
         }
     }
+    resp.setFail("ResourceRouter::handleRequest() Error: no handler for this path.");
     return 0;
 }
 

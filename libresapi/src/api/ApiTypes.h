@@ -254,6 +254,7 @@ public:
 class ResponseTask
 {
 public:
+    virtual ~ResponseTask(){}
     // return true if function should get called again
     // return false when finished
     virtual bool doWork(Request& req, Response& resp) = 0;
