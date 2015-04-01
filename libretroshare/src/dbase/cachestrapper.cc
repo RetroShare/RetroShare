@@ -233,25 +233,25 @@ bool    CacheSource::clearCache(CacheId id)
 	return ret;
 }
 		
-bool    CacheSource::cachesAvailable(const RsPeerId& pid, std::map<CacheId, RsCacheData> &ids)
-{
-	if(!isPeerAcceptedAsCacheReceiver(pid))
-		return false ;
-
-	lockData(); /* LOCK MUTEX */
-
-	/* can overwrite for more control! */
-	CacheSet::iterator it;
-	for(it = caches.begin(); it != caches.end(); ++it)
-	{
-		ids[(it->second).cid] = it->second;
-	}
-	bool ret = (caches.size() > 0);
-
-	unlockData(); /* UNLOCK MUTEX */
-	return ret;
-
-}
+//bool    CacheSource::cachesAvailable(const RsPeerId& pid, std::map<CacheId, RsCacheData> &ids)
+//{
+//	if(!isPeerAcceptedAsCacheReceiver(pid))
+//		return false ;
+//
+//	lockData(); /* LOCK MUTEX */
+//
+//	/* can overwrite for more control! */
+//	CacheSet::iterator it;
+//	for(it = caches.begin(); it != caches.end(); ++it)
+//	{
+//		ids[(it->second).cid] = it->second;
+//	}
+//	bool ret = (caches.size() > 0);
+//
+//	unlockData(); /* UNLOCK MUTEX */
+//	return ret;
+//
+//}
 
 
 bool    CacheSource::findCache(const RsFileHash &hash, RsCacheData &data) const

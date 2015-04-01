@@ -151,7 +151,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* util fns */
 
 		// from CacheSource
-		virtual bool cachesAvailable(RsPeerId /* pid */, std::map<CacheId, RsCacheData> &ids) ;
+        virtual bool cachesAvailable(const RsPeerId& pid, std::map<CacheId, RsCacheData> &ids) ;
 
 	protected:
 		// Sets/gets the duration period within which already hashed files are remembered.

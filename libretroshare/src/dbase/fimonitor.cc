@@ -1300,7 +1300,7 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 	return mod_time ;
 }
 
-bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, RsCacheData> &ids)
+bool FileIndexMonitor::cachesAvailable(const RsPeerId &pid,std::map<CacheId, RsCacheData> &ids)
 {
 	lockData() ;
 #ifdef FIM_DEBUG
@@ -1314,7 +1314,7 @@ bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, RsCacheDat
     RsPeerId ownId = rsPeers->getOwnId();
 
 	if(it != _cache_items_per_peer.end())
-	{
+    {
 		ids[it->second.cid] = it->second ;
 
 		if(pid != ownId)

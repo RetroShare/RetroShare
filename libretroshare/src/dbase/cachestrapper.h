@@ -167,7 +167,7 @@ class CacheSource
 		 *  called to determine available cache for peer -
 		 * default acceptable (returns all)
 		 */
-        virtual bool 	cachesAvailable(const RsPeerId& pid, std::map<CacheId, RsCacheData> &ids);
+        virtual bool 	cachesAvailable(const RsPeerId& pid, std::map<CacheId, RsCacheData> &ids)=0;
 
 		/*!
 		 * function called at startup to load from
