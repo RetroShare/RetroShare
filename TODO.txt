@@ -85,7 +85,7 @@ E        [ ] Friends => Friend nodes
 E        [X] remove TCP, TOR, UDP from the status column, and move it in front of IP
       
        File transfer
-H        [ ] There's a bug sometimes causing re-hash of shared files at start. Find it, kill it.
+H        [X] There's a bug sometimes causing re-hash of shared files at start. Find it, kill it.
 
        News feed
          [X] remove the Ghost news feed items
