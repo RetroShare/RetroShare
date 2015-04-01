@@ -52,11 +52,11 @@
 #include <time.h>
 
 // ***********
-// #define FIM_DEBUG 1
+//#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, const RsPeerId& pid,const std::string& config_dir)
-	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fiMutex("FileIndexMonitor"), fi(pid),
+    :CacheSource(RS_SERVICE_TYPE_FILE_INDEX, true, cs, cachedir), fiMutex("FileIndexMonitor"), fi(pid),
 		pendingDirs(false), pendingForceCacheWrite(false),
 		mForceCheck(false), mInCheck(false), hashCache(config_dir+"/" + "file_cache"),useHashCache(true)
 
@@ -1263,7 +1263,7 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
             for(std::set<RsPeerId>::const_iterator ff(it->second.begin());ff!=it->second.end();++ff)
 				_cache_items_per_peer[*ff] = data ;
 
-			data.cid.subid = 0;
+            data.cid.subid = n;
 
 			if(update_cache)
 				updateCache(data,it->second);
