@@ -204,9 +204,12 @@ void ConfCertDialog::load()
 		 if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
 		 {
 			 QString ct ;
-			 ct += QString::fromStdString(cdet.cipher_name) ;
-			 ct += QString::number(cdet.cipher_bits_1) ;
-			 ct += "-"+QString::fromStdString(cdet.cipher_version) ;
+			  ct += QString::fromStdString(cdet.cipher_version) + ": ";
+			 ct += QString::fromStdString(cdet.cipher_name);
+
+			 if(cdet.cipher_version != "TLSv1.2")
+				ct += QString::number(cdet.cipher_bits_1);
+
 			 ui.crypto_info->setText(ct) ;
 		 }
 		 else
