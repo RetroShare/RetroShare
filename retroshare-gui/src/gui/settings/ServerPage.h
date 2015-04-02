@@ -61,6 +61,7 @@ private:
 	void loadHiddenNode();
 	void updateStatusHiddenNode();
 	void saveAddressesHiddenNode();
+	void updateTorOutProxyIndicator();
 
 
     Ui::ServerPage ui;

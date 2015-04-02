@@ -234,16 +234,7 @@ void ServerPage::load()
 	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
     ui.torpage_proxyPort -> setValue(proxyport);
 
-    if(status & RS_NET_PROXY_STATUS_OK)
-    {
-        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-    ui.iconlabel_tor_outgoing->setToolTip(tr("TOR proxy is working correctly")) ;
-    }
-    else
-    {
-        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-    ui.iconlabel_tor_outgoing->setToolTip(tr("TOR status unknown")) ;
-    }
+	updateTorOutProxyIndicator();
 }
 
 void ServerPage::toggleTurtleRouting(bool b)
@@ -314,24 +305,7 @@ void ServerPage::updateStatus()
         ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
     // check for TOR
-
-    QTcpSocket socket ;
-        socket.connectToHost(ui.torpage_proxyAddress->text(),ui.torpage_proxyPort->text().toInt());
-
-        if(socket.waitForConnected(500))
-    {
-        std::cerr << "connected !" << std::endl;
-
-        socket.disconnectFromHost();
-
-        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-        ui.iconlabel_tor_outgoing->setToolTip(tr("Proxy seems to work.")) ;
-    }
-    else
-    {
-        ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_outgoing->setToolTip(tr("TOR proxy is not enabled")) ;
-    }
+	updateTorOutProxyIndicator();
 }
 
 void ServerPage::toggleUPnP()
@@ -572,6 +546,8 @@ void ServerPage::loadHiddenNode()
 	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
 	ui.torpage_proxyPort -> setValue(proxyport);
 
+	updateTorOutProxyIndicator();
+
 	QString expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
 	expected += "HiddenServicePort ";
 	expected += QString::number(detail.hiddenNodePort);
@@ -636,6 +612,7 @@ void ServerPage::updateStatusHiddenNode()
 
 #endif
 
+	updateTorOutProxyIndicator();
 }
 
 void ServerPage::saveAddressesHiddenNode()
@@ -695,5 +672,26 @@ void ServerPage::saveAddressesHiddenNode()
 
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 	load();
+}
+
+void ServerPage::updateTorOutProxyIndicator()
+{
+	QTcpSocket socket ;
+	socket.connectToHost(ui.torpage_proxyAddress->text(),ui.torpage_proxyPort->text().toInt());
+
+	if(socket.waitForConnected(500))
+	{
+		std::cerr << "connected !" << std::endl;
+
+		socket.disconnectFromHost();
+
+		ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+		ui.iconlabel_tor_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+	}
+	else
+	{
+		ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+		ui.iconlabel_tor_outgoing->setToolTip(tr("TOR proxy is not enabled")) ;
+	}
 }
 
