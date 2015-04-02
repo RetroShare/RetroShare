@@ -1487,8 +1487,10 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const RsPeerId &id, const struct sockaddr_st
 
 	if (mPeerMgr->isHidden())
 	{
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::tryConnectUDP() isHidden(): no connection attempts for : " << id;
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
@@ -1632,8 +1634,10 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 
 	if (mPeerMgr->isHidden())
 	{
+#ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::retryConnectTCP() isHidden(): no connection attempts for : " << id;
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
