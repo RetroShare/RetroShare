@@ -285,12 +285,25 @@
                  <string>Peer Address</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_6">
-                 <item row="0" column="0" colspan="2">
+                 <item row="2" column="0" colspan="2">
+                  <spacer>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>47</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="0" column="0" rowspan="2" colspan="2">
                   <layout class="QHBoxLayout" name="_4">
                    <item>
                     <layout class="QVBoxLayout" name="_5">
                      <item>
-                      <widget class="QLabel" name="label">
+                      <widget class="QLabel" name="l_localAddress">
                        <property name="layoutDirection">
                         <enum>Qt::LeftToRight</enum>
                        </property>
@@ -303,14 +316,14 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLabel" name="label_2">
+                      <widget class="QLabel" name="l_extAddress">
                        <property name="text">
                         <string>External Address</string>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLabel" name="label_3">
+                      <widget class="QLabel" name="l_dynDNS">
                        <property name="text">
                         <string>Dynamic DNS</string>
                        </property>
@@ -334,14 +347,14 @@
                    <item>
                     <layout class="QVBoxLayout" name="_7">
                      <item>
-                      <widget class="QLabel" name="label_5">
+                      <widget class="QLabel" name="l_portLocal">
                        <property name="text">
                         <string>Port</string>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QLabel" name="label_4">
+                      <widget class="QLabel" name="l_portExternal">
                        <property name="text">
                         <string>Port</string>
                        </property>

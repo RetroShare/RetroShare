@@ -217,18 +217,40 @@ void ConfCertDialog::load()
 
 		 if (detail.isHiddenNode)
 		 {
-			 /* set local address */
-			 ui.localAddress->setText("hidden");
-			 ui.localPort -> setValue(0);
-			 /* set the server address */
-			 ui.extAddress->setText("hidden");
-			 ui.extPort -> setValue(0);
+			 // enable only the first row and set name of the first label to "Hidden Address"
+			 ui.l_localAddress->setText(tr("Hidden Address"));
 
-			 ui.dynDNS->setText(QString::fromStdString(detail.hiddenNodeAddress));
+			 ui.l_extAddress->setEnabled(false);
+			 ui.extAddress->setEnabled(false);
+			 ui.l_portExternal->setEnabled(false);
+			 ui.extPort->setEnabled(false);
+
+			 ui.l_dynDNS->setEnabled(false);
+			 ui.dynDNS->setEnabled(false);
+
+			 /* set hidden address */
+			 ui.localAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
+			 ui.localPort -> setValue(detail.hiddenNodePort);
+
+			 // set everything else to none
+			 ui.extAddress->setText(tr("none"));
+			 ui.extPort->setValue(0);
+			 ui.dynDNS->setText(tr("none"));
 		 }
 		 else
 		 {
-			 /* set local address */
+			 // enable everything and set name of the first label to "Local Address"
+			 ui.l_localAddress->setText(tr("Local Address"));
+
+			 ui.l_extAddress->setEnabled(true);
+			 ui.extAddress->setEnabled(true);
+			 ui.l_portExternal->setEnabled(true);
+			 ui.extPort->setEnabled(true);
+
+			 ui.l_dynDNS->setEnabled(true);
+			 ui.dynDNS->setEnabled(true);
+
+			 /* set local address */			 
 			 ui.localAddress->setText(QString::fromStdString(detail.localAddr));
 			 ui.localPort -> setValue(detail.localPort);
 			 /* set the server address */
@@ -261,9 +283,9 @@ void ConfCertDialog::load()
 		 ui.pgpfingerprint->show();
 		 ui.pgpfingerprint_label->show();
 
-		  ui.stabWidget->setTabEnabled(2,true) ;
-        ui.stabWidget->setTabEnabled(3,true) ;
-          ui.stabWidget->setTabEnabled(4,true) ;
+		ui.stabWidget->setTabEnabled(2,true) ;
+		ui.stabWidget->setTabEnabled(3,true) ;
+		ui.stabWidget->setTabEnabled(4,true) ;
 	 } 
 	 else 
 	 {
@@ -290,10 +312,10 @@ void ConfCertDialog::load()
         ui.groupBox->hide();
         ui.tabWidget->hide();
 
-		  ui.stabWidget->setTabEnabled(2,true) ;
-        ui.stabWidget->setTabEnabled(3,false) ;
-          ui.stabWidget->setTabEnabled(4,false) ;
-          //ui._useOldFormat_CB->setEnabled(false) ;
+		ui.stabWidget->setTabEnabled(2,true) ;
+		ui.stabWidget->setTabEnabled(3,false) ;
+		ui.stabWidget->setTabEnabled(4,false) ;
+		//ui._useOldFormat_CB->setEnabled(false) ;
     }
 
     if (detail.gpg_id == rsPeers->getGPGOwnId()) {
@@ -475,34 +497,41 @@ void ConfCertDialog::applyDialog()
         rsPeers->trustGPGCertificate(pgpId, RS_TRUST_LVL_NEVER);
     }
 
-    if (!detail.isOnlyGPGdetail) {
-        /* check if the data is the same */
-        bool localChanged = false;
-        bool extChanged = false;
-        bool dnsChanged = false;
+	if (!detail.isOnlyGPGdetail) {
+		if(!detail.isHiddenNode) {
+			/* check if the data is the same */
+			bool localChanged = false;
+			bool extChanged = false;
+			bool dnsChanged = false;
 
-        /* set local address */
-        if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
-            localChanged = true;
+			/* set local address */
+			if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
+				localChanged = true;
 
-        if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
-            extChanged = true;
+			if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
+				extChanged = true;
 
-        if ((detail.dyndns != ui.dynDNS->text().toStdString()))
-            dnsChanged = true;
+			if ((detail.dyndns != ui.dynDNS->text().toStdString()))
+				dnsChanged = true;
 
-        /* now we can action the changes */
-        if (localChanged)
-            rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
+			/* now we can action the changes */
+			if (localChanged)
+				rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
 
-        if (extChanged)
-            rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
+			if (extChanged)
+				rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
-        if (dnsChanged)
-            rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
+			if (dnsChanged)
+				rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
 
-        if(localChanged || extChanged || dnsChanged)
-            emit configChanged();
+			if(localChanged || extChanged || dnsChanged)
+				emit configChanged();
+		} else {
+			if((detail.hiddenNodeAddress != ui.localAddress->text().toStdString()) || (detail.hiddenNodePort != ui.localPort->value())) {
+				rsPeers->setHiddenNode(peerId,ui.localAddress->text().toStdString(), ui.localPort->value());
+				emit configChanged();
+			}
+		}
     }
 
 	 setServiceFlags() ;
