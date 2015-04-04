@@ -13,6 +13,9 @@ CONFIG += qt gui uic qrc resources idle bitdht
 greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 5
 	QT     += uitools widgets multimedia printsupport
+	linux-* {
+		QT += x11extras
+	}
 } else {
 	# Qt 4
 	CONFIG += uitools
