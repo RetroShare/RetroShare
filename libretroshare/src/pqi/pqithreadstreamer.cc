@@ -73,6 +73,9 @@ void pqithreadstreamer::run()
     std::cerr << "pqithreadstream::run()";
     std::cerr << std::endl;
 
+    // tell the OS to free the thread resources when this function exits
+    // it is a replacement for pthread_join()
+    pthread_detach(pthread_self());
 
     while(1)
     {

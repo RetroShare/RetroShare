@@ -30,23 +30,23 @@
 #include "pqi/pqistreamer.h"
 #include "util/rsthreads.h"
 
-class pqithreadstreamer: public pqistreamer, public RsThread
+class pqithreadstreamer: public pqistreamer, private RsThread
 {
 	public:
 		pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
 
-virtual void run(); 
 virtual void start(); 
 virtual void shutdown();
 virtual void fullstop(); 
-//virtual bool threadrunning();
 
 virtual bool RecvItem(RsItem *item);
 virtual int  tick();
 
 protected:
+    // from RsThread
+    virtual void run();
 
-int  data_tick();
+    int  data_tick();
 
 	PQInterface *mParent;
 	uint32_t mTimeout;
