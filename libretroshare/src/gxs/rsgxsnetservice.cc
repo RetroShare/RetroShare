@@ -1877,6 +1877,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
     RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
 
+#warning TODO: what if grpMeta is NULL?
     if(! (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
     {
         // For unsubscribed groups, we update the timestamp to now, so that the group content will not be asked to the same
@@ -1884,6 +1885,8 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         // That needs of course to reset that time to 0 when we subscribe.
 
         locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL),msgItemL.size()) ;
+        if(grpMeta)
+            delete grpMeta;
         return ;
     }
 
@@ -2062,6 +2065,8 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
         locked_stampPeerGroupUpdateTime(pid,grpId,time(NULL),msgItemL.size()) ;
     }
+    if(grpMeta)
+        delete grpMeta;
 }
 
 void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages)
