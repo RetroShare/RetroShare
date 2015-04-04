@@ -1699,8 +1699,9 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				pitem->print(std::cerr, 10);
 				std::cerr << std::endl;
 #endif
-				/* ************* */
-                addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_DEFAULT);
+                /* ************* */
+                // permission flags is used as a mask for the existing perms, so we set it to 0xffff
+                addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
 				setLocation(pitem->peerId, pitem->location);
 			}
 
