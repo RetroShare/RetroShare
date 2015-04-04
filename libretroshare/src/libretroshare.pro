@@ -149,6 +149,9 @@ linux-* {
 		!exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
 			message(libsqlcipher.a not found. Compilation will not use SQLCIPER. Database will be unencrypted.)
 				DEFINES *= NO_SQLCIPHER
+		} else {
+			DEPENDPATH += ../../../lib/
+			INCLUDEPATH += ../../../lib/
 		}
 	}
 
