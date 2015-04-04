@@ -112,6 +112,9 @@ class pqistreamer: public PQInterface
 		RsSerialiser *mRsSerialiser;
 
 		void *mPkt_wpending; // storage for pending packet to write.
+
+        void allocate_rpend_locked(); // use these two functions to allocate/free the buffer below
+        void free_rpend_locked();
 		int   mPkt_rpend_size; // size of pkt_rpending.
 		void *mPkt_rpending; // storage for read in pending packets.
 

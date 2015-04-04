@@ -65,12 +65,9 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
     mIncomingSize = 0 ;
 
 	/* allocated once */
-	mPkt_rpend_size = getRsPktMaxSize();
-	mPkt_rpending = malloc(mPkt_rpend_size);
+    mPkt_rpend_size = 0;
+    mPkt_rpending = 0;
 	mReading_state = reading_state_initial ;
-
-	// avoid uninitialized (and random) memory read.
-	memset(mPkt_rpending,0,mPkt_rpend_size) ;
 
 	// 100 B/s (minimal)
 	setMaxRate(true, 0.1);
@@ -121,7 +118,7 @@ pqistreamer::~pqistreamer()
 		mPkt_wpending = NULL;
 	}
 
-	free(mPkt_rpending);
+    free_rpend_locked();
 
 	// clean up incoming.
     while(!mIncoming.empty())
@@ -254,6 +251,10 @@ int 	pqistreamer::tick_recv(uint32_t timeout)
 	{
 		handleincoming_locked();
 	}
+    if(!(mBio->isactive()))
+    {
+        free_rpend_locked();
+    }
 	return 1;
 }
 
@@ -486,8 +487,11 @@ int pqistreamer::handleincoming_locked()
 	{
 		mReading_state = reading_state_initial ;
 		inReadBytes_locked(readbytes);
+        free_rpend_locked();
 		return 0;
 	}
+    else
+        allocate_rpend_locked();
 
 	// enough space to read any packet.
 	int maxlen = mPkt_rpend_size; 
@@ -958,6 +962,28 @@ void    pqistreamer::inReadBytes_locked(int inb)
 	mAvgReadCount += inb;
 
 	return;
+}
+
+void pqistreamer::allocate_rpend_locked()
+{
+    if(mPkt_rpending)
+        return;
+
+    mPkt_rpend_size = getRsPktMaxSize();
+    mPkt_rpending = malloc(mPkt_rpend_size);
+
+    // avoid uninitialized (and random) memory read.
+    memset(mPkt_rpending,0,mPkt_rpend_size) ;
+}
+
+void pqistreamer::free_rpend_locked()
+{
+    if(!mPkt_rpending)
+        return;
+
+    free(mPkt_rpending);
+    mPkt_rpending = 0;
+    mPkt_rpend_size = 0;
 }
 
 int     pqistreamer::gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count)
