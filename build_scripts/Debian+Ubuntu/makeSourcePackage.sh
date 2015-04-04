@@ -45,6 +45,10 @@ while [ ${#} -gt 0 ]; do
     esac
 done
 
+if test "${dist}" = "" ; then
+	dist="precise trusty utopic"
+fi
+
 echo "  "Using PGP key id   : ${gpgkey}
 echo "  "Using distributions: ${dist}
 echo "  "Using svn          : ${rev}
