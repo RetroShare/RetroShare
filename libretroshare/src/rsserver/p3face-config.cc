@@ -60,12 +60,6 @@ const int p3facemsgzone = 11453;
 /* RsIface Config */
 /* Config */
 
-int     RsServer::ConfigSetBootPrompt( bool /*on*/ )
-{
-
-	return 1;
-}
-
 void    RsServer::ConfigFinalSave()
 {
 	/* force saving of transfers TODO */

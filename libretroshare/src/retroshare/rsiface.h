@@ -61,17 +61,8 @@ class RsControl /* The Main Interface Class - for controlling the server */
 		virtual int StartupRetroShare() = 0;
 
 		/****************************************/
-
-		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-		virtual int 	SetInBroadcast(std::string id, bool in) = 0;	/* channel : channel broadcast */
-		virtual int 	SetInSubscribe(std::string id, bool in) = 0;	/* channel : subscribed channels */
-		virtual int 	ClearInBroadcast() = 0;
-		virtual int 	ClearInSubscribe() = 0;
-
-		/****************************************/
 		/* Config */
 
-		virtual	int 	ConfigSetBootPrompt( bool on ) = 0;
 		virtual void    ConfigFinalSave( ) 			   = 0;
 		virtual void 	rsGlobalShutDown( )			   = 0;
 

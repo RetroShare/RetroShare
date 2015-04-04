@@ -110,21 +110,6 @@ class RsServer: public RsControl, public RsThread
 		/* mutex */
 		RsMutex coreMutex;
 
-		/* General Internal Helper Functions
-			(Must be Locked)
-		 */
-
-		/****************************************/
-		/****************************************/
-		/* p3face-msg Operations */
-
-	public:
-		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-		virtual int     SetInBroadcast(std::string id, bool in);    /* channel : channel broadcast */
-		virtual int     SetInSubscribe(std::string id, bool in);    /* channel : subscribed channels */
-		virtual int     ClearInBroadcast();
-		virtual int     ClearInSubscribe();
-
 	private:
 
 		/****************************************/
@@ -134,7 +119,6 @@ class RsServer: public RsControl, public RsThread
 	public:
 		/* Config */
 
-		virtual int     ConfigSetBootPrompt( bool on );
         virtual void    ConfigFinalSave( );
         virtual void	startServiceThread(RsThread *t) ;
 
