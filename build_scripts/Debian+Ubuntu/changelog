@@ -1,6 +1,38 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    GUI
+      * fix for revision number in ubuntu/debian (patch from heini, untested)
+      * fixed compile on Linux with Qt5 (patch from sehraf)
+      * fixed display of TOR information for hidden nodes (patch from Sehraf)
+      * improved display of ciphers giving TLS version
+      * changed default cert name so that v0.6 and v0.5 do not use the same file
+
+   Connexions
+      * pqistreamer: only allocate incoming buffer when needed, free incoming buffer when not needed anymore
+      * removed old code in rsiface/p3face
+      * detach pqistreamer threads to allow resource cleanup or re-use
+      * added missing delete in p3discovery2::processContactInfo()
+
+   GXS
+      * added missing delete in gxsnetservice
+
+   FT
+      * fixed bug causing re-hashing of all files in some situations, and possibly preventing file lists 
+         to transfer between 
+   Debug
+      * reduced size of output for buggy RsItems
+
+   WebUI
+      * added support for multiple client threads to ApiServer
+      * added api client which reads the password from stdin. This allows to login from the webinterface and 
+        from the terminal at the same time.
+      * added html/css/js files for the webinterface
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 14 Mar 2015 16:00:00 +0100
+
+retroshare06 (0.6.0-0.8098~precise) precise; urgency=low
+
+   GUI
       * improved profile creation wizard: Hide by default key length combobox, for advanced users get visible 
          via advanced checkbox; Set stylesheet for a Info Label; Changed Window icon to higher resolution;
          Not show too much technical detail on a info Label.
