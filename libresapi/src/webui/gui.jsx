@@ -69,7 +69,7 @@ var signalSlotServer =
     /**
      * Unregister a previously registered client.
      */
-    unregisterClient : function(client) // no token as parameter, assuming unregister from all listening tokens
+    unregisterClient : function(client)
     {
     	var to_delete = [];
     	var clients = this.clients;
@@ -139,6 +139,43 @@ var SignalSlotMixin =
 	},
 };
 
+// url hash handling
+// - allows the backwards/forward button to work
+// - restores same view for same url
+// dataflow:
+// emit change_url event -> event handler sets browser url hash
+// -> browser sends hash changed event -> emit url_changed event
+var prev_url = "";
+function hashChanged(){
+	var url = window.location.hash.slice(1); // remove #
+	// prevent double work
+	//if(url !== prev_url)
+	if(true)
+	{
+		signalSlotServer.emitSignal("url_changed", {url: url});
+		prev_url = url;
+	}
+}
+// Listen on hash change:
+window.addEventListener('hashchange', hashChanged);  
+// Listen on page load:
+// this does not work, because the components are not always mounted when the event fires
+window.addEventListener('load', hashChanged);  
+
+var changeUrlListener = {
+	onSignal: function(signal_name, parameters){
+		if(signal_name === "change_url")
+		{
+			console.log("changeUrlListener: change url to "+parameters.url);
+			window.location.hash = parameters.url;
+			// some browsers dont send an event, so trigger event by hand
+			// the history does not work then
+			hashChanged();
+		}
+	},
+};
+signalSlotServer.registerClient(changeUrlListener);
+
 var Peers = React.createClass({
 	mixins: [AutoUpdateMixin],
 	getPath: function(){return "peers";},
@@ -161,7 +198,7 @@ var Peers2 = React.createClass({
 		return {data: []};
 	},
 	add_friend_handler: function(){
-		this.emit("url_changed", {url: "add_friend"});
+		this.emit("change_url", {url: "add_friend"});
 	},
 	render: function(){
 		var component = this;
@@ -202,7 +239,7 @@ var Peers2 = React.createClass({
 		return (
 		<div>
 			{/* span reduces width to only the text length, div does not */}
-			<span onClick={this.add_friend_handler} className="btn">&#43; add friend</span>
+			<div onClick={this.add_friend_handler} className="btn2">&#43; add friend</div>
 			<table>
 				<tr><th>avatar</th><th> name </th><th> locations</th><th></th></tr>
 				{this.state.data.map(function(peer){ return <Peer key={peer.name} data={peer}/>; })}
@@ -465,14 +502,15 @@ var PasswordWidget =  React.createClass({
 	render: function(){
 		if(this.state.data.want_password === false)
 		{
-			return(<p>PasswordWidget: nothing to do.</p>);
+			return <div></div>;
+			//return(<p>PasswordWidget: nothing to do.</p>);
 		}
 		else
 		{
 			return(
 			   	<div>
 			   		<p>Enter password for key {this.state.data.key_name}</p>
-			        <input type="text" ref="password" />
+			        <input type="password" ref="password" />
 			        <input
 			          type="button"
 			          value="ok"
@@ -487,7 +525,7 @@ var PasswordWidget =  React.createClass({
 var AccountSelectWidget =  React.createClass({
 	mixins: [AutoUpdateMixin],
 	getInitialState: function(){
-		return {data: []};
+		return {mode: "list", data: []};
 	},
 	getPath: function(){
 		return "control/locations";
@@ -495,14 +533,20 @@ var AccountSelectWidget =  React.createClass({
 	selectAccount: function(id){
 		console.log("login with id="+id)
 		RS.request({path: "control/login", data:{id: id}});
+		var state = this.state;
+		state.mode = "wait";
+		this.setState(state);
 	},
 	render: function(){
 		var component = this;
+		if(this.state.mode === "wait")
+			return <p>waiting...</p>;
+		else
 		return(
 			<div>
 				<div><p>select a location to log in</p></div>
 				{this.state.data.map(function(location){
-					return <div key={location.id} className="btn" onClick ={function(){component.selectAccount(location.id);}}>{location.name} ({location.location})</div>;
+					return <div className="btn2" key={location.id} onClick ={function(){component.selectAccount(location.id);}}>{location.name} ({location.location})</div>;
 				})}
 			</div>
 		);
@@ -541,10 +585,50 @@ var LoginWidget = React.createClass({
 	},
 });
 
-var MainWidget = React.createClass({
+var Menu = React.createClass({
 	mixins: [SignalSlotMixin],
 	getInitialState: function(){
-		return {page: "login"};
+		return {};
+	},
+	componentWillMount: function()
+	{
+	},
+	render: function(){
+		var outer = this;
+		return (
+				<div>
+					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "main"});}}>
+						Start
+					</div>
+					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "login"});}}>
+						Login
+					</div>
+					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "friends"});}}>
+						Friends
+					</div>
+					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "downloads"});}}>
+						Downloads
+					</div>
+					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "search"});}}>
+						Search
+					</div>
+			</div>
+		);
+	},
+});
+
+var MainWidget = React.createClass({
+	mixins: [SignalSlotMixin, AutoUpdateMixin],
+	getPath: function(){
+		return "control/runstate";
+	},
+	getInitialState: function(){
+		// hack: get hash
+		var url = window.location.hash.slice(1);
+		if(url === "")
+			url = "menu";
+		return {page: url, data: {runstate: "waiting_for_server"}};
+		//return {page: "login"};
 	},
 	componentWillMount: function()
 	{
@@ -553,20 +637,38 @@ var MainWidget = React.createClass({
 		function(params)
 		{
 			console.log("MainWidget received url_changed. url="+params.url);
-			outer.setState({page: params.url});
+			var url = params.url;
+			if(url.length === 0)
+				url = "menu";
+			outer.setState({page: url});
 		});
 	},
 	render: function(){
 		var outer = this;
 		var mainpage = <p>page not implemented: {this.state.page}</p>;
+
+		if(this.state.data.runstate === "waiting_for_server")
+		{
+			mainpage = <div><p>waiting for reply from server...<br/>please wait...</p></div>;
+		}
+		if(this.state.data.runstate === "waiting_init" || this.state.data.runstate === "waiting_account_select")
+		{
+			mainpage = <LoginWidget/>;
+		}
+		if(this.state.data.runstate === "running_ok")
+		{
 		if(this.state.page === "main")
 		{
-			mainpage = <p>
+			mainpage = <div><p>
 			A new webinterface for Retroshare. Build with react.js.
 			React allows to build a modern and user friendly single page application. 
 			The component system makes this very simple.
 			Updating the GUI is also very simple: one React mixin can handle updating for all components.
-			</p>;
+			</p>
+
+			<div className="btn2">Div Button</div>
+			<div className="btn2">Div Button</div>
+			</div>;
 		}
 		if(this.state.page === "friends")
 		{
@@ -592,27 +694,39 @@ var MainWidget = React.createClass({
 		{
 			mainpage = <LoginWidget/>;
 		}
+		if(this.state.page === "menu")
+		{
+			mainpage = <Menu/>;
+		}
+		}
+
+		var menubutton = <div onClick={function(){outer.emit("change_url", {url: "menu"});}} className="btn2">&lt;- menu</div>;
+		if(this.state.page === "menu")
+			menubutton = <div>Retroshare webinterface</div>;
 		return (
 			<div>
 				<PasswordWidget/>
 				<AudioPlayerWidget/>
+				{/*
 				<ul className="nav">
-					<li onClick={function(){outer.emit("url_changed", {url: "main"});}}>
+					<li onClick={function(){outer.emit("change_url", {url: "main"});}}>
 						Start
 					</li>
-					<li onClick={function(){outer.emit("url_changed", {url: "login"});}}>
+					<li onClick={function(){outer.emit("change_url", {url: "login"});}}>
 						Login
 					</li>
-					<li onClick={function(){outer.emit("url_changed", {url: "friends"});}}>
+					<li onClick={function(){outer.emit("change_url", {url: "friends"});}}>
 						Friends
 					</li>
-					<li onClick={function(){outer.emit("url_changed", {url: "downloads"});}}>
+					<li onClick={function(){outer.emit("change_url", {url: "downloads"});}}>
 						Downloads
 					</li>
-					<li onClick={function(){outer.emit("url_changed", {url: "search"});}}>
+					<li onClick={function(){outer.emit("change_url", {url: "search"});}}>
 						Search
 					</li>
 				</ul>
+				*/}
+				{menubutton}
 				{mainpage}
 			</div>
 		);

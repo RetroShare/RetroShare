@@ -9,10 +9,10 @@ CSS = green-black.css
 all: dist $(JSEXTLIBS) $(addprefix dist/, $(JSLIBS)) $(addprefix dist/, $(HTML)) $(addprefix dist/, $(JSGUI)) $(addprefix dist/, $(CSS))
 .PHONY: all
 
-dist/react.js: dist
+dist/react.js:
 	cd dist && wget --no-check-certificate --output-document react.js http://fb.me/react-$(REACT_VERSION).js
 
-dist/JSXTransformer.js: dist
+dist/JSXTransformer.js:
 	cd dist && wget --no-check-certificate --output-document JSXTransformer.js http://fb.me/JSXTransformer-$(REACT_VERSION).js
 
 $(addprefix dist/, $(JSLIBS)): dist/%: %

@@ -13,7 +13,38 @@ if(require.main === module)
 	var RS = new RsApi(connection);
 
 	var tests = [];
-	PeersTest(tests);
+	var doc = {
+		counter: 0,
+		toc: [],
+		content: [],
+		header: function(h){
+			this.toc.push(h);
+			this.content.push("<a name=\""+this.counter+"\"><h1>"+h+"</h1></a>");
+			this.counter += 1;
+		},
+		paragraph: function(p){
+			this.content.push("<p>"+p+"</p>");
+		},
+
+	};
+	PeersTest(tests, doc);
+
+	var docstr = "<!DOCTYPE html><html><body>";
+	docstr += "<h1>Table of Contents</h1>";
+	docstr += "<ul>";
+	for(var i in doc.toc)
+	{
+		docstr += "<li><a href=\"#"+i+"\">"+doc.toc[i]+"</a></li>";
+	}
+	docstr += "</ul>";
+	for(var i in doc.content)
+	{
+		docstr += doc.content[i];
+	}
+	docstr += "</body></html>";
+
+	var fs = require('fs');
+	fs.writeFile("dist/api_documentation.html", docstr);
 
 	tests.map(function(test){
 		test(RS);
@@ -38,6 +69,9 @@ function PeersTest(tests, doc)
 		locations: [location],
 	});
 	var peers_list = new Type("peers_list",[peer_info]);
+
+	doc.header("peers");
+	doc.paragraph("<pre>"+graphToText(peers_list)+"</pre>");
 
 	tests.push(function(RS){
 		console.log("testing peers module...");
@@ -106,126 +140,3 @@ function PeersTest(tests, doc)
 		}
 	}
 }
-
-
-
-// ************   below is OLD stuff, to be removed ************
-	var Location =
-	{
-		avatar_address: String(),
-		groups: undefined,
-		is_online: Boolean(),
-		location: String(),
-		name: String(),
-		peer_id: undefined,
-		pgp_id: undefined,
-	};
-	var PeerInfo = 
-	{
-		name: String(),
-		locations: [Location],
-	};
-	var PeersList = [PeerInfo];
-
-	function checkIfMatch(ref, other)
-	{
-		var ok = true;
-
-		// sets ok to false on error
-		function check(subref, subother, path)
-		{
-			//console.log("checking");
-			//console.log("path: " + path);
-			//console.log("subref: " +subref);
-			//console.log("subother: "+subother);
-			if(subref instanceof Array)
-			{
-				//console.log("is Array: " + path);
-				if(!(subother instanceof Array))
-				{
-					ok = false;
-					console.log("Error: not an Array " + path);
-					return;
-				}
-				if(subother.length == 0)
-				{
-					console.log("Warning: can't check Array of lentgh 0 " + path);
-					return;
-				}
-				// check first array member
-				check(subref[0], subother[0], path);
-				return;
-			}
-			// else compare as dict
-			for(m in subref)
-			{
-				if(!(m in subother))
-				{
-					ok = false;
-					console.log("Error: missing member \"" + m + "\" in "+ path);
-					continue;
-				}
-				if(subref[m] === undefined)
-				{
-					// undefined = don't care what it is
-					continue;
-				}
-				if(typeof(subref[m]) == typeof(subother[m]))
-				{
-					if(typeof(subref[m]) == "object")
-					{
-						// make deep object inspection
-						path.push(m);
-						check(subref[m], subother[m], path);
-						path.pop();
-					}
-					// else everthing is fine
-				}
-				else
-				{
-					ok = false;
-					console.log("Error: member \"" + m + "\" has wrong type in "+ path);
-				}
-			}
-			// TODO: check for additional members and print notice
-		}
-
-		check(ref, other, []);
-
-		return ok;
-	}
-
-	function stringifyTypes(obj)
-	{
-		if(obj instanceof Array)
-		{
-			return [stringifyTypes(obj[0])];
-		}
-		var ret = {};
-		for(m in obj)
-		{
-			if(typeof(obj[m]) === "object")
-				ret[m] = stringifyTypes(obj[m]);
-			else
-				ret[m] = typeof obj[m];
-		}
-		return ret;
-	}
-
-	// trick to get multiline string constants: use comment as string constant
-	var input = function(){/*
-[{
-		"locations": [{
-			"avatar_address": "/5cfed435ebc24d2d0842f50c6443ec76/avatar_image",
-			"groups": null,
-			"is_online": true,
-			"location": "",
-			"name": "se2",
-			"peer_id": "5cfed435ebc24d2d0842f50c6443ec76",
-			"pgp_id": "985CAD914B19A212"
-		}],
-		"name": "se2"
-	}]
-*/}.toString().slice(14,-3);
-
-// **************** end of old stuff ***************************

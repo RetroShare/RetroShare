@@ -3,7 +3,8 @@ body {
 	color: lime;
 	font-family: monospace;
 	margin: 0em;
-	padding: 1.5em;
+	/*padding: 1.5em;*/
+	padding: 2mm;
 	font-size: 1.1em;
 }
 
@@ -36,12 +37,40 @@ td{
 	padding: 0.1em;
 }
 
+.btn2{
+	border-style: solid;
+	border-color: lime;
+	border-radius: 3mm;
+	padding: 2mm;
+	font-size: 10mm;
+	cursor: pointer;
+	margin-bottom: 2mm;
+}
+.btn2:hover{
+	background-color: midnightblue;
+}
+
 input, textarea{
 	color: lime;
 	font-family: monospace;
 	background-color: black;
 	border-color: lime;
+	font-size: 10mm;
+	border-radius: 3mm;
+	border-width: 1mm;
+	padding: 2mm;
+	margin-bottom: 2mm;
+	margin-right: 2mm;
+
+	/* make the button the whole screen width */
+	width: 100%;
+	/* make the text input fit small screens*/
+	box-sizing: border-box;
 }
+input:hover{
+	background-color: midnightblue;
+}
+
 #logo_splash{
     -webkit-animation-fill-mode: forwards; /* Chrome, Safari, Opera */
     animation-fill-mode: forwards;

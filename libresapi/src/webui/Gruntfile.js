@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     watch: {
       // important: exclude node_modules
-      files: ['**','!**/node_modules/**'],
+      files: ['dist/**','!**/node_modules/**'],
 	  options: {
 	    livereload: true,
 	  }

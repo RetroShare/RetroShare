@@ -520,6 +520,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         struct stat s;
         if(fstat(fileno(fd), &s) == -1)
         {
+            fclose(fd);
             const char *error = "<html><body><p>Error: file was opened but stat failed.</p></body></html>";
             struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
             MHD_add_response_header(resp, "Content-Type", "text/html");
