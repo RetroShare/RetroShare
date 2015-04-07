@@ -86,6 +86,7 @@ E        [X] remove TCP, TOR, UDP from the status column, and move it in front o
       
        File transfer
 H        [X] There's a bug sometimes causing re-hash of shared files at start. Find it, kill it.
+         [ ] Bug: when sorting files in friends file list, RS goes into a crazy loop and crashes
 
        News feed
          [X] remove the Ghost news feed items
