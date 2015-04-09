@@ -58,8 +58,12 @@ static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME_DEAD=     3600 ; // DEAD 
 
 static const uint32_t RS_GROUTER_DATA_STATUS_UNKNOWN       = 0x0000 ;	// unknown. Unused.
 static const uint32_t RS_GROUTER_DATA_STATUS_PENDING       = 0x0001 ;	// item is pending. Should be sent asap.
-static const uint32_t RS_GROUTER_DATA_STATUS_SENT          = 0x0002 ;	// item is sent. Waiting for answer
+static const uint32_t RS_GROUTER_DATA_STATUS_SENT          = 0x0002 ;	// item is sent to tunnel or friend. No need to keep sending.
 static const uint32_t RS_GROUTER_DATA_STATUS_RECEIPT_OK    = 0x0003 ;	// item is at destination.
+static const uint32_t RS_GROUTER_DATA_STATUS_ONGOING       = 0x0004 ;	// transaction is ongoing.
+
+static const uint32_t RS_GROUTER_SENDING_STATUS_TUNNEL     = 0x0001 ;	// item was sent in a tunnel
+static const uint32_t RS_GROUTER_SENDING_STATUS_FRIEND     = 0x0002 ;	// item was sent to a friend
 
 static const uint32_t RS_GROUTER_TUNNEL_STATUS_UNMANAGED   = 0x0000 ; // no tunnel requested atm
 static const uint32_t RS_GROUTER_TUNNEL_STATUS_PENDING     = 0x0001 ; // tunnel requested to turtle
@@ -89,17 +93,30 @@ public:
         receipt_item = NULL ;
     }
 
-    uint32_t data_status ;			// pending, waiting, etc.
+    uint32_t data_status ;		// pending, waiting, etc.
     uint32_t tunnel_status ;		// status of tunnel handling.
+
     time_t received_time_TS ;		// time at which the item was originally received
-    time_t last_sent_TS ;			// last time the item was sent to friends
-    time_t last_tunnel_request_TS ;		// last time tunnels have been asked for this item.
+    time_t last_tunnel_sent_TS ;	// last time the item was sent to friends
+    time_t last_friend_sent_TS ;	// last time the item was sent to friends
+    time_t last_tunnel_request_TS ;	// last time tunnels have been asked for this item.
     uint32_t sending_attempts ;		// number of times tunnels have been asked for this peer without success
 
-    GRouterServiceId client_id ;		// service ID of the client. Only valid when origin==OwnId
-    TurtleFileHash tunnel_hash ;		// tunnel hash to be used for this item
+    GRouterServiceId client_id ;	// service ID of the client. Only valid when origin==OwnId
+    TurtleFileHash tunnel_hash ;	// tunnel hash to be used for this item
 
     RsGRouterGenericDataItem *data_item ;
     RsGRouterSignedReceiptItem *receipt_item ;
+
+    std::set<RsPeerId> incoming_routes ;
+
+    // non serialised data
+
+    uint32_t routing_flags ;
+    time_t data_transaction_TS ;
+
+    static const uint32_t ROUTING_FLAGS_ALLOW_TUNNELS = 0x0001;
+    static const uint32_t ROUTING_FLAGS_ALLOW_FRIENDS = 0x0002;
+    static const uint32_t ROUTING_FLAGS_IS_ORIGIN     = 0x0003;
 };
 

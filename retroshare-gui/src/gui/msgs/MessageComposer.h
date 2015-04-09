@@ -239,7 +239,6 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
-    std::set<RsGxsId> _distant_peers ;	// we keep a list of them, in order to know which peer is a GXS id.
 };
 
 #endif

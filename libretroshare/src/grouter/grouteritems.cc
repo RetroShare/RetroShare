@@ -128,7 +128,8 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 
 	ok &= getRawUInt64(data, pktsize, &offset, &item->routing_id); 	
 	ok &= item->destination_key.deserialise(data, pktsize, offset) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &item->data_size); 	
+    ok &= getRawUInt32(data, pktsize, &offset, &item->service_id);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->data_size);
 
     if( NULL == (item->data_bytes = (uint8_t*)malloc(item->data_size)))
 	{
@@ -173,6 +174,7 @@ RsGRouterSignedReceiptItem *RsGRouterSerialiser::deserialise_RsGRouterSignedRece
     ok &= getRawUInt64(data, pktsize, &offset, &item->routing_id);
     ok &= getRawUInt32(data, pktsize, &offset, &item->flags);
     ok &= item->destination_key.deserialise(data, pktsize, offset);
+    ok &= getRawUInt32(data, pktsize, &offset, &item->service_id);
     ok &= item->data_hash.deserialise(data, pktsize, offset);
     ok &= item->signature.GetTlv(data, pktsize, &offset); 	// signature
 
@@ -201,7 +203,8 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
     ok &= getRawUInt32(data, pktsize, &offset, &item->data_status);
     ok &= getRawUInt32(data, pktsize, &offset, &item->tunnel_status);
     ok &= getRawTimeT(data, pktsize, &offset, item->received_time_TS);
-    ok &= getRawTimeT(data, pktsize, &offset, item->last_sent_TS);
+    ok &= getRawTimeT(data, pktsize, &offset, item->last_tunnel_sent_TS);
+    ok &= getRawTimeT(data, pktsize, &offset, item->last_friend_sent_TS);
 
     ok &= getRawTimeT(data, pktsize, &offset, item->last_tunnel_request_TS);
     ok &= getRawUInt32(data, pktsize, &offset, &item->sending_attempts);
@@ -330,6 +333,7 @@ uint32_t RsGRouterGenericDataItem::serial_size() const
     s += sizeof(GRouterMsgPropagationId)  ; // routing id
     s += destination_key.serial_size() ;	 // destination_key
     s += 4 ;                       		 	 // data_size
+    s += 4 ;                       		 	 // service id
     s += data_size ;                        // data
     s += signature.TlvSize() ;		// signature
     s += 4 ;                                // randomized distance
@@ -343,6 +347,7 @@ uint32_t RsGRouterGenericDataItem::signed_data_size() const
     s += sizeof(GRouterMsgPropagationId)  ; // routing id
     s += destination_key.serial_size() ;	 // destination_key
     s += 4 ;                       		 	 // data_size
+    s += 4 ;                       		 	 // service id
     s += data_size ;                        // data
 
     return s ;
@@ -354,6 +359,7 @@ uint32_t RsGRouterSignedReceiptItem::serial_size() const
     s += destination_key.serial_size() ;	// destination_key
     s += data_hash.serial_size() ;
     s += 4 ;  			// state
+    s += 4 ;  			// service_id
     s += signature.TlvSize() ;	// signature
 
     return s ;
@@ -364,6 +370,7 @@ uint32_t RsGRouterSignedReceiptItem::signed_data_size() const
     s += sizeof(GRouterMsgPropagationId)  ; // routing id
     s += destination_key.serial_size() ;	// destination_key
     s += data_hash.serial_size() ;
+    s += 4 ;  			// service_id
     s += 4 ;  			// state
 
     return s ;
@@ -422,6 +429,7 @@ bool RsGRouterGenericDataItem::serialise(void *data,uint32_t& size) const
     /* add mandatory parts first */
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
     ok &= destination_key.serialise(data, tlvsize, offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, service_id);
     ok &= setRawUInt32(data, tlvsize, &offset, data_size);
 
     memcpy(&((uint8_t*)data)[offset],data_bytes,data_size) ;
@@ -469,6 +477,7 @@ bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t& size) 
     /* add mandatory parts first */
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
     ok &= destination_key.serialise(data, tlvsize, offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, service_id);
     ok &= setRawUInt32(data, tlvsize, &offset, data_size);
 
     memcpy(&((uint8_t*)data)[offset],data_bytes,data_size) ;
@@ -494,6 +503,7 @@ bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
     ok &= setRawUInt32(data, tlvsize, &offset, flags);
     ok &= destination_key.serialise(data,tlvsize,offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, service_id);
     ok &= data_hash.serialise(data,tlvsize,offset) ;
     ok &= signature.SetTlv(data,tlvsize,&offset) ;
 
@@ -516,6 +526,7 @@ bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t& size
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
     ok &= setRawUInt32(data, tlvsize, &offset, flags);
     ok &= destination_key.serialise(data,tlvsize,offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, service_id);
     ok &= data_hash.serialise(data,tlvsize,offset) ;
 
     if (offset != tlvsize)
@@ -553,7 +564,8 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
     s += 4  ; 				// data status_flags
     s += 4  ; 				// tunnel status_flags
     s += 8  ; 				// received_time
-    s += 8  ; 				// last_sent
+    s += 8  ; 				// last_tunnel_sent_TS
+    s += 8  ; 				// last_friend_sent_TS
 
     s += 8  ; 				// last_TR_TS
     s += 4  ; 				// sending attempts
@@ -649,7 +661,8 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     ok &= setRawUInt32(data, tlvsize, &offset, data_status) ;
     ok &= setRawUInt32(data, tlvsize, &offset, tunnel_status) ;
     ok &= setRawTimeT(data, tlvsize, &offset, received_time_TS) ;
-    ok &= setRawTimeT(data, tlvsize, &offset, last_sent_TS) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, last_tunnel_sent_TS) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, last_friend_sent_TS) ;
     ok &= setRawTimeT(data, tlvsize, &offset, last_tunnel_request_TS) ;
     ok &= setRawUInt32(data, tlvsize, &offset, sending_attempts) ;
 
@@ -712,7 +725,8 @@ std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
     o << "  data   status:   "<< std::hex<< data_status << std::dec << std::endl ;
     o << "  tunnel status:   "<< tunnel_status << std::endl ;
         o << "  recv time:       "<< received_time_TS << std::endl 	;
-        o << "  Last sent:       "<< last_sent_TS << std::endl ;
+        o << "  Last tunnel sent:       "<< last_tunnel_sent_TS << std::endl ;
+        o << "  Last friend sent:       "<< last_friend_sent_TS << std::endl ;
         o << "  Sending attempts:"<< sending_attempts << std::endl ;
         o << "  destination key: "<< data_item->destination_key << std::endl ;
     o << "  Client id:       "<< client_id << std::endl ;
