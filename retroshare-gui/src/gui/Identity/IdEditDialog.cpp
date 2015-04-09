@@ -257,7 +257,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
 
-	ui->lineEdit_Nickname->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()));
+    ui->lineEdit_Nickname->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId.toStdString()));
 
 	if (realid)
@@ -297,7 +297,7 @@ void IdEditDialog::checkNewTag()
 {
 	std::string tag = ui->plainTextEdit_Tag->toPlainText().toStdString();
     RsGxsId id ( ui->lineEdit_KeyId->text().toStdString());
-	std::string name = ui->lineEdit_Nickname->text().toUtf8().data();
+    std::string name = ui->lineEdit_Nickname->text().left(RSID_MAXIMUM_NICKNAME_SIZE).toUtf8().data();
 
 	QString desc;
 	bool ok = tagDetails(id, name, tag, desc);
@@ -488,7 +488,12 @@ void IdEditDialog::createId()
 		std::cerr << std::endl;
 		return;
 	}
-
+    if (groupname.size() > RSID_MAXIMUM_NICKNAME_SIZE)
+    {
+        std::cerr << "IdEditDialog::createId() Nickname too long (max " << RSID_MAXIMUM_NICKNAME_SIZE<< " chars)";
+        std::cerr << std::endl;
+        return;
+    }
 	RsIdentityParameters params;
 	params.nickname = groupname;
 	params.isPgpLinked = (ui->radioButton_GpgId->isChecked());
@@ -538,6 +543,12 @@ void IdEditDialog::updateId()
 		std::cerr << std::endl;
 		return;
 	}
+    if (groupname.size() > RSID_MAXIMUM_NICKNAME_SIZE)
+    {
+        std::cerr << "IdEditDialog::createId() Nickname too long (max " << RSID_MAXIMUM_NICKNAME_SIZE << " chars)";
+        std::cerr << std::endl;
+        return;
+    }
 
 	mEditGroup.mMeta.mGroupName = groupname;
 

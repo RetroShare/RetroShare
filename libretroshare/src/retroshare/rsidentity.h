@@ -44,7 +44,6 @@ extern RsIdentity *rsIdentity;
 // GroupFlags: Only one so far:
 #define RSGXSID_GROUPFLAG_REALID  0x0001
 
-
 // THESE ARE FLAGS FOR INTERFACE.
 #define RSID_TYPE_MASK		0xff00
 #define RSID_RELATION_MASK	0x00ff
@@ -59,6 +58,8 @@ extern RsIdentity *rsIdentity;
 #define RSID_RELATION_UNKNOWN 	0x0010
 
 #define RSRECOGN_MAX_TAGINFO	5
+
+#define RSID_MAXIMUM_NICKNAME_SIZE 30
 
 std::string rsIdTypeToString(uint32_t idtype);
 

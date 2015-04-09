@@ -828,7 +828,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	QString name = QString::fromUtf8(details.mNickname.c_str());
+    QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
 	std::list<RsRecognTag>::const_iterator it;
 	for (it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
@@ -843,7 +843,7 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 {
 	QString comment;
 
-QString nickname = details.mNickname.empty()?tr("[Unknown]"):QString::fromUtf8(details.mNickname.c_str()) ;
+QString nickname = details.mNickname.empty()?tr("[Unknown]"):QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
 
     comment = QString("%1:%2<br/>%3:%4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
                                              nickname,
