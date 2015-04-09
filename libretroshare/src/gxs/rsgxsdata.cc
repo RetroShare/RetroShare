@@ -160,6 +160,18 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= signSet.GetTlv(data, pktsize, &offset);
     ok &= keys.GetTlv(data, pktsize, &offset);
 
+#ifdef DROP_NON_CANONICAL_ITEMS
+    if(mGroupName.length() > RsGxsGrpMetaData::MAX_ALLOWED_STRING_SIZE)
+    {
+        std::cerr << "WARNING: Deserialised group with mGroupName.length() = " << mGroupName.length() << ". This is not allowed. This item will be dropped." << std::endl;
+        return false ;
+    }
+    if(mServiceString.length() > RsGxsGrpMetaData::MAX_ALLOWED_STRING_SIZE)
+    {
+        std::cerr << "WARNING: Deserialised group with mServiceString.length() = " << mGroupName.length() << ". This is not allowed. This item will be dropped." << std::endl;
+        return false ;
+    }
+#endif
 
     return ok;
 }

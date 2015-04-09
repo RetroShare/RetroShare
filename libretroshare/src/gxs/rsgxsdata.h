@@ -40,6 +40,7 @@ class RsMsgMetaData;
 class RsGxsGrpMetaData
 {
 public:
+    static const int MAX_ALLOWED_STRING_SIZE = 50 ;
 
     RsGxsGrpMetaData();
     bool deserialise(void *data, uint32_t &pktsize);
