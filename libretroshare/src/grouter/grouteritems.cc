@@ -211,6 +211,9 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 
     ok &= getRawUInt32(data, pktsize, &offset, &item->client_id);
     ok &= item->tunnel_hash.deserialise(data, pktsize, offset) ;
+    ok &= getRawUInt32(data, pktsize, &offset, &item->routing_flags) ;
+
+    ok &= item->incoming_routes.GetTlv(data,pktsize,&offset) ;
 
 	item->data_item = deserialise_RsGRouterGenericDataItem(&((uint8_t*)data)[offset],pktsize - offset) ;
 	if(item->data_item != NULL) 
@@ -252,7 +255,7 @@ RsGRouterMatrixFriendListItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixF
 	uint32_t nb_friends = 0 ;
 	ok &= getRawUInt32(data, pktsize, &offset, &nb_friends); 	// file hash
 
-	item->reverse_friend_indices.resize(nb_friends) ;
+    item->reverse_friend_indices.resize(nb_friends) ;
 
 	for(uint32_t i=0;ok && i<nb_friends;++i)
         ok &= item->reverse_friend_indices[i].deserialise(data, pktsize, offset) ;
@@ -573,6 +576,9 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
     s += sizeof(GRouterServiceId)  ; 	// service_id
     s += tunnel_hash.serial_size() ;
 
+    s += 4 ; 				// routing_flags
+    s += incoming_routes.TlvSize() ;	// incoming_routes
+
     s += data_item->serial_size();	// data_item
 
     if(receipt_item != NULL)
@@ -668,6 +674,9 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 
     ok &= setRawUInt32(data, tlvsize, &offset, client_id) ;
     ok &= tunnel_hash.serialise(data, tlvsize, offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, routing_flags) ;
+
+    ok &= incoming_routes.SetTlv(data,tlvsize,&offset) ;
 
      uint32_t ns = size - offset ;
      ok &= data_item->serialise( &((uint8_t*)data)[offset], ns) ;

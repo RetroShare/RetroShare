@@ -61,6 +61,7 @@ static const uint32_t RS_GROUTER_DATA_STATUS_PENDING       = 0x0001 ;	// item is
 static const uint32_t RS_GROUTER_DATA_STATUS_SENT          = 0x0002 ;	// item is sent to tunnel or friend. No need to keep sending.
 static const uint32_t RS_GROUTER_DATA_STATUS_RECEIPT_OK    = 0x0003 ;	// item is at destination.
 static const uint32_t RS_GROUTER_DATA_STATUS_ONGOING       = 0x0004 ;	// transaction is ongoing.
+static const uint32_t RS_GROUTER_DATA_STATUS_DONE          = 0x0005 ;	// receipt item has been forward to all routes. We can remove the item.
 
 static const uint32_t RS_GROUTER_SENDING_STATUS_TUNNEL     = 0x0001 ;	// item was sent in a tunnel
 static const uint32_t RS_GROUTER_SENDING_STATUS_FRIEND     = 0x0002 ;	// item was sent to a friend
@@ -104,15 +105,15 @@ public:
 
     GRouterServiceId client_id ;	// service ID of the client. Only valid when origin==OwnId
     TurtleFileHash tunnel_hash ;	// tunnel hash to be used for this item
+    uint32_t routing_flags ;
 
     RsGRouterGenericDataItem *data_item ;
     RsGRouterSignedReceiptItem *receipt_item ;
 
-    std::set<RsPeerId> incoming_routes ;
+    RsTlvPeerIdSet incoming_routes ;
 
     // non serialised data
 
-    uint32_t routing_flags ;
     time_t data_transaction_TS ;
 
     static const uint32_t ROUTING_FLAGS_ALLOW_TUNNELS = 0x0001;
