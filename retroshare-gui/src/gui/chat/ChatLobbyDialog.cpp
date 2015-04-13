@@ -219,7 +219,7 @@ void ChatLobbyDialog::init()
     rsIdentity->getIdDetails(gxs_id,details) ;
 
     ui.chatWidget->setName(QString::fromUtf8(details.mNickname.c_str()));
-    ui.chatWidget->addToolsAction(ui.actionChangeNickname);
+    //ui.chatWidget->addToolsAction(ui.actionChangeNickname);
     ui.chatWidget->setDefaultExtraFileFlags(RS_FILE_REQ_ANONYMOUS_ROUTING);
 
     lastUpdateListTime = 0;

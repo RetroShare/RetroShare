@@ -39,6 +39,7 @@ E        [X] "Friends details" should show both PGP key and RS certs in differen
              It should specify clearly which one should be used to make friends.
 E        [X] addFriend does not work when the cert contains signatures.
 E        [X] PGP signatures are not transmited by discovery2. 
+         [ ] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
       
        Messages
 H        [ ] distant messages should be made async-ed
@@ -64,10 +65,11 @@ M			[ ] popularity calculation seems wrong. To reproduce: create a new channel a
        Chat lobbies
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
          [X] Remove deprecated code in rschatitems.
-		   [ ] remove "change nickname" from drop menu
+		   [X] remove "change nickname" from drop menu
       
 		 Settings
-		   [ ] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
+		   [X] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
+			[ ] Default max upload should be a large number. Not 50KB/s!!
 
        Chat
          [X] Distant chat window should show GXS avatars
