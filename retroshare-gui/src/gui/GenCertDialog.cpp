@@ -119,7 +119,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.headerFrame->setHeaderText(tr("Create a new Identity"));
 
 	connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
-	connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(hiddenUiSetup()));
+    connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
+    connect(ui.hidden_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
@@ -232,7 +233,7 @@ void GenCertDialog::init()
 	ui.header_label->setText(text);
 
 	newGPGKeyGenUiSetup();
-	hiddenUiSetup();
+    updateUiSetup();
 }
 
 void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
@@ -292,29 +293,47 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 	}
 }
 
-void GenCertDialog::hiddenUiSetup() 
+void GenCertDialog::updateUiSetup()
 {
+    if (ui.adv_checkbox->isChecked())
+    {
+        ui.hidden_checkbox->show();
+        ui.keylength_label->show();
+        ui.keylength_comboBox->show();
 
-	if (ui.adv_checkbox->isChecked()) 
-	{
-		ui.hiddenaddr_input->show();
-		ui.hiddenaddr_label->show();
-		ui.label_hiddenaddr2->show();
-		ui.hiddenport_label->show();
-		ui.hiddenport_spinBox->show();
-		ui.keylength_label->show();
-		ui.keylength_comboBox->show();
-	} 
-	else 
-	{
-		ui.hiddenaddr_input->hide();
-		ui.hiddenaddr_label->hide();
-		ui.label_hiddenaddr2->hide();
-		ui.hiddenport_label->hide();
-		ui.hiddenport_spinBox->hide();
-		ui.keylength_label->hide();
-		ui.keylength_comboBox->hide();
-	}
+        if(ui.hidden_checkbox->isChecked())
+        {
+            ui.hiddenaddr_input->show();
+            ui.hiddenaddr_label->show();
+            ui.label_hiddenaddr2->show();
+            ui.hiddenport_label->show();
+            ui.hiddenport_spinBox->show();
+        }
+        else
+        {
+            ui.hiddenaddr_input->hide();
+            ui.hiddenaddr_label->hide();
+            ui.label_hiddenaddr2->hide();
+            ui.hiddenport_label->hide();
+            ui.hiddenport_spinBox->hide();
+        }
+    }
+    else
+    {
+            ui.hiddenaddr_input->hide();
+            ui.hiddenaddr_label->hide();
+            ui.label_hiddenaddr2->hide();
+            ui.hiddenport_label->hide();
+            ui.hiddenport_spinBox->hide();
+
+        ui.hidden_checkbox->hide();
+        ui.keylength_label->hide();
+        ui.keylength_comboBox->hide();
+
+        if(ui.hidden_checkbox->isChecked())
+            ui.hidden_checkbox->setChecked(false) ;
+    }
+
 }
 
 void GenCertDialog::exportIdentity()
@@ -368,7 +387,7 @@ void GenCertDialog::genPerson()
 	RsPgpId PGPId;
 	bool isHiddenLoc = false;
 
-	if (ui.adv_checkbox->isChecked()) 
+    if (ui.hidden_checkbox->isChecked())
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
@@ -443,8 +462,9 @@ void GenCertDialog::genPerson()
 		ui.genButton->hide();
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
-		ui.adv_checkbox->hide();
-		ui.keylength_label->hide();
+        ui.hidden_checkbox->hide();
+        ui.adv_checkbox->hide();
+        ui.keylength_label->hide();
 		ui.keylength_comboBox->hide();
 
 		setCursor(Qt::WaitCursor) ;

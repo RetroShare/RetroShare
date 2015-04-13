@@ -42,7 +42,7 @@ private slots:
 	void exportIdentity();
 	void newGPGKeyGenUiSetup();
 	void grabMouse();
-	void hiddenUiSetup();
+    void updateUiSetup();
 
 private:
 	void init();
