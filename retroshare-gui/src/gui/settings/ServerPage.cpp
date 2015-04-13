@@ -145,14 +145,13 @@ void ServerPage::load()
 		return;
 	}
 
+	ui.netModeComboBox->show() ;
+	ui.hiddenMode_LB->hide() ;
+
 	/* set net mode */
 	int netIndex = 0;
 	switch(detail.netMode)
 	{
-		case RS_NETMODE_HIDDEN:
-			netIndex = 3;
-			ui.netModeComboBox->setEnabled(false);
-			break;
 		case RS_NETMODE_EXT:
 			netIndex = 2;
 			break;
@@ -467,8 +466,9 @@ void ServerPage::loadHiddenNode()
 	 */
 
 	// FIXED.
-	ui.netModeComboBox->setCurrentIndex(3);
-	ui.netModeComboBox->setEnabled(false);
+	//ui.netModeComboBox->setCurrentIndex(3);
+	ui.netModeComboBox->hide();
+	ui.hiddenMode_LB->show();
 
 	// CHANGE OPTIONS ON 
 	ui.discComboBox->removeItem(3);

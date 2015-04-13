@@ -43,11 +43,16 @@
              <string>Manually Forwarded Port</string>
             </property>
            </item>
-           <item>
-            <property name="text">
-             <string>Hidden Node</string>
-            </property>
-           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="hiddenMode_LB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>[Hidden mode]</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -56,7 +61,7 @@
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::MinimumExpanding</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
