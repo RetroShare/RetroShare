@@ -23,6 +23,7 @@ E        [X] it's not possible to create a Forum thread without a Owner.
          [X] the tooltip over GXS ids should show the avatar on the left side.
          [X] fix data race between GXS ID default icons
          [X] Share of key shows "Not implemented". Since forums are public, share key should be hidden.
+			[ ] switching between forums might cause a crash. Seems to be due to GxsIdDetails::instance not always initialised when used.
       
        GUI General
 E        [ ] do we keep "Getting Started" ? the look needs to be improved
@@ -63,7 +64,11 @@ M			[ ] popularity calculation seems wrong. To reproduce: create a new channel a
        Chat lobbies
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
          [X] Remove deprecated code in rschatitems.
+		   [ ] remove "change nickname" from drop menu
       
+		 Settings
+		   [ ] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
+
        Chat
          [X] Distant chat window should show GXS avatars
 H        [ ] Distant chat should work with shared identities
@@ -93,6 +98,7 @@ H        [X] There's a bug sometimes causing re-hash of shared files at start. F
          [X] remove the double feed publication
       
        libretroshare
+		   [ ] some users can be declared as connected although they are not. Check Heart-Beat system.
 H        [X] fix the data race in pqissl
 H        [ ] valgrind pass for data races
 H        [ ] valgrind pass for memory leaks 
