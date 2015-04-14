@@ -150,7 +150,7 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 {
 	mBgSchedule_Mode = 0;
     mBgSchedule_Active = false;
-    mLastKeyCleaningTime = time(NULL) ;
+    mLastKeyCleaningTime = 0 ;
     mLastConfigUpdate = 0 ;
 
 	// Kick off Cache Testing, + Others.
@@ -270,17 +270,19 @@ void p3IdService::cleanUnusedKeys()
     time_t now = time(NULL) ;
 
     for(std::map<RsGxsId,time_t>::iterator it(mKeysTS.begin());it!=mKeysTS.end();)
-        if(it->second + MAX_KEEP_UNUSED_KEYS < now && !isOwnId(it->first))
+        if(it->second + MAX_KEEP_UNUSED_KEYS < now
+                        && std::find(mOwnIds.begin(),mOwnIds.end(),it->first) == mOwnIds.end())
         {
             std::cerr << "Deleting identity " << it->first << " which is too old." << std::endl;
             uint32_t token ;
             RsGxsIdGroup group;
             group.mMeta.mGroupId=RsGxsGroupId(it->first);
-            rsIdentity->deleteIdentity(token, group);
+            //rsIdentity->deleteIdentity(token, group);
 
             std::map<RsGxsId,time_t>::iterator tmp = it ;
             ++tmp ;
-            mKeysTS.erase(it) ;
+            //mKeysTS.erase(it) ;
+            it = tmp ;
         }
         else
             ++it ;
