@@ -56,7 +56,7 @@
 #define ID_REQUEST_OPINION	0x0004
 
 static const uint32_t MAX_KEEP_UNUSED_KEYS      = 30*86400 ; // remove unused keys after 30 days
-static const uint32_t MAX_DELAY_BEFORE_CLEANING =     3601 ; // clean old keys every hour
+static const uint32_t MAX_DELAY_BEFORE_CLEANING =      601 ; // clean old keys every 10 mins
 
 RsIdentity *rsIdentity = NULL;
 
@@ -152,6 +152,7 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
     mBgSchedule_Active = false;
     mLastKeyCleaningTime = 0 ;
     mLastConfigUpdate = 0 ;
+    mOwnIdsLoaded = false ;
 
 	// Kick off Cache Testing, + Others.
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
@@ -265,27 +266,43 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 }
 void p3IdService::cleanUnusedKeys()
 {
-    RS_STACK_MUTEX(mIdMtx) ;
+    std::list<RsGxsId> ids_to_delete ;
 
-    time_t now = time(NULL) ;
+    // we need to stash all ids to delete into an off-mutex structure since deleteIdentity() will trigger the lock
+    {
+        RS_STACK_MUTEX(mIdMtx) ;
 
-    for(std::map<RsGxsId,time_t>::iterator it(mKeysTS.begin());it!=mKeysTS.end();)
-        if(it->second + MAX_KEEP_UNUSED_KEYS < now
-                        && std::find(mOwnIds.begin(),mOwnIds.end(),it->first) == mOwnIds.end())
+        if(!mOwnIdsLoaded)
         {
-            std::cerr << "Deleting identity " << it->first << " which is too old." << std::endl;
-            uint32_t token ;
-            RsGxsIdGroup group;
-            group.mMeta.mGroupId=RsGxsGroupId(it->first);
-            //rsIdentity->deleteIdentity(token, group);
-
-            std::map<RsGxsId,time_t>::iterator tmp = it ;
-            ++tmp ;
-            //mKeysTS.erase(it) ;
-            it = tmp ;
+            std::cerr << "(EE) Own ids not loaded. Cannot clean unused keys." << std::endl;
+            return ;
         }
-        else
-            ++it ;
+
+    // grab at most 10 identities to delete. No need to send too many requests to the token queue at once.
+        time_t now = time(NULL) ;
+    int n=0 ;
+
+        for(std::map<RsGxsId,time_t>::iterator it(mKeysTS.begin());it!=mKeysTS.end() && n < 10;++it)
+            if(it->second + MAX_KEEP_UNUSED_KEYS < now && std::find(mOwnIds.begin(),mOwnIds.end(),it->first) == mOwnIds.end())
+                ids_to_delete.push_back(it->first),++n ;
+    }
+
+    for(std::list<RsGxsId>::const_iterator it(ids_to_delete.begin());it!=ids_to_delete.end();++it)
+    {
+        std::cerr << "Deleting identity " << *it << " which is too old." << std::endl;
+        uint32_t token ;
+        RsGxsIdGroup group;
+        group.mMeta.mGroupId=RsGxsGroupId(*it);
+        rsIdentity->deleteIdentity(token, group);
+
+        {
+            RS_STACK_MUTEX(mIdMtx) ;
+            std::map<RsGxsId,time_t>::iterator tmp = mKeysTS.find(*it) ;
+
+            if(mKeysTS.end() != tmp)
+                mKeysTS.erase(tmp) ;
+        }
+    }
 }
 
 void	p3IdService::service_tick()
@@ -2157,9 +2174,14 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				{
                     mOwnIds.push_back(RsGxsId(item->meta.mGroupId));
+
+                    // This prevents automatic deletion to get rid of them.
+                    // In other words, own ids are always used.
+                    mKeysTS[RsGxsId(item->meta.mGroupId)] = time(NULL) ;
 				}
 				delete item ;
-			}
+            }
+            mOwnIdsLoaded = true ;
 		}
 
 		// No need to cache these items...
@@ -2603,6 +2625,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         if (std::find(mOwnIds.begin(), mOwnIds.end(), gxsId) == mOwnIds.end())
         {
             mOwnIds.push_back(gxsId);
+        mKeysTS[gxsId] = time(NULL) ;
         }
     }
 

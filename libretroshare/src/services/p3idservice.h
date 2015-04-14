@@ -512,6 +512,8 @@ std::string genRandomId(int len = 20);
 
     time_t mLastKeyCleaningTime ;
     time_t mLastConfigUpdate ;
+
+    bool mOwnIdsLoaded ;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER
