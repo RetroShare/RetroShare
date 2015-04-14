@@ -500,40 +500,45 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
  */
 void RsCollectionDialog::directoryLoaded(QString dirLoaded)
 {
-	if(!_dirLoaded)
-	{
+    if(!_dirLoaded)
+    {
 
-		QFileInfo lastDir = Settings->getLastDir(RshareSettings::LASTDIR_EXTRAFILE);
-		if (lastDir.absoluteFilePath() == "") return;
-		if (lastDir.absoluteFilePath() == dirLoaded) _dirLoaded = true;
+        QFileInfo lastDir = Settings->getLastDir(RshareSettings::LASTDIR_EXTRAFILE);
+        if (lastDir.absoluteFilePath() == "") return;
+        if (lastDir.absoluteFilePath() == dirLoaded) _dirLoaded = true;
 
-		// Check all parent directory to see if it is loaded
-		//as QFileSystemModel don't load all
-		do {
-			if(lastDir.absolutePath()==dirLoaded) {
-				//Only expand loaded directory
-				QModelIndex lastDirIdx = _dirModel->index(lastDir.absoluteFilePath());
-				//Select LASTDIR_EXTRAFILE or last parent found when loaded
-				if (!lastDirIdx.isValid()){
-					_dirLoaded = true;
-					break;
-				}
+        // Check all parent directory to see if it is loaded
+        //as QFileSystemModel don't load all
+        do {
+            if(lastDir.absolutePath()==dirLoaded) {
+                //Only expand loaded directory
+                QModelIndex lastDirIdx = _dirModel->index(lastDir.absoluteFilePath());
+                //Select LASTDIR_EXTRAFILE or last parent found when loaded
+                if (!lastDirIdx.isValid()){
+                    _dirLoaded = true;
+                    break;
+                }
 
-				//Ask dirModel to load next parent directory
-				while (_dirModel->canFetchMore(lastDirIdx)) _dirModel->fetchMore(lastDirIdx);
+                //Ask dirModel to load next parent directory
+                while (_dirModel->canFetchMore(lastDirIdx)) _dirModel->fetchMore(lastDirIdx);
 
-				//Ask to Expand last loaded parent
-				lastDirIdx = _tree_proxyModel->mapFromSource(lastDirIdx);
-				if (lastDirIdx.isValid()){
-					ui._systemFileTW->expand(lastDirIdx);
-					ui._systemFileTW->setCurrentIndex(lastDirIdx);
-				}
-				break;
-			}
-			if (lastDir.absoluteFilePath() == lastDir.absolutePath()) break;
-			lastDir = lastDir.absolutePath();
-		} while (true); //(lastDir.absoluteFilePath() != lastDir.absolutePath());
-	}
+                //Ask to Expand last loaded parent
+                lastDirIdx = _tree_proxyModel->mapFromSource(lastDirIdx);
+                if (lastDirIdx.isValid()){
+                    ui._systemFileTW->expand(lastDirIdx);
+                    ui._systemFileTW->setCurrentIndex(lastDirIdx);
+                }
+                break;
+            }
+            //std::cerr << "lastDir = " << lastDir.absoluteFilePath().toStdString() << std::endl;
+
+            QDir c = lastDir.dir() ;
+            if(!c.cdUp())
+                break ;
+
+            lastDir = QFileInfo(c.path());
+        } while (true); //(lastDir.absoluteFilePath() != lastDir.absolutePath());
+    }
 }
 
 /**
