@@ -265,7 +265,7 @@ class RsGRouterMatrixFriendListItem: public RsGRouterItem
 class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo, public RsGRouterNonCopyableObject
 {
 	public:
-		RsGRouterRoutingInfoItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO) 
+        RsGRouterRoutingInfoItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO)
 		{ setPriorityLevel(0) ; }	// this item is never sent through the network
 
 		virtual ~RsGRouterRoutingInfoItem() { clear() ; }
