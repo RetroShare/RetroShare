@@ -433,7 +433,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
     {
-        if(isProxyAddress(pcs.connectaddr))
+        if(isProxyAddress(pcs.connectaddr) || mPeerMgr->isHidden())
             d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
         else if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
         {
