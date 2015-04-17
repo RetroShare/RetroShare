@@ -162,9 +162,9 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 
 	if(it2 == _time_combined_hits.end())
 	{
-		// The key is not known. In this case, we return equal probabilities for all peers. 
-		//
-		float p = 1.0f / friends.size() ;
+        // The key is not known. In this case, we return a zero probability for all peers.
+        //
+        float p = 0.0f;//1.0f / friends.size() ;
 
 		probas.clear() ;
 		probas.resize(friends.size(),p) ;

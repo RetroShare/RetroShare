@@ -118,6 +118,6 @@ public:
 
     static const uint32_t ROUTING_FLAGS_ALLOW_TUNNELS = 0x0001;
     static const uint32_t ROUTING_FLAGS_ALLOW_FRIENDS = 0x0002;
-    static const uint32_t ROUTING_FLAGS_IS_ORIGIN     = 0x0003;
+    static const uint32_t ROUTING_FLAGS_IS_ORIGIN     = 0x0004;
 };
 

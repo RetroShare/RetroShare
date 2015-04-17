@@ -264,7 +264,7 @@ private:
 
     bool locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTransactionItem& item);
 
-    void locked_collectAvailableFriends(const GRouterKeyId &gxs_id,std::list<RsPeerId>& friend_peers, bool is_origin);
+    void locked_collectAvailableFriends(const GRouterKeyId &gxs_id,std::list<RsPeerId>& friend_peers, const std::set<RsPeerId>& incoming_routes,bool is_origin);
     void locked_collectAvailableTunnels(const TurtleFileHash& hash,std::list<RsPeerId>& tunnel_peers);
 
     //===================================================//
