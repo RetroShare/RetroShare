@@ -1343,8 +1343,11 @@ void FriendList::recommendfriend()
     default:
         return;
     }
+    std::set<RsPeerId> sids ;
+    for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+        sids.insert(*it) ;
 
-    MessageComposer::recommendFriend(ids);
+    MessageComposer::recommendFriend(sids);
 }
 
 void FriendList::pastePerson()
@@ -1596,7 +1599,7 @@ void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &s
         {
             RsGroupInfo groupInfo;
             if (rsPeers->getGroupInfo(peerId, groupInfo)) {
-                std::list<RsPgpId>::iterator gpgIt;
+                std::set<RsPgpId>::iterator gpgIt;
                 for (gpgIt = groupInfo.peerIds.begin(); gpgIt != groupInfo.peerIds.end(); ++gpgIt) {
                     rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
                 }

@@ -70,7 +70,7 @@ virtual bool createGroup(uint32_t &token, RsPostedGroup &group);
 virtual bool createPost(uint32_t &token, RsPostedPost &post);
 
 virtual bool updateGroup(uint32_t &token, RsPostedGroup &group);
-virtual bool groupShareKeys(const RsGxsGroupId &group, const std::list<RsPeerId>& peers);
+virtual bool groupShareKeys(const RsGxsGroupId &group, const std::set<RsPeerId>& peers);
 
         //////////////////////////////////////////////////////////////////////////////
 	// WRAPPERS due to the separate Interface.

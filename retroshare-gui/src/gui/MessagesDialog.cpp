@@ -1125,7 +1125,7 @@ void MessagesDialog::insertMessages()
 
                         text.clear();
 
-                        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit)
+                        for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit)
                         {
                             if (!text.isEmpty())
                                 text += ", ";
@@ -1136,7 +1136,7 @@ void MessagesDialog::insertMessages()
                              else
                                 text += QString::fromUtf8(peerName.c_str());
                         }
-                        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit)
+                        for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit)
                         {
                             if (!text.isEmpty())
                                 text += ", ";

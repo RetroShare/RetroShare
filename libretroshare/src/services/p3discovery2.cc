@@ -74,9 +74,9 @@ bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt)
 	return true;
 }
 
-void DiscPgpInfo::mergeFriendList(const std::list<PGPID> &friends)
+void DiscPgpInfo::mergeFriendList(const std::set<PGPID> &friends)
 {
-	std::list<PGPID>::const_iterator it;
+    std::set<PGPID>::const_iterator it;
 	for(it = friends.begin(); it != friends.end(); ++it)
 	{
 		mFriendSet.insert(*it);
@@ -481,7 +481,7 @@ void p3discovery2::sendPGPList(const SSLID &toId)
 	std::map<PGPID, DiscPgpInfo>::const_iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
-		pkt->pgpIdSet.ids.push_back(it->first);
+        pkt->pgpIdSet.ids.insert(it->first);
 	}
 
 	pkt->PeerId(toId);
@@ -517,7 +517,7 @@ void p3discovery2::updatePgpFriendList()
 	
 	mLastPgpUpdate = time(NULL);
 	
-	std::list<PGPID> pgpList;
+    std::list<PGPID> pgpList;
 	std::set<PGPID> pgpSet;
 
 	std::set<PGPID>::iterator sit;
@@ -525,7 +525,7 @@ void p3discovery2::updatePgpFriendList()
 	std::map<PGPID, DiscPgpInfo>::iterator it;
 	
 	PGPID ownPgpId = AuthGPG::getAuthGPG()->getGPGOwnId();
-	AuthGPG::getAuthGPG()->getGPGAcceptedList(pgpList);
+    AuthGPG::getAuthGPG()->getGPGAcceptedList(pgpList);
 	pgpList.push_back(ownPgpId);
 	
 	// convert to set for ordering.
@@ -597,7 +597,7 @@ void p3discovery2::updatePgpFriendList()
 
 	/* finally install the pgpList on our own entry */
 	DiscPgpInfo &ownInfo = mFriendList[ownPgpId];
-	ownInfo.mergeFriendList(pgpList);
+    ownInfo.mergeFriendList(pgpSet);
 
 }
 
@@ -647,7 +647,7 @@ void p3discovery2::processPGPList(const SSLID &fromId, const RsDiscPgpListItem *
 
 	if (requestUnknownPgpCerts)
 	{
-		std::list<PGPID>::const_iterator fit;
+        std::set<PGPID>::const_iterator fit;
 		for(fit = item->pgpIdSet.ids.begin(); fit != item->pgpIdSet.ids.end(); ++fit)
 		{
 			if (!AuthGPG::getAuthGPG()->isGPGId(*fit))
@@ -946,7 +946,7 @@ void p3discovery2::requestPGPCertificate(const PGPID &aboutId, const SSLID &toId
 	RsDiscPgpListItem *pkt = new RsDiscPgpListItem();
 	
 	pkt->mode = DISC_PGP_LIST_MODE_GETCERT;
-	pkt->pgpIdSet.ids.push_back(aboutId);		
+    pkt->pgpIdSet.ids.insert(aboutId);
 	pkt->PeerId(toId);
 	
 #ifdef P3DISC_DEBUG
@@ -966,7 +966,7 @@ void p3discovery2::recvPGPCertificateRequest(const SSLID &fromId, const RsDiscPg
 	std::cerr << std::endl;
 #endif
 
-	std::list<RsPgpId>::const_iterator it;
+    std::set<RsPgpId>::const_iterator it;
 	for(it = item->pgpIdSet.ids.begin(); it != item->pgpIdSet.ids.end(); ++it)
 	{
 		// NB: This doesn't include own certificates? why not.

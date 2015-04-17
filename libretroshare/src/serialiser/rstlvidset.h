@@ -59,7 +59,7 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 			/* start at data[offset] */
 			ok = ok && SetTlvBase(data, tlvend, offset, TLV_TYPE, tlvsize);
 
-			for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+            for(typename std::set<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
 				ok = ok && (*it).serialise(data,tlvend,*offset) ;
 
 			return ok ;
@@ -91,7 +91,7 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 			{
 				ID_CLASS id ;
 				ok = ok && id.deserialise(data,tlvend,*offset) ;
-				ids.push_back(id) ;
+                ids.insert(id) ;
 			}
 			if(*offset != tlvend)
 				std::cerr << "(EE) deserialisaiton error in " << __PRETTY_FUNCTION__ << std::endl;
@@ -99,20 +99,20 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 		}
 		virtual std::ostream &print(std::ostream &out, uint16_t /* indent */) const
 		{
-			for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+            for(typename std::set<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
 				out << (*it).toStdString() << ", " ;
 
 			return out ;
 		}
 		virtual std::ostream &printHex(std::ostream &out, uint16_t /* indent */) const /* SPECIAL One */
 		{
-			for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+            for(typename std::set<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
 				out << (*it).toStdString() << ", " ;
 
 			return out ;
 		}
 
-		std::list<ID_CLASS> ids ;
+        std::set<ID_CLASS> ids ;
 };
 
 typedef t_RsTlvIdSet<RsPeerId,TLV_TYPE_PEERSET>		RsTlvPeerIdSet ;

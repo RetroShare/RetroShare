@@ -604,7 +604,7 @@ public:
      * sets the message service string
      */
 
-    void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers) ;
+    void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
 
 protected:
 

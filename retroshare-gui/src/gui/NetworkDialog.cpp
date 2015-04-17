@@ -225,7 +225,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 void NetworkDialog::removeUnusedKeys()
 {
-    std::list<RsPgpId> pre_selected ;
+    std::set<RsPgpId> pre_selected ;
     std::list<RsPgpId> ids ;
 
 	rsPeers->getGPGAllList(ids) ;
@@ -245,17 +245,17 @@ void NetworkDialog::removeUnusedKeys()
 		if(now > (time_t) (THREE_MONTHS + details.lastUsed))
 		{
 			std::cerr << "Adding " << *it << " to pre-selection." << std::endl;
-			pre_selected.push_back(*it) ;
+            pre_selected.insert(*it) ;
 		}
 	}
 
-    std::list<RsPgpId> selected = FriendSelectionDialog::selectFriends_PGP(NULL,
+    std::set<RsPgpId> selected = FriendSelectionDialog::selectFriends_PGP(NULL,
 			tr("Clean keyring"),
 			tr("The selected keys below haven't been used in the last 3 months. \nDo you want to delete them permanently ? \n\nNotes: Your old keyring will be backed up.\n    The removal may fail when running multiple Retroshare instances on the same machine."),FriendSelectionWidget::MODUS_CHECK,FriendSelectionWidget::SHOW_GPG | FriendSelectionWidget::SHOW_NON_FRIEND_GPG,
              pre_selected) ;
 	
 	std::cerr << "Removing these keys from the keyring: " << std::endl;
-    for(std::list<RsPgpId>::const_iterator it(selected.begin());it!=selected.end();++it)
+    for(std::set<RsPgpId>::const_iterator it(selected.begin());it!=selected.end();++it)
 		std::cerr << "  " << *it << std::endl;
 
 	std::string backup_file ;

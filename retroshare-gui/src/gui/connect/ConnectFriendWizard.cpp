@@ -562,7 +562,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 		break;
 	case Page_FriendRecommendations:
 		{
-			std::list<RsPeerId> recommendIds;
+            std::set<RsPeerId> recommendIds;
             ui->frec_recommendList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(recommendIds, false);
 
 			if (recommendIds.empty()) {
@@ -570,7 +570,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 				return false;
 			}
 
-			std::list<RsPeerId> toIds;
+            std::set<RsPeerId> toIds;
             ui->frec_toList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(toIds, false);
 
 			if (toIds.empty()) {
@@ -578,7 +578,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 				return false;
 			}
 
-			std::list<RsPeerId>::iterator toId;
+            std::set<RsPeerId>::iterator toId;
 			for (toId = toIds.begin(); toId != toIds.end(); ++toId) {
 				MessageComposer::recommendFriend(recommendIds, *toId, ui->frec_messageEdit->toHtml(), true);
 			}

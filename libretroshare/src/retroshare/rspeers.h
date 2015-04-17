@@ -277,7 +277,7 @@ public:
 	std::string name;
 	uint32_t    flag;
 
-	std::list<RsPgpId> peerIds;
+    std::set<RsPgpId> peerIds;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
@@ -319,7 +319,7 @@ class RsPeers
 		virtual bool    getGPGSignedList(std::list<RsPgpId> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
 		virtual bool    getGPGValidList(std::list<RsPgpId> &gpg_ids)   = 0;
 		virtual bool    getGPGAllList(std::list<RsPgpId> &gpg_ids) 	= 0;
-		virtual bool    getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
+        virtual bool    getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
 		virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
 
 		/* Add/Remove Friends */
@@ -328,7 +328,7 @@ class RsPeers
 		virtual bool removeFriendLocation(const RsPeerId& sslId) 			= 0;
 
 		/* keyring management */
-		virtual bool removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)=0 ;
+        virtual bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)=0 ;
 
 		/* Network Stuff */
 		virtual	bool connectAttempt(const RsPeerId& ssl_id)			= 0;

@@ -101,7 +101,7 @@ virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid) = 0;
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
 
 //virtual bool groupRestoreKeys(const std::string &groupId);
-    virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::list<RsPeerId>& peers)=0;
+    virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)=0;
 
 	// Overloaded subscribe fn.
 virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe) = 0;

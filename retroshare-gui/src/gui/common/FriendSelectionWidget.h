@@ -83,19 +83,19 @@ public:
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
 
-    template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void selectedIds(std::list<ID_CLASS>& ids, bool onlyDirectSelected)
+    template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void selectedIds(std::set<ID_CLASS>& ids, bool onlyDirectSelected)
     {
-        std::list<std::string> tmpids ;
+        std::set<std::string> tmpids ;
         selectedIds(TYPE, tmpids, onlyDirectSelected);
         ids.clear() ;
-        for(std::list<std::string>::const_iterator it(tmpids.begin());it!=tmpids.end();++it)
-            ids.push_back(ID_CLASS(*it)) ;
+        for(std::set<std::string>::const_iterator it(tmpids.begin());it!=tmpids.end();++it)
+            ids.insert(ID_CLASS(*it)) ;
     }
-    template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void setSelectedIds(const std::list<ID_CLASS>& ids, bool add)
+    template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void setSelectedIds(const std::set<ID_CLASS>& ids, bool add)
     {
-        std::list<std::string> tmpids ;
-        for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
-            tmpids.push_back((*it).toStdString()) ;
+        std::set<std::string> tmpids ;
+        for(typename std::set<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+            tmpids.insert((*it).toStdString()) ;
         setSelectedIds(TYPE, tmpids, add);
     }
 
@@ -137,8 +137,8 @@ private:
 	void secured_fillList();
 	bool filterItem(QTreeWidgetItem *item, const QString &text);
 
-	void selectedIds(IdType idType, std::list<std::string> &ids, bool onlyDirectSelected);
-	void setSelectedIds(IdType idType, const std::list<std::string> &ids, bool add);
+    void selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);
+    void setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add);
 
 	void requestGXSIdList() ;
 

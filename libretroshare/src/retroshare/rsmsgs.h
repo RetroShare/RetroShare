@@ -185,15 +185,15 @@ public:
 
 	 // friend destinations
 	 //
-    std::list<RsPeerId> rspeerid_msgto;		// RsPeerId is used here for various purposes:
-    std::list<RsPeerId> rspeerid_msgcc;		//    - real peer ids which are actual friend locations
-    std::list<RsPeerId> rspeerid_msgbcc;		//    -
+    std::set<RsPeerId> rspeerid_msgto;		// RsPeerId is used here for various purposes:
+    std::set<RsPeerId> rspeerid_msgcc;		//    - real peer ids which are actual friend locations
+    std::set<RsPeerId> rspeerid_msgbcc;		//    -
 
 	 // distant peers
 	 //
-    std::list<RsGxsId> rsgxsid_msgto;		// RsPeerId is used here for various purposes:
-    std::list<RsGxsId> rsgxsid_msgcc;		//    - real peer ids which are actual friend locations
-    std::list<RsGxsId> rsgxsid_msgbcc;		//    -
+    std::set<RsGxsId> rsgxsid_msgto;		// RsPeerId is used here for various purposes:
+    std::set<RsGxsId> rsgxsid_msgcc;		//    - real peer ids which are actual friend locations
+    std::set<RsGxsId> rsgxsid_msgbcc;		//    -
 
     std::string title;
     std::string msg;
@@ -474,7 +474,7 @@ virtual bool setDefaultIdentityForChatLobby(const RsGxsId& nick) = 0;
 virtual bool getDefaultIdentityForChatLobby(RsGxsId& id) = 0 ;
     virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe) = 0 ;
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id) = 0 ;
-virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags lobby_privacy_type) = 0 ;
+virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags lobby_privacy_type) = 0 ;
 
 /****************************************/
 /*            Distant chat              */

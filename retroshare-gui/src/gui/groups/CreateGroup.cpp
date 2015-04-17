@@ -131,12 +131,12 @@ void CreateGroup::changeGroup()
 		}
 	}
 
-    std::list<RsPgpId> gpgIds;
+    std::set<RsPgpId> gpgIds;
     ui.friendList->selectedIds<RsPgpId,FriendSelectionWidget::IDTYPE_GPG>(gpgIds, true);
 
-    std::list<RsPgpId>::iterator it;
+    std::set<RsPgpId>::iterator it;
 	for (it = groupInfo.peerIds.begin(); it != groupInfo.peerIds.end(); ++it) {
-        std::list<RsPgpId>::iterator gpgIt = std::find(gpgIds.begin(), gpgIds.end(), *it);
+        std::set<RsPgpId>::iterator gpgIt = std::find(gpgIds.begin(), gpgIds.end(), *it);
 		if (gpgIt == gpgIds.end()) {
 			rsPeers->assignPeerToGroup(groupInfo.id, *it, false);
 			continue;

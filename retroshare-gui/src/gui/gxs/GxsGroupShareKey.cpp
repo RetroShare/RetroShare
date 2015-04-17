@@ -110,7 +110,7 @@ void GroupShareKey::setTyp()
 
 void GroupShareKey::shareKey()
 {
-	std::list<RsPeerId> shareList;
+    std::set<RsPeerId> shareList;
 	ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
 
 	if (shareList.empty()) {

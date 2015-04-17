@@ -1867,7 +1867,7 @@ void PGPHandler::locked_mergeKeyringFromDisk(	ops_keyring_t *keyring,
 	ops_keyring_free(tmp_keyring) ;
 }
 
-bool PGPHandler::removeKeysFromPGPKeyring(const std::list<RsPgpId>& keys_to_remove,std::string& backup_file,uint32_t& error_code)
+bool PGPHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_to_remove,std::string& backup_file,uint32_t& error_code)
 {
 	// 1 - lock everything.
 	//
@@ -1876,7 +1876,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<RsPgpId>& keys_to_remo
 
 	error_code = PGP_KEYRING_REMOVAL_ERROR_NO_ERROR ;
 
-	for(std::list<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
+    for(std::set<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
 		if(locked_getSecretKey(*it) != NULL)
 		{
 			std::cerr << "(EE) PGPHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key! Operation cancelled." << std::endl;
@@ -1912,7 +1912,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<RsPgpId>& keys_to_remo
 
 	// Remove keys from the keyring, and update the keyring map.
 	//
-	for(std::list<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
+    for(std::set<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
 	{
 		if(locked_getSecretKey(*it) != NULL)
 		{

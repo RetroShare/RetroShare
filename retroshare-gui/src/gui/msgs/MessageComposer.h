@@ -60,7 +60,7 @@ public:
     static void msgGroup(const std::string& group_id) ;
 
     static QString recommendMessage();
-    static void recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
+    static void recommendFriend(const std::set <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
     static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
     static void sendChannelPublishKey(RsGxsChannelGroup &group);
     static void sendForumPublishKey(RsGxsForumGroup &group);

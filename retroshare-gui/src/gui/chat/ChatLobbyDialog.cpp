@@ -136,14 +136,14 @@ void ChatLobbyDialog::inviteFriends()
 {
 	std::cerr << "Inviting friends" << std::endl;
 
-    std::list<RsPeerId> ids = FriendSelectionDialog::selectFriends_SSL(NULL,tr("Invite friends"),tr("Select friends to invite:")) ;
+    std::set<RsPeerId> ids = FriendSelectionDialog::selectFriends_SSL(NULL,tr("Invite friends"),tr("Select friends to invite:")) ;
 
 	std::cerr << "Inviting these friends:" << std::endl;
 
     if (!mChatId.isLobbyId())
 		return ;
 
-    for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+    for(std::set<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
 	{
 		std::cerr << "    " << *it  << std::endl;
 

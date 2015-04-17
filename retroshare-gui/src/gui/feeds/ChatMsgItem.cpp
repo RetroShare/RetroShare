@@ -249,7 +249,7 @@ void ChatMsgItem::sendMessage()
     
     mi.title = tr("Quick Message").toUtf8().constData();
     mi.msg =   quickmsgText->toHtml().toUtf8().constData();
-    mi.rspeerid_msgto.push_back(mPeerId);
+    mi.rspeerid_msgto.insert(mPeerId);
     
     rsMail->MessageSend(mi);
 

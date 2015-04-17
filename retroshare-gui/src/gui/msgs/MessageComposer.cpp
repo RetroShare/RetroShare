@@ -451,12 +451,12 @@ void MessageComposer::processSettings(bool bLoad)
     /* window will destroy itself! */
 }
 
-static QString buildRecommendHtml(const std::list<RsPeerId> &sslIds, const RsPeerId& excludeId = RsPeerId())
+static QString buildRecommendHtml(const std::set<RsPeerId> &sslIds, const RsPeerId& excludeId = RsPeerId())
 {
     QString text;
 
     /* process ssl ids */
-    std::list <RsPeerId>::const_iterator sslIt;
+    std::set <RsPeerId>::const_iterator sslIt;
     for (sslIt = sslIds.begin(); sslIt != sslIds.end(); ++sslIt) {
         if (*sslIt == excludeId) {
             continue;
@@ -475,7 +475,7 @@ QString MessageComposer::recommendMessage()
     return tr("Hello,<br>I recommend a good friend of mine; you can trust them too when you trust me. <br>");
 }
 
-void MessageComposer::recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to, const QString &msg, bool autoSend)
+void MessageComposer::recommendFriend(const std::set <RsPeerId> &sslIds, const RsPeerId &to, const QString &msg, bool autoSend)
 {
 //    std::cerr << "MessageComposer::recommendFriend()" << std::endl;
 
@@ -509,7 +509,7 @@ void MessageComposer::recommendFriend(const std::list <RsPeerId> &sslIds, const 
     sMsgText += tr("Thanks, <br>") + QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str());
     composer->setMsgText(sMsgText);
 
-    std::list <RsPeerId>::const_iterator peerIt;
+    std::set <RsPeerId>::const_iterator peerIt;
     for (peerIt = sslIds.begin(); peerIt != sslIds.end(); ++peerIt) {
         if (*peerIt == to) {
             continue;
@@ -876,7 +876,7 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
         }
 
         // iterate all assigned peers (gpg id's)
-        std::list<RsPgpId>::const_iterator peerIt;
+        std::set<RsPgpId>::const_iterator peerIt;
         for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); ++peerIt) {
             std::list<RsPeerId> sslIds;
 
@@ -913,7 +913,7 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
     // remove all ssl id's of all found groups from the list
     for (groupInfoIt = groupInfos.begin(); groupInfoIt != groupInfos.end(); ++groupInfoIt) {
         // iterate all assigned peers (gpg id's)
-        std::list<RsPgpId>::const_iterator peerIt;
+        std::set<RsPgpId>::const_iterator peerIt;
         for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); ++peerIt) {
             std::list<RsPeerId> sslIds;
 
@@ -997,12 +997,12 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
     //            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
     //        }
 
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
-        for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgto.begin();   it != msgInfo.rsgxsid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin();   it != msgInfo.rsgxsid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
-        for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
+        for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgto.begin();  it != msgInfo.rspeerid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
+        for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin();  it != msgInfo.rspeerid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
+        for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgbcc.begin(); it != msgInfo.rspeerid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
+        for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgto.begin();   it != msgInfo.rsgxsid_msgto.end(); ++it )  msgComposer->addRecipient(MessageComposer::TO, *it) ;
+        for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin();   it != msgInfo.rsgxsid_msgcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::CC, *it) ;
+        for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgbcc.begin();  it != msgInfo.rsgxsid_msgbcc.end(); ++it )  msgComposer->addRecipient(MessageComposer::BCC, *it) ;
 
         MsgTagInfo tagInfo;
         rsMail->getMessageTag(msgId, tagInfo);
@@ -1024,7 +1024,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
     QString from = link.toHtml();
 
     QString to;
-    for ( std::list<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); ++it)
+    for ( std::set<RsPeerId>::const_iterator  it = msgInfo.rspeerid_msgto.begin(); it != msgInfo.rspeerid_msgto.end(); ++it)
         if (link.createMessage(*it, ""))
         {
             if (!to.isEmpty())
@@ -1032,7 +1032,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 
             to += link.toHtml();
         }
-    for ( std::list<RsGxsId>::const_iterator  it = msgInfo.rsgxsid_msgto.begin(); it != msgInfo.rsgxsid_msgto.end(); ++it)
+    for ( std::set<RsGxsId>::const_iterator  it = msgInfo.rsgxsid_msgto.begin(); it != msgInfo.rsgxsid_msgto.end(); ++it)
         if (link.createMessage(*it, ""))
         {
             if (!to.isEmpty())
@@ -1043,14 +1043,14 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 
 
     QString cc;
-    for (std::list<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); ++it)
+    for (std::set<RsPeerId>::const_iterator it = msgInfo.rspeerid_msgcc.begin(); it != msgInfo.rspeerid_msgcc.end(); ++it)
         if (link.createMessage(*it, "")) {
             if (!cc.isEmpty()) {
                 cc += ", ";
             }
             cc += link.toHtml();
         }
-    for (std::list<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); ++it)
+    for (std::set<RsGxsId>::const_iterator it = msgInfo.rsgxsid_msgcc.begin(); it != msgInfo.rsgxsid_msgcc.end(); ++it)
         if (link.createMessage(*it, "")) {
             if (!cc.isEmpty()) {
                 cc += ", ";
@@ -1137,19 +1137,19 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     {
         RsPeerId ownId = rsPeers->getOwnId();
 
-        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgto.begin(); tli != msgInfo.rspeerid_msgto.end(); ++tli)
+        for (std::set<RsPeerId>::iterator tli = msgInfo.rspeerid_msgto.begin(); tli != msgInfo.rspeerid_msgto.end(); ++tli)
             if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::list<RsPeerId>::iterator tli = msgInfo.rspeerid_msgcc.begin(); tli != msgInfo.rspeerid_msgcc.end(); ++tli)
+        for (std::set<RsPeerId>::iterator tli = msgInfo.rspeerid_msgcc.begin(); tli != msgInfo.rspeerid_msgcc.end(); ++tli)
             if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgto.begin(); tli != msgInfo.rsgxsid_msgto.end(); ++tli)
+        for (std::set<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgto.begin(); tli != msgInfo.rsgxsid_msgto.end(); ++tli)
             //if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
 
-        for (std::list<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgcc.begin(); tli != msgInfo.rsgxsid_msgcc.end(); ++tli)
+        for (std::set<RsGxsId>::iterator tli = msgInfo.rsgxsid_msgcc.begin(); tli != msgInfo.rsgxsid_msgcc.end(); ++tli)
             //if (ownId != *tli)
                 msgComposer->addRecipient(MessageComposer::TO, *tli) ;
     }
@@ -1245,8 +1245,6 @@ void MessageComposer::sendMessage()
     }
 }
 
-template<class T> void addUnique(std::list<T>& lst,const T& t) { if(std::find(lst.begin(),lst.end(),t) == lst.end()) lst.push_back(t) ; }
-
 bool MessageComposer::sendMessage_internal(bool bDraftbox)
 {
     /* construct a message */
@@ -1316,7 +1314,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
                 continue;
             }
 
-            std::list<RsPgpId>::const_iterator groupIt;
+            std::set<RsPgpId>::const_iterator groupIt;
             for (groupIt = groupInfo.peerIds.begin(); groupIt != groupInfo.peerIds.end(); ++groupIt) {
                 std::list<RsPeerId> sslIds;
                 rsPeers->getAssociatedSSLIds(*groupIt, sslIds);
@@ -1330,11 +1328,11 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
                     switch (type)
                     {
-                    case TO: addUnique(mi.rspeerid_msgto,*sslIt);
+                    case TO: mi.rspeerid_msgto.insert(*sslIt);
                         break;
-                    case CC: addUnique(mi.rspeerid_msgcc,*sslIt);
+                    case CC: mi.rspeerid_msgcc.insert(*sslIt);
                         break;
-                    case BCC:addUnique(mi.rspeerid_msgbcc,*sslIt);
+                    case BCC:mi.rspeerid_msgbcc.insert(*sslIt);
                         break;
                     }
                 }
@@ -1347,11 +1345,11 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
             switch (type)
             {
-            case TO: addUnique(mi.rspeerid_msgto,pid);
+            case TO: mi.rspeerid_msgto.insert(pid);
             break ;
-            case CC: addUnique(mi.rspeerid_msgcc,pid);
+            case CC: mi.rspeerid_msgcc.insert(pid);
             break ;
-            case BCC:addUnique(mi.rspeerid_msgbcc,pid);
+            case BCC:mi.rspeerid_msgbcc.insert(pid);
             break ;
             }
         }
@@ -1362,11 +1360,11 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
             switch (type)
             {
-            case TO: addUnique(mi.rsgxsid_msgto,gid) ;
+            case TO: mi.rsgxsid_msgto.insert(gid) ;
             break ;
-            case CC: addUnique(mi.rsgxsid_msgcc,gid) ;
+            case CC: mi.rsgxsid_msgcc.insert(gid) ;
             break ;
-            case BCC:addUnique(mi.rsgxsid_msgbcc,gid) ;
+            case BCC:mi.rsgxsid_msgbcc.insert(gid) ;
             break ;
             }
         }
@@ -2472,16 +2470,16 @@ void MessageComposer::fileHashingFinished(QList<HashedFile> hashedFiles)
 
 void MessageComposer::addContact(enumType type)
 {
-	std::list<RsPeerId> peerIds ;
+    std::set<RsPeerId> peerIds ;
 	ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peerIds, false);
 
-	for (std::list<RsPeerId>::const_iterator idIt = peerIds.begin(); idIt != peerIds.end(); ++idIt) 
+    for (std::set<RsPeerId>::const_iterator idIt = peerIds.begin(); idIt != peerIds.end(); ++idIt)
 		addRecipient(type, *idIt);
 
-    std::list<RsGxsId> gxsIds ;
+    std::set<RsGxsId> gxsIds ;
     ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, false);
 
-	for (std::list<RsGxsId>::const_iterator idIt = gxsIds.begin(); idIt != gxsIds.end(); ++idIt) 
+    for (std::set<RsGxsId>::const_iterator idIt = gxsIds.begin(); idIt != gxsIds.end(); ++idIt)
 		addRecipient(type, *idIt);
 }
 
@@ -2522,18 +2520,18 @@ void MessageComposer::addBcc()
 
 void MessageComposer::addRecommend()
 {
-	std::list<RsPeerId> sslIds;
+    std::set<RsPeerId> sslIds;
 	ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(sslIds, false);
 
-	std::list<RsGxsId> gxsIds ;
+    std::set<RsGxsId> gxsIds ;
 	ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, true);
 
 	if (sslIds.empty() && gxsIds.empty()) 
 		return;
 
-	for(std::list <RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it)
+    for(std::set <RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it)
         addRecipient(CC, *it);
-	for (std::list<RsGxsId>::const_iterator it = gxsIds.begin(); it != gxsIds.end(); ++it)
+    for (std::set<RsGxsId>::const_iterator it = gxsIds.begin(); it != gxsIds.end(); ++it)
         addRecipient(TO, *it);
 
 	QString text = buildRecommendHtml(sslIds);

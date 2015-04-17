@@ -2391,7 +2391,7 @@ bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet 
     return true;
 }
 
-void RsGenExchange::shareGroupPublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)
+void RsGenExchange::shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers)
 {
     if(grpId.isNull())
         return ;

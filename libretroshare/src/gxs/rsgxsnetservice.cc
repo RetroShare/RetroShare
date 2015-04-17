@@ -3239,7 +3239,7 @@ void RsGxsNetService::processExplicitGroupRequests()
 	mExplicitRequest.clear();
 }
 
-int RsGxsNetService::sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers)
+int RsGxsNetService::sharePublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
@@ -3264,7 +3264,7 @@ void RsGxsNetService::sharePublishKeysPending()
 
     std::set<RsPeerId> peersOnline;
     std::list<RsGxsGroupId> toDelete;
-    std::map<RsGxsGroupId,std::list<RsPeerId> >::iterator mit ;
+    std::map<RsGxsGroupId,std::set<RsPeerId> >::iterator mit ;
 
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, peersOnline);
 
@@ -3278,9 +3278,9 @@ void RsGxsNetService::sharePublishKeysPending()
         // Compute the set of peers to send to. We start with this, to avoid retrieving the data for nothing.
 
         std::list<RsPeerId> recipients ;
-        std::list<RsPeerId> offline_recipients ;
+        std::set<RsPeerId> offline_recipients ;
 
-        for(std::list<RsPeerId>::const_iterator it(mit->second.begin());it!=mit->second.end();++it)
+        for(std::set<RsPeerId>::const_iterator it(mit->second.begin());it!=mit->second.end();++it)
             if(peersOnline.find(*it) != peersOnline.end())
             {
 #ifdef NXS_NET_DEBUG
@@ -3293,7 +3293,7 @@ void RsGxsNetService::sharePublishKeysPending()
 #ifdef NXS_NET_DEBUG
                 std::cerr << "    " << *it << ": offline. Keeping for next try." << std::endl;
 #endif
-                offline_recipients.push_back(*it) ;
+                offline_recipients.insert(*it) ;
             }
 
         // If empty, skip

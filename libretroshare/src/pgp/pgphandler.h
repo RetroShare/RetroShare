@@ -109,7 +109,7 @@ class PGPHandler
 		// Removes the given keys from the keyring. Also backup the keyring to a file which name is automatically generated
 		// and given pack for proper display.
 		//
-		bool removeKeysFromPGPKeyring(const std::list<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) ;
+        bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) ;
 
 		//bool isKeySupported(const RsPgpId& id) const ;
 

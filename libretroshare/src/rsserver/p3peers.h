@@ -80,7 +80,7 @@ virtual	bool removeFriend(const RsPgpId& gpgid);
 virtual bool removeFriendLocation(const RsPeerId& sslId);
 
 		/* keyring management */
-		virtual bool removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code);
+        virtual bool removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code);
 
 	/* Network Stuff */
 virtual	bool connectAttempt(const RsPeerId &id);

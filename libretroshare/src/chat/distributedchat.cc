@@ -1421,7 +1421,7 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 	return true ;
 }
 
-ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,ChatLobbyFlags lobby_flags)
+ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags lobby_flags)
 {
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "Creating a new Chat lobby !!" << std::endl;
@@ -1456,7 +1456,7 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 		_chat_lobbys[lobby_id] = entry ;
 	}
 
-	for(std::list<RsPeerId>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
+    for(std::set<RsPeerId>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;

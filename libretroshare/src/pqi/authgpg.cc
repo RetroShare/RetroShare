@@ -61,14 +61,14 @@ bool AuthGPG::decryptTextFromFile(std::string& text,const std::string& inputfile
 	return PGPHandler::decryptTextFromFile(mOwnGpgId,text,inputfile) ;
 }
 
-bool AuthGPG::removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code) 
+bool AuthGPG::removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
 {
-	std::list<RsPgpId> pids ;
+//	std::list<RsPgpId> pids ;
+//
+//	for(std::list<RsPgpId>::const_iterator it(pgp_ids.begin());it!=pgp_ids.end();++it)
+//		pids.push_back(RsPgpId(*it)) ;
 
-	for(std::list<RsPgpId>::const_iterator it(pgp_ids.begin());it!=pgp_ids.end();++it)
-		pids.push_back(RsPgpId(*it)) ;
-
-	return PGPHandler::removeKeysFromPGPKeyring(pids,backup_file,error_code) ;
+    return PGPHandler::removeKeysFromPGPKeyring(pgp_ids,backup_file,error_code) ;
 }
 
 // bool AuthGPG::decryptTextFromString(std::string& encrypted_text,std::string& output)

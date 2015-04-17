@@ -78,9 +78,9 @@ class RsGxsCircleGroup
 	public:
 	RsGroupMetaData mMeta; // includes GxsPermissions, for control of group distribution.
 
-	std::list<RsPgpId> mLocalFriends;
-	std::list<RsGxsId> mInvitedMembers;
-	std::list<RsGxsCircleId> mSubCircles;
+    std::set<RsPgpId> mLocalFriends;
+    std::set<RsGxsId> mInvitedMembers;
+    std::set<RsGxsCircleId> mSubCircles;
 
 	// Not Serialised.
 	// Internally inside rsCircles, this will be turned into:

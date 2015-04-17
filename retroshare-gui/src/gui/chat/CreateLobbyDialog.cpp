@@ -33,7 +33,7 @@
 #include "ChatDialog.h"
 #include "gui/ChatLobbyWidget.h"
 
-CreateLobbyDialog::CreateLobbyDialog(const std::list<RsPeerId>& peer_list, int privacyLevel, QWidget *parent) :
+CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int privacyLevel, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
 	ui = new Ui::CreateLobbyDialog() ;
@@ -109,7 +109,7 @@ void CreateLobbyDialog::checkTextFields()
 
 void CreateLobbyDialog::createLobby()
 {
-    std::list<RsPeerId> shareList;
+    std::set<RsPeerId> shareList;
     ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
 
     //	if (shareList.empty()) {

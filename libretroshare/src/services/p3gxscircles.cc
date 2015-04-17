@@ -913,8 +913,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 				std::cerr << std::endl;
 #endif
 
-				std::list<RsGxsId> &peers = group.mInvitedMembers;
-				std::list<RsGxsId>::const_iterator pit;
+                std::set<RsGxsId> &peers = group.mInvitedMembers;
+                std::set<RsGxsId>::const_iterator pit;
 	
 				// need to trigger the searches.
 				for(pit = peers.begin(); pit != peers.end(); ++pit)
@@ -1018,8 +1018,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 #endif
 
 				// LOCAL Load.
-				std::list<RsPgpId> &peers = group.mLocalFriends;
-				std::list<RsPgpId>::const_iterator pit;
+                std::set<RsPgpId> &peers = group.mLocalFriends;
+                std::set<RsPgpId>::const_iterator pit;
 	
 				// need to trigger the searches.
 				for(pit = peers.begin(); pit != peers.end(); ++pit)
@@ -1610,7 +1610,7 @@ void p3GxsCircles::generateDummyCircle()
 	std::set<RsGxsId>::iterator it;
 	for(it = idset.begin(); it != idset.end(); ++it)
 	{
-		group.mInvitedMembers.push_back(*it);
+        group.mInvitedMembers.insert(*it);
 #ifdef DEBUG_CIRCLES
 		std::cerr << "p3GxsCircles::generateDummyCircle() Adding: " << *it;
 		std::cerr << std::endl;
@@ -1634,8 +1634,8 @@ std::ostream &operator<<(std::ostream &out, const RsGxsCircleGroup &grp)
 	out << "InvitedMembers: ";
 	out << std::endl;
 
-        std::list<RsGxsId>::const_iterator it;
-        std::list<RsGxsCircleId>::const_iterator sit;
+        std::set<RsGxsId>::const_iterator it;
+        std::set<RsGxsCircleId>::const_iterator sit;
 	for(it = grp.mInvitedMembers.begin();
 		it != grp.mInvitedMembers.begin(); ++it)
 	{

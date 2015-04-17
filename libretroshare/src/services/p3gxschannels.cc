@@ -302,7 +302,7 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 	return ok;
 }
 
-bool p3GxsChannels::groupShareKeys(const RsGxsGroupId &groupId, std::list<RsPeerId>& peers)
+bool p3GxsChannels::groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)
 {
     RsGenExchange::shareGroupPublishKey(groupId,peers) ;
     return true ;

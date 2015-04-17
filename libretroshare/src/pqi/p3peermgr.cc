@@ -2089,10 +2089,10 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 
 				std::list<RsPgpId>::const_iterator peerIt;
 				for (peerIt = peerIds.begin(); peerIt != peerIds.end(); ++peerIt) {
-					std::list<RsPgpId>::iterator peerIt1 = std::find(groupItem->pgpList.ids.begin(), groupItem->pgpList.ids.end(), *peerIt);
+                    std::set<RsPgpId>::iterator peerIt1 = std::find(groupItem->pgpList.ids.begin(), groupItem->pgpList.ids.end(), *peerIt);
 					if (assign) {
 						if (peerIt1 == groupItem->pgpList.ids.end()) {
-							groupItem->pgpList.ids.push_back(*peerIt);
+                            groupItem->pgpList.ids.insert(*peerIt);
 							changed = true;
 						}
 					} else {

@@ -135,7 +135,7 @@ public:
      * share publish keys for the specified group with the peers in the specified list.
      */
 
-    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::list<RsPeerId>& peers) ;
+    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
 
     /*!
      * Returns statistics for the group networking activity: popularity (number of friends subscribers) and max_visible_msg_count,
@@ -484,7 +484,7 @@ private:
     // need to be verfied
     std::vector<AuthorPending*> mPendingResp;
     std::vector<GrpCircleVetting*> mPendingCircleVets;
-    std::map<RsGxsGroupId,std::list<RsPeerId> > mPendingPublishKeyRecipients ;
+    std::map<RsGxsGroupId,std::set<RsPeerId> > mPendingPublishKeyRecipients ;
     std::map<RsPeerId, std::list<RsGxsGroupId> > mExplicitRequest;
     std::map<RsPeerId, std::set<RsGxsGroupId> > mPartialMsgUpdates ;
 

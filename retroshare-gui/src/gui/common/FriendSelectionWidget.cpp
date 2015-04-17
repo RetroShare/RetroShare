@@ -266,22 +266,22 @@ void FriendSelectionWidget::secured_fillList()
 	mInFillList = true;
 
 	// get selected items
-    std::list<RsPeerId> sslIdsSelected;
+    std::set<RsPeerId> sslIdsSelected;
 	if (mShowTypes & SHOW_SSL) {
         selectedIds<RsPeerId,IDTYPE_SSL>(sslIdsSelected,true);
 	}
 
-	std::list<std::string> groupIdsSelected;
+    std::set<std::string> groupIdsSelected;
 	if (mShowTypes & SHOW_GROUP) {
         selectedIds<std::string,IDTYPE_GROUP>(groupIdsSelected,true);
 	}
 
-    std::list<RsPgpId> gpgIdsSelected;
+    std::set<RsPgpId> gpgIdsSelected;
 	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
         selectedIds<RsPgpId,IDTYPE_GPG>(gpgIdsSelected,true);
 	}
 
-	std::list<RsGxsId> gxsIdsSelected;
+    std::set<RsGxsId> gxsIdsSelected;
 	if (mShowTypes & SHOW_GXS)
 		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected,true);
 	
@@ -881,7 +881,7 @@ std::string FriendSelectionWidget::selectedId(IdType &idType)
 	return idFromItem(item);
 }
 
-void FriendSelectionWidget::selectedIds(IdType idType, std::list<std::string> &ids, bool onlyDirectSelected)
+void FriendSelectionWidget::selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected)
 {
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
@@ -938,7 +938,7 @@ void FriendSelectionWidget::selectedIds(IdType idType, std::list<std::string> &i
 			break;
 		}
 		if (!id.empty() && std::find(ids.begin(), ids.end(), id) == ids.end()) {
-			ids.push_back(id);
+            ids.insert(id);
 		}
 	}
 }
@@ -955,7 +955,7 @@ void FriendSelectionWidget::selectAll()
 		setSelected(mListModus, *itemIterator, true);
 }
 
-void FriendSelectionWidget::setSelectedIds(IdType idType, const std::list<std::string> &ids, bool add)
+void FriendSelectionWidget::setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add)
 {
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
@@ -973,7 +973,7 @@ void FriendSelectionWidget::setSelectedIds(IdType idType, const std::list<std::s
 		case IDTYPE_SSL:
         case IDTYPE_GXS:
             if (idType == itemType) {
-				if (std::find(ids.begin(), ids.end(), id) != ids.end()) {
+                if (ids.find(id) != ids.end()) {
 					setSelected(mListModus, item, true);
 					break;
 				}
