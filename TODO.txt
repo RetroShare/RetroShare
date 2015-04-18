@@ -23,7 +23,7 @@ E        [X] it's not possible to create a Forum thread without a Owner.
          [X] the tooltip over GXS ids should show the avatar on the left side.
          [X] fix data race between GXS ID default icons
          [X] Share of key shows "Not implemented". Since forums are public, share key should be hidden.
-			[ ] switching between forums might cause a crash. Seems to be due to GxsIdDetails::instance not always initialised when used.
+         [ ] switching between forums might cause a crash. Seems to be due to GxsIdDetails::instance not always initialised when used.
       
        GUI General
 E        [ ] do we keep "Getting Started" ? the look needs to be improved
@@ -40,8 +40,10 @@ E        [X] "Friends details" should show both PGP key and RS certs in differen
 E        [X] addFriend does not work when the cert contains signatures.
 E        [X] PGP signatures are not transmited by discovery2. 
          [ ] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
+         [ ] Default layout should use toolbars. The "menu" look is inneficient
       
        Messages
+         [ ] right-click + send message on location from friendlist does not set the proper destination
 H        [ ] distant messages should be made async-ed
 M        [ ] distant messages are not re-sent when the peer is offline the first time
 M        [X] sent messages to direct peers in the Sent box have inconsistent To field. 
@@ -58,18 +60,23 @@ H        [X] marking all as read in channels takes time. The channel icon should
              during the operation to avoid the user to re-click many times in the hope to get the posts marked as read.
          [X] channels items show a 0 left to the up/Dn buttons. What is it??
          [X] allow to post on channels when attachment is not in shared files. Just display a warning.
-M			[ ] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
-			    another location with many friends => popularity is too big at that location (should be 1)
+M        [ ] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
+             another location with many friends => popularity is too big at that location (should be 1)
 
       
        Chat lobbies
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
          [X] Remove deprecated code in rschatitems.
-		   [X] remove "change nickname" from drop menu
+         [X] remove "change nickname" from drop menu
       
-		 Settings
-		   [X] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
-			[ ] Default max upload should be a large number. Not 50KB/s!!
+       Profile creation wizard
+         [X] "Hidden node" should be an option at start. Apparently it becomes mandatory when one sets the advanced mode. 
+         [ ] the blue button "Generate new node" does not have a clear state. It should be grey while disabled, then 
+             not grey. Or maybe use an icon?
+
+       Settings
+         [X] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
+         [ ] Default max upload should be a large number. Not 50KB/s!!
 
        Chat
          [X] Distant chat window should show GXS avatars
@@ -100,7 +107,8 @@ H        [X] There's a bug sometimes causing re-hash of shared files at start. F
          [X] remove the double feed publication
       
        libretroshare
-		   [ ] some users can be declared as connected although they are not. Check Heart-Beat system.
+         [ ] make sure at least one location is kept when removing old locations as it avoids lots of connection problems.
+         [ ] some users can be declared as connected although they are not. Check Heart-Beat system.
 H        [X] fix the data race in pqissl
 H        [ ] valgrind pass for data races
 H        [ ] valgrind pass for memory leaks 
