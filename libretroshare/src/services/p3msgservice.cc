@@ -85,7 +85,8 @@ p3MsgService::p3MsgService(p3ServiceControl *sc, p3IdService *id_serv)
 	_serialiser = new RsMsgSerialiser();
 	addSerialType(_serialiser);
 
-	mDistantMessagingEnabled = true ;
+    mShouldEnableDistantMessaging = true ;
+    mDistantMessagingEnabled      = false ;
 
 	/* Initialize standard tag types */
 	if(sc)
@@ -453,7 +454,7 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
 	kv.key = "DISTANT_MESSAGES_ENABLED" ;
-	kv.value = mDistantMessagingEnabled?"YES":"NO" ;
+    kv.value = mShouldEnableDistantMessaging?"YES":"NO" ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
 	itemList.push_back(vitem) ;
@@ -533,8 +534,6 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     std::map<uint32_t, RsPeerId> srcIdMsgMap;
     std::map<uint32_t, RsPeerId>::iterator srcIt;
 
-	bool distant_messaging_set = false ;
-
 	// load items and calculate next unique msgId
 	for(it = load.begin(); it != load.end(); ++it)
 	{
@@ -556,7 +555,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 			}
 			else
 			{
-				delete mTags[mtt->tagId];
+                delete mTags[mtt->tagId];
 				mTags.erase(tagIt);
 				mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
 			}
@@ -585,17 +584,9 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 #ifdef MSG_DEBUG
 					std::cerr << "Loaded config default nick name for distant chat: " << kit->value << std::endl ;
 #endif
-					enableDistantMessaging(kit->value == "YES") ;
-					distant_messaging_set = true ;
-				}
+                    mShouldEnableDistantMessaging = (kit->value == "YES") ;
+                }
 
-	}
-	if(mDistantMessagingEnabled || !distant_messaging_set)
-	{
-#ifdef DEBUG_DISTANT_MSG
-		std::cerr << "No config value for distant messaging. Setting it to true." << std::endl;
-#endif
-		enableDistantMessaging(true) ;
 	}
 
         // sort items into lists
@@ -1694,50 +1685,48 @@ void p3MsgService::connectToGlobalRouter(p3GRouter *gr)
 
 void p3MsgService::enableDistantMessaging(bool b)
 {
-	// Normally this method should work on the basis of each GXS id. For now, we just blindly enable
-	// messaging for all GXS ids for which we have the private key.
-	
-	bool cchanged ;
-	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+    // We use a temporary variable because the call to OwnIds() might fail.
 
-		cchanged = (mDistantMessagingEnabled != b) ;
-		mDistantMessagingEnabled = b ;
-	}
-
-	std::list<RsGxsId> own_id_list ;
-	mIdService->getOwnIds(own_id_list) ;
-
-#ifdef DEBUG_DISTANT_MSG
-	for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
-        std::cerr << (b?"Enabling":"Disabling") << " distant messaging, with peer id = " << *it << std::endl;
-#endif
-
-    for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
-    {
-        if(b)
-            mGRouter->registerKey(*it,GROUTER_CLIENT_ID_MESSAGES,"Messaging contact") ;
-        else
-            mGRouter->unregisterKey(*it,GROUTER_CLIENT_ID_MESSAGES) ;
-    }
-
-	if(cchanged)
-		IndicateConfigChanged() ;
+    mShouldEnableDistantMessaging = b ;
+    IndicateConfigChanged() ;
 }
+
 bool p3MsgService::distantMessagingEnabled()
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-	return mDistantMessagingEnabled ;
+    return mShouldEnableDistantMessaging ;
 }
 
 void p3MsgService::manageDistantPeers()
 {
 	// now possibly flush pending messages
 
+    if(mShouldEnableDistantMessaging == mDistantMessagingEnabled)
+        return ;
+
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::manageDistantPeers()" << std::endl;
 #endif
-	enableDistantMessaging(mDistantMessagingEnabled) ;
+    std::list<RsGxsId> own_id_list ;
+
+    if(mIdService->getOwnIds(own_id_list))
+    {
+#ifdef DEBUG_DISTANT_MSG
+        for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
+            std::cerr << (b?"Enabling":"Disabling") << " distant messaging, with peer id = " << *it << std::endl;
+#endif
+
+        for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
+        {
+            if(mShouldEnableDistantMessaging)
+                mGRouter->registerKey(*it,GROUTER_CLIENT_ID_MESSAGES,"Messaging contact") ;
+            else
+                mGRouter->unregisterKey(*it,GROUTER_CLIENT_ID_MESSAGES) ;
+        }
+
+        RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+        mDistantMessagingEnabled = mShouldEnableDistantMessaging ;
+    }
 }
 
 void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t data_status)

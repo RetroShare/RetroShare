@@ -431,10 +431,15 @@ bool p3IdService::isOwnId(const RsGxsId& id)
 
     return std::find(mOwnIds.begin(),mOwnIds.end(),id) != mOwnIds.end() ;
 }
-void p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
+bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
 {
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	ownIds = mOwnIds;
+    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+    if(!mOwnIdsLoaded)
+        return false ;
+
+    ownIds = mOwnIds;
+    return true ;
 }
 
 

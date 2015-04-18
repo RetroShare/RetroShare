@@ -186,8 +186,8 @@ void GlobalRouterStatisticsWidget::updateContent()
 
 	painter.setFont(monospace_f) ;
 
-    static const QString data_status_string[4] = { "UNKOWN","PENDING","SENT","RECEIVED" } ;
-    static const QString tunnel_status_string[3] = { "UNMANAGED", "REQUESTED","ACTIVE" } ;
+    static const QString data_status_string[6] = { "Unkown","Pending","Sent","Receipt OK","Ongoing","Done" } ;
+    static const QString tunnel_status_string[4] = { "Unmanaged", "Pending","Ready","Can send" } ;
 
     time_t now = time(NULL) ;
 	std::map<QString, std::vector<QString> > tos ;
@@ -196,10 +196,16 @@ void GlobalRouterStatisticsWidget::updateContent()
 	{
 		QString packet_string ;
 		packet_string += QString("Id=")+QString::number(cache_infos[i].mid,16)  ;
-        //packet_string += tr(" By ")+QString::fromStdString(cache_infos[i].local_origin.toStdString()) ;
+        packet_string += tr(" By (") ;
+
+    for(std::set<RsPeerId>::const_iterator it(cache_infos[i].local_origin.begin());it!=cache_infos[i].local_origin.end();++it)
+        packet_string += QString::fromStdString((*it).toStdString()) + " - ";
+
+    packet_string += ")" ;
         packet_string += tr(" Size: ")+QString::number(cache_infos[i].data_size) ;
-        packet_string += tr(" Data status: ")+data_status_string[cache_infos[i].data_status % 4] ;
-        packet_string += tr(" Tunnel status: ")+tunnel_status_string[cache_infos[i].tunnel_status % 3] ;
+        packet_string += tr(" Data status: ")+data_status_string[cache_infos[i].data_status % 6] ;
+        packet_string += tr(" Data hash: ")+QString::fromStdString(cache_infos[i].item_hash.toStdString()) ;
+        packet_string += tr(" Tunnel status: ")+tunnel_status_string[cache_infos[i].tunnel_status % 4] ;
         packet_string += " " + tr("Received: %1 secs ago, Send: %2 secs ago, Tried: %3 secs ago")
                             .arg(now - cache_infos[i].routing_time)
                             .arg(now - cache_infos[i].last_sent_time)

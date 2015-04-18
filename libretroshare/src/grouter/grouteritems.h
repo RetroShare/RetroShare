@@ -48,7 +48,7 @@ const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES                 = 0x80 ;	// it
 const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST                 = 0x82 ;	// item to save friend lists
 const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO_deprecated      = 0x87 ;	// deprecated. Don't use.
 const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO_deprecated2     = 0x88 ;	// item to save routing info
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO                 = 0x90 ;	// deprecated. Don't use.
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO                 = 0x92 ;	//
 
 const uint8_t QOS_PRIORITY_RS_GROUTER = 4 ;			// relevant for items that travel through friends
 

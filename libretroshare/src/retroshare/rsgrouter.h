@@ -44,7 +44,7 @@ public:
     struct GRouterRoutingCacheInfo
     {
         GRouterMsgPropagationId mid ;
-        RsPeerId                local_origin;
+        std::set<RsPeerId>      local_origin;
         GRouterKeyId            destination ;
         time_t                  routing_time;
         time_t                  last_tunnel_attempt_time;
@@ -53,7 +53,7 @@ public:
         uint32_t                data_status ;
         uint32_t                tunnel_status ;
         uint32_t                data_size ;
-        Sha1CheckSum            data_hash ;
+        Sha1CheckSum            item_hash ;
     };
 
     struct GRouterPublishedKeyInfo

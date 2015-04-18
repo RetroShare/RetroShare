@@ -271,7 +271,7 @@ virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
 
     /**************** RsGixs Implementation ***************/
 
-    virtual void getOwnIds(std::list<RsGxsId> &ownIds);
+    virtual bool getOwnIds(std::list<RsGxsId> &ownIds);
 
     //virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
     //virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;

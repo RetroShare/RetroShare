@@ -83,12 +83,14 @@ public:
         incoming_data_buffer = NULL ;
     }
 
-    void clear() { delete incoming_data_buffer ; incoming_data_buffer = NULL ;}
+    void clear() { if(incoming_data_buffer!=NULL) delete incoming_data_buffer ; incoming_data_buffer = NULL ;}
 
     // These two methods handle the memory management of buffers for each virtual peers.
 
     RsGRouterAbstractMsgItem *addDataChunk(RsGRouterTransactionChunkItem *chunk_item) ;
     RsGRouterTransactionChunkItem *incoming_data_buffer ;
+
+    time_t last_activity_TS ;
 };
 
 class p3GRouter: public RsGRouter, public RsTurtleClientService, public p3Service, public p3Config
@@ -219,6 +221,8 @@ private:
     void handleLowLevelServiceItem(RsGRouterTransactionItem*) ;
     void handleLowLevelTransactionChunkItem(RsGRouterTransactionChunkItem *chunk_item);
     void handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem*) ;
+
+    static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
 
     class nullstream: public std::ostream {};
 

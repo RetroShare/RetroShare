@@ -202,6 +202,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		std::string config_dir;
 
 		bool mDistantMessagingEnabled ;
+        bool mShouldEnableDistantMessaging ;
 };
 
 #endif // MESSAGE_SERVICE_HEADER

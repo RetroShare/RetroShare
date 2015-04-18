@@ -210,6 +210,7 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
     ok &= getRawUInt32(data, pktsize, &offset, &item->sending_attempts);
 
     ok &= getRawUInt32(data, pktsize, &offset, &item->client_id);
+    ok &= item->item_hash.deserialise(data, pktsize, offset) ;
     ok &= item->tunnel_hash.deserialise(data, pktsize, offset) ;
     ok &= getRawUInt32(data, pktsize, &offset, &item->routing_flags) ;
 
@@ -575,6 +576,7 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
 
     s += sizeof(GRouterServiceId)  ; 	// service_id
     s += tunnel_hash.serial_size() ;
+    s += item_hash.serial_size() ;
 
     s += 4 ; 				// routing_flags
     s += incoming_routes.TlvSize() ;	// incoming_routes
@@ -673,6 +675,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     ok &= setRawUInt32(data, tlvsize, &offset, sending_attempts) ;
 
     ok &= setRawUInt32(data, tlvsize, &offset, client_id) ;
+    ok &= item_hash.serialise(data, tlvsize, offset) ;
     ok &= tunnel_hash.serialise(data, tlvsize, offset) ;
     ok &= setRawUInt32(data, tlvsize, &offset, routing_flags) ;
 
@@ -739,6 +742,7 @@ std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
         o << "  Sending attempts:"<< sending_attempts << std::endl ;
         o << "  destination key: "<< data_item->destination_key << std::endl ;
     o << "  Client id:       "<< client_id << std::endl ;
+    o << "  item hash:     "<< item_hash << std::endl ;
     o << "  tunnel hash:     "<< tunnel_hash << std::endl ;
         o << "  Data size:       "<< data_item->data_size << std::endl ;
         o << "  Signed receipt:  "<< (void*)receipt_item << std::endl ;

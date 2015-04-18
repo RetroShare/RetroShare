@@ -125,7 +125,7 @@ public:
 
 //    virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
 
-    virtual void getOwnIds(std::list<RsGxsId>& ids) = 0;
+    virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
     virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
 
     virtual void timeStampKey(const RsGxsId& key_id) = 0 ;
