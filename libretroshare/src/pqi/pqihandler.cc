@@ -54,11 +54,13 @@ pqihandler::pqihandler(SecurityPolicy *Global) : coreMtx("pqihandler")
 	rateIndiv_out = 0.01;
 	rateIndiv_in = 0.01;
 	rateMax_out = 0.01;
-	rateMax_in = 0.01;
-	last_m = time(NULL) ;
+    rateMax_in = 0.01;
+    rateTotal_in = 0.0 ;
+    rateTotal_out = 0.0 ;
+    last_m = time(NULL) ;
 	nb_ticks = 0 ;
 	ticks_per_sec = 5 ; // initial guess
-	return;
+    return;
 }
 
 int	pqihandler::tick()
