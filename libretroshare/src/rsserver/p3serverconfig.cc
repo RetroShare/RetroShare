@@ -34,8 +34,8 @@ RsServerConfig *rsConfig = NULL;
 
 static const std::string pqih_ftr("PQIH_FTR");
 
-#define DEFAULT_DOWNLOAD_KB_RATE        (200.0)
-#define DEFAULT_UPLOAD_KB_RATE          (50.0)
+#define DEFAULT_DOWNLOAD_KB_RATE       (10000.0)
+#define DEFAULT_UPLOAD_KB_RATE         (10000.0)
 
 #define MIN_MINIMAL_RATE	(5.0)
 

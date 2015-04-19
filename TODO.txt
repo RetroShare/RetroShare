@@ -47,7 +47,6 @@ H        [X] distant messages should be made async-ed
 M        [X] distant messages are not re-sent when the peer is offline the first time
 M        [X] sent messages to direct peers in the Sent box have inconsistent To field. 
              Raises an error if you click on it.
-H        [ ] Merge the new messaging format? (or keep this for > 0.6)
 M        [X] icons for GxsTreeWidgetItem are too small in distant messages list widget
 E        [X] "from" should be disabled until we actually use a GXS id in the destination list.
 E        [X] "show all" and "show everyone" in destination list are duplicate names for different things. 
@@ -61,7 +60,6 @@ H        [X] marking all as read in channels takes time. The channel icon should
          [X] allow to post on channels when attachment is not in shared files. Just display a warning.
 M        [ ] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
              another location with many friends => popularity is too big at that location (should be 1)
-
       
        Chat lobbies
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
@@ -70,12 +68,12 @@ H        [X] Chat lobbies should use Identities. That's a significant change, pr
       
        Profile creation wizard
          [X] "Hidden node" should be an option at start. Apparently it becomes mandatory when one sets the advanced mode. 
-         [ ] the blue button "Generate new node" does not have a clear state. It should be grey while disabled, then 
+         [X] the blue button "Generate new node" does not have a clear state. It should be grey while disabled, then 
              not grey. Or maybe use an icon?
 
        Settings
          [X] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
-         [ ] Default max upload should be a large number. Not 50KB/s!!
+         [X] Default max upload should be a large number. Not 50KB/s!!
 
        Chat
          [X] Distant chat window should show GXS avatars
@@ -145,5 +143,8 @@ M        [ ] separate chat stuff from rsmsgs.h into rschat.h
 
       Chat
 H        [ ] add "chat with this peer" from lobbies to start a private distant conversation with the GXS id of the peer
+
+		Msgs
+H        [ ] Merge the new messaging format
 
 

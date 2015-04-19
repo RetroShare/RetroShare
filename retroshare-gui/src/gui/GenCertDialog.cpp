@@ -159,12 +159,13 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	// make sure that QVariant always takes an 'int' otherwise the program will crash!
 	ui.keylength_comboBox->addItem("2048 bits", QVariant(2048));
 	ui.keylength_comboBox->addItem("3072 bits", QVariant(3072));
-	ui.keylength_comboBox->addItem("4096 bits", QVariant(4096));
+    ui.keylength_comboBox->addItem("4096 bits", QVariant(4096));
 
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
-	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
-	ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
+    ui.node_input->setPlaceholderText(tr("[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)")) ;
+    ui.hiddenaddr_input->setPlaceholderText(tr("[Required] ")) ;
+    ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
 	ui.password_input->setPlaceholderText(tr("[Required] This password protects your PGP key."));
 	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
 #endif
