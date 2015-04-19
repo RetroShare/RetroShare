@@ -214,6 +214,28 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="label_hiddenaddr2">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare's Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -438,28 +460,6 @@ anonymous, you can use a fake email.</string>
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_hiddenaddr2">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="text">
-      <string>This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion and your selected port,  you must first launch TOR and create a new hidden service to generate this address.</string>
-     </property>
-     <property name="scaledContents">
-      <bool>false</bool>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QLabel" name="entropy_label">
      <property name="font">
       <font>
@@ -482,7 +482,7 @@ anonymous, you can use a fake email.</string>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="genButton">
+    <widget class="QPushButton" name="genButton2">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -502,22 +502,35 @@ anonymous, you can use a fake email.</string>
      <property name="text">
       <string>Create new identity</string>
      </property>
+     <property name="icon">
+      <iconset resource="images.qrc">
+       <normaloff>:/images/resume.png</normaloff>:/images/resume.png</iconset>
+     </property>
     </widget>
    </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
-  <zorder>headerFrame</zorder>
+  <zorder>genButton2</zorder>
   <zorder>header_label</zorder>
-  <zorder>genButton</zorder>
-  <zorder>header_label</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
   <zorder>genprofileinfo_label</zorder>
   <zorder>entropy_bar</zorder>
-  <zorder>label_hiddenaddr2</zorder>
   <zorder>entropy_label</zorder>
-  <zorder>layoutWidget_3</zorder>
   <zorder>headerFrame</zorder>
   <zorder>no_gpg_key_label</zorder>
+  <zorder>verticalSpacer</zorder>
+  <zorder>label_hiddenaddr2</zorder>
  </widget>
  <customwidgets>
   <customwidget>

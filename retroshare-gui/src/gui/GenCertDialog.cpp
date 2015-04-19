@@ -96,10 +96,18 @@ void GenCertDialog::grabMouse()
 
 	ui.entropy_bar->setValue(count*100/2048) ;
 
-	if(ui.entropy_bar->value() < 20)
-		ui.genButton->setEnabled(false) ;
-	else
-		ui.genButton->setEnabled(true) ;
+    if(ui.entropy_bar->value() < 20)
+    {
+        ui.genButton2->setEnabled(false) ;
+        ui.genButton2->setIcon(QIcon(":/images/delete.png")) ;
+    ui.genButton2->setToolTip(tr("Currently disabled. Please move your mouse around until you reach at least 20%")) ;
+    }
+    else
+    {
+        ui.genButton2->setEnabled(true) ;
+        ui.genButton2->setIcon(QIcon(":/images/resume.png")) ;
+    ui.genButton2->setToolTip(tr("CLick to create your node and/or identity")) ;
+    }
 
 	RsInit::collectEntropy(E+(F << 16)) ;
 }
@@ -122,7 +130,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
     connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
     connect(ui.hidden_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
 
-	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
+    connect(ui.genButton2, SIGNAL(clicked()), this, SLOT(genPerson()));
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
@@ -206,7 +214,7 @@ void GenCertDialog::init()
 		ui.no_gpg_key_label->hide();
 		ui.new_gpg_key_checkbox->setChecked(false);
 		setWindowTitle(tr("Create new node"));
-		ui.genButton->setText(tr("Generate new node"));
+        ui.genButton2->setText(tr("Generate new node"));
 		ui.headerFrame->setHeaderText(tr("Create a new node"));
 		genNewGPGKey = false;
 	} else {
@@ -214,7 +222,7 @@ void GenCertDialog::init()
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->setEnabled(true);
 		setWindowTitle(tr("Create new Identity"));
-		ui.genButton->setText(tr("Generate new Identity"));
+        ui.genButton2->setText(tr("Generate new Identity"));
 		ui.headerFrame->setHeaderText(tr("Create a new Identity"));
 		genNewGPGKey = true;
 	}
@@ -260,9 +268,9 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.importIdentity_PB->hide() ;
 		ui.exportIdentity_PB->hide();
 		setWindowTitle(tr("Create new identity"));
-		ui.genButton->setText(tr("Generate new identity"));
+        ui.genButton2->setText(tr("Generate new identity and node"));
 		ui.headerFrame->setHeaderText(tr("Create a new identity"));
-		ui.genButton->setVisible(true);
+        ui.genButton2->setVisible(true);
 		ui.genprofileinfo_label->hide();
 		ui.header_label->show();
 		//ui.keylength_label->show();
@@ -283,8 +291,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.exportIdentity_PB->setVisible(!mOnlyGenerateIdentity);
 		ui.exportIdentity_PB->setEnabled(ui.genPGPuser->count() != 0);
 		setWindowTitle(tr("Create new node"));
-		ui.genButton->setText(tr("Generate new node"));
-		ui.genButton->setVisible(ui.genPGPuser->count() != 0);
+        ui.genButton2->setText(tr("Generate new node"));
+        ui.genButton2->setVisible(ui.genPGPuser->count() != 0);
 		ui.headerFrame->setHeaderText(tr("Create a new node"));
 		ui.genprofileinfo_label->show();
 		ui.header_label->hide();
@@ -459,7 +467,7 @@ void GenCertDialog::genPerson()
 		ui.genPGPuser->hide();
 		ui.node_label->hide();
 		ui.node_input->hide();
-		ui.genButton->hide();
+        ui.genButton2->hide();
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
         ui.hidden_checkbox->hide();
