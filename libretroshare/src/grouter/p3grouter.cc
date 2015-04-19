@@ -604,9 +604,22 @@ void GRouterTunnelInfo::addVirtualPeer(const TurtleVirtualPeerId& vpid)
     if(first_tunnel_ok_TS == 0) first_tunnel_ok_TS = now ;
     last_tunnel_ok_TS = now ;
 }
+
 RsGRouterAbstractMsgItem *GRouterDataInfo::addDataChunk(RsGRouterTransactionChunkItem *chunk)
 {
     last_activity_TS = time(NULL) ;
+
+    // perform some checking
+
+    if(chunk->total_size > MAX_GROUTER_DATA_SIZE + 10000 || chunk->chunk_size > chunk->total_size || chunk->chunk_start >= chunk->total_size)
+    {
+        std::cerr << "  ERROR: chunk size is unconsistent, or too large: size=" << chunk->chunk_size << ", start=" << chunk->chunk_start << ", total size=" << chunk->total_size << ". Chunk will be dropped. Data pipe will be reset." << std::endl;
+        clear() ;
+        delete chunk ;
+        return NULL ;
+    }
+
+    // now add that chunk.
 
     if(incoming_data_buffer == NULL)
     {
