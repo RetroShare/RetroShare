@@ -110,7 +110,7 @@
      </attribute>
      <column>
       <property name="text">
-       <string>Friends</string>
+       <string>Friend nodes</string>
       </property>
      </column>
      <column>
