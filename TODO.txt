@@ -39,13 +39,12 @@ E        [X] "Friends details" should show both PGP key and RS certs in differen
              It should specify clearly which one should be used to make friends.
 E        [X] addFriend does not work when the cert contains signatures.
 E        [X] PGP signatures are not transmited by discovery2. 
-         [ ] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
-         [ ] Default layout should use toolbars. The "menu" look is inneficient
+         [X] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
+         [X] Default layout should use toolbars. The "menu" look is inneficient
       
        Messages
-         [ ] right-click + send message on location from friendlist does not set the proper destination
-H        [ ] distant messages should be made async-ed
-M        [ ] distant messages are not re-sent when the peer is offline the first time
+H        [X] distant messages should be made async-ed
+M        [X] distant messages are not re-sent when the peer is offline the first time
 M        [X] sent messages to direct peers in the Sent box have inconsistent To field. 
              Raises an error if you click on it.
 H        [ ] Merge the new messaging format? (or keep this for > 0.6)

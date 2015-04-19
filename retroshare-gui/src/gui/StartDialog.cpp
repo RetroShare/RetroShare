@@ -119,13 +119,14 @@ void StartDialog::notSecureWarning()
 {
 	/* some error msg */
 	if (ui.autologin_checkbox->isChecked())
-#ifdef UBUNTU
-		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
+#ifdef WINDOWS_SYS
+        QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. \n\n Your PGP password will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
 #else
 #ifdef __APPLE__
 		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in your Keychain. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
 #else
-		QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. \n\n Your PGP password will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
+        // this handles all linux systems at once.
+        QMessageBox::warning ( this, tr("Warning"), tr("The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
 #endif
 #endif
 }

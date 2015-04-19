@@ -157,7 +157,12 @@ void RshareSettings::setLanguageCode(QString languageCode)
 /** Gets the interface style key (e.g., "windows", "motif", etc.) */
 QString RshareSettings::getInterfaceStyle()
 {
-	return value(SETTING_STYLE).toString();
+    // use GTK as default style on ubuntu
+#ifdef UBUNTU
+    return value(SETTING_STYLE,QString("GTK+")).toString();
+#else
+    return value(SETTING_STYLE,QString("Cleanlooks")).toString();
+#endif
 }
 
 /** Sets the interface style key. */
@@ -180,7 +185,7 @@ void RshareSettings::setSheetName(QString sheet)
 /** Gets the page button Location.*/
 bool RshareSettings::getPageButtonLoc()
 {
-	return value(SETTING_PAGEBUTTONLOC, false).toBool();
+    return value(SETTING_PAGEBUTTONLOC, true).toBool();
 }
 /** Sets the page button Location.*/
 void RshareSettings::setPageButtonLoc(bool onToolBar)
