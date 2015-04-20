@@ -73,6 +73,25 @@ GxsIdDetails::~GxsIdDetails()
 {
 }
 
+void GxsIdDetails::initialize()
+{
+	if (mInstance) {
+		return;
+	}
+
+	mInstance = new GxsIdDetails;
+}
+
+void GxsIdDetails::cleanup()
+{
+	if (!mInstance) {
+		return;
+	}
+
+	delete(mInstance);
+	mInstance = NULL;
+}
+
 void GxsIdDetails::objectDestroyed(QObject *object)
 {
 	if (!object) {
@@ -167,8 +186,6 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 
 			if (mPendingData.empty()) {
 				/* All done */
-				mInstance = NULL;
-				deleteLater();
 			} else {
 				/* Start timer */
 				doStartTimer();
@@ -216,10 +233,12 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 
 	/* Add id to the pending list */
 	if (!mInstance) {
-		mInstance = new GxsIdDetails;
-		mInstance->moveToThread(qApp->thread());
+		/* GxsIdDetails not initialized. Please use ::initialize */
+		callback(GXS_ID_DETAILS_TYPE_FAILED, details, object, data);
+		return false;
 	}
-    callback(GXS_ID_DETAILS_TYPE_LOADING, details, object, data);
+
+	callback(GXS_ID_DETAILS_TYPE_LOADING, details, object, data);
 
 	CallbackData pendingData;
 	pendingData.mId = id;

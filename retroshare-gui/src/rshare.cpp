@@ -40,6 +40,7 @@
 #include <retroshare/rsversion.h>
 #include <lang/languagesupport.h>
 #include "gui/settings/rsharesettings.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 #include "rshare.h"
 
@@ -160,12 +161,16 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 
   /* Switch off auto shutdown */
   setQuitOnLastWindowClosed ( false );
+
+	/* Initialize GxsIdDetails */
+	GxsIdDetails::initialize();
 }
 
 /** Destructor */
 Rshare::~Rshare()
 {
-
+	/* Cleanup GxsIdDetails */
+	GxsIdDetails::cleanup();
 }
 
 QString Rshare::retroshareVersion(bool withRevision)

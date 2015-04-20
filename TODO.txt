@@ -23,7 +23,7 @@ E        [X] it's not possible to create a Forum thread without a Owner.
          [X] the tooltip over GXS ids should show the avatar on the left side.
          [X] fix data race between GXS ID default icons
          [X] Share of key shows "Not implemented". Since forums are public, share key should be hidden.
-         [ ] switching between forums might cause a crash. Seems to be due to GxsIdDetails::instance not always initialised when used.
+         [X] switching between forums might cause a crash. Seems to be due to GxsIdDetails::instance not always initialised when used.
       
        GUI General
 E        [ ] do we keep "Getting Started" ? the look needs to be improved. Any help doing this is welcome!

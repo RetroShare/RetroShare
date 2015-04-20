@@ -57,6 +57,9 @@ public:
 	GxsIdDetails();
 	virtual ~GxsIdDetails();
 
+	static void initialize();
+	static void cleanup();
+
 	/* Information */
 	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment);
 
