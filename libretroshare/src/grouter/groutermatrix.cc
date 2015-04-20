@@ -210,8 +210,10 @@ bool GRouterMatrix::updateRoutingProbabilities()
 		v.resize(_friend_indices.size(),0.0f) ;
 
 		for(std::list<RoutingMatrixHitEntry>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
-		{
-			float time_difference_in_days = 1 + (now - (*it2).time_stamp ) / 86400.0f ;
+        {
+            // Half life period is 7 days.
+
+            float time_difference_in_days = 1 + (now - (*it2).time_stamp ) / (7*86400.0f) ;
 			v[(*it2).friend_id] += (*it2).weight / (time_difference_in_days*time_difference_in_days) ;
 		}
 	}

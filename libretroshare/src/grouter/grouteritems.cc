@@ -203,8 +203,7 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
     ok &= getRawUInt32(data, pktsize, &offset, &item->data_status);
     ok &= getRawUInt32(data, pktsize, &offset, &item->tunnel_status);
     ok &= getRawTimeT(data, pktsize, &offset, item->received_time_TS);
-    ok &= getRawTimeT(data, pktsize, &offset, item->last_tunnel_sent_TS);
-    ok &= getRawTimeT(data, pktsize, &offset, item->last_friend_sent_TS);
+    ok &= getRawTimeT(data, pktsize, &offset, item->last_sent_TS);
 
     ok &= getRawTimeT(data, pktsize, &offset, item->last_tunnel_request_TS);
     ok &= getRawUInt32(data, pktsize, &offset, &item->sending_attempts);
@@ -568,8 +567,7 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
     s += 4  ; 				// data status_flags
     s += 4  ; 				// tunnel status_flags
     s += 8  ; 				// received_time
-    s += 8  ; 				// last_tunnel_sent_TS
-    s += 8  ; 				// last_friend_sent_TS
+    s += 8  ; 				// last_sent_TS
 
     s += 8  ; 				// last_TR_TS
     s += 4  ; 				// sending attempts
@@ -669,8 +667,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     ok &= setRawUInt32(data, tlvsize, &offset, data_status) ;
     ok &= setRawUInt32(data, tlvsize, &offset, tunnel_status) ;
     ok &= setRawTimeT(data, tlvsize, &offset, received_time_TS) ;
-    ok &= setRawTimeT(data, tlvsize, &offset, last_tunnel_sent_TS) ;
-    ok &= setRawTimeT(data, tlvsize, &offset, last_friend_sent_TS) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, last_sent_TS) ;
     ok &= setRawTimeT(data, tlvsize, &offset, last_tunnel_request_TS) ;
     ok &= setRawUInt32(data, tlvsize, &offset, sending_attempts) ;
 
@@ -737,8 +734,7 @@ std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
     o << "  data   status:   "<< std::hex<< data_status << std::dec << std::endl ;
     o << "  tunnel status:   "<< tunnel_status << std::endl ;
         o << "  recv time:       "<< received_time_TS << std::endl 	;
-        o << "  Last tunnel sent:       "<< last_tunnel_sent_TS << std::endl ;
-        o << "  Last friend sent:       "<< last_friend_sent_TS << std::endl ;
+        o << "  Last sent:       "<< last_sent_TS << std::endl ;
         o << "  Sending attempts:"<< sending_attempts << std::endl ;
         o << "  destination key: "<< data_item->destination_key << std::endl ;
     o << "  Client id:       "<< client_id << std::endl ;

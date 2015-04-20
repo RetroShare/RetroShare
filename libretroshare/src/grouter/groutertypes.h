@@ -46,21 +46,17 @@ static const float RS_GROUTER_BASE_WEIGHT_GXS_PACKET          = 0.1f ;	// base c
 
 static const uint32_t MAX_TUNNEL_WAIT_TIME                 = 60          ; // wait for 60 seconds at most for a tunnel response.
 static const uint32_t MAX_TUNNEL_UNMANAGED_TIME            = 600         ; // min time before retry tunnels for that msg.
-static const uint32_t MAX_DELAY_BETWEEN_TWO_SEND           = 120         ; // wait for 120 seconds before re-sending.
+static const uint32_t MAX_DELAY_FOR_RESEND                 = 2*86400+300 ; // re-send if held for more than 2 days (cache store period) plus security delay.
 static const uint32_t TUNNEL_OK_WAIT_TIME                  = 2           ; // wait for 2 seconds after last tunnel ok, so that we have a complete set of tunnels.
 static const uint32_t MAX_GROUTER_DATA_SIZE                = 2*1024*1024 ; // 2MB size limit. This is of course arbitrary.
-static const uint32_t MAX_RECEIPT_WAIT_TIME                = 20          ; // wait for at most 20 secs for a receipt. If not, cancel.
 static const uint32_t MAX_TRANSACTION_ACK_WAITING_TIME     = 60          ; // wait for at most 60 secs for a ACK. If not restart the transaction.
 static const uint32_t DIRECT_FRIEND_TRY_DELAY              = 20          ; // wait for 20 secs if no friends available, then try tunnels.
 static const uint32_t MAX_INACTIVE_DATA_PIPE_DELAY         = 300         ; // clean inactive data pipes for more than 5 mins
 
-static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD         =      10 ; // Output everything
-static const time_t RS_GROUTER_AUTOWASH_PERIOD             =      10 ; // Autowash every minute. Not a costly operation.
-static const time_t RS_GROUTER_MATRIX_UPDATE_PERIOD        =   1 *10 ; // Check for key advertising every 10 minutes
-static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =   2 *60 ; // time between two trial of sending a given message
-//atic const time_t RS_GROUTER_ROUTING_WAITING_TIME        =    3600 ; // time between two trial of sending a given message
-static const time_t RS_GROUTER_MEAN_EXPECTED_RTT           =      30 ; // reference RTT time for a message.
-static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     =   86400 ; // Cached items are kept for 24 hours at most.
+static const time_t   RS_GROUTER_DEBUG_OUTPUT_PERIOD       =      10 ; // Output everything
+static const time_t   RS_GROUTER_AUTOWASH_PERIOD           =      10 ; // Autowash every minute. Not a costly operation.
+static const time_t   RS_GROUTER_MATRIX_UPDATE_PERIOD      =   1 *10 ; // Check for key advertising every 10 minutes
+static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     = 2*86400 ; // Cached items are kept for 48 hours at most.
 
 static const uint32_t RS_GROUTER_DATA_STATUS_UNKNOWN       = 0x0000 ;	// unknown. Unused.
 static const uint32_t RS_GROUTER_DATA_STATUS_PENDING       = 0x0001 ;	// item is pending. Should be sent asap.
@@ -72,10 +68,9 @@ static const uint32_t RS_GROUTER_DATA_STATUS_DONE          = 0x0005 ;	// receipt
 static const uint32_t RS_GROUTER_SENDING_STATUS_TUNNEL     = 0x0001 ;	// item was sent in a tunnel
 static const uint32_t RS_GROUTER_SENDING_STATUS_FRIEND     = 0x0002 ;	// item was sent to a friend
 
-static const uint32_t RS_GROUTER_TUNNEL_STATUS_UNMANAGED   = 0x0000 ; // no tunnel requested atm
-static const uint32_t RS_GROUTER_TUNNEL_STATUS_PENDING     = 0x0001 ; // tunnel requested to turtle
-static const uint32_t RS_GROUTER_TUNNEL_STATUS_READY       = 0x0002 ; // tunnel is ready but we're still waiting for various confirmations
-//static const uint32_t RS_GROUTER_TUNNEL_STATUS_CAN_SEND    = 0x0003 ; // tunnel is ready and data can be sent
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_UNMANAGED   = 0x0000 ; 	// no tunnel requested atm
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_PENDING     = 0x0001 ; 	// tunnel requested to turtle
+static const uint32_t RS_GROUTER_TUNNEL_STATUS_READY       = 0x0002 ; 	// tunnel is ready but we're still waiting for various confirmations
 
 class FriendTrialRecord
 {
@@ -105,8 +100,7 @@ public:
     uint32_t tunnel_status ;		// status of tunnel handling.
 
     time_t received_time_TS ;		// time at which the item was originally received
-    time_t last_tunnel_sent_TS ;	// last time the item was sent to friends
-    time_t last_friend_sent_TS ;	// last time the item was sent to friends
+    time_t last_sent_TS ;		// last time the item was sent
     time_t last_tunnel_request_TS ;	// last time tunnels have been asked for this item.
     uint32_t sending_attempts ;		// number of times tunnels have been asked for this peer without success
 

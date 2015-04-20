@@ -402,9 +402,11 @@ HEADERS +=  grouter/groutercache.h \
 				grouter/grouteritems.h \
 				grouter/p3grouter.h \
 				grouter/rsgroutermatrix.h \
+				grouter/groutertypes.h \
 				grouter/rsgrouterclient.h 
 
-HEADERS +=	serialiser/rsbaseserial.h \
+HEADERS +=	serialiser/itempriorities.h \
+			serialiser/rsbaseserial.h \
 			serialiser/rsfiletransferitems.h \
 			serialiser/rsserviceserialiser.h \
 			serialiser/rsconfigitems.h \
