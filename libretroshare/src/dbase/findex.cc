@@ -1045,8 +1045,9 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 	s += "-\n";
 
 	// now compress the data.
-	
-	std::cerr << "FileIndex::saveIndex(): compressign data." << std::endl;
+#ifdef FI_DEBUG
+    std::cerr << "FileIndex::saveIndex(): compressign data." << std::endl;
+#endif
 
 	uint8_t *compressed_data = NULL ;
 	uint32_t compressed_data_size = 0 ;
@@ -1059,10 +1060,12 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 
 	fileHash = RsDirUtil::sha1sum((unsigned char *)compressed_data,compressed_data_size);
 
-	std::cerr << "   file     = " << filename << std::endl;
+#ifdef FI_DEBUG
+    std::cerr << "   file     = " << filename << std::endl;
 	std::cerr << "   old size = " << s.length() << std::endl;
 	std::cerr << "   new size = " << compressed_data_size << std::endl;
-	std::cerr << "   hash     = " << fileHash << std::endl;
+    std::cerr << "   hash     = " << fileHash << std::endl;
+#endif
 
 //	/* calculate sha1 hash */
 //	SHA_CTX *sha_ctx = new SHA_CTX;

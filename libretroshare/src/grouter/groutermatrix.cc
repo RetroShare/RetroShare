@@ -27,6 +27,8 @@
 #include "groutermatrix.h"
 #include "grouteritems.h"
 
+//#define ROUTING_MATRIX_DEBUG
+
 GRouterMatrix::GRouterMatrix()
 {
 	_proba_need_updating = true ;
@@ -72,7 +74,9 @@ bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& so
 	for(uint32_t i=RS_GROUTER_MATRIX_MAX_HIT_ENTRIES;i<sz;++i)
 	{
 		lst.pop_back() ;
-		std::cerr << "Poped one entry" << std::endl;
+#ifdef ROUTING_MATRIX_DEBUG
+        std::cerr << "Poped one entry" << std::endl;
+#endif
 	}
 
 	_proba_need_updating = true ; 				// always, since we added new clues.
@@ -152,8 +156,10 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 	//	Then for a given list of online friends, the weights are computed into probabilities, 
 	//	that always sum up to 1.
 	//
-	if(_proba_need_updating)
-		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): matrix is not up to date. Not a real problem, but still..." << std::endl;
+#ifdef ROUTING_MATRIX_DEBUG
+    if(_proba_need_updating)
+        std::cerr << "GRouterMatrix::computeRoutingProbabilities(): matrix is not up to date. Not a real problem, but still..." << std::endl;
+#endif
 
 	probas.resize(friends.size(),0.0f) ;
 	float total = 0.0f ;
@@ -169,7 +175,9 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 		probas.clear() ;
 		probas.resize(friends.size(),p) ;
 
-		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): key id " << key_id.toStdString() << " does not exist! Returning uniform probabilities." << std::endl;
+#ifdef ROUTING_MATRIX_DEBUG
+        std::cerr << "GRouterMatrix::computeRoutingProbabilities(): key id " << key_id.toStdString() << " does not exist! Returning uniform probabilities." << std::endl;
+#endif
 		return  false ;
 	}
 	const std::vector<float>& w(it2->second) ;
@@ -203,7 +211,9 @@ bool GRouterMatrix::updateRoutingProbabilities()
 
 	for(std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
 	{
-		std::cerr << "      " << it->first.toStdString() << " : " ;
+#ifdef ROUTING_MATRIX_DEBUG
+        std::cerr << "      " << it->first.toStdString() << " : " ;
+#endif
 
 		std::vector<float>& v(_time_combined_hits[it->first]) ;
 		v.clear() ;
@@ -216,8 +226,10 @@ bool GRouterMatrix::updateRoutingProbabilities()
             float time_difference_in_days = 1 + (now - (*it2).time_stamp ) / (7*86400.0f) ;
 			v[(*it2).friend_id] += (*it2).weight / (time_difference_in_days*time_difference_in_days) ;
 		}
-	}
-	std::cerr << "  done." << std::endl;
+    }
+#ifdef ROUTING_MATRIX_DEBUG
+    std::cerr << "  done." << std::endl;
+#endif
 
 	_proba_need_updating = false ;
 	return true ;
@@ -225,7 +237,9 @@ bool GRouterMatrix::updateRoutingProbabilities()
 
 bool GRouterMatrix::saveList(std::list<RsItem*>& items) 
 {
-	std::cerr << "  GRoutingMatrix::saveList()" << std::endl;
+#ifdef ROUTING_MATRIX_DEBUG
+    std::cerr << "  GRoutingMatrix::saveList()" << std::endl;
+#endif
 
 	RsGRouterMatrixFriendListItem *item = new RsGRouterMatrixFriendListItem ;
 
@@ -249,13 +263,17 @@ bool GRouterMatrix::loadList(std::list<RsItem*>& items)
 	RsGRouterMatrixFriendListItem *itm1 = NULL ;
 	RsGRouterMatrixCluesItem      *itm2 = NULL ;
 
-	std::cerr << "  GRoutingMatrix::loadList()" << std::endl;
+#ifdef ROUTING_MATRIX_DEBUG
+    std::cerr << "  GRoutingMatrix::loadList()" << std::endl;
+#endif
 
 	for(std::list<RsItem*>::const_iterator it(items.begin());it!=items.end();++it)
 	{
 		if(NULL != (itm2 = dynamic_cast<RsGRouterMatrixCluesItem*>(*it)))
 		{
-			std::cerr << "    initing routing clues." << std::endl;
+#ifdef ROUTING_MATRIX_DEBUG
+            std::cerr << "    initing routing clues." << std::endl;
+#endif
 
 			_routing_clues[itm2->destination_key] = itm2->clues ;
 			_proba_need_updating = true ;	// notifies to re-compute all the info.

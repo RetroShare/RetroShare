@@ -843,8 +843,6 @@ void MessagesDialog::insertMessages()
         return;
     }
 
-    std::cerr <<"MessagesDialog::insertMessages called";
-
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
     MessageInfo msgInfo;

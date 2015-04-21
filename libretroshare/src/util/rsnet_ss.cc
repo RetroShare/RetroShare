@@ -194,9 +194,11 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 		case AF_INET6:
 			return sockaddr_storage_ipv6_port(addr);
 			break;
-		default:
-			std::cerr << "sockaddr_storage_port() invalid addr.ss_family";
-			std::cerr << std::endl;
+        default:
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_port() invalid addr.ss_family: " << addr.ss_family;
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return 0;
@@ -695,8 +697,10 @@ bool sockaddr_storage_ipv4_setport(struct sockaddr_storage &addr, uint16_t port)
 
 bool sockaddr_storage_ipv6_zeroip(struct sockaddr_storage &addr)
 {
-	std::cerr << "sockaddr_storage_ipv6_zeroip()";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_zeroip()";
+    std::cerr << std::endl;
+#endif
 
 	struct sockaddr_in6 *ipv6_ptr = to_ipv6_ptr(addr);
 	memset(&(ipv6_ptr->sin6_addr), 0, sizeof(ipv6_ptr->sin6_addr));
@@ -705,8 +709,10 @@ bool sockaddr_storage_ipv6_zeroip(struct sockaddr_storage &addr)
 
 bool sockaddr_storage_ipv6_copyip(struct sockaddr_storage &dst, const struct sockaddr_storage &src)
 {
-	std::cerr << "sockaddr_storage_ipv6_copyip()";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_copyip()";
+    std::cerr << std::endl;
+#endif
 
 	struct sockaddr_in6 *dst_ptr = to_ipv6_ptr(dst);
 	const struct sockaddr_in6 *src_ptr = to_const_ipv6_ptr(src);
@@ -718,8 +724,10 @@ bool sockaddr_storage_ipv6_copyip(struct sockaddr_storage &dst, const struct soc
 
 uint16_t sockaddr_storage_ipv6_port(const struct sockaddr_storage &addr)
 {
+#ifdef SS_DEBUG
 	std::cerr << "sockaddr_storage_ipv6_port()";
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	const struct sockaddr_in6 *ipv6_ptr = to_const_ipv6_ptr(addr);
 	uint16_t port = ntohs(ipv6_ptr->sin6_port);
@@ -728,8 +736,10 @@ uint16_t sockaddr_storage_ipv6_port(const struct sockaddr_storage &addr)
 
 bool sockaddr_storage_ipv6_setport(struct sockaddr_storage &addr, uint16_t port)
 {
-	std::cerr << "sockaddr_storage_ipv6_setport()";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_setport()";
+    std::cerr << std::endl;
+#endif
 
 	struct sockaddr_in6 *ipv6_ptr = to_ipv6_ptr(addr);
 	ipv6_ptr->sin6_port = htons(port);
@@ -818,8 +828,10 @@ bool sockaddr_storage_ipv4_samesubnet(const struct sockaddr_storage &addr, const
 // IPV6
 bool sockaddr_storage_ipv6_lessthan(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
 {
-	std::cerr << "sockaddr_storage_ipv6_lessthan()";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_lessthan()";
+    std::cerr << std::endl;
+#endif
 
 	const struct sockaddr_in6 *ptr1 = to_const_ipv6_ptr(addr);
 	const struct sockaddr_in6 *ptr2 = to_const_ipv6_ptr(addr2);
@@ -841,8 +853,10 @@ bool sockaddr_storage_ipv6_lessthan(const struct sockaddr_storage &addr, const s
 
 bool sockaddr_storage_ipv6_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
 {
-	std::cerr << "sockaddr_storage_ipv6_same()";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_same()";
+    std::cerr << std::endl;
+#endif
 	const struct sockaddr_in6 *ptr1 = to_const_ipv6_ptr(addr);
 	const struct sockaddr_in6 *ptr2 = to_const_ipv6_ptr(addr2);
 
@@ -851,8 +865,10 @@ bool sockaddr_storage_ipv6_same(const struct sockaddr_storage &addr, const struc
 
 bool sockaddr_storage_ipv6_sameip(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
 {
-	std::cerr << "sockaddr_storage_ipv6_sameip()";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_sameip()";
+    std::cerr << std::endl;
+#endif
 
 	const struct sockaddr_in6 *ptr1 = to_const_ipv6_ptr(addr);
 	const struct sockaddr_in6 *ptr2 = to_const_ipv6_ptr(addr2);
@@ -876,8 +892,10 @@ bool sockaddr_storage_ipv6_samenet(const struct sockaddr_storage &addr, const st
 	(void) addr;
 	(void) addr2;
 		
-	std::cerr << "sockaddr_storage_ipv6_samenet() TODO";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_samenet() TODO";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }
@@ -887,8 +905,10 @@ bool sockaddr_storage_ipv6_samesubnet(const struct sockaddr_storage &addr, const
 	(void) addr;
 	(void) addr2;
 	
-	std::cerr << "sockaddr_storage_ipv6_samesubnet() TODO";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_samesubnet() TODO";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }
@@ -1000,40 +1020,50 @@ bool sockaddr_storage_ipv4_isExternalNet(const struct sockaddr_storage &addr)
 
 bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage &addr)
 {
-	std::cerr << "sockaddr_storage_ipv6_isnull() TODO";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_isnull() TODO";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }
 
 bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage &addr)
 {
-	std::cerr << "sockaddr_storage_ipv6_isValidNet() TODO";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_isValidNet() TODO";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }
 
 bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage &addr)
 {
-	std::cerr << "sockaddr_storage_ipv6_isLoopbackNet() TODO";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_isLoopbackNet() TODO";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }
 
 bool sockaddr_storage_ipv6_isPrivateNet(const struct sockaddr_storage &addr)
 {
-	std::cerr << "sockaddr_storage_ipv6_isPrivateNet() TODO";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_isPrivateNet() TODO";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }
 
 bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &addr)
 {
-	std::cerr << "sockaddr_storage_ipv6_isExternalNet() TODO";
-	std::cerr << std::endl;
+#ifdef SS_DEBUG
+    std::cerr << "sockaddr_storage_ipv6_isExternalNet() TODO";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }

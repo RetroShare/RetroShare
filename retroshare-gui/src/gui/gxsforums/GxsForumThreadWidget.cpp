@@ -1859,8 +1859,10 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-	std::cerr << "GxsForumThreadWidget::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
+    std::cerr << std::endl;
+#endif
 
 	GxsMsgReq msgIds;
 	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
@@ -1872,8 +1874,10 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 
 void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 {
-	std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage()";
-	std::cerr << std::endl;
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage()";
+    std::cerr << std::endl;
+#endif
 
 	std::vector<RsGxsForumMsg> msgs;
 	if (rsGxsForums->getMsgData(token, msgs))
@@ -1899,8 +1903,10 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 
 void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-	std::cerr << "GxsForumThreadWidget::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::loadRequest() UserType: " << req.mUserType;
+    std::cerr << std::endl;
+#endif
 
 	if (queue == mTokenQueue)
 	{

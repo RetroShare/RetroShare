@@ -247,7 +247,7 @@ RsPeerId    ChatId::toPeerId()  const
         return peer_id;
     else
     {
-        std::cerr << "ChatId Warning: conversation to RsPeerId requested, but type is different." << std::endl;
+        std::cerr << "ChatId Warning: conversation to RsPeerId requested, but type is different. Current value=\"" << toStdString() << "\"" << std::endl;
         return RsPeerId();
     }
 }
@@ -257,7 +257,7 @@ RsGxsId     ChatId::toGxsId()   const
         return gxs_id;
     else
     {
-        std::cerr << "ChatId Warning: conversation to RsGxsId requested, but type is different." << std::endl;
+        std::cerr << "ChatId Warning: conversation to RsGxsId requested, but type is different. Current value=\"" << toStdString() << "\"" << std::endl;
         return RsGxsId();
     }
 }
@@ -267,7 +267,7 @@ ChatLobbyId ChatId::toLobbyId() const
         return lobby_id;
     else
     {
-        std::cerr << "ChatId Warning: conversation to ChatLobbyId requested, but type is different." << std::endl;
+        std::cerr << "ChatId Warning: conversation to ChatLobbyId requested, but type is different. Current value=\"" << toStdString() << "\"" << std::endl;
         return 0;
     }
 }

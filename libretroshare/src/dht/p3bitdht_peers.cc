@@ -221,9 +221,12 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
 	struct sockaddr_in addrv4;
 
 	if (addr.ss_family != AF_INET)
-	{
-		std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
-		std::cerr << std::endl;
+    {
+        if(addr.ss_family != AF_UNSPEC)
+        {
+            std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
+            std::cerr << std::endl;
+        }
 		sockaddr_clear(&addrv4);
 
 		if (flags & NETASSIST_KNOWN_PEER_ONLINE)

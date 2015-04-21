@@ -428,10 +428,9 @@ bool p3ServiceControl::updateServicesProvided(const RsPeerId &peerId, const RsPe
 #ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateServicesProvided() from: " << peerId.toStdString();
 	std::cerr << std::endl;
-#endif
-
 	std::cerr << info;
 	std::cerr << std::endl;
+#endif
 
 	mServicesProvided[peerId] = info;
     updateFilterByPeer_locked(peerId);

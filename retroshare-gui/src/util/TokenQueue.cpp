@@ -87,9 +87,11 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 
 void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
 {
+#ifdef ID_DEBUG
 	std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype;
 	std::cerr << " AnsType: " << anstype << " UserType: " << usertype;
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	TokenRequest req;
 	req.mToken = token;
@@ -210,10 +212,12 @@ void TokenQueue::cancelActiveRequestTokens(const uint32_t& userType)
 
 void TokenQueue::loadRequest(const TokenRequest &req)
 {
-	std::cerr << "TokenQueue::loadRequest(): ";
+#ifdef DEBUG_INFO
+    std::cerr << "TokenQueue::loadRequest(): ";
 	std::cerr << "Token: " << req.mToken << " Type: " << req.mType;
 	std::cerr << " AnsType: " << req.mAnsType << " UserType: " << req.mUserType;
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	mResponder->loadRequest(this, req);
 }
@@ -229,10 +233,12 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 	{
 		if (it->mToken == token)
 		{
-			mRequests.erase(it);
+            mRequests.erase(it);
 
-			std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
-			std::cerr << std::endl;
+#ifdef DEBUG_INFO
+            std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
+            std::cerr << std::endl;
+#endif
 
 			return true;
 		}

@@ -588,9 +588,11 @@ void bdNodeManager::SearchForLocalNet()
 	{
 		if (it->second.mQFlags & BITDHT_QFLAGS_INTERNAL)
 		{
-			std::cerr << "bdNodeManager::SearchForLocalNet() Existing Internal Search: ";
+#ifdef DEBUG_MGR
+            std::cerr << "bdNodeManager::SearchForLocalNet() Existing Internal Search: ";
 			mFns->bdPrintNodeId(std::cerr, &(it->first));
-			std::cerr << std::endl;
+            std::cerr << std::endl;
+#endif
 
 			numSearchQueries++;
 		}

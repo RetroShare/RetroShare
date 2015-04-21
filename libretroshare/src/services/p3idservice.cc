@@ -1046,7 +1046,8 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 					group.mPgpKnown = false;
 					group.mPgpId.clear();
 
-					std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString";
+                    std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
+                          << group.mMeta.mServiceString << "\"" ;
 					std::cerr << std::endl;
 				}
 

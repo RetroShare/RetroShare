@@ -42,6 +42,7 @@ const int pqipersongrpzone = 354;
 #include "pqi/pqissllistener.h"
 #include "pqi/p3peermgr.h"
 
+//#define PQISSLPERSON_DEBUG
 
 #ifndef PQI_DISABLE_UDP
   #include "pqi/pqissludp.h"
@@ -57,8 +58,10 @@ pqilistener * pqisslpersongrp::locked_createListener(const struct sockaddr_stora
 
 pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener *listener)
 {
+#ifdef PQISSLPERSON_DEBUG
 	std::cerr << "pqisslpersongrp::locked_createPerson() PeerId: " << id;
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id.toStdString());
 
@@ -68,8 +71,10 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 	// If we are a hidden node - then all connections should be via proxy.
 	if (mPeerMgr->isHiddenPeer(id) || mPeerMgr->isHidden())
 	{
-		std::cerr << "pqisslpersongrp::locked_createPerson() Is Hidden Peer!";
-		std::cerr << std::endl;
+#ifdef PQISTREAMER_DEBUG
+        std::cerr << "pqisslpersongrp::locked_createPerson() Is Hidden Peer!";
+        std::cerr << std::endl;
+#endif
 
 		pqisslproxy *pqis   = new pqisslproxy((pqissllistener *) listener, pqip, mLinkMgr);
 	
@@ -90,8 +95,10 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 	}
 	else
 	{	
-		std::cerr << "pqisslpersongrp::locked_createPerson() Is Normal Peer!";
-		std::cerr << std::endl;
+#ifdef PQISTREAMER_DEBUG
+        std::cerr << "pqisslpersongrp::locked_createPerson() Is Normal Peer!";
+        std::cerr << std::endl;
+#endif
 
 		pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
 	

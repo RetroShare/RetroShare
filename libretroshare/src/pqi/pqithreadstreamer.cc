@@ -31,6 +31,8 @@
 #define DEFAULT_STREAMER_SLEEP		   1000 // 1 ms.
 #define DEFAULT_STREAMER_IDLE_SLEEP	1000000 // 1 sec
 
+//#define PQISTREAMER_DEBUG
+
 pqithreadstreamer::pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
 :pqistreamer(rss, id, bio_in, bio_flags_in), mParent(parent), mThreadMutex("pqithreadstreamer"),  mTimeout(0)
 {
@@ -58,9 +60,11 @@ void pqithreadstreamer::start()
 {
 //    mToRun = true;
 
+#ifdef PQISTREAMER_DEBUG
     std::cerr << "pqithreadstreamer::run()" << std::endl;
     std::cerr << "  initing should_stop=0" << std::endl;
     std::cerr << "  initing has_stopped=1" << std::endl;
+#endif
 
     sem_init(&mShouldStopSemaphore,0,0) ;
     sem_init(&mHasStoppedSemaphore,0,0) ;
@@ -70,8 +74,10 @@ void pqithreadstreamer::start()
 
 void pqithreadstreamer::run()
 {
+#ifdef PQISTREAMER_DEBUG
     std::cerr << "pqithreadstream::run()";
     std::cerr << std::endl;
+#endif
 
     // tell the OS to free the thread resources when this function exits
     // it is a replacement for pthread_join()
@@ -84,8 +90,10 @@ void pqithreadstreamer::run()
 
         if(sval > 0)
         {
+#ifdef PQISTREAMER_DEBUG
             std::cerr << "pqithreadstreamer::run(): asked to stop." << std::endl;
             std::cerr << "  setting hasStopped=1" << std::endl;
+#endif
             sem_post(&mHasStoppedSemaphore) ;
             return ;
         }
@@ -96,18 +104,24 @@ void pqithreadstreamer::run()
 
 void pqithreadstreamer::shutdown()
 {
+#ifdef PQISTREAMER_DEBUG
     std::cerr << "pqithreadstreamer::stop()" << std::endl;
+#endif
 
     int sval =0;
     sem_getvalue(&mHasStoppedSemaphore,&sval) ;
 
     if(sval > 0)
     {
+#ifdef PQISTREAMER_DEBUG
         std::cerr << "  thread not running. Quit." << std::endl;
+#endif
         return ;
     }
 
+#ifdef PQISTREAMER_DEBUG
     std::cerr << "  calling stop" << std::endl;
+#endif
     sem_post(&mShouldStopSemaphore) ;
 }
 
@@ -115,9 +129,13 @@ void pqithreadstreamer::fullstop()
 {
     shutdown() ;
 
+#ifdef PQISTREAMER_DEBUG
     std::cerr << "  waiting stop" << std::endl;
+#endif
     sem_wait(&mHasStoppedSemaphore) ;
+#ifdef PQISTREAMER_DEBUG
     std::cerr << "  finished!" << std::endl;
+#endif
 }
 
 int	pqithreadstreamer::data_tick()

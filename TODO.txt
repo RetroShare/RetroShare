@@ -41,9 +41,12 @@ E        [X] addFriend does not work when the cert contains signatures.
 E        [X] PGP signatures are not transmited by discovery2. 
          [X] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
          [X] Default layout should use toolbars. The "menu" look is inneficient
+         [ ] replace sound tooltip "sound off" by "sound is on, click to turn off"
       
        Messages
 H        [X] distant messages should be made async-ed
+             * [ ] increase sigma of activity events to allow a more generous routing matrix
+             * [ ] collect routing events from chat lobbies? (maybe not a good idea)
 M        [X] distant messages are not re-sent when the peer is offline the first time
 M        [X] sent messages to direct peers in the Sent box have inconsistent To field. 
              Raises an error if you click on it.
@@ -60,6 +63,7 @@ H        [X] marking all as read in channels takes time. The channel icon should
          [X] allow to post on channels when attachment is not in shared files. Just display a warning.
 M        [ ] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
              another location with many friends => popularity is too big at that location (should be 1)
+         [ ] show group owner in channel/forum/posted's details tab
       
        Chat lobbies
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
@@ -120,7 +124,7 @@ H        [ ] RsGxsDataAccess::processRequests locks mDataMutex until all request
        Packaging
          [X] check compilation on debian
          [X] check compilation on ARM
-         [ ] Sound files should be part of the install package
+         [ ] Sound files should be part of the install package at least on ubuntu (put them in /usr/share)
 
  Post v0.6 release changes
  =========================

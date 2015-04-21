@@ -325,14 +325,18 @@ void p3PostBase::background_requestUnprocessedGroup()
 		RsStackMutex stack(mPostBaseMtx); /********** STACK LOCKED MTX ******/
 		if (mBgProcessing)
 		{
-			std::cerr << "p3PostBase::background_requestUnprocessedGroup() Already Active";
-			std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+            std::cerr << "p3PostBase::background_requestUnprocessedGroup() Already Active";
+            std::cerr << std::endl;
+#endif
 			return;
 		}
 		if (mBgGroupList.empty())
 		{
-			std::cerr << "p3PostBase::background_requestUnprocessedGroup() No Groups to Process";
-			std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+            std::cerr << "p3PostBase::background_requestUnprocessedGroup() No Groups to Process";
+            std::cerr << std::endl;
+#endif
 			return;
 		}
 

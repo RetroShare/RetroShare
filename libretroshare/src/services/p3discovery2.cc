@@ -1049,18 +1049,18 @@ void p3discovery2::recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *it
         /************* from pqiServiceMonitor *******************/
 void p3discovery2::statusChange(const std::list<pqiServicePeer> &plist)
 {
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 	std::cerr << "p3discovery2::statusChange()" << std::endl;
-//#endif
+#endif
 
 	std::list<pqiServicePeer>::const_iterator pit;
 	for(pit =  plist.begin(); pit != plist.end(); ++pit)
 	{
 		if (pit->actions & RS_SERVICE_PEER_CONNECTED) 
 		{
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 			std::cerr << "p3discovery2::statusChange() Starting Disc with: " << pit->id << std::endl;
-//#endif
+#endif
 			sendOwnContactInfo(pit->id);
 		} 
 		else if (pit->actions & RS_SERVICE_PEER_DISCONNECTED) 
@@ -1070,22 +1070,22 @@ void p3discovery2::statusChange(const std::list<pqiServicePeer> &plist)
 
 		if (pit->actions & RS_SERVICE_PEER_NEW)
 		{
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 			std::cerr << "p3discovery2::statusChange() Adding Friend: " << pit->id << std::endl;
-//#endif
+#endif
 			addFriend(pit->id);
 		}
 		else if (pit->actions & RS_SERVICE_PEER_REMOVED)
 		{
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 			std::cerr << "p3discovery2::statusChange() Removing Friend: " << pit->id << std::endl;
-//#endif
+#endif
 			removeFriend(pit->id);
 		}
 	}
-//#ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 	std::cerr << "p3discovery2::statusChange() finished." << std::endl;
-//#endif
+#endif
 	return;
 }
 
