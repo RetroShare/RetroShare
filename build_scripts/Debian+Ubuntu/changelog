@@ -1,6 +1,44 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    GUI
+      * fixed detection of TOR connections on server side (patch from sehraf)
+      * removed possible infinite loop when openning a rscollection file
+      * fixed server page: removed hidden node option from combo box. Added a label with correct tooltip
+
+   MSG
+      * implemented async message passing. Still being tested.
+
+   Identities
+      * added security 200 bytes limit on ID nicknames from getIdDetails and max size check in IdDialog
+      * Fixed crash in GxsIdDetails::process (GxsIdDetails::mInstance == NULL) by adding one global instance of GxsIdDetails.
+
+   FT
+      * changed default data rates (it is better to have some prople need to reduce it than everyone need to increase it). 
+
+   Certificates
+      * Added placeholder in gen cert dialog for TOR, improved cert creation dialog
+
+   General code change
+      * turned some std::list<PeerId> into std::set, as it automatically prevents duplicates
+
+   Bugs
+      * fixed uninitialised memory read in pqihandler
+      * fixed id auto-cleaning causing a deadlock
+      * prevent discovery and p3PeerMgr::loadList() from erasing service permission flags. 
+        Now the existing pgp-based values are kept.
+      * fix for linux compilation case where sqlcipher is present in a subdirectory of trunk (Patch from Heini)
+
+   WebUI:
+      * added missing fclose
+      * fixed makefile
+      * added support for urls and forward/backward browsing
+      * started optimization for touch screens
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 21 Avr 2015 22:00:00 +0100
+
+retroshare06 (0.6.0-0.8120~precise) precise; urgency=low
+
+   GUI
       * fix for revision number in ubuntu/debian (patch from heini, untested)
       * fixed compile on Linux with Qt5 (patch from sehraf)
       * fixed display of TOR information for hidden nodes (patch from Sehraf)
