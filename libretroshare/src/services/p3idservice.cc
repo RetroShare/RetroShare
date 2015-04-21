@@ -404,8 +404,11 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         if (mPublicKeyCache.fetch(id, data))
         {
             details = data.details;
-
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
+
+        if(details.mNickname.length() > 200)
+            details.mNickname = "[too long a name]" ;
+
             return true;
         }
 
