@@ -252,7 +252,6 @@ private:
     // utility functions
     //
     static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
-    static time_t computeNextTimeDelay(time_t duration) ;
     static bool sliceDataItem(RsGRouterAbstractMsgItem *,std::list<RsGRouterTransactionChunkItem*>& chunks) ;
 
     uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;

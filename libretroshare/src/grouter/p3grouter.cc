@@ -28,13 +28,6 @@
 // Decentralized routing
 // =====================
 // 
-// Use cases:
-//    - Peer A asks for B's key, for which he has the signature, or the ID.
-//    - Peer A wants to send a private msg to peer C, for which he has the public key
-//    - Peer A wants to contact a channel's owner, a group owner, a forum owner, etc.
-//    - Peer C needs to route msg/key requests from unknown peer, to unknown peer so that the information
-//       eventually reach their destination.
-// 
 // Main idea: Each peer holds a local routing table, a matrix with probabilities that each friend
 // is a correct path for a given key ID.
 // 
@@ -46,21 +39,12 @@
 // always chosen, but the randomness helps updating the routing probabilities.
 // 
 // Services that might use the router (All services really...)
-//     - Identity manager (p3Identity)
-//        - asks identities i.e. RSA public keys (i.e. sends dentity requests through router)
 //     - Messenger
 //        - sends/receives messages to distant peers
 //     - Channels, forums, posted, etc.
 //        - send messages to the origin of the channel/forum/posted
 // 
-// GUI
-//    - a debug panel should show the routing info: probabilities for all known IDs
-//    - routing probabilities for a given ID accordign to who's connected
-// 
 // Decentralized routing algorithm:
-//    - tick() method
-//       * calls send() and receive()
-// 
 //    - message passing
 //       - upward: 
 //          * Forward msg to friends according to probabilities.
@@ -73,7 +57,7 @@
 //          	- routing probabilities among connected friends
 //          		* this is computed by the routing matrix
 //          	- branching factor N
-//          		* depends on the depth of the items
+//          		* depends on the depth of the items. Currently branching is 3 at origin and 1 elsewhere.
 //          		* depends on the distribution of probabilities (min and max)
 //
 //          Once computed, 
@@ -109,31 +93,6 @@
 //       * saved to disk.
 //       * all contributions should have a time stamp. Regularly, the oldest contributions are removed.
 // 
-//          struct RoutingMatrixHitEntry
-//          {
-//             float weight ;
-//             time_t time_stamp ;
-//          }
-//          typedef std::map<std::string,std::list<RoutingMatrixHitEntry> > RSAKeyRoutingMap ;
-// 
-//          class RoutingMatrix
-//          {
-//             public:
-//                // Computes the routing probabilities for this id  for the given list of friends.
-//                // the computation accounts for the time at which the info was received and the
-//                // weight of each routing hit record.
-//                //
-//                bool computeRoutingProbabilities(RSAKeyIDType id, const std::vector<SSLIdType>& friends,
-//                                                 std::vector<float>& probas) const ;
-// 
-//                // Record one routing clue. The events can possibly be merged in time buckets.
-//                //
-//                bool addRoutingEvent(RSAKeyIDType id,const SSLIdType& which friend) ;
-// 
-//             private:
-//                std::map<RSAKeyIDType, RSAKeyRoutingMap> _known_keys ;
-//          };
-// 
 //    - Routed packets: we use a common packet type for all services:
 // 
 //       We need two abstract item types:
@@ -154,12 +113,6 @@
 //       * We need storage packets for the matrix states.
 //       * General routing options info?
 // 
-//    - estimated memory cost
-//       For each identity, the matrix needs
-//          - hits for each friend peer with time stamps. That means 8 bytes per hit.
-//             That is for 1000 identities, having at most 100 hits each (We keep
-//             the hits below a maximum. 100 seems ok.), that is 1000*100*8 < 1MB. Not much.
-// 
 //    - Main difficulties:
 //       * have a good re-try strategy if a msg does not arrive.
 //       * handle peer availability. In forward mode: easy. In backward mode:
@@ -167,16 +120,6 @@
 //       * robustness
 //       * security: avoid flooding, and message alteration.
 // 
-// 	- Questions to be solved
-// 		* how do we talk to other services?
-// 			- keep a list of services?
-// 
-// 			- in practice, services will need to send requests, and expect responses.
-// 				* gxs (p3identity) asks for a key, gxs (p3identity) should get the key.
-// 				* msg service wants to send a distant msg, or msg receives a distant msg.
-// 
-// 				=> we need abstract packets and service ids.
-//
 //  Data pipeline
 //  =============
 //
@@ -254,7 +197,7 @@
 #include "grouterclientservice.h"
 
 /**********************/
-#define GROUTER_DEBUG
+//#define GROUTER_DEBUG
 /**********************/
 
 
@@ -339,19 +282,6 @@ int p3GRouter::tick()
     }
 
     return 0 ;
-}
-
-time_t p3GRouter::computeNextTimeDelay(time_t stored_time)
-{
-	// Computes the time to wait before re-sending the object, based on how long it has been stored already.
-	
-	if(stored_time <       2*60  )  return      10 ;	// re-schedule every 10 secs for items not older than 2 mins. This ensures a rapid spread when peers are online.
-	if(stored_time <      40*60  )  return 10 * 60 ;	// then, try every 10 mins for 40 mins
-	if(stored_time <       4*3600)  return    3600 ;	// then, try every hour for 4 hours
-	if(stored_time <   10*24*3600)  return 12*3600 ;	// then, try every 12 hours for 10 days
-	if(stored_time < 6*30*24*3600)  return 5*86400 ;	// then, try every 5 days for 6 months
-
-	return 6*30*86400 ;											// default: try every 5 months
 }
 
 RsSerialiser *p3GRouter::setupSerialiser()
@@ -753,12 +683,6 @@ void p3GRouter::connectToTurtleRouter(p3turtle *pt)
 //                                                    Tunnel management                                                      //
 //===========================================================================================================================//
 
-// Each message is associated to a given GXS id.
-//	-> messages have a state about being sent/partially arrived/etc
-
-// Each GXS id + service might have a collection of virtual peers
-// 	-> each hash has possibly multiple virtual peers associated to it.
-
 class item_comparator_001
 {
 public:
@@ -771,13 +695,13 @@ public:
 
 void p3GRouter::handleTunnels()
 {
-    // This function is responsible for askign for tunnels, and removing requests from the turtle router.
+    // This function is responsible for asking for tunnels, and removing requests from the turtle router.
     // To remove the unnecessary TR activity generated by multiple peers trying to send the same message,
     // only peers which haven't passed on any data to direct friends, or for which the best friends are not online
     // will be allowed to monitor tunnels.
 
     // Go through the list of pending messages
-    // - if tunnels are pending for too long   =>   remove from turtle
+    // - if tunnels are pending for too long   => remove from turtle
     // - if item is waiting for too long       => tunnels are waitin
 
     // We need a priority queue of items to handle, starting from the most ancient items, with a delay that varies with
@@ -791,8 +715,7 @@ void p3GRouter::handleTunnels()
 
     // 1 - make a priority list of messages to ask tunnels for
 
-    // compute the priority of pending messages, according to the number of attempts and how far in the past they have been tried for the last time.
-
+    // Compute the priority of pending messages, according to the number of attempts and how far in the past they have been tried for the last time.
     // Delay after which a message is re-sent, depending on the number of attempts already made.
 
     RS_STACK_MUTEX(grMtx) ;
@@ -1049,7 +972,7 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,std::l
     // The strategy is the following:
     //  	if origin
     //		send to multiple neighbors : best and random
-        //	else
+    //	else
     //		send to a single "best" neighbor (determined by threshold over routing probability),
 
     std::set<RsPeerId> ids ;

@@ -1766,12 +1766,12 @@ void MessageComposer::addRecipient(enumType type, const RsPeerId& pid)
 }
 void MessageComposer::addRecipient(enumType type, const RsGxsId& gxs_id)
 {
-    static bool already = false ;
-    if(!already)
-	 {
-        QMessageBox::warning(NULL,"Distant messaging not stable","Distant messaging is currently unstable. Do not expect too much from it.") ;
-		 already = true ;
-	 }
+//    static bool already = false ;
+//    if(!already)
+//	 {
+//        	QMessageBox::warning(NULL,"Distant messaging not stable","Distant messaging is currently unstable. Do not expect too much from it.") ;
+//		already = true ;
+//	 }
 
     int rowCount = ui.recipientWidget->rowCount();
     int row;
