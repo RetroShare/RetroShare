@@ -234,13 +234,13 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 
     if (item && item->type() == TYPE_LOBBY)
     {
+        std::list<RsGxsId> own_identities ;
+        rsIdentity->getOwnIds(own_identities) ;
+
         if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
             contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Leave this lobby"), this, SLOT(unsubscribeItem()));
         else
         {
-            std::list<RsGxsId> own_identities ;
-            rsIdentity->getOwnIds(own_identities) ;
-
             QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
             uint32_t item_flags = item->data(COLUMN_DATA,ROLE_ID).toUInt() ;
 
@@ -271,16 +271,12 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
                     action->setData(QString::fromStdString((*it).toStdString())) ;
                 }
             }
+        }
 
-            if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool())
-                contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
-            else
-        {
-        if(!own_identities.empty())
+        if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool())
+            contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+        else if(!own_identities.empty())
             contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
-        }
-
-        }
     }
 
         contextMnu.addSeparator();//-------------------------------------------------------------------
