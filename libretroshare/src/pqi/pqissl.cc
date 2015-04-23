@@ -1490,8 +1490,10 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 	active = true;
 	waiting = WAITING_NOT;
 
+#ifdef PQISSL_DEBUG
 	std::cerr << "pqissl::accept_locked() connection complete - notifying parent";
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	// Notify the pqiperson.... (Both Connect/Receive)
 	if (parent())
