@@ -119,7 +119,7 @@ virtual int checkOutgoingRsItem(RsItem *item, int global)
 	private:
 
 	// The serviceserver operation.
-	int tickServiceRecv();
+    //int tickServiceRecv();
 	//int tickServiceSend();
 
 	pqilistener *pqil;

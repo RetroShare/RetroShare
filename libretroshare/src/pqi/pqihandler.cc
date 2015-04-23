@@ -349,7 +349,7 @@ int pqihandler::locked_GetItems()
 			{
 
 				static int ntimes =0 ;
-				if(++ntimes < 20)
+//				if(++ntimes < 20)
 				{
 		std::cerr << "pqihandler::locked_GetItems() pqi->GetItem()";
         std::cerr << " should never happen anymore!";

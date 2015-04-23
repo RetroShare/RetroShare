@@ -70,7 +70,7 @@ bool pqipersongrp::RecvRsRawItem(RsRawItem *item)
 
 
 
-
+#ifdef TO_BE_REMOVED
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
 {
@@ -103,13 +103,14 @@ int pqipersongrp::tickServiceRecv()
 	}
 	return 0;
 }
+#endif
 
 // handle the tunnel services.
 
 // Improvements:
 // This function is no longer necessary, and data is pushed directly to pqihandler.
 
-#if 0
+#ifdef TO_BE_REMOVED
 int pqipersongrp::tickServiceSend()
 {
         RsRawItem *pqi = NULL;
@@ -160,18 +161,14 @@ int	pqipersongrp::tick()
 
 	int i = 0;
 
-#if 0
-	if (tickServiceSend())
+#ifdef TO_BE_REMOVED
+    if (tickServiceSend())
 	{
 		i = 1;
 #ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceSend()" << std::endl;
 #endif
 	}
-#endif
-
-
-#if 0
 	if (pqihandler::tick()) /* does Send/Recv */
 	{
 		i = 1;
@@ -179,29 +176,15 @@ int	pqipersongrp::tick()
                 std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
 #endif
 	}
-#endif
-
-
 	if (tickServiceRecv())
 	{
 		i = 1;
 #ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceRecv()" << std::endl;
 #endif
-	}
-
-	p3ServiceServer::tick(); 
-
-#if 1
-	if (pqihandler::tick()) /* does Send/Recv */
-	{
-		i = 1;
-#ifdef PGRP_DEBUG
-                std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
+    }
 #endif
-	}
-
-#endif
+    p3ServiceServer::tick();
 
 	return i;
 }
