@@ -26,6 +26,7 @@
 #include "pqi/pqipersongrp.h"
 #include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
+#include "util/rsprint.h"
 #include "serialiser/rsserviceserialiser.h"
 
 #include <stdio.h>
@@ -86,8 +87,8 @@ int pqipersongrp::tickServiceRecv()
 		if(++ntimes < 20)
 		{
 		std::cerr << "pqipersongrp::tickServiceRecv() GetRsRawItem()";
-		std::cerr << " should never happen anymore!";
-		std::cerr << std::endl;
+        std::cerr << " should never happen anymore! item data=" << RsUtil::BinToHex((char*)pqi->getRawData(),pqi->getRawLength()) ;
+        std::cerr << std::endl;
 		}
 
 		++i;

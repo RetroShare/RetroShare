@@ -352,8 +352,8 @@ int pqihandler::locked_GetItems()
 				if(++ntimes < 20)
 				{
 		std::cerr << "pqihandler::locked_GetItems() pqi->GetItem()";
-		std::cerr << " should never happen anymore!";
-		std::cerr << std::endl;
+        std::cerr << " should never happen anymore!";
+        std::cerr << std::endl;
 				}
 
 #ifdef RSITEM_DEBUG 
