@@ -28,6 +28,7 @@
 #include <unistd.h>
 
 #include "util/rsprint.h"
+#include "util/rsmemory.h"
 #include "distributedchat.h"
 
 #include "pqi/p3historymgr.h"
@@ -173,7 +174,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     mGixs->requestKey(obj->signature.keyId,peer_list);
 
     uint32_t size = obj->signed_serial_size() ;
-        unsigned char *memory = (unsigned char *)malloc(size) ;
+    RsTemporaryMemory memory(size) ;
 
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "Checking object signature: " << std::endl;
@@ -182,8 +183,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
         if(!obj->serialise_signed_part(memory,size))
         {
-            std::cerr << "  (EE) Cannot sign message item. " << std::endl;
-        free(memory) ;
+            std::cerr << "  (EE) Cannot serialise message item. " << std::endl;
             return false ;
         }
 
@@ -195,7 +195,10 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
             switch(error_status)
             {
-                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot verify." << std::endl;
+                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE:
+#ifdef DEBUG_CHAT_LOBBIES
+            std::cerr << "(WW) Key is not is cache. Cannot verify." << std::endl;
+#endif
                     res =true ;
                                         break ;
                 case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/MITM?." << std::endl;
@@ -203,12 +206,8 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
                                         break ;
             default: break ;
             }
-        free(memory) ;
             return res;
         }
-    free(memory) ;
-
-
 
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature: CHECKS" << std::endl;
@@ -596,6 +595,22 @@ void DistributedChatService::addTimeShiftStatistics(int D)
 
 void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 {
+    // delete items that are not for us, as early as possible.
+    {
+        RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+
+        // send upward for display
+
+        if(_chat_lobbys.find(item->lobby_id) == _chat_lobbys.end())
+        {
+#ifdef DEBUG_CHAT_LOBBIES
+            std::cerr << "Chatlobby for id " << std::hex << item->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
+#endif
+            return ;
+        }
+    }
+
+
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "Received ChatLobbyEvent item of type " << (int)(item->event_type) << ", and string=" << item->string1 << std::endl;
 #endif
