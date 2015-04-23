@@ -211,7 +211,12 @@ bool RsGxsIntegrityCheck::check()
 			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
 			pHash.Complete(currHash);
 
-			if(currHash != msg->metaData->mHash) msgsToDel[msg->grpId].push_back(msg->msgId);
+            if(msg->metaData == NULL || currHash != msg->metaData->mHash)
+        {
+            std::cerr << "(EE) deleting message data with wrong hash or null meta data. meta=" << (void*)msg->metaData << std::endl;
+                msgsToDel[msg->grpId].push_back(msg->msgId);
+        }
+
 			delete msg;
 		}
 	}
