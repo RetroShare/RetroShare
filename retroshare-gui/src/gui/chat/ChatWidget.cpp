@@ -1479,10 +1479,11 @@ void ChatWidget::setCurrentFileName(const QString &fileName)
 
 void ChatWidget::updateStatus(const QString &peer_id, int status)
 {
-	if (chatType() == CHATTYPE_LOBBY) {
+    if (! (chatType() == CHATTYPE_PRIVATE || chatType() == CHATTYPE_DISTANT))
+    {
 		// updateTitle is used
 		return;
-	}
+    }
 
     // make virtual peer id from gxs id in case of distant chat
     RsPeerId vpid;
