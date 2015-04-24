@@ -23,6 +23,7 @@
 #ifndef _RSHARESETTINGS_H
 #define _RSHARESETTINGS_H
 
+#include <values.h>
 #include <QHash>
 #include <QRgb>
 #include <QSettings>
