@@ -68,7 +68,9 @@ class pqihandler: public P3Interface, public pqiPublisher
 
 		// Service Data Interface
 		virtual int     SendRsRawItem(RsRawItem *);
+#ifdef TO_BE_REMOVED
 		virtual RsRawItem *GetRsRawItem();
+#endif
 
 		// rate control.
 		void	setMaxRate(bool in, float val);
@@ -89,8 +91,10 @@ class pqihandler: public P3Interface, public pqiPublisher
 		bool  queueOutRsItem(RsItem *) ;
 
 		virtual int locked_checkOutgoingRsItem(RsItem *item, int global);
-		int	locked_GetItems();
+#ifdef TO_BE_REMOVED
+		int		locked_GetItems();
 		void	locked_SortnStoreItem(RsItem *item);
+#endif
 
 		RsMutex coreMtx; /* MUTEX */
 

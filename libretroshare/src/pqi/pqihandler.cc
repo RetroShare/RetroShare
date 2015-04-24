@@ -82,6 +82,7 @@ int	pqihandler::tick()
 				moreToTick = 1;
 			}
 		}
+#ifdef TO_BE_REMOVED
 		// get the items, and queue them correctly
 		if (0 < locked_GetItems())
 		{
@@ -90,6 +91,7 @@ int	pqihandler::tick()
 #endif
 			moreToTick = 1;
 		}
+#endif
     }
 
 //     static time_t last_print_time = 0 ;
@@ -318,6 +320,8 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 	return queueOutRsItem(ns) ;
 }
 
+#ifdef TO_BE_REMOVED
+
 // inputs. This is a very basic
 // system that is completely biased and slow...
 // someone please fix.
@@ -450,6 +454,7 @@ RsRawItem *pqihandler::GetRsRawItem()
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
+#endif
 
 static const float MIN_RATE = 0.01; // 10 B/s
 

@@ -184,6 +184,10 @@ int	pqipersongrp::tick()
 #endif
     }
 #endif
+
+	if(pqihandler::tick())
+		i=1;
+
     p3ServiceServer::tick();
 
 	return i;

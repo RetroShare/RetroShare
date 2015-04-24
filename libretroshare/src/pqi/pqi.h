@@ -61,8 +61,9 @@ virtual int	tick() { return 1; }
 virtual int	status() { return 1; }
 
 virtual int	SendRsRawItem(RsRawItem *) = 0;
+#ifdef TO_BE_REMOVED
 virtual RsRawItem *GetRsRawItem() = 0;
-
+#endif
 };
 
 
