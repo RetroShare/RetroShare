@@ -46,6 +46,7 @@
 #include "gui/NetworkView.h"
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
+#include "gui/settings/WebuiPage.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
 #ifdef WINDOWS_SYS
@@ -415,9 +416,13 @@ int main(int argc, char *argv[])
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
+    WebuiPage::checkStartWebui();
+
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
+
+    WebuiPage::checkShutdownWebui();
 
 	if (eventReceiver) {
 		/* Destroy event receiver */

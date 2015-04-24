@@ -304,6 +304,16 @@ public:
 	uint getMaxTimeBeforeIdle();
 	void setMaxTimeBeforeIdle(uint value);
 
+    // webinterface
+    bool getWebinterfaceEnabled();
+    void setWebinterfaceEnabled(bool enabled);
+
+    uint16_t getWebinterfacePort();
+    void setWebinterfacePort(uint16_t port);
+
+    bool getWebinterfaceAllowAllIps();
+    void setWebinterfaceAllowAllIps(bool allow_all);
+
 protected:
 	/** Default constructor. */
 	RshareSettings();

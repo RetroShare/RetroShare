@@ -210,6 +210,9 @@ win32 {
 	DEPENDPATH += .
 	INCLUDEPATH += .
 
+	DEPENDPATH += $$LIBS_DIR/include
+	INCLUDEPATH += $$LIBS_DIR/include
+
 	greaterThan(QT_MAJOR_VERSION, 4) {
 		# Qt 5
 		RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
@@ -303,6 +306,12 @@ win32 {
 
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
+
+# webinterface
+DEPENDPATH += ../../libresapi/src
+INCLUDEPATH += ../../libresapi/src
+PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
+LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
 
 # Input
 HEADERS +=  rshare.h \
@@ -530,6 +539,7 @@ HEADERS +=  rshare.h \
             gui/statistics/BwCtrlWindow.h \
             gui/statistics/RttStatistics.h \
             gui/statistics/OutQueueStatistics.h \
+    gui/settings/WebuiPage.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -642,6 +652,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
             gui/GetStartedDialog.ui \
+    gui/settings/WebuiPage.ui
 
 #            gui/ForumsDialog.ui \
 #            gui/forums/CreateForum.ui \
@@ -865,6 +876,7 @@ SOURCES +=  main.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \
+    gui/settings/WebuiPage.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \

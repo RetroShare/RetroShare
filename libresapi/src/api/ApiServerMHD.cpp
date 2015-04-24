@@ -8,6 +8,9 @@
 // for filestreamer
 #include <retroshare/rsfiles.h>
 
+// to determine default docroot
+#include <retroshare/rsinit.h>
+
 #include "JsonStream.h"
 #include "ApiServer.h"
 
@@ -57,6 +60,11 @@ struct MHD_Response * MHD_create_response_from_fd(size_t size, int fd)
 #endif
 
 namespace resource_api{
+
+std::string getDefaultDocroot()
+{
+    return RsAccounts::DataDirectory() + "/webui";
+}
 
 const char* API_ENTRY_PATH = "/api/v2";
 const char* FILESTREAMER_ENTRY_PATH = "/fstream/";
@@ -509,11 +517,9 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         FILE* fd = fopen(filename.c_str(), "rb");
         if(fd == 0)
         {
-            const char *error = "<html><body><p>Error: can't open the requested file.</p></body></html>";
-            struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
-            MHD_add_response_header(resp, "Content-Type", "text/html");
-            secure_queue_response(connection, MHD_HTTP_NOT_FOUND, resp);
-            MHD_destroy_response(resp);
+#warning sending untrusted string to the browser
+            std::string msg = "<html><body><p>Error: can't open the requested file. Path is &quot;"+filename+"&quot;</p></body></html>";
+            sendMessage(connection, MHD_HTTP_NOT_FOUND, msg);
             return MHD_YES;
         }
 

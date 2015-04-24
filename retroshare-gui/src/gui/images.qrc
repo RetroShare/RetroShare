@@ -719,5 +719,6 @@
         <file>images/btn_red.png</file>
         <file>images/view-feeds.png</file>
         <file>images/view-files.png</file>
+        <file>images/emblem-web.png</file>
     </qresource>
 </RCC>

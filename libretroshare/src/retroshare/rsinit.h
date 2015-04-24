@@ -132,7 +132,7 @@ namespace RsAccounts
 {
 	// Directories.
 	std::string ConfigDirectory(); // aka Base Directory. (normally ~/.retroshare)
-	std::string DataDirectory();   
+    std::string DataDirectory(); // you can call this method even before initialisation (you can't with the other methods)
 	std::string PGPDirectory();
 	std::string AccountDirectory();
 

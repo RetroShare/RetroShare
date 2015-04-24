@@ -717,7 +717,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	//#include <CFBundle.h>
 #endif
 
-std::string RsAccountsDetail::PathDataDirectory()
+/*static*/ std::string RsAccountsDetail::PathDataDirectory()
 {
 	std::string dataDirectory;
 
@@ -1227,7 +1227,7 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
 
         // Directories.
 std::string RsAccounts::ConfigDirectory() { return rsAccounts->PathBaseDirectory(); }
-std::string RsAccounts::DataDirectory() { return rsAccounts->PathDataDirectory(); }
+std::string RsAccounts::DataDirectory() { return RsAccountsDetail::PathDataDirectory(); }
 std::string RsAccounts::PGPDirectory() { return rsAccounts->PathPGPDirectory(); }
 std::string RsAccounts::AccountDirectory() { return rsAccounts->PathAccountDirectory(); }
 

@@ -1040,3 +1040,33 @@ void RshareSettings::setMaxTimeBeforeIdle(uint nValue)
 	m_maxTimeBeforeIdle = nValue;
 	setValue("maxTimeBeforeIdle", nValue);
 }
+
+bool RshareSettings::getWebinterfaceEnabled()
+{
+    return valueFromGroup("Webinterface", "enabled", false).toBool();
+}
+
+void RshareSettings::setWebinterfaceEnabled(bool enabled)
+{
+    setValueToGroup("Webinterface", "enabled", enabled);
+}
+
+uint16_t RshareSettings::getWebinterfacePort()
+{
+    return valueFromGroup("Webinterface", "port", 9090).toUInt();
+}
+
+void RshareSettings::setWebinterfacePort(uint16_t port)
+{
+    setValueToGroup("Webinterface", "port", port);
+}
+
+bool RshareSettings::getWebinterfaceAllowAllIps()
+{
+    return valueFromGroup("Webinterface", "allowAllIps", false).toBool();
+}
+
+void RshareSettings::setWebinterfaceAllowAllIps(bool allow_all)
+{
+    setValueToGroup("Webinterface", "allowAllIps", allow_all);
+}

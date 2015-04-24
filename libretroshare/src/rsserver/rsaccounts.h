@@ -73,7 +73,7 @@ class RsAccountsDetail
 		void	unlockPreferredAccount();
 
 		// Paths.
-		std::string 	PathDataDirectory();
+        static std::string 	PathDataDirectory();
 		std::string 	PathBaseDirectory();
 
 		// PGP Path is only dependent on BaseDirectory.

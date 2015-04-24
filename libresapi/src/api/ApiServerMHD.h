@@ -14,6 +14,10 @@
 namespace resource_api{
 class ApiServer;
 
+// returns the default docroot path
+// (it is differen on different operating systems)
+std::string getDefaultDocroot();
+
 class ApiServerMHD
 {
 public:
