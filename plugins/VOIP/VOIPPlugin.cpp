@@ -10,7 +10,6 @@
 #include "VOIPPlugin.h"
 #include "interface/rsvoip.h"
 
-#include "gui/VoipStatistics.h"
 #include "gui/AudioInputConfig.h"
 #include "gui/VOIPChatWidgetHolder.h"
 #include "gui/PluginGUIHandler.h"
@@ -124,16 +123,6 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 	}
 
 	return NULL;
-}
-
-std::string VOIPPlugin::qt_transfers_tab_name() const
-{
-	return QObject::tr("RTT Statistics").toUtf8().constData() ;
-}
-
-RsAutoUpdatePage *VOIPPlugin::qt_transfers_tab() const
-{
-	return new VoipStatistics ;
 }
 
 p3Service *VOIPPlugin::p3_service() const

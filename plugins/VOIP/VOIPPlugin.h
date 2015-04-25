@@ -16,8 +16,6 @@ class VOIPPlugin: public RsPlugin
 		virtual uint16_t        rs_service_id()         const { return RS_SERVICE_TYPE_VOIP_PLUGIN ; }
 		virtual ConfigPage     *qt_config_page()        const ;
 		virtual QDialog        *qt_about_page()         const ;
-		virtual RsAutoUpdatePage *qt_transfers_tab()    const ;
-		virtual std::string qt_transfers_tab_name()    const ;
 		virtual ChatWidgetHolder *qt_get_chat_widget_holder(ChatWidget *chatWidget) const ;
 		
 		virtual QIcon *qt_icon() const;

@@ -42,6 +42,7 @@ E        [X] PGP signatures are not transmited by discovery2.
          [X] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
          [X] Default layout should use toolbars. The "menu" look is inneficient
          [ ] replace sound tooltip "sound off" by "sound is on, click to turn off"
+         [X] rtt statistic is duplicated in statistics provided by VOIP, so remove it from file transfers
       
        Messages
 H        [X] distant messages should be made async-ed

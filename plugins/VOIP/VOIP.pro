@@ -40,7 +40,6 @@ SOURCES = services/p3vors.cc \
 			 gui/AudioWizard.cpp \
 			 gui/SpeexProcessor.cpp \
 			 gui/audiodevicehelper.cpp \
-          gui/VoipStatistics.cpp \
           gui/VOIPChatWidgetHolder.cpp \
           gui/PluginGUIHandler.cpp \
           gui/PluginNotifier.cpp \
@@ -55,7 +54,6 @@ HEADERS = services/p3vors.h \
 			 gui/AudioWizard.h \
 			 gui/SpeexProcessor.h \
 			 gui/audiodevicehelper.h \
-          gui/VoipStatistics.h \
           gui/VOIPChatWidgetHolder.h \
           gui/PluginGUIHandler.h \
           gui/PluginNotifier.h \
@@ -66,7 +64,6 @@ HEADERS = services/p3vors.h \
 
 FORMS   = gui/AudioInputConfig.ui \
           gui/AudioStats.ui \
-          gui/VoipStatistics.ui \
 			 gui/AudioWizard.ui
 
 TARGET = VOIP
