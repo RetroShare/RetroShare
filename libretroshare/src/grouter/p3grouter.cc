@@ -1953,7 +1953,9 @@ bool p3GRouter::loadList(std::list<RsItem*>& items)
             delete *it ;
         }
     }
+#ifdef GROUTER_DEBUG
     debugDump();
+#endif
     return true ;
 }
 bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items) 
