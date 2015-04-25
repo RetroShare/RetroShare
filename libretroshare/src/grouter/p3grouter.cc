@@ -1189,7 +1189,7 @@ void p3GRouter::autoWash()
                 ++ittmp ;
                 it->second.clear() ;
                 _incoming_data_pipes.erase(it) ;
-                it == ittmp ;
+                it = ittmp ;
             }
             else
                 ++it ;
