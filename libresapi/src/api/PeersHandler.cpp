@@ -156,6 +156,8 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                 itemStream << makeKeyValueReference("pgp_id", *lit);
                 itemStream << makeKeyValue("name", mRsPeers->getGPGName(*lit));
                 StreamBase& locationStream = itemStream.getStreamToMember("locations");
+                // mark as list (in case list is empty)
+                locationStream.getStreamToMember();
                 for(std::vector<RsPeerDetails>::iterator vit = detailsVec.begin(); vit != detailsVec.end(); ++vit)
                 {
                     if(vit->gpg_id == *lit)
