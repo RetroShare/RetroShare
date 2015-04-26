@@ -187,43 +187,84 @@ void GlobalRouterStatisticsWidget::updateContent()
 	painter.setFont(monospace_f) ;
 
     static const QString data_status_string[6] = { "Unkown","Pending","Sent","Receipt OK","Ongoing","Done" } ;
-    static const QString tunnel_status_string[4] = { "Unmanaged", "Pending","Ready","Can send" } ;
+    static const QString tunnel_status_string[4] = { "Unmanaged", "Pending", "Ready" } ;
 
     time_t now = time(NULL) ;
-	std::map<QString, std::vector<QString> > tos ;
+    std::map<QString, std::vector<QString> > tos ;
+    static const int nb_fields = 8 ;
 
-	for(uint32_t i=0;i<cache_infos.size();++i)
-	{
-		QString packet_string ;
-		packet_string += QString("Id=")+QString::number(cache_infos[i].mid,16)  ;
-        packet_string += tr(" By (") ;
+    static const QString fname[nb_fields] = {
+                                tr("Id"),
+                                tr("Destination"),
+                            tr("Data status"),
+                            tr("Tunnel status"),
+                            tr("Data size"),
+                            tr("Data hash"),
+                            tr("Received"),
+                            tr("Send") } ;
 
-    for(std::set<RsPeerId>::const_iterator it(cache_infos[i].local_origin.begin());it!=cache_infos[i].local_origin.end();++it)
-        packet_string += QString::fromStdString((*it).toStdString()) + " - ";
+    std::vector<int> max_column_width(nb_fields,0) ;
 
-    packet_string += ")" ;
-        packet_string += tr(" Size: ")+QString::number(cache_infos[i].data_size) ;
-        packet_string += tr(" Data status: ")+data_status_string[cache_infos[i].data_status % 6] ;
-        packet_string += tr(" Data hash: ")+QString::fromStdString(cache_infos[i].item_hash.toStdString()) ;
-        packet_string += tr(" Tunnel status: ")+tunnel_status_string[cache_infos[i].tunnel_status % 4] ;
-        packet_string += " " + tr("Received: %1 secs ago, Send: %2 secs ago, Tried: %3 secs ago")
-                            .arg(now - cache_infos[i].routing_time)
-                            .arg(now - cache_infos[i].last_sent_time)
-                            .arg(now - cache_infos[i].last_tunnel_attempt_time);
+    for(int i=0;i<cache_infos.size();++i)
+    {
+        std::vector<QString> strings;
+        strings.push_back( QString::number(cache_infos[i].mid,16) ) ;
+        strings.push_back( QString::fromStdString(cache_infos[i].destination.toStdString()) ) ;
 
-		tos[ QString::fromStdString(cache_infos[i].destination.toStdString()) ].push_back(packet_string) ;
-	}
+        //for(std::set<RsPeerId>::const_iterator it(cache_infos[i].local_origin.begin());it!=cache_infos[i].local_origin.end();++it)
+        //	packet_string += QString::fromStdString((*it).toStdString()) + " - ";
 
-	for(std::map<QString,std::vector<QString> >::const_iterator it(tos.begin());it!=tos.end();++it)
-	{
-		painter.drawText(ox+2*cellx,oy+celly,tr("To: ")+it->first ) ; oy += celly ;
+        strings.push_back( data_status_string[cache_infos[i].data_status % 6]) ;
+        strings.push_back( tunnel_status_string[cache_infos[i].tunnel_status % 3]) ;
+        strings.push_back( QString::number(cache_infos[i].data_size) );
+        strings.push_back( QString::fromStdString(cache_infos[i].item_hash.toStdString())) ;
+        strings.push_back( QString::number(now - cache_infos[i].routing_time)) ;
+        strings.push_back( QString::number(now - cache_infos[i].last_sent_time)) ;
 
-		for(uint32_t i=0;i<it->second.size();++i)
-		{
-			painter.drawText(ox+4*cellx,oy+celly,it->second[i] ) ; 
-			oy += celly ;
-		}
-	}
+        tos[ strings[0] ] = strings ;
+
+        // now compute max column sizes
+
+        for(int j=0;j<nb_fields;++j)
+            max_column_width[j] = std::max(max_column_width[j],fm_monospace.width(strings[j])) ;
+    }
+
+    // compute cumulated sizes
+
+    std::vector<int> cumulated_sizes(nb_fields+1,0) ;
+
+    for(int i=1;i<=nb_fields;++i)
+    {
+        cumulated_sizes[i] = std::max(max_column_width[i-1],fm_monospace.width(fname[i-1])) ;
+        cumulated_sizes[i] += cumulated_sizes[i-1] ;
+    }
+
+    // Now draw the matrix
+
+    for(int i=0;i<nb_fields;++i)
+        painter.drawText(ox+cumulated_sizes[i]+2,oy+celly,fname[i]) ;
+
+    painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
+
+    int top_matrix_oy = oy ;
+    oy += celly +2;
+
+    painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
+
+    for(std::map<QString,std::vector<QString> >::const_iterator it(tos.begin());it!=tos.end();++it)
+    {
+        for(int i=0;i<it->second.size();++i)
+            painter.drawText(ox+cumulated_sizes[i]+2,oy+celly,it->second[i] ) ;
+
+        oy += celly ;
+    }
+
+    oy += 2;
+
+    for(int i=0;i<=nb_fields;++i)
+        painter.drawLine(ox+cumulated_sizes[i],top_matrix_oy,ox+cumulated_sizes[i],oy) ;
+
+    painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
     oy += celly ;
 
     QString prob_string ;
