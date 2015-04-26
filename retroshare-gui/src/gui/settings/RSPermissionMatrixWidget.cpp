@@ -32,6 +32,7 @@
 #include <QMouseEvent>
 
 #include "RSPermissionMatrixWidget.h"
+#include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsservicecontrol.h>
 
@@ -123,6 +124,7 @@ void RSPermissionMatrixWidget::switchPermission(uint32_t service,const RsPeerId&
 
     rsServiceControl->updateServicePermissions(service,serv_perms);
 }
+
 void RSPermissionMatrixWidget::switchPermission(uint32_t service)
 {
     RsServicePermissions serv_perms ;
@@ -143,6 +145,7 @@ void RSPermissionMatrixWidget::switchPermission(uint32_t service)
 
     rsServiceControl->updateServicePermissions(service,serv_perms);
 }
+
 void RSPermissionMatrixWidget::mouseMoveEvent(QMouseEvent *e)
 {
     uint32_t service_id ;
@@ -173,6 +176,48 @@ RSPermissionMatrixWidget::~RSPermissionMatrixWidget()
     delete _painter;
 }
 
+bool sortRsPeerIdByStatusNameLocation(const RsPeerId &a, const RsPeerId &b)
+{
+	RsPeerDetails detailsA, detailsB;
+	rsPeers->getPeerDetails(a, detailsA);
+	rsPeers->getPeerDetails(b, detailsB);
+	QString stringA, stringB;
+
+	// connection state
+	switch (detailsA.connectState) {
+	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
+		stringA = "a";
+		break;
+	default:
+		stringA = "b";
+		break;
+	}
+	switch (detailsB.connectState) {
+	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
+		stringB = "a";
+		break;
+	default:
+		stringB = "b";
+		break;
+	}
+
+	// name
+	stringA += QString::fromUtf8(detailsA.name.c_str());
+	stringB += QString::fromUtf8(detailsB.name.c_str());
+
+	// location
+	stringA += QString::fromUtf8(detailsA.location.c_str());
+	stringB += QString::fromUtf8(detailsB.location.c_str());
+
+	return stringA.toLower() < stringB.toLower();
+}
+
 /** Overloads default QWidget::paintEvent. Draws the actual 
  * bandwidth graph. */
 void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
@@ -196,6 +241,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   // draw one line per friend.
   std::list<RsPeerId> ssllist ;
   rsPeers->getFriendList(ssllist) ;
+  ssllist.sort(sortRsPeerIdByStatusNameLocation);
 
   RsPeerServiceInfo ownServices;
   rsServiceControl->getOwnServices(ownServices);
@@ -487,6 +533,7 @@ bool RSPermissionMatrixWidget::computeServiceAndPeer(int x,int y,uint32_t& servi
 
     return true ;
 }
+
 bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& service_id) const
 {
     // 1 - make sure that x and y are on a widget
@@ -508,6 +555,7 @@ bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& 
 
     return true ;
 }
+
 void RSPermissionMatrixWidget::defaultPermissionSwitched(uint32_t ServiceId,bool b)
 {
     NOT_IMPLEMENTED ;
