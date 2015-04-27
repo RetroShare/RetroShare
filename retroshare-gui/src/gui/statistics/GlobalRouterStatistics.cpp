@@ -121,70 +121,70 @@ GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
 
 void GlobalRouterStatisticsWidget::updateContent()
 {
-	std::vector<RsGRouter::GRouterRoutingCacheInfo> cache_infos ;
-	RsGRouter::GRouterRoutingMatrixInfo matrix_info ;
+    std::vector<RsGRouter::GRouterRoutingCacheInfo> cache_infos ;
+    RsGRouter::GRouterRoutingMatrixInfo matrix_info ;
 
-	rsGRouter->getRoutingCacheInfo(cache_infos) ;
-	rsGRouter->getRoutingMatrixInfo(matrix_info) ;
+    rsGRouter->getRoutingCacheInfo(cache_infos) ;
+    rsGRouter->getRoutingMatrixInfo(matrix_info) ;
 
-	// What do we need to draw?
-	//
-	// Routing matrix
-	// 	Key         [][][][][][][][][][]
-	//
-	// ->	each [] shows a square (one per friend node) that is the routing probabilities for all connected friends
-	// 	computed using the "computeRoutingProbabilitites()" method.
-	//
-	// Own key ids
-	// 	key			service id			description
-	//
-	// Data items
-	// 	Msg id				Local origin				Destination				Time           Status
-	//
-	QPixmap tmppixmap(maxWidth, maxHeight);
-	tmppixmap.fill(this, 0, 0);
-	setFixedHeight(maxHeight);
+    // What do we need to draw?
+    //
+    // Routing matrix
+    // 	Key         [][][][][][][][][][]
+    //
+    // ->	each [] shows a square (one per friend node) that is the routing probabilities for all connected friends
+    // 	computed using the "computeRoutingProbabilitites()" method.
+    //
+    // Own key ids
+    // 	key			service id			description
+    //
+    // Data items
+    // 	Msg id				Local origin				Destination				Time           Status
+    //
+    QPixmap tmppixmap(maxWidth, maxHeight);
+    tmppixmap.fill(this, 0, 0);
+    setFixedHeight(maxHeight);
 
-	QPainter painter(&tmppixmap);
-	painter.initFrom(this);
-	painter.setPen(QColor::fromRgb(0,0,0)) ;
+    QPainter painter(&tmppixmap);
+    painter.initFrom(this);
+    painter.setPen(QColor::fromRgb(0,0,0)) ;
 
-	QFont times_f("Times") ;
-	QFont monospace_f("Monospace") ;
-	monospace_f.setStyleHint(QFont::TypeWriter) ;
+    QFont times_f("Times") ;
+    QFont monospace_f("Monospace") ;
+    monospace_f.setStyleHint(QFont::TypeWriter) ;
 
-	QFontMetrics fm_monospace(monospace_f) ;
-	QFontMetrics fm_times(times_f) ;
+    QFontMetrics fm_monospace(monospace_f) ;
+    QFontMetrics fm_times(times_f) ;
 
-	static const int cellx = fm_monospace.width(QString(" ")) ;
-	static const int celly = fm_monospace.height() ;
+    static const int cellx = fm_monospace.width(QString(" ")) ;
+    static const int celly = fm_monospace.height() ;
 
-	maxHeight = 500 ;
+    maxHeight = 500 ;
 
-	// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
-	// draw...
-	int ox=5,oy=5 ;
-	
-	
-	painter.setFont(times_f) ;
-	painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
+    // std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
+    // draw...
+    int ox=5,oy=5 ;
 
-	painter.setFont(monospace_f) ;
+
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
+
+    painter.setFont(monospace_f) ;
     for(std::map<Sha1CheckSum,RsGRouter::GRouterPublishedKeyInfo>::const_iterator it(matrix_info.published_keys.begin());it!=matrix_info.published_keys.end();++it)
-	{
-		QString packet_string ;
+    {
+        QString packet_string ;
         packet_string += QString::fromStdString(it->second.authentication_key.toStdString())  ;
-		packet_string += tr(" : Service ID = ")+QString::number(it->second.service_id,16) ;
-		packet_string += "  \""+QString::fromUtf8(it->second.description_string.c_str()) + "\"" ;
+        packet_string += tr(" : Service ID = ")+QString::number(it->second.service_id,16) ;
+        packet_string += "  \""+QString::fromUtf8(it->second.description_string.c_str()) + "\"" ;
 
-		painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
-	}
-	oy += celly ;
+        painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
+    }
+    oy += celly ;
 
-	painter.setFont(times_f) ;
-	painter.drawText(ox,oy+celly,tr("Pending packets")+":" + QString::number(cache_infos.size())) ; oy += celly*2 ;
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy+celly,tr("Pending packets")+":" + QString::number(cache_infos.size())) ; oy += celly*2 ;
 
-	painter.setFont(monospace_f) ;
+    painter.setFont(monospace_f) ;
 
     static const QString data_status_string[6] = { "Unkown","Pending","Sent","Receipt OK","Ongoing","Done" } ;
     static const QString tunnel_status_string[4] = { "Unmanaged", "Pending", "Ready" } ;
@@ -194,14 +194,14 @@ void GlobalRouterStatisticsWidget::updateContent()
     static const int nb_fields = 8 ;
 
     static const QString fname[nb_fields] = {
-                                tr("Id"),
-                                tr("Destination"),
-                            tr("Data status"),
-                            tr("Tunnel status"),
-                            tr("Data size"),
-                            tr("Data hash"),
-                            tr("Received"),
-                            tr("Send") } ;
+            tr("Id"),
+            tr("Destination"),
+            tr("Data status"),
+            tr("Tunnel status"),
+            tr("Data size"),
+            tr("Data hash"),
+            tr("Received"),
+            tr("Send") } ;
 
     std::vector<int> max_column_width(nb_fields,0) ;
 
@@ -292,24 +292,31 @@ void GlobalRouterStatisticsWidget::updateContent()
 
     for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it)
     {
-        QString ids = QString::fromStdString(it->first.toStdString())+" : " ;
-        painter.drawText(ox+2*cellx,oy+celly,ids) ;
+        bool is_null = true ;
 
         for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
-            painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy,cellx,celly,colorScale(it->second[i])) ;
+            if(it->second[i] > 0.0)
+                is_null = false ;
 
-        oy += celly ;
+        if(!is_null)
+        {
+            QString ids = QString::fromStdString(it->first.toStdString())+" : " ;
+            painter.drawText(ox+2*cellx,oy+celly,ids) ;
+
+            for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
+                painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy,cellx,celly,colorScale(it->second[i])) ;
+
+            oy += celly ;
+        }
     }
 
+    oy += celly ;
+    oy += celly ;
 
-
-	oy += celly ;
-	oy += celly ;
-
-	// update the pixmap
-	//
-	pixmap = tmppixmap;
-	maxHeight = oy ;
+    // update the pixmap
+    //
+    pixmap = tmppixmap;
+    maxHeight = oy ;
 }
 
 QString GlobalRouterStatisticsWidget::speedString(float f)

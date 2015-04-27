@@ -197,7 +197,7 @@
 #include "grouterclientservice.h"
 
 /**********************/
-//#define GROUTER_DEBUG
+#define GROUTER_DEBUG
 /**********************/
 
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
@@ -440,7 +440,7 @@ void p3GRouter::handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem *t
 
     std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.find(trans_ack_item->propagation_id) ;
 
-    if(it != _pending_messages.end())
+    if(it != _pending_messages.end() && it->second.data_status == RS_GROUTER_DATA_STATUS_ONGOING)
     {
         it->second.data_status = RS_GROUTER_DATA_STATUS_SENT;
         it->second.last_sent_TS = time(NULL) ;
@@ -1479,28 +1479,28 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
         item_is_for_us = _owned_key_ids.find( makeTunnelHash(data_item->destination_key,service_id) ) != _owned_key_ids.end() ;
 
 #ifdef GROUTER_DEBUG
-    std::cerr << "    item is " << (item_is_for_us?"":"not") << " for us." << std::endl;
+        std::cerr << "    item is " << (item_is_for_us?"":"not") << " for us." << std::endl;
 #endif
-    std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::iterator it = _pending_messages.find(data_item->routing_id) ;
+        std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::iterator it = _pending_messages.find(data_item->routing_id) ;
 
-    if(it != _pending_messages.end())
-    {
-        if(it->second.item_hash != item_hash)
+        if(it != _pending_messages.end())
         {
+            if(it->second.item_hash != item_hash)
+            {
 #ifdef GROUTER_DEBUG
-            std::cerr << "    ERROR: item is already known but data hash does not match. Dropping that item." << std::endl;
+                std::cerr << "    ERROR: item is already known but data hash does not match. Dropping that item." << std::endl;
 #endif
-            return ;
+                return ;
+            }
+            item_is_already_known = true ;
+            receipt_item = it->second.receipt_item ;
+#ifdef GROUTER_DEBUG
+            std::cerr << "    item is already in cache." << std::endl;
+#endif
         }
-        item_is_already_known = true ;
-        receipt_item = it->second.receipt_item ;
 #ifdef GROUTER_DEBUG
-        std::cerr << "    item is already in cache." << std::endl;
-#endif
-    }
-#ifdef GROUTER_DEBUG
-    else
-        std::cerr << "    item is new." << std::endl;
+        else
+            std::cerr << "    item is new." << std::endl;
 #endif
     }
     // At this point, if item is already known, it is guarrantied to be identical to the stored item.
@@ -1522,8 +1522,6 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
         else
             std::cerr << "    verifying item signature: CHECKED!" ;
 #endif
-
-
         // No we need to send a signed receipt to the sender.
 
         receipt_item = new RsGRouterSignedReceiptItem;
