@@ -299,11 +299,6 @@ bitdht {
 	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 }
 
-win32 {
-# must be added after bitdht
-    LIBS += -lws2_32
-}
-
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
 
@@ -312,6 +307,11 @@ DEPENDPATH += ../../libresapi/src
 INCLUDEPATH += ../../libresapi/src
 PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
 LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+
+win32 {
+# must be added after bitdht
+    LIBS += -lws2_32
+}
 
 # Input
 HEADERS +=  rshare.h \
