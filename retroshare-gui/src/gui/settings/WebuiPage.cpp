@@ -109,6 +109,18 @@ QString WebuiPage::helpText() const
     }
 }
 
+/*static*/ void WebuiPage::showWebui()
+{
+    if(Settings->getWebinterfaceEnabled())
+    {
+        QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(Settings->getWebinterfacePort())));
+    }
+    else
+    {
+        QMessageBox::warning(0, tr("Webinterface not enabled"), "The webinterface is not enabled. Enable it in Settings -> Webinterface.");
+    }
+}
+
 void WebuiPage::onEnableCBClicked(bool checked)
 {
     if(checked)

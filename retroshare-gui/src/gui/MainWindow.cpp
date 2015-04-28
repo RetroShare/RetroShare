@@ -108,6 +108,7 @@
 #include "gui/common/RsCollectionFile.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
+#include "settings/WebuiPage.h"
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
 
@@ -605,6 +606,7 @@ void MainWindow::createTrayIcon()
     trayMenu->addSeparator();
     //trayMenu->addAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
+    trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
 
@@ -1093,7 +1095,11 @@ void MainWindow::showMessengerWindow()
 void MainWindow::showStatisticsWindow()
 {
     StatisticsWindow::showYourself();
+}
 
+void MainWindow::showWebinterface()
+{
+    WebuiPage::showWebui();
 }
 
 /** Shows Application window */

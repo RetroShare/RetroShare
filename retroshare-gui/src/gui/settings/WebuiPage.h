@@ -35,6 +35,9 @@ public:
   // it stops the webinterface if its running
   static void checkShutdownWebui();
 
+  // show webinterface in default browser (if enabled)
+  static void showWebui();
+
 public slots:
   void onEnableCBClicked(bool checked);
   void onApplyClicked();
