@@ -629,32 +629,7 @@ QString RetroShareLink::title() const
 
 static QString encodeItem(QString item)
 {
-	return item
-		//            .replace("{", "%"+QString::number((int)'{', 16))
-		//            .replace("}", "%"+QString::number((int)'}', 16))
-		//            .replace("[", "%"+QString::number((int)'[', 16))
-		//            .replace("]", "%"+QString::number((int)']', 16))
-		//            .replace("^", "%"+QString::number((int)'^', 16))
-		//            .replace("~", "%"+QString::number((int)'~', 16))
-		//            .replace(";", "%"+QString::number((int)';', 16))
-		//            .replace(":", "%"+QString::number((int)':', 16))
-		//            .replace("=", "%"+QString::number((int)'=', 16))
-		//            .replace("+", "%"+QString::number((int)'+', 16))
-		//            .replace("$", "%"+QString::number((int)'$', 16))
-		//            .replace(",", "%"+QString::number((int)',', 16))
-		//            .replace("\"", "%"+QString::number((int)'\"', 16))
-		//            .replace("|", "%"+QString::number((int)'|', 16))
-		//            .replace("?", "%"+QString::number((int)'?', 16))
-		//            .replace("@", "%"+QString::number((int)'@', 16))
-		.replace("&", "%"+QString::number((int)'&', 16))//Not necessary: only for text link
-		.replace("/", "%"+QString::number((int)'/', 16))
-		.replace(" ", "%"+QString::number((int)' ', 16))
-		.replace("#", "%"+QString::number((int)'#', 16))
-		//            .replace("£", "%"+QString::number((int)'£', 16))
-		//            .replace("µ", "%"+QString::number((int)'µ', 16))
-		//            .replace("§", "%"+QString::number((int)'§', 16))
-		//            .replace("!", "%"+QString::number((int)'!', 16))
-		;
+    return QUrl::toPercentEncoding(item);
 }
 
 QString RetroShareLink::toString() const
