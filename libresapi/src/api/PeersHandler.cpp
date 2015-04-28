@@ -139,6 +139,8 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
             ok = true;
             std::list<RsPgpId> identities;
             ok &= mRsPeers->getGPGAcceptedList(identities);
+            RsPgpId own_pgp = mRsPeers->getGPGOwnId();
+            identities.push_back(own_pgp);
             std::list<RsPeerId> peers;
             ok &= mRsPeers->getFriendList(peers);
             std::list<RsGroupInfo> grpInfo;
@@ -152,9 +154,22 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
             }
             for(std::list<RsPgpId>::iterator lit = identities.begin(); lit != identities.end(); ++lit)
             {
+                // if no own ssl id is known, then hide the own id from the friendslist
+                if(*lit == own_pgp)
+                {
+                    bool found = false;
+                    for(std::vector<RsPeerDetails>::iterator vit = detailsVec.begin(); vit != detailsVec.end(); ++vit)
+                    {
+                        if(vit->gpg_id == *lit)
+                            found = true;
+                    }
+                    if(!found)
+                        continue;
+                }
                 StreamBase& itemStream = resp.mDataStream.getStreamToMember();
                 itemStream << makeKeyValueReference("pgp_id", *lit);
                 itemStream << makeKeyValue("name", mRsPeers->getGPGName(*lit));
+                itemStream << makeKeyValue("is_own", *lit == own_pgp);
                 StreamBase& locationStream = itemStream.getStreamToMember("locations");
                 // mark as list (in case list is empty)
                 locationStream.getStreamToMember();
