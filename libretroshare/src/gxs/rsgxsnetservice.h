@@ -105,6 +105,7 @@ public:
      * Use this to set how far back synchronisation of messages should take place
      * @param age the max age a sync item can to be allowed in a synchronisation
      */
+    // NOT IMPLEMENTED
     virtual void setSyncAge(uint32_t age);
 
     /*!
@@ -112,6 +113,7 @@ public:
      * from peers
      * @param enabled set to false to disable pause, and true otherwise
      */
+    // NOT IMPLEMENTED
     virtual void pauseSynchronisation(bool enabled);
 
 
