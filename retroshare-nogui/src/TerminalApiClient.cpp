@@ -227,6 +227,7 @@ void TerminalApiClient::run()
                         << makeKeyValueReference("location", location);
                 std::cout << "[" << i << "] " << name << "(" << location << ")" << std::endl;
                 accounts.push_back(id);
+                i++;
             }
         }
 
