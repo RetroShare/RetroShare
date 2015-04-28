@@ -25,8 +25,6 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsservicecontrol.h>
 
-//#include <retroshare/rsservicecontrol.h>
-
 #include <iostream>
 #include <QTimer>
 
@@ -34,7 +32,7 @@
 #define ServiceIdUserRole		(Qt::UserRole + 1)
 #define PeerIdUserRole			(Qt::UserRole + 2)
 
-ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags flags)
+ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags /*flags*/)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -60,5 +58,9 @@ QString ServicePermissionsPage::helpText() const
                    stop all anonymous transfer, distant chat and distant messaging.</p>");
 }
 
+bool ServicePermissionsPage::isHideOfflineChecked()
+{
+    return ui.cb_hideOffline->checkState() == Qt::Checked;
+}
 
 

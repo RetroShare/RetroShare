@@ -21,6 +21,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="cb_hideOffline">
+       <property name="text">
+        <string>hide offline</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

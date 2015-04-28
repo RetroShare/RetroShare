@@ -32,6 +32,7 @@
 #include <QMouseEvent>
 
 #include "RSPermissionMatrixWidget.h"
+#include "gui/settings/ServicePermissionsPage.h"
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsservicecontrol.h>
@@ -176,36 +177,12 @@ RSPermissionMatrixWidget::~RSPermissionMatrixWidget()
     delete _painter;
 }
 
-bool sortRsPeerIdByStatusNameLocation(const RsPeerId &a, const RsPeerId &b)
+bool sortRsPeerIdByNameLocation(const RsPeerId &a, const RsPeerId &b)
 {
 	RsPeerDetails detailsA, detailsB;
 	rsPeers->getPeerDetails(a, detailsA);
 	rsPeers->getPeerDetails(b, detailsB);
 	QString stringA, stringB;
-
-	// connection state
-	switch (detailsA.connectState) {
-	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
-	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
-	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
-	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
-		stringA = "a";
-		break;
-	default:
-		stringA = "b";
-		break;
-	}
-	switch (detailsB.connectState) {
-	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
-	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
-	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
-	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
-		stringB = "a";
-		break;
-	default:
-		stringB = "b";
-		break;
-	}
 
 	// name
 	stringA += QString::fromUtf8(detailsA.name.c_str());
@@ -241,7 +218,35 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   // draw one line per friend.
   std::list<RsPeerId> ssllist ;
   rsPeers->getFriendList(ssllist) ;
-  ssllist.sort(sortRsPeerIdByStatusNameLocation);
+
+  // sort list
+  {
+      // RSPermissionMatrixWidgets parent is ServicePermissionsPage which holds the checkbox
+      ServicePermissionsPage *spp = dynamic_cast<ServicePermissionsPage*>(parentWidget());
+      if(spp != NULL) {
+          // sort out offline peers
+          if(spp->isHideOfflineChecked()) {
+              RsPeerDetails peerDetails;
+              for(std::list<RsPeerId>::iterator it = ssllist.begin(); it != ssllist.end();) {
+                  rsPeers->getPeerDetails(*it, peerDetails);
+
+                  switch (peerDetails.connectState) {
+                  case RS_PEER_CONNECTSTATE_OFFLINE:
+                  case RS_PEER_CONNECTSTATE_TRYING_TCP:
+                  case RS_PEER_CONNECTSTATE_TRYING_UDP:
+                      it = ssllist.erase(it);
+                      break;
+                  default:
+                      it++;
+                      break;
+                  }
+              }
+          }
+      }
+
+      // sort by name
+      ssllist.sort(sortRsPeerIdByNameLocation);
+  }
 
   RsPeerServiceInfo ownServices;
   rsServiceControl->getOwnServices(ownServices);
