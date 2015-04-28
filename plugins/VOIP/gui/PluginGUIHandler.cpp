@@ -6,6 +6,7 @@
 #include <gui/chat/ChatDialog.h>
 #include <gui/VOIPChatWidgetHolder.h>
 #include "gui/chat/ChatWidget.h"
+#include "gui/settings/rsharesettings.h"
 
 void PluginGUIHandler::ReceivedInvitation(const QString& /*peer_id*/)
 {
@@ -33,7 +34,7 @@ void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 		return ;
 	}
 
-    ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getChat(ChatId(peer_id), Settings->getChatFlags());
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if (cw) {
