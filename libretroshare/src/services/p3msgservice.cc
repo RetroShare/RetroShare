@@ -428,28 +428,33 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 
     MsgTagType stdTags;
 
-	cleanup = false;
+    cleanup = true;
 
 	mMsgMtx.lock();
 
 	for(mit = imsg.begin(); mit != imsg.end(); ++mit)
-		itemList.push_back(mit->second);
+        itemList.push_back(new RsMsgItem(*mit->second));
 
 	for(lit = mSrcIds.begin(); lit != mSrcIds.end(); ++lit)
-		itemList.push_back(lit->second);
+        itemList.push_back(new RsMsgSrcId(*lit->second));
 
 
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit)
-		itemList.push_back(mit->second) ;
+        itemList.push_back(new RsMsgItem(*mit->second)) ;
 
 	for(mit2 = mTags.begin();  mit2 != mTags.end(); ++mit2)
-		itemList.push_back(mit2->second);
+        itemList.push_back(new RsMsgTagType(*mit2->second));
 
 	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); ++mit3)
-		itemList.push_back(mit3->second);
+        itemList.push_back(new RsMsgTags(*mit3->second));
 
 	for(mit4 = mParentId.begin();  mit4 != mParentId.end(); ++mit4)
-		itemList.push_back(mit4->second);
+        itemList.push_back(new RsMsgParentId(*mit4->second));
+
+    RsMsgGRouterMap *grmap = new RsMsgGRouterMap ;
+    grmap->ongoing_msgs = _ongoing_messages ;
+
+    itemList.push_back(grmap) ;
 
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
@@ -526,6 +531,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     RsMsgTags* mti;
     RsMsgSrcId* msi;
     RsMsgParentId* msp;
+    RsMsgGRouterMap* grm;
 //    RsPublicMsgInviteConfigItem* msv;
 
     std::list<RsMsgItem*> items;
@@ -545,7 +551,13 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 				mMsgUniqueId = mitem->msgId + 1;
 			}
 			items.push_back(mitem);
-		}
+        }
+        else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
+        {
+            // merge.
+            for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
+                _ongoing_messages.insert(*it) ;
+        }
 		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 		{
 			// delete standard tags as they are now save in config

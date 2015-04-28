@@ -762,6 +762,144 @@ RsMsgSrcId* RsMsgSerialiser::deserialiseMsgSrcIdItem(void* data, uint32_t* pktsi
 
 /************************* end of definition of msgSrcId serialisation functions ************************/
 
+std::ostream& RsMsgGRouterMap::print(std::ostream& out, uint16_t indent)
+{
+    printRsItemBase(out, "RsMsgGRouterMap", indent);
+    uint16_t int_Indent = indent + 2;
+
+    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(ongoing_msgs.begin());it!=ongoing_msgs.end();++it)
+    {
+        printIndent(out, int_Indent);
+        out << "  " << std::hex << it->first << std::dec << " : " << it->second << std::endl;
+    }
+
+    printRsItemEnd(out, "RsMsgGRouterMap", indent);
+
+    return out;
+}
+
+void RsMsgGRouterMap::clear()
+{
+    ongoing_msgs.clear() ;
+
+    return;
+}
+
+uint32_t RsMsgGRouterMap::serial_size(bool)
+{
+    uint32_t s = 8; /* header */
+
+    s += 4; // number of entries
+    s += (8+4)*ongoing_msgs.size(); // entries
+
+    return s;
+}
+
+bool RsMsgGRouterMap::serialise(void *data, uint32_t& pktsize,bool config)
+{
+    uint32_t tlvsize = serial_size( config) ;
+    uint32_t offset = 0;
+
+    if (pktsize < tlvsize)
+        return false; /* not enough space */
+
+    pktsize = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsMsgSerialiser::serialiseMsgParentIdItem() Header: " << ok << std::endl;
+    std::cerr << "RsMsgSerialiser::serialiseMsgParentIdItem() Size: " << tlvsize << std::endl;
+#endif
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= setRawUInt32(data, tlvsize, &offset, ongoing_msgs.size());
+
+    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it=ongoing_msgs.begin();ok && it!=ongoing_msgs.end();++it)
+    {
+        ok &= setRawUInt64(data, tlvsize, &offset, it->first);
+        ok &= setRawUInt32(data, tlvsize, &offset, it->second);
+    }
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsMsgSerialiser::serialiseMsgGRouterMap() Size Error! " << std::endl;
+    }
+
+    return ok;
+}
+
+RsMsgGRouterMap* RsMsgSerialiser::deserialiseMsgGRouterMap(void* data, uint32_t* pktsize)
+{
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+        (RS_SERVICE_TYPE_MSG != getRsItemService(rstype)) ||
+        (RS_PKT_SUBTYPE_MSG_GROUTER_MAP != getRsItemSubType(rstype)))
+    {
+        return NULL; /* wrong type */
+    }
+
+    if (*pktsize < rssize)    /* check size */
+        return NULL; /* not enough data */
+
+    /* set the packet length */
+    *pktsize = rssize;
+
+    bool ok = true;
+
+    /* ready to load */
+    RsMsgGRouterMap *item = new RsMsgGRouterMap();
+    item->clear();
+
+    /* skip the header */
+    offset += 8;
+
+    uint32_t s=0 ;
+
+    /* get mandatory parts first */
+    ok &= getRawUInt32(data, rssize, &offset, &s);
+
+    for(uint32_t i=0;i<s && ok;++i)
+    {
+        uint32_t mid;
+        uint64_t routing_id;
+
+        ok &= getRawUInt64(data, rssize, &offset, &routing_id);
+        ok &= getRawUInt32(data, rssize, &offset, &mid);
+
+        item->ongoing_msgs.insert(std::make_pair(routing_id,mid)) ;
+    }
+
+    if (offset != rssize)
+    {
+        /* error */
+        delete item;
+        return NULL;
+    }
+
+    if (!ok)
+    {
+        delete item;
+        return NULL;
+    }
+
+    return item;
+}
+
+/************************* end of definition of msgGRouterMap serialisation functions ************************/
+
+
 /************************************** Message ParentId **********************/
 
 std::ostream& RsMsgParentId::print(std::ostream& out, uint16_t indent)
@@ -922,7 +1060,10 @@ RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_MSG_TAGS:
 			return deserialiseMsgTagItem(data, pktsize);
 			break;
-		default:
+        case RS_PKT_SUBTYPE_MSG_GROUTER_MAP:
+            return deserialiseMsgGRouterMap(data, pktsize);
+            break;
+        default:
 			return NULL;
 			break;
 	}

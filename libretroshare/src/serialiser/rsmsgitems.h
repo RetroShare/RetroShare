@@ -35,6 +35,7 @@
 
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvfileitem.h"
+#include "grouter/grouteritems.h"
 
 #if 0
 #include "serialiser/rstlvtypes.h"
@@ -45,10 +46,11 @@
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
-const uint8_t RS_PKT_SUBTYPE_MSG_TAGS 			= 0x04;
-const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG 		= 0x05;
+const uint8_t RS_PKT_SUBTYPE_MSG_TAGS 		= 0x04;
+const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG 	= 0x05;
 const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG 	= 0x06;
 const uint8_t RS_PKT_SUBTYPE_MSG_INVITE    	= 0x07;
+const uint8_t RS_PKT_SUBTYPE_MSG_GROUTER_MAP  	= 0x08;
 
 
 /**************************************************************************/
@@ -207,6 +209,23 @@ class RsPublicMsgInviteConfigItem : public RsMessageItem
 		time_t time_stamp ;
 };
 
+class RsMsgGRouterMap : public RsMessageItem
+{
+    public:
+        RsMsgGRouterMap() : RsMessageItem(RS_PKT_SUBTYPE_MSG_GROUTER_MAP) {}
+
+        std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+        virtual bool serialise(void *data,uint32_t& size,bool config) ;
+        virtual uint32_t serial_size(bool config) ;
+
+        virtual ~RsMsgGRouterMap() {}
+        virtual void clear();
+
+        // ----------- Specific fields ------------- //
+        //
+        std::map<GRouterMsgPropagationId,uint32_t> ongoing_msgs ;
+};
 
 class RsMsgParentId : public RsMessageItem
 {
@@ -234,7 +253,7 @@ class RsMsgSerialiser: public RsSerialType
 			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG), m_bConfiguration (bConfiguration) {}
 
 		RsMsgSerialiser(uint16_t type)
-			:RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false) {}
+            :RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false) {}
 
 		virtual     ~RsMsgSerialiser() {}
 
@@ -256,6 +275,7 @@ class RsMsgSerialiser: public RsSerialType
 		virtual	RsMsgSrcId                  *deserialiseMsgSrcIdItem(void *data, uint32_t *size);
 		virtual	RsMsgParentId               *deserialiseMsgParentIdItem(void *data, uint32_t *size);
 		virtual	RsPublicMsgInviteConfigItem *deserialisePublicMsgInviteConfigItem(void *data, uint32_t *size);
+        virtual	RsMsgGRouterMap             *deserialiseMsgGRouterMap(void *data, uint32_t *size);
 
 		bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
 };
