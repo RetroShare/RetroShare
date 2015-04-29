@@ -255,10 +255,13 @@ public:
 ApiServer::ApiServer():
     mMtx("ApiServer mMtx"),
     mStateTokenServer(),
+    mLivereloadhandler(&mStateTokenServer),
     mMainModules(0)
 {
     mRouter.addResourceHandler("statetokenservice", dynamic_cast<ResourceRouter*>(&mStateTokenServer),
                                &StateTokenServer::handleRequest);
+    mRouter.addResourceHandler("livereload", dynamic_cast<ResourceRouter*>(&mLivereloadhandler),
+                               &LivereloadHandler::handleRequest);
 }
 
 ApiServer::~ApiServer()

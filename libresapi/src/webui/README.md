@@ -24,11 +24,11 @@ DEVELOPMENT
 	- Windows: download and install nodejs from http://nodejs.org
 	- Download development tools with the nodejs package manager (short npm)
 		npm install
-	- during development, run these two commands at the same time
+	- run Retroshare with webinterface on port 9090
+	- during development, run this command (use MinGW shell on Windows)
 		while true; do make --silent; sleep 1; done
-		grunt watch
-	- command one will copy the source files to the "dist" directory if they change
-	- command two will tell the browser to reload if a file changes
+	- the command will copy the source files to the "dist" directory if they change
+	- it will trigger livereload at http://localhost:9090/api/v2/livereload/trigger
 
 API DOCUMENTATION
 -----------------

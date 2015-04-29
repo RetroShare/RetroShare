@@ -9,6 +9,7 @@
 #include "StateTokenServer.h"
 #include "FileSearchHandler.h"
 #include "TransfersHandler.h"
+#include "LivereloadHandler.h"
 
 namespace resource_api{
 
@@ -77,6 +78,7 @@ private:
     RsMutex mMtx;
     StateTokenServer mStateTokenServer; // goes first, as others may depend on it
                                         // is always loaded, because it has no dependencies
+    LivereloadHandler mLivereloadhandler;
 
     // only pointers here, to load/unload modules at runtime
     ApiServerMainModules* mMainModules; // loaded when RS is started

@@ -35,7 +35,9 @@ SOURCES += \
 	api/FileSearchHandler.cpp \
 	api/TransfersHandler.cpp	\
 	api/RsControlModule.cpp	\
-	api/GetPluginInterfaces.cpp
+	api/GetPluginInterfaces.cpp \
+    api/ChatHandler.cpp \
+    api/LivereloadHandler.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -54,4 +56,6 @@ HEADERS += \
 	api/FileSearchHandler.h \
 	api/TransfersHandler.h	\
 	api/RsControlModule.h	\
-	api/GetPluginInterfaces.h
+	api/GetPluginInterfaces.h \
+    api/ChatHandler.h \
+    api/LivereloadHandler.h

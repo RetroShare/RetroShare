@@ -5,6 +5,18 @@ RS.start();
 var api_url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api/v2/";
 var filestreamer_url = window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "/fstream/";
 
+// livereload
+function start_live_reload()
+{
+	RS.request({path: "livereload"}, function(resp){
+		RS.register_token_listener(function(){
+			// Reload the current page, without using the cache
+			document.location.reload(true);
+		},resp.statetoken);
+	});
+}
+start_live_reload();
+
 // implements automatic update using the state token system
 // components using this mixin should have a member "getPath()" to specify the resource
 var AutoUpdateMixin = 
@@ -612,6 +624,49 @@ var Menu = React.createClass({
 					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "search"});}}>
 						Search
 					</div>
+					{/*<div className="btn2" onClick={function(){outer.emit("change_url", {url: "testwidget"});}}>
+						TestWidget
+					</div>*/}
+			</div>
+		);
+	},
+});
+
+var TestWidget = React.createClass({
+	mixins: [SignalSlotMixin],
+	getInitialState: function(){
+		return {s:"one"};
+	},
+	componentWillMount: function()
+	{
+	},
+	one: function(){
+		this.setState({s:"one"});
+	},
+	two: function(){
+		this.setState({s:"two"});
+	},
+	render: function(){
+		var outer = this;
+		var outercontainerstyle = {borderStyle: "solid", borderColor: "darksalmon", overflow: "hidden", width: "100%"};
+		var transx = "0px";
+		if(this.state.s === "two")
+			transx = "-45%";
+		var innercontainerstyle = {width: "200%", transform: "translatex("+transx+")", WebkitTransform: "translatex("+transx+")", transition: "all 0.5s ease-in-out", WebkitTransition: "all 0.5s ease-in-out"};
+		var innerstyle = {float:"left", width: "45%"};
+		var two = <div></div>;
+		if(this.state.s === "two")
+			two = <div style={innerstyle} className="btn2" onClick={function(){outer.one();}}>
+					two
+				</div>;
+		return (
+			<div style={outercontainerstyle}>
+			<div style={innercontainerstyle}>
+				<div style={innerstyle} className="btn2" onClick={function(){outer.two();}}>
+					one
+				</div>
+				{two}
+			</div>
 			</div>
 		);
 	},
@@ -665,18 +720,11 @@ var MainWidget = React.createClass({
 			The component system makes this very simple.
 			Updating the GUI is also very simple: one React mixin can handle updating for all components.
 			</p>
-
-			<div className="btn2">Div Button</div>
-			<div className="btn2">Div Button</div>
 			</div>;
 		}
 		if(this.state.page === "friends")
 		{
-			mainpage =
-			<div>
-				<p>the list updates itself when something changes. Lots of magic happens here!</p>
-				<Peers2 />
-			</div>;
+			mainpage = <Peers2 />;
 		}
 		if(this.state.page === "downloads")
 		{
@@ -698,6 +746,10 @@ var MainWidget = React.createClass({
 		{
 			mainpage = <Menu/>;
 		}
+		if(this.state.page === "testwidget")
+		{
+			mainpage = <TestWidget/>;
+		}
 		}
 
 		var menubutton = <div onClick={function(){outer.emit("change_url", {url: "menu"});}} className="btn2">&lt;- menu</div>;
@@ -707,25 +759,6 @@ var MainWidget = React.createClass({
 			<div>
 				<PasswordWidget/>
 				<AudioPlayerWidget/>
-				{/*
-				<ul className="nav">
-					<li onClick={function(){outer.emit("change_url", {url: "main"});}}>
-						Start
-					</li>
-					<li onClick={function(){outer.emit("change_url", {url: "login"});}}>
-						Login
-					</li>
-					<li onClick={function(){outer.emit("change_url", {url: "friends"});}}>
-						Friends
-					</li>
-					<li onClick={function(){outer.emit("change_url", {url: "downloads"});}}>
-						Downloads
-					</li>
-					<li onClick={function(){outer.emit("change_url", {url: "search"});}}>
-						Search
-					</li>
-				</ul>
-				*/}
 				{menubutton}
 				{mainpage}
 			</div>
