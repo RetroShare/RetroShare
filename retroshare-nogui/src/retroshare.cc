@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 {
 #ifdef ENABLE_WEBUI
 
-    std::string docroot = "./";
+    std::string docroot = "";
     uint16_t httpPort = 0;
     std::string listenAddress;
     bool allowAllIps = false;
@@ -92,6 +92,9 @@ int main(int argc, char **argv)
     {
         std::cerr << args.usage() << std::endl;
     }
+
+    if(docroot.empty())
+        docroot = resource_api::getDefaultDocroot();
 
     resource_api::ApiServer api;
     resource_api::RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
