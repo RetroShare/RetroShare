@@ -612,9 +612,13 @@ var Menu = React.createClass({
 					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "main"});}}>
 						Start
 					</div>
-					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "login"});}}>
-						Login
-					</div>
+					{function(){
+						if(outer.props.fullcontrol)
+							return (<div className="btn2" onClick={function(){outer.emit("change_url", {url: "login"});}}>
+								Login
+							</div>);
+						else return <div></div>;
+					}()}
 					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "friends"});}}>
 						Friends
 					</div>
@@ -710,7 +714,7 @@ var MainWidget = React.createClass({
 		{
 			mainpage = <LoginWidget/>;
 		}
-		if(this.state.data.runstate === "running_ok")
+		if(this.state.data.runstate === "running_ok" || this.state.data.runstate ==="running_ok_no_full_control")
 		{
 		if(this.state.page === "main")
 		{
@@ -744,7 +748,7 @@ var MainWidget = React.createClass({
 		}
 		if(this.state.page === "menu")
 		{
-			mainpage = <Menu/>;
+			mainpage = <Menu fullcontrol = {this.state.data.runstate === "running_ok"}/>;
 		}
 		if(this.state.page === "testwidget")
 		{

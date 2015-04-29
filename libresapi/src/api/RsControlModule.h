@@ -41,7 +41,7 @@ protected:
     virtual void run();
 
 private:
-    enum RunState { WAITING_INIT, FATAL_ERROR, WAITING_ACCOUNT_SELECT, WAITING_STARTUP, RUNNING_OK};
+    enum RunState { WAITING_INIT, FATAL_ERROR, WAITING_ACCOUNT_SELECT, WAITING_STARTUP, RUNNING_OK, RUNNING_OK_NO_FULL_CONTROL};
     void handleRunState(Request& req, Response& resp);
     void handleIdentities(Request& req, Response& resp);
     void handleLocations(Request& req, Response& resp);

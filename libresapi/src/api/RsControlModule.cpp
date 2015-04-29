@@ -31,7 +31,7 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     if(full_control)
         start();
     else
-        mRunState = RUNNING_OK;
+        mRunState = RUNNING_OK_NO_FULL_CONTROL;
 
     addResourceHandler("runstate", this, &RsControlModule::handleRunState);
     addResourceHandler("identities", this, &RsControlModule::handleIdentities);
@@ -208,6 +208,9 @@ void RsControlModule::handleRunState(Request &req, Response &resp)
         break;
     case RUNNING_OK:
         state = "running_ok";
+        break;
+    case RUNNING_OK_NO_FULL_CONTROL:
+        state = "running_ok_no_full_control";
         break;
     default:
         state = "error_should_not_happen_this_is_a_bug";
