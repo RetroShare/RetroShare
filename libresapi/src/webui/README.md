@@ -26,7 +26,7 @@ DEVELOPMENT
 		npm install
 	- run Retroshare with webinterface on port 9090
 	- during development, run this command (use MinGW shell on Windows)
-		while true; do make --silent; sleep 1; done
+		while true; do make dist/livereload --silent; sleep 1; done
 	- the command will copy the source files to the "dist" directory if they change
 	- it will trigger livereload at http://localhost:9090/api/v2/livereload/trigger
 

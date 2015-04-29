@@ -6,7 +6,7 @@ HTML = index.html
 JSGUI = gui.jsx
 CSS = green-black.css
 
-all: dist $(JSEXTLIBS) $(addprefix dist/, $(JSLIBS)) $(addprefix dist/, $(HTML)) $(addprefix dist/, $(JSGUI)) $(addprefix dist/, $(CSS)) dist/livereload
+all: dist $(JSEXTLIBS) $(addprefix dist/, $(JSLIBS)) $(addprefix dist/, $(HTML)) $(addprefix dist/, $(JSGUI)) $(addprefix dist/, $(CSS))
 .PHONY: all
 
 dist/livereload: dist $(JSEXTLIBS) $(addprefix dist/, $(JSLIBS)) $(addprefix dist/, $(HTML)) $(addprefix dist/, $(JSGUI)) $(addprefix dist/, $(CSS))
