@@ -943,7 +943,7 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
     std::cerr << "  signature done." << std::endl;
 
     // check signature
-        if(!mGixs->validateSignature((const char *)memory,item.signed_serial_size(),lobby.gxs_id,item.signature,true,error_status))
+        if(!mGixs->validateData(memory,item.signed_serial_size(),item.signature,true,error_status))
         {
             std::cerr << "(EE) Cannot check message item. " << std::endl;
             return false ;
