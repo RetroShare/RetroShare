@@ -218,11 +218,10 @@ void GxsIdChooser::loadPrivateIds()
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
 		}
-	}
+        setDefaultItem();
+    }
 
 	mFirstLoad = false;
-
-	setDefaultItem();
 }
 
 void GxsIdChooser::setDefaultItem()
