@@ -56,5 +56,5 @@ SoundStatus::SoundStatus(QWidget *parent)
 void SoundStatus::mute(bool isMute)
 {
 	imageButton->setIcon(QIcon(isMute ? IMAGE_MUTE_ON : IMAGE_MUTE_OFF));
-	imageButton->setToolTip(isMute ? tr("Sound on") : tr("Sound off"));
+    imageButton->setToolTip(isMute ? tr("Sound is off, click to turn it on") : tr("Sound is on, click to turn it off"));
 }

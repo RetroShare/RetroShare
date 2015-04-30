@@ -41,7 +41,7 @@ E        [X] addFriend does not work when the cert contains signatures.
 E        [X] PGP signatures are not transmited by discovery2. 
          [X] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
          [X] Default layout should use toolbars. The "menu" look is inneficient
-         [ ] replace sound tooltip "sound off" by "sound is on, click to turn off"
+         [X] replace sound tooltip "sound off" by "sound is on, click to turn off"
          [X] rtt statistic is duplicated in statistics provided by VOIP, so remove it from file transfers
       
        Messages
@@ -70,7 +70,7 @@ M        [ ] popularity calculation seems wrong. To reproduce: create a new chan
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
          [X] Remove deprecated code in rschatitems.
          [X] remove "change nickname" from drop menu
-			[ ] there's no way to remove auto-subscribe when connected to a lobby. Show auto-subscribe status in tooltip, add menu entries.
+			[X] there's no way to remove auto-subscribe when connected to a lobby. Show auto-subscribe status in tooltip, add menu entries.
       
        Profile creation wizard
          [X] "Hidden node" should be an option at start. Apparently it becomes mandatory when one sets the advanced mode. 
