@@ -1,0 +1,93 @@
+body {
+	background-color: black;
+	color: lime;
+	font-family: monospace;
+	margin: 0em;
+	/*padding: 1.5em;*/
+	padding: 2mm;
+	font-size: 1.1em;
+}
+
+.nav{
+	list-style-type: none;
+	padding: 0em;
+	margin: 0em;
+}
+
+.nav li{
+	display: inline;
+	padding: 0.1em;
+	margin-right: 1em;
+	border-width: 0.1em;
+	border-color: blue;
+	border-bottom-style: solid;
+	cursor: pointer;
+}
+td{
+	padding: 0.3em;
+	border-style: solid;
+	border-width: 0.1em;
+	border-color: lime;
+}
+.btn{
+	border-style: solid;
+	border-color: lime;
+	border-width: 0.1em;
+	cursor: pointer;
+	padding: 0.1em;
+}
+
+.btn2{
+	border-style: solid;
+	border-color: lime;
+	border-radius: 3mm;
+	padding: 2mm;
+	font-size: 10mm;
+	cursor: pointer;
+	margin-bottom: 2mm;
+}
+.btn2:hover{
+	background-color: midnightblue;
+}
+
+input, textarea{
+	color: lime;
+	font-family: monospace;
+	background-color: black;
+	border-color: lime;
+	font-size: 10mm;
+	border-radius: 3mm;
+	border-width: 1mm;
+	padding: 2mm;
+	margin-bottom: 2mm;
+	margin-right: 2mm;
+
+	/* make the button the whole screen width */
+	width: 100%;
+	/* make the text input fit small screens*/
+	box-sizing: border-box;
+}
+input:hover{
+	background-color: midnightblue;
+}
+
+#logo_splash{
+    -webkit-animation-fill-mode: forwards; /* Chrome, Safari, Opera */
+    animation-fill-mode: forwards;
+    -webkit-animation-name: logo_splash; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 3s; /* Chrome, Safari, Opera */
+    animation-name: logo_splash;
+    animation-duration: 3s;
+	text-align: center;
+}
+/* Chrome, Safari, Opera */
+@-webkit-keyframes logo_splash {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes logo_splash {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
