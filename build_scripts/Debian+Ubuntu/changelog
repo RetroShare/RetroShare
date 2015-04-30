@@ -1,40 +1,49 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    GUI
-      * fixed detection of TOR connections on server side (patch from sehraf)
-      * removed possible infinite loop when openning a rscollection file
-      * fixed server page: removed hidden node option from combo box. Added a label with correct tooltip
+      * changed sound button tooltip
+      * added auto subscribe status to lobby tooltip
+      * removed wrong info from forums help
+      * added checkbox to hide offline peers in permission matrix (modified patch from sehraf)
+      * fixed rslinks with "
+      * proper sorting of peers by connection state in permission matrix (patch from Sehraf)
+      * added for hidden label own stylesheet
 
    MSG
-      * implemented async message passing. Still being tested.
+      * fixed memory leak and potential crash due to not copying items passed to config saving in messages. 
+        Added save/load for map between GRouter and Msg ids which fixes the never removed outgoing messages
+      * fixed small bug in global router causing incoming messages to be in SENT mode
+      * improved display of grouter internal info
+      * fixed a few bugs in global router, eliminated duplicate messages, improved routing logic
 
-   Identities
-      * added security 200 bytes limit on ID nicknames from getIdDetails and max size check in IdDialog
-      * Fixed crash in GxsIdDetails::process (GxsIdDetails::mInstance == NULL) by adding one global instance of GxsIdDetails.
-
-   FT
-      * changed default data rates (it is better to have some prople need to reduce it than everyone need to increase it). 
-
-   Certificates
-      * Added placeholder in gen cert dialog for TOR, improved cert creation dialog
+   VOIP
+      * add popup when get incoming VOIP call
+      * removed RTT statistics tab from VOIP plugin as it is already provided in Statistics
 
    General code change
-      * turned some std::list<PeerId> into std::set, as it automatically prevents duplicates
+      * updated packaging scripts. Disabled libssh, protobuf; enabled webui, added dependencies in libmicrohttpd
+      * marked unimplemented methods in rsgxsnetservice.h
+      * disabled some useless old branches in the flushing of incoming items due to calling pqihandler::tick() and 
+         pqipersongrp::tickServiceRecv which caused ghost items to print out at start
+      * fixed error msg due to broadcast chat trying to call statusUpdate()
 
    Bugs
-      * fixed uninitialised memory read in pqihandler
-      * fixed id auto-cleaning causing a deadlock
-      * prevent discovery and p3PeerMgr::loadList() from erasing service permission flags. 
-        Now the existing pgp-based values are kept.
-      * fix for linux compilation case where sqlcipher is present in a subdirectory of trunk (Patch from Heini)
+      * only reset GxsIdChooser to default item on first load. Fixes the bug of current identity that keeps changing in chat lobbies
+      * attempt at fixing crash that shoult not happen in rsgxsutil.cc
+      * fixed chat lobby context menu to allow to toggle auto subscribe
 
    WebUI:
-      * added missing fclose
-      * fixed makefile
-      * added support for urls and forward/backward browsing
-      * started optimization for touch screens
+      * use same docroot in retroshare-nogui as in retroshare-gui
+      * hide login/shutdown when running in retroshare-gui
+      * added better live reload. It uses the Retroshare built in server. Grunt is not required anymore.
+      * removed unused buttons
+      * started ChatHandler
+      * enabled webui to show own locations
+      * added web interface to tray menu
+      * fixed wrong account numbering in retroshare-nogui
+      * added web interface to retroshare-gui
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 21 Avr 2015 22:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 30 Apr 2015 21:00:00 +0100
 
 retroshare06 (0.6.0-0.8120~precise) precise; urgency=low
 
