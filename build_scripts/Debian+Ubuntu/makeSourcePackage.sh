@@ -46,7 +46,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty utopic"
+	dist="precise trusty utopic vivid"
 fi
 
 echo "  "Using PGP key id   : ${gpgkey}
@@ -94,20 +94,20 @@ cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/
 #   LIBSSH_LOCATION=https://git.libssh.org/projects/libssh.git/snapshot/libssh-${LIBSSH_VERSION}.tar.gz
 #   
 #   [ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz $LIBSSH_LOCATION 
-#   cd ${workdir}
 #   tar zxvf ../libssh-${LIBSSH_VERSION}.tar.gz
 
 # Cloning sqlcipher
 # git clone https://github.com/sqlcipher/sqlcipher.git
 
 # cleaning up protobof generated files
-rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
-rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
+# rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
+# rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
 
+cd ${workdir}
 echo Setting version numbers...
 
 # setup version numbers
-sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   ${svnrev}%" src/libretroshare/src/retroshare/rsversion.in >src/libretroshare/src/retroshare/rsversion.h
+sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   ${svnrev}%" src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
 
 # Various cleaning
 echo Cleaning...

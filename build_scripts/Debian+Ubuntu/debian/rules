@@ -45,12 +45,12 @@ install: build
 	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui       $(CURDIR)/debian/retroshare06-nogui/usr/bin/RetroShare06-nogui
 	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui       $(CURDIR)/debian/retroshare06/usr/bin/RetroShare06-nogui
 	install -D -m 755 src/retroshare-gui/src/RetroShare               $(CURDIR)/debian/retroshare06/usr/bin/RetroShare06
-	install -D -m src/libresapi/src/webfiles/JSXTransformer.js     	$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/JSXTransformer.js   
-	install -D -m src/libresapi/src/webfiles/RsApi.js     				$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/RsApi.js     		 
-	install -D -m src/libresapi/src/webfiles/RsXHRConnection.js    	$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/RsXHRConnection.js  
-	install -D -m src/libresapi/src/webfiles/green-black.css     		$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/green-black.css     
-	install -D -m src/libresapi/src/webfiles/gui.jsx     					$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/gui.jsx     			 
-	install -D -m src/libresapi/src/webfiles/index.html     				$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/index.html     		 
+	install -D -m 644 src/libresapi/src/webfiles/JSXTransformer.js    $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/JSXTransformer.js   
+	install -D -m 644 src/libresapi/src/webfiles/RsApi.js     			$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/RsApi.js     		 
+	install -D -m 644 src/libresapi/src/webfiles/RsXHRConnection.js   $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/RsXHRConnection.js  
+	install -D -m 644 src/libresapi/src/webfiles/green-black.css     	$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/green-black.css     
+	install -D -m 644 src/libresapi/src/webfiles/gui.jsx     			$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/gui.jsx     			 
+	install -D -m 644 src/libresapi/src/webfiles/index.html     		$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/index.html     		 
 	install -D -m src/libresapi/src/webfiles/react.js     				$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/react.js     		 
 
 # Add here commands to install the package into debian/your_appname
