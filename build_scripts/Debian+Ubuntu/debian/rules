@@ -51,7 +51,7 @@ install: build
 	install -D -m 644 src/libresapi/src/webfiles/green-black.css     	$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/green-black.css     
 	install -D -m 644 src/libresapi/src/webfiles/gui.jsx     			$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/gui.jsx     			 
 	install -D -m 644 src/libresapi/src/webfiles/index.html     		$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/index.html     		 
-	install -D -m src/libresapi/src/webfiles/react.js     				$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/react.js     		 
+	install -D -m 644 src/libresapi/src/webfiles/react.js     			$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/react.js     		 
 
 # Add here commands to install the package into debian/your_appname
 #    cd builddir && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
