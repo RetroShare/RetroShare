@@ -89,13 +89,13 @@ cd -
 # VOIP tweak  
 cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
 
-# handling of libssh
-LIBSSH_VERSION=0.6.4
-LIBSSH_LOCATION=https://git.libssh.org/projects/libssh.git/snapshot/libssh-${LIBSSH_VERSION}.tar.gz
-
-[ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz $LIBSSH_LOCATION 
-cd ${workdir}
-tar zxvf ../libssh-${LIBSSH_VERSION}.tar.gz
+#   # handling of libssh
+#   LIBSSH_VERSION=0.6.4
+#   LIBSSH_LOCATION=https://git.libssh.org/projects/libssh.git/snapshot/libssh-${LIBSSH_VERSION}.tar.gz
+#   
+#   [ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz $LIBSSH_LOCATION 
+#   cd ${workdir}
+#   tar zxvf ../libssh-${LIBSSH_VERSION}.tar.gz
 
 # Cloning sqlcipher
 # git clone https://github.com/sqlcipher/sqlcipher.git

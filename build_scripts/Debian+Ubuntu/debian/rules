@@ -11,10 +11,10 @@ build: build-stamp
 build-stamp: builddir/Makefile
 	dh_testdir
 	# Add here commands to compile the package.
-	cd libssh-0.6.4 && mkdir -p build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
-	#cd sqlcipher && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto" && make
-	mkdir lib
-	cp -r libssh-0.6.4 lib/
+	# cd libssh-0.6.4 && mkdir -p build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
+	# cd sqlcipher && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto" && make
+	# mkdir lib
+	# cp -r libssh-0.6.4 lib/
 	#cp -r sqlcipher lib/
 	#cd src/rsctrl/src && make
 	cd src && qmake-qt4 CONFIG=release RetroShare.pro && make
@@ -33,18 +33,25 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	install -D -m 644 src/data/retroshare.desktop                           $(CURDIR)/debian/retroshare06/usr/share/applications/retroshare06.desktop
-	install -D -m 644 src/data/24x24/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/24x24/apps/retroshare06.png
-	install -D -m 644 src/data/48x48/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/48x48/apps/retroshare06.png
-	install -D -m 644 src/data/64x64/retroshare.png                         $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/64x64/apps/retroshare06.png
-	install -D -m 644 src/data/retroshare.xpm                               $(CURDIR)/debian/retroshare06/usr/share/pixmaps/retroshare06.xpm
-	install -D -m 644 src/plugins/VOIP/libVOIP.so.1.0.0              		$(CURDIR)/debian/retroshare06-voip-plugin/usr/lib/retroshare/extensions6/libVOIP.so
-	install -D -m 644 src/plugins/FeedReader/libFeedReader.so.1.0.0  		$(CURDIR)/debian/retroshare06-feedreader-plugin/usr/lib/retroshare/extensions6/libFeedReader.so
-	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt                   $(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/bdboot.txt
-	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt                   $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/bdboot.txt
-	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui        		$(CURDIR)/debian/retroshare06-nogui/usr/bin/RetroShare06-nogui
-	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui        		$(CURDIR)/debian/retroshare06/usr/bin/RetroShare06-nogui
-	install -D -m 755 src/retroshare-gui/src/RetroShare                		$(CURDIR)/debian/retroshare06/usr/bin/RetroShare06
+	install -D -m 644 src/data/retroshare.desktop                     $(CURDIR)/debian/retroshare06/usr/share/applications/retroshare06.desktop
+	install -D -m 644 src/data/24x24/retroshare.png                   $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/24x24/apps/retroshare06.png
+	install -D -m 644 src/data/48x48/retroshare.png                   $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/48x48/apps/retroshare06.png
+	install -D -m 644 src/data/64x64/retroshare.png                   $(CURDIR)/debian/retroshare06/usr/share/icons/hicolor/64x64/apps/retroshare06.png
+	install -D -m 644 src/data/retroshare.xpm                         $(CURDIR)/debian/retroshare06/usr/share/pixmaps/retroshare06.xpm
+	install -D -m 644 src/plugins/VOIP/libVOIP.so.1.0.0              	$(CURDIR)/debian/retroshare06-voip-plugin/usr/lib/retroshare/extensions6/libVOIP.so
+	install -D -m 644 src/plugins/FeedReader/libFeedReader.so.1.0.0  	$(CURDIR)/debian/retroshare06-feedreader-plugin/usr/lib/retroshare/extensions6/libFeedReader.so
+	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt             $(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/bdboot.txt
+	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt             $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/bdboot.txt
+	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui       $(CURDIR)/debian/retroshare06-nogui/usr/bin/RetroShare06-nogui
+	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui       $(CURDIR)/debian/retroshare06/usr/bin/RetroShare06-nogui
+	install -D -m 755 src/retroshare-gui/src/RetroShare               $(CURDIR)/debian/retroshare06/usr/bin/RetroShare06
+	install -D -m src/libresapi/src/webfiles/JSXTransformer.js     	$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/JSXTransformer.js   
+	install -D -m src/libresapi/src/webfiles/RsApi.js     				$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/RsApi.js     		 
+	install -D -m src/libresapi/src/webfiles/RsXHRConnection.js    	$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/RsXHRConnection.js  
+	install -D -m src/libresapi/src/webfiles/green-black.css     		$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/green-black.css     
+	install -D -m src/libresapi/src/webfiles/gui.jsx     					$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/gui.jsx     			 
+	install -D -m src/libresapi/src/webfiles/index.html     				$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/index.html     		 
+	install -D -m src/libresapi/src/webfiles/react.js     				$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/react.js     		 
 
 # Add here commands to install the package into debian/your_appname
 #    cd builddir && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
