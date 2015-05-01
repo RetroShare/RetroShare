@@ -604,12 +604,12 @@ int 	pqissl::Delay_Connection()
 	}
 
   	rslog(RSL_WARNING, pqisslzone, 
-		 "pqissl::Initiate_Connection() Already Attempt in Progress!");
+		 "pqissl::Delay_Connection() Already Attempt in Progress!");
 	return -1;
 }
 
 
-int 	pqissl::Initiate_Connection()
+int pqissl::Initiate_Connection()
 {
 	int err;
 	struct sockaddr_storage addr = remote_addr;
@@ -750,6 +750,7 @@ int 	pqissl::Initiate_Connection()
 	{
 		std::string out;
 		rs_sprintf(out, "pqissl::Initiate_Connection() connect returns:%d -> errno: %d error: %s\n", err, errno, socket_errorType(errno).c_str());
+		sockaddr_storage_dump(addr, &out);
 		
 		if (errno == EINPROGRESS)
 		{

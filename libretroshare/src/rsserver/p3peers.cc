@@ -894,7 +894,9 @@ bool p3Peers::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 
 bool p3Peers::getProxyServer(std::string &addr, uint16_t &port, uint32_t &status)
 {
-        std::cerr << "p3Peers::getProxyServer()" << std::endl;
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::getProxyServer()" << std::endl;
+#endif
 
 	struct sockaddr_storage proxy_addr;
 	mPeerMgr->getProxyServerAddress(proxy_addr);

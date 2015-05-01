@@ -371,21 +371,25 @@ in_addr_t inet_network(const char *inet_name)
 bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs)
 {
 	struct ifaddrs *ifsaddrs, *ifa;
-	if(getifaddrs(&ifsaddrs) != 0) exit(1);
+	if(getifaddrs(&ifsaddrs) != 0)
+	{
+		freeifaddrs(ifsaddrs);
+		return false;
+	}
 
 	addrs.clear();
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
 		if ( (ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_LOOPBACK) )
 		{
-			sockaddr_storage * tmp = new sockaddr_storage;
-			if (sockaddr_storage_copyip(* tmp, * (const struct sockaddr_storage *) ifa->ifa_addr))
-				addrs.push_back(*tmp);
-			else delete tmp;
+			const sockaddr_storage & ifaaddr = * (const struct sockaddr_storage *) ifa->ifa_addr;
+			if (sockaddr_storage_isLinkLocal(ifaaddr)) continue;
+			sockaddr_storage tmp;
+			if (sockaddr_storage_copyip(tmp, ifaaddr)) addrs.push_back(tmp);
 		}
 
-	freeifaddrs(ifsaddrs);
 
-	return (!addrs.empty());
+	freeifaddrs(ifsaddrs);
+	return !addrs.empty();
 }
 
 

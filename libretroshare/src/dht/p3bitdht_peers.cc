@@ -219,29 +219,23 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags) 
 {
 	struct sockaddr_in addrv4;
+	sockaddr_storage tmpAddr = addr;
 
-	if (addr.ss_family != AF_INET)
+	if (!sockaddr_storage_ipv6_to_ipv4(tmpAddr))
 	{
-		std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
-		std::cerr << std::endl;
-		sockaddr_clear(&addrv4);
-
-
-		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
-		{
-			std::cerr << "p3BitDht::addKnownPeer() Non IPv4 Address & ONLINE. Abort()ing.";
-			std::cerr << std::endl;
-			return 0; // TODO:IPV6
-		}
-
-
+#ifdef DEBUG_BITDHT
+		std::cerr << "p3BitDht::addKnownPeer() Warning! Cannot add non IPv4 Address" << std::endl;
+		sockaddr_storage_dump(addr);
+#endif
+		return 0; // TODO:IPV6
 	}
 	else
 	{
 
 		// convert.
-		struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
-	
+		struct sockaddr_in *ap = (struct sockaddr_in *) &tmpAddr;
+
+		sockaddr_clear(&addrv4);
 		addrv4.sin_family = ap->sin_family;
 		addrv4.sin_addr = ap->sin_addr;
 		addrv4.sin_port = ap->sin_port;	
