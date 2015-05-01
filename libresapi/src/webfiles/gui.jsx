@@ -188,21 +188,6 @@ var changeUrlListener = {
 };
 signalSlotServer.registerClient(changeUrlListener);
 
-var Peers = React.createClass({
-	mixins: [AutoUpdateMixin],
-	getPath: function(){return "peers";},
-	getInitialState: function(){
-		return {data: []};
-	},
-	render: function(){
-		var renderOne = function(f){
-			console.log("make one");
-			return <p>{f.name} <img src={api_url+f.locations[0].avatar_address} /></p>;
-		};
-		return <div>{this.state.data.map(renderOne)}</div>;
-	},
- });
-
 var Peers2 = React.createClass({
 	mixins: [AutoUpdateMixin, SignalSlotMixin],
 	getPath: function(){return "peers";},
@@ -260,6 +245,81 @@ var Peers2 = React.createClass({
 	},
 });
 
+
+var Peers3 = React.createClass({
+	mixins: [AutoUpdateMixin, SignalSlotMixin],
+	getPath: function(){return "peers";},
+	getInitialState: function(){
+		return {data: []};
+	},
+	add_friend_handler: function(){
+		this.emit("change_url", {url: "add_friend"});
+	},
+	render: function(){
+		var component = this;
+		var Peer = React.createClass({
+			remove_peer_handler: function(){
+				var yes = window.confirm("Remove "+this.props.data.name+" from friendslist?");
+				if(yes){
+					RS.request({path: component.getPath()+"/"+this.props.data.pgp_id+"/delete"});
+				}
+			},
+			render: function(){
+				var locations = this.props.data.locations.map(function(loc){
+					var online_style = {
+						width: "1em",
+						height: "1em",
+						borderRadius: "0.5em",
+						backgroundColor: "grey",
+						float:"left",
+					};
+					if(loc.is_online)
+						online_style.backgroundColor = "lime";
+					return(<div key={loc.peer_id} style={{color: loc.is_online? "lime": "grey"}}>{/*<div style={online_style}></div>*/}{loc.location}</div>);
+				});
+				var avatars = this.props.data.locations.map(function(loc){
+					if(loc.is_online)
+					{
+						var avatar_url = api_url + component.getPath() + loc.avatar_address;
+						return <img style={{borderRadius: "3mm", margin: "2mm"}} src={avatar_url}/>;
+					}
+					else return <span></span>;
+				});
+				var remove_button_style = {
+					color: "red",
+					//fontSize: "1.5em",
+					fontSize: "10mm",
+					padding: "0.2em",
+					cursor: "pointer",
+				};
+				var remove_button = <div onClick={this.remove_peer_handler} style={remove_button_style}>X</div>;
+				var is_online = false;
+				for(var i in this.props.data.locations)
+				{
+					if(this.props.data.locations[i].is_online)
+						is_online = true;
+				}
+				return(
+				<div className="flexbox" style={{color: is_online? "lime": "grey"}}>
+					<div>{avatars}</div>
+					<div className="flexwidemember">
+						<h1 style={{marginBottom: "1mm"}}>{this.props.data.name}</h1>
+						<div>{locations}</div>
+					</div>
+					{remove_button}
+				</div>
+				);
+			}
+		});
+		return (
+		<div>
+			{/* span reduces width to only the text length, div does not */}
+			<div onClick={this.add_friend_handler} className="btn2">&#43; add friend</div>
+			{this.state.data.map(function(peer){ return <Peer key={peer.pgp_id} data={peer}/>; })}
+		</div>);
+	},
+});
+
 var AddPeerWidget = React.createClass({
 	getInitialState: function(){
 		return {page: "start"};
@@ -308,6 +368,35 @@ var AddPeerWidget = React.createClass({
 			);
 	},
 });
+
+var ProgressBar = React.createClass({
+	render: function(){
+		return(
+		<div style={{
+			borderStyle: "solid",
+			borderColor: "lime",
+			borderRadius: "3mm",
+			padding: "2mm",
+			height: "10mm",
+		}}>
+			<div style={{backgroundColor: "lime", height: "100%", width: (this.props.progress*100)+"%",}}></div>
+		</div>);
+	}
+});
+
+function makeFriendlyUnit(bytes)
+{
+	if(bytes < 1e3)
+		return bytes.toFixed(1) + "B";
+	if(bytes < 1e3)
+		return (bytes/1e3).toFixed(1) + "kB";
+	if(bytes < 1e9)
+		return (bytes/1e6).toFixed(1) + "MB";
+	if(bytes < 1e12)
+		return (bytes/1e9).toFixed(1) + "GB";
+	return (bytes/1e12).toFixed(1) + "TB";
+}
+
 
 var DownloadsWidget = React.createClass({
 	mixins: [AutoUpdateMixin, SignalSlotMixin],
@@ -372,8 +461,8 @@ var DownloadsWidget = React.createClass({
 				}
 				return(<tr>
 					<td>{this.props.data.name}</td>
-					<td>{this.props.data.size}</td>
-					<td>{this.props.data.transfered / this.props.data.size}</td>
+					<td>{makeFriendlyUnit(this.props.data.size)}</td>
+					<td><ProgressBar progress={this.props.data.transfered / this.props.data.size}/></td>
 					<td>{this.props.data.download_status}</td>
 					<td>{ctrlBtn} <div className="btn" onClick={cancelFn}>cancel</div> {playBtn}</td>
 					</tr>);
@@ -728,7 +817,7 @@ var MainWidget = React.createClass({
 		}
 		if(this.state.page === "friends")
 		{
-			mainpage = <Peers2 />;
+			mainpage = <Peers3 />;
 		}
 		if(this.state.page === "downloads")
 		{
@@ -765,6 +854,7 @@ var MainWidget = React.createClass({
 				<AudioPlayerWidget/>
 				{menubutton}
 				{mainpage}
+				{/*<ProgressBar progress={0.7}/>*/}
 			</div>
 		);
 	},

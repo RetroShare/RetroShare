@@ -1,35 +1,36 @@
 REACT_VERSION = 0.13.1
 
-JSEXTLIBS = dist/react.js dist/JSXTransformer.js 
+DISTDIR = ../webfiles
+JSEXTLIBS = $(DISTDIR)/react.js $(DISTDIR)/JSXTransformer.js 
 JSLIBS = RsXHRConnection.js RsApi.js
 HTML = index.html
 JSGUI = gui.jsx
 CSS = green-black.css
 
-all: dist $(JSEXTLIBS) $(addprefix dist/, $(JSLIBS)) $(addprefix dist/, $(HTML)) $(addprefix dist/, $(JSGUI)) $(addprefix dist/, $(CSS))
+all: $(DISTDIR) $(JSEXTLIBS) $(addprefix $(DISTDIR)/, $(JSLIBS)) $(addprefix $(DISTDIR)/, $(HTML)) $(addprefix $(DISTDIR)/, $(JSGUI)) $(addprefix $(DISTDIR)/, $(CSS))
 .PHONY: all
 
-dist/livereload: dist $(JSEXTLIBS) $(addprefix dist/, $(JSLIBS)) $(addprefix dist/, $(HTML)) $(addprefix dist/, $(JSGUI)) $(addprefix dist/, $(CSS))
+$(DISTDIR)/livereload: $(DISTDIR) $(JSEXTLIBS) $(addprefix $(DISTDIR)/, $(JSLIBS)) $(addprefix $(DISTDIR)/, $(HTML)) $(addprefix $(DISTDIR)/, $(JSGUI)) $(addprefix $(DISTDIR)/, $(CSS))
 	wget -qO- http://localhost:9090/api/v2/livereload/trigger
-	touch dist/livereload
+	touch $(DISTDIR)/livereload
 
-dist/react.js:
-	cd dist && wget --no-check-certificate --output-document react.js http://fb.me/react-$(REACT_VERSION).js
+$(DISTDIR)/react.js:
+	cd $(DISTDIR) && wget --no-check-certificate --output-document react.js http://fb.me/react-$(REACT_VERSION).js
 
-dist/JSXTransformer.js:
-	cd dist && wget --no-check-certificate --output-document JSXTransformer.js http://fb.me/JSXTransformer-$(REACT_VERSION).js
+$(DISTDIR)/JSXTransformer.js:
+	cd $(DISTDIR) && wget --no-check-certificate --output-document JSXTransformer.js http://fb.me/JSXTransformer-$(REACT_VERSION).js
 
-$(addprefix dist/, $(JSLIBS)): dist/%: %
+$(addprefix $(DISTDIR)/, $(JSLIBS)): $(DISTDIR)/%: %
 	cp $< $@
 
-$(addprefix dist/, $(HTML)): dist/%: %
+$(addprefix $(DISTDIR)/, $(HTML)): $(DISTDIR)/%: %
 	cp $< $@
 
-$(addprefix dist/, $(JSGUI)): dist/%: %
+$(addprefix $(DISTDIR)/, $(JSGUI)): $(DISTDIR)/%: %
 	cp $< $@
 
-$(addprefix dist/, $(CSS)): dist/%: %
+$(addprefix $(DISTDIR)/, $(CSS)): $(DISTDIR)/%: %
 	cp $< $@
 
-dist:
-	mkdir dist
+$(DISTDIR):
+	mkdir $(DISTDIR)

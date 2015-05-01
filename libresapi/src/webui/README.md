@@ -12,9 +12,11 @@ BUILD / INSTALLATION
 
 	- run (requires wget, use MinGW shell on Windows)
 		make
-	- all output files are now in the "dist" folder
+	- all output files are now in libresapi/src/webfiles
 	- use the --webinterface 9090 command line parameter to enable webui in retroshare-nogui
-	- set the --docroot parameter of retroshare-nogui to point to the "dist" directory
+	- set the --docroot parameter of retroshare-nogui to point to the "libresapi/src/webfiles" directory
+		(or symlink from /usr/share/RetroShare0.6/webui on Linux, ./webui on Windows)
+	- retroshare-gui does not have a --docroot parameter. Use symlinks then.
 
 DEVELOPMENT
 -----------
@@ -26,8 +28,8 @@ DEVELOPMENT
 		npm install
 	- run Retroshare with webinterface on port 9090
 	- during development, run this command (use MinGW shell on Windows)
-		while true; do make dist/livereload --silent; sleep 1; done
-	- the command will copy the source files to the "dist" directory if they change
+		while true; do make ../webfiles/livereload --silent; sleep 1; done
+	- the command will copy the source files to libresapi/src/webfiles if they change
 	- it will trigger livereload at http://localhost:9090/api/v2/livereload/trigger
 
 API DOCUMENTATION
