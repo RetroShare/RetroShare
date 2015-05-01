@@ -6,8 +6,134 @@ Legend:
    M: medium. Needs some care.
    H: hard. Needs digging into libretroshare.
 
-Level |  What
--------------------------------------------------------------------------------------------------------------------
+----------------------------------------  GUI TWEAKS FOR 0.6 RELEASE  -------------------------------------------------
+
+To be done
+
+0001 [ ]    forums - middle horisontal bar - always shows *by anonymous* (from noname)
+0002 [ ]    remove useless column in forums "signed by" (last column) (from electron)
+0003 [ ]    main window must close on ESC (from noname)
+0004 [ ]    show storage time of forums/channels/posted in gui (from cave)
+0005 [ ]    if keysigning is not working -> hide or remove it (from cave) cyril: keep it, but add more info about how to use/interpret it.
+0006 [ ]    implement default gxs id (from cave) cyril: you mean system-wide default gxs id? That would be a good thing to have.
+0007 [ ]    *getting started* - need to say about chatservers (from noname)
+            comment: chatservers are inofficial and may go down at any time. which one should we mention?
+            cyril: we could add a link to a search for RS chat servers in duckduck go
+0008 [ ]    forum livetime too short (from noname) cyril: expand it to 1 year
+0009 [ ]    Settings -> Server -> show discovery information in statusbar. I've never seen any discovery info since the switch to 
+            disc v2 - so i guess this option can be removed (from sehraf) cyril: that can be fixed. The link between GUI and discovery2 can
+            be restored. Also we should get rid of the code for discovery(1)
+
+0010 [ ]    window and tab sizes not saved on exit or closing (from noname)
+
+0011 [ ]    in add friend dialog: include signatures seems to do nothing there. cyril: it does if you have signatures. Show 
+            the checkbox only when the key as signatures => less confusion.  (from noname)
+
+0012 [ ]    from time to time the location images and the location message is not updated or gets lost, or the location name.  (from cave)
+
+0013 [ ]    new design, new icons, minimal UI (from purplehaze420) comment: use webui as base for minimal ui
+            cyril: we cannot change everything now. But purplehaze420 said he would provide a consistent set of icons. That would be great.
+
+0014 [ ]    go to Settings -> Permissions: wait for scrollbars to appear go back to any other setting (e.g. Notify): the page now 
+            needs the same space as the permission matrix (happens on windows + linux; can be "fixed" by closing and reopen the setting window)
+            (from sehraf)
+
+0015 [ ]    The new statistics windows is really nice and everybody should see it -> add a link to it somewhere in settings 
+            (or wherever suitable) (from sehraf) cyril: there's a menu in the bottom right corner ofthe main window to get it. 
+            Otherwise, we could merge it as tabs in options->server, but I don't really like this option.
+
+0016 [ ]    many things are deeply hidden - config wizard, share manager, permissions, statistics (from noname)
+            comment: either the gui is overloaded with buttons or stuff is hidden. choose one
+            cyril: this is true. Config wizard and share manager could be made more obvious.
+            Config wizard could be integrated in "getting started" which means
+            to be improved anyway.
+
+0017 [X]    no tab configuraion for uploads section. no cache transfer disable option comment: cachetransfers will be removed (from noname)
+            cyril: rename "show cache transfers" into "show file lists transfers"
+
+0018 [ ]    add friend dialog - add button for pasting from clipboard. 
+            // some ppl dumb to use rightclich or keyboard)) and on the upper window some buttons exist, the lower one feels lonely.(from noname)
+            comment: teach to use the context menu, else they are lost in RS
+
+0019 [ ]    no identity on first start makes impossible to start chat or post forums.
+            maybe config wizard should propose to create one, just asking a name desired.  (from noname)
+            cyril: integrating in config wizard is a good idea: check if one identity is present, if not allow to create one.
+            Note that all ID choosers allow to create a new identity
+
+0020 [ ]    double click on completed download must open the file. or folder, configurable in options (from noname)
+
+0028 [ ]    RTT statistics shouldn't show curves for offline peers
+0029 [ ]    In options, rename "server"->"network", "transfer"->"file transfer".
+
+0030 [ ]    forums - middle horisontal bar - post time is duplicate to the one in the list. also thread name.
+            forum name (the line with view mode) is duplicate to tab header.
+            button for new thread must have text, *reply to selected post* button must be placed next to it
+            the big subscribe button on the top, but never used.
+            generally,we have 2 panels here, both semi-empty. need to compact all the stuff
+
+0031 [ ]    chats - participant list can't be extended in wide.
+            show/hide button is almost invisible. make it more big. but it takes space in width, so move it to bar with lobby name.
+            however, the lobby name bar also seems redundant. so maybe the button's final place must domewhere in the lower button bar. 
+
+0032 [ ]    In Network->friend list. Remove "[Connected]" to location names.  Takes room and isn't useful since the text is in bold 
+            when connected. Also put the avatar column first. Remove the "Busy" and "Idle" text since they are shown as icon already and
+            set them as tooltip => lots of saved space.
+
+0033 [ ]    Selecting different options in messages composer -> contact list then come back, shows disappearing / re-appearing people. 
+            What causes this???
+
+**Not sure**
+
+0021 [ ]    too many option tabs. may be some must be hidden when advanced mode is not selected
+            some may be grouped, like styles -for messages, chats and forums appearance must be somewhere on top, in general (from noname)
+            comment: hiding stuff makes it even more complicated. before we hide it we can remove it
+            cyril: we could group them somehow. 
+
+0022 [ ]    some time ago we had separate chat window for messaging (in 0.5.5 it still exists). may be it must be resurrected.  (from noname)
+
+// UNSORTED
+// 
+// 23 [too hard for v0.6] chats are missing quote feature, any text formatting.
+//  picture attachment is ajoke, with the size limits given.
+//  need ability to save picture attaches in forums and chats
+// (from noname)
+// 
+// 24 [do nothing] people tab - is not much useful, may be hide it somewhere from main window. like options-node-my idents.
+// (from noname)
+// comment: we don't have somethign better, live with it
+// 
+// 25 [low priority] network - peer filter - not showing locations, not useful because many options are location specific.
+// (from noname)
+// comment: not sure what correct behaviour would be
+// 
+// 26 [low priority] friend file browser - need options to hide offline peers, hide empy shares
+//  size column should count contents for directories
+// (from noname)
+// comment: will people complain about missing peers?
+// 
+// 27 [] notify for channels and forums - need option to show only new forums, not for every post in them.
+//  some might not like flooding there, and it is not a big problem to go to needed tab when it becomes red.
+// (from noname)
+
+// long post from noname. Many things go to deep and are out of scope for v0.6
+// 
+// compaction the line below the buttonbar is useless, it just duplicates the
+// button. except the mail tab, there is some buttons and they need to be
+// relocated the help icon on each tab can be placed in window title or
+// somwhere else
+// 
+// IM window - the whole bar with name and a/v buttons is excess. name is on
+// the window title, and in the chat. buttons must be on the lower panel with
+// the others.  3x set... and dock buttons also must be relocated and the
+// panel removed.  away/offline informer bar must be more compact and nice
+// 
+// modularity some peopl may not use specific rs features like forums or chats
+// or mail. create the ability to hide the tabs from interface and disable the
+// network services for them in an ultimate configuration people for example
+// may want only chats, so the compact interface with only peer list is good
+// for them, skype-like.
+
+------------------------------------------  GENERAL BACKEND STUFF  ----------------------------------------------------
        Posted:
 E        [X] it's not possible to create a Posted thread without a Owner. 
              Bug? If not, then remove "No signature" from selection box
@@ -70,7 +196,7 @@ M        [ ] popularity calculation seems wrong. To reproduce: create a new chan
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
          [X] Remove deprecated code in rschatitems.
          [X] remove "change nickname" from drop menu
-			[X] there's no way to remove auto-subscribe when connected to a lobby. Show auto-subscribe status in tooltip, add menu entries.
+         [X] there's no way to remove auto-subscribe when connected to a lobby. Show auto-subscribe status in tooltip, add menu entries.
       
        Profile creation wizard
          [X] "Hidden node" should be an option at start. Apparently it becomes mandatory when one sets the advanced mode. 
@@ -150,7 +276,7 @@ M        [ ] separate chat stuff from rsmsgs.h into rschat.h
       Chat
 H        [ ] add "chat with this peer" from lobbies to start a private distant conversation with the GXS id of the peer
 
-		Msgs
+      Msgs
 H        [ ] Merge the new messaging format
 
 
