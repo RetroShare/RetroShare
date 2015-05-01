@@ -244,11 +244,6 @@
            <string>Author</string>
           </property>
          </column>
-         <column>
-          <property name="text">
-           <string>Signed</string>
-          </property>
-         </column>
         </widget>
        </item>
        <item>
