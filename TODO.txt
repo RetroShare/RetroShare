@@ -10,7 +10,7 @@ Legend:
 
 To be done
 
-0001 [ ]    forums - middle horisontal bar - always shows *by anonymous* (from noname)
+0001 [X]    forums - middle horisontal bar - always shows *by anonymous* (from noname) [fixed, also removed useless thread line]
 0002 [ ]    remove useless column in forums "signed by" (last column) (from electron)
 0003 [ ]    main window must close on ESC (from noname)
 0004 [ ]    show storage time of forums/channels/posted in gui (from cave)

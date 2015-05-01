@@ -118,7 +118,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mStateHelper->addWidget(mTokenTypeMessageData, ui->downloadButton);
 
 	mStateHelper->addLoadPlaceholder(mTokenTypeMessageData, ui->postText);
-	mStateHelper->addLoadPlaceholder(mTokenTypeMessageData, ui->threadTitle);
+    //mStateHelper->addLoadPlaceholder(mTokenTypeMessageData, ui->threadTitle);
 
 	mSubscribeFlags = 0;
 	mInProcessSettings = false;
@@ -192,7 +192,15 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	setGroupId(forumId);
 
-	ui->threadTreeWidget->installEventFilter(this);
+    ui->threadTreeWidget->installEventFilter(this);
+
+    ui->postText->clear();
+    ui->by_label->setId(RsGxsId());
+    ui->time_label->clear() ;
+    ui->line->hide() ;
+    ui->line_2->hide() ;
+    ui->by_text_label->hide() ;
+    ui->by_label->hide() ;
 }
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
@@ -450,7 +458,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(replyAct);
 	contextMnu.addAction(replyauthorAct);
   contextMnu.addAction(newthreadAct);
-	QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+    QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
 	contextMnu.addAction(markMsgAsRead);
@@ -692,7 +700,7 @@ void GxsForumThreadWidget::insertGroupData(const RsGxsForumGroup &group)
 
 	if (mThreadId.isNull() && !mStateHelper->isLoading(mTokenTypeMessageData))
 	{
-		ui->threadTitle->setText(tr("Forum Description"));
+        //ui->threadTitle->setText(tr("Forum Description"));
 		ui->postText->setText(mForumDescription);
 	}
 
@@ -1171,7 +1179,7 @@ void GxsForumThreadWidget::insertMessage()
 		mStateHelper->clear(mTokenTypeMessageData);
 
 		ui->postText->clear();
-		ui->threadTitle->clear();
+        //ui->threadTitle->clear();
 		return;
 	}
 
@@ -1180,7 +1188,7 @@ void GxsForumThreadWidget::insertMessage()
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
 
-		ui->threadTitle->setText(tr("Forum Description"));
+        //ui->threadTitle->setText(tr("Forum Description"));
 		ui->postText->setText(mForumDescription);
 		return;
 	}
@@ -1205,6 +1213,12 @@ void GxsForumThreadWidget::insertMessage()
 
 	/* blank text, incase we get nothing */
 	ui->postText->clear();
+    ui->by_label->setId(RsGxsId());
+    ui->time_label->clear() ;
+    ui->line->hide() ;
+    ui->line_2->hide() ;
+    ui->by_text_label->hide() ;
+    ui->by_label->hide() ;
 
 	/* request Post */
 	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
@@ -1215,7 +1229,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 {
 	/* As some time has elapsed since request - check that this is still the current msg.
 	 * otherwise, another request will fill the data
-	 */
+     */
 
 	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
 	{
@@ -1259,24 +1273,17 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	}
 
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
+    ui->by_label->setId(msg.mMeta.mAuthorId) ;
 
-	std::string authorName;
-	//= rsPeers->getPeerName(msg.mMeta.mAuthorId);
-	QString text = QString::fromUtf8(authorName.c_str());
+    ui->line->show() ;
+    ui->line_2->show() ;
+    ui->by_text_label->show() ;
+    ui->by_label->show() ;
 
-	if (text.isEmpty())
-	{
-		ui->by_label->setText( tr("By") + " " + tr("Anonymous"));
-	}
-	else
-	{
-		ui->by_label->setText( tr("By") + " " + text );
-	}
-
-	QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+    QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
 	ui->postText->setHtml(extraTxt);
-	ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
+    //ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 }
 
 void GxsForumThreadWidget::previousMessage()
@@ -1559,7 +1566,11 @@ void GxsForumThreadWidget::copyMessageLink()
 	}
 
 	RetroShareLink link;
-	if (link.createGxsMessageLink(RetroShareLink::TYPE_FORUM, groupId(), mThreadId, ui->threadTitle->text())) {
+    QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+
+    QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
+
+    if (link.createGxsMessageLink(RetroShareLink::TYPE_FORUM, groupId(), mThreadId, thread_title)) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);

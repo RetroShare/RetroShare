@@ -256,33 +256,33 @@
          <property name="leftMargin">
           <number>3</number>
          </property>
-         <item>
-          <widget class="QLabel" name="threadLabel">
-           <property name="text">
-            <string>Thread:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="threadTitle">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
         <layout class="QGridLayout" name="postLayout">
+         <item row="0" column="5">
+          <widget class="QToolButton" name="downloadButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Download all files</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="7">
           <widget class="QLabel" name="time_label">
            <property name="text">
@@ -290,7 +290,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="11">
+         <item row="0" column="12">
           <widget class="QPushButton" name="nextUnreadButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -326,7 +326,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="13">
+         <item row="0" column="14">
           <widget class="QPushButton" name="expandButton">
            <property name="maximumSize">
             <size>
@@ -352,29 +352,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="5">
-          <widget class="QToolButton" name="downloadButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="toolTip">
-            <string>Download all files</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="6">
           <widget class="Line" name="line_2">
            <property name="orientation">
@@ -389,14 +366,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="9">
-          <widget class="QLabel" name="by_label">
-           <property name="text">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="10">
+         <item row="0" column="11">
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -488,6 +458,20 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="10">
+          <widget class="GxsIdLabel" name="by_label">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="9">
+          <widget class="QLabel" name="by_text_label">
+           <property name="text">
+            <string>By </string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -524,6 +508,11 @@
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

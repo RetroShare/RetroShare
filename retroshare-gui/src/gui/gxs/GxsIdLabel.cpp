@@ -48,7 +48,7 @@ static void fillLabelCallback(GxsIdDetailsType type, const RsIdentityDetails &de
 		break;
 
 	case GXS_ID_DETAILS_TYPE_DONE:
-		toolTip = GxsIdDetails::getComment(details);
+        toolTip = GxsIdDetails::getComment(details);
 		break;
 	}
 
