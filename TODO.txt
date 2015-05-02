@@ -71,9 +71,11 @@ To be done
             the big subscribe button on the top, but never used.
             generally,we have 2 panels here, both semi-empty. need to compact all the stuff
 
-0031 [ ]    chats - participant list can't be extended in wide.
+0031 [X]    chats - participant list can't be extended in wide.
             show/hide button is almost invisible. make it more big. but it takes space in width, so move it to bar with lobby name.
             however, the lobby name bar also seems redundant. so maybe the button's final place must domewhere in the lower button bar. 
+
+0031a[ ]    ... the lobby name bar also seems redundant ....
 
 0032 [ ]    In Network->friend list. Remove "[Connected]" to location names.  Takes room and isn't useful since the text is in bold 
             when connected. Also put the avatar column first. Remove the "Busy" and "Idle" text since they are shown as icon already and

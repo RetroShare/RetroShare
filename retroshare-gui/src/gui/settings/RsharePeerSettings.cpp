@@ -240,16 +240,6 @@ void RsharePeerSettings::setShowAvatarFrame(const ChatId& chatId, bool value)
     return set(chatId, "ShowAvatarFrame", value);
 }
 
-bool RsharePeerSettings::getShowParticipantsFrame(const ChatId& chatId)
-{
-    return get(chatId, "ShowParticipantsFrame", true).toBool();
-}
-
-void RsharePeerSettings::setShowParticipantsFrame(const ChatId& chatId, bool value)
-{
-    return set(chatId, "ShowParticipantsFrame", value);
-}
-
 void RsharePeerSettings::getStyle(const ChatId& chatId, const QString &name, RSStyle &style)
 {
     std::string settingsId;

@@ -56,7 +56,6 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-	connect(ui.participantsFrameButton, SIGNAL(toggled(bool)), this, SLOT(showParticipantsFrame(bool)));
         //connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
 	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
@@ -224,9 +223,6 @@ void ChatLobbyDialog::init()
 
     lastUpdateListTime = 0;
 
-    /* Hide or show the participants frames */
-    showParticipantsFrame(PeerSettings->getShowParticipantsFrame(ChatId(lobbyId)));
-
     // add to window
 
     dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->addChatPage(this) ;
@@ -268,8 +264,14 @@ void ChatLobbyDialog::processSettings(bool load)
 
 	if (load) {
 		// load settings
+
+		// state of splitter
+		ui.splitter->restoreState(Settings->value("splitter").toByteArray());
 	} else {
 		// save settings
+
+		// state of splitter
+		Settings->setValue("splitter", ui.splitter->saveState());
 	}
 
 	Settings->endGroup();
@@ -694,20 +696,4 @@ void ChatLobbyDialog::showDialog(uint chatflags)
 		MainWindow::showWindow(MainWindow::ChatLobby);
 		dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->setCurrentChatPage(this) ;
 	}
-}
-
-void ChatLobbyDialog::showParticipantsFrame(bool show)
-{
-	ui.participantsFrame->setVisible(show);
-	ui.participantsFrameButton->setChecked(show);
-
-	if (show) {
-		ui.participantsFrameButton->setToolTip(tr("Hide Participants"));
-		ui.participantsFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
-	} else {
-		ui.participantsFrameButton->setToolTip(tr("Show Participants"));
-		ui.participantsFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
-	}
-
-    PeerSettings->setShowParticipantsFrame(ChatId(lobbyId), show);
 }

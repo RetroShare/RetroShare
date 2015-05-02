@@ -50,9 +50,6 @@ public:
     bool    getShowAvatarFrame(const ChatId& chatId);
     void    setShowAvatarFrame(const ChatId& chatId, bool value);
 
-    bool    getShowParticipantsFrame(const ChatId& chatId);
-    void    setShowParticipantsFrame(const ChatId& chatId, bool value);
-
     void    getStyle(const ChatId& chatId, const QString &name, RSStyle &style);
     void    setStyle(const ChatId& chatId, const QString &name, RSStyle &style);
 

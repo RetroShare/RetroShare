@@ -48,7 +48,6 @@ public:
 	ChatLobbyId id() const { return lobbyId ;}
 
 private slots:
-	void showParticipantsFrame(bool show);
 	void participantsTreeWidgetCustomPopupMenu( QPoint point );
 	void inviteFriends() ;
 	void leaveLobby() ;
