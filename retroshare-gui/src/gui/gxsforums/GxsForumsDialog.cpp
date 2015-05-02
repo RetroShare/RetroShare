@@ -54,7 +54,8 @@ QString GxsForumsDialog::getHelpString() const
 			<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>    \
 			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
 			your friends. This automatically promotes interesting forums in the network.</p>            \
-                ");
+            <p>Forum messages get deleted after %1 months.</p>\
+                ").arg(QString::number(rsGxsForums->getStoragePeriod()));
 
                 // not true anymore in v0.6
                 /*

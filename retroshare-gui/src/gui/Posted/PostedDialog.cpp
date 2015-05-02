@@ -63,7 +63,9 @@ QString PostedDialog::getHelpString() const
 	 channels</p> \
 	 <p>Links can be commented by subscribed users. A promotion system also gives the opportunity to  \
 	 enlight important links.</p> \
-	 <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>") ;
+     <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>\
+     <p>Posted links get deleted after %1 months.</p>\
+     ").arg(QString::number(rsPosted->getStoragePeriod()));
 
 	return hlp_str ;
 }

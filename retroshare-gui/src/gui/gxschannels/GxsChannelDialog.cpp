@@ -60,8 +60,9 @@ QString GxsChannelDialog::getHelpString() const
 	 the posting rights or the reading rights with friend Retroshare nodes.</p>\
 	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
 	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
-    ") ;
-				
+    <p>Channel posts get deleted after %1 months.</p>\
+    ").arg(QString::number(rsGxsChannels->getStoragePeriod()));
+
 	return hlp_str ;
 }
 

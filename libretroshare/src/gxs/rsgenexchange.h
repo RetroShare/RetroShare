@@ -584,6 +584,11 @@ public:
     void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff);
 
     /*!
+     * @return storage time of messages in months
+     */
+    int getStoragePeriod(){ return MESSAGE_STORE_PERIOD/(60*60*24*31);}
+
+    /*!
      * sets the msg status flag
      * @param token this is set to token value associated to this request
      * @param grpId Id of group whose subscribe file will be changed

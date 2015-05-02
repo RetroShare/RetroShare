@@ -170,6 +170,11 @@ public:
 	 * @param CutOff The cut off value to set
 	 */
 	virtual void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff) = 0;
+
+    /*!
+     * @return storage time of messages in months
+     */
+    virtual int getStoragePeriod() = 0;
 };
 
 

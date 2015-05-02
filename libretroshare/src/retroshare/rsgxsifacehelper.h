@@ -208,6 +208,14 @@ public:
 		return mGxs->setGroupReputationCutOff(token, grpId, CutOff);
 	}
 
+    /*!
+     * @return storage time of messages in months
+     */
+    int getStoragePeriod()
+    {
+        return mGxs->getStoragePeriod();
+    }
+
 private:
 
     RsGxsIface* mGxs;
