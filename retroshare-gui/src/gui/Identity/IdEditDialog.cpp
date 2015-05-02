@@ -480,7 +480,7 @@ void IdEditDialog::submit()
 
 void IdEditDialog::createId()
 {
-	std::string groupname = ui->lineEdit_Nickname->text().toUtf8().constData();
+    QString groupname = ui->lineEdit_Nickname->text();
 
 	if (groupname.size() < 2)
 	{
@@ -495,7 +495,7 @@ void IdEditDialog::createId()
         return;
     }
 	RsIdentityParameters params;
-	params.nickname = groupname;
+    params.nickname = groupname.toUtf8().constData();
 	params.isPgpLinked = (ui->radioButton_GpgId->isChecked());
 
 	if (!mAvatar.isNull())
@@ -535,7 +535,7 @@ void IdEditDialog::idCreated(uint32_t token)
 void IdEditDialog::updateId()
 {
 	/* submit updated details */
-	std::string groupname = ui->lineEdit_Nickname->text().toUtf8().constData();
+    QString groupname = ui->lineEdit_Nickname->text();
 
 	if (groupname.size() < 2)
 	{
@@ -550,7 +550,7 @@ void IdEditDialog::updateId()
         return;
     }
 
-	mEditGroup.mMeta.mGroupName = groupname;
+    mEditGroup.mMeta.mGroupName = groupname.toUtf8().constData();
 
 	if (!mAvatar.isNull())
 	{
