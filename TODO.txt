@@ -13,13 +13,13 @@ To be done
 0001 [X]    forums - middle horisontal bar - always shows *by anonymous* (from noname) [fixed, also removed useless thread line]
 0002 [X]    remove useless column in forums "signed by" (last column) (from electron)
 0003 [ ]    main window must close on ESC (from noname)
-0004 [ ]    show storage time of forums/channels/posted in gui (from cave)
+0004 [X]    show storage time of forums/channels/posted in gui (from cave)
 0005 [ ]    if keysigning is not working -> hide or remove it (from cave) cyril: keep it, but add more info about how to use/interpret it.
 0006 [ ]    implement default gxs id (from cave) cyril: you mean system-wide default gxs id? That would be a good thing to have.
 0007 [ ]    *getting started* - need to say about chatservers (from noname)
             comment: chatservers are inofficial and may go down at any time. which one should we mention?
             cyril: we could add a link to a search for RS chat servers in duckduck go
-0008 [ ]    forum livetime too short (from noname) cyril: expand it to 1 year
+0008 [X]    forum livetime too short (from noname) cyril: expand it to 1 year
 0009 [ ]    Settings -> Server -> show discovery information in statusbar. I've never seen any discovery info since the switch to 
             disc v2 - so i guess this option can be removed (from sehraf) cyril: that can be fixed. The link between GUI and discovery2 can
             be restored. Also we should get rid of the code for discovery(1)
@@ -171,6 +171,8 @@ E        [X] PGP signatures are not transmited by discovery2.
          [X] Default layout should use toolbars. The "menu" look is inneficient
          [X] replace sound tooltip "sound off" by "sound is on, click to turn off"
          [X] rtt statistic is duplicated in statistics provided by VOIP, so remove it from file transfers
+         [ ] add tooltips in in permission matrix when hovering over the top most button/service name
+             explain what the service does and the dependencies
       
        Messages
 H        [X] distant messages should be made async-ed
@@ -192,6 +194,9 @@ H        [X] marking all as read in channels takes time. The channel icon should
          [X] allow to post on channels when attachment is not in shared files. Just display a warning.
 M        [ ] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
              another location with many friends => popularity is too big at that location (should be 1)
+             the problem seems to be in RsGxsNetService::handleRecvSyncMessage
+             peers send RsNxsSyncMsg for unsubscribed groups (they are not suppliers then)
+             nor sure what role RsGxsNetService::loadList plays here
          [ ] show group owner in channel/forum/posted's details tab
       
        Chat lobbies

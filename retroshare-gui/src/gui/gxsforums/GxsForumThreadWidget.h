@@ -2,6 +2,7 @@
 #define GXSFORUMTHREADWIDGET_H
 
 #include "gui/gxs/GxsMessageFrameWidget.h"
+#include <retroshare/rsgxsforums.h>
 
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
@@ -131,8 +132,9 @@ private:
 
 	void requestGroupData();
 	void loadGroupData(const uint32_t &token);
-	void insertGroupData(const RsGxsForumGroup &group);
-
+private slots:
+    void insertGroupData();
+private:
 	void requestMessageData(const RsGxsGrpMsgIdPair &msgId);
 	void loadMessageData(const uint32_t &token);
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
@@ -141,6 +143,7 @@ private:
 private:
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
+    RsGxsForumGroup mForumGroup;
 	QString mForumDescription;
 	int mSubscribeFlags;
 	bool mInProcessSettings;
