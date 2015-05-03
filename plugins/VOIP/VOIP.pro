@@ -20,7 +20,7 @@ INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 
 linux-* {
 	INCLUDEPATH += /usr/include
-	LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+	LIBS += $$system(pkg-config --libs opencv)
 }
 
 win32 {
