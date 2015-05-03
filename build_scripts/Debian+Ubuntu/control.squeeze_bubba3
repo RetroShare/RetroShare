@@ -2,7 +2,7 @@ Source: retroshare06
 Section: devel
 Priority: standard
 Maintainer: Cyril Soler <csoler@users.sourceforge.net>
-Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, qt4-dev-tools, libqt4-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libqt4-opengl-dev, libqt4-multimedia, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libcv-dev, libhighgui-dev, tcl8.5, libmicrohttpd-dev, libsqlite3-dev
+Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, qt4-dev-tools, libqt4-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libqt4-opengl-dev, libqt4-multimedia, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libcv-dev, libcvaux-dev, libhighgui-dev, tcl8.5, libmicrohttpd-dev, libsqlite3-dev
 Standards-Version: 3.9.3
 Homepage: http://retroshare.sourceforge.net
 
