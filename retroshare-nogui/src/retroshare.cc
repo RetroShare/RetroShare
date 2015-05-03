@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 {
 #ifdef ENABLE_WEBUI
 
-    std::string docroot = "";
+    std::string docroot = resource_api::getDefaultDocroot();
     uint16_t httpPort = 0;
     std::string listenAddress;
     bool allowAllIps = false;
@@ -85,16 +85,17 @@ int main(int argc, char **argv)
     args >> parameter("docroot",      docroot,  "path", "Serve static files from this path.", false);
     // unfinished
     //args >> parameter("http-listen", listenAddress, "ipv6 address", "Listen only on the specified address.", false);
-    args >> option("http-allow-all", allowAllIps, "allow connections from all IP adresses (default: localhost only)");
+    args >> option("http-allow-all", allowAllIps, "allow connections from all IP adresses (default= localhost only)");
     args >> help();
 
     if (args.helpRequested())
     {
         std::cerr << args.usage() << std::endl;
+        // print libretroshare command line args and exit
+        RsInit::InitRsConfig();
+        RsInit::InitRetroShare(argc, argv, true);
+        return 0;
     }
-
-    if(docroot.empty())
-        docroot = resource_api::getDefaultDocroot();
 
     resource_api::ApiServer api;
     resource_api::RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);

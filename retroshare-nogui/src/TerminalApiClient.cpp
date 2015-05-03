@@ -5,72 +5,83 @@
 
 #include <api/JsonStream.h>
 
-// need two functions for non blocking read from stdin:
-// int _kbhit()     (returns a non zero value if a key was pressed)
-// int _getch()     (return the pressed key)
-// these function are available on windows in conio.h
-// they are not available on linux
+// windows has _kbhit() and _getch() fr non-blocking keaboard read.
+// linux does not have these functions.
+// the TerminalInput class provides both for win and linux
+// only use a single instance of this class in the whole program!
+// or destroy the classes in the inverse order how the where created
+// else terminal echo will not be restored
+// the point of this class is:
+// - it configures the terminal in the constructor
+// - it restores the terminal in the destructor
 #ifdef _WIN32
     #include <conio.h>
 #else // LINUX
-/**
- Linux (POSIX) implementation of _kbhit().
- Morgan McGuire, morgan@cs.brown.edu
- (modified to disable echo)
- */
-#include <stdio.h>
-#include <sys/select.h>
-#include <sys/ioctl.h>
-#include <termios.h>
-#include <stropts.h>
+    #include <termios.h>
+    #include <stdio.h>
+    #include <sys/ioctl.h>
+#endif
+#define TERMINALINPUT_DEBUG
+class TerminalInput
+{
+public:
+    TerminalInput()
+    {
+#ifndef _WIN32
+        /*
+        Q: Is there a getch() (from conio) equivalent on Linux/UNIX?
 
-int _kbhit() {
-    static const int STDIN = 0;
-    static bool initialized = false;
+         A: No. But it's easy to emulate:
 
-    if (! initialized) {
-        // Use termios to turn off line buffering
-        termios term;
-        tcgetattr(STDIN, &term);
+        This code sets the terminal into non-canonical mode, thus disabling line buffering, reads a character from stdin and then restores the old terminal status. For more info on what else you can do with termios, see ``man termios''.
+         There's also a ``getch()'' function in the curses library, but it is /not/ equivalent to the DOS ``getch()'' and may only be used within real curses applications (ie: it only works in curses ``WINDOW''s).
+
+        http://cboard.cprogramming.com/faq-board/27714-faq-there-getch-conio-equivalent-linux-unix.html
+        */
+        tcgetattr(STDIN_FILENO, &mOldTermSettings);
+        termios term = mOldTermSettings;
         term.c_lflag &= ~ICANON;
         term.c_lflag &= ~ECHO; // disable echo
-        tcsetattr(STDIN, TCSANOW, &term);
+        tcsetattr(STDIN_FILENO, TCSANOW, &term);
         setbuf(stdin, NULL);
-        initialized = true;
+#endif
+    }
+    ~TerminalInput()
+    {
+#ifndef _WIN32
+        // restore terminal settings
+        tcsetattr(STDIN_FILENO, TCSANOW, &mOldTermSettings);
+#ifdef TERMINALINPUT_DEBUG
+        std::cerr << "Terminal restored" << std::endl;
+#endif
+#endif
     }
 
-    int bytesWaiting;
-    ioctl(STDIN, FIONREAD, &bytesWaiting);
-    return bytesWaiting;
-}
-/*
-Q: Is there a getch() (from conio) equivalent on Linux/UNIX?
-
- A: No. But it's easy to emulate:
-
-This code sets the terminal into non-canonical mode, thus disabling line buffering, reads a character from stdin and then restores the old terminal status. For more info on what else you can do with termios, see ``man termios''.
- There's also a ``getch()'' function in the curses library, but it is /not/ equivalent to the DOS ``getch()'' and may only be used within real curses applications (ie: it only works in curses ``WINDOW''s).
-
-http://cboard.cprogramming.com/faq-board/27714-faq-there-getch-conio-equivalent-linux-unix.html
-*/
-#include <stdio.h>
-#include <termios.h>
-#include <unistd.h>
-
-int _getch( ) {
-    struct termios oldt,
-                   newt;
-    int              ch;
-    tcgetattr( STDIN_FILENO, &oldt );
-    newt = oldt;
-    newt.c_lflag &= ~( ICANON | ECHO );
-    tcsetattr( STDIN_FILENO, TCSANOW, &newt );
-    ch = getchar();
-    tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
-    return ch;
-}
-#endif // LINUX
-
+    // returns a non zero value if a key was pressed
+    int kbhit()
+    {
+#ifdef _WIN32
+        return _kbhit();
+#else // LINUX
+        int bytesWaiting;
+        ioctl(STDIN_FILENO, FIONREAD, &bytesWaiting);
+        return bytesWaiting;
+#endif
+    }
+    // return the pressed key
+    int getch()
+    {
+#ifdef _WIN32
+        return _getch();
+#else // LINUX
+        return getchar();
+#endif
+    }
+private:
+#ifndef _WIN32
+    struct termios mOldTermSettings;
+#endif
+};
 
 namespace resource_api {
 
@@ -108,6 +119,8 @@ void TerminalApiClient::run()
     bool ask_for_password = false;
     std::string key_name;
 
+    TerminalInput term;
+
     while(isRunning())
     {
         // assuming sleep_time >> work_time
@@ -120,10 +133,10 @@ void TerminalApiClient::run()
         {
             last_io_poll = 0;
             last_char = 0;
-            if(_kbhit())
+            if(term.kbhit())
             {
                 enter_was_pressed = false;
-                last_char = _getch();
+                last_char = term.getch();
                 if(last_char > 127)
                     std::cout << "Warning: non ASCII characters probably won't work." << std::endl;
                 if(last_char >= ' ')// space is the first printable ascii character

@@ -4,7 +4,7 @@ CONFIG += bitdht
 #CONFIG += introserver
 #CONFIG += sshserver
 # webinterface, requires libmicrohttpd
-#CONFIG += webui
+CONFIG += webui
 CONFIG -= qt xml gui
 
 # if you are linking against the libretroshare with gxs.
