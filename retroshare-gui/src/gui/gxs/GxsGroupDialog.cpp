@@ -166,6 +166,7 @@ void GxsGroupDialog::initMode()
 	{
 		case MODE_CREATE:
 		{
+            ui.stackedWidget->setCurrentIndex(0);
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 			newGroup();
 		}
@@ -182,6 +183,7 @@ void GxsGroupDialog::initMode()
 
 		case MODE_EDIT:
 		{
+            ui.stackedWidget->setCurrentIndex(0);
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
 			requestGroup(mGrpMeta.mGroupId);
