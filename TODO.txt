@@ -77,7 +77,7 @@ To be done
 
 0031a[ ]    ... the lobby name bar also seems redundant ....
 
-0032 [ ]    In Network->friend list. Remove "[Connected]" to location names.  Takes room and isn't useful since the text is in bold 
+0032 [X]    In Network->friend list. Remove "[Connected]" to location names.  Takes room and isn't useful since the text is in bold 
             when connected. Also put the avatar column first. Remove the "Busy" and "Idle" text since they are shown as icon already and
             set them as tooltip => lots of saved space.
 

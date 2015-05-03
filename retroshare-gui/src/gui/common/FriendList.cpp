@@ -1981,7 +1981,7 @@ void FriendList::createDisplayMenu()
     menu->addAction(ui->actionShowAvatarColumn);
     menu->addAction(ui->actionShowLastContactColumn);
     menu->addAction(ui->actionShowIPColumn);
-    //menu->addAction(ui->actionShowStatusColumn);
+    menu->addAction(ui->actionShowStatusColumn);
     menu = displayMenu->addMenu(tr("Sort by"));
 //    menu->addAction(ui->actionSortByName);
     menu->addAction(ui->actionSortByState);
