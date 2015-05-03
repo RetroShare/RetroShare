@@ -3,6 +3,7 @@
 
 #include "gui/gxs/GxsMessageFrameWidget.h"
 #include <retroshare/rsgxsforums.h>
+#include "gui/gxs/GxsIdDetails.h"
 
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
@@ -132,9 +133,9 @@ private:
 
 	void requestGroupData();
 	void loadGroupData(const uint32_t &token);
-private slots:
     void insertGroupData();
-private:
+    static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
+
 	void requestMessageData(const RsGxsGrpMsgIdPair &msgId);
 	void loadMessageData(const uint32_t &token);
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);

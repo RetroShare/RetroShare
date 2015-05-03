@@ -686,43 +686,51 @@ void GxsForumThreadWidget::insertGroupData()
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::insertGroupData" << std::endl;
 #endif
-    const RsGxsForumGroup& group = mForumGroup;
+    GxsIdDetails::process(mForumGroup.mMeta.mAuthorId, &loadAuthorIdCallback, this);
+	calculateIconsAndFonts();
+}
+
+/*static*/ void GxsForumThreadWidget::loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &)
+{
+    GxsForumThreadWidget *tw = dynamic_cast<GxsForumThreadWidget*>(object);
+    if(!tw)
+        return;
 
     QString author;
-    if(group.mMeta.mAuthorId.isNull())
-        author = tr("no author");
-    else
-    {
-        RsIdentityDetails details;
-        if(!rsIdentity->getIdDetails(group.mMeta.mAuthorId, details))
-        {
-            // try again later
-            QTimer::singleShot(200, this, SLOT(insertGroupData()));
-            author = tr("loading...");
-        }
-        else
-            author = QString::fromUtf8(details.mNickname.c_str());
+    switch (type) {
+    case GXS_ID_DETAILS_TYPE_EMPTY:
+        author = GxsIdDetails::getEmptyIdText();
+        break;
+    case GXS_ID_DETAILS_TYPE_FAILED:
+        author = GxsIdDetails::getFailedText(details.mId);
+        break;
+    case GXS_ID_DETAILS_TYPE_LOADING:
+        author = GxsIdDetails::getLoadingText(details.mId);
+        break;
+    case GXS_ID_DETAILS_TYPE_DONE:
+        author = GxsIdDetails::getName(details);
+        break;
     }
 
-	mSubscribeFlags = group.mMeta.mSubscribeFlags;
-	ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+    const RsGxsForumGroup& group = tw->mForumGroup;
 
-	mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
-	mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
-	mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
-    mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
-	mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
+    tw->mSubscribeFlags = group.mMeta.mSubscribeFlags;
+    tw->ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
-	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mSubscribeFlags));
-	mStateHelper->setWidgetEnabled(ui->newthreadButton, (IS_GROUP_SUBSCRIBED(mSubscribeFlags)));
+    tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
+    tw->mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
 
-	if (mThreadId.isNull() && !mStateHelper->isLoading(mTokenTypeMessageData))
-	{
+    tw->ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags));
+    tw->mStateHelper->setWidgetEnabled(tw->ui->newthreadButton, (IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags)));
+
+    if (tw->mThreadId.isNull() && !tw->mStateHelper->isLoading(tw->mTokenTypeMessageData))
+    {
         //ui->threadTitle->setText(tr("Forum Description"));
-		ui->postText->setText(mForumDescription);
-	}
-
-	calculateIconsAndFonts();
+        tw->ui->postText->setText(tw->mForumDescription);
+    }
 }
 
 void GxsForumThreadWidget::fillThreadFinished()
