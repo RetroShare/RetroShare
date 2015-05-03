@@ -197,7 +197,7 @@ M        [ ] popularity calculation seems wrong. To reproduce: create a new chan
              the problem seems to be in RsGxsNetService::handleRecvSyncMessage
              peers send RsNxsSyncMsg for unsubscribed groups (they are not suppliers then)
              nor sure what role RsGxsNetService::loadList plays here
-         [ ] show group owner in channel/forum/posted's details tab
+         [X] show group owner in channel/forum/posted's details tab
       
        Chat lobbies
 H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 

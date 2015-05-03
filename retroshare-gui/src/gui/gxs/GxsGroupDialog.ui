@@ -14,13 +14,22 @@
    <string notr="true">Create New</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
    <property name="verticalSpacing">
-    <number>0</number>
-   </property>
-   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -35,18 +44,18 @@
       <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="createmode">
       <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
        <property name="horizontalSpacing">
         <number>6</number>
        </property>
        <property name="verticalSpacing">
         <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>9</number>
        </property>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBoxLogo">
@@ -57,7 +66,16 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
            <number>4</number>
           </property>
           <item>
@@ -112,8 +130,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="groupName">
-               </widget>
+               <widget class="QLineEdit" name="groupName"/>
               </item>
              </layout>
             </item>
@@ -122,7 +139,16 @@
               <property name="spacing">
                <number>9</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
                <number>3</number>
               </property>
               <item>
@@ -471,8 +497,7 @@
          </property>
          <layout class="QVBoxLayout">
           <item>
-           <widget class="MimeTextEdit" name="groupDesc">
-           </widget>
+           <widget class="MimeTextEdit" name="groupDesc"/>
           </item>
          </layout>
         </widget>
@@ -520,7 +545,16 @@
          </property>
          <widget class="QWidget" name="dockWidgetContents">
           <layout class="QGridLayout" name="_2">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <property name="spacing">
@@ -574,7 +608,7 @@
           <string>Info</string>
          </property>
          <layout class="QGridLayout" name="_3">
-          <item row="6" column="1">
+          <item row="7" column="1">
            <widget class="QGroupBox" name="distribGroupBox_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -586,7 +620,16 @@
              <string/>
             </property>
             <layout class="QGridLayout" name="gridLayout_2">
-             <property name="margin">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <property name="bottomMargin">
               <number>6</number>
              </property>
              <item row="0" column="1">
@@ -674,7 +717,7 @@
             </layout>
            </widget>
           </item>
-          <item row="7" column="1">
+          <item row="8" column="1">
            <widget class="QGroupBox" name="commentGroupBox_2">
             <property name="title">
              <string/>
@@ -683,7 +726,16 @@
              <property name="spacing">
               <number>6</number>
              </property>
-             <property name="margin">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <property name="bottomMargin">
               <number>6</number>
              </property>
              <item>
@@ -737,7 +789,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QLineEdit" name="IDline">
             <property name="readOnly">
              <bool>true</bool>
@@ -751,7 +803,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>ID</string>
@@ -789,20 +841,34 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
+          <item row="8" column="0">
            <widget class="QLabel" name="commentslabel">
             <property name="text">
              <string>Comments</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>Type</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Author</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="GxsIdLabel" name="authorLabel">
+            <property name="text">
+             <string>GxsIdLabel</string>
             </property>
            </widget>
           </item>
@@ -864,6 +930,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
   <customwidget>
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
