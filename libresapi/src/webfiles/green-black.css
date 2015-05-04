@@ -8,6 +8,20 @@ body {
 	font-size: 1.1em;
 }
 
+#overlay{
+	z-index: 10;
+	position: fixed;
+	top:0;
+	left:0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.8);
+}
+
+.paddingbox{
+	padding:2mm;
+}
+
 .nav{
 	list-style-type: none;
 	padding: 0em;

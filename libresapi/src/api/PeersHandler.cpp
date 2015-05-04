@@ -100,6 +100,12 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
         req.mPath.pop();
         if(str != "")
         {
+            if(str == "self" && !req.mPath.empty() && req.mPath.top() == "certificate")
+            {
+                resp.mDataStream << makeKeyValue("cert_string", mRsPeers->GetRetroshareInvite(false));
+                resp.setOk();
+                return;
+            }
             // assume the path element is a peer id
             // sometimes it is a peer id for location info
             // another time it is a pgp id

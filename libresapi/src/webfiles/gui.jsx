@@ -245,7 +245,6 @@ var Peers2 = React.createClass({
 	},
 });
 
-
 var Peers3 = React.createClass({
 	mixins: [AutoUpdateMixin, SignalSlotMixin],
 	getPath: function(){return "peers";},
@@ -320,6 +319,21 @@ var Peers3 = React.createClass({
 	},
 });
 
+var OwnCert = React.createClass({
+	mixins: [AutoUpdateMixin, SignalSlotMixin],
+	getPath: function(){return "peers/self/certificate";},
+	getInitialState: function(){
+		return {data: {cert_string: ""}};
+	},
+	render: function(){
+		// use <pre> tag for correct new line behavior!
+		return (
+		<pre>
+			{this.state.data.cert_string}
+		</pre>);
+	},
+});
+
 var AddPeerWidget = React.createClass({
 	getInitialState: function(){
 		return {page: "start"};
@@ -344,6 +358,8 @@ var AddPeerWidget = React.createClass({
 		if(this.state.page === "start")
 			return(
 				<div>
+					<p>Your own key, give it to your friends</p>
+					<OwnCert/>
 					<p>paste your friends key below</p>
 			        <textarea ref="cert" cols="70" rows="16"></textarea><br/>
 			        <input
@@ -850,6 +866,7 @@ var MainWidget = React.createClass({
 			menubutton = <div>Retroshare webinterface</div>;
 		return (
 			<div>
+				{/*<div id="overlay"><div className="paddingbox"><div className="btn2">test</div></div></div>*/}
 				<PasswordWidget/>
 				<AudioPlayerWidget/>
 				{menubutton}
