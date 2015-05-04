@@ -501,6 +501,7 @@ void Object::Clear()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::string SerializeArray(const Array& a);
+static std::string EscapeJSONString(const std::string& in);
 
 std::string SerializeValue(const Value& v)
 {
@@ -517,7 +518,7 @@ std::string SerializeValue(const Value& v)
 		case NULLVal		: str = "null"; break;
 		case ObjectVal		: str = Serialize(v); break;
 		case ArrayVal		: str = SerializeArray(v); break;
-		case StringVal		: str = std::string("\"") + (std::string)v + std::string("\""); break;
+        case StringVal		: str = "\"" + EscapeJSONString((std::string)v) + "\""; break;
 	}
 
 	return str;
@@ -541,6 +542,30 @@ std::string SerializeArray(const Array& a)
 
 	str += "]";
 	return str;
+}
+
+// in can be utf-8
+static std::string EscapeJSONString(const std::string &in)
+{
+    std::string out = "";
+
+    for (std::string::size_type i = 0; i < in.length(); i++)
+    {
+        switch (in[i])
+        {
+            case '"'  : out += "\\\""; break;
+            case '\\' : out += "\\\\"; break;
+            case '/'  : out += "\\/"; break;
+            case '\t' : out += "\\t"; break;
+            case '\n' : out += "\\n"; break;
+            case '\r' : out += "\\r"; break;
+            case '\b' :	out += "\\b"; break;
+            case '\f' : out += "\\f"; break;
+            default   : out += in[i]; break;
+        }
+    }
+
+    return out;
 }
 
 std::string json::Serialize(const Value& v)
