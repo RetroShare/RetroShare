@@ -1010,7 +1010,7 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		 	// Random port avoids clashes, improves anonymity.
 			//
 		
-			int new_port = htons(PQI_MIN_PORT + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT))); 
+			int new_port = htons(PQI_MIN_PORT_RNG + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT_RNG)));
 			sockaddr_storage_setport(mLocalAddr, new_port);
 
 			addrChanged = true;
