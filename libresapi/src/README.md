@@ -10,5 +10,5 @@ Quickinfo for builders and packagers
 
 * copy the files in ./webfiles to
 * ./webui (Windows)
-* /usr/share/RetroShare0.6/webui (Linux)
+* /usr/share/RetroShare06/webui (Linux)
 * other OS: see RsAccountsDetail::PathDataDirectory()
