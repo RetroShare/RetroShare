@@ -78,14 +78,14 @@ void GroupShareKey::setTyp()
             return;
             
         ui->headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
-        ui->headerFrame->setHeaderText(tr("Share Channel"));    
-        ui->sharekeyinfo_label->setText(tr("You can let your friends know about your Channel by sharing it with them. Select the Friends with which you want to Share your Channel."));
+        ui->headerFrame->setHeaderText(tr("Share Channel admin permissions"));
+        ui->sharekeyinfo_label->setText(tr("You can allow your friends to publish in your Channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the Friends which you want to allowed to publish in this Channel. Note: it is not possible to revoke channel admin permissions."));
     }
     else if(mGrpType == FORUM_KEY_SHARE)
     {
         
         ui->headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
-        ui->headerFrame->setHeaderText(tr("Share Forum")); 
+        ui->headerFrame->setHeaderText(tr("Share Forum admin permissions"));
         ui->sharekeyinfo_label->setText(tr("You can let your friends know about your Forum by sharing it with them. Select the Friends with which you want to Share your Forum."));
 
     }
@@ -95,8 +95,8 @@ void GroupShareKey::setTyp()
             return;
         
         ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));    
-        ui->headerFrame->setHeaderText(tr("Share Topic"));
-        ui->sharekeyinfo_label->setText(tr("You can let your friends know about your Topic by sharing it with them. Select the Friends with which you want to Share your Topic."));
+        ui->headerFrame->setHeaderText(tr("Share Topic admin permissions"));
+        ui->sharekeyinfo_label->setText(tr("You can allow your friends to edit the Topic. Select them in the list below. Note: it is not possible to revoke posted admin permissions."));
 
     }
     else

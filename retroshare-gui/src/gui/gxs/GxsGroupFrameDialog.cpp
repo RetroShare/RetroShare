@@ -285,7 +285,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
 	if (shareKeyType()) {
-		action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share"), this, SLOT(shareKey()));
+        action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share admin permissions"), this, SLOT(shareKey()));
         action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
 
