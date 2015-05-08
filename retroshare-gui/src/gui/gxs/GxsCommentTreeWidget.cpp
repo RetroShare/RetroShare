@@ -109,6 +109,8 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 
 	if (!mCurrentMsgId.isNull())
 	{
+        // not implemented yet
+        /*
 		contextMnu.addSeparator();
 		QMenu *rep_menu = contextMnu.addMenu(tr("Reputation"));
 
@@ -120,6 +122,7 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 
 		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Mark Spammy"), this, SLOT(markSpammer()));
 		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Ban User"), this, SLOT(banUser()));
+        */
 	}
 
 	contextMnu.exec(QCursor::pos());
