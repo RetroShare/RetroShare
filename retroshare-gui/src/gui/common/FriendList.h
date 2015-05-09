@@ -130,7 +130,7 @@ private:
 private slots:
     void groupsChanged();
     void insertPeers();
-    void peerTreeWidgetCostumPopupMenu();
+    void peerTreeWidgetCustomPopupMenu();
     void updateAvatar(const QString &);
     void updateMenu();
 
