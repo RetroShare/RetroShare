@@ -46,6 +46,7 @@ public:
 
 private slots:
 	void refresh();
+    void idChooserReady();
 	void voterSelectionChanged( int index );
 
 private:

@@ -56,6 +56,10 @@ public:
 	bool setChosenId(const RsGxsId &gxsId);
 	ChosenId_Ret getChosenId(RsGxsId &gxsId);
 
+signals:
+    // emitted after first load of own ids
+    void idsLoaded();
+
 protected:
 	virtual void showEvent(QShowEvent *event);
     void updateDisplay(bool reset);

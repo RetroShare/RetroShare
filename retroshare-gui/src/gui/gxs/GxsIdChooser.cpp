@@ -219,6 +219,7 @@ void GxsIdChooser::loadPrivateIds()
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
 		}
         setDefaultItem();
+        emit idsLoaded();
     }
 
 	mFirstLoad = false;

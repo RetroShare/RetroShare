@@ -47,9 +47,7 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
-
-	/* force voterId through - first time */
-	voterSelectionChanged( 0 );
+    connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
 }
 
 GxsCommentDialog::~GxsCommentDialog()
@@ -79,6 +77,11 @@ void GxsCommentDialog::refresh()
 	std::cerr << std::endl;
 
 	commentLoad(mGrpId, mMsgId);
+}
+
+void GxsCommentDialog::idChooserReady()
+{
+    voterSelectionChanged(0);
 }
 
 void GxsCommentDialog::voterSelectionChanged( int index )
