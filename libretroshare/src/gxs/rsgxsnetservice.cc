@@ -854,12 +854,20 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 
     for(ClientMsgMap::iterator it = mClientMsgUpdateMap.begin();it!=mClientMsgUpdateMap.end();++it)
         for(std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
-    {
-        RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[it2->first] ;
+		  {
+			  RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[it2->first] ;
 
-        gnsr.suppliers.insert(it->first) ;
-        gnsr.max_visible_count = std::max(it2->second.message_count,gnsr.max_visible_count) ;
-    }
+			  // At each reload, divide the last count by 2. This gradually flushes old information away.
+
+			  gnsr.max_visible_count = std::max(it2->second.message_count,gnsr.max_visible_count/2) ;
+
+			  // Similarly, we remove some of the suppliers randomly. If they are
+			  // actual suppliers, they will come back automatically.  If they are
+			  // not, they will be forgotten.
+
+			  if(RSRandom::random_f32() > 0.2)
+				  gnsr.suppliers.insert(it->first) ;
+		  }
     return true;
 }
 
