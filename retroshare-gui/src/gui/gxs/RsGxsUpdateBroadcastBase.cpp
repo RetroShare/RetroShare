@@ -40,6 +40,11 @@ void RsGxsUpdateBroadcastBase::securedUpdateDisplay()
 	emit fillDisplay(mFillComplete);
 	mFillComplete = false;
 
+    // Randomly force updating popularity, and other statistics that can only be retrieved through a
+    // complete update.
+    if(RSRandom::random_f32() < 0.2)
+        mFillComplete = true ;
+
 	/* Clear updated ids */
 	mGrpIds.clear();
 	mGrpIdsMeta.clear(),
