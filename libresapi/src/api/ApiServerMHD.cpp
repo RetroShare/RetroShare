@@ -408,7 +408,7 @@ bool ApiServerMHD::start()
     }
     else
     {
-        std::cerr << "ApiServerMHD::start() ERROR: starting the server failed." << std::endl;
+        std::cerr << "ApiServerMHD::start() ERROR: starting the server failed. Maybe port " << ntohs(mListenAddr.sin_port) << " is already in use?" << std::endl;
         return false;
     }
 }
