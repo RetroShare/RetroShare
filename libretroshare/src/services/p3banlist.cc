@@ -418,7 +418,7 @@ void p3BanList::sendBanLists()
 	for(it = idList.begin(); it != idList.end(); ++it)
 	{
 #ifdef DEBUG_BANLIST
-		std::cerr << "p3VoRS::sendBanList() To: " << *it;
+		std::cerr << "p3BanList::sendBanList() To: " << *it;
 		std::cerr << std::endl;
 #endif
 		sendBanSet(*it);
