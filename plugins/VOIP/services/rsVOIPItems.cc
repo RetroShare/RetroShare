@@ -1,34 +1,29 @@
-
-/*
- * libretroshare/src/serialiser: rsvoipitems.cc
+/****************************************************************
+ *  RetroShare is distributed under the following license:
  *
- * RetroShare Serialiser.
+ *  Copyright (C) 2015
  *
- * Copyright 2011 by Robert Fernie.
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
 
 #include <stdexcept>
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
-#include "services/rsvoipitems.h"
+#include "services/rsVOIPItems.h"
 
 /***
 #define RSSERIAL_DEBUG 1
@@ -38,9 +33,9 @@
 
 /*************************************************************************/
 
-std::ostream& RsVoipPingItem::print(std::ostream &out, uint16_t indent)
+std::ostream& RsVOIPPingItem::print(std::ostream &out, uint16_t indent)
 {
-	printRsItemBase(out, "RsVoipPingItem", indent);
+	printRsItemBase(out, "RsVOIPPingItem", indent);
 	uint16_t int_Indent = indent + 2;
 	printIndent(out, int_Indent);
 	out << "SeqNo: " << mSeqNo << std::endl;
@@ -48,13 +43,13 @@ std::ostream& RsVoipPingItem::print(std::ostream &out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "PingTS: " << std::hex << mPingTS << std::dec << std::endl;
 
-	printRsItemEnd(out, "RsVoipPingItem", indent);
+	printRsItemEnd(out, "RsVOIPPingItem", indent);
 	return out;
 }
 
-std::ostream& RsVoipPongItem::print(std::ostream &out, uint16_t indent)
+std::ostream& RsVOIPPongItem::print(std::ostream &out, uint16_t indent)
 {
-	printRsItemBase(out, "RsVoipPongItem", indent);
+	printRsItemBase(out, "RsVOIPPongItem", indent);
 	uint16_t int_Indent = indent + 2;
 	printIndent(out, int_Indent);
 	out << "SeqNo: " << mSeqNo << std::endl;
@@ -65,12 +60,12 @@ std::ostream& RsVoipPongItem::print(std::ostream &out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "PongTS: " << std::hex << mPongTS << std::dec << std::endl;
 
-	printRsItemEnd(out, "RsVoipPongItem", indent);
+	printRsItemEnd(out, "RsVOIPPongItem", indent);
 	return out;
 }
-std::ostream& RsVoipProtocolItem::print(std::ostream &out, uint16_t indent)
+std::ostream& RsVOIPProtocolItem::print(std::ostream &out, uint16_t indent)
 {
-	printRsItemBase(out, "RsVoipProtocolItem", indent);
+	printRsItemBase(out, "RsVOIPProtocolItem", indent);
 	uint16_t int_Indent = indent + 2;
 	printIndent(out, int_Indent);
 	out << "flags: " << flags << std::endl;
@@ -78,12 +73,12 @@ std::ostream& RsVoipProtocolItem::print(std::ostream &out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "protocol: " << std::hex << protocol << std::dec << std::endl;
 
-	printRsItemEnd(out, "RsVoipProtocolItem", indent);
+	printRsItemEnd(out, "RsVOIPProtocolItem", indent);
 	return out;
 }
-std::ostream& RsVoipDataItem::print(std::ostream &out, uint16_t indent)
+std::ostream& RsVOIPDataItem::print(std::ostream &out, uint16_t indent)
 {
-	printRsItemBase(out, "RsVoipDataItem", indent);
+	printRsItemBase(out, "RsVOIPDataItem", indent);
 	uint16_t int_Indent = indent + 2;
 	printIndent(out, int_Indent);
 	out << "flags: " << flags << std::endl;
@@ -91,12 +86,12 @@ std::ostream& RsVoipDataItem::print(std::ostream &out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "data size: " << std::hex << data_size << std::dec << std::endl;
 
-	printRsItemEnd(out, "RsVoipDataItem", indent);
+	printRsItemEnd(out, "RsVOIPDataItem", indent);
 	return out;
 }
 
 /*************************************************************************/
-uint32_t RsVoipDataItem::serial_size() const
+uint32_t RsVOIPDataItem::serial_size() const
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* flags */
@@ -105,7 +100,7 @@ uint32_t RsVoipDataItem::serial_size() const
 
 	return s;
 }
-uint32_t RsVoipProtocolItem::serial_size() const
+uint32_t RsVOIPProtocolItem::serial_size() const
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* flags */
@@ -113,7 +108,7 @@ uint32_t RsVoipProtocolItem::serial_size() const
 
 	return s;
 }
-uint32_t RsVoipPingItem::serial_size() const
+uint32_t RsVOIPPingItem::serial_size() const
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* seqno */
@@ -121,7 +116,7 @@ uint32_t RsVoipPingItem::serial_size() const
 
 	return s;
 }
-bool RsVoipProtocolItem::serialise(void *data, uint32_t& pktsize) 
+bool RsVOIPProtocolItem::serialise(void *data, uint32_t& pktsize) 
 {
 	uint32_t tlvsize = serial_size() ;
 	uint32_t offset = 0;
@@ -136,8 +131,8 @@ bool RsVoipProtocolItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsVoipSerialiser::serialiseVoipDataItem() Header: " << ok << std::endl;
-	std::cerr << "RsVoipSerialiser::serialiseVoipDataItem() Size: " << tlvsize << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPDataItem() Header: " << ok << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPDataItem() Size: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -150,13 +145,13 @@ bool RsVoipProtocolItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsVoipSerialiser::serialiseVoipPingItem() Size Error! " << std::endl;
+		std::cerr << "RsVOIPSerialiser::serialiseVOIPPingItem() Size Error! " << std::endl;
 	}
 
 	return ok;
 }
 /* serialise the data to the buffer */
-bool RsVoipDataItem::serialise(void *data, uint32_t& pktsize) 
+bool RsVOIPDataItem::serialise(void *data, uint32_t& pktsize) 
 {
 	uint32_t tlvsize = serial_size() ;
 	uint32_t offset = 0;
@@ -171,8 +166,8 @@ bool RsVoipDataItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsVoipSerialiser::serialiseVoipDataItem() Header: " << ok << std::endl;
-	std::cerr << "RsVoipSerialiser::serialiseVoipDataItem() Size: " << tlvsize << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPDataItem() Header: " << ok << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPDataItem() Size: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -188,13 +183,13 @@ bool RsVoipDataItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsVoipSerialiser::serialiseVoipPingItem() Size Error! " << std::endl;
+		std::cerr << "RsVOIPSerialiser::serialiseVOIPPingItem() Size Error! " << std::endl;
 	}
 
 	return ok;
 }
 /* serialise the data to the buffer */
-bool RsVoipPingItem::serialise(void *data, uint32_t& pktsize) 
+bool RsVOIPPingItem::serialise(void *data, uint32_t& pktsize) 
 {
 	uint32_t tlvsize = serial_size() ;
 	uint32_t offset = 0;
@@ -209,8 +204,8 @@ bool RsVoipPingItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsVoipSerialiser::serialiseVoipPingItem() Header: " << ok << std::endl;
-	std::cerr << "RsVoipSerialiser::serialiseVoipPingItem() Size: " << tlvsize << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPPingItem() Header: " << ok << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPPingItem() Size: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -223,14 +218,14 @@ bool RsVoipPingItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsVoipSerialiser::serialiseVoipPingItem() Size Error! " << std::endl;
+		std::cerr << "RsVOIPSerialiser::serialiseVOIPPingItem() Size Error! " << std::endl;
 	}
 
 	return ok;
 }
 
-RsVoipProtocolItem::RsVoipProtocolItem(void *data, uint32_t pktsize)
-	: RsVoipItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL)
+RsVOIPProtocolItem::RsVOIPProtocolItem(void *data, uint32_t pktsize)
+	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -259,8 +254,8 @@ RsVoipProtocolItem::RsVoipProtocolItem(void *data, uint32_t pktsize)
 	if (!ok)
 		throw std::runtime_error("Deserialisation error!") ;
 }
-RsVoipPingItem::RsVoipPingItem(void *data, uint32_t pktsize)
-	: RsVoipItem(RS_PKT_SUBTYPE_VOIP_PING)
+RsVOIPPingItem::RsVOIPPingItem(void *data, uint32_t pktsize)
+	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PING)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -295,7 +290,7 @@ RsVoipPingItem::RsVoipPingItem(void *data, uint32_t pktsize)
 /*************************************************************************/
 
 
-uint32_t RsVoipPongItem::serial_size() const
+uint32_t RsVOIPPongItem::serial_size() const
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* seqno */
@@ -306,7 +301,7 @@ uint32_t RsVoipPongItem::serial_size() const
 }
 
 /* serialise the data to the buffer */
-bool RsVoipPongItem::serialise(void *data, uint32_t& pktsize) 
+bool RsVOIPPongItem::serialise(void *data, uint32_t& pktsize) 
 {
 	uint32_t tlvsize = serial_size() ;
 	uint32_t offset = 0;
@@ -321,8 +316,8 @@ bool RsVoipPongItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsVoipSerialiser::serialiseVoipPongItem() Header: " << ok << std::endl;
-	std::cerr << "RsVoipSerialiser::serialiseVoipPongItem() Size: " << tlvsize << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPPongItem() Header: " << ok << std::endl;
+	std::cerr << "RsVOIPSerialiser::serialiseVOIPPongItem() Size: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -336,13 +331,13 @@ bool RsVoipPongItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsVoipSerialiser::serialiseVoipPongItem() Size Error! " << std::endl;
+		std::cerr << "RsVOIPSerialiser::serialiseVOIPPongItem() Size Error! " << std::endl;
 	}
 
 	return ok;
 }
-RsVoipDataItem::RsVoipDataItem(void *data, uint32_t pktsize)
-	: RsVoipItem(RS_PKT_SUBTYPE_VOIP_DATA)
+RsVOIPDataItem::RsVOIPDataItem(void *data, uint32_t pktsize)
+	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_DATA)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -375,8 +370,8 @@ RsVoipDataItem::RsVoipDataItem(void *data, uint32_t pktsize)
 	if (!ok)
 		throw std::runtime_error("Serialization error.") ;
 }
-RsVoipPongItem::RsVoipPongItem(void *data, uint32_t pktsize)
-	: RsVoipItem(RS_PKT_SUBTYPE_VOIP_PONG)
+RsVOIPPongItem::RsVOIPPongItem(void *data, uint32_t pktsize)
+	: RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PONG)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -409,10 +404,10 @@ RsVoipPongItem::RsVoipPongItem(void *data, uint32_t pktsize)
 
 /*************************************************************************/
 
-RsItem* RsVoipSerialiser::deserialise(void *data, uint32_t *pktsize)
+RsItem* RsVOIPSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsVoipSerialiser::deserialise()" << std::endl;
+	std::cerr << "RsVOIPSerialiser::deserialise()" << std::endl;
 #endif
 
 	/* get the type and size */
@@ -425,10 +420,10 @@ RsItem* RsVoipSerialiser::deserialise(void *data, uint32_t *pktsize)
 	{
 		switch(getRsItemSubType(rstype))
 		{
-			case RS_PKT_SUBTYPE_VOIP_PING: 		return new RsVoipPingItem(data, *pktsize);
-			case RS_PKT_SUBTYPE_VOIP_PONG: 		return new RsVoipPongItem(data, *pktsize);
-			case RS_PKT_SUBTYPE_VOIP_PROTOCOL: 	return new RsVoipProtocolItem(data, *pktsize);
-			case RS_PKT_SUBTYPE_VOIP_DATA: 		return new RsVoipDataItem(data, *pktsize);
+			case RS_PKT_SUBTYPE_VOIP_PING: 		return new RsVOIPPingItem(data, *pktsize);
+			case RS_PKT_SUBTYPE_VOIP_PONG: 		return new RsVOIPPongItem(data, *pktsize);
+			case RS_PKT_SUBTYPE_VOIP_PROTOCOL: 	return new RsVOIPProtocolItem(data, *pktsize);
+			case RS_PKT_SUBTYPE_VOIP_DATA: 		return new RsVOIPDataItem(data, *pktsize);
 
 			default:
 				return NULL;
@@ -436,7 +431,7 @@ RsItem* RsVoipSerialiser::deserialise(void *data, uint32_t *pktsize)
 	}
 	catch(std::exception& e)
 	{
-		std::cerr << "RsVoipSerialiser: deserialization error: " << e.what() << std::endl;
+		std::cerr << "RsVOIPSerialiser: deserialization error: " << e.what() << std::endl;
 		return NULL;
 	}
 }

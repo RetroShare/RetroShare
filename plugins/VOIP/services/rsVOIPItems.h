@@ -1,8 +1,28 @@
-#ifndef RS_VOIP_ITEMS_H
-#define RS_VOIP_ITEMS_H
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2015
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
+#pragma once
 
 /*
- * libretroshare/src/serialiser: rsvoipitems.h
+ * libretroshare/src/serialiser: rsVOIPItems.h
  *
  * RetroShare Serialiser.
  *
@@ -46,16 +66,16 @@ const uint8_t QOS_PRIORITY_RS_VOIP = 9 ;
 const uint32_t RS_VOIP_FLAGS_VIDEO_DATA = 0x0001 ;
 const uint32_t RS_VOIP_FLAGS_AUDIO_DATA = 0x0002 ;
 
-class RsVoipItem: public RsItem
+class RsVOIPItem: public RsItem
 {
 	public:
-		RsVoipItem(uint8_t voip_subtype) 
+		RsVOIPItem(uint8_t voip_subtype)
 			: RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP_PLUGIN,voip_subtype) 
 		{ 
 			setPriorityLevel(QOS_PRIORITY_RS_VOIP) ;
 		}	
 
-		virtual ~RsVoipItem() {};
+		virtual ~RsVOIPItem() {};
 		virtual void clear() {};
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
 
@@ -63,32 +83,32 @@ class RsVoipItem: public RsItem
 		virtual uint32_t serial_size() const = 0 ; 							// deserialise is handled using a constructor
 };
 
-class RsVoipPingItem: public RsVoipItem
+class RsVOIPPingItem: public RsVOIPItem
 {
 	public:
-		RsVoipPingItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_PING) {}
-		RsVoipPingItem(void *data,uint32_t size) ;
+		RsVOIPPingItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PING) {}
+		RsVOIPPingItem(void *data,uint32_t size) ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;	
 		virtual uint32_t serial_size() const ; 						
 
-		virtual ~RsVoipPingItem() {}
+		virtual ~RsVOIPPingItem() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 		uint32_t mSeqNo;
 		uint64_t mPingTS;
 };
 
-class RsVoipDataItem: public RsVoipItem
+class RsVOIPDataItem: public RsVOIPItem
 {
 	public:
-		RsVoipDataItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_DATA) {}
-		RsVoipDataItem(void *data,uint32_t size) ; // de-serialization
+		RsVOIPDataItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_DATA) {}
+		RsVOIPDataItem(void *data,uint32_t size) ; // de-serialization
 
 		virtual bool serialise(void *data,uint32_t& size) ;
 		virtual uint32_t serial_size() const ; 							
 
-		virtual ~RsVoipDataItem() 
+		virtual ~RsVOIPDataItem() 
 		{
 			free(voip_data) ;
 			voip_data = NULL ;
@@ -100,34 +120,34 @@ class RsVoipDataItem: public RsVoipItem
 		void *voip_data ;
 };
 
-class RsVoipProtocolItem: public RsVoipItem
+class RsVOIPProtocolItem: public RsVOIPItem
 {
 	public:
-		RsVoipProtocolItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL) {}
-		RsVoipProtocolItem(void *data,uint32_t size) ;
+		RsVOIPProtocolItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL) {}
+		RsVOIPProtocolItem(void *data,uint32_t size) ;
 
 		enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3, VoipProtocol_Bandwidth = 4 } ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;
 		virtual uint32_t serial_size() const ; 							
 
-		virtual ~RsVoipProtocolItem() {}
+		virtual ~RsVOIPProtocolItem() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 		uint32_t protocol ;
 		uint32_t flags ;
 };
 
-class RsVoipPongItem: public RsVoipItem
+class RsVOIPPongItem: public RsVOIPItem
 {
 	public:
-		RsVoipPongItem() :RsVoipItem(RS_PKT_SUBTYPE_VOIP_PONG) {}
-		RsVoipPongItem(void *data,uint32_t size) ;
+		RsVOIPPongItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PONG) {}
+		RsVOIPPongItem(void *data,uint32_t size) ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;
 		virtual uint32_t serial_size() const ; 							
 
-		virtual ~RsVoipPongItem() {}
+		virtual ~RsVOIPPongItem() {}
 	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 		uint32_t mSeqNo;
@@ -135,29 +155,25 @@ class RsVoipPongItem: public RsVoipItem
 		uint64_t mPongTS;
 };
 
-class RsVoipSerialiser: public RsSerialType
+class RsVOIPSerialiser: public RsSerialType
 {
 	public:
-		RsVoipSerialiser()
+		RsVOIPSerialiser()
 			:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_VOIP_PLUGIN)
 		{ 
 		}
-		virtual ~RsVoipSerialiser() {}
+		virtual ~RsVOIPSerialiser() {}
 
 		virtual uint32_t 	size (RsItem *item) 
 		{ 
-			return dynamic_cast<RsVoipItem *>(item)->serial_size() ;
+			return dynamic_cast<RsVOIPItem *>(item)->serial_size() ;
 		}
 
 		virtual	bool serialise  (RsItem *item, void *data, uint32_t *size)
 		{ 
-			return dynamic_cast<RsVoipItem *>(item)->serialise(data,*size) ;
+			return dynamic_cast<RsVOIPItem *>(item)->serialise(data,*size) ;
 		}
 		virtual	RsItem *deserialise(void *data, uint32_t *size);
 };
 
 /**************************************************************************/
-
-#endif /* RS_VOIP_ITEMS_H */
-
-

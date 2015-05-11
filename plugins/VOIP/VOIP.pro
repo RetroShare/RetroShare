@@ -33,38 +33,38 @@ win32 {
 
 QMAKE_CXXFLAGS *= -Wall
 
-SOURCES = services/p3vors.cc \
-			 services/rsvoipitems.cc \
-			 gui/AudioInputConfig.cpp \
-			 gui/AudioStats.cpp \
-			 gui/AudioWizard.cpp \
-			 gui/SpeexProcessor.cpp \
-			 gui/audiodevicehelper.cpp \
+SOURCES = VOIPPlugin.cpp               \
+          services/p3VOIP.cc           \
+          services/rsVOIPItems.cc      \
+          gui/AudioInputConfig.cpp     \
+          gui/AudioStats.cpp           \
+          gui/AudioWizard.cpp          \
+          gui/SpeexProcessor.cpp       \
+          gui/audiodevicehelper.cpp    \
+          gui/VideoProcessor.cpp       \
+          gui/QVideoDevice.cpp         \
           gui/VOIPChatWidgetHolder.cpp \
-          gui/PluginGUIHandler.cpp \
-          gui/PluginNotifier.cpp \
-			 gui/VideoProcessor.cpp \
-			 gui/QVideoDevice.cpp \
-          VOIPPlugin.cpp
+          gui/VOIPGUIHandler.cpp       \
+          gui/VOIPNotify.cpp
 
-HEADERS = services/p3vors.h \
-			 services/rsvoipitems.h \
-          gui/AudioInputConfig.h \
-			 gui/AudioStats.h \
-			 gui/AudioWizard.h \
-			 gui/SpeexProcessor.h \
-			 gui/audiodevicehelper.h \
-          gui/VOIPChatWidgetHolder.h \
-          gui/PluginGUIHandler.h \
-          gui/PluginNotifier.h \
-			 gui/VideoProcessor.h \
-			 gui/QVideoDevice.h \
-			 interface/rsvoip.h \
-          VOIPPlugin.h
+HEADERS = VOIPPlugin.h                 \
+          services/p3VOIP.h            \
+          services/rsVOIPItems.h       \
+          gui/AudioInputConfig.h       \
+          gui/AudioStats.h             \
+          gui/AudioWizard.h            \
+          gui/SpeexProcessor.h         \
+          gui/audiodevicehelper.h      \
+          gui/VideoProcessor.h         \
+          gui/QVideoDevice.h           \
+          gui/VOIPChatWidgetHolder.h   \
+          gui/VOIPGUIHandler.h         \
+          gui/VOIPNotify.h             \
+          interface/rsVOIP.h
 
-FORMS   = gui/AudioInputConfig.ui \
-          gui/AudioStats.ui \
-			 gui/AudioWizard.ui
+FORMS   = gui/AudioInputConfig.ui      \
+          gui/AudioStats.ui            \
+          gui/AudioWizard.ui
 
 TARGET = VOIP
 

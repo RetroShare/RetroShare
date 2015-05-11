@@ -3,8 +3,7 @@
  * Copyright (C) 2010 Peter Zotov
  */
 
-#ifndef SPEEXPROCESSOR_H
-#define SPEEXPROCESSOR_H
+#pragma once
 
 #include <iostream>
 
@@ -117,5 +116,3 @@ namespace QtSpeex {
                 int speex_jitter_get_pointer_timestamp(SpeexJitter jitter);
         };
     }
-
-#endif // SPEEXPROCESSOR_H

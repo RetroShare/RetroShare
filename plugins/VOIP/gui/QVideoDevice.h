@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <QLabel>
-#include "interface/rsvoip.h"
+#include "interface/rsVOIP.h"
 
 class VideoEncoder ;
 class CvCapture ;
@@ -12,7 +12,7 @@ class CvCapture ;
 class QVideoOutputDevice: public QLabel
 {
 	public:
-		QVideoOutputDevice(QWidget *parent) ;
+		QVideoOutputDevice(QWidget *parent = 0) ;
 		
 		void showFrame(const QImage&) ;
 		void showFrameOff() ;
@@ -26,7 +26,7 @@ class QVideoInputDevice: public QObject
 	Q_OBJECT
 
 	public:
-		QVideoInputDevice(QWidget *parent) ;
+		QVideoInputDevice(QWidget *parent = 0) ;
 		~QVideoInputDevice() ;
 
 		// Captured images are sent to this encoder. Can be NULL.
@@ -40,7 +40,7 @@ class QVideoInputDevice: public QObject
 	
 		// get the next encoded video data chunk.
 		//
-		bool getNextEncodedPacket(RsVoipDataChunk&) ;
+		bool getNextEncodedPacket(RsVOIPDataChunk&) ;
 
 		void start() ;
 		void stop() ;
@@ -58,6 +58,6 @@ class QVideoInputDevice: public QObject
 
 		QVideoOutputDevice *_echo_output_device ;
 
-		std::list<RsVoipDataChunk> _out_queue ;
+		std::list<RsVOIPDataChunk> _out_queue ;
 };
 

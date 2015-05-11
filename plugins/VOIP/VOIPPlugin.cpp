@@ -1,3 +1,23 @@
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2015
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsversion.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
@@ -8,12 +28,12 @@
 #include <QMessageBox>
 
 #include "VOIPPlugin.h"
-#include "interface/rsvoip.h"
+#include "interface/rsVOIP.h"
 
 #include "gui/AudioInputConfig.h"
 #include "gui/VOIPChatWidgetHolder.h"
-#include "gui/PluginGUIHandler.h"
-#include "gui/PluginNotifier.h"
+#include "gui/VOIPGUIHandler.h"
+#include "gui/VOIPNotify.h"
 #include "gui/SoundManager.h"
 #include "gui/chat/ChatWidget.h"
 
@@ -58,20 +78,20 @@ void VOIPPlugin::getPluginVersion(int& major, int& minor, int& build, int& svn_r
 
 VOIPPlugin::VOIPPlugin()
 {
-	mVoip = NULL ;
+	mVOIP = NULL ;
 	mPlugInHandler = NULL;
 	mPeers = NULL;
 	config_page = NULL ;
 	mIcon = NULL ;
 
-	mPluginGUIHandler = new PluginGUIHandler ;
-	mPluginNotifier = new PluginNotifier ;
+	mVOIPGUIHandler = new VOIPGUIHandler ;
+	mVOIPNotify = new VOIPNotify ;
 
-	QObject::connect(mPluginNotifier,SIGNAL(voipInvitationReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedInvitation(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipDataReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipData(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipAcceptReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipAccept(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipHangUpReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipHangUp(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipBandwidthInfoReceived(const QString&,int)),mPluginGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const QString&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const QString&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipDataReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedVoipData(const QString&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const QString&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const QString&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipBandwidthInfoReceived(const QString&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const QString&,int)),Qt::QueuedConnection) ;
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -127,10 +147,10 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 
 p3Service *VOIPPlugin::p3_service() const
 {
-    if(mVoip == NULL)
-        rsVoip = mVoip = new p3VoRS(mPlugInHandler,mPluginNotifier) ; // , 3600 * 24 * 30 * 6); // 6 Months
+    if(mVOIP == NULL)
+        rsVOIP = mVOIP = new p3VOIP(mPlugInHandler,mVOIPNotify) ; // , 3600 * 24 * 30 * 6); // 6 Months
 
-	return mVoip ;
+	return mVOIP ;
 }
 
 void VOIPPlugin::setPlugInHandler(RsPluginHandler *pgHandler)

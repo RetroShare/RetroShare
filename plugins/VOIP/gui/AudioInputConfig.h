@@ -28,8 +28,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _AUDIOINPUTCONFIG_H
-#define _AUDIOINPUTCONFIG_H
+#pragma once
 
 #include <QAudioInput>
 #include <QWidget>
@@ -88,5 +87,3 @@ class AudioInputConfig : public ConfigPage
 		void on_qpbAudioWizard_clicked();
 		void on_qcbEchoCancel_clicked();
 };
-
-#endif

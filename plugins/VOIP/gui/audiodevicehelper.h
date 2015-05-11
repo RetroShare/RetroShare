@@ -1,5 +1,5 @@
-#ifndef AUDIODEVICEHELPER_H
-#define AUDIODEVICEHELPER_H
+#pragma once
+
 #include <QAudioInput>
 #include <QAudioOutput>
 
@@ -15,5 +15,3 @@ public:
     static QAudioOutput* getPreferedOutputDevice();
     //static list getOutputDeviceList();
 };
-
-#endif // AUDIODEVICEHELPER_H

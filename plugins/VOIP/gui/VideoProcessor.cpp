@@ -19,7 +19,7 @@ bool VideoEncoder::addImage(const QImage& img)
 	return true ;
 }
 
-bool VideoEncoder::nextPacket(RsVoipDataChunk& chunk)
+bool VideoEncoder::nextPacket(RsVOIPDataChunk& chunk)
 {
 	if(_out_queue.empty())
 		return false ;
@@ -62,11 +62,11 @@ void JPEGVideoEncoder::encodeData(const QImage& image)
 	buffer.open(QIODevice::WriteOnly) ;
 	image.save(&buffer,"JPEG") ;
 
-	RsVoipDataChunk voip_chunk ;
+	RsVOIPDataChunk voip_chunk ;
 	voip_chunk.data = malloc(qb.size());
 	memcpy(voip_chunk.data,qb.data(),qb.size()) ;
 	voip_chunk.size = qb.size() ;
-	voip_chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+	voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 
 	_out_queue.push_back(voip_chunk) ;
 }

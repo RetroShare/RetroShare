@@ -7,6 +7,7 @@
 #include "VideoProcessor.h"
 
 QVideoInputDevice::QVideoInputDevice(QWidget *parent)
+  :QObject(parent)
 {
 	_timer = NULL ;
 	_capture_device = NULL ;
@@ -85,7 +86,7 @@ void QVideoInputDevice::grabFrame()
 	if(_echo_output_device != NULL) _echo_output_device->showFrame(image) ;
 }
 
-bool QVideoInputDevice::getNextEncodedPacket(RsVoipDataChunk& chunk)
+bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
 	return _video_encoder->nextPacket(chunk) ;
 }

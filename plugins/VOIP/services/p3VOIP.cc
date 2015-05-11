@@ -1,27 +1,23 @@
-/*
- * libretroshare/src/services p3vors.cc
+/****************************************************************
+ *  RetroShare is distributed under the following license:
  *
- * Voice Over Retroshare Service  for RetroShare.
+ *  Copyright (C) 2015
  *
- * Copyright 2011-2011 by Robert Fernie.
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
 
 #include "util/rsdir.h"
 #include "retroshare/rsiface.h"
@@ -33,23 +29,23 @@
 
 #include <sstream> // for std::istringstream
 
-#include "services/p3vors.h"
-#include "services/rsvoipitems.h"
-#include "gui/PluginNotifier.h"
+#include "services/p3VOIP.h"
+#include "services/rsVOIPItems.h"
+#include "gui/VOIPNotify.h"
 
 #include <sys/time.h>
 
 /****
- * #define DEBUG_VORS		1
+ * #define DEBUG_VOIP		1
  ****/
 
 /* DEFINE INTERFACE POINTER! */
-RsVoip *rsVoip = NULL;
+RsVOIP *rsVOIP = NULL;
 
 
 #define MAX_PONG_RESULTS		150
-#define VORS_PING_PERIOD  		10
-#define VORS_BANDWIDTH_PERIOD 5
+#define VOIP_PING_PERIOD  		10
+#define VOIP_BANDWIDTH_PERIOD 5
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -116,10 +112,10 @@ static double convert64bitsToTs(uint64_t bits)
 	return ts;
 }
 
-p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
-     : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,0,handler), mVorsMtx("p3VoRS"), mServiceControl(handler->getServiceControl()) , mNotify(notifier)
+p3VOIP::p3VOIP(RsPluginHandler *handler,VOIPNotify *notifier)
+     : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,0,handler), mVOIPMtx("p3VOIP"), mServiceControl(handler->getServiceControl()) , mNotify(notifier)
 {
-	addSerialType(new RsVoipSerialiser());
+	addSerialType(new RsVOIPSerialiser());
 
 	mSentPingTime = 0;
 	mSentBandwidthInfoTime = 0;
@@ -135,7 +131,7 @@ p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
         _echo_cancel = true;
 
 }
-RsServiceInfo p3VoRS::getServiceInfo()
+RsServiceInfo p3VOIP::getServiceInfo()
 {
     const std::string TURTLE_APP_NAME = "VOIP";
     const uint16_t TURTLE_APP_MAJOR_VERSION  =       1;
@@ -151,10 +147,10 @@ RsServiceInfo p3VoRS::getServiceInfo()
                          TURTLE_MIN_MINOR_VERSION);
 }
 
-int	p3VoRS::tick()
+int	p3VOIP::tick()
 {
-#ifdef DEBUG_VORS
-	std::cerr << "ticking p3VoRS" << std::endl;
+#ifdef DEBUG_VOIP
+	std::cerr << "ticking p3VOIP" << std::endl;
 #endif
 
 	//processIncoming();
@@ -163,48 +159,48 @@ int	p3VoRS::tick()
 	return 0;
 }
 
-int	p3VoRS::status()
+int	p3VOIP::status()
 {
 	return 1;
 }
 
-int	p3VoRS::sendPackets()
+int	p3VOIP::sendPackets()
 {
 	time_t now = time(NULL);
 	time_t pt;
 	time_t pt2;
 	{
-		RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+		RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 		pt = mSentPingTime;
 		pt2 = mSentBandwidthInfoTime;
 	}
 
-	if (now > pt + VORS_PING_PERIOD)
+	if (now > pt + VOIP_PING_PERIOD)
 	{
 		sendPingMeasurements();
 
-		RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+		RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 		mSentPingTime = now;
 	}
-	if (now > pt2 + VORS_BANDWIDTH_PERIOD)
+	if (now > pt2 + VOIP_BANDWIDTH_PERIOD)
 	{
 		sendBandwidthInfo();
 
-		RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+		RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 		mSentBandwidthInfoTime = now;
 	}
 	return true ;
 }
-void p3VoRS::sendBandwidthInfo()
+void p3VOIP::sendBandwidthInfo()
 {
     std::set<RsPeerId> onlineIds;
 	 mServiceControl->getPeersConnected(getServiceInfo().mServiceType, onlineIds);
 
-	 RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+	 RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 
-	for(std::map<RsPeerId,VorsPeerInfo>::iterator it(mPeerInfo.begin());it!=mPeerInfo.end();++it)
+	for(std::map<RsPeerId,VOIPPeerInfo>::iterator it(mPeerInfo.begin());it!=mPeerInfo.end();++it)
 	{
-		it->second.average_incoming_bandwidth = 0.75 * it->second.average_incoming_bandwidth + 0.25 * it->second.total_bytes_received / VORS_BANDWIDTH_PERIOD ;
+		it->second.average_incoming_bandwidth = 0.75 * it->second.average_incoming_bandwidth + 0.25 * it->second.total_bytes_received / VOIP_BANDWIDTH_PERIOD ;
 		it->second.total_bytes_received = 0 ;
 
 		if(onlineIds.find(it->first) == onlineIds.end() || it->second.average_incoming_bandwidth == 0)
@@ -215,11 +211,11 @@ void p3VoRS::sendBandwidthInfo()
 	}
 }
 
-int p3VoRS::sendVoipHangUpCall(const RsPeerId &peer_id)
+int p3VOIP::sendVoipHangUpCall(const RsPeerId &peer_id)
 {
-	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
+	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
 
-	item->protocol = RsVoipProtocolItem::VoipProtocol_Close;
+	item->protocol = RsVOIPProtocolItem::VoipProtocol_Close;
 	item->flags = 0 ;
 	item->PeerId(peer_id) ;
 
@@ -227,11 +223,11 @@ int p3VoRS::sendVoipHangUpCall(const RsPeerId &peer_id)
 
 	return true ;
 }
-int p3VoRS::sendVoipAcceptCall(const RsPeerId& peer_id)
+int p3VOIP::sendVoipAcceptCall(const RsPeerId& peer_id)
 {
-	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
+	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
 
-	item->protocol = RsVoipProtocolItem::VoipProtocol_Ackn ;
+	item->protocol = RsVOIPProtocolItem::VoipProtocol_Ackn ;
 	item->flags = 0 ;
 	item->PeerId(peer_id) ;
 
@@ -239,11 +235,11 @@ int p3VoRS::sendVoipAcceptCall(const RsPeerId& peer_id)
 
 	return true ;
 }
-int p3VoRS::sendVoipRinging(const RsPeerId &peer_id)
+int p3VOIP::sendVoipRinging(const RsPeerId &peer_id)
 {
-	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
+	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
 
-	item->protocol = RsVoipProtocolItem::VoipProtocol_Ring ;
+	item->protocol = RsVOIPProtocolItem::VoipProtocol_Ring ;
 	item->flags = 0 ;
 	item->PeerId(peer_id) ;
 
@@ -251,11 +247,11 @@ int p3VoRS::sendVoipRinging(const RsPeerId &peer_id)
 
 	return true ;
 }
-int p3VoRS::sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec)
+int p3VOIP::sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec)
 {
-	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
+	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
 
-	item->protocol = RsVoipProtocolItem::VoipProtocol_Bandwidth ;
+	item->protocol = RsVOIPProtocolItem::VoipProtocol_Bandwidth ;
 	item->flags = bytes_per_sec ;
 	item->PeerId(peer_id) ;
 
@@ -263,24 +259,24 @@ int p3VoRS::sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec)
 
 	return true ;
 }
-int p3VoRS::sendVoipData(const RsPeerId& peer_id,const RsVoipDataChunk& chunk)
+int p3VOIP::sendVoipData(const RsPeerId& peer_id,const RsVOIPDataChunk& chunk)
 {
-#ifdef DEBUG_VORS
+#ifdef DEBUG_VOIP
 	std::cerr << "Sending " << chunk.size << " bytes of voip data." << std::endl;
 #endif
 
-	RsVoipDataItem *item = new RsVoipDataItem ;
+	RsVOIPDataItem *item = new RsVOIPDataItem ;
 
 	if(!item)
 	{
-		std::cerr << "Cannot allocate RsVoipDataItem !" << std::endl;
+		std::cerr << "Cannot allocate RsVOIPDataItem !" << std::endl;
 		return false ;
 	}
 	item->voip_data = malloc(chunk.size) ;
 
 	if(item->voip_data == NULL)
 	{
-		std::cerr << "Cannot allocate RsVoipDataItem.voip_data of size " << chunk.size << " !" << std::endl;
+		std::cerr << "Cannot allocate RsVOIPDataItem.voip_data of size " << chunk.size << " !" << std::endl;
 		delete item ;
 		return false ;
 	}
@@ -288,13 +284,13 @@ int p3VoRS::sendVoipData(const RsPeerId& peer_id,const RsVoipDataChunk& chunk)
 	item->PeerId(peer_id) ;
 	item->data_size = chunk.size;
 
-	if(chunk.type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO) 
+	if(chunk.type == RsVOIPDataChunk::RS_VOIP_DATA_TYPE_AUDIO) 
 		item->flags = RS_VOIP_FLAGS_AUDIO_DATA ;
-	else if(chunk.type == RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO) 
+	else if(chunk.type == RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO) 
 		item->flags = RS_VOIP_FLAGS_VIDEO_DATA ;
 	else
 	{
-		std::cerr << "(EE) p3VoRs: cannot send chunk data. Unknown data type = " << chunk.type << std::endl;
+		std::cerr << "(EE) p3VOIP: cannot send chunk data. Unknown data type = " << chunk.type << std::endl;
 		delete item ;
 		return false ;
 	}
@@ -304,7 +300,7 @@ int p3VoRS::sendVoipData(const RsPeerId& peer_id,const RsVoipDataChunk& chunk)
 	return true ;
 }
 
-void p3VoRS::sendPingMeasurements()
+void p3VOIP::sendPingMeasurements()
 {
 	/* we ping our peers */
 	/* who is online? */
@@ -316,8 +312,8 @@ void p3VoRS::sendPingMeasurements()
 
 	double ts = getCurrentTS();
 
-#ifdef DEBUG_VORS
-	std::cerr << "p3VoRS::sendPingMeasurements() @ts: " << ts;
+#ifdef DEBUG_VOIP
+	std::cerr << "p3VOIP::sendPingMeasurements() @ts: " << ts;
 	std::cerr << std::endl;
 #endif
 
@@ -325,21 +321,21 @@ void p3VoRS::sendPingMeasurements()
     std::set<RsPeerId>::iterator it;
     for(it = onlineIds.begin(); it != onlineIds.end(); it++)
 	{
-#ifdef DEBUG_VORS
-		std::cerr << "p3VoRS::sendPingMeasurements() Pinging: " << *it;
+#ifdef DEBUG_VOIP
+		std::cerr << "p3VOIP::sendPingMeasurements() Pinging: " << *it;
 		std::cerr << std::endl;
 #endif
 
 		/* create the packet */
-		RsVoipPingItem *pingPkt = new RsVoipPingItem();
+		RsVOIPPingItem *pingPkt = new RsVOIPPingItem();
 		pingPkt->PeerId(*it);
 		pingPkt->mSeqNo = mCounter;
 		pingPkt->mPingTS = convertTsTo64bits(ts);
 
 		storePingAttempt(*it, ts, mCounter);
 
-#ifdef DEBUG_VORS
-		std::cerr << "p3VoRS::sendPingMeasurements() With Packet:";
+#ifdef DEBUG_VOIP
+		std::cerr << "p3VOIP::sendPingMeasurements() With Packet:";
 		std::cerr << std::endl;
 		pingPkt->print(std::cerr, 10);
 #endif
@@ -347,55 +343,55 @@ void p3VoRS::sendPingMeasurements()
 		sendItem(pingPkt);
 	}
 
-	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 	mCounter++;
 }
 
 
-void p3VoRS::handleProtocol(RsVoipProtocolItem *item)
+void p3VOIP::handleProtocol(RsVOIPProtocolItem *item)
 {
 	// should we keep a list of received requests?
 
 	switch(item->protocol)
 	{
-		case RsVoipProtocolItem::VoipProtocol_Ring: mNotify->notifyReceivedVoipInvite(item->PeerId());
-#ifdef DEBUG_VORS
-																  std::cerr << "p3VoRS::handleProtocol(): Received protocol ring item." << std::endl;
+		case RsVOIPProtocolItem::VoipProtocol_Ring: mNotify->notifyReceivedVoipInvite(item->PeerId());
+#ifdef DEBUG_VOIP
+																  std::cerr << "p3VOIP::handleProtocol(): Received protocol ring item." << std::endl;
 #endif
 																  break ;
 
-		case RsVoipProtocolItem::VoipProtocol_Ackn: mNotify->notifyReceivedVoipAccept(item->PeerId());
-#ifdef DEBUG_VORS
-																  std::cerr << "p3VoRS::handleProtocol(): Received protocol accept call" << std::endl;
+		case RsVOIPProtocolItem::VoipProtocol_Ackn: mNotify->notifyReceivedVoipAccept(item->PeerId());
+#ifdef DEBUG_VOIP
+																  std::cerr << "p3VOIP::handleProtocol(): Received protocol accept call" << std::endl;
 #endif
 																  break ;
 
-		case RsVoipProtocolItem::VoipProtocol_Close: mNotify->notifyReceivedVoipHangUp(item->PeerId());
-#ifdef DEBUG_VORS
-																  std::cerr << "p3VoRS::handleProtocol(): Received protocol Close call." << std::endl;
+		case RsVOIPProtocolItem::VoipProtocol_Close: mNotify->notifyReceivedVoipHangUp(item->PeerId());
+#ifdef DEBUG_VOIP
+																  std::cerr << "p3VOIP::handleProtocol(): Received protocol Close call." << std::endl;
 #endif
 																  break ;
-		case RsVoipProtocolItem::VoipProtocol_Bandwidth: mNotify->notifyReceivedVoipBandwidth(item->PeerId(),(uint32_t)item->flags);
-#ifdef DEBUG_VORS
-																  std::cerr << "p3VoRS::handleProtocol(): Received protocol bandwidth. Value=" << item->flags << std::endl;
+		case RsVOIPProtocolItem::VoipProtocol_Bandwidth: mNotify->notifyReceivedVoipBandwidth(item->PeerId(),(uint32_t)item->flags);
+#ifdef DEBUG_VOIP
+																  std::cerr << "p3VOIP::handleProtocol(): Received protocol bandwidth. Value=" << item->flags << std::endl;
 #endif
 																  break ;
 		default:
-#ifdef DEBUG_VORS
-																  std::cerr << "p3VoRS::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
+#ifdef DEBUG_VOIP
+																  std::cerr << "p3VOIP::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
 #endif
 																  break ;
 	}
 
 }
 
-void p3VoRS::handleData(RsVoipDataItem *item)
+void p3VOIP::handleData(RsVOIPDataItem *item)
 {
-	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 
 	// store the data in a queue.
 
-	std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
+	std::map<RsPeerId,VOIPPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
 
 	if(it == mPeerInfo.end())
 	{
@@ -413,33 +409,33 @@ void p3VoRS::handleData(RsVoipDataItem *item)
 	mNotify->notifyReceivedVoipData(item->PeerId());
 }
 
-bool p3VoRS::getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk>& incoming_data_chunks)
+bool p3VOIP::getIncomingData(const RsPeerId& peer_id,std::vector<RsVOIPDataChunk>& incoming_data_chunks)
 {
-	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 
 	incoming_data_chunks.clear() ;
 
-	std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(peer_id) ;
+	std::map<RsPeerId,VOIPPeerInfo>::iterator it = mPeerInfo.find(peer_id) ;
 
 	if(it == mPeerInfo.end())
 	{
 		std::cerr << "Peer unknown to VOIP process. No data returned. Probably a bug !" << std::endl;
 		return false ;
 	}
-	for(std::list<RsVoipDataItem*>::const_iterator it2(it->second.incoming_queue.begin());it2!=it->second.incoming_queue.end();++it2)
+	for(std::list<RsVOIPDataItem*>::const_iterator it2(it->second.incoming_queue.begin());it2!=it->second.incoming_queue.end();++it2)
 	{
-		RsVoipDataChunk chunk ;
+		RsVOIPDataChunk chunk ;
 		chunk.size = (*it2)->data_size ;
 		chunk.data = malloc((*it2)->data_size) ;
 
 		uint32_t type_flags = (*it2)->flags & (RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA) ;
 		if(type_flags == RS_VOIP_FLAGS_AUDIO_DATA)
-			chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
+			chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
 		else if(type_flags == RS_VOIP_FLAGS_VIDEO_DATA)
-			chunk.type = RsVoipDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+			chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 		else
 		{
-			std::cerr << "(EE) p3VoRS::getIncomingData(): error. Cannot handle item with unknown type " << type_flags << std::endl;
+			std::cerr << "(EE) p3VOIP::getIncomingData(): error. Cannot handle item with unknown type " << type_flags << std::endl;
 			delete *it2 ;
 			free(chunk.data) ;
 			continue ;
@@ -457,7 +453,7 @@ bool p3VoRS::getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk
 	return true ;
 }
 
-bool	p3VoRS::recvItem(RsItem *item)
+bool	p3VOIP::recvItem(RsItem *item)
 {
 	/* pass to specific handler */
 	bool keep = false ;
@@ -465,19 +461,19 @@ bool	p3VoRS::recvItem(RsItem *item)
 	switch(item->PacketSubType())
 	{
 		case RS_PKT_SUBTYPE_VOIP_PING: 
-			handlePing(dynamic_cast<RsVoipPingItem*>(item));
+			handlePing(dynamic_cast<RsVOIPPingItem*>(item));
 			break;
 
 		case RS_PKT_SUBTYPE_VOIP_PONG: 
-			handlePong(dynamic_cast<RsVoipPongItem*>(item));
+			handlePong(dynamic_cast<RsVOIPPongItem*>(item));
 			break;
 
 		case RS_PKT_SUBTYPE_VOIP_PROTOCOL: 
-			handleProtocol(dynamic_cast<RsVoipProtocolItem*>(item)) ;
+			handleProtocol(dynamic_cast<RsVOIPProtocolItem*>(item)) ;
 			break ;
 
 		case RS_PKT_SUBTYPE_VOIP_DATA: 
-			handleData(dynamic_cast<RsVoipDataItem*>(item));
+			handleData(dynamic_cast<RsVOIPDataItem*>(item));
 			keep = true ;
 			break;
 #if 0
@@ -500,17 +496,17 @@ bool	p3VoRS::recvItem(RsItem *item)
 	return true ;
 } 
 
-int p3VoRS::handlePing(RsVoipPingItem *ping)
+int p3VOIP::handlePing(RsVOIPPingItem *ping)
 {
 	/* cast to right type */
 
-#ifdef DEBUG_VORS
-	std::cerr << "p3VoRS::handlePing() Recvd Packet from: " << ping->PeerId();
+#ifdef DEBUG_VOIP
+	std::cerr << "p3VOIP::handlePing() Recvd Packet from: " << ping->PeerId();
 	std::cerr << std::endl;
 #endif
 
 	/* with a ping, we just respond as quickly as possible - they do all the analysis */
-	RsVoipPongItem *pong = new RsVoipPongItem();
+	RsVOIPPongItem *pong = new RsVOIPPongItem();
 
 
 	pong->PeerId(ping->PeerId());
@@ -522,8 +518,8 @@ int p3VoRS::handlePing(RsVoipPingItem *ping)
 	pong->mPongTS = convertTsTo64bits(ts);
 
 
-#ifdef DEBUG_VORS
-	std::cerr << "p3VoRS::handlePing() With Packet:";
+#ifdef DEBUG_VOIP
+	std::cerr << "p3VOIP::handlePing() With Packet:";
 	std::cerr << std::endl;
 	pong->print(std::cerr, 10);
 #endif
@@ -533,12 +529,12 @@ int p3VoRS::handlePing(RsVoipPingItem *ping)
 }
 
 
-int p3VoRS::handlePong(RsVoipPongItem *pong)
+int p3VOIP::handlePong(RsVOIPPongItem *pong)
 {
 	/* cast to right type */
 
-#ifdef DEBUG_VORS
-	std::cerr << "p3VoRS::handlePong() Recvd Packet from: " << pong->PeerId();
+#ifdef DEBUG_VOIP
+	std::cerr << "p3VOIP::handlePong() Recvd Packet from: " << pong->PeerId();
 	std::cerr << std::endl;
 	pong->print(std::cerr, 10);
 #endif
@@ -551,8 +547,8 @@ int p3VoRS::handlePong(RsVoipPongItem *pong)
 	double rtt = recvTS - pingTS;
 	double offset = pongTS - (recvTS - rtt / 2.0);  // so to get to their time, we go ourTS + offset.
 
-#ifdef DEBUG_VORS
-	std::cerr << "p3VoRS::handlePong() Timing:";
+#ifdef DEBUG_VOIP
+	std::cerr << "p3VOIP::handlePong() Timing:";
 	std::cerr << std::endl;
 	std::cerr << "\tpingTS: " << pingTS;
 	std::cerr << std::endl;
@@ -570,12 +566,12 @@ int p3VoRS::handlePong(RsVoipPongItem *pong)
 	return true ;
 }
 
-int	p3VoRS::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
+int	p3VOIP::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
 {
-	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 
 	/* find corresponding local data */
-	VorsPeerInfo *peerInfo = locked_GetPeerInfo(id);
+	VOIPPeerInfo *peerInfo = locked_GetPeerInfo(id);
 
 	peerInfo->mCurrentPingTS = ts;
 	peerInfo->mCurrentPingCounter = seqno;
@@ -593,17 +589,17 @@ int	p3VoRS::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
 
 
 
-int	p3VoRS::storePongResult(const RsPeerId &id, uint32_t counter, double ts, double rtt, double offset)
+int	p3VOIP::storePongResult(const RsPeerId &id, uint32_t counter, double ts, double rtt, double offset)
 {
-	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 
 	/* find corresponding local data */
-	VorsPeerInfo *peerInfo = locked_GetPeerInfo(id);
+	VOIPPeerInfo *peerInfo = locked_GetPeerInfo(id);
 
 	if (peerInfo->mCurrentPingCounter != counter)
 	{
-#ifdef DEBUG_VORS
-		std::cerr << "p3VoRS::storePongResult() ERROR Severly Delayed Measurements!" << std::endl;
+#ifdef DEBUG_VOIP
+		std::cerr << "p3VOIP::storePongResult() ERROR Severly Delayed Measurements!" << std::endl;
 #endif
 	}
 	else
@@ -611,7 +607,7 @@ int	p3VoRS::storePongResult(const RsPeerId &id, uint32_t counter, double ts, dou
 		peerInfo->mCurrentPongRecvd = true;
 	}
 
-	peerInfo->mPongResults.push_back(RsVoipPongResult(ts, rtt, offset));
+	peerInfo->mPongResults.push_back(RsVOIPPongResult(ts, rtt, offset));
 
 
 	while(peerInfo->mPongResults.size() > MAX_PONG_RESULTS)
@@ -624,13 +620,13 @@ int	p3VoRS::storePongResult(const RsPeerId &id, uint32_t counter, double ts, dou
 }
 
 
-uint32_t p3VoRS::getPongResults(const RsPeerId& id, int n, std::list<RsVoipPongResult> &results)
+uint32_t p3VOIP::getPongResults(const RsPeerId& id, int n, std::list<RsVOIPPongResult> &results)
 {
-	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
 
-	VorsPeerInfo *peer = locked_GetPeerInfo(id);
+	VOIPPeerInfo *peer = locked_GetPeerInfo(id);
 
-	std::list<RsVoipPongResult>::reverse_iterator it;
+	std::list<RsVOIPPongResult>::reverse_iterator it;
 	int i = 0;
 	for(it = peer->mPongResults.rbegin(); (it != peer->mPongResults.rend()) && (i < n); it++, i++)
 	{
@@ -642,14 +638,14 @@ uint32_t p3VoRS::getPongResults(const RsPeerId& id, int n, std::list<RsVoipPongR
 
 
 
-VorsPeerInfo *p3VoRS::locked_GetPeerInfo(const RsPeerId &id)
+VOIPPeerInfo *p3VOIP::locked_GetPeerInfo(const RsPeerId &id)
 {
-    std::map<RsPeerId, VorsPeerInfo>::iterator it;
+    std::map<RsPeerId, VOIPPeerInfo>::iterator it;
 	it = mPeerInfo.find(id);
 	if (it == mPeerInfo.end())
 	{
 		/* add it in */
-		VorsPeerInfo pinfo;
+		VOIPPeerInfo pinfo;
 
 		/* initialise entry */
 		pinfo.initialisePeerInfo(id);
@@ -662,7 +658,7 @@ VorsPeerInfo *p3VoRS::locked_GetPeerInfo(const RsPeerId &id)
 	return &(it->second);
 }
 
-bool VorsPeerInfo::initialisePeerInfo(const RsPeerId& id)
+bool VOIPPeerInfo::initialisePeerInfo(const RsPeerId& id)
 {
 	mId = id;
 
@@ -681,43 +677,43 @@ bool VorsPeerInfo::initialisePeerInfo(const RsPeerId& id)
 	return true;
 }
 
-void p3VoRS::setVoipATransmit(int t) 
+void p3VOIP::setVoipATransmit(int t)
 {
 	_atransmit = t ;
 	IndicateConfigChanged() ;
 }
-void p3VoRS::setVoipVoiceHold(int vh) 
+void p3VOIP::setVoipVoiceHold(int vh)
 {
 	_voice_hold = vh ;
 	IndicateConfigChanged() ;
 }
-void p3VoRS::setVoipfVADmin(int vad) 
+void p3VOIP::setVoipfVADmin(int vad)
 {
 	_vadmin = vad ;
 	IndicateConfigChanged() ;
 }
-void p3VoRS::setVoipfVADmax(int vad) 
+void p3VOIP::setVoipfVADmax(int vad)
 {
 	_vadmax = vad ;
 	IndicateConfigChanged() ;
 }
-void p3VoRS::setVoipiNoiseSuppress(int n) 
+void p3VOIP::setVoipiNoiseSuppress(int n)
 {
 	_noise_suppress = n ;
 	IndicateConfigChanged() ;
 }
-void p3VoRS::setVoipiMinLoudness(int ml) 
+void p3VOIP::setVoipiMinLoudness(int ml)
 {
 	_min_loudness = ml ;
 	IndicateConfigChanged() ;
 }
-void p3VoRS::setVoipEchoCancel(bool b) 
+void p3VOIP::setVoipEchoCancel(bool b)
 {
 	_echo_cancel = b ;
 	IndicateConfigChanged() ;
 }
 
-RsTlvKeyValue p3VoRS::push_int_value(const std::string& key,int value)
+RsTlvKeyValue p3VOIP::push_int_value(const std::string& key,int value)
 {
 	RsTlvKeyValue kv ;
 	kv.key = key ;
@@ -725,7 +721,7 @@ RsTlvKeyValue p3VoRS::push_int_value(const std::string& key,int value)
 
 	return kv ;
 }
-int p3VoRS::pop_int_value(const std::string& s)
+int p3VOIP::pop_int_value(const std::string& s)
 {
 	std::istringstream is(s) ;
 
@@ -735,7 +731,7 @@ int p3VoRS::pop_int_value(const std::string& s)
 	return val ;
 }
 
-bool p3VoRS::saveList(bool& cleanup, std::list<RsItem*>& lst) 
+bool p3VOIP::saveList(bool& cleanup, std::list<RsItem*>& lst)
 {
 	cleanup = true ;
 
@@ -753,7 +749,7 @@ bool p3VoRS::saveList(bool& cleanup, std::list<RsItem*>& lst)
 
 	return true ;
 }
-bool p3VoRS::loadList(std::list<RsItem*>& load) 
+bool p3VOIP::loadList(std::list<RsItem*>& load)
 {
 	for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
 	{
@@ -785,10 +781,10 @@ bool p3VoRS::loadList(std::list<RsItem*>& load)
 	return true ;
 }
 
-RsSerialiser *p3VoRS::setupSerialiser() 
+RsSerialiser *p3VOIP::setupSerialiser()
 {
 	RsSerialiser *rsSerialiser = new RsSerialiser();
-	rsSerialiser->addSerialType(new RsVoipSerialiser());
+	rsSerialiser->addSerialType(new RsVOIPSerialiser());
 	rsSerialiser->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rsSerialiser ;

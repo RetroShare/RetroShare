@@ -39,7 +39,7 @@
 //#include "NetworkConfig.h"
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
-#include <interface/rsvoip.h>
+#include <interface/rsVOIP.h>
 
 #define iroundf(x) ( static_cast<int>(x) )
 
@@ -112,9 +112,9 @@ void AudioInputConfig::load()
     }
     qcbSystem->setEnabled(qcbSystem->count() > 1);*/
 
-    ui.qcbTransmit->addItem(tr("Continuous"), RsVoip::AudioTransmitContinous);
-    ui.qcbTransmit->addItem(tr("Voice Activity"), RsVoip::AudioTransmitVAD);
-    ui.qcbTransmit->addItem(tr("Push To Talk"), RsVoip::AudioTransmitPushToTalk);
+    ui.qcbTransmit->addItem(tr("Continuous"), RsVOIP::AudioTransmitContinous);
+    ui.qcbTransmit->addItem(tr("Voice Activity"), RsVOIP::AudioTransmitVAD);
+    ui.qcbTransmit->addItem(tr("Push To Talk"), RsVOIP::AudioTransmitPushToTalk);
 
     abSpeech = new AudioBar();
     abSpeech->qcBelow = Qt::red;
@@ -151,26 +151,26 @@ void AudioInputConfig::loadSettings() {
 	loadSlider(qsTransmitMax, iroundf(r.fVADmax * 32767.0f + 0.5f));
 	loadSlider(qsFrames, (r.iFramesPerPacket == 1) ? 1 : (r.iFramesPerPacket/2 + 1));
         loadSlider(qsDoublePush, iroundf(static_cast<float>(r.uiDoublePush) / 1000.f + 0.5f));*/
-        ui.qcbTransmit->setCurrentIndex(rsVoip->getVoipATransmit());
-        on_qcbTransmit_currentIndexChanged(rsVoip->getVoipATransmit());
-        ui.qsTransmitHold->setValue(rsVoip->getVoipVoiceHold());
-        on_qsTransmitHold_valueChanged(rsVoip->getVoipVoiceHold());
-        ui.qsTransmitMin->setValue(rsVoip->getVoipfVADmin());
-        ui.qsTransmitMax->setValue(rsVoip->getVoipfVADmax());
-        ui.qcbEchoCancel->setChecked(rsVoip->getVoipEchoCancel());
+        ui.qcbTransmit->setCurrentIndex(rsVOIP->getVoipATransmit());
+        on_qcbTransmit_currentIndexChanged(rsVOIP->getVoipATransmit());
+        ui.qsTransmitHold->setValue(rsVOIP->getVoipVoiceHold());
+        on_qsTransmitHold_valueChanged(rsVOIP->getVoipVoiceHold());
+        ui.qsTransmitMin->setValue(rsVOIP->getVoipfVADmin());
+        ui.qsTransmitMax->setValue(rsVOIP->getVoipfVADmax());
+        ui.qcbEchoCancel->setChecked(rsVOIP->getVoipEchoCancel());
         //ui.qsDoublePush->setValue(iroundf(static_cast<float>(r.uiDoublePush) / 1000.f + 0.5f));
 
         //loadCheckBox(qcbPushClick, r.bPushClick);
         //loadSlider(qsQuality, r.iQuality);
-        if (rsVoip->getVoipiNoiseSuppress() != 0)
-                ui.qsNoise->setValue(-rsVoip->getVoipiNoiseSuppress());
+        if (rsVOIP->getVoipiNoiseSuppress() != 0)
+                ui.qsNoise->setValue(-rsVOIP->getVoipiNoiseSuppress());
 	else
                 ui.qsNoise->setValue(14);
 
-        on_qsNoise_valueChanged(-rsVoip->getVoipiNoiseSuppress());
+        on_qsNoise_valueChanged(-rsVOIP->getVoipiNoiseSuppress());
 
-        ui.qsAmp->setValue(20000 - rsVoip->getVoipiMinLoudness());
-        on_qsAmp_valueChanged(20000 - rsVoip->getVoipiMinLoudness());
+        ui.qsAmp->setValue(20000 - rsVOIP->getVoipiMinLoudness());
+        on_qsAmp_valueChanged(20000 - rsVOIP->getVoipiMinLoudness());
         //loadSlider(qsIdle, r.iIdleTime);
 
         /*int echo = 0;
@@ -190,14 +190,14 @@ void AudioInputConfig::loadSettings() {
 
 bool AudioInputConfig::save(QString &/*errmsg*/) {//mainly useless beacause saving occurs in realtime
         //s.iQuality = qsQuality->value();
-        rsVoip->setVoipiNoiseSuppress((ui.qsNoise->value() == 14) ? 0 : - ui.qsNoise->value());
-        rsVoip->setVoipiMinLoudness(20000 - ui.qsAmp->value());
-        rsVoip->setVoipVoiceHold(ui.qsTransmitHold->value());
-        rsVoip->setVoipfVADmin(ui.qsTransmitMin->value());
-        rsVoip->setVoipfVADmax(ui.qsTransmitMax->value());
+        rsVOIP->setVoipiNoiseSuppress((ui.qsNoise->value() == 14) ? 0 : - ui.qsNoise->value());
+        rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
+        rsVOIP->setVoipVoiceHold(ui.qsTransmitHold->value());
+        rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
+        rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
         /*s.uiDoublePush = qsDoublePush->value() * 1000;*/
-        rsVoip->setVoipATransmit(static_cast<RsVoip::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
-        rsVoip->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
+        rsVOIP->setVoipATransmit(static_cast<RsVOIP::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
+        rsVOIP->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
 
         return true;
 }
@@ -220,7 +220,7 @@ void AudioInputConfig::on_qsTransmitHold_valueChanged(int v) {
         float val = static_cast<float>(v * FRAME_SIZE);
         val = val / SAMPLING_RATE;
         ui.qlTransmitHold->setText(tr("%1 s").arg(val, 0, 'f', 2));
-        rsVoip->setVoipVoiceHold(v);
+        rsVOIP->setVoipVoiceHold(v);
 }
 
 void AudioInputConfig::on_qsNoise_valueChanged(int v) {
@@ -233,18 +233,18 @@ void AudioInputConfig::on_qsNoise_valueChanged(int v) {
                 ui.qlNoise->setText(tr("-%1 dB").arg(v));
 	}
         ui.qlNoise->setPalette(pal);
-        rsVoip->setVoipiNoiseSuppress(- ui.qsNoise->value());
+        rsVOIP->setVoipiNoiseSuppress(- ui.qsNoise->value());
 }
 
 void AudioInputConfig::on_qsAmp_valueChanged(int v) {
         v = 20000 - v;
 	float d = 20000.0f/static_cast<float>(v);
         ui.qlAmp->setText(QString::fromLatin1("%1").arg(d, 0, 'f', 2));
-        rsVoip->setVoipiMinLoudness(20000 - ui.qsAmp->value());
+        rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
 }
 
 void AudioInputConfig::on_qcbEchoCancel_clicked() {
-    rsVoip->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
+    rsVOIP->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
 }
 
 
@@ -261,7 +261,7 @@ void AudioInputConfig::on_qcbTransmit_currentIndexChanged(int v) {
 			break;
 	}
         if (loaded)
-            rsVoip->setVoipATransmit(static_cast<RsVoip::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
+            rsVOIP->setVoipATransmit(static_cast<RsVOIP::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
 }
 
 
@@ -280,8 +280,8 @@ void AudioInputConfig::on_Tick_timeout() {
         abSpeech->iBelow = ui.qsTransmitMin->value();
         abSpeech->iAbove = ui.qsTransmitMax->value();
         if (loaded) {
-            rsVoip->setVoipfVADmin(ui.qsTransmitMin->value());
-            rsVoip->setVoipfVADmax(ui.qsTransmitMax->value());
+            rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
+            rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
         }
 
         abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);

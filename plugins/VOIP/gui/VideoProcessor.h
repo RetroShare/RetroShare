@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <QImage>
-#include "interface/rsvoip.h"
+#include "interface/rsVOIP.h"
 
 class QVideoOutputDevice ;
 
@@ -43,7 +43,7 @@ class VideoDecoder
 };
 
 // This class encodes video using a video codec (possibly homemade, or based on existing codecs)
-// and produces a data stream that is sent to the network transfer service (e.g. p3VoRs).
+// and produces a data stream that is sent to the network transfer service (e.g. p3VOIP).
 //
 class VideoEncoder
 {
@@ -55,7 +55,7 @@ class VideoEncoder
 		bool addImage(const QImage& Image) ;
 
 		bool packetReady() const { return !_out_queue.empty() ; }
-		bool nextPacket(RsVoipDataChunk& ) ;
+		bool nextPacket(RsVOIPDataChunk& ) ;
 
 		// Used to tweak the compression ratio so that the video can stream ok.
 		//
@@ -65,7 +65,7 @@ class VideoEncoder
 		//virtual bool sendEncodedData(unsigned char *mem,uint32_t size) = 0 ;
 		virtual void encodeData(const QImage& image) = 0 ;
 
-		std::list<RsVoipDataChunk> _out_queue ;
+		std::list<RsVOIPDataChunk> _out_queue ;
 };
 
 // Now derive various image encoding/decoding algorithms.
