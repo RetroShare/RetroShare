@@ -39,7 +39,7 @@
 //#include "TrustView.h"
 #include "NetworkView.h"
 #include "GenCertDialog.h"
-#include "connect/ConfCertDialog.h"
+#include "connect/PGPKeyDialog.h"
 #include "settings/rsharesettings.h"
 #include "RetroShareLink.h"
 #include "util/QtVersion.h"
@@ -204,13 +204,13 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 	if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
 		return ;
 
-	if(peer_id != rsPeers->getGPGOwnId())
-	{
-		if(detail.accept_connection)
-			contextMnu->addAction(QIcon(IMAGE_DENIED), tr("Deny friend"), this, SLOT(denyFriend()));
-		else	// not a friend
-			contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend"), this, SLOT(makeFriend()));
-	}
+    if(peer_id != rsPeers->getGPGOwnId())
+    {
+        if(detail.accept_connection)
+            contextMnu->addAction(QIcon(IMAGE_DENIED), tr("Deny friend"), this, SLOT(denyFriend()));
+        else	// not a friend
+            contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend..."), this, SLOT(makeFriend()));
+    }
 	if(peer_id == rsPeers->getGPGOwnId())
 		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
 
@@ -315,7 +315,7 @@ void NetworkDialog::denyFriend()
 
 void NetworkDialog::makeFriend()
 {
-    ConfCertDialog::showIt(RsPgpId(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString()), ConfCertDialog::PageTrust);
+    PGPKeyDialog::showIt(RsPgpId(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString()), PGPKeyDialog::PageDetails);
 }
 
 /** Shows Peer Information/Auth Dialog */
@@ -325,7 +325,7 @@ void NetworkDialog::peerdetails()
 	if (item == NULL) {
 		return;
 	}
-    ConfCertDialog::showIt(RsPgpId(item->text(COLUMN_PEERID).toStdString()), ConfCertDialog::PageDetails);
+    PGPKeyDialog::showIt(RsPgpId(item->text(COLUMN_PEERID).toStdString()), PGPKeyDialog::PageDetails);
 }
 
 void NetworkDialog::copyLink()

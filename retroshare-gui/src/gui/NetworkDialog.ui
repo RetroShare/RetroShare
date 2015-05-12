@@ -30,7 +30,7 @@
      <item>
       <widget class="QCheckBox" name="onlyTrustedKeys">
        <property name="text">
-        <string>Only show people you trusted</string>
+        <string>Trusted keys only</string>
        </property>
       </widget>
      </item>

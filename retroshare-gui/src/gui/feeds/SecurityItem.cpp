@@ -29,6 +29,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/connect/PGPKeyDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/AvatarDefs.h"
 #include "util/DateTime.h"
@@ -374,7 +375,7 @@ void SecurityItem::peerDetails()
 	/* then gpgid */
     if (rsPeers->getGPGDetails(mGpgId, details))
 	{
-		ConfCertDialog::showIt(mGpgId, ConfCertDialog::PageDetails);
+        PGPKeyDialog::showIt(mGpgId, PGPKeyDialog::PageDetails);
 	}
 }
 

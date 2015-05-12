@@ -20,34 +20,27 @@
  ****************************************************************/
 
 
-#ifndef _CONFCERTDIALOG_H
-#define _CONFCERTDIALOG_H
+#pragma once
 
 #include <QDialog>
 
-#include "ui_ConfCertDialog.h"
+#include "ui_PGPKeyDialog.h"
 #include <retroshare/rstypes.h>
 
-class ConfCertDialog : public QDialog
+class PGPKeyDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    enum enumPage { PageDetails, PageTrust, PageCertificate };
+    enum enumPage { PageDetails=0x0 };
 
     template<class ID_CLASS> static void showIt(const ID_CLASS& id, enumPage page)
     {
-        ConfCertDialog *confdialog = instance(id);
+        PGPKeyDialog *confdialog = instance(id);
 
         switch (page) {
         case PageDetails:
             confdialog->ui.stabWidget->setCurrentIndex(0);
-            break;
-        case PageTrust:
-            confdialog->ui.stabWidget->setCurrentIndex(1);
-            break;
-        case PageCertificate:
-            confdialog->ui.stabWidget->setCurrentIndex(2);
             break;
         }
 
@@ -65,22 +58,21 @@ signals:
 
 private:
     /** Default constructor */
-    ConfCertDialog(const RsPeerId &id,const RsPgpId& pgp_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    PGPKeyDialog(const RsPeerId &id,const RsPgpId& pgp_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     /** Default destructor */
-    ~ConfCertDialog();
+    ~PGPKeyDialog();
 
-    static ConfCertDialog *instance(const RsPeerId &peer_id);
-    static ConfCertDialog *instance(const RsPgpId &pgp_id);
+    static PGPKeyDialog *instance(const RsPgpId &pgp_id);
 
     void load();
 
 private slots:
     void applyDialog();
-    //void makeFriend();
-    //void denyFriend();
-    //void signGPGKey();
-    void loadInvitePage();
-    void setServiceFlags();
+    void makeFriend();
+    void denyFriend();
+    void signGPGKey();
+    void loadKeyPage();
+    //void setServiceFlags();
 
     void showHelpDialog();
     /** Called when a child window requests the given help <b>topic</b>. */
@@ -91,7 +83,6 @@ private:
     RsPgpId  pgpId;
 
     /** Qt Designer generated object */
-    Ui::ConfCertDialog ui;
+    Ui::PGPKeyDialog ui;
 };
 
-#endif

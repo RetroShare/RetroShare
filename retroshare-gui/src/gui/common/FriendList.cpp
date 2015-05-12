@@ -35,6 +35,7 @@
 #include "gui/common/AvatarDefs.h"
 
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/connect/PGPKeyDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/groups/CreateGroup.h"
 #include "gui/msgs/MessageComposer.h"
@@ -379,6 +380,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
              break;
          case TYPE_GPG:
         {
+                 contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this, SLOT(configurefriend()));
                      contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny"), this, SLOT(removefriend()));
 
              if(mShowGroups)
@@ -1499,7 +1501,7 @@ void FriendList::configurefriend()
     if(!RsPeerId(getRsId(getCurrentPeer())).isNull())
         ConfCertDialog::showIt(RsPeerId(getRsId(getCurrentPeer())), ConfCertDialog::PageDetails);
     else if(!RsPgpId(getRsId(getCurrentPeer())).isNull())
-        ConfCertDialog::showIt(RsPgpId(getRsId(getCurrentPeer())), ConfCertDialog::PageDetails);
+        PGPKeyDialog::showIt(RsPgpId(getRsId(getCurrentPeer())), PGPKeyDialog::PageDetails);
     else
         std::cerr << "FriendList::configurefriend: id is not an SSL nor a PGP id." << std::endl;
 }

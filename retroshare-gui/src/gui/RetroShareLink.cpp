@@ -45,6 +45,7 @@
 #include "common/RsCollectionFile.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/connect/PGPKeyDialog.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsmsgs.h>
@@ -973,9 +974,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			processList(fileAdd, QObject::tr("Add file"), QObject::tr("Add files"), content);
 		}
 
-		if (personAdd.size()) {
-			processList(personAdd, QObject::tr("Add friend"), QObject::tr("Add friends"), content);
-		}
+        //if (personAdd.size()) {
+        //	processList(personAdd, QObject::tr("Add friend"), QObject::tr("Add friends"), content);
+        //}
 
 		if (content.isEmpty() == false) {
 			QString question = "<html><body>";
@@ -1147,34 +1148,41 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << " RetroShareLink::process FriendRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << std::endl;
 #endif
 
-					needNotifySuccess = true;
+                    RsPeerDetails detail;
+                    if (rsPeers->getGPGDetails(RsPgpId(link.hash().toStdString()), detail))
+                        PGPKeyDialog::showIt(detail.gpg_id,PGPKeyDialog::PageDetails) ;
+                    else
+                        personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
 
-					RsPeerDetails detail;
-					if (rsPeers->getGPGDetails(RsPgpId(link.hash().toStdString()), detail))
-					{
-						if (RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
-							// it's me, do nothing
-							break;
-						}
+            break;
+//					needNotifySuccess = true;
 
-						if (detail.accept_connection) {
-							// peer connection is already accepted
-							personExist.append(PeerDefs::rsid(detail));
-							break;
-						}
-
-						if (rsPeers->addFriend(RsPeerId(), RsPgpId(link.hash().toStdString()))) {
-							ConfCertDialog::loadAll();
-							personAdded.append(PeerDefs::rsid(detail));
-							break;
-						}
-
-						personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
-						break;
-					}
-
-					personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
-					break;
+//					RsPeerDetails detail;
+//					if (rsPeers->getGPGDetails(RsPgpId(link.hash().toStdString()), detail))
+//					{
+//						if (RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
+//							// it's me, do nothing
+//							break;
+//						}
+//
+//						if (detail.accept_connection) {
+//							// peer connection is already accepted
+//							personExist.append(PeerDefs::rsid(detail));
+//							break;
+//						}
+//
+//						if (rsPeers->addFriend(RsPeerId(), RsPgpId(link.hash().toStdString()))) {
+//							ConfCertDialog::loadAll();
+//							personAdded.append(PeerDefs::rsid(detail));
+//							break;
+//						}
+//
+//						personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
+//						break;
+//					}
+//
+//					personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
+//					break;
 				}
 
 

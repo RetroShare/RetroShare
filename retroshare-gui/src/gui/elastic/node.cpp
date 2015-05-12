@@ -50,7 +50,7 @@
 #include <QStyleOption>
 #include <iostream>
 
-#include <gui/connect/ConfCertDialog.h>
+#include <gui/connect/PGPKeyDialog.h>
 
 #include <retroshare/rspeers.h>
 #include "edge.h"
@@ -354,15 +354,15 @@ void Node::peerDetails()
 #ifdef DEBUG_ELASTIC
 	std::cerr << "Calling peer details" << std::endl;
 #endif
-    ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageDetails);
+    PGPKeyDialog::showIt(_gpg_id, PGPKeyDialog::PageDetails);
 }
 void Node::makeFriend()
 {
-	ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageTrust);
+    PGPKeyDialog::showIt(_gpg_id, PGPKeyDialog::PageDetails);
 }
 void Node::denyFriend()
 {
-	ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageTrust);
+    PGPKeyDialog::showIt(_gpg_id, PGPKeyDialog::PageDetails);
 }
 
 void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) 

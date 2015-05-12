@@ -406,6 +406,7 @@ HEADERS +=  rshare.h \
             gui/chat/ChatUserNotify.h \
             gui/chat/ChatLobbyUserNotify.h \
             gui/connect/ConfCertDialog.h \
+            gui/connect/PGPKeyDialog.h \
             gui/msgs/MessageInterface.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
@@ -590,6 +591,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/chat/CreateLobbyDialog.ui \
             gui/ChatLobbyWidget.ui \
             gui/connect/ConfCertDialog.ui \
+            gui/connect/PGPKeyDialog.ui \
             gui/connect/ConnectFriendWizard.ui \
             gui/connect/ConnectProgressDialog.ui \
             gui/msgs/MessageComposer.ui \
@@ -746,6 +748,7 @@ SOURCES +=  main.cpp \
             gui/chat/ChatUserNotify.cpp \
             gui/chat/ChatLobbyUserNotify.cpp \
             gui/connect/ConfCertDialog.cpp \
+            gui/connect/PGPKeyDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
