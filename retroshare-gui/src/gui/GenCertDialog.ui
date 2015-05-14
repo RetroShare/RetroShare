@@ -62,7 +62,7 @@
       </font>
      </property>
      <property name="text">
-      <string>You can create and run Retroshare nodes on different computers using the same identity. To do so just export the selected identity, import it on the other computer and create a new node with it.</string>
+      <string>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -72,7 +72,7 @@
    <item>
     <widget class="QLabel" name="no_gpg_key_label">
      <property name="text">
-      <string>It looks like you don't own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</string>
+      <string>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -90,10 +90,10 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Your profile is associated with a PGP key</string>
+        <string>Your profile is associated with a PGP key pair</string>
        </property>
        <property name="text">
-        <string>Create a new identity</string>
+        <string>Create a new profile</string>
        </property>
        <property name="icon">
         <iconset resource="images.qrc">
@@ -119,7 +119,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Import new identity</string>
+        <string>Import new profile</string>
        </property>
       </widget>
      </item>
@@ -132,7 +132,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Export selected identity</string>
+        <string>Export selected profile</string>
        </property>
       </widget>
      </item>
@@ -145,7 +145,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Your profile is associated with a PGP key</string>
+        <string>Your profile is associated with a PGP key pair</string>
        </property>
        <property name="text">
         <string>Advanced options</string>
@@ -242,7 +242,7 @@
        <item>
         <widget class="QLabel" name="genPGPuserlabel">
          <property name="text">
-          <string>Use identity</string>
+          <string>Use profile</string>
          </property>
         </widget>
        </item>
@@ -308,7 +308,7 @@
        <item>
         <widget class="QComboBox" name="genPGPuser">
          <property name="toolTip">
-          <string>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</string>
+          <string>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</string>
          </property>
         </widget>
        </item>
@@ -355,7 +355,7 @@ anonymous, you can use a fake email.</string>
        <item>
         <widget class="QLineEdit" name="password_input">
          <property name="toolTip">
-          <string>Put a strong password here. This password protects your PGP key.</string>
+          <string>Put a strong password here. This password protects your private PGP key.</string>
          </property>
          <property name="inputMask">
           <string/>
@@ -377,7 +377,7 @@ anonymous, you can use a fake email.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Put a strong password here. This password protects your PGP key.</string>
+          <string>Put a strong password here. This password protects your private PGP key.</string>
          </property>
          <property name="inputMask">
           <string/>
@@ -500,7 +500,7 @@ anonymous, you can use a fake email.</string>
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Create new identity</string>
+      <string>Create new profile</string>
      </property>
      <property name="icon">
       <iconset resource="images.qrc">
