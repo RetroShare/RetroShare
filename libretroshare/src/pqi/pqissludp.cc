@@ -151,7 +151,7 @@ int	pqissludp::attach()
 
 
 // The Address determination is done centrally
-int 	pqissludp::Initiate_Connection()
+int pqissludp::Initiate_Connection()
 {
 	int err;
 
@@ -256,13 +256,13 @@ int 	pqissludp::Initiate_Connection()
 			struct sockaddr_in proxyaddr;
 			struct sockaddr_in remoteaddr;
 			
-			if ((mConnectSrcAddr.ss_family != AF_INET) ||
-					(mConnectProxyAddr.ss_family != AF_INET) ||
-					(remote_addr.ss_family != AF_INET))
+			if ( !( sockaddr_storage_ipv6_to_ipv4(mConnectSrcAddr) &&
+					sockaddr_storage_ipv6_to_ipv4(mConnectProxyAddr) &&
+					sockaddr_storage_ipv6_to_ipv4(remote_addr)))
 			{
-				std::cerr << "Error One Address is not IPv4. aborting";
+				std::cerr << "pqissludp::Initiate_Connection() Error One Address is not IPv4. aborting";
 				std::cerr << std::endl;
-				abort();
+				return 0; // TODO:IPV6
 			}
 			
 			struct sockaddr_in *rap = (struct sockaddr_in *) &remote_addr;
