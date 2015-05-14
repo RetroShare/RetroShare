@@ -925,7 +925,9 @@ bool p3NetMgrIMPL::checkNetAddress()
 	}
 	else
 	{
-		validAddr = getPreferredInterface(mLocalAddr, prefAddr);
+		std::list<struct sockaddr_storage> addrs;
+		validAddr = getLocalAddresses(addrs);
+		if (validAddr) prefAddr = addrs.front();
 	}
 
 
