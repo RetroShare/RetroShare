@@ -24,6 +24,7 @@
  */
 
 #include <sstream>
+#include <netinet/in.h>
 
 #include "util/rsnet.h"
 #include "util/rsstring.h"
@@ -499,8 +500,9 @@ bool sockaddr_storage_isLinkLocal(const struct sockaddr_storage &addr)
 	case AF_INET6:
 	{
 		const sockaddr_in6 * addr6 = (const sockaddr_in6 *) &addr;
-		u_int16_t mask = 0xc0ff; // Mask end prefix inverted because of IPv6 is big endian
-		return ((addr6->sin6_addr.s6_addr16[0] & mask ) == 0x80fe);
+		u_int16_t mask = htons(0xffc0);
+		u_int16_t llPrefix = htons(0xfe80);
+		return ((addr6->sin6_addr.s6_addr16[0] & mask ) == llPrefix);
 	}
 
 	default:
@@ -1031,9 +1033,9 @@ bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage & addr)
 #endif
 
 	const sockaddr_in6 & addr6 = (const sockaddr_in6 &) addr;
-	bool isNull = (addr6.sin6_addr.s6_addr32[3] == 0x0);
+	bool isNull = (addr6.sin6_addr.s6_addr32[3] == 0x00000000);
 	for (int i=0; isNull && i<3; ++i)
-		isNull &= (addr6.sin6_addr.s6_addr32[i] == 0x0);
+		isNull &= (addr6.sin6_addr.s6_addr32[i] == 0x00000000);
 
 	return isNull;
 }
@@ -1050,7 +1052,7 @@ bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage & )
 bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage & addr )
 {
 	sockaddr_in6 & addr6 = (sockaddr_in6 &) addr;
-	bool isLp = (addr6.sin6_addr.s6_addr32[3] == 0x10000000); // IPv6 is big endian
+	bool isLp = (addr6.sin6_addr.s6_addr32[3] == htonl(0x00000001));
 	for (int i=0; isLp && i<3; ++i)
 		isLp &= (addr6.sin6_addr.s6_addr32[i] == 0x00000000);
 
