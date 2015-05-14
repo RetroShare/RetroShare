@@ -183,18 +183,23 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 		break;
 	}
 
-	if (details.connectStateString.empty() == false) {
-		if (stateString.isEmpty() == false) {
-			stateString += ": ";
-		}
+	if (!details.connectStateString.empty())
+	{
+		if (!stateString.isEmpty()) stateString += ": ";
 		stateString += QString::fromStdString(details.connectStateString);
+	}
+	else if (!details.connectAddr.empty())
+	{
+		if (!stateString.isEmpty()) stateString += ": [";
+		stateString += QString::fromStdString(details.connectAddr);
+		stateString += "]:";
+		stateString += QString::number(details.connectPort);
 	}
 
 	/* HACK to display DHT Status info too */
-	if (details.foundDHT) {
-		if (stateString.isEmpty() == false) {
-			stateString += ", ";
-		}
+	if (details.foundDHT)
+	{
+		if (!stateString.isEmpty()) stateString += ", ";
 		stateString += qApp->translate("StatusDefs", "DHT: Contact");
 	}
 
