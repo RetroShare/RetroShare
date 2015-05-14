@@ -167,7 +167,7 @@ void* doExtAddrSearch(void *p)
 
 
 
-	if(!sockaddr_storage_ipv4_aton(af->mAddr, res[res.size()/2].c_str()))
+	if(!sockaddr_storage_inet_pton(af->mAddr, res[res.size()/2].c_str()))
 	{
 		std::cerr << "ExtAddrFinder: Could not convert " << res[res.size()/2] << " into an address." << std::endl ;
 		{

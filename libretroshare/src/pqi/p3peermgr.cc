@@ -130,9 +130,9 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 
 		// setup default ProxyServerAddress.
 		sockaddr_storage_clear(mProxyServerAddress);
-		sockaddr_storage_ipv4_aton(mProxyServerAddress,
+		sockaddr_storage_inet_pton(mProxyServerAddress,
 				kConfigDefaultProxyServerIpAddr.c_str());
-		sockaddr_storage_ipv4_setport(mProxyServerAddress, 
+		sockaddr_storage_setport(mProxyServerAddress,
                 kConfigDefaultProxyServerPort);
 
         mProxyServerStatus = RS_NET_PROXY_STATUS_UNKNOWN ;
@@ -190,8 +190,8 @@ bool p3PeerMgrIMPL::forceHiddenNode()
 
 		// force external address - otherwise its invalid.
 		sockaddr_storage_clear(mOwnState.serveraddr);
-		sockaddr_storage_ipv4_aton(mOwnState.serveraddr, "0.0.0.0");
-		sockaddr_storage_ipv4_setport(mOwnState.serveraddr, 0);
+		sockaddr_storage_inet_pton(mOwnState.serveraddr, "0.0.0.0");
+		sockaddr_storage_setport(mOwnState.serveraddr, 0);
 	}
 
 	setOwnNetworkMode(RS_NET_MODE_HIDDEN);
@@ -202,7 +202,7 @@ bool p3PeerMgrIMPL::forceHiddenNode()
 	// Force the Port.
 	struct sockaddr_storage loopback;
 	sockaddr_storage_clear(loopback);
-	sockaddr_storage_ipv4_aton(loopback, "127.0.0.1");
+	sockaddr_storage_inet_pton(loopback, "127.0.0.1");
 	uint16_t port = sockaddr_storage_port(mOwnState.localaddr); 
 	sockaddr_storage_ipv4_setport(loopback, port); 
 
@@ -1881,13 +1881,11 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	// Configure Proxy Server.
 	struct sockaddr_storage proxy_addr;
 	sockaddr_storage_clear(proxy_addr);
-	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddress.c_str());
-	sockaddr_storage_ipv4_setport(proxy_addr, proxyPort);
+	sockaddr_storage_inet_pton(proxy_addr, proxyIpAddress.c_str());
+	sockaddr_storage_setport(proxy_addr, proxyPort);
 
 	if (sockaddr_storage_isValidNet(proxy_addr))
-	{
 		setProxyServerAddress(proxy_addr);
-	}
 
 	return true;
 }

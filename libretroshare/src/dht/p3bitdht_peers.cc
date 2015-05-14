@@ -229,12 +229,15 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
         }
 		sockaddr_clear(&addrv4);
 
+#if 0
 		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
 		{
 			std::cerr << "p3BitDht::addKnownPeer() Non IPv4 Address & ONLINE. Abort()ing.";
 			std::cerr << std::endl;
 			abort();
 		}
+#endif
+
 	}
 	else
 	{

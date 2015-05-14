@@ -102,7 +102,7 @@ int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
-bool getPreferredInterface(struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr); // returns best addr.
+bool getPreferredInterface(const struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr); // returns best addr.
 bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct sockaddr_storage> &addrs); // returns all possible addrs.
 
 in_addr_t pqi_inet_netof(struct in_addr addr); // our implementation.

@@ -560,7 +560,7 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 	return 1;
 }
 
-bool 	getPreferredInterface_ipv4(in_addr &routeAddr, struct in_addr &prefAddr) // returns best addr.
+bool getPreferredInterface_ipv4(in_addr &routeAddr, struct in_addr &prefAddr) // returns best addr.
 {
 	std::list<struct in_addr> addrs;
 	std::list<struct in_addr>::iterator it;
@@ -691,7 +691,7 @@ bool 	getPreferredInterface_ipv4(in_addr &routeAddr, struct in_addr &prefAddr) /
 
 
 
-bool getPreferredInterface(struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr)
+bool getPreferredInterface(const struct sockaddr_storage & existAddr, struct sockaddr_storage & prefAddr)
 {
 	struct in_addr existing_addr;
 	struct in_addr pref_addr;

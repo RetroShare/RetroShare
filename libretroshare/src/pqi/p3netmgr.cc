@@ -908,7 +908,7 @@ void p3NetMgrIMPL::netExtCheck()
  ************************************** Interfaces    *****************************************
  **********************************************************************************************/
 
-bool 	p3NetMgrIMPL::checkNetAddress()
+bool p3NetMgrIMPL::checkNetAddress()
 {
 	bool addrChanged = false;
 	bool validAddr = false;
@@ -920,7 +920,7 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 	{
 		std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
 		std::cerr << std::endl;
-	    sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
+		sockaddr_storage_inet_pton(prefAddr, "127.0.0.1");
 		validAddr = true;
 	}
 	else
