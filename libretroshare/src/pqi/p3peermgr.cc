@@ -965,7 +965,7 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
  * as it doesn't call back to there.
  */
 
-bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, const struct sockaddr_storage &extAddr)
+bool p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, const struct sockaddr_storage &extAddr)
 {
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
@@ -976,16 +976,25 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, 
 #endif
 
 	{
-		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-
-		//update ip address list
-		pqiIpAddress ipAddressTimed;
-		ipAddressTimed.mAddr = localAddr;
-		ipAddressTimed.mSeenTime = time(NULL);
-		ipAddressTimed.mSrc = 0 ;
-		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
+		/****** STACK LOCK MUTEX *******/
+		RsStackMutex stack(mPeerMtx); (void)stack;
 
 		mOwnState.localaddr = localAddr;
+
+		// update ip address list
+		std::list<struct sockaddr_storage>::iterator it;
+		std::list<struct sockaddr_storage> lAddrs;
+		getLocalAddresses(lAddrs);
+		lAddrs.push_front(localAddr);
+		for ( it = lAddrs.begin(); it != lAddrs.end(); ++it)
+		{
+			pqiIpAddress ipAddressTimed;
+			ipAddressTimed.mAddr = *it;
+			sockaddr_storage_setport(ipAddressTimed.mAddr, sockaddr_storage_port(localAddr));
+			ipAddressTimed.mSeenTime = time(NULL);
+			ipAddressTimed.mSrc = 0 ;
+			mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
+		}
 	}
 
 
