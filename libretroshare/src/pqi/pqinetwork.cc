@@ -870,86 +870,52 @@ int unix_socket(int domain, int type, int protocol)
 	return osock;
 }
 
-
 int unix_fcntl_nonblock(int fd)
 {
-        int ret;
+	int ret;
 
-/******************* WINDOWS SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS // ie UNIX
-	ret = fcntl(fd, F_SETFL, O_NONBLOCK);
-
-#ifdef NET_DEBUG
-	std::cerr << "unix_fcntl_nonblock():" << ret << " errno:" << errno << std::endl;
-#endif
-
-#else
+#ifdef WINDOWS_SYS
 	unsigned long int on = 1;
 	ret = ioctlsocket(fd, FIONBIO, &on);
 
-#ifdef NET_DEBUG
-	std::cerr << "unix_fcntl_nonblock()" << std::endl;
-#endif
 	if (ret != 0)
 	{
-		/* store unix-style error
-		 */
 		ret = -1;
 		errno = WinToUnixError(WSAGetLastError());
 	}
-#endif
-/******************* WINDOWS SPECIFIC PART ******************/
+#else // ! WINDOWS_SYS => is UNIX !
+	ret = fcntl(fd, F_SETFL, O_NONBLOCK);
+#endif // WINDOWS_SYS
+
+#ifdef NET_DEBUG
+	std::cerr << "unix_fcntl_nonblock():" << ret << " errno:" << errno << std::endl;
+#endif // NET_DEBUG
+
 	return ret;
 }
 
-
-int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t socklen)
+int unix_connect(int fd, const sockaddr_storage *serv_addr)
 {
 #ifdef NET_DEBUG
 	std::cerr << "unix_connect()";
 	std::cerr << std::endl;
-#endif
+#endif // NET_DEBUG
 
-	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
-	socklen_t len = socklen;
+	int ret = connect(fd, (const struct sockaddr *) serv_addr, sizeof(struct sockaddr_in6));
 
-	switch (ss_addr->ss_family)
-	{
-		case AF_INET:
-			len = sizeof(struct sockaddr_in);
-			break;
-		case AF_INET6:
-			len = sizeof(struct sockaddr_in6);
-			break;
-	}
-
-	if (len > socklen)
-	{
-		std::cerr << "unix_connect() ERROR len > socklen";
-		std::cerr << std::endl;
-
-		len = socklen;
-		//return EINVAL;
-	}
-
-	int ret = connect(fd, serv_addr, len);
-
-/******************* WINDOWS SPECIFIC PART ******************/
-#ifdef WINDOWS_SYS // WINDOWS
-
+#ifdef WINDOWS_SYS
 #ifdef NET_DEBUG
 	std::cerr << "unix_connect()" << std::endl;
-#endif
+#endif // NET_DEBUG
 	if (ret != 0)
 	{
 		errno = WinToUnixError(WSAGetLastError());
 		ret = -1;
 	}
-#endif
-/******************* WINDOWS SPECIFIC PART ******************/
+#endif // WINDOWS_SYS
+
 	return ret;
 }
-
 
 int unix_getsockopt_error(int sockfd, int *err)
 {

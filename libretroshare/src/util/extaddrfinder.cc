@@ -81,13 +81,15 @@ static void getPage(const std::string& server_name,std::string& page)
 		return ;
 	}
 	serveur.sin_addr = *(struct in_addr*) hostinfo->h_addr; 
-	serveur.sin_port = htons(80);
 
 #ifdef EXTADDRSEARCH_DEBUG
 	printf("Connection attempt\n");
 #endif
 
-	if(unix_connect(sockfd,(struct sockaddr *)&serveur, sizeof(serveur)) == -1)
+	sockaddr_storage server;
+	sockaddr_storage_setipv4(server, &serveur);
+	sockaddr_storage_setport(server, 80);
+	if(unix_connect(sockfd, &server) == -1)
 	{
 		std::cerr << "ExtAddrFinder: Connection error to " << server_name << std::endl ;
 		return ;

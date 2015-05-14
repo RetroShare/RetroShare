@@ -97,6 +97,7 @@ bool sockaddr_storage_setipv6(struct sockaddr_storage &addr, const sockaddr_in6 
 bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name);
 bool sockaddr_storage_ipv4_setport(struct sockaddr_storage &addr, const uint16_t port);
 
+bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr);
 
 // comparisons.
 bool operator<(const struct sockaddr_storage &a, const struct sockaddr_storage &b);

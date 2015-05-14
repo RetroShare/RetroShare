@@ -103,10 +103,10 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	mConnectDelay(0), mConnectTS(0),
 	mConnectTimeout(0), mTimeoutTS(0)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RsStackMutex stack(mSslMtx); (void)stack;/**** LOCKED MUTEX ****/
 
 	/* set address to zero */
-        sockaddr_storage_clear(remote_addr);
+	sockaddr_storage_clear(remote_addr);
 
 #ifdef PQISSL_LOG_DEBUG 
     rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl for PeerId: " + PeerId());
@@ -634,7 +634,7 @@ int 	pqissl::Initiate_Connection()
 #endif
 
 	// open socket connection to addr.
-	int osock = unix_socket(PF_INET, SOCK_STREAM, 0);
+	int osock = unix_socket(PF_INET6, SOCK_STREAM, 0);
 
 #ifdef PQISSL_LOG_DEBUG 
 	{
@@ -734,10 +734,21 @@ int 	pqissl::Initiate_Connection()
 #endif
 #endif // WINDOWS_SYS
 
+#ifdef IPV6_V6ONLY
+	int no = 0;
+	err = setsockopt(sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&no, sizeof(no));
+#ifdef PQISSL_DEBUG
+	if (err) std::cerr << "pqissl::Initiate_Connection: Error setting IPv6 socket dual stack" << std::endl;
+	else std::cerr << "pqissl::Initiate_Connection: Setting IPv6 socket dual stack" << std::endl;
+#endif // PQISSL_DEBUG
+#endif // IPV6_V6ONLY
+
 	mTimeoutTS = time(NULL) + mConnectTimeout;
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
-	if (0 != (err = unix_connect(osock, (struct sockaddr *) &addr, sizeof(addr))))
+	sockaddr_storage_ipv4_to_ipv6(addr);
+	err = unix_connect(osock, &addr);
+	if(err)
 	{
 		std::string out;
 		rs_sprintf(out, "pqissl::Initiate_Connection() connect returns:%d -> errno: %d error: %s\n", err, errno, socket_errorType(errno).c_str());
@@ -771,7 +782,7 @@ int 	pqissl::Initiate_Connection()
 		}
 
 		/* IF we get here ---- we Failed for some other reason. 
-                 * Should abandon this interface 
+		 * Should abandon this interface
 		 * Known reasons to get here: EINVAL (bad address)
 		 */
 
@@ -788,13 +799,13 @@ int 	pqissl::Initiate_Connection()
 
 		return -1;
 	}
+#ifdef PQISSL_LOG_DEBUG
 	else
 	{
-#ifdef PQISSL_LOG_DEBUG 
   		rslog(RSL_DEBUG_BASIC, pqisslzone,
 		 "pqissl::Init_Connection() connect returned 0");
-#endif
 	}
+#endif
 
 	waiting = WAITING_SOCK_CONNECT;
 	sockfd = osock;
@@ -1225,7 +1236,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	RsPgpId gpgid(getX509CNString(peercert->cert_info->issuer));
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
 
-	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);
+	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid, sslcn, remote_addr, false);
 	mLinkMgr->notifyDeniedConnection(gpgid, sslid, sslcn, remote_addr, false);
 
 	return 1;
@@ -1334,7 +1345,7 @@ int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr
 	return accept_locked(ssl, fd, foreign_addr);
 }
 
-int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
+int pqissl::accept_locked(SSL *ssl, int fd, const sockaddr_storage &foreign_addr) // initiate incoming connection.
 {
 	if (waiting != WAITING_NOT)
 	{

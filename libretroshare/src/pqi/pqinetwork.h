@@ -114,7 +114,7 @@ bool LookupDNSAddr(std::string name, struct sockaddr_in &addr);
 int unix_close(int sockfd);
 int unix_socket(int domain, int type, int protocol);
 int unix_fcntl_nonblock(int sockfd);
-int unix_connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+int unix_connect(int sockfd, const sockaddr_storage *serv_addr);
 int unix_getsockopt_error(int sockfd, int *err);
 
 #ifdef WINDOWS_SYS // WINDOWS
