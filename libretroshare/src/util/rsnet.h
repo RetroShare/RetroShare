@@ -112,7 +112,7 @@ std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr);
-void sockaddr_storage_dump(const sockaddr_storage & addr);
+void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputString = NULL);
 
 // output
 //void sockaddr_storage_output(const struct sockaddr_storage &addr, std::ostream &out);
@@ -120,6 +120,8 @@ void sockaddr_storage_dump(const sockaddr_storage & addr);
 
 // net checks.
 bool sockaddr_storage_isnull(const struct sockaddr_storage &addr);
+bool sockaddr_storage_isLinkLocal(const struct sockaddr_storage &addr);
+bool sockaddr_storage_isIPv4Mapped(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr);
