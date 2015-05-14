@@ -197,7 +197,7 @@
 #include "grouterclientservice.h"
 
 /**********************/
-#define GROUTER_DEBUG
+//#define GROUTER_DEBUG
 /**********************/
 
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
@@ -408,13 +408,14 @@ void p3GRouter::handleLowLevelTransactionChunkItem(RsGRouterTransactionChunkItem
         RS_STACK_MUTEX(grMtx) ;
 
         generic_item = _incoming_data_pipes[pid].addDataChunk(dynamic_cast<RsGRouterTransactionChunkItem*>(chunk_item->duplicate())) ;// addDataChunk takes ownership over chunk_item
-    generic_item->PeerId(pid) ;
     }
 
     // send to client off-mutex
 
     if(generic_item == NULL)
         return ;
+
+    generic_item->PeerId(pid) ;
 
 #ifdef GROUTER_DEBUG
     std::cerr << "  transaction is finished. Passing newly created item to client." << std::endl;
@@ -1739,6 +1740,8 @@ bool p3GRouter::decryptDataItem(RsGRouterGenericDataItem *item)
             std::cerr << "(EE) Cannot decrypt incoming message. Key " << item->destination_key << " unknown." << std::endl;
         else
             std::cerr << "(EE) Cannot decrypt incoming message. Unknown error. " << std::endl;
+
+    return false ;
     }
 
     free(item->data_bytes) ;
