@@ -280,7 +280,9 @@ bool sockaddr_storage_inet_pton(struct sockaddr_storage &addr, const char * ip_s
 
 bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)
 {
+#ifdef SS_DEBUG
 	std::cerr << "sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)" << std::endl;
+#endif
 
 	if ( addr.ss_family == AF_INET6 ) return true;
 
@@ -303,6 +305,41 @@ bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)
 
 	return false;
 }
+
+bool sockaddr_storage_ipv6_to_ipv4(sockaddr_storage &addr)
+{
+//#ifdef SS_DEBUG
+	std::cerr << "sockaddr_storage_ipv6_to_ipv4(sockaddr_storage &addr)" << std::endl;
+//#endif
+
+	if ( addr.ss_family == AF_INET ) return true;
+
+	if ( addr.ss_family == AF_INET6 )
+	{
+		sockaddr_in6 & addr_ipv6 =  (sockaddr_in6 &) addr;
+		bool ipv4m = addr_ipv6.sin6_addr.s6_addr16[5] == (u_int16_t) 0xffff;
+		for ( int i = 0; ipv4m && i < 5 ; ++i )
+			ipv4m &= addr_ipv6.sin6_addr.s6_addr16[i] == (u_int16_t) 0x0000;
+
+		if(ipv4m)
+		{
+			u_int32_t ip = addr_ipv6.sin6_addr.s6_addr32[3];
+			u_int16_t port = addr_ipv6.sin6_port;
+
+			sockaddr_in & addr_ipv4 = (sockaddr_in &) addr;
+
+			sockaddr_storage_clear(addr);
+			addr_ipv4.sin_family = AF_INET;
+			addr_ipv4.sin_port = port;
+			addr_ipv4.sin_addr.s_addr = ip;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 /******************************** Comparisions **********************************/
 
