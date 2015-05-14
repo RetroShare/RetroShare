@@ -62,9 +62,16 @@ bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt)
 		pkt->isHidden = false;
 
 		pkt->localAddrV4.addr = detail.localaddr;
+		if(!sockaddr_storage_ipv6_to_ipv4(pkt->localAddrV4.addr)) sockaddr_storage_clear(pkt->localAddrV4.addr);
+
 		pkt->extAddrV4.addr = detail.serveraddr;
-		sockaddr_storage_clear(pkt->localAddrV6.addr);
-		sockaddr_storage_clear(pkt->extAddrV6.addr);
+		if(!sockaddr_storage_ipv6_to_ipv4(pkt->extAddrV4.addr)) sockaddr_storage_clear(pkt->extAddrV4.addr);
+
+		pkt->localAddrV6.addr = detail.localaddr;
+		if (!sockaddr_storage_ipv4_to_ipv6(pkt->localAddrV6.addr)) sockaddr_storage_clear(pkt->localAddrV6.addr);
+
+		pkt->extAddrV6.addr = detail.serveraddr;
+		if(!sockaddr_storage_ipv4_to_ipv6(pkt->extAddrV6.addr)) sockaddr_storage_clear(pkt->extAddrV6.addr);
 
 		pkt->dyndns = detail.dyndns;
 		detail.ipAddrs.mLocal.loadTlv(pkt->localAddrList);
