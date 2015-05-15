@@ -354,7 +354,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 #endif
 
     /** Setup the actions for the context menu */
-   toggleShowCacheTransfersAct = new QAction(tr( "Show cache transfers" ), this );
+   toggleShowCacheTransfersAct = new QAction(tr( "Show file list transfers" ), this );
 	toggleShowCacheTransfersAct->setCheckable(true) ;
 	connect(toggleShowCacheTransfersAct,SIGNAL(triggered()),this,SLOT(toggleShowCacheTransfers())) ;
 
