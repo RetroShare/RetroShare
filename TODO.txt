@@ -10,11 +10,14 @@ Legend:
 
 To be done
 
+0000 [ ]    merge the various help systems. there's 3 of them: (1) help buttons on most tabs that pop a flat panel with some 
+            info; (2) help wizard accessible from the "!" button in friends details->Trust; (3) 'getting started tab'
+
 0001 [X]    forums - middle horisontal bar - always shows *by anonymous* (from noname) [fixed, also removed useless thread line]
 0002 [X]    remove useless column in forums "signed by" (last column) (from electron)
 0003 [ ]    main window must close on ESC (from noname)
 0004 [X]    show storage time of forums/channels/posted in gui (from cave)
-0005 [ ]    if keysigning is not working -> hide or remove it (from cave) cyril: keep it, but add more info about how to use/interpret it.
+0005 [X]    if keysigning is not working -> hide or remove it (from cave) cyril: keep it, but add more info about how to use/interpret it.
 0006 [ ]    implement default gxs id (from cave) cyril: you mean system-wide default gxs id? That would be a good thing to have.
 0007 [ ]    *getting started* - need to say about chatservers (from noname)
             comment: chatservers are inofficial and may go down at any time. which one should we mention?
@@ -26,7 +29,7 @@ To be done
 
 0010 [ ]    window and tab sizes not saved on exit or closing (from noname)
 
-0011 [ ]    in add friend dialog: include signatures seems to do nothing there. cyril: it does if you have signatures. Show 
+0011 [X]    in add friend dialog: include signatures seems to do nothing there. cyril: it does if you have signatures. Show 
             the checkbox only when the key as signatures => less confusion.  (from noname)
 
 0012 [ ]    from time to time the location images and the location message is not updated or gets lost, or the location name.  (from cave)
@@ -83,6 +86,8 @@ To be done
 
 0033 [ ]    Selecting different options in messages composer -> contact list then come back, shows disappearing / re-appearing people. 
             What causes this???
+
+0034 [ ]    Show forum/channel/posted admin name in details window
 
 **Not sure**
 

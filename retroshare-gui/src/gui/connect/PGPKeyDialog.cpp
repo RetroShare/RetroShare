@@ -296,6 +296,8 @@ void PGPKeyDialog::loadKeyPage()
         close();
         return;
     }
+    ui._shouldAddSignatures_CB_2->setEnabled(detail.gpgSigners.size() > 1) ;
+
      std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB_2->isChecked()) ; // this needs to be a SSL id
 
     ui.userCertificateText_2->setReadOnly(true);
