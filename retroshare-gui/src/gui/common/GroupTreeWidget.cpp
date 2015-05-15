@@ -369,10 +369,13 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 		/* Set tooltip */
 		if (itemInfo.privatekey) {
-			tooltip += "\n" + tr("Private Key Available");
+            tooltip += "\n" + tr("You have admin rights");
         }
         if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
+    {
             tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
+        tooltip += "\n" + tr("Subscribe to download and read messages") ;
+    }
 
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_POPULARITY, tooltip);

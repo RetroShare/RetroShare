@@ -132,6 +132,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 
+    ui->subscribeToolButton->hide() ;
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
 	connect(ui->newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
 	connect(ui->newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
@@ -201,6 +202,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->line_2->hide() ;
     ui->by_text_label->hide() ;
     ui->by_label->hide() ;
+
+    ui->subscribeToolButton->setToolTip(tr("<p>Subscribing to the forum will gather \
+                                           available posts from your subscribed friends, and make the \
+                                           forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
 }
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
@@ -387,10 +392,10 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(createmessage()));
 
-	QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to Author"), &contextMnu);
-	connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
-	
-	QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
+    QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply with private message"), &contextMnu);
+    connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
+
+    QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
 	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mSubscribeFlags));
 	connect(newthreadAct , SIGNAL(triggered()), this, SLOT(createthread()));
 
@@ -441,10 +446,10 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
 		if (nCount == 1) {
 			replyAct->setEnabled (true);
-			replyauthorAct->setEnabled (true);
+            replyauthorAct->setEnabled (true);
 		} else {
 			replyAct->setDisabled (true);
-			replyauthorAct->setDisabled (true);
+            replyauthorAct->setDisabled (true);
 		}
 	} else {
 		markMsgAsRead->setDisabled(true);
@@ -452,11 +457,10 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		markMsgAsUnread->setDisabled(true);
 		markMsgAsUnreadChildren->setDisabled(true);
 		replyAct->setDisabled (true);
-		replyauthorAct->setDisabled (true);
+        replyauthorAct->setDisabled (true);
 	}
 
 	contextMnu.addAction(replyAct);
-	contextMnu.addAction(replyauthorAct);
   contextMnu.addAction(newthreadAct);
     QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
@@ -465,11 +469,14 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(markMsgAsReadChildren);
 	contextMnu.addAction(markMsgAsUnread);
 	contextMnu.addAction(markMsgAsUnreadChildren);
-	contextMnu.addSeparator();
-	contextMnu.addAction(expandAll);
+    contextMnu.addSeparator();
+    contextMnu.addAction(expandAll);
 	contextMnu.addAction(collapseAll);
 
-	contextMnu.exec(QCursor::pos());
+    contextMnu.addSeparator();
+    contextMnu.addAction(replyauthorAct);
+
+    contextMnu.exec(QCursor::pos());
 }
 
 bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
@@ -1821,8 +1828,10 @@ void GxsForumThreadWidget::loadGroupData(const uint32_t &token)
         mForumGroup = groups[0];
         insertGroupData();
 
-		mStateHelper->setActive(mTokenTypeGroupData, true);
-	}
+        mStateHelper->setActive(mTokenTypeGroupData, true);
+
+        ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mSubscribeFlags)) ;
+    }
 	else
 	{
 		std::cerr << "GxsForumThreadWidget::loadGroupSummary_CurrentForum() ERROR Invalid Number of Groups...";
@@ -1886,7 +1895,7 @@ void GxsForumThreadWidget::loadMessageData(const uint32_t &token)
 
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
-	}
+    }
 }
 
 /*********************** **** **** **** ***********************/

@@ -65,10 +65,10 @@ To be done
 
 0020 [ ]    double click on completed download must open the file. or folder, configurable in options (from noname)
 
-0028 [ ]    RTT statistics shouldn't show curves for offline peers
-0029 [ ]    In options, rename "server"->"network", "transfer"->"file transfer".
+0028 [X]    RTT statistics shouldn't show curves for offline peers
+0029 [X]    In options, rename "server"->"network", "transfer"->"file transfer".
 
-0030 [ ]    forums - middle horisontal bar - post time is duplicate to the one in the list. also thread name.
+0030 [X]    forums - middle horisontal bar - post time is duplicate to the one in the list. also thread name.
             forum name (the line with view mode) is duplicate to tab header.
             button for new thread must have text, *reply to selected post* button must be placed next to it
             the big subscribe button on the top, but never used.
@@ -87,7 +87,7 @@ To be done
 0033 [ ]    Selecting different options in messages composer -> contact list then come back, shows disappearing / re-appearing people. 
             What causes this???
 
-0034 [ ]    Show forum/channel/posted admin name in details window
+0034 [X]    Show forum/channel/posted admin name in details window
 
 **Not sure**
 
