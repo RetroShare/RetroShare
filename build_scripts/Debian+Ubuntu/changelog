@@ -1,5 +1,71 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   GUI 
+      * force loading of own ID to get a proper name to display in chat lobby dialog
+      * improved alignment of IPs in friend list
+      * improved layout of forum thread widget. Removed one almost empty line. Hide unscribe button when already subscribed.
+      * updated names of transfers and server pages in config
+      * only show relevant entries in statistics graphs
+      * improved RSGraphWidget to take the current time as reference for all curves
+      * fixed PGP/SSL key size combo box in certificate creation wizard (patch from sehraf, modified)
+      * fixed text in transfers dialog popup menu
+      * disable signature checkbox when the certificate only has self signature in ConfCertDialog
+      * replace identity with profile in GernCertDialog (patch from Henry)
+      * attempt to improve/clarify relationship between nodes and PGP keys. Removed duplicate options and splitted ConfCerDialog into a dialog 
+        to show nodes certificates and PGP key information
+      * removed useless thread line in forums, kept link copy functionality, used a GxsIdLabel to show the by_label correctly, 
+         added hide/show of labels when not useful
+
+      * fixed typo in naming and removed inconsistent entries from friend list menu.
+      * fixed comment voting
+      * hide unimplemented reputation functions in comment tree widget
+      * improved text of gxs share group key feature in posted and channels
+      * use random port >=1024 (patch from sehraf)
+      * fixed creation and edit of channel/forum/posted group. Force display of correct stacked widget page in GxsGroupDialog.
+      * re-enabled hide of status column in friends list
+      * show group owner in channel/forum/posted's details tab
+      * show forum admin/author in gui
+      * show gxs message store period in gui, set forums store period to one year
+      * allow 30 unicode symbols for identity name, instead of 30 bytes
+      * Saved size of participants list in profile.
+      * Removed show/hide button to get more space. The participants list can be colapsed by moving the splitter to the right frame border.
+      * removed useless column in forum thread widget
+
+   VOIP
+      * Renaming all to VOIP in VOIP plugin (patch from Phenom)
+      * fixed wrong names in comment and debug output (patch from Phenom)
+      * fixed opencv dependencies for all systems using pkg-config
+
+   WebUI
+      * redesigned friends list
+      * added friendly units on downloads page
+      * added progress bar on downloads page
+      * fixed makefile directories and updated readme
+      * fixed path in webui readme
+      * added hint to check if port is already in use if webinterface failed to start
+      * fixed wrong path in libresapi readme
+      * fixed crash in rs-gui when stopping webui
+      * webui: added display of own cert
+      * added string escape in SuperEasyJSON serialization
+      * added terminal restore to rs-nogui on linux. Enabled compile of webui in rs-nogui.
+
+   GXS
+      * randomly force full update of RsGxsUpdateBroadcastBase so as to get fresh statistics about GXS groups from time to time
+      * simple hack to have non active groups gradually loose popularity and number of posts.
+
+   Packaging
+      * additional fix to packaging on squeeze
+      * updated bubba3 (squeeze+armel) packaging scripts
+
+   Bug fixes:
+      * fixed bug in global router causing SIGSEGV in some cases
+      * Removed maximum value from chat lobby participants list.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 15 May 2015 18:00:00 +0100
+
+
+retroshare06 (0.6.0-0.8196~precise) precise; urgency=low
+
    GUI
       * changed sound button tooltip
       * added auto subscribe status to lobby tooltip
