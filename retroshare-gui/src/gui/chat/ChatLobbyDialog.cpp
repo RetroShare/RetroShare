@@ -215,7 +215,15 @@ void ChatLobbyDialog::init()
     rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
 
     RsIdentityDetails details ;
-    rsIdentity->getIdDetails(gxs_id,details) ;
+
+    // This lets the backend some time to load our own identity in cache.
+    // It will only loop for at most 1 second the first time.
+
+    for(int i=0;i<3;++i)
+        if(rsIdentity->getIdDetails(gxs_id,details))
+            break ;
+        else
+            usleep(1000*300) ;
 
     ui.chatWidget->setName(QString::fromUtf8(details.mNickname.c_str()));
     //ui.chatWidget->addToolsAction(ui.actionChangeNickname);
@@ -286,7 +294,7 @@ void ChatLobbyDialog::setIdentity(const RsGxsId& gxs_id)
 {
     rsMsgs->setIdentityForChatLobby(lobbyId, gxs_id) ;
 
-	// get new nick name
+    // get new nick name
     RsGxsId newid;
 
     if (rsMsgs->getIdentityForChatLobby(lobbyId, newid))
@@ -295,7 +303,7 @@ void ChatLobbyDialog::setIdentity(const RsGxsId& gxs_id)
         rsIdentity->getIdDetails(gxs_id,details) ;
 
         ui.chatWidget->setName(QString::fromUtf8(details.mNickname.c_str()));
-	}
+    }
 }
 
 /**
