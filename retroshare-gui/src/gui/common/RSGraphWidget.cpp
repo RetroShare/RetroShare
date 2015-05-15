@@ -385,7 +385,8 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 
     /* Translate all data points to points on the graph frame */
 
-    float last = values.back().x() ;
+    // take 0 as the origin, otherwise the different curves are not aligned properly
+    float last = 0;//values.back().x();
 
     //std::cerr << "Got " << values.size() << " values for index 0" << std::endl;
 
@@ -568,6 +569,7 @@ void RSGraphWidget::paintLegend()
   _source->getCurrentValues(vals) ;
 
     for(uint i=0;i<vals.size();++i)
+      if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
     {
         qreal paintStep = 4+FONT_SIZE;
         qreal pos = 20+i*paintStep;
