@@ -20,6 +20,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <unistd.h>
+
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QMenu>
