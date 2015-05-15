@@ -105,12 +105,13 @@ QString RSGraphSource::displayValue(float v) const
     return QString::number(v,'f',_digits) + " " + unitName() ;
 }
 
-void RSGraphSource::getCurrentValues(std::vector<float>& vals) const
+void RSGraphSource::getCurrentValues(std::vector<QPointF>& vals) const
 {
     std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
+    qint64 now = getTime() ;
 
     for(it = _points.begin();it!=_points.end();++it)
-        vals.push_back(it->second.back().second) ;
+        vals.push_back(QPointF( (now - it->second.back().first)/1000.0f,it->second.back().second)) ;
 }
 
 QString RSGraphSource::legend(int i,float v) const
@@ -565,23 +566,29 @@ void RSGraphWidget::paintLegend()
 {
   int bottom = _rec.height();
 
-  std::vector<float> vals ;
+  std::vector<QPointF> vals ;
   _source->getCurrentValues(vals) ;
+  int j=0;
 
     for(uint i=0;i<vals.size();++i)
       if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
-    {
-        qreal paintStep = 4+FONT_SIZE;
-        qreal pos = 20+i*paintStep;
-        QString text = _source->legend(i,vals[i]) ;
+      {
+          if( _rec.width() - (vals[i].x()-0)*_time_scale < SCALE_WIDTH )
+              continue ;
 
-        QPen oldPen = _painter->pen();
-        _painter->setPen(QPen(getColor(i), Qt::SolidLine));
-        _painter->drawLine(QPointF(SCALE_WIDTH+10.0, pos),  QPointF(SCALE_WIDTH+30.0, pos));
-        _painter->setPen(oldPen);
+          qreal paintStep = 4+FONT_SIZE;
+          qreal pos = 20+j*paintStep;
+          QString text = _source->legend(i,vals[i].y()) ;
 
-    _painter->setPen(SCALE_COLOR);
-        _painter->drawText(QPointF(SCALE_WIDTH + 40,pos + 0.5*FONT_SIZE), text) ;
-    }
+          QPen oldPen = _painter->pen();
+          _painter->setPen(QPen(getColor(i), Qt::SolidLine));
+          _painter->drawLine(QPointF(SCALE_WIDTH+10.0, pos),  QPointF(SCALE_WIDTH+30.0, pos));
+          _painter->setPen(oldPen);
+
+          _painter->setPen(SCALE_COLOR);
+          _painter->drawText(QPointF(SCALE_WIDTH + 40,pos + 0.5*FONT_SIZE), text) ;
+
+          ++j ;
+      }
 }
 

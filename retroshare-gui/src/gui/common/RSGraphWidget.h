@@ -70,7 +70,7 @@ public:
     virtual QString displayValue(float v) const ;
 
     // return the vector of last values up to date
-    virtual void getCurrentValues(std::vector<float>& vals) const ;
+    virtual void getCurrentValues(std::vector<QPointF>& vals) const ;
 
     // returns what to display in the legend. Derive this to show additional info.
     virtual QString legend(int i,float v) const ;
