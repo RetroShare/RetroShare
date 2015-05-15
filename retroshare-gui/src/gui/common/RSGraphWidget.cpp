@@ -310,11 +310,14 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   _painter->drawRect(_rec);
 
   /* Paint the scale */
-  paintScale();
+  paintScale1();
   /* Plot the rsDHT/allDHT data */
   paintData();
   /* Paint the rsDHT/allDHT totals */
   paintTotals();
+
+  // part of the scale that needs to write over the data curves.
+  paintScale2();
 
   if(_flags & RSGRAPH_FLAGS_SHOW_LEGEND)
       paintLegend() ;
@@ -504,7 +507,7 @@ QString RSGraphWidget::totalToStr(qreal total)
 }
 
 /** Paints the scale on the graph. */
-void RSGraphWidget::paintScale()
+void RSGraphWidget::paintScale1()
 {
 	int top = _rec.y();
 	int bottom = _rec.height();
@@ -535,21 +538,25 @@ void RSGraphWidget::paintScale()
 
 	/* Draw vertical separator */
 	_painter->drawLine(SCALE_WIDTH, top, SCALE_WIDTH, bottom);
+}
 
-	// draw time below the graph
+void RSGraphWidget::paintScale2()
+{
+    // draw time below the graph
 
-	static const int npix = 100 ;
+    int bottom = _rec.height();
+    static const int npix = 100 ;
 
-	for(int i=_rec.width();i>SCALE_WIDTH;i-=npix)
-	{
-		pos = bottom - FONT_SIZE;
+    for(int i=_rec.width();i>SCALE_WIDTH;i-=npix)
+    {
+        qreal pos = bottom - FONT_SIZE;
 
-		int seconds = (_rec.width()-i)/_time_scale ;	// pixels / (pixels per second) => seconds
-		QString text = QString::number(seconds)+ " secs";
+        int seconds = (_rec.width()-i)/_time_scale ;	// pixels / (pixels per second) => seconds
+        QString text = QString::number(seconds)+ " secs";
 
-		_painter->setPen(SCALE_COLOR);
-		_painter->drawText(QPointF(i, _rec.height()-0.5*FONT_SIZE),  text);
-	}
+        _painter->setPen(SCALE_COLOR);
+        _painter->drawText(QPointF(i, _rec.height()-0.5*FONT_SIZE),  text);
+    }
 }
 
 void RSGraphWidget::wheelEvent(QWheelEvent *e)

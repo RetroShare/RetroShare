@@ -172,7 +172,8 @@ class RSGraphWidget: public QFrame
 		/** Paints the scale in the graph. */
         void paintLegend();
         /** Paints the scale in the graph. */
-        void paintScale();
+        void paintScale1();
+        void paintScale2();
 
         QColor getColor(int i) ;
 
