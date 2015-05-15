@@ -52,6 +52,7 @@ install: build
 	install -D -m 644 src/libresapi/src/webfiles/gui.jsx     			$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/gui.jsx     			 
 	install -D -m 644 src/libresapi/src/webfiles/index.html     		$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/index.html     		 
 	install -D -m 644 src/libresapi/src/webfiles/react.js     			$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/react.js     		 
+	install -D -m 644 src/retroshare-gui/src/gui/images/logo/logo_splash.png	$(CURDIR)/debian/retroshare06/usr/share/RetroShare06/webui/img/logo_splash.png    		 
 	install -D -m 644 src/libresapi/src/webfiles/JSXTransformer.js    $(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/JSXTransformer.js   
 	install -D -m 644 src/libresapi/src/webfiles/RsApi.js     			$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/RsApi.js     		 
 	install -D -m 644 src/libresapi/src/webfiles/RsXHRConnection.js   $(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/RsXHRConnection.js  
@@ -59,6 +60,7 @@ install: build
 	install -D -m 644 src/libresapi/src/webfiles/gui.jsx     			$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/gui.jsx     			 
 	install -D -m 644 src/libresapi/src/webfiles/index.html     		$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/index.html     		 
 	install -D -m 644 src/libresapi/src/webfiles/react.js     			$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/react.js     		 
+	install -D -m 644 src/retroshare-gui/src/gui/images/logo/logo_splash.png	$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/img/logo_splash.png    		 
 
 # Add here commands to install the package into debian/your_appname
 #    cd builddir && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
