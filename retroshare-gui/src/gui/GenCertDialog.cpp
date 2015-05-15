@@ -157,9 +157,9 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.entropy_bar->setValue(0) ;
 
 	// make sure that QVariant always takes an 'int' otherwise the program will crash!
-	ui.keylength_comboBox->addItem("2048 bits", QVariant(2048));
-	ui.keylength_comboBox->addItem("3072 bits", QVariant(3072));
-    ui.keylength_comboBox->addItem("4096 bits", QVariant(4096));
+	ui.keylength_comboBox->addItem("default (2048 bits, recommended)", QVariant(2048));
+	ui.keylength_comboBox->addItem("high (3072 bits)", QVariant(3072));
+    ui.keylength_comboBox->addItem("insane (4096 bits)", QVariant(4096));
 
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
@@ -328,9 +328,19 @@ void GenCertDialog::updateUiSetup()
     if (ui.adv_checkbox->isChecked())
     {
         ui.hidden_checkbox->show();
-        ui.keylength_label->show();
-        ui.keylength_comboBox->show();
-
+        
+		if (ui.new_gpg_key_checkbox->isChecked())
+		{
+			// key length is only for pgp key creation
+			ui.keylength_label->show();
+			ui.keylength_comboBox->show();
+		}
+		else
+		{
+			ui.keylength_label->hide();
+			ui.keylength_comboBox->hide();
+		}
+ 
         if(ui.hidden_checkbox->isChecked())
         {
             ui.hiddenaddr_input->show();

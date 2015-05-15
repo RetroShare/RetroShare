@@ -297,7 +297,7 @@
        <item>
         <widget class="QLabel" name="keylength_label">
          <property name="text">
-          <string>SSL key length</string>
+          <string>PGP key length</string>
          </property>
         </widget>
        </item>
