@@ -228,7 +228,7 @@ QString StatusDefs::connectStateWithoutTransportTypeString(RsPeerDetails &detail
 
 QString StatusDefs::connectStateIpString(RsPeerDetails &details)
 {
-	QString stateString = QString(details.connectAddr.c_str()) + QString(" [");
+    QString stateString = QString("");
 
 	switch (details.connectState) {
 	case 0:
@@ -249,7 +249,9 @@ QString StatusDefs::connectStateIpString(RsPeerDetails &details)
 		stateString += qApp->translate("StatusDefs", "unkown");
 		break;
 	}
-	stateString += QString("]");
+    stateString += QString(" : ");
+
+    stateString += QString(details.connectAddr.c_str()) ;
 
 	return stateString;
 }
