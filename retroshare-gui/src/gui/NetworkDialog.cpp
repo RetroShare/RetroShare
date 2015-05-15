@@ -106,17 +106,17 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
     _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(""));
     _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name"));
-    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Did I authenticated peer"));
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Trust level"));
     _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer authenticated me"));
     _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Cert Id"));
     _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Last used"));
 
-    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" If I accept connection from peer"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of peer"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Did I sign his PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer sign mine PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Peer's Certificat ID"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Since when I use this Certificat"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" Do you accept connections signed by this key?"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of the key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("This column indicates trust level and whether you signed his PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did that peer sign your own PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Certificat ID"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Since when I use this Certificats"),Qt::ToolTipRole);
 
     _header->resizeSection ( COLUMN_CHECK, 25 );
     _header->resizeSection ( COLUMN_PEERNAME, 200 );
