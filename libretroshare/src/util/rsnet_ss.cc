@@ -24,11 +24,15 @@
  */
 
 #include <sstream>
+#ifdef WINDOWS_SYS
+// u.Word (Windows) is the same as s6_addr16 (Linux)
+#define s6_addr16 u.Word
+#else
 #include <netinet/in.h>
+#endif // WINDOWS_SYS
 
 #include "util/rsnet.h"
 #include "util/rsstring.h"
-#include "util/stacktrace.h"
 #include "pqi/pqinetwork.h"
 
 /***************************** Internal Helper Fns ******************************/
@@ -287,16 +291,16 @@ bool sockaddr_storage_ipv4_to_ipv6(sockaddr_storage &addr)
 	if ( addr.ss_family == AF_INET )
 	{
 		sockaddr_in & addr_ipv4 = (sockaddr_in &) addr;
+		const char *ip[4];
+		memcpy(ip, (void *)(&addr_ipv4.sin_addr.s_addr), 4);
+		uint16_t port = addr_ipv4.sin_port;
+
 		sockaddr_in6 & addr_ipv6 =  (sockaddr_in6 &) addr;
-
-		u_int32_t ip = addr_ipv4.sin_addr.s_addr;
-		u_int16_t port = addr_ipv4.sin_port;
-
 		sockaddr_storage_clear(addr);
 		addr_ipv6.sin6_family = AF_INET6;
 		addr_ipv6.sin6_port = port;
-		addr_ipv6.sin6_addr.s6_addr32[3] = ip;
-		addr_ipv6.sin6_addr.s6_addr16[5] = (u_int16_t) 0xffff;
+		memcpy((void *)&(addr_ipv6.sin6_addr.s6_addr16[6]), ip, 4);
+		addr_ipv6.sin6_addr.s6_addr16[5] = (uint16_t) 0xffff;
 
 		return true;
 	}
@@ -315,15 +319,15 @@ bool sockaddr_storage_ipv6_to_ipv4(sockaddr_storage &addr)
 	if(sockaddr_storage_isIPv4Mapped(addr))
 	{
 		sockaddr_in6 & addr_ipv6 =  (sockaddr_in6 &) addr;
-		u_int32_t ip = addr_ipv6.sin6_addr.s6_addr32[3];
-		u_int16_t port = addr_ipv6.sin6_port;
+		const char *ip[4];
+		memcpy(ip, (void *)&(addr_ipv6.sin6_addr.s6_addr16[6]), 4);
+		uint16_t port = addr_ipv6.sin6_port;
 
 		sockaddr_in & addr_ipv4 = (sockaddr_in &) addr;
-
 		sockaddr_storage_clear(addr);
 		addr_ipv4.sin_family = AF_INET;
+		memcpy((void *)&(addr_ipv4.sin_addr.s_addr), ip, 4);
 		addr_ipv4.sin_port = port;
-		addr_ipv4.sin_addr.s_addr = ip;
 
 		return true;
 	}
@@ -500,8 +504,8 @@ bool sockaddr_storage_isLinkLocal(const struct sockaddr_storage &addr)
 	case AF_INET6:
 	{
 		const sockaddr_in6 * addr6 = (const sockaddr_in6 *) &addr;
-		u_int16_t mask = htons(0xffc0);
-		u_int16_t llPrefix = htons(0xfe80);
+		uint16_t mask = htons(0xffc0);
+		uint16_t llPrefix = htons(0xfe80);
 		return ((addr6->sin6_addr.s6_addr16[0] & mask ) == llPrefix);
 	}
 
@@ -515,9 +519,9 @@ bool sockaddr_storage_isIPv4Mapped(const struct sockaddr_storage &addr)
 	if (addr.ss_family == AF_INET6)
 	{
 		sockaddr_in6 & addr_ipv6 =  (sockaddr_in6 &) addr;
-		bool ipv4m = addr_ipv6.sin6_addr.s6_addr16[5] == (u_int16_t) 0xffff;
+		bool ipv4m = addr_ipv6.sin6_addr.s6_addr16[5] == (uint16_t) 0xffff;
 		for ( int i = 0; ipv4m && i < 5 ; ++i )
-			ipv4m &= addr_ipv6.sin6_addr.s6_addr16[i] == (u_int16_t) 0x0000;
+			ipv4m &= addr_ipv6.sin6_addr.s6_addr16[i] == (uint16_t) 0x0000;
 		return ipv4m;
 	}
 
@@ -933,8 +937,15 @@ void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputSt
 		output << addr.ss_family;
 		output << " addr.__ss_align = ";
 		output << addr.__ss_align;
+#ifdef WINDOWS_SYS
+		output << " addr.__ss_pad1 = ";
+		output << addr.__ss_pad1;
+		output << " addr.__ss_pad2 = ";
+		output << addr.__ss_pad2;
+#else
 		output << " addr.__ss_padding = ";
 		output << addr.__ss_padding;
+#endif // WINDOWS_SYS
 	}}
 
 	if(outputString)
@@ -1033,9 +1044,9 @@ bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage & addr)
 #endif
 
 	const sockaddr_in6 & addr6 = (const sockaddr_in6 &) addr;
-	bool isNull = (addr6.sin6_addr.s6_addr32[3] == 0x00000000);
-	for (int i=0; isNull && i<3; ++i)
-		isNull &= (addr6.sin6_addr.s6_addr32[i] == 0x00000000);
+	bool isNull = (addr6.sin6_addr.s6_addr16[7] == 0x0000);
+	for (int i=0; isNull && i<7; ++i)
+		isNull &= (addr6.sin6_addr.s6_addr16[i] == 0x0000);
 
 	return isNull;
 }
@@ -1052,9 +1063,9 @@ bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage & )
 bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage & addr )
 {
 	sockaddr_in6 & addr6 = (sockaddr_in6 &) addr;
-	bool isLp = (addr6.sin6_addr.s6_addr32[3] == htonl(0x00000001));
-	for (int i=0; isLp && i<3; ++i)
-		isLp &= (addr6.sin6_addr.s6_addr32[i] == 0x00000000);
+	bool isLp = (addr6.sin6_addr.s6_addr16[7] == htonl(0x0001));
+	for (int i=0; isLp && i<7; ++i)
+		isLp &= (addr6.sin6_addr.s6_addr16[i] == 0x0000);
 
 #ifdef SS_DEBUG
 	sockaddr_storage_dump(addr);

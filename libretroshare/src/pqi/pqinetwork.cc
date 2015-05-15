@@ -145,6 +145,34 @@ std::string socket_errorType(int err)
 	return std::string("UNKNOWN ERROR CODE - ASK RS-DEVS TO ADD IT!");
 }
 
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <net/if.h>
+
+bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs)
+{
+	struct ifaddrs *ifsaddrs, *ifa;
+	if(getifaddrs(&ifsaddrs) != 0)
+	{
+		freeifaddrs(ifsaddrs);
+		return false;
+	}
+
+	addrs.clear();
+	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
+		if ( (ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_LOOPBACK) )
+		{
+			const sockaddr_storage & ifaaddr = * (const struct sockaddr_storage *) ifa->ifa_addr;
+			if (sockaddr_storage_isLinkLocal(ifaaddr)) continue;
+			sockaddr_storage tmp;
+			if (sockaddr_storage_copyip(tmp, ifaaddr)) addrs.push_back(tmp);
+		}
+
+
+	freeifaddrs(ifsaddrs);
+	return !addrs.empty();
+}
+
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else
 
@@ -257,16 +285,8 @@ std::string socket_errorType(int err)
 // A function to determine the interfaces on your computer....
 // No idea of how to do this in windows....
 // see if it compiles.
-bool getLocalInterfaces_ipv4(struct in_addr &routeAddr, std::list<struct in_addr> &addrs)
+bool getLocalInterfaces_ipv4(std::list<struct in_addr> &addrs)
 {
-	// Get the best interface for transport to routeAddr
-	// This interface should be first in list!
-	DWORD bestInterface;
-	if (GetBestInterface((IPAddr) routeAddr.s_addr, &bestInterface) != NO_ERROR)
-	{
-		bestInterface = 0;
-	}
-
 	/* USE MIB IPADDR Interface */
 	PMIB_IPADDRTABLE iptable =  NULL;
 	DWORD dwSize = 0;
@@ -308,21 +328,31 @@ bool getLocalInterfaces_ipv4(struct in_addr &routeAddr, std::list<struct in_addr
 			continue;
 		}
 
-		if (ipaddr.dwIndex == bestInterface)
-		{
-			pqioutput(PQL_DEBUG_BASIC, pqinetzone, "Best address, " + out);
-			addrs.push_front(addr);
-		}
-		else
-		{
-			pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
-			addrs.push_back(addr);
-		}
+		pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
+		addrs.push_back(addr);
 	}
 
 	free (iptable);
 
 	return (addrs.size() > 0);
+}
+
+// temporary fix
+// wrapper for getLocalInterfaces_ipv4
+bool getLocalAddresses(std::list<struct sockaddr_storage> &addrs)
+{
+	addrs.clear();
+	std::list<struct in_addr> addrs2;
+	std::list<struct in_addr>::iterator addrs2_it;
+	getLocalInterfaces_ipv4(addrs2);
+	for(addrs2_it = addrs2.begin(); addrs2_it != addrs2.end(); ++addrs2_it) {
+		struct sockaddr_storage *ss = new sockaddr_storage;
+		sockaddr_in *ss_ptr = (sockaddr_in *) ss;
+		ss_ptr->sin_family = AF_INET;
+		ss_ptr->sin_addr = *addrs2_it;
+		addrs.push_back(*ss);
+	}
+	return !addrs.empty();
 }
 
 // implement the improved unix inet address fn.
@@ -332,65 +362,55 @@ int inet_aton(const char *name, struct in_addr *addr)
 	return (((*addr).s_addr = inet_addr(name)) != INADDR_NONE);
 }
 
-
-// This returns in Net Byte Order. 
-// NB: Linux man page claims it is in Host Byte order, but
-// this is blatantly wrong!..... (for Debian anyway)
-// Making this consistent with the Actual behavior (rather than documented).
-in_addr_t inet_netof(struct in_addr addr)
+int inet_pton(int af, const char *src, void *dst)
 {
-	return pqi_inet_netof(addr);
-}
+	struct sockaddr_storage ss;
+	int size = sizeof(ss);
+	char src_copy[INET6_ADDRSTRLEN+1];
 
-// This returns in Host Byte Order. (as the man page says)
-// Again, to be consistent with Linux.
-in_addr_t inet_network(const char *inet_name)
-{
-	struct in_addr addr;
-	if (inet_aton(inet_name, &addr))
-	{
-#ifdef NET_DEBUG
-//		std::cerr << "inet_network(" << inet_name << ") : ";
-//		std::cerr << rs_inet_ntoa(addr) << std::endl;
-#endif
-		return ntohl(inet_netof(addr));
+	ZeroMemory(&ss, sizeof(ss));
+	/* stupid non-const API */
+	strncpy (src_copy, src, INET6_ADDRSTRLEN+1);
+	src_copy[INET6_ADDRSTRLEN] = 0;
+
+	if (WSAStringToAddressA(src_copy, af, NULL, (struct sockaddr *)&ss, &size) == 0) {
+		switch(af) {
+		case AF_INET:
+			*(struct in_addr *)dst = ((struct sockaddr_in *)&ss)->sin_addr;
+			return 1;
+		case AF_INET6:
+			*(struct in6_addr *)dst = ((struct sockaddr_in6 *)&ss)->sin6_addr;
+			return 1;
+		}
 	}
-	return 0xffffffff;
-	//return -1;
+	return 0;
 }
 
+const char *inet_ntop(int af, const void *src, char *dst, socklen_t size)
+{
+	struct sockaddr_storage ss;
+	unsigned long s = size;
+
+	ZeroMemory(&ss, sizeof(ss));
+	ss.ss_family = af;
+
+	switch(af) {
+	case AF_INET:
+		((struct sockaddr_in *)&ss)->sin_addr = *(struct in_addr *)src;
+		break;
+	case AF_INET6:
+		((struct sockaddr_in6 *)&ss)->sin6_addr = *(struct in6_addr *)src;
+		break;
+	default:
+		return NULL;
+	}
+	/* cannot direclty use &size because of strict aliasing rules */
+	int ret = WSAAddressToStringA((struct sockaddr *)&ss, sizeof(ss), NULL, dst, &s);
+	return (ret == 0) ? dst : NULL;
+}
 
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-
-#include <sys/types.h>
-#include <ifaddrs.h>
-#include <net/if.h>
-
-bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs)
-{
-	struct ifaddrs *ifsaddrs, *ifa;
-	if(getifaddrs(&ifsaddrs) != 0)
-	{
-		freeifaddrs(ifsaddrs);
-		return false;
-	}
-
-	addrs.clear();
-	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
-		if ( (ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_LOOPBACK) )
-		{
-			const sockaddr_storage & ifaaddr = * (const struct sockaddr_storage *) ifa->ifa_addr;
-			if (sockaddr_storage_isLinkLocal(ifaaddr)) continue;
-			sockaddr_storage tmp;
-			if (sockaddr_storage_copyip(tmp, ifaaddr)) addrs.push_back(tmp);
-		}
-
-
-	freeifaddrs(ifsaddrs);
-	return !addrs.empty();
-}
 
 
 /*************************************************************

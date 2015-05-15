@@ -736,7 +736,11 @@ int pqissl::Initiate_Connection()
 
 #ifdef IPV6_V6ONLY
 	int no = 0;
+#ifdef WINDOWS_SYS
+	err = setsockopt(sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&no, sizeof(no));
+#else
 	err = setsockopt(sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&no, sizeof(no));
+#endif // WINDOWS_SYS
 #ifdef PQISSL_DEBUG
 	if (err) std::cerr << "pqissl::Initiate_Connection: Error setting IPv6 socket dual stack" << std::endl;
 	else std::cerr << "pqissl::Initiate_Connection: Setting IPv6 socket dual stack" << std::endl;

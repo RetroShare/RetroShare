@@ -109,7 +109,9 @@ int unix_getsockopt_error(int sockfd, int *err);
 
 #ifdef WINDOWS_SYS // WINDOWS
 /******************* WINDOWS SPECIFIC PART ******************/
-int     WinToUnixError(int error);
+int			WinToUnixError(int error);
+const char	*inet_ntop(int af, const void *src, char *dst, socklen_t size_param);
+int			inet_pton(int af, const char *src, void *dst);
 #endif
 
 
