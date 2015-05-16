@@ -17,6 +17,42 @@ function start_live_reload()
 }
 start_live_reload();
 
+// displays a notice if requests to the server failed
+var ConnectionStatusWidget = React.createClass({
+	// react component lifecycle callbacks
+	getInitialState: function(){
+		return {status: "unknown"};
+	},
+	componentWillMount: function()
+	{
+		connection.register_status_listener(this.onConnectionStatusChanged);
+	},
+	componentWillUnmount: function()
+	{
+		connection.unregister_status_listener(this.onConnectionStatusChanged);
+	},
+	onConnectionStatusChanged: function(state)
+	{
+		this.setState({status: state});
+	},
+	render: function()
+	{
+		if(this.state.status === "unknown")
+		{
+			return <div>connecting to server...</div>;
+		}
+		if(this.state.status === "connected")
+		{
+			return <div></div>;
+		}
+		if(this.state.status === "not_connected")
+		{
+			return <div>You are not connected to the server anymore. Is the Network connection ok? Is the server up?</div>;
+		}
+		return <div>Error: unexpected status value in ConnectionStatusWidget. Please Report this. this.state.status={this.state.status}</div>;
+	},
+});
+
 // implements automatic update using the state token system
 // components using this mixin should have a member "getPath()" to specify the resource
 var AutoUpdateMixin = 
@@ -867,6 +903,7 @@ var MainWidget = React.createClass({
 		return (
 			<div>
 				{/*<div id="overlay"><div className="paddingbox"><div className="btn2">test</div></div></div>*/}
+				<ConnectionStatusWidget/>
 				<PasswordWidget/>
 				<AudioPlayerWidget/>
 				{menubutton}

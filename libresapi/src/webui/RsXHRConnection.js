@@ -13,6 +13,48 @@ function RsXHRConnection(server_hostname, server_port)
     //server_port = "9090";
     var api_root_path = "/api/v2/";
 
+    var status_listeners = [];
+
+    function notify_status(status)
+    {
+        for(var i = 0; i < status_listeners.length; i++)
+        {
+            status_listeners[i](status);
+        }
+    }
+
+    /**
+     *  Register a callback to be called when the state of the connection changes.
+     *  @param {function} cb - callback which receives a single argument. The arguments value is "connected" or "not_connected".
+     */
+    this.register_status_listener = function(cb)
+    {
+        status_listeners.push(cb);
+    };
+
+    /**
+     * Unregister a status callback function.
+     * @param {function} cb - a privously registered callback function
+     */
+     this.unregister_status_listener = function(cb)
+     {
+        var to_delete = [];
+        for(var i = 0; i < status_listeners.length; i++)
+        {
+            if(status_listeners[i] === cb){
+                to_delete.push(i);
+            }
+        }
+        for(var i = 0; i < to_delete.length; i++)
+        {
+            // copy the last element to the current index
+            var index = to_delete[i];
+            status_listeners[i] = status_listeners[status_listeners.length-1];
+            // remove the last element
+            status_listeners.pop();
+        }
+     };
+
     /**
      * Send a request to the backend
      * automatically encodes the request as JSON before sending it to the server
@@ -36,11 +78,13 @@ function RsXHRConnection(server_hostname, server_port)
                     console.log("RsXHRConnection: request failed with status: "+xhr.status);
                     console.log("request was:");
                     console.log(req);
+                    notify_status("not_connected");
                     if(err_cb !== undefined)
                         err_cb();
                     return;
                 }
                 // received response
+                notify_status("connected");
                 debug("RsXHRConnection received response:");
                 debug(xhr.responseText);
                 if(false)//if(xhr.responseText === "")
