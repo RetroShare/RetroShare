@@ -49,6 +49,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Max. tunnel req. forwarded per second:</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -72,12 +79,7 @@
           <item>
            <widget class="QSpinBox" name="_minPrioritized_SB">
             <property name="toolTip">
-             <string>You can use this to force RetroShare to download your files rather 
-than cache files for as many slots as requested. Setting that number 
-to be equal to the queue size above will always prioritize your files
-over cache. 
-
-It is however recommended to leave at least a few slots for cache files.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;/p&gt;&lt;p&gt;than cache files for as many slots as requested. Setting that number &lt;/p&gt;&lt;p&gt;to be equal to the queue size above will always prioritize your files&lt;/p&gt;&lt;p&gt;over cache. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="minimum">
              <number>1</number>
@@ -91,6 +93,9 @@ It is however recommended to leave at least a few slots for cache files.</string
            <widget class="QComboBox" name="_defaultStrategy_CB">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <item>
              <property name="text">
@@ -111,6 +116,9 @@ It is however recommended to leave at least a few slots for cache files.</string
           </item>
           <item>
            <widget class="QSpinBox" name="_diskSpaceLimit_SB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="suffix">
              <string> MB</string>
             </property>
@@ -125,6 +133,25 @@ It is however recommended to leave at least a few slots for cache files.</string
             </property>
             <property name="value">
              <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="_max_tr_up_per_sec_SB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value controls how many tunnel request your peer can forward per second. &lt;/p&gt;&lt;p&gt;If you have a large internet bandwidth, you may raise this up to 30-40, to allow statistically longer tunnels to pass. Be very careful though, since this generates  many small packets that can significantly slow down your own file transfer. &lt;/p&gt;&lt;p&gt;The default value is 20. If you're not sure, keep it that way.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="minimum">
+             <number>5</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="singleStep">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>20</number>
             </property>
            </widget>
           </item>

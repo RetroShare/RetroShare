@@ -51,13 +51,19 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui._minPrioritized_SB,SIGNAL(valueChanged(int)),this,SLOT(updateMinPrioritized(int))) ;
 	QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
 	QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
+        QObject::connect(ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
+
+    ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
 }
-
+void TransferPage::updateMaxTRUpRate(int b)
+{
+    rsTurtle->setMaxTRForwardRate(b) ;
+}
 void TransferPage::updateDefaultStrategy(int i)
 {
 	switch(i)

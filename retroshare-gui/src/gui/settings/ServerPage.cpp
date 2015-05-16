@@ -46,9 +46,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
-  connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
-  connect( ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
-  connect( ui._turtle_enabled_CB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTurtleRouting(bool) ) );
+  //connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
+  //connect( ui._turtle_enabled_CB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTurtleRouting(bool) ) );
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -62,13 +61,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.allowIpDeterminationCB->setChecked(b) ;
 	ui.IPServersLV->setEnabled(b) ;
 
-#ifdef RS_RELEASE_VERSION
-    ui.allowTunnelConnectionCB->hide();
-    this->toggleTunnelConnection(false);
-#else
-    b = rsPeers->getAllowTunnelConnection() ;
-    ui.allowTunnelConnectionCB->setChecked(b) ;
-#endif
+    //ui.allowTunnelConnectionCB->hide();
+    //this->toggleTunnelConnection(false);
+
+    //b = rsPeers->getAllowTunnelConnection() ;
+    //ui.allowTunnelConnectionCB->setChecked(b) ;
 
 	std::list<std::string> ip_servers ;
 	rsPeers->getIPServersList(ip_servers) ;
@@ -89,10 +86,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 #endif
 }
 
-void ServerPage::updateMaxTRUpRate(int b)
-{
-	rsTurtle->setMaxTRForwardRate(b) ;
-}
+
 
 void ServerPage::toggleIpDetermination(bool b)
 {
@@ -218,9 +212,6 @@ void ServerPage::load()
 
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 
-	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
-	ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
-
 		ui.ipAddressList->clear();
 		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
 			ui.ipAddressList->addItem(QString::fromStdString(*it));
@@ -236,12 +227,12 @@ void ServerPage::load()
 	updateTorOutProxyIndicator();
 }
 
-void ServerPage::toggleTurtleRouting(bool b)
-{
-	ui._max_tr_up_per_sec_SB->setEnabled(b) ;
-
-	rsTurtle->setEnabled(b) ;
-}
+//void ServerPage::toggleTurtleRouting(bool b)
+//{
+//	ui._max_tr_up_per_sec_SB->setEnabled(b) ;
+//
+//	rsTurtle->setEnabled(b) ;
+//}
 
 /** Loads the settings for this page */
 void ServerPage::updateStatus()
@@ -511,9 +502,9 @@ void ServerPage::loadHiddenNode()
 	ui.extAddress->setText(tr("Hidden - See TOR Config"));
 
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
+    ui.showDiscStatusBar->hide() ;	// hidden because not functional at the moment.
 
-	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
-	ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
+    //ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
 
 	// show what we have in ipAddresses. (should be nothing!)
 	ui.ipAddressList->clear();
@@ -681,7 +672,7 @@ void ServerPage::updateTorOutProxyIndicator()
 
 	if(socket.waitForConnected(500))
 	{
-		std::cerr << "connected !" << std::endl;
+        //std::cerr << "connected !" << std::endl;
 
 		socket.disconnectFromHost();
 

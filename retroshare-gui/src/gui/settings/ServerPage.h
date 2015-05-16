@@ -52,8 +52,6 @@ private slots:
     void toggleUPnP();
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;
-	 void updateMaxTRUpRate(int) ;
-	 void toggleTurtleRouting(bool) ;
 
 private:
 

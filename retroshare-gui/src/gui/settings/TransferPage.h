@@ -49,6 +49,7 @@ class TransferPage: public ConfigPage
 		void updateMinPrioritized(int) ;
 		void updateDefaultStrategy(int) ;
 		void updateDiskSizeLimit(int) ;
+        void updateMaxTRUpRate(int);
 
 	private:
 
