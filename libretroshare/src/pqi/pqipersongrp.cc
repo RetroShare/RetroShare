@@ -657,7 +657,7 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(const RsPeerId& id, uint32_t ptype, bool success, const struct sockaddr_storage &raddr)
+bool    pqipersongrp::notifyConnect(const RsPeerId& id, uint32_t ptype, bool success, bool isIncomingConnection, const struct sockaddr_storage &raddr)
 {
 	uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
@@ -670,7 +670,7 @@ bool    pqipersongrp::notifyConnect(const RsPeerId& id, uint32_t ptype, bool suc
 	}
 	
 	if (mLinkMgr)
-		mLinkMgr->connectResult(id, success, type, raddr);
+		mLinkMgr->connectResult(id, success, isIncomingConnection, type, raddr);
 	
 	return (NULL != mLinkMgr);
 }

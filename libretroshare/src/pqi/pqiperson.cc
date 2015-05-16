@@ -310,9 +310,14 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 	case CONNECT_SUCCESS:
 
 		/* notify */
-                if (pqipg) {
-                        pqipg->notifyConnect(PeerId(), type, true, remote_peer_address);
-                }
+		if (pqipg)
+		{
+			pqissl *ssl = dynamic_cast<pqissl*>(ni);
+			if(ssl != NULL)
+				pqipg->notifyConnect(PeerId(), type, true, ssl->actAsServer(), remote_peer_address);
+			else
+				pqipg->notifyConnect(PeerId(), type, true, false, remote_peer_address);
+		}
 
 		if ((active) && (activepqi != pqi)) // already connected - trouble
 		{
@@ -382,7 +387,7 @@ int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const s
 		/* notify up */
 		if (pqipg)
 		{
-			pqipg->notifyConnect(PeerId(), type, false, remote_peer_address);
+			pqipg->notifyConnect(PeerId(), type, false, false, remote_peer_address);
 		}
 
 		return 1;
@@ -529,7 +534,7 @@ int	pqiperson::connect(uint32_t type, const struct sockaddr_storage &raddr,
 #endif
 		/* notify of fail! */
 
-		pqipg->notifyConnect(PeerId(), type, false, raddr);
+		pqipg->notifyConnect(PeerId(), type, false, false, raddr);
 
 		return 0;
 	}

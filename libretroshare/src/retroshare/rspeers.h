@@ -216,7 +216,8 @@ class RsPeerDetails
     ServicePermissionFlags service_perm_flags ;
 
     /* Network details (only valid if friend) */
-	uint32_t		state;
+	uint32_t	state;
+	bool		actAsServer;
 
 	std::string				connectAddr ; // current address if connected.
 	uint16_t				connectPort ;

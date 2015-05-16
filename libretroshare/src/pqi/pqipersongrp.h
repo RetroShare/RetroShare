@@ -88,7 +88,7 @@ virtual bool RecvRsRawItem(RsRawItem *item);
 int	tagHeartbeatRecvd(const RsPeerId& id);
 
 	/*** callback from children ****/
-bool    notifyConnect(const RsPeerId& id, uint32_t type, bool success, const struct sockaddr_storage &remote_peer_address);
+bool    notifyConnect(const RsPeerId& id, uint32_t type, bool success, bool isIncomingConnection, const struct sockaddr_storage &remote_peer_address);
 //bool    notifyConnect(std::string id, uint32_t type, bool success);
 
 	// tick interfaces.

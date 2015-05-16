@@ -101,7 +101,8 @@ class peerConnectState
 	bool dhtVisible;
 
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
-        time_t lastavailable;
+	bool actAsServer;
+	time_t lastavailable;
 	time_t lastattempt;
 
 	std::string name;
@@ -111,9 +112,9 @@ class peerConnectState
 	uint32_t    linkType;
 
 	uint32_t		source; /* most current source */
-	peerAddrInfo		dht;
-	peerAddrInfo		disc;
-	peerAddrInfo		peer;
+	peerAddrInfo	dht;
+	peerAddrInfo	disc;
+	peerAddrInfo	peer;
 
 	struct sockaddr_storage connectaddr; // current connection address. Can be local or external.
 
@@ -171,7 +172,7 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
 					std::string &domain_addr, uint16_t &domain_port) = 0;
 	
-virtual bool 	connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
+virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
 virtual bool	retryConnect(const RsPeerId &id) = 0;
 
 virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0;
@@ -229,7 +230,7 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth, 
 					std::string &domain_addr, uint16_t &domain_port);
 	
-virtual bool 	connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
+virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
 virtual bool	retryConnect(const RsPeerId &id);
 
 virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming);

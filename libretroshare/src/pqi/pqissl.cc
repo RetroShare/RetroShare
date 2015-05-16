@@ -367,6 +367,11 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 	}
 }
 
+bool pqissl::actAsServer()
+{
+	return (bool)ssl_connection->server;
+}
+
 /* returns ...
  * -1 if inactive.
  *  0 if connecting.

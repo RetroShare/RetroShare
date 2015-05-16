@@ -768,7 +768,7 @@ bool p3LinkMgrIMPL::connectAttempt(const RsPeerId &id, struct sockaddr_storage &
  *
  */
 
-bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address)
+bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address)
 {
 	bool doDhtAssist = false ;
 	bool updatePeerAddr = false;
@@ -845,6 +845,8 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, uint32_t fla
 			it->second.actions |= RS_PEER_CONNECTED;
 			it->second.connecttype = flags;
 			it->second.connectaddr = remote_peer_address;
+
+			it->second.actAsServer = isIncomingConnection;
 
 			updateLastContact = true; /* time of connect */
 

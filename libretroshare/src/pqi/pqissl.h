@@ -125,6 +125,7 @@ public:
 
 int	accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
 void getCryptoParams(RsPeerCryptoParams& params) ;
+bool actAsServer();
 
 
 protected:
