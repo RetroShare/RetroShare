@@ -22,6 +22,7 @@
 #include <rshare.h>
 #include <util/rsrandom.h>
 #include <retroshare/rsinit.h>
+#include <rsserver/rsaccounts.h>
 #include "GenCertDialog.h"
 #include <QAbstractEventDispatcher>
 #include <QFileDialog>
@@ -255,6 +256,7 @@ void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 void GenCertDialog::newGPGKeyGenUiSetup() {
 	bool adv_state = ui.adv_checkbox->isChecked();
 	bool hidden_state = ui.hidden_checkbox->isChecked();
+	ui.no_node_label->setVisible(false);
 
 	if (ui.new_gpg_key_checkbox->isChecked()) {
 		genNewGPGKey = true;
@@ -286,6 +288,13 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		//ui.keylength_comboBox->show();
 	} else {
 		bool havePGPkeys = (ui.genPGPuser->count() != 0)?true:false;
+		if (havePGPkeys) {
+			QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
+			if (!rsAccounts->selectAccountByString(data.toString().toStdString())) {
+				ui.no_node_label->setText(tr("No node is associated with the profile named") + " " + ui.genPGPuser->currentText() + ". " +tr("Please create a node for it by providing a node name."));
+				ui.no_node_label->setVisible(true);
+			}
+		}
 		genNewGPGKey = false;
 		ui.name_label->hide();
 		ui.name_input->hide();
