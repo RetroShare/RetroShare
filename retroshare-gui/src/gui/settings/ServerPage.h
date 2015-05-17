@@ -40,9 +40,9 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
-     virtual QString pageName() const { return tr("Network") ; }
-	 virtual QString helpText() const { return ""; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
+    virtual QString pageName() const { return tr("Network") ; }
+    virtual QString helpText() const { return ""; }
 
 public slots:
     void updateStatus();
@@ -52,20 +52,22 @@ private slots:
     void toggleUPnP();
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;
+    void clearKnownAddressList() ;
 
 private:
 
-	// Alternative Versions for HiddenNode Mode.
-	void loadHiddenNode();
-	void updateStatusHiddenNode();
-	void saveAddressesHiddenNode();
-	void updateTorOutProxyIndicator();
-
+    // Alternative Versions for HiddenNode Mode.
+    void loadHiddenNode();
+    void updateStatusHiddenNode();
+    void saveAddressesHiddenNode();
+    void updateTorOutProxyIndicator();
+    void updateLocInProxyIndicator();
+    void updateTorInProxyIndicator();
 
     Ui::ServerPage ui;
 
 
-	bool mIsHiddenNode;
+    bool mIsHiddenNode;
 };
 
 #endif // !SERVERPAGE_H

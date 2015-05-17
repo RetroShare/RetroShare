@@ -349,7 +349,8 @@ class RsPeers
 
 		virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 		virtual void allowServerIPDetermination(bool) = 0;
-		virtual bool getAllowServerIPDetermination() = 0 ;
+        virtual bool resetOwnExternalAddressList() = 0;
+        virtual bool getAllowServerIPDetermination() = 0 ;
 
 		/* Auth Stuff */
 		virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures) 			= 0;

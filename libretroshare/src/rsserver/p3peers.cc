@@ -725,7 +725,11 @@ void p3Peers::getIPServersList(std::list<std::string>& ip_servers)
 {
 	mNetMgr->getIPServersList(ip_servers) ;
 }
-void p3Peers::allowServerIPDetermination(bool b) 
+bool p3Peers::resetOwnExternalAddressList()
+{
+    return mPeerMgr->resetOwnExternalAddressList();
+}
+void p3Peers::allowServerIPDetermination(bool b)
 {
 	mNetMgr->setIPServersEnabled(b) ;
 }

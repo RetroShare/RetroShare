@@ -460,7 +460,19 @@ bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_storage &proxy_a
 	}
 	return true;
 }
-	
+
+bool p3PeerMgrIMPL::resetOwnExternalAddressList()
+{
+    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+    mOwnState.ipAddrs.mLocal.mAddrs.clear() ;
+    mOwnState.ipAddrs.mExt.mAddrs.clear() ;
+
+    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+    return true ;
+}
+
 bool p3PeerMgrIMPL::getProxyServerStatus(uint32_t& proxy_status)
 {
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/

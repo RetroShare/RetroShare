@@ -135,6 +135,8 @@ virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
 virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
 
+    virtual bool resetOwnExternalAddressList() = 0 ;
+
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) =0;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) =0;
 	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) =0;
@@ -237,7 +239,7 @@ virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
 virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign);
 
-	virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) ;
+    virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) ;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) ;
 	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) ;
 
@@ -263,6 +265,7 @@ virtual bool    updateCurrentAddress(const RsPeerId& id, const pqiIpAddress &add
 virtual bool    updateLastContact(const RsPeerId& id);
 virtual bool    updateAddressList(const RsPeerId& id, const pqiIpAddrSet &addrs);
 
+    virtual bool resetOwnExternalAddressList() ;
 
 		// THIS MUST ONLY BE CALLED BY NETMGR!!!!
 virtual bool    UpdateOwnAddress(const struct sockaddr_storage &local_addr, const struct sockaddr_storage &ext_addr);

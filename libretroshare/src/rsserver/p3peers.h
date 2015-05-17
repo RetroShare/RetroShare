@@ -101,6 +101,7 @@ virtual bool isProxyAddress(const sockaddr_storage&);
 virtual void getIPServersList(std::list<std::string>& ip_servers) ;
 virtual void allowServerIPDetermination(bool) ;
 virtual bool getAllowServerIPDetermination() ;
+    virtual bool resetOwnExternalAddressList() ;
 
 	/* Auth Stuff */
 // Get the invitation (GPG cert + local/ext address + SSL id for the given peer)

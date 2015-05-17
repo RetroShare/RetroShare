@@ -23,7 +23,7 @@
       <attribute name="title">
        <string>Network Configuration</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_9">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
@@ -317,11 +317,38 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Known / Previous IPs:</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Known / Previous IPs:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cleanKnownIPs_PB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QListWidget" name="ipAddressList">
@@ -471,6 +498,8 @@ behind a firewall or a VPN.</string>
       <zorder>label_7</zorder>
       <zorder></zorder>
       <zorder></zorder>
+      <zorder>cleanKnownIPs_PB</zorder>
+      <zorder>horizontalSpacer</zorder>
      </widget>
      <widget class="QWidget" name="TorTAB">
       <attribute name="title">
@@ -530,7 +559,7 @@ behind a firewall or a VPN.</string>
               <item>
                <widget class="QLabel" name="label_9">
                 <property name="text">
-                 <string>Outgoing Okay</string>
+                 <string>TOR outgoing Okay</string>
                 </property>
                </widget>
               </item>
@@ -577,16 +606,6 @@ are running a standard Node, so why not setup TOR? </string>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Local Address</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="torpage_localAddress"/>
-            </item>
             <item row="0" column="2">
              <widget class="QSpinBox" name="torpage_localPort">
               <property name="minimum">
@@ -600,7 +619,7 @@ are running a standard Node, so why not setup TOR? </string>
             <item row="0" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
-               <widget class="QLabel" name="iconlabel_tor_incoming">
+               <widget class="QLabel" name="iconlabel_local_incoming">
                 <property name="maximumSize">
                  <size>
                   <width>16</width>
@@ -618,21 +637,11 @@ are running a standard Node, so why not setup TOR? </string>
               <item>
                <widget class="QLabel" name="label_13">
                 <property name="text">
-                 <string>Incoming Okay</string>
+                 <string>Local incoming Okay</string>
                 </property>
                </widget>
               </item>
              </layout>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>Onion Address</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="torpage_onionAddress"/>
             </item>
             <item row="1" column="2">
              <widget class="QSpinBox" name="torpage_onionPort">
@@ -643,6 +652,61 @@ are running a standard Node, so why not setup TOR? </string>
                <number>65535</number>
               </property>
              </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Onion Address</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Local Address</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="torpage_onionAddress">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="torpage_localAddress">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLabel" name="iconlabel_tor_incoming">
+                <property name="maximumSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>TOR incoming  ok</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -752,6 +816,7 @@ If you have issues connecting over TOR check the TOR logs too.</string>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
+  <include location="gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>
