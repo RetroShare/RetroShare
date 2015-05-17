@@ -24,11 +24,20 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
-    <widget class="HeaderFrame" name="headerFrame" native="true"/>
+    <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item>
     <widget class="QFrame" name="frame">
@@ -45,6 +54,16 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>You can have one or more nicknames. They are used when you write in Chatlobbies, Forums and Channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -72,7 +91,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>PGP Associated ID</string>
+             <string>Linked to your profile</string>
             </property>
             <property name="icon">
              <iconset resource="../images.qrc">
@@ -386,7 +405,16 @@
       <property name="spacing">
        <number>9</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
        <number>9</number>
       </property>
       <item>
@@ -417,8 +445,9 @@
  <customwidgets>
   <customwidget>
    <class>HeaderFrame</class>
-   <extends>QWidget</extends>
+   <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

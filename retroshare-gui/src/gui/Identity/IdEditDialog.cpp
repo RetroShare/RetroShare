@@ -138,6 +138,9 @@ void IdEditDialog::setupNewId(bool pseudo)
 	ui->radioButton_Pseudo->setEnabled(true);
 
 	setAvatar(QPixmap());
+
+    // force resize of dialog, to hide empty space from the hidden recogn tags area
+    adjustSize();
 }
 
 void IdEditDialog::idTypeToggled(bool checked)
