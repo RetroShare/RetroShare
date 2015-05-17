@@ -64,6 +64,7 @@ protected slots:
 	void showLobby(QTreeWidgetItem *lobby_item) ;
 	void showBlankPage(ChatLobbyId id) ;
     void unsubscribeChatLobby(ChatLobbyId id) ;
+    void createIdentityAndSubscribe();
     void subscribeChatLobbyAs() ;
     void updateTypingStatus(ChatLobbyId id) ;
 	void resetLobbyTreeIcons() ;

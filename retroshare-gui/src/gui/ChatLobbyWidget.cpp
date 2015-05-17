@@ -15,6 +15,7 @@
 #include "util/QtVersion.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/Identity/IdEditDialog.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -244,14 +245,14 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
             uint32_t item_flags = item->data(COLUMN_DATA,ROLE_ID).toUInt() ;
 
-            if(own_identities.size() <= 1)
+            if(own_identities.empty())
+            {
+                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create a nickname and enter this lobby"), this, SLOT(createIdentityAndSubscribe()));
+            }
+            else if(own_identities.size() == 1)
             {
                 QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Enter this lobby"), this, SLOT(subscribeChatLobbyAs()));
-
-                if(own_identities.empty())
-                    action->setEnabled(false) ;
-                else
-                    action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+                action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
             }
             else
             {
@@ -636,6 +637,28 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 		ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
 }
 
+// this function is for the case where we don't have any identity yet
+void ChatLobbyWidget::createIdentityAndSubscribe()
+{
+    QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
+
+    if(!item)
+        return ;
+
+    ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+
+    IdEditDialog dlg(this);
+    dlg.setupNewId(false);
+    dlg.exec();
+    // fetch new id
+    std::list<RsGxsId> own_ids;
+    if(!rsIdentity->getOwnIds(own_ids) || own_ids.empty())
+        return;
+
+    if(rsMsgs->joinVisibleChatLobby(id,own_ids.front()))
+        ChatDialog::chatFriend(ChatId(id),true) ;
+}
+
 void ChatLobbyWidget::subscribeChatLobbyAs()
 {
     QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
@@ -689,7 +712,29 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
     RsGxsId gxs_id ;
 
-    if(rsMsgs->getDefaultIdentityForChatLobby(gxs_id) && !gxs_id.isNull() && rsMsgs->joinVisibleChatLobby(id,gxs_id))
+    std::list<RsGxsId> own_ids;
+    // not using rsMsgs->getDefaultIdentityForChatLobby(), to check if we have an identity
+    // to work around the case when the identity was deleted and is invalid
+    // (the chatservervice does not know if a default identity was deleted)
+    // only rsIdentity knows the truth at the moment!
+    if(!rsIdentity->getOwnIds(own_ids))
+        return;
+
+    // if there is no identity yet, show the dialog to create a new identity
+    if(own_ids.empty())
+    {
+        IdEditDialog dlg(this);
+        dlg.setupNewId(false);
+        dlg.exec();
+        // fetch new id
+        if(!rsIdentity->getOwnIds(own_ids) || own_ids.empty())
+            return;
+        gxs_id = own_ids.front();
+    }
+    else
+        rsMsgs->getDefaultIdentityForChatLobby(gxs_id);
+
+    if(rsMsgs->joinVisibleChatLobby(id,gxs_id))
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
 

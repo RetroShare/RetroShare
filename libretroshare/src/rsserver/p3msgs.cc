@@ -471,9 +471,9 @@ bool p3Msgs::setDefaultIdentityForChatLobby(const RsGxsId& nick)
 {
     return mChatSrv->setDefaultIdentityForChatLobby(nick) ;
 }
-bool p3Msgs::getDefaultIdentityForChatLobby(RsGxsId& nick_name)
+void p3Msgs::getDefaultIdentityForChatLobby(RsGxsId& nick_name)
 {
-    return mChatSrv->getDefaultIdentityForChatLobby(nick_name) ;
+    mChatSrv->getDefaultIdentityForChatLobby(nick_name) ;
 }
 
 bool p3Msgs::setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& nick)

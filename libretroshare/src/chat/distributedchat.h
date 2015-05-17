@@ -71,7 +71,7 @@ class DistributedChatService
         bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& nick) ;
         bool getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick) ;
         bool setDefaultIdentityForChatLobby(const RsGxsId& nick) ;
-        bool getDefaultIdentityForChatLobby(RsGxsId& nick) ;
+        void getDefaultIdentityForChatLobby(RsGxsId& nick) ;
 		void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
 		bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;

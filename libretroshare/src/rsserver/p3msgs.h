@@ -150,7 +150,7 @@ class p3Msgs: public RsMsgs
       virtual bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId&) ;
       virtual bool getIdentityForChatLobby(const ChatLobbyId&,RsGxsId& nick) ;
       virtual bool setDefaultIdentityForChatLobby(const RsGxsId&) ;
-      virtual bool getDefaultIdentityForChatLobby(RsGxsId& nick) ;
+      virtual void getDefaultIdentityForChatLobby(RsGxsId& nick) ;
     virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
       virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type) ;

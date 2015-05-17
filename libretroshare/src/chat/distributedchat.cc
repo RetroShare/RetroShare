@@ -1578,13 +1578,11 @@ bool DistributedChatService::setDefaultIdentityForChatLobby(const RsGxsId& nick)
 	triggerConfigSave() ;
 	return true ;
 }
-bool DistributedChatService::getDefaultIdentityForChatLobby(RsGxsId& nick)
+void DistributedChatService::getDefaultIdentityForChatLobby(RsGxsId& nick)
 {
     RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
     nick = locked_getDefaultIdentity() ;
-
-    return true ;
 }
 
 RsGxsId DistributedChatService::locked_getDefaultIdentity()

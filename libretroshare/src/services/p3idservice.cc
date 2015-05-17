@@ -439,7 +439,10 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds)
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
     if(!mOwnIdsLoaded)
+    {
+        std::cerr << "p3IdService::getOwnIds(): own identities are not loaded yet." << std::endl;
         return false ;
+    }
 
     ownIds = mOwnIds;
     return true ;
