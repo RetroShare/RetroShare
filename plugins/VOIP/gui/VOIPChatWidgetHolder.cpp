@@ -281,8 +281,8 @@ void VOIPChatWidgetHolder::addVideoData(const QString name, QByteArray* array)
 			button_map::iterator it = buttonMapTakeVideo.find(buttonName);
 			if (it == buttonMapTakeVideo.end()){
 				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
-				                        , tr("Video call from: %1").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
-				RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Take Video Call"));
+				                        , tr("%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+				RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Video Call"));
 				button->setToolTip(tr("Activate camera"));
 				button->setStyleSheet(QString("background-color: green;")
 				                      .append("border-style: outset;")
