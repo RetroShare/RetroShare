@@ -84,10 +84,12 @@ void RsThread::start()
 
     int err ;
 
+    // pthread_create is a memory barrier
+    // -> the new thread will see mIsRunning = true
+    mIsRunning = true ;
     if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data)))
     {
         mTid = tid;
-        mIsRunning = true ;
     }
     else
     {
