@@ -231,8 +231,10 @@ void ServerPage::load()
 	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
     ui.torpage_proxyPort -> setValue(proxyport);
 
-	updateTorOutProxyIndicator();
-    updateTorInProxyIndicator();
+    updateTorOutProxyIndicator();
+
+    if(mIsHiddenNode)
+        updateTorInProxyIndicator();
 }
 
 //void ServerPage::toggleTurtleRouting(bool b)
@@ -303,7 +305,9 @@ void ServerPage::updateStatus()
         ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
     // check for TOR
-	updateTorOutProxyIndicator();
+    updateTorOutProxyIndicator();
+
+    if(mIsHiddenNode)
     updateTorInProxyIndicator();
 }
 
@@ -546,7 +550,9 @@ void ServerPage::loadHiddenNode()
 	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
 	ui.torpage_proxyPort -> setValue(proxyport);
 
-	updateTorOutProxyIndicator();
+    updateTorOutProxyIndicator();
+
+if(mIsHiddenNode)
     updateTorInProxyIndicator();
 
 	QString expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
@@ -613,7 +619,8 @@ void ServerPage::updateStatusHiddenNode()
 
 #endif
 
-	updateTorOutProxyIndicator();
+    updateTorOutProxyIndicator();
+    if(mIsHiddenNode)
     updateTorInProxyIndicator();
 }
 
@@ -711,20 +718,27 @@ void ServerPage::updateLocInProxyIndicator()
 }
 void ServerPage::updateTorInProxyIndicator()
 {
+    // need to find a proper way to do this
+#ifdef SUSPENDED
+    if(!mIsHiddenNode)
+        return ;
+
     QTcpSocket socket ;
 
     QNetworkProxy proxy ;
 
-    proxy.setType(QNetworkProxy::Socks5Proxy);
+    proxy.setType(QNetworkProxy::DefaultProxy);
     proxy.setHostName(ui.torpage_proxyAddress->text());
     proxy.setPort(ui.torpage_proxyPort->text().toInt());
+    proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
-    std::cerr << "Setting proxy hostname+port to " << ui.torpage_proxyAddress->text().toStdString() << ":" << ui.torpage_proxyPort->text().toInt() << std::endl;
+    std::cerr << "Setting proxy hostname+port to " << std::dec << ui.torpage_proxyAddress->text().toStdString() << ":" << ui.torpage_proxyPort->text().toInt() << std::endl;
     socket.setProxy(proxy) ;
 
     std::cerr << "Connecting to " << ui.torpage_onionAddress->text().toStdString() << ":" << ui.torpage_onionPort->text().toInt() << std::endl;
 
-    socket.connectToHost(ui.torpage_onionAddress->text(),ui.torpage_onionPort->text().toInt(),QAbstractSocket::ReadOnly);
+    socket.connectToHost(ui.torpage_onionAddress->text(),ui.torpage_onionPort->text().toInt());
+    //socket.connectToHost("www.showip.com",80);
 
     if(socket.waitForConnected(5000))
     {
@@ -739,6 +753,7 @@ void ServerPage::updateTorInProxyIndicator()
     std::cerr << "Error: " << socket.errorString().toStdString() << std::endl;
         ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_tor_incoming->setToolTip(tr("TOR proxy is not enabled or broken.\nAre you running a TOR hidden service?\nCheck your ports!")) ;
-	}
+    }
+#endif
 }
 
