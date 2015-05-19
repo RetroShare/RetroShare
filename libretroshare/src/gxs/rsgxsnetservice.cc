@@ -1873,8 +1873,16 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
     RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[grpId];
 
+    std::set<RsPeerId>::size_type oldSuppliersCount = gnsr.suppliers.size();
+    uint32_t oldVisibleCount = gnsr.max_visible_count;
+
     gnsr.suppliers.insert(pid) ;
     gnsr.max_visible_count = std::max(gnsr.max_visible_count, mcount) ;
+
+    if (oldVisibleCount != gnsr.max_visible_count || oldSuppliersCount != gnsr.suppliers.size())
+    {
+        mObserver->notifyChangedGroupStats(grpId);
+    }
 
 #ifdef NXS_NET_DEBUG
     std::cerr << "  grpId = " << grpId << std::endl;
@@ -2975,10 +2983,6 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 		return;
 
 	RS_STACK_MUTEX(mNxsMutex) ;
-
-    // We do that early, so as to get info about who sends data about which group,
-    // even when the group doesn't need update.
-    mGroupNetworkStats[item->grpId].suppliers.insert(item->PeerId()) ;
 
     const RsPeerId& peer = item->PeerId();
 

@@ -1484,6 +1484,15 @@ void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 	mNotifications.push_back(gc);
 }
 
+void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
+{
+	RS_STACK_MUTEX(mGenMtx);
+
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
+	gc->mGrpIdList.push_back(grpId);
+	mNotifications.push_back(gc);
+}
+
 void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 {
 

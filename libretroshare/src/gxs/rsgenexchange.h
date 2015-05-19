@@ -156,6 +156,11 @@ public:
      */
     virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
 
+    /*!
+     * @param grpId group id
+     */
+    virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId);
+
     /** E: Observer implementation **/
 
     /*!

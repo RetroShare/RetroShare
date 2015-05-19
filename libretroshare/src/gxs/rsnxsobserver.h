@@ -53,6 +53,11 @@ public:
      * @param grpId group id
      */
     virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId) = 0;
+
+    /*!
+     * @param grpId group id
+     */
+    virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId) = 0;
 };
 
 #endif // RSNXSOBSERVER_H
