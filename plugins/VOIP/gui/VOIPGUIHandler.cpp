@@ -65,7 +65,6 @@ void VOIPGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 				VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
 
 				if (acwh) {
-					for (unsigned int i = 0; i < chunks.size(); ++i) {
 						for (unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++)
 						{
 							QByteArray qb(reinterpret_cast<const char *>(chunks[chunkIndex].data),chunks[chunkIndex].size);
@@ -77,7 +76,6 @@ void VOIPGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 							else
 								std::cerr << "VOIPGUIHandler: Unknown data type received. type=" << chunks[chunkIndex].type << std::endl;
 						}
-					}
 					break;
 				}
 			}
