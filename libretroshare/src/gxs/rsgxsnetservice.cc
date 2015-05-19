@@ -37,8 +37,8 @@
 /***
  * #define NXS_NET_DEBUG	1
  ***/
-//#define NXS_NET_DEBUG	1
-//#define NXS_NET_DEBUG_0	1
+// #define NXS_NET_DEBUG	1
+// #define NXS_NET_DEBUG_0	1
 // #define NXS_NET_DEBUG_1	1
 
 #define GIXS_CUT_OFF 0
@@ -3336,7 +3336,7 @@ void RsGxsNetService::sharePublishKeysPending()
 
         for(; kit != kit_end && !publish_key_found; ++kit)
         {
-            publish_key_found = (kit->second.keyFlags == (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL));
+            publish_key_found = (kit->second.keyFlags == (RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_FULL));
             publishKey = kit->second ;
         }
 
@@ -3411,7 +3411,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	 std::cerr << "  Key received: " << std::endl;
 
 	 bool admin = (item->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)   && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
-	 bool publi = (item->key.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE) && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+     bool publi = (item->key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
 
      std::cerr << "    Key id = " << item->key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->key.endTS << std::endl;
 
@@ -3430,7 +3430,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
          return ;
      }
 
-     if((it->second.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE) && (it->second.keyFlags & RSTLV_KEY_TYPE_FULL))
+     if((it->second.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (it->second.keyFlags & RSTLV_KEY_TYPE_FULL))
      {
          std::cerr << "   (EE) Publish key already present in database. Discarding message." << std::endl;
 			return ;

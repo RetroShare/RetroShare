@@ -202,7 +202,7 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvS
 
 bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& key, const RsTlvKeySignature& signature)
 {
-	RSA *rsakey = RSAPublicKey_dup(::extractPublicKey(key)) ;
+    RSA *rsakey = (key.keyFlags & RSTLV_KEY_TYPE_FULL)? RSAPublicKey_dup(::extractPrivateKey(key)) : RSAPublicKey_dup(::extractPublicKey(key)) ;
 
 	if(!rsakey)
 	{
@@ -228,7 +228,7 @@ bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const R
 	return signOk;
 }
 
-bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
+bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key)
 {
     #ifdef GXS_SECURITY_DEBUG
             std::cerr << "GxsSecurity::validateNxsMsg()";
@@ -244,8 +244,7 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
     //        /********************* check signature *******************/
 
             /* check signature timeperiod */
-            if ((msgMeta.mPublishTs < key.startTS) ||
-                    (msgMeta.mPublishTs > key.endTS))
+            if ((msgMeta.mPublishTs < key.startTS) || (key.endTS != 0 && msgMeta.mPublishTs > key.endTS))
             {
     #ifdef GXS_SECURITY_DEBUG
                     std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
@@ -267,7 +266,8 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
     #endif
 
             /* extract admin key */
-            RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+
+            RSA *rsakey = (key.keyFlags & RSTLV_KEY_TYPE_FULL)?  (d2i_RSAPrivateKey(NULL, &(keyptr), keylen)) : (d2i_RSAPublicKey(NULL, &(keyptr), keylen));
 
             if (!rsakey)
             {
@@ -535,7 +535,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 }
 
 
-bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
+bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key)
 {
 #ifdef GXS_SECURITY_DEBUG
         std::cerr << "GxsSecurity::validateNxsGrp()";
@@ -551,8 +551,7 @@ bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSe
         /********************* check signature *******************/
 
         /* check signature timeperiod */
-        if ((grpMeta.mPublishTs < key.startTS) ||
-                (grpMeta.mPublishTs > key.endTS))
+        if ((grpMeta.mPublishTs < key.startTS) || (key.endTS != 0 && grpMeta.mPublishTs > key.endTS))
         {
 #ifdef GXS_SECURITY_DEBUG
                 std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
@@ -574,7 +573,7 @@ bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSe
 #endif
 
         /* extract admin key */
-        RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+        RSA *rsakey =  (key.keyFlags & RSTLV_KEY_TYPE_FULL)? d2i_RSAPrivateKey(NULL, &(keyptr), keylen): d2i_RSAPublicKey(NULL, &(keyptr), keylen);
 
         if (!rsakey)
         {

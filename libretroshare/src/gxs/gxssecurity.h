@@ -84,7 +84,7 @@ class GxsSecurity
 		 * @param key the public key to use to check signature
 		 * @return true if group valid false otherwise
 		 */
-		static bool validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
+        static bool validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key);
 
 		/*!
 		 * Validate a msg's signature using the given public key
@@ -93,7 +93,7 @@ class GxsSecurity
 		 * @param key the public key to use to check signature
 		 * @return false if verfication of signature is not passed
 		 */
-		static bool validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
+        static bool validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key);
 
 
 		/*!

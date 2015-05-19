@@ -36,15 +36,15 @@
 #include <map>
 
 const uint32_t RSTLV_KEY_TYPE_MASK              = 0x000f;
-const uint32_t RSTLV_KEY_DISTRIB_MASK           = 0x00f0;
 const uint32_t RSTLV_KEY_TYPE_PUBLIC_ONLY       = 0x0001;
 const uint32_t RSTLV_KEY_TYPE_FULL              = 0x0002;
-const uint32_t RSTLV_KEY_TYPE_SHARED            = 0x0004;
-const uint32_t RSTLV_KEY_DISTRIB_PUBLIC         = 0x0010;
-const uint32_t RSTLV_KEY_DISTRIB_PRIVATE        = 0x0020;
+
+const uint32_t RSTLV_KEY_DISTRIB_PUBLIC_deprecated = 0x0010;// was used as PUBLISH flag. Probably a typo.
+
+const uint32_t RSTLV_KEY_DISTRIB_PUBLISH        = 0x0020;
 const uint32_t RSTLV_KEY_DISTRIB_ADMIN          = 0x0040;
 const uint32_t RSTLV_KEY_DISTRIB_IDENTITY       = 0x0080;
-
+const uint32_t RSTLV_KEY_DISTRIB_MASK           = 0x00f0;
 
 class RsTlvSecurityKey: public RsTlvItem
 {

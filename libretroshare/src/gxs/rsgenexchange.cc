@@ -340,15 +340,15 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvS
     if(genPublishKeys)
     {
         /* set publish keys */
-        RsTlvSecurityKey pubKey, privPubKey;
-		  GxsSecurity::generateKeyPair(pubKey,privPubKey) ;
+        RsTlvSecurityKey publishKey, privPublishKey;
+    GxsSecurity::generateKeyPair(publishKey,privPublishKey) ;
 
         // for now all public
-        pubKey.keyFlags = RSTLV_KEY_DISTRIB_PUBLIC | RSTLV_KEY_TYPE_PUBLIC_ONLY;
-        privPubKey.keyFlags = RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL;
+        publishKey.keyFlags = RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_PUBLIC_ONLY;
+        privPublishKey.keyFlags = RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_FULL;
 
-        publickeySet.keys[pubKey.keyId] = pubKey;
-        privatekeySet.keys[privPubKey.keyId] = privPubKey;
+        publickeySet.keys[publishKey.keyId] = publishKey;
+        privatekeySet.keys[privPublishKey.keyId] = privPublishKey;
     }
 }
 
@@ -388,6 +388,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
         {
             privAdminKey = key;
             privKeyFound = true;
+        break ;
         }
     }
 
@@ -594,30 +595,30 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     {
         // public and shared is publish key
         RsTlvSecurityKeySet& keys = grpMeta.keys;
-        RsTlvSecurityKey* pubKey;
+        RsTlvSecurityKey* publishKey;
 
         std::map<RsGxsId, RsTlvSecurityKey>::iterator mit =
                         keys.keys.begin(), mit_end = keys.keys.end();
-        bool pub_key_found = false;
+        bool publish_key_found = false;
         for(; mit != mit_end; ++mit)
         {
 
-                pub_key_found = mit->second.keyFlags == (RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_FULL);
-                if(pub_key_found)
+                publish_key_found = mit->second.keyFlags == (RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_FULL);
+                if(publish_key_found)
                         break;
         }
 
-        if (pub_key_found)
+        if (publish_key_found)
         {
             // private publish key
-            pubKey = &(mit->second);
+            publishKey = &(mit->second);
 
-            RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+            RsTlvKeySignature publishSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
 
-            publishSignSuccess = GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, *pubKey, pubSign);
+            publishSignSuccess = GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, *publishKey, publishSign);
 
             //place signature in msg meta
-            signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH] = pubSign;
+            signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH] = publishSign;
         }else
         {
         	std::cerr << "RsGenExchange::createMsgSignatures()";
@@ -811,15 +812,22 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
 
         RsGxsId keyId;
         for(; mit != keys.end() ; ++mit)
-        {
-            RsTlvSecurityKey& key = mit->second;
+    {
+        RsTlvSecurityKey& key = mit->second;
 
-            if((key.keyFlags & RSTLV_KEY_DISTRIB_PUBLIC) &&
-               (key.keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY))
-            {
-                keyId = key.keyId;
-            }
+        if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLIC_deprecated)
+        {
+            keyId = key.keyId;
+            std::cerr << "WARNING: old style publish key with flags " << key.keyFlags << std::endl;
+            std::cerr << "         this cannot be fixed, but RS will deal with it." << std::endl;
+            break ;
         }
+        if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) // we might have the private key, but we still should be able to check the signature
+        {
+            keyId = key.keyId;
+            break;
+        }
+    }
 
         if(!keyId.isNull())
         {
@@ -2119,7 +2127,7 @@ bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
                     if(key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
                         adminFound = true;
 
-                    if(key.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE)
+                    if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH)
                         publishFound = true;
 
                 }
