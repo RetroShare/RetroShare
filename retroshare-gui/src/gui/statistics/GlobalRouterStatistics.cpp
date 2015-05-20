@@ -142,7 +142,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     // 	Msg id				Local origin				Destination				Time           Status
     //
     QPixmap tmppixmap(maxWidth, maxHeight);
-    tmppixmap.fill(this, 0, 0);
+	tmppixmap.fill(Qt::transparent);
     setFixedHeight(maxHeight);
 
     QPainter painter(&tmppixmap);

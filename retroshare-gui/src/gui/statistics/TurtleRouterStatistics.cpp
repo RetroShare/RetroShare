@@ -279,7 +279,7 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	static const int celly = 10+4 ;
 
 	QPixmap tmppixmap(maxWidth, maxHeight);
-	tmppixmap.fill(this, 0, 0);
+	tmppixmap.fill(Qt::transparent);
 	setFixedHeight(maxHeight);
 
 	QPainter painter(&tmppixmap);
