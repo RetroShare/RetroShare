@@ -100,6 +100,10 @@ RshareSettings::RshareSettings()
 
 void RshareSettings::initSettings()
 { 
+#ifdef UBUNTU
+	// use GTK as default style on ubuntu
+	setDefault(SETTING_STYLE, "GTK+");
+#else
 #if defined(Q_WS_MAC)
 	setDefault(SETTING_STYLE, "macintosh (aqua)");
 #else
@@ -117,6 +121,7 @@ void RshareSettings::initSettings()
 		else
 			setDefault(SETTING_STYLE, "plastique");
 	}
+#endif
 #endif
 
 	setDefault(SETTING_LANGUAGE, LanguageSupport::defaultLanguageCode());
@@ -157,12 +162,7 @@ void RshareSettings::setLanguageCode(QString languageCode)
 /** Gets the interface style key (e.g., "windows", "motif", etc.) */
 QString RshareSettings::getInterfaceStyle()
 {
-    // use GTK as default style on ubuntu
-#ifdef UBUNTU
-    return value(SETTING_STYLE,QString("GTK+")).toString();
-#else
-    return value(SETTING_STYLE,QString("Cleanlooks")).toString();
-#endif
+	return value(SETTING_STYLE).toString();
 }
 
 /** Sets the interface style key. */
