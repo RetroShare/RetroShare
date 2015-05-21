@@ -276,6 +276,7 @@ H        [ ] get rid of the old cache system (remove CacheStrapper, CacheSource,
       GUI
 H        [ ] enable circles for channels/posted/forums
 E        [ ] enable people dialog
+E        [ ] fix RSButtonOnText::eventFilter, and fix all places where RSButtonOnText gets deleted
 
       GXS
 H        [ ] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.

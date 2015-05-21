@@ -6,6 +6,7 @@
 #include <QToolTip>
 #include <QUrl>
 #include <QUuid>
+#include <iostream>
 
 RSButtonOnText::RSButtonOnText(QWidget *parent)
   : QPushButton(parent)
@@ -81,6 +82,12 @@ RSButtonOnText::~RSButtonOnText()
 
 bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 {
+    // comment electron:
+    // the guard is here, because someone deletes this object in callbacks(slots) called from here
+    // the QPointer can detect this
+    // but this is bad practice, because it hides the root cause for the problem,
+    // which is the deletion of objects in their own signals
+    // TODO: better use the Qt function deleteLater
 	QPointer<QAbstractButton> guard(this);
 	QPoint point;
 	if (isEventForThis(obj, event, point)) {
@@ -94,7 +101,7 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 			                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,0);
 			QPushButton::mousePressEvent(mouseEvent);
 			delete mouseEvent;
-			_pressed = true;
+            if (guard) _pressed = true;
 			//if (guard) emit pressed();
 			if (guard) updateImage();
 		}
@@ -103,7 +110,7 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 			                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,0);
 			QPushButton::mouseReleaseEvent(mouseEvent);
 			delete mouseEvent;
-			_pressed = false;
+            if (guard) _pressed = false;
 			//if (guard) emit released();
 			//if (guard) emit clicked();
 			//if (guard) if (isCheckable()) emit clicked(QPushButton::isChecked());
@@ -119,7 +126,7 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 				//QPushButton::setDown(true);
 				if (guard) emit mouseEnter();
 			}
-			_mouseOver = true;
+            if (guard) _mouseOver = true;
 			if (guard) updateImage();
 		}
 	} else {
@@ -144,6 +151,9 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 			}
 		}
 	}
+
+    if(!guard)
+        std::cerr << "BIG FAT WARNING from RSButtonOnText::eventFilter(): i was deleted in my own event handler. This is bad practice. Please make a patch and use deleteLater to delay deletion." << std::endl;
 
 	// pass the event on to the parent class
 	return QWidget::eventFilter(obj, event);
