@@ -41,7 +41,7 @@ To be done
             needs the same space as the permission matrix (happens on windows + linux; can be "fixed" by closing and reopen the setting window)
             (from sehraf)
 
-0015 [ ]    The new statistics windows is really nice and everybody should see it -> add a link to it somewhere in settings 
+0015 [X]    The new statistics windows is really nice and everybody should see it -> add a link to it somewhere in settings 
             (or wherever suitable) (from sehraf) cyril: there's a menu in the bottom right corner ofthe main window to get it. 
             Otherwise, we could merge it as tabs in options->server, but I don't really like this option.
 

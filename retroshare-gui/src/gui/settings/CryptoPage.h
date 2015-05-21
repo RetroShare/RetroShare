@@ -51,6 +51,7 @@ class CryptoPage : public ConfigPage
 		void profilemanager();
       bool fileSave();
       bool fileSaveAs();
+      void showStats();
 
   private:
       QString fileName;

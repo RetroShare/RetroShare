@@ -32,6 +32,7 @@
 #include "util/DateTime.h"
 #include <gui/RetroShareLink.h>
 #include <gui/profile/ProfileManager.h>
+#include <gui/statistics/StatisticsWindow.h>
 
 #include <retroshare/rspeers.h> //for rsPeers variable
 #include <retroshare/rsdisc.h> //for rsPeers variable
@@ -47,6 +48,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
   connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
+  connect(ui.showStats_PB, SIGNAL(clicked()), this, SLOT(showStats()));
 
   // hide profile manager as it causes bugs when generating a new profile.
   //ui.profile_Button->hide() ;
@@ -163,4 +165,9 @@ bool CryptoPage::fileSaveAs()
         return fileSave();
     }
     return false;
+}
+
+void CryptoPage::showStats()
+{
+    StatisticsWindow::showYourself();
 }
