@@ -54,6 +54,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
   connect( ui.testIncomingTor_PB, SIGNAL( clicked( ) ), this, SLOT( updateTorInProxyIndicator() ) );
 
+  manager = NULL ;
+
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);
@@ -709,7 +711,8 @@ void ServerPage::updateTorInProxyIndicator()
     if(!mIsHiddenNode)
         return ;
 
-    static QNetworkAccessManager *manager = new  QNetworkAccessManager(this);
+    if(manager == NULL)
+        manager = new  QNetworkAccessManager(this);
 
     QNetworkProxy proxy ;
 

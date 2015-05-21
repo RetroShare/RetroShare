@@ -27,6 +27,7 @@
 #include "RsAutoUpdatePage.h"
 
 class QNetworkReply;
+class QNetworkAccessManager;
 
 class ServerPage: public ConfigPage
 {
@@ -68,6 +69,7 @@ private:
 
     Ui::ServerPage ui;
 
+    QNetworkAccessManager *manager ;
 
     bool mIsHiddenNode;
 };
