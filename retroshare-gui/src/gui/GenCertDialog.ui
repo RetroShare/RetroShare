@@ -46,7 +46,8 @@
       </font>
      </property>
      <property name="text">
-      <string/>
+      <string>You can create a new profile with this form.
+Alternatively you can use an existing profile. Just uncheck "Create a new profile"</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -223,34 +224,25 @@
      </item>
     </layout>
    </item>
-   <item>
-    <widget class="QLabel" name="label_hiddenaddr2">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare's Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="scaledContents">
-      <bool>false</bool>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
+   
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QLabel" name="genPGPuserlabel">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>120</width>
+           <height>32</height>
+          </size>
+	 </property>
          <property name="text">
           <string>Use profile</string>
          </property>
@@ -258,6 +250,18 @@
        </item>
        <item>
         <widget class="QLabel" name="name_label">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>120</width>
+           <height>32</height>
+          </size>
+	 </property>
          <property name="text">
           <string>Name</string>
          </property>
@@ -301,13 +305,6 @@
         <widget class="QLabel" name="hiddenaddr_label">
          <property name="text">
           <string>TOR address</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="keylength_label">
-         <property name="text">
-          <string>PGP key length</string>
          </property>
         </widget>
        </item>
@@ -462,6 +459,61 @@ anonymous, you can use a fake email.</string>
          </item>
         </layout>
        </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+
+
+   <item>
+    <widget class="QLabel" name="label_hiddenaddr2">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare's Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_1">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_1">
+       <item>
+        <widget class="QLabel" name="keylength_label">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>120</width>
+           <height>32</height>
+          </size>
+	 </property>
+         <property name="text">
+          <string>PGP key length</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="QComboBox" name="keylength_comboBox"/>
        </item>

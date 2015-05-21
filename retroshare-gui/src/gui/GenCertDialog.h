@@ -51,6 +51,7 @@ private:
 	Ui::GenCertDialog ui;
 
 	bool genNewGPGKey;
+	bool haveGPGKeys;
 	bool mOnlyGenerateIdentity;
 
 	QTimer *entropy_timer ;

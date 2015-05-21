@@ -196,8 +196,11 @@ void GenCertDialog::init()
 
 	std::list<RsPgpId> pgpIds;
 	std::list<RsPgpId>::iterator it;
-	bool foundGPGKeys = false;
+	haveGPGKeys = false;
+#ifdef TO_REMOVE
+	/* replace with true/false below */
 	if (!mOnlyGenerateIdentity) {
+#endif
 		if (RsAccounts::GetPGPLogins(pgpIds)) {
 			for(it = pgpIds.begin(); it != pgpIds.end(); ++it)
 			{
@@ -207,13 +210,15 @@ void GenCertDialog::init()
 				std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
 				QString gid = QString::fromStdString( (*it).toStdString()).right(8) ;
 				ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
-				foundGPGKeys = true;
+				haveGPGKeys = true;
 			}
 		}
+#ifdef TO_REMOVE
 	}
-
-	if (foundGPGKeys) {
+#endif
+	if (haveGPGKeys) {
 		ui.no_gpg_key_label->hide();
+		ui.header_label->show();
 		ui.new_gpg_key_checkbox->setChecked(false);
 		setWindowTitle(tr("Create new node"));
         ui.genButton2->setText(tr("Generate new node"));
@@ -221,6 +226,7 @@ void GenCertDialog::init()
 		genNewGPGKey = false;
 	} else {
 		ui.no_gpg_key_label->setVisible(!mOnlyGenerateIdentity);
+		ui.header_label->setVisible(mOnlyGenerateIdentity);
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->setEnabled(true);
 		setWindowTitle(tr("Create new profile"));
@@ -229,19 +235,22 @@ void GenCertDialog::init()
 		genNewGPGKey = true;
 	}
 
+#ifdef TO_REMOVE
 	QString text; /*= ui.header_label->text() + "\n";*/
 	text += tr("You can create a new profile with this form.");
 
 	if (mOnlyGenerateIdentity) {
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->hide();
+#endif
 		ui.genprofileinfo_label->hide();
+#ifdef TO_REMOVE
 	} else {
 		text += "\n";
 		text += tr("Alternatively you can use an existing profile. Just uncheck \"Create a new profile\"");
 	}
 	ui.header_label->setText(text);
-
+#endif
 	newGPGKeyGenUiSetup();
     //updateUiSetup();
 }
@@ -275,24 +284,28 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		setWindowTitle(tr("Create new profile"));
         ui.genButton2->setText(tr("Generate new profile and node"));
 		ui.headerFrame->setHeaderText(tr("Create a new profile and node"));
-		ui.no_gpg_key_label->setText(tr("Please fill out this form to create a profile and node."));
+		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
 		ui.genButton2->setVisible(true);
 		ui.adv_checkbox->setVisible(true);
 		ui.node_label->setVisible(true);
 		ui.node_input->setVisible(true);
 		ui.entropy_label->setVisible(true);
 		ui.entropy_bar->setVisible(true);
-		ui.genprofileinfo_label->hide();
-		ui.header_label->show();
+		ui.genprofileinfo_label->setVisible(false);
+		if (!mOnlyGenerateIdentity) {
+			ui.header_label->setVisible(haveGPGKeys);
+		}
 		//ui.keylength_label->show();
 		//ui.keylength_comboBox->show();
 	} else {
-		bool havePGPkeys = (ui.genPGPuser->count() != 0)?true:false;
-		if (havePGPkeys) {
+		//haveGPGKeys = (ui.genPGPuser->count() != 0)?true:false;
+		if (haveGPGKeys) {
 			QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
 			if (!rsAccounts->selectAccountByString(data.toString().toStdString())) {
 				ui.no_node_label->setText(tr("No node is associated with the profile named") + " " + ui.genPGPuser->currentText() + ". " +tr("Please create a node for it by providing a node name."));
 				ui.no_node_label->setVisible(true);
+			} else {
+				ui.genprofileinfo_label->show();
 			}
 		}
 		genNewGPGKey = false;
@@ -307,23 +320,23 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.genPGPuserlabel->show();
 		ui.genPGPuser->show();
 		ui.importIdentity_PB->setVisible(!mOnlyGenerateIdentity);
-		ui.exportIdentity_PB->setVisible(havePGPkeys);
-		ui.exportIdentity_PB->setEnabled(havePGPkeys);
+		ui.exportIdentity_PB->setVisible(haveGPGKeys);
+		ui.exportIdentity_PB->setEnabled(haveGPGKeys);
 		setWindowTitle(tr("Create new node"));
         ui.genButton2->setText(tr("Generate new node"));
 		ui.headerFrame->setHeaderText(tr("Create a new node"));
-		ui.no_gpg_key_label->setText(tr("No valid profile found!\nPlease import one first."));
-		ui.genButton2->setVisible(havePGPkeys);
-		ui.adv_checkbox->setVisible(havePGPkeys);
-		ui.adv_checkbox->setChecked(havePGPkeys && adv_state);
-		ui.genPGPuser->setVisible(havePGPkeys);
-		ui.genPGPuserlabel->setVisible(havePGPkeys);
-		ui.node_label->setVisible(havePGPkeys);
-		ui.node_input->setVisible(havePGPkeys);
-		ui.entropy_label->setVisible(havePGPkeys);
-		ui.entropy_bar->setVisible(havePGPkeys);
-		ui.genprofileinfo_label->show();
-		ui.header_label->hide();
+		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it."));
+		ui.genButton2->setVisible(haveGPGKeys);
+		ui.adv_checkbox->setVisible(haveGPGKeys);
+		ui.adv_checkbox->setChecked(haveGPGKeys && adv_state);
+		ui.genPGPuser->setVisible(haveGPGKeys);
+		ui.genPGPuserlabel->setVisible(haveGPGKeys);
+		ui.node_label->setVisible(haveGPGKeys);
+		ui.node_input->setVisible(haveGPGKeys);
+		ui.entropy_label->setVisible(haveGPGKeys);
+		ui.entropy_bar->setVisible(haveGPGKeys);
+		//ui.genprofileinfo_label->show();
+		ui.header_label->setVisible(false);
 		ui.keylength_label->hide();
 		ui.keylength_comboBox->hide();
 	}
