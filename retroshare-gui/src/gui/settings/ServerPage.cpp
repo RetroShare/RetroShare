@@ -30,8 +30,12 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
 
+#include <QMovie>
 #include <QTcpSocket>
 #include <QNetworkProxy>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
 #include <QTimer>
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
@@ -48,8 +52,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
   connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
-  //connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
-  //connect( ui._turtle_enabled_CB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTurtleRouting(bool) ) );
+  connect( ui.testIncomingTor_PB, SIGNAL( clicked( ) ), this, SLOT( updateTorInProxyIndicator() ) );
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -62,12 +65,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	bool b = rsPeers->getAllowServerIPDetermination() ;
 	ui.allowIpDeterminationCB->setChecked(b) ;
 	ui.IPServersLV->setEnabled(b) ;
-
-    //ui.allowTunnelConnectionCB->hide();
-    //this->toggleTunnelConnection(false);
-
-    //b = rsPeers->getAllowTunnelConnection() ;
-    //ui.allowTunnelConnectionCB->setChecked(b) ;
 
 	std::list<std::string> ip_servers ;
 	rsPeers->getIPServersList(ip_servers) ;
@@ -232,9 +229,6 @@ void ServerPage::load()
     ui.torpage_proxyPort -> setValue(proxyport);
 
     updateTorOutProxyIndicator();
-
-    if(mIsHiddenNode)
-        updateTorInProxyIndicator();
 }
 
 //void ServerPage::toggleTurtleRouting(bool b)
@@ -306,9 +300,6 @@ void ServerPage::updateStatus()
 
     // check for TOR
     updateTorOutProxyIndicator();
-
-    if(mIsHiddenNode)
-    updateTorInProxyIndicator();
 }
 
 void ServerPage::toggleUPnP()
@@ -552,9 +543,6 @@ void ServerPage::loadHiddenNode()
 
     updateTorOutProxyIndicator();
 
-if(mIsHiddenNode)
-    updateTorInProxyIndicator();
-
 	QString expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
 	expected += "HiddenServicePort ";
 	expected += QString::number(detail.hiddenNodePort);
@@ -620,8 +608,6 @@ void ServerPage::updateStatusHiddenNode()
 #endif
 
     updateTorOutProxyIndicator();
-    if(mIsHiddenNode)
-    updateTorInProxyIndicator();
 }
 
 void ServerPage::saveAddressesHiddenNode()
@@ -707,53 +693,70 @@ void ServerPage::updateLocInProxyIndicator()
     if(socket.waitForConnected(1000))
     {
         socket.disconnectFromHost();
-        ui.iconlabel_local_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-        ui.iconlabel_local_incoming->setToolTip(tr("You are reachable through TOR.")) ;
+        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through TOR.")) ;
     }
     else
     {
-        ui.iconlabel_local_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_local_incoming->setToolTip(tr("TOR proxy is not enabled or broken.\nAre you running a TOR hidden service?\nCheck your ports!")) ;
+        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+        ui.iconlabel_tor_incoming->setToolTip(tr("TOR proxy is not enabled or broken.\nAre you running a TOR hidden service?\nCheck your ports!")) ;
     }
 }
 void ServerPage::updateTorInProxyIndicator()
 {
     // need to find a proper way to do this
-#ifdef SUSPENDED
+
     if(!mIsHiddenNode)
         return ;
 
-    QTcpSocket socket ;
+    static QNetworkAccessManager *manager = new  QNetworkAccessManager(this);
 
     QNetworkProxy proxy ;
 
-    proxy.setType(QNetworkProxy::DefaultProxy);
+    proxy.setType(QNetworkProxy::Socks5Proxy);
     proxy.setHostName(ui.torpage_proxyAddress->text());
     proxy.setPort(ui.torpage_proxyPort->text().toInt());
     proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
+        //ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+        //ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
+        QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
+        ui.iconlabel_tor_incoming->setMovie(movie);
+    movie->start() ;
+
+    QNetworkProxy::setApplicationProxy(proxy) ;
+
+                 QUrl url("https://"+ui.torpage_onionAddress->text() + ":" + ui.torpage_onionPort->text()) ;
+
     std::cerr << "Setting proxy hostname+port to " << std::dec << ui.torpage_proxyAddress->text().toStdString() << ":" << ui.torpage_proxyPort->text().toInt() << std::endl;
-    socket.setProxy(proxy) ;
+    std::cerr << "Connecting to " << url.toString().toStdString() << std::endl;
 
-    std::cerr << "Connecting to " << ui.torpage_onionAddress->text().toStdString() << ":" << ui.torpage_onionPort->text().toInt() << std::endl;
+    connect(manager, SIGNAL(finished(QNetworkReply*)),this,SLOT(handleNetworkReply(QNetworkReply*))) ;
+    manager->get( QNetworkRequest(url) ) ;
 
-    socket.connectToHost(ui.torpage_onionAddress->text(),ui.torpage_onionPort->text().toInt());
-    //socket.connectToHost("www.showip.com",80);
+    QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy) ;
+}
 
-    if(socket.waitForConnected(5000))
+void ServerPage::handleNetworkReply(QNetworkReply *reply)
+{
+    int error = reply->error() ;
+
+    if(reply->isOpen() &&  error == QNetworkReply::SslHandshakeFailedError)
     {
         std::cerr <<"Connected!" << std::endl;
-		socket.disconnectFromHost();
         ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
         ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through TOR.")) ;
-	}
-	else
-	{
+        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_OK)) ;
+    }
+    else
+    {
         std::cerr <<"Failed!" << std::endl;
-    std::cerr << "Error: " << socket.errorString().toStdString() << std::endl;
+
+        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_tor_incoming->setToolTip(tr("TOR proxy is not enabled or broken.\nAre you running a TOR hidden service?\nCheck your ports!")) ;
     }
-#endif
+
+    reply->close();
 }
 

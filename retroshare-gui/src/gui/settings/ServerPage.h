@@ -26,6 +26,7 @@
 #include "ui_ServerPage.h"
 #include "RsAutoUpdatePage.h"
 
+class QNetworkReply;
 
 class ServerPage: public ConfigPage
 {
@@ -53,6 +54,8 @@ private slots:
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;
     void clearKnownAddressList() ;
+    void handleNetworkReply(QNetworkReply *reply);
+    void updateTorInProxyIndicator();
 
 private:
 
@@ -62,7 +65,6 @@ private:
     void saveAddressesHiddenNode();
     void updateTorOutProxyIndicator();
     void updateLocInProxyIndicator();
-    void updateTorInProxyIndicator();
 
     Ui::ServerPage ui;
 

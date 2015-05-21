@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -495,11 +495,8 @@ behind a firewall or a VPN.</string>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
-      <zorder>label_7</zorder>
       <zorder></zorder>
       <zorder></zorder>
-      <zorder>cleanKnownIPs_PB</zorder>
-      <zorder>horizontalSpacer</zorder>
      </widget>
      <widget class="QWidget" name="TorTAB">
       <attribute name="title">
@@ -619,25 +616,12 @@ are running a standard Node, so why not setup TOR? </string>
             <item row="0" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
-               <widget class="QLabel" name="iconlabel_local_incoming">
-                <property name="maximumSize">
-                 <size>
-                  <width>16</width>
-                  <height>16</height>
-                 </size>
+               <widget class="QPushButton" name="testIncomingTor_PB">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button fakes a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &amp;quot;security warning&amp;quot; in the NewsFeed if you enabled it, from your local host IP (127.0.0.1).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
-                 <string/>
-                </property>
-                <property name="pixmap">
-                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_13">
-                <property name="text">
-                 <string>Local incoming Okay</string>
+                 <string>Test</string>
                 </property>
                </widget>
               </item>
@@ -816,7 +800,6 @@ If you have issues connecting over TOR check the TOR logs too.</string>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
-  <include location="gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>
