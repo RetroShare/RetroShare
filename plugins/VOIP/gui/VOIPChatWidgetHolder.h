@@ -56,6 +56,7 @@ private slots:
 	void toggleAudioCapture();
 	void toggleVideoCapture();
 	void startVideoCapture();
+	void startAudioCapture();
 	void hangupCall() ;
 	void botMouseEnter();
 	void botMouseLeave();

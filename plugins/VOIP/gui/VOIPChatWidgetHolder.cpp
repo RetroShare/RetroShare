@@ -194,6 +194,12 @@ void VOIPChatWidgetHolder::hangupCall()
 	hangupButton->hide();
 }
 
+void VOIPChatWidgetHolder::startAudioCapture()
+{
+	audioCaptureToggleButton->setChecked(true);
+	toggleAudioCapture();
+}
+
 void VOIPChatWidgetHolder::toggleAudioCapture()
 {
     if (audioCaptureToggleButton->isChecked()) {
@@ -218,6 +224,13 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
         
         if (mChatWidget) {
          mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Call is started..."), ChatWidget::MSGTYPE_SYSTEM);
+        }
+        
+        button_map::iterator it = buttonMapTakeVideo.begin();
+        while (it != buttonMapTakeVideo.end()) {
+        RSButtonOnText *button = it.value();
+        delete button;
+        it = buttonMapTakeVideo.erase(it);
         }
         
     } else {
@@ -284,11 +297,13 @@ void VOIPChatWidgetHolder::addVideoData(const QString name, QByteArray* array)
 				                        , tr("%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
 				RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Video Call"));
 				button->setToolTip(tr("Activate camera"));
-				button->setStyleSheet(QString("background-color: green;")
-				                      .append("border-style: outset;")
-				                      .append("border-width: 5px;")
-				                      .append("border-radius: 5px;")
-				                      .append("border-color: beige;")
+				button->setStyleSheet(QString("border: 1px solid #199909;")
+                              .append("font-size: 12pt;  color: white;")
+                              .append("min-width: 128px; min-height: 24px;")
+				                      .append("border-radius: 6px;")
+				                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+                                        "stop: 0 #22c70d, stop: 1 #116a06);")
+
 				                      );
 
 				button->updateImage();
@@ -307,12 +322,14 @@ void VOIPChatWidgetHolder::botMouseEnter()
 {
 	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
 	if (source){
-		source->setStyleSheet(QString("background-color: red;")
-		                      .append("border-style: outset;")
-		                      .append("border-width: 5px;")
-		                      .append("border-radius: 5px;")
-		                      .append("border-color: beige;")
-		                      );
+		source->setStyleSheet(QString("border: 1px solid #333333;")
+                          .append("font-size: 12pt; color: white;")
+                          .append("min-width: 128px; min-height: 24px;")
+                          .append("border-radius: 6px;")
+                          .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+                                  "stop: 0 #444444, stop: 1 #222222);")
+
+                          );
 		//source->setDown(true);
 	}
 }
@@ -321,12 +338,14 @@ void VOIPChatWidgetHolder::botMouseLeave()
 {
 	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
 	if (source){
-		source->setStyleSheet(QString("background-color: green;")
-		                      .append("border-style: outset;")
-		                      .append("border-width: 5px;")
-		                      .append("border-radius: 5px;")
-		                      .append("border-color: beige;")
-		                      );
+		source->setStyleSheet(QString("border: 1px solid #199909;")
+                          .append("font-size: 12pt; color: white;")
+                          .append("min-width: 128px; min-height: 24px;")
+				                  .append("border-radius: 6px;")
+				                  .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+                                   "stop: 0 #22c70d, stop: 1 #116a06);")
+
+				                   );
 		//source->setDown(false);
 	}
 }
@@ -352,6 +371,35 @@ void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
             anim->setEndValue(1);
             anim->setDuration(400);
             anim->start();
+        }
+        
+        if (mChatWidget) {
+        QString buttonName = name;
+        if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
+        button_map::iterator it = buttonMapTakeVideo.find(buttonName);
+        if (it == buttonMapTakeVideo.end()){
+				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+				                        , tr("%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+				RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Call"));
+				button->setToolTip(tr("Activate audio"));
+				button->setStyleSheet(QString("border: 1px solid #199909;")
+				                      .append("font-size: 12pt;  color: white;")
+				                      .append("min-width: 128px; min-height: 24px;")
+				                      .append("border-radius: 6px;")
+				                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+                                        "stop: 0 #22c70d, stop: 1 #116a06);")
+
+				                      );
+                                       
+
+				button->updateImage();
+
+				connect(button,SIGNAL(clicked()),this,SLOT(startAudioCapture()));
+				connect(button,SIGNAL(mouseEnter()),this,SLOT(botMouseEnter()));
+				connect(button,SIGNAL(mouseLeave()),this,SLOT(botMouseLeave()));
+
+				buttonMapTakeVideo.insert(buttonName, button);
+        }
         }
 
 //        soundManager->play(VOIP_SOUND_INCOMING_CALL);
