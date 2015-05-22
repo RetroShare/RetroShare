@@ -177,31 +177,50 @@ pthread_t  createThread(RsThread &thread);
 
 class RsThread
 {
-public:
+    public:
     RsThread();
     virtual ~RsThread() {}
 
     void start() ;
-    void shutdown();
-    void fullstop();
-    void join() { fullstop() ; }	// used for compatibility
     bool isRunning();
 
 protected:
-    void run() ; /* called once the thread is started. Should be overloaded by subclasses. */
+    virtual void runloop() =0; /* called once the thread is started. Should be overloaded by subclasses. */
 
-private:
-    static void *rsthread_init(void*) ;
-
-    pthread_t mTid;
-    RsMutex   mMutex;
-
-    sem_t mShouldStopSemaphore;
     sem_t mHasStoppedSemaphore;
+
+    static void *rsthread_init(void*) ;
+    RsMutex   mMutex;
+    pthread_t mTid;
 };
 
+class RsTickingThread: public RsThread
+{
+public:
+    RsTickingThread();
 
-class RsQueueThread: public RsThread
+    void shutdown();
+    void fullstop();
+    void join() { fullstop() ; }	// used for compatibility
+
+    virtual void data_tick() =0;
+
+private:
+    virtual void runloop() ; /* called once the thread is started. Should be overloaded by subclasses. */
+
+    sem_t mShouldStopSemaphore;
+};
+
+class RsSingleJobThread: public RsThread
+{
+public:
+    virtual void run() =0;
+
+protected:
+    virtual void runloop() { run(); } /* called once the thread is started. Should be overloaded by subclasses. */
+};
+
+class RsQueueThread: public RsTickingThread
 {
 public:
 

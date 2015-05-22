@@ -43,60 +43,55 @@
 ftExtraList::ftExtraList()
 	:p3Config(), extMutex("p3Config")
 {
-	return;
+    cleanup = 0;
+    return;
 }
 
 
-void ftExtraList::run()
+void ftExtraList::data_tick()
 {
-	bool todo = false;
-	time_t cleanup = 0;
-	time_t now = 0;
+    bool todo = false;
+    time_t now = time(NULL);
 
-	while (isRunning())
-	{
 #ifdef  DEBUG_ELIST
-		//std::cerr << "ftExtraList::run() Iteration";
-		//std::cerr << std::endl;
+    //std::cerr << "ftExtraList::run() Iteration";
+    //std::cerr << std::endl;
 #endif
 
-		now = time(NULL);
+    {
+        RsStackMutex stack(extMutex);
 
-		{
-			RsStackMutex stack(extMutex);
+        todo = (mToHash.size() > 0);
+    }
 
-			todo = (mToHash.size() > 0);
-		}
-
-		if (todo)
-		{
-			/* Hash a file */
-			hashAFile();
+    if (todo)
+    {
+        /* Hash a file */
+        hashAFile();
 
 #ifdef WIN32
-			Sleep(1);
+        Sleep(1);
 #else
-			/* microsleep */
-			usleep(10);
+        /* microsleep */
+        usleep(10);
 #endif
-		}
-		else
-		{
-			/* cleanup */
-			if (cleanup < now)
-			{
-				cleanupOldFiles();
-				cleanup = now + CLEANUP_PERIOD;
-			}
+    }
+    else
+    {
+        /* cleanup */
+        if (cleanup < now)
+        {
+            cleanupOldFiles();
+            cleanup = now + CLEANUP_PERIOD;
+        }
 
-			/* sleep */
+        /* sleep */
 #ifdef WIN32
-			Sleep(1000);
+        Sleep(1000);
 #else
-			sleep(1);
+        sleep(1);
 #endif
-		}
-	}
+    }
 }
 
 

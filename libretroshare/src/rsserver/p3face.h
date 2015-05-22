@@ -74,7 +74,7 @@ class RsPluginManager;
 //int InitRetroShare(int argc, char **argv, RsInit *config);
 //int LoadCertificates(RsInit *config);
 
-class RsServer: public RsControl, public RsThread
+class RsServer: public RsControl, public RsTickingThread
 {
 	public:
 		/****************************************/
@@ -88,7 +88,7 @@ class RsServer: public RsControl, public RsThread
 		virtual ~RsServer();
 
 		/* Thread Fn: Run the Core */
-		virtual void run();
+        virtual void data_tick();
 
 		/* locking stuff */
 		void    lockRsCore() 
@@ -120,7 +120,7 @@ class RsServer: public RsControl, public RsThread
 		/* Config */
 
         virtual void    ConfigFinalSave( );
-        virtual void	startServiceThread(RsThread *t) ;
+        virtual void	startServiceThread(RsTickingThread *t) ;
 
 		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
@@ -162,7 +162,7 @@ class RsServer: public RsControl, public RsThread
 
         // This list contains all threaded services. It will be used to shut them down properly.
 
-        std::list<RsThread*> mRegisteredServiceThreads ;
+        std::list<RsTickingThread*> mRegisteredServiceThreads ;
 
         /* GXS */
 //		p3Wiki *mWiki;
@@ -184,6 +184,16 @@ class RsServer: public RsControl, public RsThread
 
 		// Worker Data.....
 
+    int mMin ;
+    int mLoop ;
+    int mLastts ;
+    long mLastSec ;
+    double mAvgTickRate ;
+    double mTimeDelta ;
+
+    static const double minTimeDelta = 0.1; // 25;
+    static const double maxTimeDelta = 0.5;
+    static const double kickLimit = 0.15;
 };
 
 /* Helper function to convert windows paths

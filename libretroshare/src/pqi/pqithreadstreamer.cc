@@ -53,7 +53,7 @@ int	pqithreadstreamer::tick()
 	return 0;
 }
 
-int	pqithreadstreamer::data_tick()
+void	pqithreadstreamer::data_tick()
 {
     uint32_t recv_timeout = 0;
     uint32_t sleep_period = 0;
@@ -68,7 +68,7 @@ int	pqithreadstreamer::data_tick()
     if (!isactive)
     {
         usleep(DEFAULT_STREAMER_IDLE_SLEEP);
-        return 0;
+        return ;
     }
 
     {
@@ -92,7 +92,6 @@ int	pqithreadstreamer::data_tick()
     {
         usleep(sleep_period);
     }
-    return 1;
 }
 
 

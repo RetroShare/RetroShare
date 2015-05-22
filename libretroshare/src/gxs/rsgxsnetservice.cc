@@ -73,6 +73,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
 {
 	addSerialType(new RsNxsSerialiser(mServType));
 	mOwnId = mNetMgr->getOwnId();
+    mUpdateCounter = 0;
 }
 
 RsGxsNetService::~RsGxsNetService()
@@ -1149,23 +1150,20 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
         return false;
 }
 
-void RsGxsNetService::run()
+void RsGxsNetService::data_tick()
 {
-    double timeDelta = 0.5;
-    int updateCounter = 0;
+    static const double timeDelta = 0.5;
 
-    while(isRunning())
-    {
         //Start waiting as nothing to do in runup
         usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
 
-        if(updateCounter >= 20)
+        if(mUpdateCounter >= 20)
         {
             updateServerSyncTS();
-            updateCounter = 0;
+            mUpdateCounter = 0;
         }
         else
-            updateCounter++;
+            mUpdateCounter++;
 
         // process active transactions
         processTransactions();
@@ -1177,8 +1175,6 @@ void RsGxsNetService::run()
         runVetting();
 
         processExplicitGroupRequests();
-
-    }
 }
 
 void RsGxsNetService::updateServerSyncTS()

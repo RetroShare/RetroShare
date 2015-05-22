@@ -96,7 +96,7 @@ public:
     virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
 };
 
-class AuthGPG: public p3Config, public RsThread, public PGPHandler
+class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 {
 	public:
 
@@ -274,7 +274,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		bool    printOwnKeys_locked();
 
 		/* own thread */
-		virtual void run();
+        virtual void data_tick();
 
 	private:
 
@@ -295,7 +295,8 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 
 		RsPgpId mOwnGpgId;
 		bool gpgKeySelected;
-		bool _force_sync_database ;
+        bool _force_sync_database ;
+        uint32_t mCount ;
 
 		std::list<AuthGPGService*> services ;
 

@@ -103,7 +103,7 @@ class HashCache
  * FileIndexMonitor
  *****************************************************************************************/
 
-class FileIndexMonitor: public CacheSource, public RsThread
+class FileIndexMonitor: public CacheSource, public RsTickingThread
 {
 	public:
         FileIndexMonitor(CacheStrapper *cs, std::string cachedir, const RsPeerId& pid, const std::string& config_dir);
@@ -131,7 +131,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* the FileIndexMonitor inner workings */
 		//virtual void 	run(std::string& currentJob); /* overloaded from RsThread */
 		//void 	updateCycle(std::string& currentJob);
-		virtual void 	run(); /* overloaded from RsThread */
+        virtual void 	data_tick(); /* overloaded from RsThread */
 		void 	updateCycle();
 
 		// Interface for browsing dir hirarchy

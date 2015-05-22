@@ -19,8 +19,7 @@ class ApiServer;
 // - handle password callback
 // - confirm plugin loading
 // - shutdown retroshare
-class RsControlModule: public ResourceRouter, NotifyClient,
-        private RsThread
+class RsControlModule: public ResourceRouter, NotifyClient, private RsSingleJobThread
 {
 public:
     // ApiServer will be called once RS is started, to load additional api modules

@@ -43,8 +43,7 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
 
 RsControlModule::~RsControlModule()
 {
-    if(isRunning())
-        join();
+//        join();
 }
 
 bool RsControlModule::processShouldExit()

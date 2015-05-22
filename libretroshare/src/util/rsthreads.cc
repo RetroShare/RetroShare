@@ -56,11 +56,33 @@ void *RsThread::rsthread_init(void* p)
   {
     return NULL;
   }
-  thread -> run();
+    // tell the OS to free the thread resources when this function exits
+    // it is a replacement for pthread_join()
+    pthread_detach(pthread_self());
+
+  thread -> runloop();
   return NULL;
 }
+RsThread::RsThread () : mMutex("RsThread")
+{
+    sem_init(&mHasStoppedSemaphore,0,1) ;
 
-void RsThread::shutdown()
+#ifdef WINDOWS_SYS
+    memset (&mTid, 0, sizeof(mTid));
+#else
+    mTid = 0;
+#endif
+}
+bool RsThread::isRunning()
+{
+    // do we need a mutex for this ?
+    int sval =0;
+    sem_getvalue(&mHasStoppedSemaphore,&sval) ;
+
+    return !sval ;
+}
+
+void RsTickingThread::shutdown()
 {
 #ifdef DEBUG_THREADS
     std::cerr << "pqithreadstreamer::stop()" << std::endl;
@@ -83,7 +105,7 @@ void RsThread::shutdown()
     sem_post(&mShouldStopSemaphore) ;
 }
 
-void RsThread::fullstop()
+void RsTickingThread::fullstop()
 {
     shutdown() ;
 
@@ -107,7 +129,6 @@ void RsThread::start()
     std::cerr << "  initing should_stop=0" << std::endl;
     std::cerr << "  initing has_stopped=1" << std::endl;
 #endif
-    sem_init(&mShouldStopSemaphore,0,0) ;
     sem_init(&mHasStoppedSemaphore,0,0) ;
 
     int err ;
@@ -125,37 +146,19 @@ void RsThread::start()
 }
 
 
-RsThread::RsThread () : mMutex("RsThread")
+
+RsTickingThread::RsTickingThread ()
 {
     sem_init(&mShouldStopSemaphore,0,0) ;
-    sem_init(&mHasStoppedSemaphore,0,1) ;
-
-#ifdef WINDOWS_SYS
-    memset (&mTid, 0, sizeof(mTid));
-#else
-    mTid = 0;
-#endif
 }
 
-bool RsThread::isRunning()
-{
-    // do we need a mutex for this ?
-    int sval =0;
-    sem_getvalue(&mHasStoppedSemaphore,&sval) ;
-
-    return !sval ;
-}
-
-void RsThread::run()
+void RsTickingThread::runloop()
 {
 #ifdef DEBUG_THREADS
     std::cerr << "pqithreadstream::run()";
     std::cerr << std::endl;
 #endif
-
-    // tell the OS to free the thread resources when this function exits
-    // it is a replacement for pthread_join()
-    pthread_detach(pthread_self());
+    sem_init(&mShouldStopSemaphore,0,0) ;
 
     while(1)
     {

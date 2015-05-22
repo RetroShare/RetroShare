@@ -61,7 +61,7 @@ inline RsGxsGrpMsgIdPair getMsgIdPair(RsGxsMsgItem& msg)
  * Does message clean up based on individual group expirations first
  * if avialable. If not then deletion s
  */
-class RsGxsMessageCleanUp : public RsThread
+class RsGxsMessageCleanUp //: public RsThread
 {
 public:
 
@@ -84,7 +84,7 @@ public:
 	/*!
 	 * TODO: Rather than manual progressions consider running through a thread
 	 */
-	void run(){}
+    //virtual void data_tick(){}
 
 private:
 
@@ -97,7 +97,7 @@ private:
  * Checks the integrity message and groups
  * in rsDataService using computed hash
  */
-class RsGxsIntegrityCheck : public RsThread
+class RsGxsIntegrityCheck : public RsSingleJobThread
 {
 
 	enum CheckState { CheckStart, CheckChecking };

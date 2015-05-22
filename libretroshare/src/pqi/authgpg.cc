@@ -130,6 +130,7 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
 {
 	_force_sync_database = false ;
 	start();
+    int mCount = 0;
 }
 
 /* This function is called when retroshare is first started
@@ -178,30 +179,26 @@ int AuthGPG::GPGInit(const RsPgpId &ownId)
 {
 }
 
-void AuthGPG::run()
+void AuthGPG::data_tick()
 {
-    int count = 0;
+    usleep(100 * 1000); //100 msec
 
-	while (isRunning()) {
-		usleep(100 * 1000); //100 msec
+    /// every 100 milliseconds
+    processServices();
 
-		/// every 100 milliseconds
-        processServices();
+    /// every ten seconds
+    if (++mCount >= 100 || _force_sync_database) {
+        RsStackMutex stack(gpgMtxService); ///******* LOCKED ******
 
-		/// every ten seconds
-		if (++count >= 100 || _force_sync_database) {
-			RsStackMutex stack(gpgMtxService); ///******* LOCKED ******
-
-			/// The call does multiple things at once:
-			/// 	- checks whether the keyring has changed in memory
-			/// 	- checks whether the keyring has changed on disk.
-			/// 	- merges/updates according to status.
-			///
-			  PGPHandler::syncDatabase() ;
-			  count = 0;
-			  _force_sync_database = false ;
-		}//if (++count >= 100 || _force_sync_database)
-	}//while (isRunning())
+        /// The call does multiple things at once:
+        /// 	- checks whether the keyring has changed in memory
+        /// 	- checks whether the keyring has changed on disk.
+        /// 	- merges/updates according to status.
+        ///
+        PGPHandler::syncDatabase() ;
+        mCount = 0;
+        _force_sync_database = false ;
+    }//if (++count >= 100 || _force_sync_database)
 }
 
 void AuthGPG::processServices()

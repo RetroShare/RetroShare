@@ -8,7 +8,7 @@ namespace resource_api {
 // - account selection
 // - login
 // - shutdown
-class TerminalApiClient: private RsThread{
+class TerminalApiClient: private RsSingleJobThread{
 public:
     // zero setup: create an instance of this class and destroy it when not needed anymore
     // no need to call start or stop or something

@@ -146,16 +146,13 @@ RsGenExchange::~RsGenExchange()
 
 }
 
-void RsGenExchange::run()
+void RsGenExchange::data_tick()
 {
 
-	double timeDelta = 0.1; // slow tick in sec
+    static const double timeDelta = 0.1; // slow tick in sec
 
-	while(isRunning()) {
         tick();
-
-		usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
-	}//while(isRunning())
+    usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
 }
 
 void RsGenExchange::tick()
@@ -238,7 +235,6 @@ void RsGenExchange::tick()
 					mNotifications.push_back(c);
 				}
 
-				mIntegrityCheck->join();
 				delete mIntegrityCheck;
 				mIntegrityCheck = NULL;
 				mLastCheck = time(NULL);

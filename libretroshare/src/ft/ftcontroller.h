@@ -113,7 +113,7 @@ class ftPendingRequest
 };
 
 
-class ftController: public CacheTransfer, public RsThread, public pqiServiceMonitor, public p3Config
+class ftController: public CacheTransfer, public RsTickingThread, public pqiServiceMonitor, public p3Config
 {
 	public:
 
@@ -126,7 +126,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiServiceMoni
 		bool    activate();
 		bool 	isActiveAndNoPending();
 
-		virtual void run();
+        virtual void data_tick();
 
 		/***************************************************************/
 		/********************** Controller Access **********************/
@@ -243,6 +243,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiServiceMoni
 		p3ServiceControl *mServiceCtrl;
 		uint32_t mFtServiceId;
 
+        uint32_t cnt ;
 		RsMutex ctrlMutex;
 
         std::map<RsFileHash, ftFileControl*> mCompleted;

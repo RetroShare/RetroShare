@@ -109,7 +109,7 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgItem*> > GxsMsgRelatedDa
 
 class RsGixs;
 
-class RsGenExchange : public RsNxsObserver, public RsThread, public RsGxsIface
+class RsGenExchange : public RsNxsObserver, public RsTickingThread, public RsGxsIface
 {
 public:
 
@@ -182,7 +182,7 @@ public:
      */
     RsTokenService* getTokenService();
 
-    void run();
+    virtual void data_tick();
 
     /*!
      * Policy bit pattern portion

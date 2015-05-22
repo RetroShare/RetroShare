@@ -71,7 +71,7 @@ void    RsServer::ConfigFinalSave()
 	mConfigMgr->completeConfiguration();
 }
 
-void RsServer::startServiceThread(RsThread *t)
+void RsServer::startServiceThread(RsTickingThread *t)
 {
     t->start() ;
     mRegisteredServiceThreads.push_back(t) ;
@@ -87,13 +87,13 @@ void RsServer::rsGlobalShutDown()
 
 	mNetMgr->shutdown(); /* Handles UPnP */
 
-	join();
+    fullstop() ;
 
-	// kill all registered service threads
+    // kill all registered service threads
 
-    for(std::list<RsThread*>::iterator it= mRegisteredServiceThreads.begin();it!=mRegisteredServiceThreads.end();++it)
+    for(std::list<RsTickingThread*>::iterator it= mRegisteredServiceThreads.begin();it!=mRegisteredServiceThreads.end();++it)
 	{
-		(*it)->join() ;
+        (*it)->fullstop() ;
 	}
 // #ifdef RS_ENABLE_GXS
 // 		// We should automate this.

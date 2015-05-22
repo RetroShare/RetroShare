@@ -93,7 +93,7 @@ TerminalApiClient::TerminalApiClient(ApiServer *api):
 
 TerminalApiClient::~TerminalApiClient()
 {
-    join();
+    //join();
 }
 
 void TerminalApiClient::run()

@@ -37,7 +37,7 @@ enum FeedFormat { FORMAT_RSS, FORMAT_RDF, FORMAT_ATOM };
  *********/
 
 p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId) :
-	RsThread(), mFeedReader(feedReader), mType(type), mFeedId(feedId)
+    RsTickingThread(), mFeedReader(feedReader), mType(type), mFeedId(feedId)
 {
 }
 
@@ -49,9 +49,8 @@ p3FeedReaderThread::~p3FeedReaderThread()
 /****************************** Thread *************************************/
 /***************************************************************************/
 
-void p3FeedReaderThread::run()
+void p3FeedReaderThread::data_tick()
 {
-	while (isRunning()) {
 #ifdef WIN32
 		Sleep(1000);
 #else
@@ -148,7 +147,6 @@ void p3FeedReaderThread::run()
 			}
 			break;
 		}
-	}
 }
 
 /***************************************************************************/

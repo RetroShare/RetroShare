@@ -61,8 +61,8 @@ FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, cons
 		mForceCheck(false), mInCheck(false), hashCache(config_dir+"/" + "file_cache"),useHashCache(true)
 
 {
-	updatePeriod = 15 * 60; // 15 minutes
-	reference_time = 0 ;
+    updatePeriod = 15 * 60; // 15 minutes
+    reference_time = 0 ;
 }
 
 bool FileIndexMonitor::autoCheckEnabled() const
@@ -622,15 +622,13 @@ void 	FileIndexMonitor::setPeriod(int period)
 #endif
 }
 
-void 	FileIndexMonitor::run()
+void 	FileIndexMonitor::data_tick()
 {
-	if(autoCheckEnabled())
-		updateCycle();
+    if(autoCheckEnabled())
+            updateCycle();
 
-	while(isRunning())
-	{
-		int i=0 ;
-		for(;;++i)
+        int i=0 ;
+        for(;;++i)
 		{
 			if(!isRunning()) 
 				return;
@@ -651,7 +649,6 @@ void 	FileIndexMonitor::run()
 
 		if(i < abs(updatePeriod) || autoCheckEnabled())
 			updateCycle();
-	}
 }
 
 void 	FileIndexMonitor::updateCycle()

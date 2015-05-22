@@ -168,7 +168,7 @@ public:
     /*!
      * Processes transactions and job queue
      */
-    void run();
+    virtual void data_tick();
 private:
 
     /*!
@@ -477,6 +477,7 @@ private:
     uint32_t mLastKeyPublishTs;
 
     const uint32_t mSYNC_PERIOD;
+    int mUpdateCounter ;
 
     RsGcxs* mCircles;
     RsGixsReputation* mReputations;

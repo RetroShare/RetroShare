@@ -157,7 +157,7 @@ virtual bool	send(RsRawItem *item)
 };
 
 
-class p3ThreadedService: public p3Service, public RsThread
+class p3ThreadedService: public p3Service, public RsTickingThread
 {
 	protected:
 

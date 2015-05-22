@@ -115,6 +115,7 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceCont
 	_max_active_downloads = 5 ; // default queue size
 	_min_prioritized_transfers = 3 ;
 	/* TODO */
+    cnt = 0 ;
 }
 
 void ftController::setTurtleRouter(p3turtle *pt) { mTurtle = pt ; }
@@ -209,14 +210,10 @@ void ftController::removeFileSource(const RsFileHash& hash,const RsPeerId& peer_
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
-void ftController::run()
+void ftController::data_tick()
 {
-
 	/* check the queues */
-	uint32_t cnt = 0 ;
 
-	while(isRunning())
-	{
 		//Waiting 1 sec before start
 		usleep(1*1000*1000); // 1 sec
 
@@ -276,8 +273,6 @@ void ftController::run()
 
 		if(cnt++ % 10 == 0)
 			checkDownloadQueue() ;
-	}
-
 }
 
 void ftController::searchForDirectSources()
