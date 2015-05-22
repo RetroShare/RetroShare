@@ -60,6 +60,41 @@ void *RsThread::rsthread_init(void* p)
   return NULL;
 }
 
+void RsThread::shutdown()
+{
+#ifdef DEBUG_THREADS
+    std::cerr << "pqithreadstreamer::stop()" << std::endl;
+#endif
+
+    int sval =0;
+    sem_getvalue(&mHasStoppedSemaphore,&sval) ;
+
+    if(sval > 0)
+    {
+#ifdef DEBUG_THREADS
+        std::cerr << "  thread not running. Quit." << std::endl;
+#endif
+        return ;
+    }
+
+#ifdef DEBUG_THREADS
+    std::cerr << "  calling stop" << std::endl;
+#endif
+    sem_post(&mShouldStopSemaphore) ;
+}
+
+void RsThread::fullstop()
+{
+    shutdown() ;
+
+#ifdef DEBUG_THREADS
+    std::cerr << "  waiting stop" << std::endl;
+#endif
+    sem_wait(&mHasStoppedSemaphore) ;
+#ifdef DEBUG_THREADS
+    std::cerr << "  finished!" << std::endl;
+#endif
+}
 void RsThread::start()
 {
     pthread_t tid;
@@ -67,41 +102,33 @@ void RsThread::start()
 
     RS_STACK_MUTEX(mMutex) ;
 
-#if 0
-    int ret;
-    ret = pthread_attr_init(&tattr);
-    if (doDetached)
-    {
-        ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_DETACHED);
-    }
-    else
-    {
-        ret = pthread_attr_setdetachstate(&tattr,PTHREAD_CREATE_JOINABLE);
-    }
-
-    pthread_create(&tid, &tattr, &rsthread_init, data);
+#ifdef DEBUG_THREADS
+    std::cerr << "pqithreadstreamer::run()" << std::endl;
+    std::cerr << "  initing should_stop=0" << std::endl;
+    std::cerr << "  initing has_stopped=1" << std::endl;
 #endif
+    sem_init(&mShouldStopSemaphore,0,0) ;
+    sem_init(&mHasStoppedSemaphore,0,0) ;
 
     int err ;
 
     // pthread_create is a memory barrier
-    // -> the new thread will see mIsRunning = true
-    mIsRunning = true ;
+    // -> the new thread will see mIsRunning() = true
+
     if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data)))
-    {
         mTid = tid;
-    }
     else
     {
         std::cerr << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
-        mIsRunning = false ;
+    sem_init(&mHasStoppedSemaphore,0,1) ;
     }
 }
 
 
 RsThread::RsThread () : mMutex("RsThread")
 {
-    mIsRunning = false;
+    sem_init(&mShouldStopSemaphore,0,0) ;
+    sem_init(&mHasStoppedSemaphore,0,1) ;
 
 #ifdef WINDOWS_SYS
     memset (&mTid, 0, sizeof(mTid));
@@ -110,73 +137,89 @@ RsThread::RsThread () : mMutex("RsThread")
 #endif
 }
 
-void RsThread::join() /* waits for the the mTid thread to stop */
-{
-	// do we need a mutex for this ?
-	mIsRunning = false;
-
-	void *ptr;
-	pthread_join(mTid, &ptr);
-}
-
-void RsThread::stop() 
-{
-	pthread_exit(NULL);
-}
-
 bool RsThread::isRunning()
 {
-	// do we need a mutex for this ?
-	return mIsRunning;
+    // do we need a mutex for this ?
+    int sval =0;
+    sem_getvalue(&mHasStoppedSemaphore,&sval) ;
+
+    return !sval ;
+}
+
+void RsThread::run()
+{
+#ifdef DEBUG_THREADS
+    std::cerr << "pqithreadstream::run()";
+    std::cerr << std::endl;
+#endif
+
+    // tell the OS to free the thread resources when this function exits
+    // it is a replacement for pthread_join()
+    pthread_detach(pthread_self());
+
+    while(1)
+    {
+        int sval =0;
+        sem_getvalue(&mShouldStopSemaphore,&sval) ;
+
+        if(sval > 0)
+        {
+#ifdef DEBUG_THREADS
+            std::cerr << "pqithreadstreamer::run(): asked to stop." << std::endl;
+            std::cerr << "  setting hasStopped=1" << std::endl;
+#endif
+            sem_post(&mHasStoppedSemaphore) ;
+            return ;
+        }
+
+        data_tick();
+    }
 }
 
 RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
-	:mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)
+    :mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)
 {
-	mLastSleep = (uint32_t)mMinSleep ;
-	mLastWork = time(NULL) ;
+    mLastSleep = (uint32_t)mMinSleep ;
+    mLastWork = time(NULL) ;
 }
 
-void RsQueueThread::run()
+void RsQueueThread::data_tick()
 {
-	while(isRunning())
-	{
-		bool doneWork = false;
-		while(workQueued() && doWork())
-		{
-			doneWork = true;
-		}
-		time_t now = time(NULL);
-		if (doneWork)
-		{
-			mLastWork = now;
-			mLastSleep = (uint32_t) (mMinSleep + (mLastSleep - mMinSleep) / 2.0);
+    bool doneWork = false;
+    while(workQueued() && doWork())
+    {
+        doneWork = true;
+    }
+    time_t now = time(NULL);
+    if (doneWork)
+    {
+        mLastWork = now;
+        mLastSleep = (uint32_t) (mMinSleep + (mLastSleep - mMinSleep) / 2.0);
 #ifdef DEBUG_THREADS
-			std::cerr << "RsQueueThread::run() done work: sleeping for: " << mLastSleep;
-			std::cerr << " ms";
-			std::cerr << std::endl;
+        std::cerr << "RsQueueThread::run() done work: sleeping for: " << mLastSleep;
+        std::cerr << " ms";
+        std::cerr << std::endl;
 #endif
 
-		}
-		else
-		{
-			uint32_t deltaT = now - mLastWork;
-			double frac = deltaT / mRelaxFactor;
-			
-			mLastSleep += (uint32_t) 
-				((mMaxSleep-mMinSleep) * (frac + 0.05));
-			if (mLastSleep > mMaxSleep)
-			{
-				mLastSleep = mMaxSleep;
-			}
+    }
+    else
+    {
+        uint32_t deltaT = now - mLastWork;
+        double frac = deltaT / mRelaxFactor;
+
+        mLastSleep += (uint32_t)
+                        ((mMaxSleep-mMinSleep) * (frac + 0.05));
+        if (mLastSleep > mMaxSleep)
+        {
+            mLastSleep = mMaxSleep;
+        }
 #ifdef DEBUG_THREADS
-			std::cerr << "RsQueueThread::run() no work: sleeping for: " << mLastSleep;
-			std::cerr << " ms";
-			std::cerr << std::endl;
+        std::cerr << "RsQueueThread::run() no work: sleeping for: " << mLastSleep;
+        std::cerr << " ms";
+        std::cerr << std::endl;
 #endif
-		}
-		usleep(mLastSleep * 1000); // mLastSleep msec
-	}
+    }
+    usleep(mLastSleep * 1000); // mLastSleep msec
 }
 
 void RsMutex::unlock()

@@ -1,6 +1,3 @@
-#ifndef RSIFACE_THREADS_H
-#define RSIFACE_THREADS_H
-
 /*
  * "$Id: rsthreads.h,v 1.1 2007-02-19 20:08:30 rmf24 Exp $"
  *
@@ -26,11 +23,13 @@
  *
  */
 
+#pragma once
 
 #include <pthread.h>
 #include <inttypes.h>
 #include <string>
 #include <iostream>
+#include <semaphore.h>
 
 /* RsIface Thread Wrappers */
 
@@ -183,43 +182,43 @@ public:
     virtual ~RsThread() {}
 
     void start() ;
-    void join(); /* waits for the the mTid thread to stop */
-    void stop(); /* calls pthread_exit() */
-
+    void shutdown();
+    void fullstop();
+    void join() { fullstop() ; }	// used for compatibility
     bool isRunning();
 
 protected:
-    virtual void run() = 0; /* called once the thread is started. Should be overloaded by subclasses. */
+    void run() ; /* called once the thread is started. Should be overloaded by subclasses. */
+
 private:
     static void *rsthread_init(void*) ;
 
     pthread_t mTid;
     RsMutex   mMutex;
 
-    bool mIsRunning;
+    sem_t mShouldStopSemaphore;
+    sem_t mHasStoppedSemaphore;
 };
 
 
 class RsQueueThread: public RsThread
 {
-	public:
+public:
 
-	RsQueueThread(uint32_t min, uint32_t max, double relaxFactor );
-virtual ~RsQueueThread() { return; }
+    RsQueueThread(uint32_t min, uint32_t max, double relaxFactor );
+    virtual ~RsQueueThread() { return; }
 
-virtual void run();
+protected:
 
-	protected:
+    virtual bool workQueued() = 0;
+    virtual bool doWork() = 0;
+    virtual void data_tick() ;
 
-virtual bool workQueued() = 0;
-virtual bool doWork() = 0;
-
-	private:
-	uint32_t mMinSleep; /* ms */
-	uint32_t mMaxSleep; /* ms */
-	uint32_t mLastSleep; /* ms */
-	time_t   mLastWork;  /* secs */
-	float    mRelaxFactor; 
+private:
+    uint32_t mMinSleep; /* ms */
+    uint32_t mMaxSleep; /* ms */
+    uint32_t mLastSleep; /* ms */
+    time_t   mLastWork;  /* secs */
+    float    mRelaxFactor;
 };
 
-#endif

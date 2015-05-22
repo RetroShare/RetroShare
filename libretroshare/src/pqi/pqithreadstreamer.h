@@ -26,18 +26,13 @@
 #ifndef MRK_PQI_THREAD_STREAMER_HEADER
 #define MRK_PQI_THREAD_STREAMER_HEADER
 
-#include <semaphore.h>
 #include "pqi/pqistreamer.h"
 #include "util/rsthreads.h"
 
-class pqithreadstreamer: public pqistreamer, private RsThread
+class pqithreadstreamer: public pqistreamer, public RsThread
 {
 	public:
 		pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
-
-virtual void start(); 
-virtual void shutdown();
-virtual void fullstop(); 
 
 virtual bool RecvItem(RsItem *item);
 virtual int  tick();
@@ -55,8 +50,6 @@ protected:
 private:
 	/* thread variables */
 	RsMutex mThreadMutex;
-    sem_t mShouldStopSemaphore;
-    sem_t mHasStoppedSemaphore;
 };
 
 #endif //MRK_PQI_THREAD_STREAMER_HEADER

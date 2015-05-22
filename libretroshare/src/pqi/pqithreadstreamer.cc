@@ -36,11 +36,8 @@
 pqithreadstreamer::pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
 :pqistreamer(rss, id, bio_in, bio_flags_in), mParent(parent), mThreadMutex("pqithreadstreamer"),  mTimeout(0)
 {
-	mTimeout = DEFAULT_STREAMER_TIMEOUT;
+    mTimeout = DEFAULT_STREAMER_TIMEOUT;
     mSleepPeriod = DEFAULT_STREAMER_SLEEP;
-
-    sem_init(&mShouldStopSemaphore,0,0) ;
-    sem_init(&mHasStoppedSemaphore,0,1) ;
 }
 
 bool pqithreadstreamer::RecvItem(RsItem *item)
@@ -56,128 +53,46 @@ int	pqithreadstreamer::tick()
 	return 0;
 }
 
-void pqithreadstreamer::start()
-{
-//    mToRun = true;
-
-#ifdef PQISTREAMER_DEBUG
-    std::cerr << "pqithreadstreamer::run()" << std::endl;
-    std::cerr << "  initing should_stop=0" << std::endl;
-    std::cerr << "  initing has_stopped=1" << std::endl;
-#endif
-
-    sem_init(&mShouldStopSemaphore,0,0) ;
-    sem_init(&mHasStoppedSemaphore,0,0) ;
-
-    RsThread::start();
-}
-
-void pqithreadstreamer::run()
-{
-#ifdef PQISTREAMER_DEBUG
-    std::cerr << "pqithreadstream::run()";
-    std::cerr << std::endl;
-#endif
-
-    // tell the OS to free the thread resources when this function exits
-    // it is a replacement for pthread_join()
-    pthread_detach(pthread_self());
-
-    while(1)
-    {
-        int sval =0;
-        sem_getvalue(&mShouldStopSemaphore,&sval) ;
-
-        if(sval > 0)
-        {
-#ifdef PQISTREAMER_DEBUG
-            std::cerr << "pqithreadstreamer::run(): asked to stop." << std::endl;
-            std::cerr << "  setting hasStopped=1" << std::endl;
-#endif
-            sem_post(&mHasStoppedSemaphore) ;
-            return ;
-        }
-
-        data_tick();
-    }
-}
-
-void pqithreadstreamer::shutdown()
-{
-#ifdef PQISTREAMER_DEBUG
-    std::cerr << "pqithreadstreamer::stop()" << std::endl;
-#endif
-
-    int sval =0;
-    sem_getvalue(&mHasStoppedSemaphore,&sval) ;
-
-    if(sval > 0)
-    {
-#ifdef PQISTREAMER_DEBUG
-        std::cerr << "  thread not running. Quit." << std::endl;
-#endif
-        return ;
-    }
-
-#ifdef PQISTREAMER_DEBUG
-    std::cerr << "  calling stop" << std::endl;
-#endif
-    sem_post(&mShouldStopSemaphore) ;
-}
-
-void pqithreadstreamer::fullstop()
-{
-    shutdown() ;
-
-#ifdef PQISTREAMER_DEBUG
-    std::cerr << "  waiting stop" << std::endl;
-#endif
-    sem_wait(&mHasStoppedSemaphore) ;
-#ifdef PQISTREAMER_DEBUG
-    std::cerr << "  finished!" << std::endl;
-#endif
-}
-
 int	pqithreadstreamer::data_tick()
 {
-	uint32_t recv_timeout = 0;
-	uint32_t sleep_period = 0;
-	bool isactive = false;
-	{
-		RsStackMutex stack(mStreamerMtx);
-		recv_timeout = mTimeout;
-		sleep_period = mSleepPeriod;
-        	isactive = mBio->isactive();
-	}
+    uint32_t recv_timeout = 0;
+    uint32_t sleep_period = 0;
+    bool isactive = false;
+    {
+        RsStackMutex stack(mStreamerMtx);
+        recv_timeout = mTimeout;
+        sleep_period = mSleepPeriod;
+        isactive = mBio->isactive();
+    }
 
-	if (!isactive)
-	{
-		usleep(DEFAULT_STREAMER_IDLE_SLEEP);
-		return 0;
-	}
+    if (!isactive)
+    {
+        usleep(DEFAULT_STREAMER_IDLE_SLEEP);
+        return 0;
+    }
 
     {
         RsStackMutex stack(mThreadMutex);
-    tick_recv(recv_timeout);
+        tick_recv(recv_timeout);
     }
 
-	// Push Items, Outside of Mutex.
-	RsItem *incoming = NULL;
-	while((incoming = GetItem()))
-	{
-		RecvItem(incoming);
-	}
+    // Push Items, Outside of Mutex.
+    RsItem *incoming = NULL;
+    while((incoming = GetItem()))
+    {
+        RecvItem(incoming);
+    }
 
     {
         RsStackMutex stack(mThreadMutex);
-    tick_send(0);
+        tick_send(0);
     }
 
-	if (sleep_period)
-	{
-		usleep(sleep_period);
-	}
-	return 1;
+    if (sleep_period)
+    {
+        usleep(sleep_period);
+    }
+    return 1;
 }
 
 
