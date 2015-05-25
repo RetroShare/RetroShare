@@ -47,6 +47,7 @@ const int p3peermgrzone = 9531;
 
 #include "retroshare/rsiface.h" // Needed for rsicontrol (should remove this dependancy)
 #include "retroshare/rspeers.h" // Needed for Group Parameters.
+#include "retroshare/rsdht.h" // Needed for banned IPs
 
 /* Network setup States */
 
@@ -274,7 +275,7 @@ bool p3PeerMgrIMPL::setOwnVisState(uint16_t vs_disc, uint16_t vs_dht)
 
 void p3PeerMgrIMPL::tick()
 {
-    static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 600 ; // Remove unused locations and clean IPs every 10 minutes.
+    static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 300 ; // Remove unused locations and clean IPs every 10 minutes.
 
     static time_t last_friends_check = time(NULL) ; // first cleaning after 1 hour.
 
@@ -992,6 +993,12 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, 
 	std::cerr << sockaddr_storage_tostring(extAddr);
 	std::cerr << ")" << std::endl;
 #endif
+
+    if(rsDht->isAddressBanned(localAddr))
+    {
+        std::cerr << "(SS) Trying to set own IP to a banned IP " << sockaddr_storage_iptostring(localAddr) << ". Attack?" << std::endl;
+        return false ;
+    }
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/

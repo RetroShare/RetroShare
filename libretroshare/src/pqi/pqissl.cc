@@ -39,6 +39,7 @@
 
 #include "pqi/p3linkmgr.h"
 #include <retroshare/rspeers.h>
+#include <retroshare/rsdht.h>
 
 const int pqisslzone = 37714;
 
@@ -1309,6 +1310,12 @@ int 	pqissl::Authorise_SSL_Connection()
     bool res = AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
 	bool certCorrect = true; /* WE know it okay already! */
 
+    if(rsDht->isAddressBanned(remote_addr))
+    {
+        std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Attack??" << std::endl;
+    reset_locked();
+    return 0 ;
+    }
 	// check it's the right one.
 	if (certCorrect)
 	{
