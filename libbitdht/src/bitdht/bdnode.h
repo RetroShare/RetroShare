@@ -33,6 +33,7 @@
 #include "bitdht/bdobj.h"
 #include "bitdht/bdhash.h"
 #include "bitdht/bdhistory.h"
+#include "bitdht/bdfilter.h"
 
 #include "bitdht/bdconnection.h"
 #include "bitdht/bdaccount.h"
@@ -83,6 +84,8 @@ output -> call back to Udp().
 
  *********/
 
+class bdFilteredPeer ;
+
 class bdNodeNetMsg
 {
 
@@ -118,7 +121,7 @@ class bdNode: public bdNodePublisher
 {
 	public:
 
-	bdNode(bdNodeId *id, std::string dhtVersion, std::string bootfile, 
+    bdNode(bdNodeId *id, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile,
 		bdDhtFunctions *fns);	
 
 	void init(); /* sets up the self referential classes (mQueryMgr & mConnMgr) */
@@ -145,6 +148,10 @@ class bdNode: public bdNodePublisher
 	void processRemoteQuery();
 	void updateStore();
 
+    bool addressBanned(const sockaddr_in &raddr) ;
+    void getFilteredPeers(std::list<bdFilteredPeer> &peers);
+    void loadFilteredPeers(const std::list<bdFilteredPeer> &peers);
+
 	/* simplified outgoing msg functions (for the managers) */
 	virtual void send_ping(bdId *id); /* message out */
 	virtual void send_query(bdId *id, bdNodeId *targetNodeId, bool localnet); /* message out */
@@ -163,8 +170,9 @@ void 	incomingMsg(struct sockaddr_in *addr, char *msg, int len);
 void	dropRelayServers();
 void	pingRelayServers();
 
-	// Below is internal Management of incoming / outgoing messages.
-	private:
+// Below is internal Management of incoming / outgoing messages.
+
+private:
 
 	/* internal interaction with network */
 void	sendPkt(char *msg, int len, struct sockaddr_in addr);
@@ -235,10 +243,10 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	protected:
 
 	bdSpace mNodeSpace;
+    bdFilter mFilterPeers;
 
 	bdQueryManager *mQueryMgr;
 	bdConnectManager *mConnMgr;
-	bdFilter *mFilterPeers;
 
 	bdNodeId mOwnId;
 	bdId 	mLikelyOwnId; // Try to workout own id address.

@@ -161,6 +161,7 @@ virtual void    peerConnectRequest(const RsPeerId& id, const struct sockaddr_sto
 			const struct sockaddr_storage &proxyaddr,  const struct sockaddr_storage &srcaddr,  
                         uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
 
+
 //virtual void	stunStatus(std::string id, const struct sockaddr_storage &raddr, uint32_t type, uint32_t flags) = 0;
 };
 

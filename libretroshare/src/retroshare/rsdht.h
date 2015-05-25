@@ -195,6 +195,7 @@ virtual int	setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth
 	// So we can provide to clients.
 virtual bool    getOwnDhtId(std::string &ownDhtId) = 0;
 
+virtual bool	isAddressBanned(const struct sockaddr_storage& raddr) =0;
 
 #if 0
 virtual std::string getPeerStatusString();

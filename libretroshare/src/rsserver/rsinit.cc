@@ -1079,16 +1079,20 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_BITDHT
 
 #define BITDHT_BOOTSTRAP_FILENAME  	"bdboot.txt"
+#define BITDHT_FILTERED_IP_FILENAME  	"bdfilter.txt"
 
 
 	std::string bootstrapfile = rsAccounts->PathAccountDirectory();
 	if (bootstrapfile != "")
-	{
 		bootstrapfile += "/";
-	}
 	bootstrapfile += BITDHT_BOOTSTRAP_FILENAME;
 
-	std::cerr << "Checking for DHT bootstrap file: " << bootstrapfile << std::endl;
+    std::string filteredipfile = rsAccounts->PathAccountDirectory();
+    if (filteredipfile != "")
+        filteredipfile += "/";
+    filteredipfile += BITDHT_FILTERED_IP_FILENAME;
+
+    std::cerr << "Checking for DHT bootstrap file: " << bootstrapfile << std::endl;
 
 	/* check if bootstrap file exists...
 	 * if not... copy from dataDirectory
@@ -1137,7 +1141,7 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// NEXT BITDHT.
-	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile);
+    p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
 	/* install external Pointer for Interface */
 	rsDht = mBitDht;
 

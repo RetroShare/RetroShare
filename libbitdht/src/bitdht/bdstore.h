@@ -33,24 +33,24 @@
 
 class bdStore
 {
-	public:
+public:
 
-	bdStore(std::string file, bdDhtFunctions *fns);
+    bdStore(std::string file, bdDhtFunctions *fns);
 
-int 	reloadFromStore(); /* for restarts */
-int	filterIpList(const std::list<struct sockaddr_in> &filteredIPs);
-int 	clear();
+    int 	reloadFromStore(); /* for restarts */
+    int	filterIpList(const std::list<struct sockaddr_in> &filteredIPs);
+    int 	clear();
 
-int 	getPeer(bdPeer *peer);
-void	addStore(bdPeer *peer);
-void	writeStore(std::string file);
-void	writeStore();
+    int 	getPeer(bdPeer *peer);
+    void	addStore(bdPeer *peer);
+    void	writeStore(std::string file);
+    void	writeStore();
 
-	private:
-		std::string mStoreFile;
-		std::list<bdPeer> store;
-		int mIndex;
-		bdDhtFunctions *mFns;
+protected:
+    std::string mStoreFile;
+    std::list<bdPeer> store;
+    int mIndex;
+    bdDhtFunctions *mFns;
 };
 
 

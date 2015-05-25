@@ -216,7 +216,11 @@ int	pqiperson::tick()
 // - Actually, now we have - must store and process later.
 int 	pqiperson::notifyEvent(NetInterface *ni, int newState, const struct sockaddr_storage &remote_peer_address)
 {
-	if (mPersonMtx.trylock())
+#ifdef PERSON_DEBUG
+    std::cerr << "pqiperson::notifyEvent() adding event to Queue. newState=" << newState << " from IP = " << sockaddr_storage_tostring(remote_peer_address) << std::endl;
+#endif
+
+    if (mPersonMtx.trylock())
 	{
 		handleNotifyEvent_locked(ni, newState, remote_peer_address);
 
@@ -224,7 +228,6 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState, const struct sockadd
 		
 		return 1;
 	}
-
 
 	RsStackMutex stack(mNotifyMtx); /**** LOCK MUTEX ****/
 

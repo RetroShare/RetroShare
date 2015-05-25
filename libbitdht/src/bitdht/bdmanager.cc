@@ -68,8 +68,8 @@
 #define QUERY_UPDATE_PERIOD 8 	// under refresh period - so it'll happen at the MAX_REFRESH_PERIOD
 
 
-bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
-	:bdNode(id, dhtVersion, bootfile, fns)
+bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, const std::string& filterfile,bdDhtFunctions *fns)
+    :bdNode(id, dhtVersion, bootfile, filterfile, fns)
 {
 	mMode = BITDHT_MGR_STATE_OFF;
 	mFns = fns;
@@ -394,7 +394,7 @@ void bdNodeManager::iteration()
 				std::cerr << std::endl;
 #endif
 
-				mFilterPeers->cleanupFilter();
+                mFilterPeers.cleanupFilter();
 
 
 #ifdef DEBUG_MGR

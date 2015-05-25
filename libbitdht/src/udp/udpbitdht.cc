@@ -57,7 +57,7 @@
 
 /*************************************/
 
-UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, std::string bootstrapfile, bdDhtFunctions *fns)
+UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, std::string bootstrapfile, const std::string& filteredipfile, bdDhtFunctions *fns)
 	:UdpSubReceiver(pub), dhtMtx(true), mFns(fns)
 {
 	std::string usedVersion;
@@ -76,7 +76,7 @@ UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, st
 
 	/* setup nodeManager */
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
-	mBitDhtManager = new bdNodeManager(id, usedVersion, bootstrapfile, fns);
+    mBitDhtManager = new bdNodeManager(id, usedVersion, bootstrapfile, filteredipfile, fns);
 }
 
 
@@ -209,7 +209,12 @@ int 	UdpBitDht::getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 
-	return mBitDhtManager->getDhtQueryStatus(id, query);
+    return mBitDhtManager->getDhtQueryStatus(id, query);
+}
+
+bool UdpBitDht::isAddressBanned(const sockaddr_in &raddr)
+{
+    return mBitDhtManager->addressBanned(raddr) ;
 }
 
 

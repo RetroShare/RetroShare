@@ -259,7 +259,7 @@ bool p3BitDht::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 
 	config->print(std::cerr, 0);
 
-	saveList.push_back(config);
+    saveList.push_back(config);
 
 	return true;
 }

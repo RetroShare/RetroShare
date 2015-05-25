@@ -1126,12 +1126,12 @@ bool    p3NetMgrIMPL::setNetworkMode(uint32_t netMode)
 
 		oldNetMode = mNetMode;
 
-//#ifdef NETMGR_DEBUG
-		std::cerr << "p3NetMgrIMPL::setNetworkMode()";
-		std::cerr << " Existing netMode: " << mNetMode;
-		std::cerr << " Input netMode: " << netMode;
-		std::cerr << std::endl;
-//#endif
+#ifdef NETMGR_DEBUG
+        std::cerr << "p3NetMgrIMPL::setNetworkMode()";
+        std::cerr << " Existing netMode: " << mNetMode;
+        std::cerr << " Input netMode: " << netMode;
+        std::cerr << std::endl;
+#endif
 		mNetMode &= ~(RS_NET_MODE_TRYMODE);
 
 		switch(netMode & RS_NET_MODE_ACTUAL)
@@ -1169,7 +1169,7 @@ bool    p3NetMgrIMPL::setVisState(uint16_t vs_disc, uint16_t vs_dht)
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	mVsDisc = vs_disc;
-	mVsDht = vs_dht;
+    mVsDht = vs_dht;
 
 	/* if we've started up - then tweak Dht On/Off */
 	if (mNetStatus != RS_NET_UNKNOWN)

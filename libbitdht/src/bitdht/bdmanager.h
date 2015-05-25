@@ -96,7 +96,7 @@ class bdQueryPeer
 class bdNodeManager: public bdNode, public BitDhtInterface
 {
 	public:
-        bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns);
+        bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, const std::string &filterfile, bdDhtFunctions *fns);
 
 
 void 	iteration();
@@ -152,7 +152,8 @@ virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
                                         int mode, int point, int param, int cbtype, int errcode); 
 
 int 	isBitDhtPacket(char *data, int size, struct sockaddr_in &from);
-	private:
+
+private:
 
 
 void 	doNodeCallback(const bdId *id, uint32_t peerflags);

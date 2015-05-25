@@ -50,7 +50,7 @@ class UdpBitDht: public UdpSubReceiver, public bdThread, public BitDhtInterface
 {
 	public:
 
-	UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string dhtVersion, std::string bootstrapfile, bdDhtFunctions *fns);
+    UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string dhtVersion, std::string bootstrapfile, const std::string& filteredipfile,bdDhtFunctions *fns);
 virtual ~UdpBitDht();
 
 
@@ -86,6 +86,8 @@ virtual int getDhtBucket(const int idx, bdBucket &bucket);
 
 virtual int getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries);
 virtual int getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query);
+
+    virtual bool isAddressBanned(const sockaddr_in &raddr) ;
 
         /* stats and Dht state */
 virtual int startDht();

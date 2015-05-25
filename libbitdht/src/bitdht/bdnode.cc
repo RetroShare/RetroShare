@@ -70,12 +70,14 @@
 
 #define HISTORY_PERIOD  60
 
-bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
-	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), 
-	mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns), 
-	mFriendList(ownId), mHistory(HISTORY_PERIOD)
+bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile, bdDhtFunctions *fns)
+    :mNodeSpace(ownId, fns),
+         mFilterPeers(filterfile,ownId, BITDHT_FILTER_REASON_OWNID, fns),
+      mQueryMgr(NULL),
+          mConnMgr(NULL),
+          mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns),
+          mFriendList(ownId), mHistory(HISTORY_PERIOD)
 {
-
 	init(); /* (uses this pointers) stuff it - do it here! */
 }
 
@@ -84,9 +86,6 @@ void bdNode::init()
 	mQueryMgr = new bdQueryManager(&mNodeSpace, mFns, this);
 	mConnMgr = new bdConnectManager(&mOwnId, &mNodeSpace, mQueryMgr, mFns, this);
 
- 	std::list<bdFilteredPeer> emptyList;
-	mFilterPeers = new bdFilter(&mOwnId, emptyList, BITDHT_FILTER_REASON_OWNID, mFns);
-	
 	//setNodeOptions(BITDHT_OPTIONS_MAINTAIN_UNSTABLE_PORT);
 	setNodeOptions(0);
 
@@ -94,7 +93,15 @@ void bdNode::init()
 	setNodeDhtMode(BITDHT_MODE_TRAFFIC_DEFAULT);
 
 }
-
+//void bdNode::getFilteredPeers(std::list<bdFilteredPeer>& peers)
+//{
+//    mFilterPeers.getFilteredPeers(peers) ;
+//}
+//
+//void bdNode::loadFilteredPeers(const std::list<bdFilteredPeer>& peers)
+//{
+//    mFilterPeers.loadFilteredPeers(peers) ;
+//}
 /* Unfortunately I've ended up with 2 calls down through the heirarchy...
  * not ideal - must clean this up one day.
  */
@@ -249,7 +256,12 @@ void bdNode::shutdownNode()
 /* Crappy initial store... use bdspace as answer */
 void bdNode::updateStore()
 {
-	mStore.writeStore();
+    mStore.writeStore();
+}
+
+bool bdNode::addressBanned(const sockaddr_in& raddr)
+{
+    return !mFilterPeers.addrOkay(const_cast<sockaddr_in*>(&raddr)) ;
 }
 
 void bdNode::printState()
@@ -481,7 +493,7 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 	/* Check BadPeer Filters for Potential Peers too */
 
 	/* first check the filters */
-        if (!mFilterPeers->addrOkay(&(id->addr)))
+        if (!mFilterPeers.addrOkay(&(id->addr)))
 	{
 		std::cerr << "bdNode::checkPotentialPeer(";
 		mFns->bdPrintId(std::cerr, id);
@@ -509,10 +521,10 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 				// Stores in queue for later callback and desemination around the network.
 	        		mBadPeerQueue.queuePeer(id, 0);
 
-	        		mFilterPeers->addPeerToFilter(id, 0);
+                    mFilterPeers.addPeerToFilter(id->addr, 0);
 
 				std::list<struct sockaddr_in> filteredIPs;
-				mFilterPeers->filteredIPs(filteredIPs);
+                mFilterPeers.filteredIPs(filteredIPs);
 				mStore.filterIpList(filteredIPs);
 
 				return;
@@ -542,8 +554,6 @@ void bdNode::addPotentialPeer(bdId *id, bdId * /*src*/)
 	mPotentialPeers.push_back(*id);
 }
 
-
-
         // virtual so manager can do callback.
         // peer flags defined in bdiface.h
 void bdNode::addPeer(const bdId *id, uint32_t peerflags)
@@ -556,7 +566,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 #endif
 
 	/* first check the filters */
-        if (mFilterPeers->checkPeer(id, peerflags))
+        if (mFilterPeers.checkPeer(id, peerflags))
 	{
 		std::cerr << "bdNode::addPeer(";
 		mFns->bdPrintId(std::cerr, id);
@@ -565,7 +575,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 		std::cerr << std::endl;
 
 		std::list<struct sockaddr_in> filteredIPs;
-		mFilterPeers->filteredIPs(filteredIPs);
+        mFilterPeers.filteredIPs(filteredIPs);
 		mStore.filterIpList(filteredIPs);
 
 	        mBadPeerQueue.queuePeer(id, peerflags);
@@ -597,10 +607,10 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 				// Stores in queue for later callback and desemination around the network.
 	        		mBadPeerQueue.queuePeer(id, peerflags);
 
-	        		mFilterPeers->addPeerToFilter(id, peerflags);
+                    mFilterPeers.addPeerToFilter(id->addr, peerflags);
 
 				std::list<struct sockaddr_in> filteredIPs;
-				mFilterPeers->filteredIPs(filteredIPs);
+                mFilterPeers.filteredIPs(filteredIPs);
 				mStore.filterIpList(filteredIPs);
 
 				// DO WE EXPLICITLY NEED TO DO THIS, OR WILL THEY JUST BE DROPPED?
@@ -826,7 +836,7 @@ int     bdNode::outgoingMsg(struct sockaddr_in *addr, char *msg, int *len)
 void    bdNode::incomingMsg(struct sockaddr_in *addr, char *msg, int len)
 {
 	/* check against the filter */
-	if (mFilterPeers->addrOkay(addr))
+    if (mFilterPeers.addrOkay(addr))
 	{
 		bdNodeNetMsg *bdmsg = new bdNodeNetMsg(msg, len, addr);
 		mIncomingMsgs.push_back(bdmsg);
@@ -1133,7 +1143,7 @@ void    bdNode::sendPkt(char *msg, int len, struct sockaddr_in addr)
 	//		len, inet_ntoa(addr.sin_addr), htons(addr.sin_port));
 
 	/* filter outgoing packets */
-        if (mFilterPeers->addrOkay(&addr))
+        if (mFilterPeers.addrOkay(&addr))
 	{
 		bdNodeNetMsg *bdmsg = new bdNodeNetMsg(msg, len, &addr);
 		//bdmsg->print(std::cerr);

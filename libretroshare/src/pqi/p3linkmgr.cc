@@ -47,6 +47,7 @@ const int p3connectzone = 3431;
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsdht.h"
 
 /* Network setup States */
 
@@ -828,9 +829,9 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 		if (success)
 		{
 			/* update address (should also come through from DISC) */
-#ifdef LINKMGR_DEBUG_CONNFAIL
+#ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::connectResult() Connect!: id: " << id << std::endl;
-			std::cerr << " Success: " << success << " flags: " << flags << std::endl;
+            std::cerr << " Success: " << success << " flags: " << flags << ", remote IP = " <<  sockaddr_storage_iptostring(remote_peer_address) << std::endl;
 #endif
 
 #ifdef LINKMGR_DEBUG
@@ -1730,7 +1731,11 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 
 	std::list<struct sockaddr_storage>::const_iterator it;
 	for(it = mBannedIpList.begin(); it != mBannedIpList.end(); ++it)
-	{
+    {
+#ifdef LINKMGR_DEBUG
+        std::cerr << "Checking IP w.r.t. banned IP " << sockaddr_storage_iptostring(*it) << std::endl;
+#endif
+
 		if (sockaddr_storage_sameip(*it, addr))
 		{
 #ifdef LINKMGR_DEBUG
@@ -1741,6 +1746,15 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 		}
 	}
 
+    if(rsDht != NULL && rsDht->isAddressBanned(addr))
+    {
+#ifdef LINKMGR_DEBUG
+            std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() adding to local Banned IPList";
+            std::cerr << std::endl;
+#endif
+            mBannedIpList.push_back(addr) ;
+            return false ;
+    }
 
 	/* if it is an external address, we'll accept it.
 	 * - even it is meant to be a local address.
@@ -1891,8 +1905,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses()";
 	std::cerr << std::endl;
 #endif
-	for(ait = ipAddrs.mLocal.mAddrs.begin(); 
-		ait != ipAddrs.mLocal.mAddrs.end(); ++ait)
+    for(ait = ipAddrs.mLocal.mAddrs.begin();  ait != ipAddrs.mLocal.mAddrs.end(); ++ait)
 	{
 		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
 		{
@@ -2235,7 +2248,14 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
                 }
         }
 
-        return;
+    return;
+}
+
+bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, time_t age)
+{
+    RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+    return locked_CheckPotentialAddr(addr,age) ;
 }
 
 

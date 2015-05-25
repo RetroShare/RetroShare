@@ -143,7 +143,7 @@ class p3BitDht: public p3Config, public pqiNetAssistConnect, public RsDht
 {
 	public:
 	p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
-		UdpStack *udpstack, std::string bootstrapfile);
+        UdpStack *udpstack, std::string bootstrapfile, const std::string &filteredipfile);
 
 
 virtual	~p3BitDht();
@@ -214,6 +214,7 @@ virtual bool 	getPeerStatus(const RsPeerId& id,
 virtual bool 	getExternalInterface(struct sockaddr_storage &raddr, 
 					uint32_t &mode);
 
+virtual bool	isAddressBanned(const struct sockaddr_storage& raddr) ;
 
 virtual bool    setAttachMode(bool on);
 

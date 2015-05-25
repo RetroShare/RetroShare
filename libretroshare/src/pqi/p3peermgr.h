@@ -325,12 +325,11 @@ int 	getConnectAddresses(const RsPeerId &id,
 				struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
 				pqiIpAddrSet &histAddrs, std::string &dyndns);
 
-
-
 protected:
 	/* Internal Functions */
 
 bool 	removeUnusedLocations();
+bool 	removeBannedIps();
 
 void    printPeerLists(std::ostream &out);
 

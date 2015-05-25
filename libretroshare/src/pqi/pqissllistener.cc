@@ -45,6 +45,7 @@ const int pqissllistenzone = 49787;
  * #define OPEN_UNIVERSAL_PORT 1
  */
 
+//#define DEBUG_LISTENNER
 #define OPEN_UNIVERSAL_PORT 1
 
 /************************ PQI SSL LISTEN BASE ****************************
@@ -373,25 +374,31 @@ int	pqissllistenbase::acceptconnection()
 
 	SSL_set_fd(incoming_connexion_info.ssl, fd);
 
-	return continueSSL(incoming_connexion_info, true); // continue and save if incomplete.
+    return continueSSL(incoming_connexion_info, true); // continue and save if incomplete.
 }
 
 int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool addin)
 {
 	// attempt the accept again.
-	int fd =  SSL_get_fd(incoming_connexion_info.ssl);
+    int fd =  SSL_get_fd(incoming_connexion_info.ssl);
 
-	// clear the connection info that will be filled in by the callback.
-	//
-	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(RsPgpId(),RsPeerId(),std::string()) ;
+    AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(RsPgpId(),RsPeerId(),std::string()) ;
+    int err = SSL_accept(incoming_connexion_info.ssl);
 
-	int err = SSL_accept(incoming_connexion_info.ssl);
+    // Now grab the connection info that was filled in by the callback.
+    // In the case the callback did not succeed the SSL certificate will not be accessible
+    // from SSL_get_peer_certificate, so we need to get it from the callback system.
+    //
+    AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(incoming_connexion_info.gpgid,incoming_connexion_info.sslid,incoming_connexion_info.sslcn) ;
 
-	// No grab the connection info that was filled in by the callback.
-	//
-	AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(incoming_connexion_info.gpgid,incoming_connexion_info.sslid,incoming_connexion_info.sslcn) ;
+#ifdef DEBUG_LISTENNER
+    std::cerr << "Info from callback: " << std::endl;
+        std::cerr << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl;
+        std::cerr << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl;
+        std::cerr << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
+#endif
 
-	if (err <= 0)
+    if (err <= 0)
 	{
 		int ssl_err = SSL_get_error(incoming_connexion_info.ssl, err);
 		int err_err = ERR_get_error();
@@ -445,8 +452,35 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 
 		// failure -1, pending 0, sucess 1.
 		return -1;
-	}
-	
+    }
+
+    // Now grab the connection info from the SSL itself, because the callback info might be
+    // tempered due to multiple connection attempts at once.
+    //
+    X509 *x509 = SSL_get_peer_certificate(incoming_connexion_info.ssl) ;
+
+#ifdef DEBUG_LISTENNER
+    std::cerr << "Info from certificate: " << std::endl;
+#endif
+    if(x509 != NULL)
+    {
+        incoming_connexion_info.gpgid = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
+        incoming_connexion_info.sslcn = getX509CNString(x509->cert_info->subject);
+
+        getX509id(x509,incoming_connexion_info.sslid);
+
+#ifdef DEBUG_LISTENNER
+        std::cerr << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl;
+        std::cerr << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl;
+        std::cerr << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
+#endif
+    }
+#ifdef DEBUG_LISTENNER
+    else
+        std::cerr << "  no info." << std::endl;
+#endif
+
+
 	// if it succeeds
 	if (0 < completeConnection(fd, incoming_connexion_info))
 	{
@@ -887,6 +921,18 @@ int pqissllistener::finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId,
 	out += sockaddr_storage_tostring(remote_addr);
 	out += "\npqissllistener => Passing to pqissl module!";
 	pqioutput(PQL_WARNING, pqissllistenzone, out);
+
+    std::string addrstring = sockaddr_storage_tostring(remote_addr);
+
+    if(!strncmp(addrstring.c_str(),"IPv4=194.228",12))
+        std::cerr << "Caught connection from bad address " << addrstring << " for peer ID " << peerId << std::endl;
+
+    if(!strncmp(addrstring.c_str(),"IPv4=217.66",11))
+        std::cerr << "Caught connection from bad address " << addrstring << " for peer ID " << peerId << std::endl;
+
+    if(!strncmp(addrstring.c_str(),"IPv4=194.199",12))
+        std::cerr << "Caught connection from bad address " << addrstring << std::endl;
+    std::cerr << "pqissllistenner::finaliseConnection() connected to " << sockaddr_storage_tostring(remote_addr) << std::endl;
 
 	// hand off ssl conection.
 	pqissl *pqis = it -> second;

@@ -82,7 +82,7 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 
 
 p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm, 
-			UdpStack *udpstack, std::string bootstrapfile)
+            UdpStack *udpstack, std::string bootstrapfile,const std::string& filteredipfile)
 	:p3Config(), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
 {
 	mDhtStunner = NULL;
@@ -129,7 +129,7 @@ p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
 #endif
 
 	/* create dht */
-	mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, mDhtFns);
+    mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, filteredipfile,mDhtFns);
 	udpstack->addReceiver(mUdpBitDht);
 
 	/* setup callback to here */
@@ -373,7 +373,18 @@ bool 	p3BitDht::getExternalInterface(struct sockaddr_storage &/*raddr*/,
 #endif
 
 
-	return false;
+    return false;
+}
+
+bool p3BitDht::isAddressBanned(const sockaddr_storage &raddr)
+{
+    if(raddr.ss_family == AF_INET6)	// the DHT does not handle INET6 addresses yet.
+        return false ;
+
+    if(raddr.ss_family == AF_INET)
+        return mUdpBitDht->isAddressBanned((sockaddr_in&)raddr) ;
+
+    return false ;
 }
 
 
