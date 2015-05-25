@@ -66,6 +66,7 @@ void *RsThread::rsthread_init(void* p)
 RsThread::RsThread () : mMutex("RsThread")
 {
     sem_init(&mHasStoppedSemaphore,0,1) ;
+    sem_init(&mShouldStopSemaphore,0,0) ;
 
 #ifdef WINDOWS_SYS
     memset (&mTid, 0, sizeof(mTid));
@@ -80,6 +81,14 @@ bool RsThread::isRunning()
     sem_getvalue(&mHasStoppedSemaphore,&sval) ;
 
     return !sval ;
+}
+
+bool RsThread::shouldStop()
+{
+        int sval =0;
+        sem_getvalue(&mShouldStopSemaphore,&sval) ;
+
+        return sval > 0;
 }
 
 void RsTickingThread::shutdown()
@@ -99,6 +108,11 @@ void RsTickingThread::shutdown()
         return ;
     }
 
+    ask_for_stop() ;
+}
+
+void RsThread::ask_for_stop()
+{
 #ifdef DEBUG_THREADS
     std::cerr << "  calling stop" << std::endl;
 #endif
@@ -152,6 +166,13 @@ RsTickingThread::RsTickingThread ()
     sem_init(&mShouldStopSemaphore,0,0) ;
 }
 
+void RsSingleJobThread::runloop()
+{
+    sem_init(&mShouldStopSemaphore,0,0) ;
+
+    run() ;
+}
+
 void RsTickingThread::runloop()
 {
 #ifdef DEBUG_THREADS
@@ -162,10 +183,7 @@ void RsTickingThread::runloop()
 
     while(1)
     {
-        int sval =0;
-        sem_getvalue(&mShouldStopSemaphore,&sval) ;
-
-        if(sval > 0)
+        if(shouldStop())
         {
 #ifdef DEBUG_THREADS
             std::cerr << "pqithreadstreamer::run(): asked to stop." << std::endl;

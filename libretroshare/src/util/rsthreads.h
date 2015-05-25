@@ -182,12 +182,26 @@ class RsThread
     virtual ~RsThread() {}
 
     void start() ;
+
+    // Returns true of the thread is still running.
+
     bool isRunning();
+
+    // Returns true if the thread received a stopping order and hasn't yet stopped.
+
+    bool shouldStop();
+
+    // Can be called to set the stopping flags. The stop will not be handled
+    // by RsThread itself, but in subclasses. If you derive your own subclass,
+    // you need to call shouldStop() in order to check for a possible stopping order.
+
+    void ask_for_stop();
 
 protected:
     virtual void runloop() =0; /* called once the thread is started. Should be overloaded by subclasses. */
 
     sem_t mHasStoppedSemaphore;
+    sem_t mShouldStopSemaphore;
 
     static void *rsthread_init(void*) ;
     RsMutex   mMutex;
@@ -207,8 +221,6 @@ public:
 
 private:
     virtual void runloop() ; /* called once the thread is started. Should be overloaded by subclasses. */
-
-    sem_t mShouldStopSemaphore;
 };
 
 class RsSingleJobThread: public RsThread
@@ -217,7 +229,7 @@ public:
     virtual void run() =0;
 
 protected:
-    virtual void runloop() { run(); } /* called once the thread is started. Should be overloaded by subclasses. */
+    virtual void runloop() ;
 };
 
 class RsQueueThread: public RsTickingThread
