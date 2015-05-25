@@ -274,20 +274,19 @@ bool p3PeerMgrIMPL::setOwnVisState(uint16_t vs_disc, uint16_t vs_dht)
 
 void p3PeerMgrIMPL::tick()
 {
-
     static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 600 ; // Remove unused locations and clean IPs every 10 minutes.
 
-    static time_t last_friends_check = time(NULL) + INTERVAL_BETWEEN_LOCATION_CLEANING; // first cleaning after 1 hour.
+    static time_t last_friends_check = time(NULL) ; // first cleaning after 1 hour.
 
-	time_t now = time(NULL) ;
+    time_t now = time(NULL) ;
 
-	if(now - last_friends_check > INTERVAL_BETWEEN_LOCATION_CLEANING)
-	{
+    if(now > INTERVAL_BETWEEN_LOCATION_CLEANING + last_friends_check )
+    {
 #ifdef PEER_DEBUG
-		std::cerr << "p3PeerMgrIMPL::tick(): cleaning unused locations." << std::endl ;
+        std::cerr << "p3PeerMgrIMPL::tick(): cleaning unused locations." << std::endl ;
 #endif
 
-		rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::tick() removeUnusedLocations()");
+        rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::tick() removeUnusedLocations()");
 
         removeUnusedLocations() ;
 
@@ -296,8 +295,8 @@ void p3PeerMgrIMPL::tick()
 #endif
         removeBannedIps() ;
 
-		last_friends_check = now ;
-	}
+        last_friends_check = now ;
+    }
 }
 
 
@@ -2217,7 +2216,7 @@ bool	p3PeerMgrIMPL::getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-#ifdef P3PEERS_DEBUG
+#ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgr::getAssociatedPeers() for id : " << gpg_id << std::endl;
 #endif
 	
@@ -2230,7 +2229,7 @@ bool	p3PeerMgrIMPL::getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId
 			count++;
 			ids.push_back(it->first);
 
-#ifdef P3PEERS_DEBUG
+#ifdef PEER_DEBUG
 			std::cerr << "p3PeerMgr::getAssociatedPeers() found ssl id :  " << it->first << std::endl;
 #endif
 			
@@ -2249,12 +2248,12 @@ static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkM
 
     for(std::list<pqiIpAddress>::iterator it2(lst.begin());it2 != lst.end();)
     {
-#ifdef P3PEERS_DEBUG
+#ifdef PEER_DEBUG
       std::cerr << "Checking IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " for peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
 #endif
         if(!link_mgr->checkPotentialAddr( (*it2).mAddr,now - (*it2).mSeenTime))
         {
-#ifdef P3PEERS_DEBUG
+#ifdef PEER_DEBUG
             std::cerr << "  ==> Removing Banned/old IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " from peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
 #endif
 
@@ -2279,12 +2278,12 @@ bool p3PeerMgrIMPL::removeBannedIps()
     bool changed = false ;
     for( std::map<RsPeerId, peerState>::iterator it = mFriendList.begin(); it != mFriendList.end(); ++it)
     {
-        changed = changed || cleanIpList(it->second.ipAddrs.mExt.mAddrs,it->first,mLinkMgr) ;
-        changed = changed || cleanIpList(it->second.ipAddrs.mLocal.mAddrs,it->first,mLinkMgr) ;
+        if(cleanIpList(it->second.ipAddrs.mExt.mAddrs,it->first,mLinkMgr)) changed = true ;
+        if(cleanIpList(it->second.ipAddrs.mLocal.mAddrs,it->first,mLinkMgr)) changed = true ;
     }
 
-    changed = changed || cleanIpList(mOwnState.ipAddrs.mExt.mAddrs,mOwnState.id,mLinkMgr) ;
-    changed = changed || cleanIpList(mOwnState.ipAddrs.mLocal.mAddrs,mOwnState.id,mLinkMgr) ;
+    if(cleanIpList(mOwnState.ipAddrs.mExt.mAddrs,mOwnState.id,mLinkMgr) ) changed = true ;
+    if(cleanIpList(mOwnState.ipAddrs.mLocal.mAddrs,mOwnState.id,mLinkMgr) )  changed = true ;
 
     if(changed)
         IndicateConfigChanged();
@@ -2310,7 +2309,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	
-#ifdef P3PEERS_DEBUG
+#ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgr::removeUnusedLocations()" << std::endl;
 #endif
 		
@@ -2323,7 +2322,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 			{
 				toRemove.push_back(it->first);
 
-#ifdef P3PEERS_DEBUG
+#ifdef PEER_DEBUG
                 std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
 #endif
 				
@@ -2333,7 +2332,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 //			{
 //				toRemove.push_back(it->first);
 //				
-//#ifdef P3PEERS_DEBUG
+//#ifdef PEER_DEBUG
 //				std::cerr << "p3PeerMgr::removeUnusedLocations() removing Dummy Id: " << it->first << std::endl;
 //#endif
 //				
