@@ -218,6 +218,12 @@ H        [X] Chat lobbies should use Identities. That's a significant change, pr
        Settings
          [X] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
          [X] Default max upload should be a large number. Not 50KB/s!!
+         
+       Settings > Sounds -> enable default sounds for 
+         [ ] Friend go online
+         [ ] New Chat Message
+         [ ] Message arrived
+         [ ] Download complete
 
        Chat
          [X] Distant chat window should show GXS avatars
