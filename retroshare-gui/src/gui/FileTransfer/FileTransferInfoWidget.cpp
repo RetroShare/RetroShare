@@ -46,7 +46,7 @@ FileTransferInfoWidget::FileTransferInfoWidget(QWidget * /*parent*/, Qt::WindowF
 	maxWidth = TaskGraphRect.width();
 	maxHeight = 0;
 	pixmap = QPixmap(size());
-	pixmap.fill(this, 0, 0);
+	pixmap.fill(Qt::transparent);
 
 	downloadedPixmap.load(":images/graph-downloaded.png");
 	downloadingPixmap.load(":images/graph-downloading.png");
@@ -80,7 +80,7 @@ void FileTransferInfoWidget::updateDisplay()
 //	pixmap = QPixmap(size());
 //	pixmap.fill(this, 0, 0);
 	pixmap = QPixmap(maxWidth, maxHeight);
-	pixmap.fill(this, 0, 0);
+	pixmap.fill(Qt::transparent);
 	setFixedHeight(maxHeight);
 
 	QPainter painter(&pixmap);
