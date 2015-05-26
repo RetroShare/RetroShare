@@ -21,31 +21,29 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <interface/rsVOIP.h>
 #include "VOIPGUIHandler.h"
 #include <gui/chat/ChatDialog.h>
 #include <gui/VOIPChatWidgetHolder.h>
 #include "gui/chat/ChatWidget.h"
 #include "gui/settings/rsharesettings.h"
 
-void VOIPGUIHandler::ReceivedInvitation(const QString& /*peer_id*/)
+void VOIPGUIHandler::ReceivedInvitation(const RsPeerId &/*peer_id*/)
 {
         std::cerr << "****** VOIPGUIHandler: received Invitation!" << std::endl;
 }
 
-void VOIPGUIHandler::ReceivedVoipHangUp(const QString& /*peer_id*/)
+void VOIPGUIHandler::ReceivedVoipHangUp(const RsPeerId &/*peer_id*/)
 {
 	std::cerr << "****** VOIPGUIHandler: received HangUp!" << std::endl;
 }
 
-void VOIPGUIHandler::ReceivedVoipAccept(const QString& /*peer_id*/)
+void VOIPGUIHandler::ReceivedVoipAccept(const RsPeerId &/*peer_id*/)
 {
 	std::cerr << "****** VOIPGUIHandler: received VoipAccept!" << std::endl;
 }
 
-void VOIPGUIHandler::ReceivedVoipData(const QString& qpeer_id)
+void VOIPGUIHandler::ReceivedVoipData(const RsPeerId &peer_id)
 {
-	RsPeerId peer_id(qpeer_id.toStdString()) ;
 	std::vector<RsVOIPDataChunk> chunks ;
 
 	if(!rsVOIP->getIncomingData(peer_id,chunks))
@@ -70,9 +68,9 @@ void VOIPGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 							QByteArray qb(reinterpret_cast<const char *>(chunks[chunkIndex].data),chunks[chunkIndex].size);
 
 							if(chunks[chunkIndex].type == RsVOIPDataChunk::RS_VOIP_DATA_TYPE_AUDIO)
-								acwh->addAudioData(QString::fromStdString(peer_id.toStdString()),&qb);
+							acwh->addAudioData(peer_id, &qb);
 							else if(chunks[chunkIndex].type == RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO)
-								acwh->addVideoData(QString::fromStdString(peer_id.toStdString()),&qb);
+							acwh->addVideoData(peer_id, &qb);
 							else
 								std::cerr << "VOIPGUIHandler: Unknown data type received. type=" << chunks[chunkIndex].type << std::endl;
 						}
@@ -89,13 +87,11 @@ void VOIPGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 	}
 }
 
-void VOIPGUIHandler::ReceivedVoipBandwidthInfo(const QString& qpeer_id,int bytes_per_sec)
+void VOIPGUIHandler::ReceivedVoipBandwidthInfo(const RsPeerId &peer_id, int bytes_per_sec)
 {
-	RsPeerId peer_id(qpeer_id.toStdString()) ;
-
     ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
 
-	std::cerr << "VOIPGUIHandler::received bw info for peer " << qpeer_id.toStdString() << ": " << bytes_per_sec << " Bps" << std::endl;
+	std::cerr << "VOIPGUIHandler::received bw info for peer " << peer_id.toStdString() << ": " << bytes_per_sec << " Bps" << std::endl;
 	if(!di)
 	{
 		std::cerr << "VOIPGUIHandler Error: received bandwidth info for a chat dialog that does not stand VOIP (Peer id = " << peer_id.toStdString() << "!" << std::endl;
@@ -115,6 +111,50 @@ void VOIPGUIHandler::ReceivedVoipBandwidthInfo(const QString& qpeer_id,int bytes
 		VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
 
 		if (acwh) 
-			acwh->setAcceptedBandwidth(QString::fromStdString(peer_id.toStdString()),bytes_per_sec);
+			acwh->setAcceptedBandwidth(bytes_per_sec);
 	}
+}
+
+void VOIPGUIHandler::AnswerAudioCall(const RsPeerId &peer_id)
+{
+	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	if (di) {
+		ChatWidget *cw = di->getChatWidget();
+		if(cw) {
+			const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
+
+			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList)
+			{
+				VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
+
+				if (acwh)
+					acwh->startAudioCapture();
+			}
+		}
+	} else {
+		std::cerr << "VOIPGUIHandler Error: answer audio call for a chat dialog that does not stand VOIP (Peer id = " << peer_id.toStdString() << "!" << std::endl;
+	}
+
+}
+
+void VOIPGUIHandler::AnswerVideoCall(const RsPeerId &peer_id)
+{
+	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	if (di) {
+		ChatWidget *cw = di->getChatWidget();
+		if(cw) {
+			const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
+
+			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList)
+			{
+				VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
+
+				if (acwh)
+					acwh->startVideoCapture();
+			}
+		}
+	} else {
+		std::cerr << "VOIPGUIHandler Error: answer video call for a chat dialog that does not stand VOIP (Peer id = " << peer_id.toStdString() << "!" << std::endl;
+	}
+
 }

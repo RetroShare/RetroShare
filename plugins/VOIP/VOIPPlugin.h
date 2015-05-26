@@ -20,8 +20,12 @@
  ****************************************************************/
 #pragma once
 
-#include <retroshare/rsplugin.h>
+/*VOIP*/
+#include "gui/VOIPToasterNotify.h"
 #include "services/p3VOIP.h"
+
+/*libretroshare"*/
+#include <retroshare/rsplugin.h>
 
 class VOIPGUIHandler ;
 class VOIPNotify ;
@@ -51,6 +55,9 @@ class VOIPPlugin: public RsPlugin
 		virtual std::string getPluginName() const;
 		virtual void setInterfaces(RsPlugInInterfaces& interfaces);
 
+		//================================== RsPlugin Notify ==================================//
+		virtual ToasterNotify *qt_toasterNotify();
+
 	private:
 		mutable p3VOIP *mVOIP ;
 		mutable RsPluginHandler *mPlugInHandler;
@@ -60,5 +67,6 @@ class VOIPPlugin: public RsPlugin
 
 		VOIPNotify *mVOIPNotify ;
 		VOIPGUIHandler *mVOIPGUIHandler ;
+		VOIPToasterNotify *mVOIPToasterNotify ;
 };
 

@@ -14,7 +14,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabFeed">
       <attribute name="title">
@@ -99,7 +99,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
-             <widget class="QPushButton" name="notifyButton">
+             <widget class="QPushButton" name="testFeedButton">
               <property name="text">
                <string>Test</string>
               </property>
@@ -237,12 +237,15 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <layout class="QVBoxLayout" name="toasterLayout"/>
+              </item>
              </layout>
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <widget class="QPushButton" name="toasterButton">
+               <widget class="QPushButton" name="testToasterButton">
                 <property name="text">
                  <string>Test</string>
                 </property>

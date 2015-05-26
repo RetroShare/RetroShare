@@ -41,8 +41,8 @@
 #define CALL_HOLD  ":/images/call-hold.png"
 
 
-VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget)
-	: QObject(), ChatWidgetHolder(chatWidget)
+VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *notify)
+  : QObject(), ChatWidgetHolder(chatWidget), mVOIPNotify(notify)
 {
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/images/audio-volume-muted.png")) ;
@@ -284,12 +284,11 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	}
 }
 
-void VOIPChatWidgetHolder::addVideoData(const QString name, QByteArray* array)
+void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* array)
 {
-	outputVideoProcessor->receiveEncodedData((unsigned char *)array->data(),array->size()) ;
 	if (!videoCaptureToggleButton->isChecked()) {
 		if (mChatWidget) {
-			QString buttonName = name;
+			QString buttonName = QString::fromStdString(peer_id.toStdString());
 			if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
 			button_map::iterator it = buttonMapTakeVideo.find(buttonName);
 			if (it == buttonMapTakeVideo.end()){
@@ -315,6 +314,13 @@ void VOIPChatWidgetHolder::addVideoData(const QString name, QByteArray* array)
 				buttonMapTakeVideo.insert(buttonName, button);
 			}
 		}
+
+		//TODO make a sound for the incoming call
+//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
+		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(peer_id);
+
+	} else {
+		outputVideoProcessor->receiveEncodedData((unsigned char *)array->data(),array->size()) ;
 	}
 }
 
@@ -350,12 +356,12 @@ void VOIPChatWidgetHolder::botMouseLeave()
 	}
 }
 
-void VOIPChatWidgetHolder::setAcceptedBandwidth(const QString name, uint32_t bytes_per_sec)
+void VOIPChatWidgetHolder::setAcceptedBandwidth(uint32_t bytes_per_sec)
 {
 	inputVideoProcessor->setMaximumFrameRate(bytes_per_sec) ;
 }
 
-void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
+void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* array)
 {
     if (!audioCaptureToggleButton->isChecked()) {
         //launch an animation. Don't launch it if already animating
@@ -374,7 +380,7 @@ void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
         }
         
         if (mChatWidget) {
-        QString buttonName = name;
+        QString buttonName = QString::fromStdString(peer_id.toStdString());
         if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
         button_map::iterator it = buttonMapTakeVideo.find(buttonName);
         if (it == buttonMapTakeVideo.end()){
@@ -402,11 +408,12 @@ void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
         }
         }
 
-//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
-
         audioCaptureToggleButton->setToolTip(tr("Answer"));
 
-        //TODO make a toaster and a sound for the incoming call
+        //TODO make a sound for the incoming call
+//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
+        if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipAudioCall(peer_id);
+
         return;
     }
 
@@ -432,7 +439,7 @@ void VOIPChatWidgetHolder::addAudioData(const QString name, QByteArray* array)
             outputAudioDevice->setBufferSize(20);
         outputAudioDevice->start(outputAudioProcessor);
     }
-    outputAudioProcessor->putNetworkPacket(name, *array);
+    outputAudioProcessor->putNetworkPacket(QString::fromStdString(peer_id.toStdString()), *array);
 
     //check the input device for errors
     if (inputAudioDevice && inputAudioDevice->error() != QAudio::NoError) {

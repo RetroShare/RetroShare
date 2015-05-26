@@ -78,20 +78,22 @@ void VOIPPlugin::getPluginVersion(int& major, int& minor, int& build, int& svn_r
 
 VOIPPlugin::VOIPPlugin()
 {
+	qRegisterMetaType<RsPeerId>("RsPeerId");
 	mVOIP = NULL ;
 	mPlugInHandler = NULL;
 	mPeers = NULL;
 	config_page = NULL ;
 	mIcon = NULL ;
+	mVOIPToasterNotify = NULL ;
 
 	mVOIPGUIHandler = new VOIPGUIHandler ;
 	mVOIPNotify = new VOIPNotify ;
 
-	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipDataReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedVoipData(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const QString&)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipBandwidthInfoReceived(const QString&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const QString&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipDataReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipData(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipBandwidthInfoReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const RsPeerId&,int)),Qt::QueuedConnection) ;
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -135,7 +137,7 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 {
 	switch (chatWidget->chatType()) {
 	case ChatWidget::CHATTYPE_PRIVATE:
-		return new VOIPChatWidgetHolder(chatWidget);
+		return new VOIPChatWidgetHolder(chatWidget, mVOIPNotify);
 	case ChatWidget::CHATTYPE_UNKNOWN:
 	case ChatWidget::CHATTYPE_LOBBY:
 	case ChatWidget::CHATTYPE_DISTANT:
@@ -200,4 +202,11 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 void VOIPPlugin::qt_sound_events(SoundEvents &/*events*/) const
 {
 //	events.addEvent(QApplication::translate("VOIP", "VOIP"), QApplication::translate("VOIP", "Incoming call"), VOIP_SOUND_INCOMING_CALL);
+}
+
+ToasterNotify *VOIPPlugin::qt_toasterNotify(){
+	if (!mVOIPToasterNotify) {
+		mVOIPToasterNotify = new VOIPToasterNotify(mVOIP, mVOIPNotify);
+	}
+	return mVOIPToasterNotify;
 }

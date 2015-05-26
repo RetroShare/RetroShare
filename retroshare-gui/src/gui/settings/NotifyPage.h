@@ -29,6 +29,7 @@
 
 class UserNotify;
 class FeedNotify;
+class ToasterNotify;
 
 class UserNotifySetting
 {
@@ -54,6 +55,17 @@ public:
         : mFeedNotify(feedNotify), mEnabledCheckBox(enabledCheckBox) {}
 };
 
+class ToasterNotifySetting
+{
+public:
+    ToasterNotify *mToasterNotify;
+    QCheckBox *mEnabledCheckBox;
+
+public:
+    ToasterNotifySetting(ToasterNotify *toasterNotify, QCheckBox *enabledCheckBox)
+        : mToasterNotify(toasterNotify), mEnabledCheckBox(enabledCheckBox) {}
+};
+
 class NotifyPage : public ConfigPage
 {
     Q_OBJECT
@@ -76,7 +88,7 @@ public:
 private slots:
 	void notifyToggled();
 	void testToaster();
-	void testNotify();
+	void testFeed();
 
 private:
 	uint getNewsFlags();
@@ -84,6 +96,7 @@ private:
 	ChatLobbyUserNotify* mChatLobbyUserNotify;
 
     QList<FeedNotifySetting> mFeedNotifySettingList;
+    QList<ToasterNotifySetting> mToasterNotifySettingList;
     QList<UserNotifySetting> mUserNotifySettingList;
 
     /** Qt Designer generated object */

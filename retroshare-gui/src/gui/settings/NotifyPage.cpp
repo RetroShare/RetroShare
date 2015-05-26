@@ -29,6 +29,7 @@
 #include "gui/MainWindow.h"
 #include "gui/common/UserNotify.h"
 #include "gui/common/FeedNotify.h"
+#include "gui/common/ToasterNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/NewsFeed.h"
 
@@ -39,8 +40,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  connect(ui.notifyButton, SIGNAL(clicked()), this, SLOT(testNotify()));
-  connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
+  connect(ui.testFeedButton, SIGNAL(clicked()), this, SLOT(testFeed()));
+  connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
   connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
   connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
     connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool))) ;
@@ -49,8 +50,9 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
   QFont font = ui.notify_Peers->font(); // use font from existing checkbox
 
-  /* add feed notify */
-  int row = 0;
+  /* add feed and Toaster notify */
+  int rowFeed = 0;
+  int rowToaster = 0;
   int pluginCount = rsPlugins->nbPlugins();
   for (int i = 0; i < pluginCount; ++i) {
       RsPlugin *rsPlugin = rsPlugins->plugin(i);
@@ -58,15 +60,48 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
           FeedNotify *feedNotify = rsPlugin->qt_feedNotify();
           if (feedNotify) {
               QString name;
-              if (!feedNotify->hasSetting(name)) {
-                  continue;
+              if (feedNotify->hasSetting(name)) {
+
+                  QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+                  enabledCheckBox->setFont(font);
+                  ui.feedLayout->addWidget(enabledCheckBox, rowFeed++);
+
+                  mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
+              }
+          }
+
+          ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
+          if (toasterNotify) {
+              QString name;
+              if (toasterNotify->hasSetting(name)) {
+
+                  QCheckBox *enabledCheckBox = new QCheckBox(name, this);
+                  enabledCheckBox->setFont(font);
+                  ui.toasterLayout->addWidget(enabledCheckBox, rowToaster++);
+
+                  mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
               }
 
-              QCheckBox *enabledCheckBox = new QCheckBox(name, this);
-              enabledCheckBox->setFont(font);
-              ui.feedLayout->addWidget(enabledCheckBox, row++);
-
-              mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
+              QMap<QString, QString> map;
+              if (toasterNotify->hasSettings(name, map)) {
+                  if (!map.empty()){
+                      QWidget* widget = new QWidget();
+                      QVBoxLayout* vbLayout = new QVBoxLayout(widget);
+                      QLabel *label = new QLabel(name, this);
+                      QFont fontBold = QFont(font);
+                      fontBold.setBold(true);
+                      label->setFont(fontBold);
+                      vbLayout->addWidget(label);
+                      for (QMap<QString, QString>::const_iterator it = map.begin(); it != map.end(); ++it){
+                          QCheckBox *enabledCheckBox = new QCheckBox(it.value(), this);
+                          enabledCheckBox->setAccessibleName(it.key());
+                          enabledCheckBox->setFont(font);
+                          vbLayout->addWidget(enabledCheckBox);
+                          mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
+                      }
+                      ui.toasterLayout->addWidget(widget, rowToaster++);
+                  }
+              }
           }
       }
   }
@@ -74,7 +109,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   /* add user notify */
   const QList<UserNotify*> &userNotifyList = MainWindow::getInstance()->getUserNotifyList();
   QList<UserNotify*>::const_iterator it;
-  row = 0;
+  rowFeed = 0;
   mChatLobbyUserNotify = 0;
   for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
       UserNotify *userNotify = *it;
@@ -86,16 +121,16 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
       QCheckBox *enabledCheckBox = new QCheckBox(name, this);
       enabledCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(enabledCheckBox, row, 0, 0);
+      ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
       connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
 
       QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
       combinedCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(combinedCheckBox, row, 1);
+      ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
 
       QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
       blinkCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(blinkCheckBox, row++, 2);
+      ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
 
       mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
 
@@ -186,6 +221,16 @@ NotifyPage::save(QString &/*errmsg*/)
     QList<FeedNotifySetting>::iterator feedNotifyIt;
     for (feedNotifyIt = mFeedNotifySettingList.begin(); feedNotifyIt != mFeedNotifySettingList.end(); ++feedNotifyIt) {
         feedNotifyIt->mFeedNotify->setNotifyEnabled(feedNotifyIt->mEnabledCheckBox->isChecked());
+    }
+
+    /* save toaster notify */
+    QList<ToasterNotifySetting>::iterator toasterNotifyIt;
+    for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt) {
+        if(toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty()){
+            toasterNotifyIt->mToasterNotify->setNotifyEnabled(toasterNotifyIt->mEnabledCheckBox->isChecked()) ;
+        } else {
+            toasterNotifyIt->mToasterNotify->setNotifyEnabled(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mEnabledCheckBox->isChecked()) ;
+        }
     }
 
     /* save user notify */
@@ -284,6 +329,16 @@ void NotifyPage::load()
         feedNotifyIt->mEnabledCheckBox->setChecked(feedNotifyIt->mFeedNotify->notifyEnabled());
     }
 
+    /* load toaster notify */
+    QList<ToasterNotifySetting>::iterator toasterNotifyIt;
+    for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt) {
+        if (toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty()) {
+            toasterNotifyIt->mEnabledCheckBox->setChecked(toasterNotifyIt->mToasterNotify->notifyEnabled()) ;
+        } else {
+            toasterNotifyIt->mEnabledCheckBox->setChecked(toasterNotifyIt->mToasterNotify->notifyEnabled(toasterNotifyIt->mEnabledCheckBox->accessibleName())) ;
+        }
+    }
+
     /* load user notify */
     QList<UserNotifySetting>::iterator userNotifyIt;
     for (userNotifyIt = mUserNotifySettingList.begin(); userNotifyIt != mUserNotifySettingList.end(); ++userNotifyIt) {
@@ -321,7 +376,7 @@ void NotifyPage::notifyToggled()
     }
 }
 
-void NotifyPage::testNotify()
+void NotifyPage::testFeed()
 {
     NewsFeed::testFeeds(getNewsFlags());
 
@@ -336,5 +391,19 @@ void NotifyPage::testNotify()
 
 void NotifyPage::testToaster()
 {
-    NotifyQt::getInstance()->testToaster(getNotifyFlags(), (RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(ui.comboBoxToasterPosition->currentIndex()).toInt(), QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value()));
+    RshareSettings::enumToasterPosition pos = (RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(ui.comboBoxToasterPosition->currentIndex()).toInt();
+    QPoint margin = QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value());
+    NotifyQt::getInstance()->testToasters(getNotifyFlags(), pos, margin);
+
+    /* notify of plugins */
+    QList<ToasterNotifySetting>::iterator toasterNotifyIt;
+    for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt) {
+        if (toasterNotifyIt->mEnabledCheckBox->isChecked()){
+            if (toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty()){
+                NotifyQt::getInstance()->testToaster(toasterNotifyIt->mToasterNotify, pos, margin) ;
+            } else {
+                NotifyQt::getInstance()->testToaster(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mToasterNotify, pos, margin) ;
+            }
+        }
+    }
 }

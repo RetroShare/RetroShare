@@ -13,6 +13,7 @@ class VideoDecoder
 {
 	public:
 		VideoDecoder() ;
+		virtual ~VideoDecoder() {}
 
 		// Gets the next image to be displayed. Once returned, the image should
 		// be cleared from the incoming queue.
@@ -49,6 +50,7 @@ class VideoEncoder
 {
 	public:
 		VideoEncoder() {}
+		virtual ~VideoEncoder() {}
 
 		// Takes the next image to be encoded. 
 		//

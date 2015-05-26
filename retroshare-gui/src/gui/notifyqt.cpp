@@ -41,6 +41,8 @@
 #include "toaster/GroupChatToaster.h"
 #include "toaster/ChatLobbyToaster.h"
 #include "toaster/FriendRequestToaster.h"
+#include "toaster/ToasterItem.h"
+#include "common/ToasterNotify.h"
 
 #include "chat/ChatDialog.h"
 #include "chat/ChatLobbyDialog.h"
@@ -49,52 +51,11 @@
 #include "gui/settings/rsharesettings.h"
 #include "SoundManager.h"
 
+#include "retroshare/rsplugin.h"
+
 /*****
  * #define NOTIFY_DEBUG
  ****/
-
-class Toaster
-{
-public:
-	Toaster(QWidget *widget)
-	{
-		this->widget = widget;
-
-		/* Values from settings */
-		position = Settings->getToasterPosition();
-		Settings->getToasterMargin();
-
-
-		/* Standard values */
-		timeToShow = 500;
-		timeToLive = 3000;
-		timeToHide = 500;
-
-		/* Calculated values */
-		elapsedTimeToShow = 0;
-		elapsedTimeToLive = 0;
-		elapsedTimeToHide = 0;
-	}
-
-public:
-	QWidget *widget;
-
-	/* Values from settings */
-	RshareSettings::enumToasterPosition position;
-	QPoint margin;
-
-	/* Standard values */
-	int timeToShow;
-	int timeToLive;
-	int timeToHide;
-
-	/* Calculated values */
-	QPoint startPos;
-	QPoint endPos;
-	int elapsedTimeToShow;
-	int elapsedTimeToLive;
-	int elapsedTimeToHide;
-};
 
 /*static*/ NotifyQt *NotifyQt::_instance = NULL;
 /*static*/ bool NotifyQt::_disableAllToaster = false;
@@ -820,12 +781,11 @@ void NotifyQt::UpdateGUI()
 		uint32_t type;
         std::string title, id, msg;
 
+		/* You can set timeToShow, timeToLive and timeToHide or can leave the standard */
+		ToasterItem *toaster = NULL;
 		if (rsNotify->NotifyPopupMessage(type, id, title, msg))
 		{
 			uint popupflags = Settings->getNotifyFlags();
-
-			/* You can set timeToShow, timeToLive and timeToHide or can leave the standard */
-			Toaster *toaster = NULL;
 
 			switch(type)
 			{
@@ -834,7 +794,7 @@ void NotifyQt::UpdateGUI()
 
 					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
 					{
-						toaster = new Toaster(new MessageToaster("", tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
+						toaster = new ToasterItem(new MessageToaster("", tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
 					}
 					break;
 				case RS_POPUP_MSG:
@@ -842,7 +802,7 @@ void NotifyQt::UpdateGUI()
 
 					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
 					{
-						toaster = new Toaster(new MessageToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
+						toaster = new ToasterItem(new MessageToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT:
@@ -850,7 +810,7 @@ void NotifyQt::UpdateGUI()
 
 					if ((popupflags & RS_POPUP_CONNECT) && !_disableAllToaster)
 					{
-						toaster = new Toaster(new OnlineToaster(RsPeerId(id)));
+						toaster = new ToasterItem(new OnlineToaster(RsPeerId(id)));
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
@@ -859,7 +819,7 @@ void NotifyQt::UpdateGUI()
 					if ((popupflags & RS_POPUP_DOWNLOAD) && !_disableAllToaster)
 					{
 						/* id = file hash */
-						toaster = new Toaster(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
+						toaster = new ToasterItem(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
 					}
 					break;
 				case RS_POPUP_CHAT:
@@ -872,7 +832,7 @@ void NotifyQt::UpdateGUI()
 							// do not show when active
 							break;
 						}
-                        toaster = new Toaster(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
+                        toaster = new ToasterItem(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_GROUPCHAT:
@@ -887,7 +847,7 @@ void NotifyQt::UpdateGUI()
 								}
 							}
 						}
-						toaster = new Toaster(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
+						toaster = new ToasterItem(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CHATLOBBY:
@@ -914,7 +874,7 @@ void NotifyQt::UpdateGUI()
                         if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(RsGxsId(title)))
                             break; // participant is muted
 
-                        toaster = new Toaster(new ChatLobbyToaster(lobby_id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
+                        toaster = new ToasterItem(new ChatLobbyToaster(lobby_id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:
@@ -923,19 +883,34 @@ void NotifyQt::UpdateGUI()
 						// id = gpgid
 						// title = ssl name
 						// msg = peer id
-						toaster = new Toaster(new FriendRequestToaster(RsPgpId(id), QString::fromUtf8(title.c_str()), RsPeerId(msg)));
+						toaster = new ToasterItem(new FriendRequestToaster(RsPgpId(id), QString::fromUtf8(title.c_str()), RsPeerId(msg)));
 					}
 					break;
 			}
+		}
 
-			if (toaster) {
-				/* init attributes */
-				toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
-
-				/* add toaster to waiting list */
-				//QMutexLocker lock(&waitingToasterMutex);
-				waitingToasterList.push_back(toaster);
+		/*Now check Plugins*/
+		if (!toaster) {
+			int pluginCount = rsPlugins->nbPlugins();
+			for (int i = 0; i < pluginCount; ++i) {
+				RsPlugin *rsPlugin = rsPlugins->plugin(i);
+				if (rsPlugin) {
+					ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
+					if (toasterNotify) {
+						toaster = toasterNotify->toasterItem();
+						continue;
+					}
+				}
 			}
+		}
+
+		if (toaster) {
+			/* init attributes */
+			toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
+
+			/* add toaster to waiting list */
+			//QMutexLocker lock(&waitingToasterMutex);
+			waitingToasterList.push_back(toaster);
 		}
 
 		if (rsNotify->NotifySysMessage(sysid, type, title, msg))
@@ -980,7 +955,7 @@ void NotifyQt::UpdateGUI()
 	startWaitingToasters();
 }
 
-void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
 {
 	QString title = tr("Test");
 	QString message = tr("This is a test.");
@@ -995,33 +970,33 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 		notifyFlags &= ~(1 << pos);
 		++pos;
 
-		Toaster *toaster = NULL;
+		ToasterItem *toaster = NULL;
 
 		switch(type)
 		{
 			case RS_POPUP_ENCRYPTED_MSG:
-				toaster = new Toaster(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
+				toaster = new ToasterItem(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
 				break;
 			case RS_POPUP_MSG:
-				toaster = new Toaster(new MessageToaster(id.toStdString(), title, message));
+				toaster = new ToasterItem(new MessageToaster(id.toStdString(), title, message));
 				break;
 			case RS_POPUP_CONNECT:
-				toaster = new Toaster(new OnlineToaster(id));
+				toaster = new ToasterItem(new OnlineToaster(id));
 				break;
 			case RS_POPUP_DOWNLOAD:
-                toaster = new Toaster(new DownloadToaster(RsFileHash::random(), title));
+                toaster = new ToasterItem(new DownloadToaster(RsFileHash::random(), title));
 				break;
 			case RS_POPUP_CHAT:
-                toaster = new Toaster(new ChatToaster(id, message));
+                toaster = new ToasterItem(new ChatToaster(id, message));
 				break;
 			case RS_POPUP_GROUPCHAT:
-				toaster = new Toaster(new GroupChatToaster(id, message));
+				toaster = new ToasterItem(new GroupChatToaster(id, message));
 				break;
 			case RS_POPUP_CHATLOBBY:
-                toaster = new Toaster(new ChatLobbyToaster(0, title, message));
+                toaster = new ToasterItem(new ChatLobbyToaster(0, title, message));
 				break;
 			case RS_POPUP_CONNECT_ATTEMPT:
-				toaster = new Toaster(new FriendRequestToaster(pgpid, title, id));
+				toaster = new ToasterItem(new FriendRequestToaster(pgpid, title, id));
 				break;
 		}
 
@@ -1035,6 +1010,48 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 			//QMutexLocker lock(&waitingToasterMutex);
 			waitingToasterList.push_back(toaster);
 		}
+	}
+}
+
+void NotifyQt::testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+{
+
+	if (!toasterNotify) {
+		return;
+	}
+
+	ToasterItem *toaster = toasterNotify->testToasterItem();
+
+	if (toaster) {
+		/* init attributes */
+		toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
+		toaster->position = (RshareSettings::enumToasterPosition) position;
+		toaster->margin = margin;
+
+		/* add toaster to waiting list */
+		//QMutexLocker lock(&waitingToasterMutex);
+		waitingToasterList.push_back(toaster);
+	}
+}
+
+void NotifyQt::testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+{
+
+	if (!toasterNotify) {
+		return;
+	}
+
+	ToasterItem *toaster = toasterNotify->testToasterItem(tag);
+
+	if (toaster) {
+		/* init attributes */
+		toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
+		toaster->position = (RshareSettings::enumToasterPosition) position;
+		toaster->margin = margin;
+
+		/* add toaster to waiting list */
+		//QMutexLocker lock(&waitingToasterMutex);
+		waitingToasterList.push_back(toaster);
 	}
 }
 
@@ -1084,7 +1101,7 @@ void NotifyQt::startWaitingToasters()
 		}
 	}
 
-	Toaster *toaster = NULL;
+	ToasterItem *toaster = NULL;
 
 	{
 		//QMutexLocker lock(&waitingToasterMutex);
@@ -1149,9 +1166,9 @@ void NotifyQt::runningTick()
 	int interval = runningToasterTimer->interval();
 	QPoint diff;
 
-	QList<Toaster*>::iterator it = runningToasterList.begin();
+	QList<ToasterItem*>::iterator it = runningToasterList.begin();
 	while (it != runningToasterList.end()) {
-		Toaster *toaster = *it;
+		ToasterItem *toaster = *it;
 
 		bool visible = true;
 		if (toaster->elapsedTimeToShow) {
@@ -1192,7 +1209,7 @@ void NotifyQt::runningTick()
 		} else {
 			/* Toaster is hidden, delete it */
 			it = runningToasterList.erase(it);
-			delete(toaster->widget);
+			//delete(toaster->widget);
 			delete(toaster);
 			continue;
 		}

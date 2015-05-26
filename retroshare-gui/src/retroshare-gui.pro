@@ -442,6 +442,7 @@ HEADERS +=  rshare.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/settings/GroupFrameSettingsWidget.h \
+            gui/toaster/ToasterItem.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/DownloadToaster.h \
@@ -498,6 +499,7 @@ HEADERS +=  rshare.h \
             gui/common/PictureFlow.h \
             gui/common/StyledLabel.h \
             gui/common/StyledElidedLabel.h \
+            gui/common/ToasterNotify.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -804,6 +806,7 @@ SOURCES +=  main.cpp \
             gui/common/PictureFlow.cpp \
             gui/common/StyledLabel.cpp \
             gui/common/StyledElidedLabel.cpp \
+            gui/common/ToasterNotify.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/RSPermissionMatrixWidget.cpp \
@@ -843,6 +846,7 @@ SOURCES +=  main.cpp \
             gui/statusbar/OpModeStatus.cpp \
             gui/statusbar/ToasterDisable.cpp \
             gui/statusbar/SysTrayStatus.cpp \
+            gui/toaster/ToasterItem.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/DownloadToaster.cpp \
             gui/toaster/OnlineToaster.cpp \

@@ -45,7 +45,9 @@ SOURCES = VOIPPlugin.cpp               \
           gui/QVideoDevice.cpp         \
           gui/VOIPChatWidgetHolder.cpp \
           gui/VOIPGUIHandler.cpp       \
-          gui/VOIPNotify.cpp
+          gui/VOIPNotify.cpp           \
+          gui/VOIPToasterItem.cpp      \
+          gui/VOIPToasterNotify.cpp
 
 HEADERS = VOIPPlugin.h                 \
           services/p3VOIP.h            \
@@ -60,11 +62,14 @@ HEADERS = VOIPPlugin.h                 \
           gui/VOIPChatWidgetHolder.h   \
           gui/VOIPGUIHandler.h         \
           gui/VOIPNotify.h             \
+          gui/VOIPToasterItem.h        \
+          gui/VOIPToasterNotify.h     \
           interface/rsVOIP.h
 
 FORMS   = gui/AudioInputConfig.ui      \
           gui/AudioStats.ui            \
-          gui/AudioWizard.ui
+          gui/AudioWizard.ui           \
+          gui/VOIPToasterItem.ui
 
 TARGET = VOIP
 

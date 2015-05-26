@@ -28,25 +28,32 @@
 
 #pragma once
 
-#include <QObject>
+/*libretroshare*/
 #include <retroshare/rstypes.h>
+
+#include <QObject>
 
 class VOIPNotify: public QObject
 {
 	Q_OBJECT
 
 	public:
-        void notifyReceivedVoipData(const RsPeerId& peer_id) ;
-        void notifyReceivedVoipInvite(const RsPeerId &peer_id) ;
-        void notifyReceivedVoipHangUp(const RsPeerId& peer_id) ;
-        void notifyReceivedVoipAccept(const RsPeerId &peer_id) ;
-        void notifyReceivedVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec) ;
+	void notifyReceivedVoipAccept(const RsPeerId &peer_id) ;
+	void notifyReceivedVoipBandwidth(const RsPeerId &peer_id, uint32_t bytes_per_sec) ;
+	void notifyReceivedVoipData(const RsPeerId &peer_id) ;
+	void notifyReceivedVoipHangUp(const RsPeerId &peer_id) ;
+	void notifyReceivedVoipInvite(const RsPeerId &peer_id) ;
+	void notifyReceivedVoipAudioCall(const RsPeerId &peer_id) ;
+	void notifyReceivedVoipVideoCall(const RsPeerId &peer_id) ;
 
 	signals:
-		void voipInvitationReceived(const QString&) ;	// signal emitted when an invitation has been received
-		void voipDataReceived(const QString&) ;			// signal emitted when some voip data has been received
-		void voipHangUpReceived(const QString& peer_id) ; // emitted when the peer closes the call (i.e. hangs up)
-		void voipAcceptReceived(const QString& peer_id) ; // emitted when the peer accepts the call
-		void voipBandwidthInfoReceived(const QString& peer_id,int bytes_per_sec) ; // emitted when measured bandwidth info is received by the peer.
+	void voipAcceptReceived(const RsPeerId &peer_id) ; // emitted when the peer accepts the call
+	void voipBandwidthInfoReceived(const RsPeerId &peer_id, int bytes_per_sec) ; // emitted when measured bandwidth info is received by the peer.
+	void voipDataReceived(const RsPeerId &peer_id) ;			// signal emitted when some voip data has been received
+	void voipHangUpReceived(const RsPeerId &peer_id) ; // emitted when the peer closes the call (i.e. hangs up)
+	void voipInvitationReceived(const RsPeerId &peer_id) ;	// signal emitted when an invitation has been received
+
+	void voipAudioCallReceived(const RsPeerId &peer_id) ; // emitted when the peer is calling and own don't send audio
+	void voipVideoCallReceived(const RsPeerId &peer_id) ; // emitted when the peer is calling and own don't send video
 };
 

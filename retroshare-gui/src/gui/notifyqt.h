@@ -21,7 +21,8 @@ class ChatDialog;
 class MessagesDialog;
 class ChannelsDialog;
 class MessengerWindow;
-class Toaster;
+class ToasterItem;
+class ToasterNotify;
 class SignatureEventData ;
 struct TurtleFileInfo;
 
@@ -90,7 +91,9 @@ class NotifyQt: public QObject, public NotifyClient
 		void notifyChatFontChanged();
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 
-		void testToaster(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
+		void testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
+		void testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
+		void testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 
 		void notifySettingsChanged();
 
@@ -169,10 +172,10 @@ class NotifyQt: public QObject, public NotifyClient
 		void startWaitingToasters();
 
 //		QMutex waitingToasterMutex; // for lock of the waiting toaster list
-		QList<Toaster*> waitingToasterList;
+		QList<ToasterItem*> waitingToasterList;
 
 		QTimer *runningToasterTimer;
-		QList<Toaster*> runningToasterList;
+		QList<ToasterItem*> runningToasterList;
 
 		bool _enabled ;
 		QMutex _mutex ;

@@ -21,23 +21,33 @@
 
 #include "VOIPNotify.h"
 
-void VOIPNotify::notifyReceivedVoipInvite(const RsPeerId& peer_id)
-{
-    emit voipInvitationReceived(QString::fromStdString(peer_id.toStdString())) ;
-}
-void VOIPNotify::notifyReceivedVoipData(const RsPeerId &peer_id)
-{
-    emit voipDataReceived(QString::fromStdString(peer_id.toStdString())) ;
-}
+//Call 	qRegisterMetaType<RsPeerId>("RsPeerId"); to enable these SIGNALs
+
 void VOIPNotify::notifyReceivedVoipAccept(const RsPeerId& peer_id)
 {
-    emit voipAcceptReceived(QString::fromStdString(peer_id.toStdString())) ;
-}
-void VOIPNotify::notifyReceivedVoipHangUp(const RsPeerId &peer_id)
-{
-    emit voipHangUpReceived(QString::fromStdString(peer_id.toStdString())) ;
+	emit voipAcceptReceived(peer_id) ;
 }
 void VOIPNotify::notifyReceivedVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec)
 {
-    emit voipBandwidthInfoReceived(QString::fromStdString(peer_id.toStdString()),bytes_per_sec) ;
+	emit voipBandwidthInfoReceived(peer_id, bytes_per_sec) ;
+}
+void VOIPNotify::notifyReceivedVoipData(const RsPeerId &peer_id)
+{
+	emit voipDataReceived(peer_id) ;
+}
+void VOIPNotify::notifyReceivedVoipHangUp(const RsPeerId &peer_id)
+{
+	emit voipHangUpReceived(peer_id) ;
+}
+void VOIPNotify::notifyReceivedVoipInvite(const RsPeerId& peer_id)
+{
+	emit voipInvitationReceived(peer_id) ;
+}
+void VOIPNotify::notifyReceivedVoipAudioCall(const RsPeerId &peer_id)
+{
+	emit voipAudioCallReceived(peer_id) ;
+}
+void VOIPNotify::notifyReceivedVoipVideoCall(const RsPeerId &peer_id)
+{
+	emit voipVideoCallReceived(peer_id) ;
 }

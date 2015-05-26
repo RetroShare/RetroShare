@@ -62,6 +62,7 @@ class RsPQIService ;
 class RsAutoUpdatePage ;
 class SoundEvents;
 class FeedNotify;
+class ToasterNotify;
 class ChatWidget;
 class ChatWidgetHolder;
 // for gxs based plugins
@@ -178,6 +179,7 @@ class RsPlugin
 		//================================== Notify ==================================//
 		//
 		virtual FeedNotify *qt_feedNotify() { return NULL; }
+		virtual ToasterNotify *qt_toasterNotify() { return NULL; }
 
 		//
 		//========================== Plugin Description ==============================//

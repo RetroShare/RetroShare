@@ -28,17 +28,22 @@
 
 #pragma once
 
+#include <interface/rsVOIP.h>
+
 #include <stdint.h>
 #include <QObject>
 
 class VOIPGUIHandler: public QObject
 {
 	Q_OBJECT
+public:
+	static void AnswerAudioCall(const RsPeerId &peer_id) ;
+	static void AnswerVideoCall(const RsPeerId &peer_id) ;
 
 	public slots:
-		void ReceivedInvitation(const QString& peer_id) ;
-		void ReceivedVoipData(const QString& peer_id) ;
-		void ReceivedVoipHangUp(const QString& peer_id) ;
-		void ReceivedVoipAccept(const QString& peer_id) ;
-		void ReceivedVoipBandwidthInfo(const QString& peer_id,int) ;
+		void ReceivedInvitation(const RsPeerId &peer_id) ;
+		void ReceivedVoipData(const RsPeerId &peer_id) ;
+		void ReceivedVoipHangUp(const RsPeerId &peer_id) ;
+		void ReceivedVoipAccept(const RsPeerId &peer_id) ;
+		void ReceivedVoipBandwidthInfo(const RsPeerId &peer_id, int) ;
 };

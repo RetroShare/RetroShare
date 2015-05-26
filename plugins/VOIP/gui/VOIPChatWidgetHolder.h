@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "gui/VOIPNotify.h"
+
 #include <QObject>
 #include <QGraphicsEffect>
 #include <gui/SpeexProcessor.h>
@@ -42,28 +44,28 @@ class VOIPChatWidgetHolder : public QObject, public ChatWidgetHolder
 	Q_OBJECT
 
 public:
-	VOIPChatWidgetHolder(ChatWidget *chatWidget);
+	VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *notify);
 	virtual ~VOIPChatWidgetHolder();
 
 	virtual void updateStatus(int status);
 
-	void addAudioData(const QString name, QByteArray* array) ;
-	void addVideoData(const QString name, QByteArray* array) ;
-	void setAcceptedBandwidth(const QString name, uint32_t bytes_per_sec) ;
+	void addAudioData(const RsPeerId &peer_id, QByteArray* array) ;
+	void addVideoData(const RsPeerId &peer_id, QByteArray* array) ;
+	void setAcceptedBandwidth(uint32_t bytes_per_sec) ;
+
+public slots:
+	void sendAudioData();
+	void sendVideoData();
+	void startAudioCapture();
+	void startVideoCapture();
 
 private slots:
 	void toggleAudioListen();
 	void toggleAudioCapture();
 	void toggleVideoCapture();
-	void startVideoCapture();
-	void startAudioCapture();
 	void hangupCall() ;
 	void botMouseEnter();
 	void botMouseLeave();
-
-public slots:
-	void sendAudioData();
-	void sendVideoData();
 
 protected:
 	// Audio input/output
@@ -91,5 +93,7 @@ protected:
 
 	typedef QMap<QString, RSButtonOnText*> button_map;
 	button_map buttonMapTakeVideo;
+
+	VOIPNotify *mVOIPNotify;
 };
 
