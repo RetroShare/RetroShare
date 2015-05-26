@@ -101,6 +101,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsrank.h \
 					retroshare/rsstatus.h \
 					retroshare/rsturtle.h \
+					retroshare/rsbanlist.h \
 					retroshare/rstypes.h \
 					retroshare/rsdht.h \
 					retroshare/rsrtt.h \

@@ -23,6 +23,7 @@
  *
  */
 
+#include <list>
 
 #include "dht/p3bitdht.h"
 
@@ -387,6 +388,22 @@ bool p3BitDht::isAddressBanned(const sockaddr_storage &raddr)
     return false ;
 }
 
+void p3BitDht::getListOfBannedIps(std::list<RsDhtFilteredPeer>& ips)
+{
+    std::list<bdFilteredPeer> lst ;
+
+    mUdpBitDht->getListOfBannedIps(lst) ;
+
+    for(std::list<bdFilteredPeer>::const_iterator it(lst.begin());it!=lst.end();++it)
+    {
+        RsDhtFilteredPeer fp ;
+        fp.mAddr = (*it).mAddr ;
+        fp.mFilterFlags = (*it).mFilterFlags ;
+        fp.mFilterTS = (*it).mFilterTS ;
+        fp.mLastSeen = (*it).mLastSeen ;
+        ips.push_back(fp) ;
+    }
+}
 
 bool 	p3BitDht::setAttachMode(bool on)
 {

@@ -149,8 +149,8 @@ class bdNode: public bdNodePublisher
 	void updateStore();
 
     bool addressBanned(const sockaddr_in &raddr) ;
-    void getFilteredPeers(std::list<bdFilteredPeer> &peers);
-    void loadFilteredPeers(const std::list<bdFilteredPeer> &peers);
+    bool getFilteredPeers(std::list<bdFilteredPeer> &peers);
+    //void loadFilteredPeers(const std::list<bdFilteredPeer> &peers);
 
 	/* simplified outgoing msg functions (for the managers) */
 	virtual void send_ping(bdId *id); /* message out */

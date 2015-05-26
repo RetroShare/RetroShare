@@ -88,6 +88,7 @@ virtual int getDhtQueries(std::map<bdNodeId, bdQueryStatus> &queries);
 virtual int getDhtQueryStatus(const bdNodeId *id, bdQuerySummary &query);
 
     virtual bool isAddressBanned(const sockaddr_in &raddr) ;
+    virtual bool getListOfBannedIps(std::list<bdFilteredPeer> &ipl);
 
         /* stats and Dht state */
 virtual int startDht();
@@ -111,9 +112,8 @@ virtual int status(std::ostream &out);
 virtual void run();
 
 	/**** do whats to be done ***/
-	int tick();
-
-	private:
+int tick();
+private:
 
 void clearDataTransferred();
 

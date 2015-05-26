@@ -26,6 +26,7 @@
  *
  */
 
+#include <netinet/in.h>
 #include <inttypes.h>
 #include <string>
 #include <list>
@@ -35,10 +36,8 @@
 class RsDht;
 extern RsDht *rsDht;
 
-
 //std::ostream &operator<<(std::ostream &out, const RsPhotoShowDetails &detail);
 //std::ostream &operator<<(std::ostream &out, const RsPhotoDetails &detail);
-
 
 #define RSDHT_NETSTART_NETWORKMODE	0x0001
 #define RSDHT_NETSTART_NATTYPE		0x0002
@@ -157,7 +156,14 @@ class RsDhtRelayProxy
         //time_t mLastBandwidthTS;
 
 };
-
+class RsDhtFilteredPeer
+{
+public:
+    struct sockaddr_in mAddr;
+    uint32_t mFilterFlags; /* reasons why we are filtering */
+    time_t mFilterTS;
+    time_t mLastSeen;
+};
 
 class RsDht
 {
@@ -196,6 +202,7 @@ virtual int	setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth
 virtual bool    getOwnDhtId(std::string &ownDhtId) = 0;
 
 virtual bool	isAddressBanned(const struct sockaddr_storage& raddr) =0;
+virtual void	getListOfBannedIps(std::list<RsDhtFilteredPeer>& lst) =0;
 
 #if 0
 virtual std::string getPeerStatusString();

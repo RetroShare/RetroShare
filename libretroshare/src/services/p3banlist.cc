@@ -30,12 +30,14 @@
 
 #include "services/p3banlist.h"
 #include "serialiser/rsbanlistitems.h"
+#include "retroshare/rsdht.h"
 
 #include <sys/time.h>
 
 /****
  * #define DEBUG_BANLIST		1
  ****/
+ #define DEBUG_BANLIST		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -48,6 +50,8 @@
 #define RSBANLIST_SOURCE_FRIEND		1
 #define RSBANLIST_SOURCE_FOF		2
 
+#define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 60	// should be more: e.g. 600 secs.
+
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -55,14 +59,15 @@
  * we distribute and track the network list of bad peers.
  *
  */
-
+RsBanList *rsBanList = NULL ;
 
 p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr *nm)
 	:p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc), mNetMgr(nm) 
 {
 	addSerialType(new RsBanListSerialiser());
 
-	mSentListTime = 0;
+    mSentListTime = 0;
+    mLastDhtInfoRequest = 0 ;
 }
 
 
@@ -79,15 +84,37 @@ RsServiceInfo p3BanList::getServiceInfo()
                 BANLIST_APP_MAJOR_VERSION,
                 BANLIST_APP_MINOR_VERSION,
                 BANLIST_MIN_MAJOR_VERSION,
-                BANLIST_MIN_MINOR_VERSION);
+                             BANLIST_MIN_MINOR_VERSION);
 }
 
+bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
+{
+    // we should normally work this including entire ranges of IPs. For now, just check the exact IPs.
 
+    if(mBanSet.find(addr) != mBanSet.end())
+        return false ;
+
+    return true ;
+}
+
+void p3BanList::getListOfBannedIps(std::list<BanListPeer> &lst)
+{
+    for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanSet.begin());it!=mBanSet.end();++it)
+        lst.push_back(it->second) ;
+}
 
 int	p3BanList::tick()
 {
 	processIncoming();
 	sendPackets();
+
+    time_t now = time(NULL) ;
+
+    if(mLastDhtInfoRequest + RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT < now)
+    {
+        getDhtInfo() ;
+        mLastDhtInfoRequest = now;
+    }
 
 	return 0;
 }
@@ -97,6 +124,31 @@ int	p3BanList::status()
 	return 1;
 }
 
+void p3BanList::getDhtInfo()
+{
+    // Get the list of masquerading peers from the DHT. Add them as potential IPs to be banned.
+    // Don't make them active. Just insert them in the list.
+
+    std::list<RsDhtFilteredPeer> filtered_peers ;
+
+    rsDht->getListOfBannedIps(filtered_peers) ;
+
+    std::cerr << "p3BanList::getDhtInfo() Got list of banned IPs." << std::endl;
+    RsPeerId ownId = mServiceCtrl->getOwnId();
+
+    for(std::list<RsDhtFilteredPeer>::const_iterator it(filtered_peers.begin());it!=filtered_peers.end();++it)
+    {
+        std::cerr << "  filtered peer: " << rs_inet_ntoa((*it).mAddr.sin_addr) << std::endl;
+
+        int int_reason = 0 ;
+        int age = 0 ;
+        sockaddr_storage ad = *(sockaddr_storage*)&(*it).mAddr ;
+
+        addBanEntry(ownId, ad, RSBANLIST_SOURCE_SELF, int_reason, age);
+    }
+
+    condenseBanSources_locked() ;
+}
 
 /***** Implementation ******/
 
@@ -187,7 +239,7 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 	bool updated = false;
 
 #ifdef DEBUG_BANLIST
-	std::cerr << "p3BanList::addBanEntry() Addr: " << rs_inet_ntoa(addr.sin_addr) << " Level: " << level;
+    std::cerr << "p3BanList::addBanEntry() Addr: " << sockaddr_storage_iptostring(addr) << " Level: " << level;
 	std::cerr << " Reason: " << reason << " Age: " << age;
 	std::cerr << std::endl;
 #endif

@@ -217,6 +217,11 @@ bool UdpBitDht::isAddressBanned(const sockaddr_in &raddr)
     return mBitDhtManager->addressBanned(raddr) ;
 }
 
+bool UdpBitDht::getListOfBannedIps(std::list<bdFilteredPeer>& ipl)
+{
+    return mBitDhtManager->getFilteredPeers(ipl) ;
+}
+
 
 
         /* stats and Dht state */

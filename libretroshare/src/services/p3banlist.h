@@ -33,20 +33,12 @@
 
 #include "serialiser/rsbanlistitems.h"
 #include "services/p3service.h"
-//#include "retroshare/rsbanlist.h"
+#include "retroshare/rsbanlist.h"
 
 class p3ServiceControl;
 class p3NetMgr;
 
-class BanListPeer
-{
-	public:
-	
-	struct sockaddr_storage addr;
-	uint32_t reason; // Dup Self, Dup Friend
-	int level; // LOCAL, FRIEND, FoF.
-	time_t mTs;
-};
+
 
 class BanList
 {
@@ -65,7 +57,7 @@ class BanList
   * Exchange list of Banned IP addresses with peers.
   */
 
-class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPeerShare /* , public p3Config, public pqiMonitor */
+class p3BanList: public RsBanList, public p3Service, public pqiNetAssistPeerShare /* , public p3Config, public pqiMonitor */
 {
 	public:
 		p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
@@ -73,10 +65,12 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 
 		/***** overloaded from RsBanList *****/
 
-		/***** overloaded from pqiNetAssistPeerShare *****/
+        virtual bool isAddressAccepted(const struct sockaddr_storage& addr) ;
+        virtual void getListOfBannedIps(std::list<BanListPeer>& list) ;
+
+        /***** overloaded from pqiNetAssistPeerShare *****/
 
 		virtual void    updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int age);
-
 
 		/***** overloaded from p3Service *****/
 		/*!
@@ -94,8 +88,7 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 		bool 	processIncoming();
 
 		bool recvBanItem(RsBanListItem *item);
-		bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, 
-			int level, uint32_t reason, uint32_t age);
+        bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, uint32_t age);
 		void sendBanLists();
 		int sendBanSet(const RsPeerId& peerid);
 
@@ -115,7 +108,9 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 		//virtual bool loadList(std::list<RsItem*>& load) ;
 
 
-	private:
+    private:
+        void getDhtInfo() ;
+
 		RsMutex mBanMtx;
 
 		int condenseBanSources_locked();
@@ -127,7 +122,8 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 		std::map<struct sockaddr_storage, BanListPeer> mBanSet;
 
 		p3ServiceControl *mServiceCtrl;
-		p3NetMgr *mNetMgr;
+        p3NetMgr *mNetMgr;
+        time_t mLastDhtInfoRequest ;
 
 };
 

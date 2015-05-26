@@ -40,11 +40,11 @@
 
 class bdFilteredPeer
 {
-	public:
-	struct sockaddr_in mAddr;
-	uint32_t mFilterFlags; /* reasons why we are filtering */
-	time_t mFilterTS;
-	time_t mLastSeen;
+    public:
+    struct sockaddr_in mAddr;
+    uint32_t mFilterFlags; /* reasons why we are filtering */
+    time_t mFilterTS;
+    time_t mLastSeen;
 };
 
 class bdFilter
@@ -56,7 +56,7 @@ class bdFilter
 //bool	filtered(std::list<bdFilteredPeer> &answer);
 bool	filteredIPs(std::list<struct sockaddr_in> &answer);
 
-void    loadFilteredPeers(const std::list<bdFilteredPeer>& peers) ;
+//void    loadFilteredPeers(const std::list<bdFilteredPeer>& peers) ;
 void 	getFilteredPeers(std::list<bdFilteredPeer> &peers);
 
 int 	checkPeer(const bdId *id, uint32_t peerFlags);

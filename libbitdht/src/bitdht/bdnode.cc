@@ -93,10 +93,11 @@ void bdNode::init()
 	setNodeDhtMode(BITDHT_MODE_TRAFFIC_DEFAULT);
 
 }
-//void bdNode::getFilteredPeers(std::list<bdFilteredPeer>& peers)
-//{
-//    mFilterPeers.getFilteredPeers(peers) ;
-//}
+bool bdNode::getFilteredPeers(std::list<bdFilteredPeer>& peers)
+{
+    mFilterPeers.getFilteredPeers(peers) ;
+    return true ;
+}
 //
 //void bdNode::loadFilteredPeers(const std::list<bdFilteredPeer>& peers)
 //{

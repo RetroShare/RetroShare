@@ -66,7 +66,7 @@ void bdFilter::writeBannedIpFile()
 
     for( std::map<uint32_t,bdFilteredPeer>::iterator it=mFiltered.begin();it!=mFiltered.end();++it)
     {
-        fprintf(fd, "%s %d %ld %ld\n", bdnet_inet_ntoa(it->second.mAddr.sin_addr).c_str(), it->second.mFilterFlags, it->second.mFilterTS, it->second.mLastSeen) ;
+        fprintf(fd, "%s %u %lu %lu\n", bdnet_inet_ntoa(it->second.mAddr.sin_addr).c_str(), it->second.mFilterFlags, it->second.mFilterTS, it->second.mLastSeen) ;
 #ifdef DEBUG_FILTER
         fprintf(stderr, "Storing Peer Address: %s \n", bdnet_inet_ntoa(it->second.mAddr.sin_addr).c_str()) ;
 #endif
@@ -212,11 +212,11 @@ int bdFilter::addPeerToFilter(const struct sockaddr_in& addr, uint32_t flags)
 //         mFiltered[saddr] = *it ;
 //     }
 // }
-// void bdFilter::getFilteredPeers(std::list<bdFilteredPeer>& peers)
-// {
-//     for(std::map<uint32_t,bdFilteredPeer>::iterator it = mFiltered.begin(); it != mFiltered.end();++it)
-//         peers.push_back(it->second) ;
-// }
+void bdFilter::getFilteredPeers(std::list<bdFilteredPeer>& peers)
+{
+    for(std::map<uint32_t,bdFilteredPeer>::iterator it = mFiltered.begin(); it != mFiltered.end();++it)
+        peers.push_back(it->second) ;
+}
 /* fast check if the addr is in the structure */
 int bdFilter::addrOkay(struct sockaddr_in *addr)
 {
