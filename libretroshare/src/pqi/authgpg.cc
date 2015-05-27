@@ -129,8 +129,8 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
 	gpgKeySelected(false) 
 {
 	_force_sync_database = false ;
+    mCount = 0;
 	start();
-    int mCount = 0;
 }
 
 /* This function is called when retroshare is first started
