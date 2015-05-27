@@ -371,7 +371,7 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
             ) {
             QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(audioListenToggleButton);
             audioCaptureToggleButton->setGraphicsEffect(effect);
-            QPropertyAnimation *anim = new QPropertyAnimation(effect, "opacity");
+            QPropertyAnimation *anim = new QPropertyAnimation(effect, "opacity", effect);
             anim->setStartValue(1);
             anim->setKeyValueAt(0.5,0);
             anim->setEndValue(1);
