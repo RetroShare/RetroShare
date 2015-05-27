@@ -38,6 +38,7 @@
  * #define DEBUG_BANLIST		1
  ****/
  #define DEBUG_BANLIST		1
+ #define DEBUG_BANLIST_CONDENSE		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -45,10 +46,6 @@
 
 #define RSBANLIST_ENTRY_MAX_AGE		(60 * 60 * 1) // 1 HOURS
 #define RSBANLIST_SEND_PERIOD	600		// 10 Minutes.
-
-#define RSBANLIST_SOURCE_SELF		0
-#define RSBANLIST_SOURCE_FRIEND		1
-#define RSBANLIST_SOURCE_FOF		2
 
 #define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 60	// should be more: e.g. 600 secs.
 
@@ -85,6 +82,16 @@ RsServiceInfo p3BanList::getServiceInfo()
                 BANLIST_APP_MINOR_VERSION,
                 BANLIST_MIN_MAJOR_VERSION,
                              BANLIST_MIN_MINOR_VERSION);
+}
+
+bool p3BanList::ipFilteringEnabled()
+{
+    return mIPFilteringEnabled ;
+}
+
+void p3BanList::enableIPFiltering(bool b)
+{
+    mIPFilteringEnabled = b ;
 }
 
 bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
@@ -140,11 +147,12 @@ void p3BanList::getDhtInfo()
     {
         std::cerr << "  filtered peer: " << rs_inet_ntoa((*it).mAddr.sin_addr) << std::endl;
 
-        int int_reason = 0 ;
-        int age = 0 ;
+        int int_reason = RSBANLIST_REASON_DHT ;
+        int time_stamp = (*it).mLastSeen ;
+        uint8_t masked_bytes = 0 ;
         sockaddr_storage ad = *(sockaddr_storage*)&(*it).mAddr ;
 
-        addBanEntry(ownId, ad, RSBANLIST_SOURCE_SELF, int_reason, age);
+        addBanEntry(ownId, ad, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp, masked_bytes);
     }
 
     condenseBanSources_locked() ;
@@ -202,36 +210,39 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 {
 	bool updated = false;
 
+    std::cerr << "(EE) should not receive a Ban item yet. Not implemented!" << std::endl;
+    time_t now = time(NULL) ;
 	std::list<RsTlvBanListEntry>::const_iterator it;
 	//for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); ++it)
 	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); ++it)
 	{
 		// Order is important!.	
-		updated = (addBanEntry(item->PeerId(), it->addr.addr, it->level, 
-			it->reason, it->age) || updated);
+        updated = (addBanEntry(item->PeerId(), it->addr.addr, it->level,  it->reason, now - it->age,it->masked_bytes) || updated);
 	}
 	return updated;
 }
 
 /* overloaded from pqiNetAssistSharePeer */
-void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int age)
+void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int type, int /*reason*/, int time_stamp)
 {
-	RsPeerId ownId = mServiceCtrl->getOwnId();
+    RsPeerId ownId = mServiceCtrl->getOwnId();
 
-	int int_reason = 0;
-	addBanEntry(ownId, addr, RSBANLIST_SOURCE_SELF, int_reason, age);
+    int int_reason = RSBANLIST_REASON_DHT;
 
-	/* process */
-	{
-		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+    addBanEntry(ownId, addr, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp,0);
 
-		mBanSet.clear();
-		condenseBanSources_locked();
-	}
+    /* process */
+    {
+        RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+
+        mBanSet.clear();
+        condenseBanSources_locked();
+    }
 }
 
 
-bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, uint32_t age)
+bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr,
+                            int level, uint32_t reason, time_t time_stamp,uint8_t masked_bytes)
 {
 	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 
@@ -239,8 +250,8 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 	bool updated = false;
 
 #ifdef DEBUG_BANLIST
-    std::cerr << "p3BanList::addBanEntry() Addr: " << sockaddr_storage_iptostring(addr) << " Level: " << level;
-	std::cerr << " Reason: " << reason << " Age: " << age;
+    std::cerr << "p3BanList::addBanEntry() Addr: " << sockaddr_storage_iptostring(addr) << " Origin: " << level;
+    std::cerr << " Reason: " << reason << " Age: " << now - time_stamp;
 	std::cerr << std::endl;
 #endif
 
@@ -282,9 +293,9 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 		BanListPeer blp;
 		blp.addr = addr;
 		blp.reason = reason;
-		blp.level = level;
-		blp.mTs = now - age;
-
+        blp.level = level;
+        blp.mTs = time_stamp ;
+        blp.masked_bytes = masked_bytes ;
 		
 		it->second.mBanPeers[bannedaddr] = blp;
 		it->second.mLastUpdate = now;
@@ -294,14 +305,17 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 	{
 		/* see if it needs an update */
 		if ((mit->second.reason != reason) ||
-			(mit->second.level != level) ||
-			(mit->second.mTs < (time_t) (now - age)))
+            (mit->second.level != level) ||
+            (mit->second.mTs < time_stamp)||
+            (mit->second.masked_bytes < masked_bytes)
+                        )
 		{
 			/* update */
 			mit->second.addr = addr;
 			mit->second.reason = reason;
-			mit->second.level = level;
-			mit->second.mTs = now - age;
+            mit->second.level = level;
+            mit->second.mTs = time_stamp;
+            mit->second.masked_bytes = masked_bytes ;
 
 			it->second.mLastUpdate = now;
 			updated = true;
@@ -328,15 +342,15 @@ int p3BanList::condenseBanSources_locked()
 	std::map<RsPeerId, BanList>::const_iterator it;
 	for(it = mBanSources.begin(); it != mBanSources.end(); ++it)
 	{
-		if (now - it->second.mLastUpdate > RSBANLIST_ENTRY_MAX_AGE)
-		{
-#ifdef DEBUG_BANLIST_CONDENSE
-			std::cerr << "p3BanList::condenseBanSources_locked()";
-			std::cerr << " Ignoring Out-Of-Date peer: " << it->first;
-			std::cerr << std::endl;
-#endif
-			continue;
-		}
+//		if (now - it->second.mLastUpdate > RSBANLIST_ENTRY_MAX_AGE)
+//		{
+//#ifdef DEBUG_BANLIST_CONDENSE
+//			std::cerr << "p3BanList::condenseBanSources_locked()";
+//			std::cerr << " Ignoring Out-Of-Date peer: " << it->first;
+//			std::cerr << std::endl;
+//#endif
+//			continue;
+//		}
 
 #ifdef DEBUG_BANLIST_CONDENSE
 		std::cerr << "p3BanList::condenseBanSources_locked()";
@@ -349,18 +363,19 @@ int p3BanList::condenseBanSources_locked()
 			lit != it->second.mBanPeers.end(); ++lit)
 		{
 			/* check timestamp */
-			if (now - lit->second.mTs > RSBANLIST_ENTRY_MAX_AGE)
-			{
-#ifdef DEBUG_BANLIST_CONDENSE
-				std::cerr << "p3BanList::condenseBanSources_locked()";
-				std::cerr << " Ignoring Out-Of-Date Entry for: ";
-				std::cerr << sockaddr_storage_iptostring(lit->second.addr);
-				std::cerr << std::endl;
-#endif
-				continue;
-			}
+//            if (now > RSBANLIST_ENTRY_MAX_AGE + lit->second.mTs)
+//			{
+//#ifdef DEBUG_BANLIST_CONDENSE
+//				std::cerr << "p3BanList::condenseBanSources_locked()";
+//				std::cerr << " Ignoring Out-Of-Date Entry for: ";
+//				std::cerr << sockaddr_storage_iptostring(lit->second.addr);
+//                std::cerr << " time stamp= " << lit->second.mTs << ", age=" << now - lit->second.mTs;
+//                std::cerr << std::endl;
+//#endif
+//				continue;
+//			}
 
-			int lvl = lit->second.level;
+            int lvl = lit->second.level;
 			if (it->first != ownId)	
 			{
 				/* as from someone else, increment level */
@@ -376,10 +391,10 @@ int p3BanList::condenseBanSources_locked()
 			/* check if it exists in the Set already */
 			std::map<struct sockaddr_storage, BanListPeer>::iterator sit;
 			sit = mBanSet.find(bannedaddr);
-			if ((sit == mBanSet.end()) || (lvl < sit->second.level))
+            if ((sit == mBanSet.end()) || (lvl < sit->second.level))
 			{
 				BanListPeer bp = lit->second;
-				bp.level = lvl;
+                bp.level = lvl;
 				sockaddr_storage_setport(bp.addr, 0);
 				mBanSet[bannedaddr] = bp;
 #ifdef DEBUG_BANLIST_CONDENSE
@@ -398,7 +413,7 @@ int p3BanList::condenseBanSources_locked()
 				std::cerr << std::endl;
 #endif
 				/* update if necessary */
-				if (lvl == sit->second.level)
+                if (lvl == sit->second.level)
 				{
 					sit->second.reason |= lit->second.reason;
 					if (sit->second.mTs < lit->second.mTs)
@@ -492,7 +507,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 		std::map<struct sockaddr_storage, BanListPeer>::iterator it;
 		for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
 		{
-			if (it->second.level >= RSBANLIST_SOURCE_FRIEND)
+            if (it->second.level >= RSBANLIST_ORIGIN_FRIEND)
 			{
 				continue; // only share OWN for the moment.
 			}
@@ -500,7 +515,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 			RsTlvBanListEntry bi;
 			bi.addr.addr = it->second.addr;
 			bi.reason = it->second.reason;
-			bi.level = it->second.level;
+            bi.level = it->second.level;
 			bi.age = now - it->second.mTs;
 	
 			//item->peerList.entries.push_back(bi);
@@ -525,8 +540,8 @@ int p3BanList::printBanSet_locked(std::ostream &out)
 	{
 		out << "Ban: " << sockaddr_storage_iptostring(it->second.addr);
 		out << " Reason: " << it->second.reason;
-		out << " Level: " << it->second.level;
-		if (it->second.level > RSBANLIST_SOURCE_FRIEND)
+        out << " Level: " << it->second.level;
+        if (it->second.level > RSBANLIST_ORIGIN_FRIEND)
 		{
 			out << " (unused)";
 		}
@@ -557,7 +572,7 @@ int p3BanList::printBanSources_locked(std::ostream &out)
 			out << "\t";
 			out << "Ban: " << sockaddr_storage_iptostring(lit->second.addr);
 			out << " Reason: " << lit->second.reason;
-			out << " Level: " << lit->second.level;
+            out << " Level: " << lit->second.level;
 			out << " Age: " << now - lit->second.mTs;
 			out << std::endl;
 		}

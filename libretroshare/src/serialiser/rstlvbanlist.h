@@ -50,7 +50,8 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 	RsTlvIpAddress addr;
 	uint32_t level;
 	uint32_t reason;
-	uint32_t age;
+    uint32_t age;
+    uint8_t masked_bytes ;
 };
 
 

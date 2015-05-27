@@ -38,8 +38,6 @@
 class p3ServiceControl;
 class p3NetMgr;
 
-
-
 class BanList
 {
 	public:
@@ -49,8 +47,6 @@ class BanList
 	std::map<struct sockaddr_storage, BanListPeer> mBanPeers;
 };
 
-
-
 //!The RS BanList service.
  /**
   *
@@ -59,72 +55,75 @@ class BanList
 
 class p3BanList: public RsBanList, public p3Service, public pqiNetAssistPeerShare /* , public p3Config, public pqiMonitor */
 {
-	public:
-		p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
-		virtual RsServiceInfo getServiceInfo();
+public:
+    p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
+    virtual RsServiceInfo getServiceInfo();
 
-		/***** overloaded from RsBanList *****/
+    /***** overloaded from RsBanList *****/
 
-        virtual bool isAddressAccepted(const struct sockaddr_storage& addr) ;
-        virtual void getListOfBannedIps(std::list<BanListPeer>& list) ;
+    virtual void enableIPFiltering(bool b) ;
+    virtual bool ipFilteringEnabled() ;
+    virtual bool isAddressAccepted(const struct sockaddr_storage& addr) ;
+    virtual void getListOfBannedIps(std::list<BanListPeer>& list) ;
 
-        /***** overloaded from pqiNetAssistPeerShare *****/
+    /***** overloaded from pqiNetAssistPeerShare *****/
 
-		virtual void    updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int age);
+    virtual void    updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int time_stamp);
 
-		/***** overloaded from p3Service *****/
-		/*!
-		 * This retrieves all chat msg items and also (important!)
-		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
-		 * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
-		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
-		 * @see NotifyBase
+    /***** overloaded from p3Service *****/
+    /*!
+         * This retrieves all chat msg items and also (important!)
+         * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
+         * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
+         * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
+         * @see NotifyBase
 
-		 */
-		virtual int   tick();
-		virtual int   status();
+         */
+    virtual int   tick();
+    virtual int   status();
 
-		int     sendPackets();
-		bool 	processIncoming();
+    int     sendPackets();
+    bool 	processIncoming();
 
-		bool recvBanItem(RsBanListItem *item);
-        bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, uint32_t age);
-		void sendBanLists();
-		int sendBanSet(const RsPeerId& peerid);
-
-
-		/*!
-		 * Interface stuff.
-		 */
-
-		/*************** pqiMonitor callback ***********************/
-		//virtual void statusChange(const std::list<pqipeer> &plist);
+    bool recvBanItem(RsBanListItem *item);
+    bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, time_t time_stamp, uint8_t masked_bytes);
+    void sendBanLists();
+    int sendBanSet(const RsPeerId& peerid);
 
 
-		/************* from p3Config *******************/
-		//virtual RsSerialiser *setupSerialiser() ;
-		//virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
-		//virtual void saveDone();
-		//virtual bool loadList(std::list<RsItem*>& load) ;
+    /*!
+         * Interface stuff.
+         */
+
+    /*************** pqiMonitor callback ***********************/
+    //virtual void statusChange(const std::list<pqipeer> &plist);
 
 
-    private:
-        void getDhtInfo() ;
+    /************* from p3Config *******************/
+    //virtual RsSerialiser *setupSerialiser() ;
+    //virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
+    //virtual void saveDone();
+    //virtual bool loadList(std::list<RsItem*>& load) ;
 
-		RsMutex mBanMtx;
 
-		int condenseBanSources_locked();
-		int printBanSources_locked(std::ostream &out);
-		int printBanSet_locked(std::ostream &out);
+private:
+    void getDhtInfo() ;
 
-		time_t mSentListTime;
-		std::map<RsPeerId, BanList> mBanSources;
-		std::map<struct sockaddr_storage, BanListPeer> mBanSet;
+    RsMutex mBanMtx;
 
-		p3ServiceControl *mServiceCtrl;
-        p3NetMgr *mNetMgr;
-        time_t mLastDhtInfoRequest ;
+    int condenseBanSources_locked();
+    int printBanSources_locked(std::ostream &out);
+    int printBanSet_locked(std::ostream &out);
 
+    time_t mSentListTime;
+    std::map<RsPeerId, BanList> mBanSources;
+    std::map<struct sockaddr_storage, BanListPeer> mBanSet;
+
+    p3ServiceControl *mServiceCtrl;
+    p3NetMgr *mNetMgr;
+    time_t mLastDhtInfoRequest ;
+
+    bool mIPFilteringEnabled ;
 };
 
 #endif // SERVICE_RSBANLIST_HEADER

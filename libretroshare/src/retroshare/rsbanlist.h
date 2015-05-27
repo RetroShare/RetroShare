@@ -30,23 +30,36 @@
 class RsBanList;
 extern RsBanList *rsBanList ;
 
+#define RSBANLIST_ORIGIN_UNKNOWN	0
+#define RSBANLIST_ORIGIN_SELF		1
+#define RSBANLIST_ORIGIN_FRIEND		2
+#define RSBANLIST_ORIGIN_FOF		3
+
+#define RSBANLIST_REASON_UNKNOWN	0
+#define RSBANLIST_REASON_USER		1
+#define RSBANLIST_REASON_DHT		2
+
 class BanListPeer
 {
 public:
-
     struct sockaddr_storage addr;
-    uint8_t masked_bytes ;
-    uint32_t reason; 		// Dup Self, Dup Friend
-    int level; 			// LOCAL, FRIEND, FoF.
-    time_t mTs;
+    uint8_t masked_bytes ;		// 0 = []/32. 1=[]/24, 2=[]/16
+    uint32_t reason; 			 // User, DHT
+    uint32_t level; 			 // LOCAL, FRIEND, FoF.
     bool state ; 			// true=>active, false=>just stored but inactive
+    int  connect_attempts ; 	// recorded by the BanList service
+    time_t mTs;
+    std::string comment ;		//
 };
 
 class RsBanList
 {
-	public:
-		virtual bool isAddressAccepted(const struct sockaddr_storage& addr) =0;
-        virtual void getListOfBannedIps(std::list<BanListPeer>& list) =0;
+public:
+    virtual void enableIPFiltering(bool b) =0;
+    virtual bool ipFilteringEnabled() =0;
+
+    virtual bool isAddressAccepted(const struct sockaddr_storage& addr) =0;
+    virtual void getListOfBannedIps(std::list<BanListPeer>& list) =0;
 };
 
 

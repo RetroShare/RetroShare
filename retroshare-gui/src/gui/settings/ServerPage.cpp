@@ -29,8 +29,10 @@
 #include <retroshare/rsconfig.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
+#include <retroshare/rsbanlist.h>
 
 #include <QMovie>
+#include <QMenu>
 #include <QTcpSocket>
 #include <QNetworkProxy>
 #include <QNetworkReply>
@@ -40,6 +42,12 @@
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
+
+#define COLUMN_RANGE   0
+#define COLUMN_STATUS  1
+#define COLUMN_ORIGIN  2
+#define COLUMN_REASON  3
+#define COLUMN_COMMENT 4
 
 //#define SERVER_DEBUG 1
 
@@ -55,6 +63,17 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   connect( ui.testIncomingTor_PB, SIGNAL( clicked( ) ), this, SLOT( updateTorInProxyIndicator() ) );
 
   manager = NULL ;
+
+    ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
+    ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_STATUS,new QTableWidgetItem(tr("Status"))) ;
+    ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_ORIGIN,new QTableWidgetItem(tr("Origin"))) ;
+    ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_COMMENT,new QTableWidgetItem(tr("Comment"))) ;
+
+    ui.filteredIpsTable->verticalHeader()->hide() ;
+
+
+    QObject::connect(ui.filteredIpsTable,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(ipFilterContextMenu(const QPoint&))) ;
+    QObject::connect(ui.denyAll_CB,SIGNAL(toggled(bool)),this,SLOT(toggleIpFiltering(bool)));
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -136,9 +155,11 @@ void ServerPage::load()
 	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
 	{
 		return;
-	}
+    }
+    loadFilteredIps() ;
 
-	mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
+    mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
+
 	if (mIsHiddenNode)
 	{
 		loadHiddenNode();
@@ -233,12 +254,209 @@ void ServerPage::load()
     updateTorOutProxyIndicator();
 }
 
-//void ServerPage::toggleTurtleRouting(bool b)
-//{
-//	ui._max_tr_up_per_sec_SB->setEnabled(b) ;
-//
-//	rsTurtle->setEnabled(b) ;
-//}
+static std::string print_addr(const struct sockaddr_storage& addr)
+{
+    const sockaddr_in *in = (const sockaddr_in*)&addr ;
+
+    char str[100];
+    uint8_t *bytes = (uint8_t *) &(in->sin_addr.s_addr);
+    sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
+
+    return std::string(str) ;
+}
+
+std::string print_addr_range(const struct sockaddr_storage& addr,uint8_t masked_bytes)
+{
+    const sockaddr_in *in = (const sockaddr_in*)&addr ;
+
+    char str[100];
+    uint8_t *bytes = (uint8_t *) &(in->sin_addr.s_addr);
+    str[0] = 0 ;
+
+    switch(masked_bytes)
+    {
+    case 0: sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
+        break ;
+    case 1: sprintf(str, "%u.%u.%u.255/24", (int) bytes[0], (int) bytes[1], (int) bytes[2]);
+        break ;
+    case 2: sprintf(str, "%u.%u.255.255/16", (int) bytes[0], (int) bytes[1]);
+        break ;
+    default:
+        std::cerr << "ERROR: Wrong format : masked_bytes = " << masked_bytes << std::endl;
+    return std::string("Invalid format") ;
+    }
+
+    return std::string(str) ;
+}
+
+void ServerPage::toggleIpFiltering(bool b)
+{
+    rsBanList->enableIPFiltering(b) ;
+    loadFilteredIps() ;
+}
+
+void ServerPage::loadFilteredIps()
+{
+        ui.includeFromFriends_CB->setChecked(false) ;
+        ui.includeFromDHT_CB->setChecked(true) ;
+
+    ui.ipInput_LE->setEnabled(false) ;
+    ui.ipInputRange_SB->setEnabled(false) ;
+    ui.ipInputComment_LE->setEnabled(false) ;
+    ui.ipInputAdd_PB->setEnabled(false) ;
+
+    if(rsBanList->ipFilteringEnabled())
+    {
+        ui.denyAll_CB->setChecked(true) ;
+        ui.filteredIpsTable->setEnabled(true) ;
+        ui.includeFromFriends_CB->setEnabled(false) ;
+        ui.includeFromDHT_CB->setEnabled(false) ;
+    }
+    else
+    {
+        ui.denyAll_CB->setChecked(false) ;
+        ui.filteredIpsTable->setEnabled(false) ;
+        ui.includeFromFriends_CB->setEnabled(false) ;
+        ui.includeFromDHT_CB->setEnabled(false) ;
+    }
+
+    std::list<BanListPeer> lst ;
+
+    rsBanList->getListOfBannedIps(lst) ;
+
+    ui.filteredIpsTable->setRowCount(lst.size()) ;
+
+    //std::cerr << "Adding " << lst.size() << " entries to table." << std::endl;
+
+    int row = 0 ;
+    for(std::list<BanListPeer>::const_iterator it(lst.begin());it!=lst.end();++it,++row)
+    {
+        //std::cerr << "  adding banned lst peer: " << print_addr((*it).addr) << std::endl;
+
+        ui.filteredIpsTable->setItem(row,COLUMN_RANGE,new QTableWidgetItem(QString::fromStdString(print_addr_range((*it).addr,(*it).masked_bytes)))) ;
+
+        if( (*it).state )
+            ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString("active"))) ;
+        else
+            ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString(""))) ;
+
+    ui.filteredIpsTable->item(row,COLUMN_STATUS)->setData(Qt::UserRole,QVariant( (*it).state )) ;
+
+        switch((*it).level)
+        {
+        default:
+        case RSBANLIST_ORIGIN_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("Unknown"))) ;
+            break ;
+        case RSBANLIST_ORIGIN_FOF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend of a friend"))) ;
+            break ;
+        case RSBANLIST_ORIGIN_FRIEND:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend"))) ;
+            break ;
+        case RSBANLIST_ORIGIN_SELF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From you"))) ;
+            break ;
+        }
+
+    switch( (*it).reason )
+    {
+        case RSBANLIST_REASON_DHT:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Bad peer (DHT)"))) ;
+            break ;
+        case RSBANLIST_REASON_USER:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
+            break ;
+        default:
+        case RSBANLIST_REASON_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Unknown"))) ;
+            break ;
+    }
+        ui.filteredIpsTable->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString((*it).comment))) ;
+    }
+}
+
+static bool parseAddrFromQString(const QString& s,struct sockaddr_storage& addr,int& bytes )
+{
+    QStringList lst = s.split(".") ;
+
+    QStringList::const_iterator it = lst.begin();
+    bool ok ;
+
+    uint32_t s1 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
+    uint32_t s2 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
+    uint32_t s3 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
+
+    QStringList lst2 = (*it).split("/") ;
+
+    it = lst2.begin();
+
+    uint32_t s4 ;
+    s4 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
+
+    if(it != lst2.end())
+    {
+        uint32_t x = (*it).toInt(&ok) ; if(!ok) return false ;
+        if(x%8 != 0)
+            return false ;
+
+        if(x != 16 &&  x != 24)
+            return false ;
+
+        bytes = 4 - x/8 ;
+    }
+
+    const sockaddr_in *in = (const sockaddr_in*)&addr ;
+    ((uint8_t*)&in->sin_addr.s_addr)[0] = s1 ;
+    ((uint8_t*)&in->sin_addr.s_addr)[1] = s2 ;
+    ((uint8_t*)&in->sin_addr.s_addr)[2] = s3 ;
+    ((uint8_t*)&in->sin_addr.s_addr)[3] = s4 ;
+
+    return ok;
+}
+
+void ServerPage::ipFilterContextMenu(const QPoint& point)
+{
+    QMenu contextMenu(this) ;
+    int row = ui.filteredIpsTable->currentRow();
+
+    QTableWidgetItem *item = ui.filteredIpsTable->item(row, COLUMN_STATUS);
+
+    if(item == NULL)
+        return ;
+
+    bool status = item->data(Qt::UserRole).toBool();
+
+    if(!status)
+        contextMenu.addAction(tr("Disable/remove"),this,SLOT(removeBannedIp()))->setEnabled(false) ;
+
+    QString addr_string = ui.filteredIpsTable->item(row,COLUMN_RANGE)->text() ;
+
+    sockaddr_storage addr ;
+    int masked_bytes ;
+
+    if(!parseAddrFromQString(addr_string,addr,masked_bytes))
+    {
+        std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
+        return ;
+    }
+
+    QString range0 = QString::fromStdString(print_addr_range(addr,0)) ;
+    QString range1 = QString::fromStdString(print_addr_range(addr,1)) ;
+    QString range2 = QString::fromStdString(print_addr_range(addr,2)) ;
+
+    contextMenu.addAction(QObject::tr("Filter IP "          )+range0,this,SLOT(enableBannedIp()))->setEnabled(false) ;
+#warning UNIMPLEMENTED CODE
+    contextMenu.addAction(QObject::tr("Filter entire range ")+range1,this,SLOT(enableBannedIp()))->setEnabled(false) ;
+    contextMenu.addAction(QObject::tr("Filter entire range ")+range2,this,SLOT(enableBannedIp()))->setEnabled(false) ;
+
+    contextMenu.exec(QCursor::pos()) ;
+}
+
+void ServerPage::removeBannedIp()
+{
+#warning UNIMPLEMENTED CODE
+    std::cerr << "Removing banned IP" << std::endl;
+}
+
+void ServerPage::enableBannedIp()
+{
+#warning UNIMPLEMENTED CODE
+    std::cerr << "Removing banned IP" << std::endl;
+}
 
 /** Loads the settings for this page */
 void ServerPage::updateStatus()
@@ -254,11 +472,13 @@ void ServerPage::updateStatus()
 	if(!isVisible())
 		return ;
 
+    loadFilteredIps() ;
+
 	if (mIsHiddenNode)
 	{
 		updateStatusHiddenNode();
 		return;
-	}
+    }
 
 	/* load up configuration from rsPeers */
 	RsPeerDetails detail;

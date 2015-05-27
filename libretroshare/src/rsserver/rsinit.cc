@@ -1142,6 +1142,7 @@ int RsServer::StartupRetroShare()
 
 	// NEXT BITDHT.
     p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
+
 	/* install external Pointer for Interface */
 	rsDht = mBitDht;
 
@@ -1520,7 +1521,8 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// new services to test.
-	p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
+    p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
+    rsBanList = mBanList ;
 	pqih -> addService(mBanList, true);
 	mBitDht->setupPeerSharer(mBanList);
 

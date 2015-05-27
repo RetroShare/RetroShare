@@ -50,6 +50,10 @@ public slots:
     void updateStatus();
 
 private slots:
+    void toggleIpFiltering(bool b);
+    void ipFilterContextMenu(const QPoint &);
+    void removeBannedIp();
+    void enableBannedIp();
     void saveAddresses();
     void toggleUPnP();
     void toggleIpDetermination(bool) ;
@@ -66,6 +70,7 @@ private:
     void saveAddressesHiddenNode();
     void updateTorOutProxyIndicator();
     void updateLocInProxyIndicator();
+    void loadFilteredIps() ;
 
     Ui::ServerPage ui;
 
