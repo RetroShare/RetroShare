@@ -182,7 +182,7 @@ int	pqissllistenbase::setuplisten()
 
 #ifdef OPEN_UNIVERSAL_PORT
 	struct sockaddr_storage tmpaddr = laddr;
-	sockaddr_storage_zeroip(tmpaddr);
+	if (!mPeerMgr->isHidden()) sockaddr_storage_zeroip(tmpaddr);
 	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
 #else
 	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
@@ -194,7 +194,7 @@ int	pqissllistenbase::setuplisten()
 		std::cerr << out << std::endl;
 		std::cerr << "laddr: " << sockaddr_storage_tostring(laddr) << std::endl;
 #ifdef OPEN_UNIVERSAL_PORT
-		std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
+		if (!mPeerMgr->isHidden()) std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
 #endif
 
 		exit(1); 
