@@ -2,13 +2,6 @@
 <!DOCTYPE TS> 
 <TS version="2.0" language="en_US"> 
 <context> 
-  <name>Section_Main</name> 
-  <message> 
-    <source>${APPNAME}</source> 
-    <translation type="unfinished"></translation> 
-  </message> 
-</context> 
-<context> 
   <name>Section_Main_Desc</name> 
   <message> 
     <source>Installs ${APPNAME} and required components.</source> 
