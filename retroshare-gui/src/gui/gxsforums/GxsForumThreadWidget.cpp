@@ -159,7 +159,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
 	QHeaderView_setSectionResizeMode(ttheader, COLUMN_THREAD_TITLE, QHeaderView::Interactive);
 	ttheader->resizeSection (COLUMN_THREAD_DATE,  140);
-	ttheader->resizeSection (COLUMN_THREAD_TITLE, 290);
+	ttheader->resizeSection (COLUMN_THREAD_TITLE, 440);
 	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150);
 
 	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
