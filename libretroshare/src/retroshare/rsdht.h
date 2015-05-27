@@ -26,11 +26,11 @@
  *
  */
 
-#include <netinet/in.h>
 #include <inttypes.h>
 #include <string>
 #include <list>
 #include <retroshare/rstypes.h>
+#include "util/rsnet.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsDht;

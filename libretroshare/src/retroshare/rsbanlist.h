@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <netinet/in.h>
+#include "util/rsnet.h"
 
 class RsBanList;
 extern RsBanList *rsBanList ;
