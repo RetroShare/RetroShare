@@ -24,16 +24,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -55,12 +46,85 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="info_label">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>178</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>255</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>178</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>178</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>255</green>
+              <blue>178</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
         <property name="text">
          <string>You can have one or more nicknames. They are used when you write in Chatlobbies, Forums and Channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
+        </property>
+        <property name="margin">
+         <number>4</number>
         </property>
        </widget>
       </item>
@@ -405,16 +469,7 @@
       <property name="spacing">
        <number>9</number>
       </property>
-      <property name="leftMargin">
-       <number>9</number>
-      </property>
-      <property name="topMargin">
-       <number>9</number>
-      </property>
-      <property name="rightMargin">
-       <number>9</number>
-      </property>
-      <property name="bottomMargin">
+      <property name="margin">
        <number>9</number>
       </property>
       <item>
