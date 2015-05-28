@@ -40,9 +40,11 @@ VOIPToasterItem::VOIPToasterItem(const RsPeerId &peer_id, const QString &msg, co
 	switch (mType){
 		case AudioCall:
 			toasterButton->setIcon(QIcon("://images/call-start.png"));
+			toasterButton->setText(tr("Answer"));
 		break;
 		case VideoCall:
 			toasterButton->setIcon(QIcon("://images/video-icon-on.png"));
+			toasterButton->setText(tr("Answer with video"));
 		break;
 		default:
 			ChatDialog::chatFriend(ChatId(mPeerId));
@@ -53,7 +55,7 @@ VOIPToasterItem::VOIPToasterItem(const RsPeerId &peer_id, const QString &msg, co
 
 	/* set informations */
 	textLabel->setText(RsHtml().formatText(NULL, msg, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
-	toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(mPeerId).c_str()));
+	//toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(mPeerId).c_str()));
 	avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	avatarWidget->setId(ChatId(mPeerId));
 }

@@ -37,7 +37,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout">
+     <layout class="QGridLayout" name="gridLayout_2">
       <property name="margin">
        <number>2</number>
       </property>
@@ -70,7 +70,7 @@
            </size>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/logo/logo_16.png</pixmap>
+           <pixmap>:/images/logo/logo_16.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -80,7 +80,7 @@
         <item>
          <widget class="QLabel" name="toasterLabel">
           <property name="text">
-           <string notr="true">Name</string>
+           <string notr="true">RetroShare</string>
           </property>
          </widget>
         </item>
@@ -112,7 +112,7 @@
            </size>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/closenormal.png</normaloff>:/images/closenormal.png</iconset>
           </property>
           <property name="flat">
@@ -123,27 +123,70 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <layout class="QGridLayout">
-        <property name="spacing">
-         <number>2</number>
-        </property>
+       <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="1">
-         <widget class="QPushButton" name="toasterButton">
-          <property name="text">
-           <string>Show Chat</string>
+         <widget class="QLabel" name="textLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>218</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLabel" name="textLabel">
-          <property name="maximumSize">
-           <size>
-            <width>218</width>
-            <height>43</height>
-           </size>
+         <widget class="QPushButton" name="toasterButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton{
+border: 1px solid #199909;
+font-size: 12pt;  color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, 
+                                       stop: 0 #22c70d, stop: 1 #116a06);
+}
+QPushButton::hover{
+border: 1px solid #199909;
+font-size: 12pt;  color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, 
+                                       stop: 0 #26df0f, stop: 1 #1db20a);
+}
+
+QPushButton::pressed{
+border: 1px solid #333333;
+font-size: 12pt; color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, 
+                                  stop: 0 #444444, stop: 1 #222222);		
+}                     </string>
           </property>
-          <property name="wordWrap">
-           <bool>true</bool>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -179,8 +222,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
+  <include location="VOIP_images.qrc"/>
  </resources>
  <connections/>
 </ui>

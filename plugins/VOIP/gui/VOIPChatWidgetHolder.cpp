@@ -35,6 +35,7 @@
 #include "QVideoDevice.h"
 
 #include <retroshare/rsstatus.h>
+#include <retroshare/rspeers.h>
 
 #define CALL_START ":/images/call-start.png"
 #define CALL_STOP  ":/images/call-stop.png"
@@ -288,7 +289,7 @@ void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* arr
 {
 	if (!videoCaptureToggleButton->isChecked()) {
 		if (mChatWidget) {
-			QString buttonName = QString::fromStdString(peer_id.toStdString());
+			QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
 			if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
 			button_map::iterator it = buttonMapTakeVideo.find(buttonName);
 			if (it == buttonMapTakeVideo.end()){
@@ -380,7 +381,7 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
         }
         
         if (mChatWidget) {
-        QString buttonName = QString::fromStdString(peer_id.toStdString());
+        QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
         if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
         button_map::iterator it = buttonMapTakeVideo.find(buttonName);
         if (it == buttonMapTakeVideo.end()){

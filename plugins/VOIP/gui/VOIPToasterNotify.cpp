@@ -322,7 +322,7 @@ void VOIPToasterNotify::voipAudioCallReceived(const RsPeerId &peer_id)
 	if (!mToasterAudioCall.contains(peer_id)){
 		ToasterItemData toasterItemData;
 		toasterItemData.mPeerId = peer_id;
-		toasterItemData.mMsg = tr("Audio Call received from this peer.");
+		toasterItemData.mMsg = QString::fromUtf8(rsPeers->getPeerName(toasterItemData.mPeerId).c_str()) + " " + tr("calling");
 
 		mPendingToasterAudioCall.push_back(toasterItemData);
 		mToasterAudioCall.insert(peer_id, NULL);
@@ -346,7 +346,7 @@ void VOIPToasterNotify::voipVideoCallReceived(const RsPeerId &peer_id)
 	if (!mToasterVideoCall.contains(peer_id)){
 		ToasterItemData toasterItemData;
 		toasterItemData.mPeerId = peer_id;
-		toasterItemData.mMsg = tr("Video Call received from this peer.");
+		toasterItemData.mMsg = QString::fromUtf8(rsPeers->getPeerName(toasterItemData.mPeerId).c_str()) + " " + tr("calling");
 
 		mPendingToasterVideoCall.push_back(toasterItemData);
 		mToasterVideoCall.insert(peer_id, NULL);
