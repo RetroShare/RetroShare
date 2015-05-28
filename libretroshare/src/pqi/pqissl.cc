@@ -40,6 +40,7 @@
 #include "pqi/p3linkmgr.h"
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdht.h>
+#include <retroshare/rsbanlist.h>
 
 const int pqisslzone = 37714;
 
@@ -1137,14 +1138,14 @@ int 	pqissl::SSL_Connection_Complete()
 	if (sslmode)
 	{
 #ifdef PQISSL_LOG_DEBUG 
-  		rslog(RSL_DEBUG_BASIC, pqisslzone, "--------> Active Connect!");
+        rslog(RSL_DEBUG_BASIC, pqisslzone, "--------> Active Connect! Client side.");
 #endif
-		err = SSL_connect(ssl_connection);
+        err = SSL_connect(ssl_connection);
 	}
 	else
 	{
 #ifdef PQISSL_LOG_DEBUG 
-  		rslog(RSL_DEBUG_BASIC, pqisslzone, "--------> Passive Accept!");
+        rslog(RSL_DEBUG_BASIC, pqisslzone, "--------> Passive Accept! Server side.");
 #endif
 		err = SSL_accept(ssl_connection);
 	}
@@ -1310,6 +1311,12 @@ int 	pqissl::Authorise_SSL_Connection()
     bool res = AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
 	bool certCorrect = true; /* WE know it okay already! */
 
+    if(!rsBanList->isAddressAccepted(remote_addr))
+    {
+        std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Attack??" << std::endl;
+    reset_locked();
+    return 0 ;
+    }
     if(rsDht->isAddressBanned(remote_addr))
     {
         std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Attack??" << std::endl;
@@ -1350,6 +1357,12 @@ int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr
 
 int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
 {
+    if(!rsBanList->isAddressAccepted(foreign_addr))
+    {
+        std::cerr << "(SS) refusing incoming SSL connection from blacklisted foreign address " << sockaddr_storage_iptostring(foreign_addr) << std::endl;
+            reset_locked();
+        return -1;
+    }
 	if (waiting != WAITING_NOT)
 	{
 		rslog(RSL_WARNING, pqisslzone, "pqissl::accept() Peer: " + PeerId().toStdString() + " - Two connections in progress - Shut 1 down!");

@@ -50,6 +50,10 @@ public slots:
     void updateStatus();
 
 private slots:
+    void setGroupIpLimit(int n);
+    void toggleGroupIps(bool b);
+    void toggleAutoIncludeDHT(bool b);
+    void toggleAutoIncludeFriends(bool b);
     void toggleIpFiltering(bool b);
     void ipFilterContextMenu(const QPoint &);
     void removeBannedIp();

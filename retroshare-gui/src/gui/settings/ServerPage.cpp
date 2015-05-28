@@ -71,9 +71,12 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
     ui.filteredIpsTable->verticalHeader()->hide() ;
 
-
     QObject::connect(ui.filteredIpsTable,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(ipFilterContextMenu(const QPoint&))) ;
     QObject::connect(ui.denyAll_CB,SIGNAL(toggled(bool)),this,SLOT(toggleIpFiltering(bool)));
+    QObject::connect(ui.includeFromDHT_CB,SIGNAL(toggled(bool)),this,SLOT(toggleAutoIncludeDHT(bool)));
+    QObject::connect(ui.includeFromFriends_CB,SIGNAL(toggled(bool)),this,SLOT(toggleAutoIncludeFriends(bool)));
+    QObject::connect(ui.groupIPRanges_CB,SIGNAL(toggled(bool)),this,SLOT(toggleGroupIps(bool)));
+    QObject::connect(ui.groupIPRanges_SB,SIGNAL(valueChanged(int)),this,SLOT(setGroupIpLimit(int)));
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -289,6 +292,15 @@ std::string print_addr_range(const struct sockaddr_storage& addr,uint8_t masked_
     return std::string(str) ;
 }
 
+void ServerPage::toggleAutoIncludeFriends(bool b)
+{
+    rsBanList->enableIPsFromFriends(b) ;
+}
+
+void ServerPage::toggleAutoIncludeDHT(bool b)
+{
+    rsBanList->enableIPsFromDHT(b) ;
+}
 void ServerPage::toggleIpFiltering(bool b)
 {
     rsBanList->enableIPFiltering(b) ;
@@ -297,20 +309,18 @@ void ServerPage::toggleIpFiltering(bool b)
 
 void ServerPage::loadFilteredIps()
 {
-        ui.includeFromFriends_CB->setChecked(false) ;
-        ui.includeFromDHT_CB->setChecked(true) ;
-
-    ui.ipInput_LE->setEnabled(false) ;
-    ui.ipInputRange_SB->setEnabled(false) ;
-    ui.ipInputComment_LE->setEnabled(false) ;
-    ui.ipInputAdd_PB->setEnabled(false) ;
-
     if(rsBanList->ipFilteringEnabled())
     {
         ui.denyAll_CB->setChecked(true) ;
         ui.filteredIpsTable->setEnabled(true) ;
-        ui.includeFromFriends_CB->setEnabled(false) ;
-        ui.includeFromDHT_CB->setEnabled(false) ;
+        ui.includeFromFriends_CB->setEnabled(true) ;
+        ui.includeFromDHT_CB->setEnabled(true) ;
+        ui.ipInput_LE->setEnabled(false) ;
+        ui.ipInputRange_SB->setEnabled(false) ;
+        ui.ipInputComment_LE->setEnabled(false) ;
+        ui.ipInputAdd_PB->setEnabled(false) ;
+        ui.groupIPRanges_CB->setEnabled(true) ;
+        ui.groupIPRanges_SB->setEnabled(true) ;
     }
     else
     {
@@ -318,7 +328,18 @@ void ServerPage::loadFilteredIps()
         ui.filteredIpsTable->setEnabled(false) ;
         ui.includeFromFriends_CB->setEnabled(false) ;
         ui.includeFromDHT_CB->setEnabled(false) ;
+        ui.ipInput_LE->setEnabled(false) ;
+        ui.ipInputRange_SB->setEnabled(false) ;
+        ui.ipInputComment_LE->setEnabled(false) ;
+        ui.ipInputAdd_PB->setEnabled(false) ;
+        ui.groupIPRanges_CB->setEnabled(false) ;
+        ui.groupIPRanges_SB->setEnabled(false) ;
     }
+
+    ui.includeFromFriends_CB->setChecked(rsBanList->IPsFromFriendsEnabled()) ;
+    ui.includeFromDHT_CB->setChecked(rsBanList->iPsFromDHTEnabled()) ;
+    ui.groupIPRanges_CB->setChecked(rsBanList->autoRangeEnabled()) ;
+    ui.groupIPRanges_SB->setValue(rsBanList->autoRangeLimit()) ;
 
     std::list<BanListPeer> lst ;
 
@@ -407,6 +428,9 @@ static bool parseAddrFromQString(const QString& s,struct sockaddr_storage& addr,
 
     return ok;
 }
+
+void ServerPage::toggleGroupIps(bool b) { rsBanList->enableAutoRange(b) ; }
+void ServerPage::setGroupIpLimit(int n) { rsBanList->setAutoRangeLimit(n) ; }
 
 void ServerPage::ipFilterContextMenu(const QPoint& point)
 {

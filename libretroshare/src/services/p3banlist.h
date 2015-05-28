@@ -61,10 +61,23 @@ public:
 
     /***** overloaded from RsBanList *****/
 
-    virtual void enableIPFiltering(bool b) ;
-    virtual bool ipFilteringEnabled() ;
     virtual bool isAddressAccepted(const struct sockaddr_storage& addr) ;
     virtual void getListOfBannedIps(std::list<BanListPeer>& list) ;
+
+    virtual void enableIPFiltering(bool b) ;
+    virtual bool ipFilteringEnabled() ;
+
+    virtual bool autoRangeEnabled() { return mAutoRangeIps ; }
+    virtual void enableAutoRange(bool b) ;
+
+    virtual int  autoRangeLimit()   { return mAutoRangeLimit ; }
+    virtual void setAutoRangeLimit(int b) ;
+
+    virtual void enableIPsFromFriends(bool b) ;
+    virtual bool IPsFromFriendsEnabled() { return mIPFriendGatheringEnabled ;}
+
+    virtual void enableIPsFromDHT(bool b) ;
+    virtual bool iPsFromDHTEnabled() { return mIPDHTGatheringEnabled ;}
 
     /***** overloaded from pqiNetAssistPeerShare *****/
 
@@ -105,12 +118,12 @@ public:
     //virtual void saveDone();
     //virtual bool loadList(std::list<RsItem*>& load) ;
 
-
 private:
     void getDhtInfo() ;
 
     RsMutex mBanMtx;
 
+    void autoFigureOutBanRanges();
     int condenseBanSources_locked();
     int printBanSources_locked(std::ostream &out);
     int printBanSet_locked(std::ostream &out);
@@ -118,12 +131,18 @@ private:
     time_t mSentListTime;
     std::map<RsPeerId, BanList> mBanSources;
     std::map<struct sockaddr_storage, BanListPeer> mBanSet;
+    std::map<struct sockaddr_storage, BanListPeer> mBanRanges;
 
     p3ServiceControl *mServiceCtrl;
     p3NetMgr *mNetMgr;
     time_t mLastDhtInfoRequest ;
 
     bool mIPFilteringEnabled ;
+    bool mIPFriendGatheringEnabled ;
+    bool mIPDHTGatheringEnabled ;
+
+    uint32_t mAutoRangeLimit ;
+    bool mAutoRangeIps ;
 };
 
 #endif // SERVICE_RSBANLIST_HEADER

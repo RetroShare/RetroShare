@@ -38,10 +38,14 @@ extern RsBanList *rsBanList ;
 #define RSBANLIST_REASON_UNKNOWN	0
 #define RSBANLIST_REASON_USER		1
 #define RSBANLIST_REASON_DHT		2
+#define RSBANLIST_REASON_AUTO_RANGE     3
 
 class BanListPeer
 {
 public:
+    BanListPeer() ;
+
+
     struct sockaddr_storage addr;
     uint8_t masked_bytes ;		// 0 = []/32. 1=[]/24, 2=[]/16
     uint32_t reason; 			 // User, DHT
@@ -60,6 +64,19 @@ public:
 
     virtual bool isAddressAccepted(const struct sockaddr_storage& addr) =0;
     virtual void getListOfBannedIps(std::list<BanListPeer>& list) =0;
+
+    virtual bool autoRangeEnabled() =0;
+    virtual void enableAutoRange(bool b) =0 ;
+
+    virtual int  autoRangeLimit() =0;
+    virtual void setAutoRangeLimit(int n)=0;
+
+    virtual void enableIPsFromFriends(bool b) =0;
+    virtual bool IPsFromFriendsEnabled() =0;
+
+    virtual void enableIPsFromDHT(bool b) =0;
+    virtual bool iPsFromDHTEnabled() =0;
+
 };
 
 

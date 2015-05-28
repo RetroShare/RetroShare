@@ -515,6 +515,9 @@ behind a firewall or a VPN.</string>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list get automatically filled from information gathered at multiple sources: masquerading peers reported by the DHT, IP ranged entered by you, and IP ranges reported by your friends. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
@@ -554,14 +557,51 @@ behind a firewall or a VPN.</string>
        <item>
         <widget class="QCheckBox" name="includeFromFriends_CB">
          <property name="text">
-          <string> Automatically include the  IPs denied by your friends</string>
+          <string>Include the  IPs reported by your friends</string>
          </property>
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QCheckBox" name="groupIPRanges_CB">
+           <property name="text">
+            <string>Group IPs by ranges when at least :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="groupIPRanges_SB">
+           <property name="suffix">
+            <string>  IPs</string>
+           </property>
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QCheckBox" name="includeFromDHT_CB">
          <property name="text">
-          <string>Automatically filter suspicious IPs detected by DHT</string>
+          <string>Include masquerading IPs reported by DHT</string>
          </property>
         </widget>
        </item>
