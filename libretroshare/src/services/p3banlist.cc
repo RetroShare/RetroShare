@@ -219,8 +219,11 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
 
 void p3BanList::getListOfBannedIps(std::list<BanListPeer> &lst)
 {
+    RS_STACK_MUTEX(mBanMtx) ;
+
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanSet.begin());it!=mBanSet.end();++it)
-        lst.push_back(it->second) ;
+        if(mBanRanges.find(make24BitsRange(it->first)) == mBanRanges.end())
+           lst.push_back(it->second) ;
 
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanRanges.begin());it!=mBanRanges.end();++it)
         lst.push_back(it->second) ;
@@ -508,11 +511,6 @@ int p3BanList::condenseBanSources_locked()
         sockaddr_storage_clear(bannedaddr);
         sockaddr_storage_copyip(bannedaddr, lit->second.addr);
         sockaddr_storage_setport(bannedaddr, 0);
-
-        // check if not already filtered in a Ban Range
-
-        if(mBanRanges.find(make24BitsRange(bannedaddr)) != mBanRanges.end())
-            continue ;
 
         /* check if it exists in the Set already */
         std::map<struct sockaddr_storage, BanListPeer>::iterator sit;
