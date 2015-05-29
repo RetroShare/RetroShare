@@ -25,11 +25,13 @@
 
 #include "pqi/p3servicecontrol.h"
 #include "pqi/p3netmgr.h"
+#include "pqi/p3cfgmgr.h"
 
 #include "util/rsnet.h"
 
 #include "services/p3banlist.h"
 #include "serialiser/rsbanlistitems.h"
+#include "serialiser/rsconfigitems.h"
 #include "retroshare/rsdht.h"
 
 #include <sys/time.h>
@@ -129,6 +131,27 @@ BanListPeer::BanListPeer()
     mTs=0;
 }
 
+void BanListPeer::toRsTlvBanListEntry(RsTlvBanListEntry &e) const
+{
+    e.addr.addr = addr;
+    e.level = level;
+    e.reason = reason;
+    e.masked_bytes = masked_bytes;
+    e.age = time(NULL) - mTs;
+}
+
+void BanListPeer::fromRsTlvBanListEntry(const RsTlvBanListEntry &e)
+{
+    addr = e.addr.addr;
+    masked_bytes = e.masked_bytes;		// 0 = []/32. 1=[]/24, 2=[]/16
+    reason = e.reason; 			// User, DHT
+    level = e.level; 			// LOCAL, FRIEND, FoF.
+    state = true; 				// true=>active, false=>just stored but inactive
+    connect_attempts = 0; 			// recorded by the BanList service
+    mTs = time(NULL) - e.age;
+    comment.clear() ;			//
+}
+
 static sockaddr_storage makeBitsRange(const sockaddr_storage& addr,int masked_bytes)
 {
     sockaddr_storage s ;
@@ -166,8 +189,9 @@ void p3BanList::autoFigureOutBanRanges()
 
     if(!mAutoRangeIps)
         return ;
-
+#ifdef DEBUG_BANLIST
     std::cerr << "Automatically figuring out IP ranges from banned IPs." << std::endl;
+#endif
 
     std::map<sockaddr_storage,ZeroedInt> range_map ;
 
@@ -178,11 +202,15 @@ void p3BanList::autoFigureOutBanRanges()
 
     for(std::map<sockaddr_storage,ZeroedInt>::const_iterator it=range_map.begin();it!=range_map.end();++it)
     {
+#ifdef DEBUG_BANLIST
         std::cerr << "Ban range: " << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << std::endl;
+#endif
 
         if(it->second.n >= mAutoRangeLimit)
         {
+#ifdef DEBUG_BANLIST
            std::cerr << " --> creating new ban range." << std::endl;
+#endif
            BanListPeer& peer(mBanRanges[it->first]) ;
 
        if(peer.reason == RSBANLIST_REASON_USER)
@@ -212,32 +240,42 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
     sockaddr_storage addr_24 = makeBitsRange(addr,1) ;
     sockaddr_storage addr_16 = makeBitsRange(addr,2) ;
 
+#ifdef DEBUG_BANLIST
     std::cerr << "p3BanList::isAddressAccepted() testing " << sockaddr_storage_iptostring(addr) << " and range " << sockaddr_storage_iptostring(addr_24) ;
+#endif
 
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
 
     if((it=mBanRanges.find(addr_16)) != mBanRanges.end())
     {
         ++it->second.connect_attempts;
+#ifdef DEBUG_BANLIST
         std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
+#endif
         return false ;
     }
 
     if((it=mBanRanges.find(addr_24)) != mBanRanges.end())
     {
         ++it->second.connect_attempts;
+#ifdef DEBUG_BANLIST
         std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
+#endif
         return false ;
     }
 
     if((it=mBanSet.find(addr)) != mBanSet.end())
     {
         ++it->second.connect_attempts;
+#ifdef DEBUG_BANLIST
         std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
+#endif
         return false ;
     }
 
+#ifdef DEBUG_BANLIST
     std::cerr << " returning true " << std::endl;
+#endif
     return true ;
 }
 
@@ -313,12 +351,16 @@ void p3BanList::getDhtInfo()
 
     rsDht->getListOfBannedIps(filtered_peers) ;
 
+#ifdef DEBUG_BANLIST
     std::cerr << "p3BanList::getDhtInfo() Got list of banned IPs." << std::endl;
+#endif
     RsPeerId ownId = mServiceCtrl->getOwnId();
 
     for(std::list<RsDhtFilteredPeer>::const_iterator it(filtered_peers.begin());it!=filtered_peers.end();++it)
     {
+#ifdef DEBUG_BANLIST
         std::cerr << "  filtered peer: " << rs_inet_ntoa((*it).mAddr.sin_addr) << std::endl;
+#endif
 
         int int_reason = RSBANLIST_REASON_DHT ;
         int time_stamp = (*it).mLastSeen ;
@@ -386,8 +428,8 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 	bool updated = false;
 
     time_t now = time(NULL) ;
-	std::list<RsTlvBanListEntry>::const_iterator it;
-	//for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); ++it)
+    std::list<RsTlvBanListEntry>::const_iterator it;
+
 	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); ++it)
 	{
 		// Order is important!.	
@@ -413,6 +455,108 @@ void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage
     }
 }
 
+RsSerialiser *p3BanList::setupSerialiser()
+{
+    RsSerialiser *rss = new RsSerialiser ;
+
+    rss->addSerialType(new RsBanListSerialiser()) ;
+    rss->addSerialType(new RsGeneralConfigSerialiser());
+
+    return rss ;
+}
+
+bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
+{
+    RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+
+    cleanup = true ;
+
+    for(std::map<RsPeerId,BanList>::const_iterator it(mBanSources.begin());it!=mBanSources.end();++it)
+    {
+        RsBanListConfigItem *item = new RsBanListConfigItem ;
+
+        item->peerId       = it->second.mPeerId ;
+        item->update_time  = it->second.mLastUpdate ;
+        item->banned_peers.TlvClear() ;
+
+        for(std::map<sockaddr_storage,BanListPeer>::const_iterator it2 = it->second.mBanPeers.begin();it2!=it->second.mBanPeers.end();++it2)
+        {
+            RsTlvBanListEntry e ;
+            it2->second.toRsTlvBanListEntry(e) ;
+
+            item->banned_peers.mList.push_back(e) ;
+        }
+
+        itemlist.push_back(item) ;
+    }
+
+    RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+
+    RsTlvKeyValue kv;
+
+    kv.key = "IP_FILTERING_ENABLED";
+    kv.value = mIPFilteringEnabled?"TRUE":"FALSE" ;
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
+    kv.key = "IP_FILTERING_AUTORANGE_IPS";
+    kv.value = mAutoRangeIps?"TRUE":"FALSE" ;
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
+    kv.key = "IP_FILTERING_FRIEND_GATHERING_ENABLED";
+    kv.value = mIPFriendGatheringEnabled?"TRUE":"FALSE" ;
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
+    kv.key = "IP_FILTERING_DHT_GATHERING_ENABLED";
+    kv.value = mIPDHTGatheringEnabled?"TRUE":"FALSE" ;
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
+    itemlist.push_back(vitem) ;
+
+    return true ;
+}
+
+bool p3BanList::loadList(std::list<RsItem*>& load)
+{
+    RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+
+    for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
+    {
+        RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>( *it ) ;
+
+        if(vitem != NULL)
+            for(std::list<RsTlvKeyValue>::const_iterator it2(vitem->tlvkvs.pairs.begin());it2!=vitem->tlvkvs.pairs.end();++it2)
+            {
+                if(it2->key == "IP_FILTERING_ENABLED") mIPFilteringEnabled = (it2->value=="TRUE") ;
+                if(it2->key == "IP_FILTERING_AUTORANGE_IPS") mAutoRangeIps = (it2->value=="TRUE") ;
+                if(it2->key == "IP_FILTERING_FRIEND_GATHERING_ENABLED") mIPFriendGatheringEnabled = (it2->value=="TRUE") ;
+                if(it2->key == "IP_FILTERING_DHT_GATHERING_ENABLED") mIPDHTGatheringEnabled = (it2->value=="TRUE") ;
+            }
+
+        RsBanListConfigItem *citem = dynamic_cast<RsBanListConfigItem*>( *it ) ;
+
+        if(citem != NULL)
+    {
+        BanList& bl(mBanSources[citem->peerId]) ;
+
+        bl.mPeerId = citem->peerId ;
+        bl.mLastUpdate = citem->update_time ;
+
+        bl.mBanPeers.clear() ;
+
+        for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+        {
+            BanListPeer blp ;
+            blp.fromRsTlvBanListEntry(*it2) ;
+
+            bl.mBanPeers[blp.addr] = blp ;
+        }
+    }
+
+        delete *it ;
+    }
+
+    return true ;
+}
 
 bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr,
                             int level, uint32_t reason, time_t time_stamp,uint8_t masked_bytes)
@@ -506,7 +650,7 @@ int p3BanList::condenseBanSources_locked()
 {
         mBanSet.clear();
 
-    time_t now = time(NULL);
+//    time_t now = time(NULL);
 	RsPeerId ownId = mServiceCtrl->getOwnId();
 	
 #ifdef DEBUG_BANLIST
@@ -670,35 +814,29 @@ void p3BanList::sendBanLists()
 
 int p3BanList::sendBanSet(const RsPeerId& peerid)
 {
-	/* */
-	RsBanListItem *item = new RsBanListItem();
-	item->PeerId(peerid);
-	
-	time_t now = time(NULL);
+    /* */
+    RsBanListItem *item = new RsBanListItem();
+    item->PeerId(peerid);
 
-	{
-		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
-		std::map<struct sockaddr_storage, BanListPeer>::iterator it;
-		for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
-		{
+    //time_t now = time(NULL);
+
+    {
+        RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+        std::map<struct sockaddr_storage, BanListPeer>::iterator it;
+        for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
+        {
             if (it->second.level >= RSBANLIST_ORIGIN_FRIEND)
-			{
-				continue; // only share OWN for the moment.
-			}
-	
-			RsTlvBanListEntry bi;
-			bi.addr.addr = it->second.addr;
-			bi.reason = it->second.reason;
-            bi.level = it->second.level;
-			bi.age = now - it->second.mTs;
-	
-			//item->peerList.entries.push_back(bi);
-			item->peerList.mList.push_back(bi);
-		}
-	}			
+                continue; // only share OWN for the moment.
 
-	sendItem(item);
-	return 1;
+            RsTlvBanListEntry bi;
+            it->second.toRsTlvBanListEntry(bi) ;
+
+            item->peerList.mList.push_back(bi);
+        }
+    }
+
+    sendItem(item);
+    return 1;
 }
 
 

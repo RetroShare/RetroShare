@@ -64,6 +64,15 @@ uint32_t    RsBanListSerialiser::sizeList(RsBanListItem *item)
 	return s;
 }
 
+uint32_t    RsBanListSerialiser::sizeListConfig(RsBanListConfigItem *item)
+{
+    uint32_t s = 8; /* header */
+    s += item->banned_peers.TlvSize();
+    s += 8 ;	// update time
+    s += item->peerId.serial_size() ;
+
+    return s;
+}
 /* serialise the data to the buffer */
 bool     RsBanListSerialiser::serialiseList(RsBanListItem *item, void *data, uint32_t *pktsize)
 {
@@ -100,8 +109,95 @@ bool     RsBanListSerialiser::serialiseList(RsBanListItem *item, void *data, uin
 
 	return ok;
 }
+/* serialise the data to the buffer */
+bool     RsBanListSerialiser::serialiseListConfig(RsBanListConfigItem *item, void *data, uint32_t *pktsize)
+{
+    uint32_t tlvsize = sizeListConfig(item);
+    uint32_t offset = 0;
 
+    if (*pktsize < tlvsize)
+        return false; /* not enough space */
+
+    *pktsize = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsBanListSerialiser::serialiseRoute() Header: " << ok << std::endl;
+    std::cerr << "RsBanListSerialiser::serialiseRoute() Size: " << tlvsize << std::endl;
+#endif
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= item->peerId.serialise(data, tlvsize, offset);
+    ok &= setRawTimeT(data, tlvsize, &offset,item->update_time);
+
+    /* add mandatory parts first */
+    ok &= item->banned_peers.SetTlv(data, tlvsize, &offset);
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsBanListSerialiser::serialiseRoute() Size Error! " << std::endl;
+#endif
+    }
+
+    return ok;
+}
 RsBanListItem *RsBanListSerialiser::deserialiseList(void *data, uint32_t *pktsize)
+{
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t tlvsize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+        (RS_SERVICE_TYPE_BANLIST != getRsItemService(rstype)) ||
+        (RS_PKT_SUBTYPE_BANLIST_ITEM != getRsItemSubType(rstype)))
+    {
+        return NULL; /* wrong type */
+    }
+
+    if (*pktsize < tlvsize)    /* check size */
+        return NULL; /* not enough data */
+
+    /* set the packet length */
+    *pktsize = tlvsize;
+
+    bool ok = true;
+
+    /* ready to load */
+    RsBanListItem *item = new RsBanListItem();
+    item->clear();
+
+    /* skip the header */
+    offset += 8;
+
+    /* add mandatory parts first */
+    ok &= item->peerList.GetTlv(data, tlvsize, &offset);
+
+    if (offset != tlvsize)
+    {
+        /* error */
+        delete item;
+        return NULL;
+    }
+
+    if (!ok)
+    {
+        delete item;
+        return NULL;
+    }
+
+    return item;
+}
+RsBanListConfigItem *RsBanListSerialiser::deserialiseListConfig(void *data, uint32_t *pktsize)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -112,7 +208,7 @@ RsBanListItem *RsBanListSerialiser::deserialiseList(void *data, uint32_t *pktsiz
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(RS_SERVICE_TYPE_BANLIST != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_BANLIST_ITEM != getRsItemSubType(rstype)))
+        (RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -126,14 +222,17 @@ RsBanListItem *RsBanListSerialiser::deserialiseList(void *data, uint32_t *pktsiz
 	bool ok = true;
 
 	/* ready to load */
-	RsBanListItem *item = new RsBanListItem();
+    RsBanListConfigItem *item = new RsBanListConfigItem();
 	item->clear();
 
 	/* skip the header */
 	offset += 8;
 
-	/* add mandatory parts first */
-	ok &= item->peerList.GetTlv(data, tlvsize, &offset);
+    ok &= item->peerId.deserialise(data, tlvsize, offset);
+    ok &= getRawTimeT(data, tlvsize, &offset,item->update_time);
+
+    /* add mandatory parts first */
+    ok &= item->banned_peers.GetTlv(data, tlvsize, &offset);
 
 	if (offset != tlvsize)
 	{
@@ -156,23 +255,34 @@ RsBanListItem *RsBanListSerialiser::deserialiseList(void *data, uint32_t *pktsiz
 uint32_t    RsBanListSerialiser::size(RsItem *i)
 {
 	RsBanListItem *dri;
+    RsBanListConfigItem *drc;
 
 	if (NULL != (dri = dynamic_cast<RsBanListItem *>(i)))
 	{
 		return sizeList(dri);
-	}
-	return 0;
+    }
+
+    if (NULL != (drc = dynamic_cast<RsBanListConfigItem *>(i)))
+    {
+        return sizeListConfig(drc);
+    }
+    return 0;
 }
 
 bool     RsBanListSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
 	RsBanListItem *dri;
+    RsBanListConfigItem *drc;
 
-	if (NULL != (dri = dynamic_cast<RsBanListItem *>(i)))
+    if (NULL != (dri = dynamic_cast<RsBanListItem *>(i)))
 	{
 		return serialiseList(dri, data, pktsize);
 	}
-	return false;
+    if (NULL != (drc = dynamic_cast<RsBanListConfigItem *>(i)))
+    {
+        return serialiseListConfig(drc, data, pktsize);
+    }
+    return false;
 }
 
 RsItem *RsBanListSerialiser::deserialise(void *data, uint32_t *pktsize)
@@ -191,10 +301,28 @@ RsItem *RsBanListSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_BANLIST_ITEM:
 			return deserialiseList(data, pktsize);
 			break;
-		default:
+        case RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM:
+            return deserialiseListConfig(data, pktsize);
+            break;
+        default:
 			return NULL;
 			break;
-	}
+    }
+}
+
+void RsBanListConfigItem::clear()
+{
+    banned_peers.TlvClear() ;
+}
+
+std::ostream &RsBanListConfigItem::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsBanListConfigItem", indent);
+    uint16_t int_Indent = indent + 2;
+    banned_peers.print(out, int_Indent);
+
+        printRsItemEnd(out, "RsBanListConfigItem", indent);
+        return out;
 }
 
 /*************************************************************************/

@@ -1420,10 +1420,10 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
     	// TODO: move this to nxs layer to save bandwidth
     	if(received == mReceivedGrps.end())
     	{
-//#ifdef GEN_EXCH_DEBUG
+#ifdef GEN_EXCH_DEBUG
 		std::cerr << "RsGenExchange::notifyNewGroups() Received GrpId: " << grp->grpId;
 		std::cerr << std::endl;
-//#endif
+#endif
 
     		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
     		mReceivedGrps.push_back(gpsi);

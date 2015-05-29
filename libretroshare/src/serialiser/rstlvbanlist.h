@@ -54,7 +54,6 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
     uint8_t masked_bytes ;
 };
 
-
 typedef t_RsTlvList<RsTlvBanListEntry,TLV_TYPE_BAN_LIST> RsTlvBanList;
 
 

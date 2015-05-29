@@ -40,11 +40,15 @@ extern RsBanList *rsBanList ;
 #define RSBANLIST_REASON_DHT		2
 #define RSBANLIST_REASON_AUTO_RANGE     3
 
+class RsTlvBanListEntry ;
+
 class BanListPeer
 {
 public:
     BanListPeer() ;
 
+    void toRsTlvBanListEntry(RsTlvBanListEntry& e) const ;
+    void fromRsTlvBanListEntry(const RsTlvBanListEntry& e) ;
 
     struct sockaddr_storage addr;
     uint8_t masked_bytes ;		// 0 = []/32. 1=[]/24, 2=[]/16

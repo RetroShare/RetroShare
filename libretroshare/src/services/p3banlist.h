@@ -53,7 +53,7 @@ class BanList
   * Exchange list of Banned IP addresses with peers.
   */
 
-class p3BanList: public RsBanList, public p3Service, public pqiNetAssistPeerShare /* , public p3Config, public pqiMonitor */
+class p3BanList: public RsBanList, public p3Service, public pqiNetAssistPeerShare, public p3Config /*, public pqiMonitor */
 {
 public:
     p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
@@ -85,6 +85,11 @@ public:
 
     virtual void    updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int time_stamp);
 
+    /***********************  p3config  ******************************/
+    virtual RsSerialiser *setupSerialiser();
+    virtual bool saveList(bool &cleanup, std::list<RsItem *>& itemlist);
+    virtual bool loadList(std::list<RsItem *>& load);
+
     /***** overloaded from p3Service *****/
     /*!
      * This retrieves all chat msg items and also (important!)
@@ -103,7 +108,7 @@ public:
     bool recvBanItem(RsBanListItem *item);
     bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, time_t time_stamp, uint8_t masked_bytes);
     void sendBanLists();
-    int sendBanSet(const RsPeerId& peerid);
+    int  sendBanSet(const RsPeerId& peerid);
 
 
     /*!

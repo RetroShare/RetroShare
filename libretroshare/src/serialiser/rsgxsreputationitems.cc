@@ -35,6 +35,7 @@
 
 /*************************************************************************/
 
+#ifdef SUSPENDED
 RsBanListItem::~RsBanListItem()
 {
 	return;
@@ -197,6 +198,7 @@ RsItem *RsBanListSerialiser::deserialise(void *data, uint32_t *pktsize)
 	}
 }
 
+#endif
 /*************************************************************************/
 
 
