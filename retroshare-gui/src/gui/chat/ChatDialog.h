@@ -90,4 +90,15 @@ protected:
     ChatId mChatId;
 };
 
+class ChatFriendMethod: public QObject
+{
+    Q_OBJECT
+public:
+    ChatFriendMethod(QObject* parent, RsPeerId peerId): QObject(parent), mPeerId(peerId){}
+public slots:
+    void chatFriend(){ChatDialog::chatFriend(ChatId(mPeerId));}
+private:
+    RsPeerId mPeerId;
+};
+
 #endif // CHATDIALOG_H

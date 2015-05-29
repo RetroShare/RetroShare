@@ -22,6 +22,8 @@
 
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QMenu>
+#include <QWidgetAction>
 
 #include "ChatDialog.h"
 #include "gui/common/PeerDefs.h"
@@ -254,9 +256,20 @@ void ChatDialog::init(ChatId id, const QString &title)
 		return;
 	}
 
-	// more than one ssl ids online or all offline
-	QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one nodes.\nPlease choose one of it to chat with."), QMessageBox::Ok);
-	mb.exec();
+    // show menu with online locations
+    QMenu menu;
+    QLabel* label = new QLabel("<strong>Select one of your friends locations to chat with</strong>");
+    QWidgetAction *widgetAction = new QWidgetAction(&menu);
+    widgetAction->setDefaultWidget(label);
+    menu.addAction(widgetAction);
+    QObject cleanupchildren;
+    for(std::list<RsPeerId>::iterator it = onlineIds.begin(); it != onlineIds.end(); ++it)
+    {
+        RsPeerDetails detail;
+        rsPeers->getPeerDetails(*it, detail);
+        menu.addAction(QString::fromUtf8(detail.location.c_str()), new ChatFriendMethod(&cleanupchildren, *it), SLOT(chatFriend()));
+    }
+    menu.exec(QCursor::pos());
 }
 
 void ChatDialog::addToParent(QWidget *newParent)
