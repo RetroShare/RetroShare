@@ -64,6 +64,8 @@ public:
     virtual bool isAddressAccepted(const struct sockaddr_storage& addr) ;
     virtual void getListOfBannedIps(std::list<BanListPeer>& list) ;
 
+    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,const std::string& comment) ;
+
     virtual void enableIPFiltering(bool b) ;
     virtual bool ipFilteringEnabled() ;
 
@@ -85,13 +87,13 @@ public:
 
     /***** overloaded from p3Service *****/
     /*!
-         * This retrieves all chat msg items and also (important!)
-         * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
-         * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
-         * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
-         * @see NotifyBase
+     * This retrieves all chat msg items and also (important!)
+     * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
+     * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
+     * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
+     * @see NotifyBase
 
-         */
+     */
     virtual int   tick();
     virtual int   status();
 
@@ -105,8 +107,8 @@ public:
 
 
     /*!
-         * Interface stuff.
-         */
+     * Interface stuff.
+     */
 
     /*************** pqiMonitor callback ***********************/
     //virtual void statusChange(const std::list<pqipeer> &plist);

@@ -28,6 +28,7 @@
 #include <QRgb>
 #include <QSettings>
 
+#include <stdint.h>
 #include <gui/linetypes.h>
 #include "rsettings.h"
 

@@ -62,6 +62,8 @@ public:
     virtual void enableIPFiltering(bool b) =0;
     virtual bool ipFilteringEnabled() =0;
 
+    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,const std::string& comment) =0;
+
     virtual bool isAddressAccepted(const struct sockaddr_storage& addr) =0;
     virtual void getListOfBannedIps(std::list<BanListPeer>& list) =0;
 

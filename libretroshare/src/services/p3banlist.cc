@@ -124,12 +124,12 @@ BanListPeer::BanListPeer()
     masked_bytes=0;
     reason=RSBANLIST_REASON_UNKNOWN ;
     level=RSBANLIST_ORIGIN_UNKNOWN ;
-    state = false ;
+    state = true ;
     connect_attempts=0;
     mTs=0;
 }
 
-static sockaddr_storage make24BitsRange(const sockaddr_storage& addr)
+static sockaddr_storage makeBitsRange(const sockaddr_storage& addr,int masked_bytes)
 {
     sockaddr_storage s ;
     sockaddr_storage_clear(s) ;
@@ -137,7 +137,12 @@ static sockaddr_storage make24BitsRange(const sockaddr_storage& addr)
 
     sockaddr_in *ad = (sockaddr_in*)(&s) ;
 
-    ad->sin_addr.s_addr |= 0xff000000 ;
+    if(masked_bytes == 1)
+        ad->sin_addr.s_addr |= 0xff000000 ;
+    else if(masked_bytes == 2)
+        ad->sin_addr.s_addr |= 0xffff0000 ;
+    else if(masked_bytes != 0)
+        std::cerr << "Warning: unhandled mask size for IP range: " << masked_bytes << std::endl;
 
     return s ;
 }
@@ -146,7 +151,18 @@ void p3BanList::autoFigureOutBanRanges()
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
-    mBanRanges.clear() ;
+    // clear automatic ban ranges
+
+    for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanRanges.begin());it!=mBanRanges.end();)
+        if(it->second.reason == RSBANLIST_REASON_AUTO_RANGE)
+        {
+            std::map<sockaddr_storage,BanListPeer>::iterator it2=it ;
+            ++it2 ;
+            mBanRanges.erase(it) ;
+            it=it2 ;
+        }
+        else
+            ++it;
 
     if(!mAutoRangeIps)
         return ;
@@ -156,7 +172,7 @@ void p3BanList::autoFigureOutBanRanges()
     std::map<sockaddr_storage,ZeroedInt> range_map ;
 
     for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanSet.begin());it!=mBanSet.end();++it)
-        ++range_map[make24BitsRange(it->first)].n ;
+        ++range_map[makeBitsRange(it->first,1)].n ;
 
     time_t now = time(NULL) ;
 
@@ -168,6 +184,9 @@ void p3BanList::autoFigureOutBanRanges()
         {
            std::cerr << " --> creating new ban range." << std::endl;
            BanListPeer& peer(mBanRanges[it->first]) ;
+
+       if(peer.reason == RSBANLIST_REASON_USER)
+           continue ;
 
            peer.addr = it->first ;
            peer.masked_bytes = 1 ;
@@ -190,11 +209,19 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
 
     // we should normally work this including entire ranges of IPs. For now, just check the exact IPs.
 
-    sockaddr_storage addr_24 = make24BitsRange(addr) ;
+    sockaddr_storage addr_24 = makeBitsRange(addr,1) ;
+    sockaddr_storage addr_16 = makeBitsRange(addr,2) ;
 
     std::cerr << "p3BanList::isAddressAccepted() testing " << sockaddr_storage_iptostring(addr) << " and range " << sockaddr_storage_iptostring(addr_24) ;
 
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
+
+    if((it=mBanRanges.find(addr_16)) != mBanRanges.end())
+    {
+        ++it->second.connect_attempts;
+        std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
+        return false ;
+    }
 
     if((it=mBanRanges.find(addr_24)) != mBanRanges.end())
     {
@@ -219,11 +246,36 @@ void p3BanList::getListOfBannedIps(std::list<BanListPeer> &lst)
     RS_STACK_MUTEX(mBanMtx) ;
 
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanSet.begin());it!=mBanSet.end();++it)
-        if(mBanRanges.find(make24BitsRange(it->first)) == mBanRanges.end())
+        if(mBanRanges.find(makeBitsRange(it->first,1)) == mBanRanges.end()
+                    && mBanRanges.find(makeBitsRange(it->first,2)) == mBanRanges.end())
            lst.push_back(it->second) ;
 
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanRanges.begin());it!=mBanRanges.end();++it)
         lst.push_back(it->second) ;
+}
+
+void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,const std::string& comment)
+{
+    RS_STACK_MUTEX(mBanMtx) ;
+
+    BanListPeer blp ;
+    blp.level = RSBANLIST_ORIGIN_SELF ;
+    blp.connect_attempts = 0 ;
+    blp.addr = addr ;
+    blp.masked_bytes = masked_bytes ;
+    blp.mTs = time(NULL) ;
+    blp.reason = RSBANLIST_REASON_USER;
+    blp.comment = comment ;
+
+    if(masked_bytes != 0 && masked_bytes != 1 && masked_bytes != 2)
+    {
+        std::cerr << "Unhandled masked byte size " << masked_bytes << ". Should be 0,1 or 2" << std::endl;
+        return ;
+    }
+
+    sockaddr_storage addrrange = makeBitsRange(addr,masked_bytes) ;
+
+    mBanRanges[addrrange] = blp ;
 }
 
 int	p3BanList::tick()
@@ -237,6 +289,7 @@ int	p3BanList::tick()
     {
         if(mIPDHTGatheringEnabled)
             getDhtInfo() ;
+
         mLastDhtInfoRequest = now;
 
         if(mAutoRangeIps)
@@ -332,7 +385,6 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 {
 	bool updated = false;
 
-    std::cerr << "(EE) should not receive a Ban item yet. Not implemented!" << std::endl;
     time_t now = time(NULL) ;
 	std::list<RsTlvBanListEntry>::const_iterator it;
 	//for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); ++it)

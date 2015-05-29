@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -626,13 +626,13 @@ behind a firewall or a VPN.</string>
             <number>16</number>
            </property>
            <property name="maximum">
-            <number>32</number>
+            <number>24</number>
            </property>
            <property name="singleStep">
             <number>8</number>
            </property>
            <property name="value">
-            <number>32</number>
+            <number>24</number>
            </property>
           </widget>
          </item>

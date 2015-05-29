@@ -50,6 +50,8 @@ public slots:
     void updateStatus();
 
 private slots:
+    void addIpRange();
+    void checkIpRange(const QString &);
     void setGroupIpLimit(int n);
     void toggleGroupIps(bool b);
     void toggleAutoIncludeDHT(bool b);

@@ -77,11 +77,12 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.includeFromFriends_CB,SIGNAL(toggled(bool)),this,SLOT(toggleAutoIncludeFriends(bool)));
     QObject::connect(ui.groupIPRanges_CB,SIGNAL(toggled(bool)),this,SLOT(toggleGroupIps(bool)));
     QObject::connect(ui.groupIPRanges_SB,SIGNAL(valueChanged(int)),this,SLOT(setGroupIpLimit(int)));
+    QObject::connect(ui.ipInputAdd_PB,SIGNAL(clicked()),this,SLOT(addIpRange()));
+    QObject::connect(ui.ipInput_LE,SIGNAL(textChanged(const QString&)),this,SLOT(checkIpRange(const QString&)));
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);
-
 
 	//load();
 	updateStatus();
@@ -107,6 +108,81 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	std::cerr << "ServerPage::ServerPage() called";
 	std::cerr << std::endl;
 #endif
+}
+static bool parseAddrFromQString(const QString& s,struct sockaddr_storage& addr,int& bytes )
+{
+    QStringList lst = s.split(".") ;
+
+    QStringList::const_iterator it = lst.begin();
+    bool ok ;
+
+    uint32_t s1 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
+    uint32_t s2 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
+    uint32_t s3 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
+
+    QStringList lst2 = (*it).split("/") ;
+
+    it = lst2.begin();
+
+    uint32_t s4 ;
+    s4 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
+
+    if(it != lst2.end())
+    {
+        uint32_t x = (*it).toInt(&ok) ; if(!ok) return false ;
+        if(x%8 != 0)
+            return false ;
+
+        if(x != 16 &&  x != 24)
+            return false ;
+
+        bytes = 4 - x/8 ;
+    }
+
+    const sockaddr_in *in = (const sockaddr_in*)&addr ;
+    ((uint8_t*)&in->sin_addr.s_addr)[0] = s1 ;
+    ((uint8_t*)&in->sin_addr.s_addr)[1] = s2 ;
+    ((uint8_t*)&in->sin_addr.s_addr)[2] = s3 ;
+    ((uint8_t*)&in->sin_addr.s_addr)[3] = s4 ;
+
+    return ok;
+}
+void ServerPage::checkIpRange(const QString& ipstr)
+{
+    QColor color;
+    struct sockaddr_storage addr;
+    int bytes ;
+
+    if(!parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
+    {
+        std::cout << "setting palette 1" << std::endl ;
+        color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
+    }
+    else
+    {
+        std::cout << "setting palette 2" << std::endl ;
+        color = QApplication::palette().color(QPalette::Active, QPalette::Base);
+    }
+    /* unpolish widget to clear the stylesheet's palette cache */
+    ui.ipInput_LE->style()->unpolish(ui.ipInput_LE);
+
+    QPalette palette = ui.ipInput_LE->palette();
+    palette.setColor(ui.ipInput_LE->backgroundRole(), color);
+    ui.ipInput_LE->setPalette(palette);
+}
+
+void ServerPage::addIpRange()
+{
+    QString ipstr = ui.ipInput_LE->text() ;
+    sockaddr_storage addr ;
+    int bytes = 0 ;
+
+    if(!parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
+        return ;
+
+    bytes = 4 - ui.ipInputRange_SB->value()/8;
+
+    rsBanList->addIpRange(addr,bytes,ui.ipInputComment_LE->text().toStdString());
 }
 
 void ServerPage::clearKnownAddressList()
@@ -315,10 +391,10 @@ void ServerPage::loadFilteredIps()
         ui.filteredIpsTable->setEnabled(true) ;
         ui.includeFromFriends_CB->setEnabled(true) ;
         ui.includeFromDHT_CB->setEnabled(true) ;
-        ui.ipInput_LE->setEnabled(false) ;
-        ui.ipInputRange_SB->setEnabled(false) ;
-        ui.ipInputComment_LE->setEnabled(false) ;
-        ui.ipInputAdd_PB->setEnabled(false) ;
+        ui.ipInput_LE->setEnabled(true) ;
+        ui.ipInputRange_SB->setEnabled(true) ;
+        ui.ipInputComment_LE->setEnabled(true) ;
+        ui.ipInputAdd_PB->setEnabled(true) ;
         ui.groupIPRanges_CB->setEnabled(true) ;
         ui.groupIPRanges_SB->setEnabled(true) ;
     }
@@ -383,7 +459,7 @@ void ServerPage::loadFilteredIps()
        case RSBANLIST_REASON_USER:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
           break ;
        case RSBANLIST_REASON_AUTO_RANGE:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Auto-generated range"))) ;
-                                            ui.filteredIpsTable->item(row,COLUMN_REASON)->setToolTip(tr("Range made from %1 collected addresses").arg(QString::number((*it).connect_attempts))) ;
+                                            ui.filteredIpsTable->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(tr("Range made from %1 collected addresses").arg(QString::number((*it).connect_attempts)))) ;
           break ;
        default:
        case RSBANLIST_REASON_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Unknown"))) ;
@@ -394,44 +470,7 @@ void ServerPage::loadFilteredIps()
     }
 }
 
-static bool parseAddrFromQString(const QString& s,struct sockaddr_storage& addr,int& bytes )
-{
-    QStringList lst = s.split(".") ;
 
-    QStringList::const_iterator it = lst.begin();
-    bool ok ;
-
-    uint32_t s1 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
-    uint32_t s2 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
-    uint32_t s3 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
-
-    QStringList lst2 = (*it).split("/") ;
-
-    it = lst2.begin();
-
-    uint32_t s4 ;
-    s4 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
-
-    if(it != lst2.end())
-    {
-        uint32_t x = (*it).toInt(&ok) ; if(!ok) return false ;
-        if(x%8 != 0)
-            return false ;
-
-        if(x != 16 &&  x != 24)
-            return false ;
-
-        bytes = 4 - x/8 ;
-    }
-
-    const sockaddr_in *in = (const sockaddr_in*)&addr ;
-    ((uint8_t*)&in->sin_addr.s_addr)[0] = s1 ;
-    ((uint8_t*)&in->sin_addr.s_addr)[1] = s2 ;
-    ((uint8_t*)&in->sin_addr.s_addr)[2] = s3 ;
-    ((uint8_t*)&in->sin_addr.s_addr)[3] = s4 ;
-
-    return ok;
-}
 
 void ServerPage::toggleGroupIps(bool b) { rsBanList->enableAutoRange(b) ; }
 void ServerPage::setGroupIpLimit(int n) { rsBanList->setAutoRangeLimit(n) ; }
