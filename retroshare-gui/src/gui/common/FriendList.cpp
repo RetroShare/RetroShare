@@ -380,6 +380,11 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
              break;
          case TYPE_GPG:
         {
+             contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+             contextMnu.addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
+
+             contextMnu.addSeparator();
+
                  contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this, SLOT(configurefriend()));
                      contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny"), this, SLOT(removefriend()));
 
@@ -1269,14 +1274,21 @@ void FriendList::addFriend()
 
 void FriendList::msgfriend()
 {
-    QTreeWidgetItem *peer = getCurrentPeer();
+    QTreeWidgetItem *item = getCurrentPeer();
 
-    if (!peer)
+    if (!item)
         return;
 
-    std::string id = getRsId(peer);
-
-    MessageComposer::msgFriend(RsPeerId(id)) ;
+    switch (item->type()) {
+    case TYPE_GROUP:
+        break;
+    case TYPE_GPG:
+        MessageComposer::msgFriend(RsPgpId(getRsId(item)));
+        break;
+    case TYPE_SSL:
+        MessageComposer::msgFriend(RsPeerId(getRsId(item)));
+        break;
+    }
 }
 
 void FriendList::recommendfriend()

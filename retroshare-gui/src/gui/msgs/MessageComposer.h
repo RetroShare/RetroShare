@@ -56,6 +56,8 @@ public:
     ~MessageComposer();
 
     static void msgFriend(const RsPeerId &id);
+    // send msg to all locations
+    static void msgFriend(const RsPgpId &id);
     static void msgGxsIdentity(const RsGxsId& gxs_id) ;
     static void msgGroup(const std::string& group_id) ;
 

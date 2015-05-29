@@ -451,6 +451,35 @@ void MessageComposer::processSettings(bool bLoad)
     /* window will destroy itself! */
 }
 
+/*static*/ void MessageComposer::msgFriend(const RsPgpId &id)
+{
+    //    std::cerr << "MessageComposer::msgfriend()" << std::endl;
+
+    /* check if pgp id is a friend */
+    std::list<RsPgpId> friends;
+    rsPeers->getGPGAcceptedList(friends);
+    if(std::find(friends.begin(), friends.end(), id) == friends.end())
+        return;
+
+    /* create a message */
+    MessageComposer *pMsgDialog = MessageComposer::newMsg();
+    if (pMsgDialog == NULL) {
+        return;
+    }
+
+    /* add all locations */
+    std::list<RsPeerId> locations;
+    rsPeers->getAssociatedSSLIds(id, locations);
+    for(std::list<RsPeerId>::iterator it = locations.begin(); it != locations.end(); ++it)
+    {
+        pMsgDialog->addRecipient(TO, *it);
+    }
+
+    pMsgDialog->show();
+
+    /* window will destroy itself! */
+}
+
 static QString buildRecommendHtml(const std::set<RsPeerId> &sslIds, const RsPeerId& excludeId = RsPeerId())
 {
     QString text;
