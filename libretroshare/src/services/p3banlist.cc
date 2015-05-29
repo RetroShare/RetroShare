@@ -166,20 +166,17 @@ void p3BanList::autoFigureOutBanRanges()
 
         if(it->second.n >= mAutoRangeLimit)
         {
-        std::cerr << " --> creating new ban range." << std::endl;
-            BanListPeer& peer(mBanRanges[it->first]) ;
+           std::cerr << " --> creating new ban range." << std::endl;
+           BanListPeer& peer(mBanRanges[it->first]) ;
 
-            peer.addr = it->first ;
-            peer.masked_bytes = 1 ;
-            peer.reason = RSBANLIST_REASON_AUTO_RANGE ;
-            peer.level = RSBANLIST_ORIGIN_SELF ;
-            peer.state = true  ;
-
-            if(peer.mTs == 0)
-            {
-                peer.mTs = now ;
-                peer.connect_attempts = 0 ;
-            }
+           peer.addr = it->first ;
+           peer.masked_bytes = 1 ;
+           peer.reason = RSBANLIST_REASON_AUTO_RANGE ;
+           peer.level = RSBANLIST_ORIGIN_SELF ;
+           peer.state = true  ;
+           peer.mTs = now ;
+           peer.connect_attempts = 0 ;
+           peer.connect_attempts = it->second.n;
         }
     }
 

@@ -352,41 +352,45 @@ void ServerPage::loadFilteredIps()
     int row = 0 ;
     for(std::list<BanListPeer>::const_iterator it(lst.begin());it!=lst.end();++it,++row)
     {
-        //std::cerr << "  adding banned lst peer: " << print_addr((*it).addr) << std::endl;
+       //std::cerr << "  adding banned lst peer: " << print_addr((*it).addr) << std::endl;
 
-        ui.filteredIpsTable->setItem(row,COLUMN_RANGE,new QTableWidgetItem(QString::fromStdString(print_addr_range((*it).addr,(*it).masked_bytes)))) ;
+       ui.filteredIpsTable->setItem(row,COLUMN_RANGE,new QTableWidgetItem(QString::fromStdString(print_addr_range((*it).addr,(*it).masked_bytes)))) ;
 
-        if( (*it).state )
-            ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString("active"))) ;
-        else
-            ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString(""))) ;
+       if( (*it).state )
+          ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString("active"))) ;
+       else
+          ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString(""))) ;
 
-    ui.filteredIpsTable->item(row,COLUMN_STATUS)->setData(Qt::UserRole,QVariant( (*it).state )) ;
+       ui.filteredIpsTable->item(row,COLUMN_STATUS)->setData(Qt::UserRole,QVariant( (*it).state )) ;
 
-        switch((*it).level)
-        {
-        default:
-        case RSBANLIST_ORIGIN_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("Unknown"))) ;
-            break ;
-        case RSBANLIST_ORIGIN_FOF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend of a friend"))) ;
-            break ;
-        case RSBANLIST_ORIGIN_FRIEND:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend"))) ;
-            break ;
-        case RSBANLIST_ORIGIN_SELF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From you"))) ;
-            break ;
-        }
+       switch((*it).level)
+       {
+       case RSBANLIST_ORIGIN_FOF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend of a friend"))) ;
+          break ;
+       case RSBANLIST_ORIGIN_FRIEND:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend"))) ;
+          break ;
+       case RSBANLIST_ORIGIN_SELF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From you"))) ;
+          break ;
+       default:
+       case RSBANLIST_ORIGIN_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("Unknown"))) ;
+          break ;
+       }
 
-    switch( (*it).reason )
-    {
-        case RSBANLIST_REASON_DHT:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Bad peer (DHT)"))) ;
-            break ;
-        case RSBANLIST_REASON_USER:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
-            break ;
-        default:
-        case RSBANLIST_REASON_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Unknown"))) ;
-            break ;
-    }
-        ui.filteredIpsTable->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString((*it).comment))) ;
+       switch( (*it).reason )
+       {
+       case RSBANLIST_REASON_DHT:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Bad peer (DHT)"))) ;
+          break ;
+       case RSBANLIST_REASON_USER:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
+          break ;
+       case RSBANLIST_REASON_AUTO_RANGE:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Auto-generated range"))) ;
+                                            ui.filteredIpsTable->item(row,COLUMN_REASON)->setToolTip(tr("Range made from %1 collected addresses").arg(QString::number((*it).connect_attempts))) ;
+          break ;
+       default:
+       case RSBANLIST_REASON_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Unknown"))) ;
+          break ;
+       }
+
+       ui.filteredIpsTable->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString((*it).comment))) ;
     }
 }
 
