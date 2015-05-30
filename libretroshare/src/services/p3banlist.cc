@@ -341,7 +341,26 @@ void p3BanList::getBannedIps(std::list<BanListPeer> &lst)
 
 void p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type)
 {
-#warning NOT IMPLEMENTED YET
+    std::map<sockaddr_storage,BanListPeer>::iterator it ;
+
+    if(list_type == RSBANLIST_TYPE_BLACKLIST)
+    {
+        if( mBanRanges.end() != (it = mBanRanges.find(makeBitsRange(addr,masked_bytes))))
+        {
+            mBanRanges.erase(it) ;
+            IndicateConfigChanged();
+        }
+    }
+    else if(list_type == RSBANLIST_TYPE_WHITELIST)
+    {
+        if( mWhiteListedRanges.end() != (it = mWhiteListedRanges.find(makeBitsRange(addr,masked_bytes))))
+        {
+            mWhiteListedRanges.erase(it) ;
+            IndicateConfigChanged();
+        }
+    }
+    else
+        std::cerr << "(EE) Only whitelist or blacklist ranges can be removed." << std::endl;
 }
 
 void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32_t list_type,const std::string& comment)
@@ -365,9 +384,9 @@ void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32
 
     sockaddr_storage addrrange = makeBitsRange(addr,masked_bytes) ;
 
-    if(list_type == RSBANLIST_CHECKING_FLAGS_BLACKLIST)
+    if(list_type == RSBANLIST_TYPE_BLACKLIST)
         mBanRanges[addrrange] = blp ;
-    else if(list_type == RSBANLIST_CHECKING_FLAGS_WHITELIST)
+    else if(list_type == RSBANLIST_TYPE_WHITELIST)
         mWhiteListedRanges[addrrange] = blp ;
     else
         std::cerr << "(EE) Cannot add IP range. Bad list_type. Should be eiter RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST" << std::endl;
@@ -534,6 +553,7 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
     {
         RsBanListConfigItem *item = new RsBanListConfigItem ;
 
+        item->type         = RSBANLIST_TYPE_PEERLIST ;
         item->peerId       = it->second.mPeerId ;
         item->update_time  = it->second.mLastUpdate ;
         item->banned_peers.TlvClear() ;
@@ -548,6 +568,45 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
 
         itemlist.push_back(item) ;
     }
+
+    // Add  whitelist
+    RsBanListConfigItem *item = new RsBanListConfigItem ;
+
+    item->type         = RSBANLIST_TYPE_WHITELIST ;
+    item->peerId.clear() ;
+    item->update_time  = 0 ;
+    item->banned_peers.TlvClear() ;
+
+    for(std::map<sockaddr_storage,BanListPeer>::const_iterator it2 = mWhiteListedRanges.begin();it2!=mWhiteListedRanges.end();++it2)
+    {
+        RsTlvBanListEntry e ;
+        it2->second.toRsTlvBanListEntry(e) ;
+
+        item->banned_peers.mList.push_back(e) ;
+    }
+
+    itemlist.push_back(item) ;
+
+    // addblacklist
+
+    item = new RsBanListConfigItem ;
+
+    item->type         = RSBANLIST_TYPE_BLACKLIST ;
+    item->peerId.clear();
+    item->update_time  = 0 ;
+    item->banned_peers.TlvClear() ;
+
+    for(std::map<sockaddr_storage,BanListPeer>::const_iterator it2 = mBanRanges.begin();it2!=mBanRanges.end();++it2)
+    {
+        RsTlvBanListEntry e ;
+        it2->second.toRsTlvBanListEntry(e) ;
+
+        item->banned_peers.mList.push_back(e) ;
+    }
+
+    itemlist.push_back(item) ;
+
+    // Other variables
 
     RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 
@@ -593,22 +652,51 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
 
         RsBanListConfigItem *citem = dynamic_cast<RsBanListConfigItem*>( *it ) ;
 
-        if(citem != NULL)
+    if(citem != NULL)
     {
-        BanList& bl(mBanSources[citem->peerId]) ;
-
-        bl.mPeerId = citem->peerId ;
-        bl.mLastUpdate = citem->update_time ;
-
-        bl.mBanPeers.clear() ;
-
-        for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+        if(citem->type == RSBANLIST_TYPE_PEERLIST)
         {
-            BanListPeer blp ;
-            blp.fromRsTlvBanListEntry(*it2) ;
+            BanList& bl(mBanSources[citem->peerId]) ;
 
-            bl.mBanPeers[blp.addr] = blp ;
+            bl.mPeerId = citem->peerId ;
+            bl.mLastUpdate = citem->update_time ;
+
+            bl.mBanPeers.clear() ;
+
+            for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+            {
+                BanListPeer blp ;
+                blp.fromRsTlvBanListEntry(*it2) ;
+
+                bl.mBanPeers[blp.addr] = blp ;
+            }
         }
+        else if(citem->type == RSBANLIST_TYPE_BLACKLIST)
+        {
+            mBanRanges.clear() ;
+
+            for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+            {
+                BanListPeer blp ;
+                blp.fromRsTlvBanListEntry(*it2) ;
+
+                mBanRanges[blp.addr] = blp ;
+            }
+        }
+        else if(citem->type == RSBANLIST_TYPE_WHITELIST)
+        {
+            mWhiteListedRanges.clear() ;
+
+            for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+            {
+                BanListPeer blp ;
+                blp.fromRsTlvBanListEntry(*it2) ;
+
+                mWhiteListedRanges[blp.addr] = blp ;
+            }
+        }
+        else
+            std::cerr << "(EE) BanList item unknown type " << citem->type << ". This is a bug." << std::endl;
     }
 
         delete *it ;

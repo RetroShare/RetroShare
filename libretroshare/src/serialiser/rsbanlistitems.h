@@ -32,9 +32,10 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbanlist.h"
 
-#define RS_PKT_SUBTYPE_BANLIST_ITEM_deprecated  0x01
-#define RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM   	0x02
-#define RS_PKT_SUBTYPE_BANLIST_ITEM		0x03
+#define RS_PKT_SUBTYPE_BANLIST_ITEM_deprecated  		0x01
+#define RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM_deprecated   	0x02
+#define RS_PKT_SUBTYPE_BANLIST_ITEM				0x03
+#define RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM   			0x04
 
 /**************************************************************************/
 
@@ -67,7 +68,8 @@ public:
 
     std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-    RsPeerId  	peerId ;
+    uint32_t		type ;
+    RsPeerId  		peerId ;
     time_t		update_time ;
     RsTlvBanList	banned_peers;
 };

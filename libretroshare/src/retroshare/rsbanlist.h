@@ -54,6 +54,10 @@ extern RsBanList *rsBanList ;
 #define RSBANLIST_CHECK_RESULT_NOT_WHITELISTED  0x03
 #define RSBANLIST_CHECK_RESULT_ACCEPTED     	0x04
 
+#define RSBANLIST_TYPE_PEERLIST	  		1
+#define RSBANLIST_TYPE_BLACKLIST		2
+#define RSBANLIST_TYPE_WHITELIST		3
+
 class RsTlvBanListEntry ;
 
 class BanListPeer
@@ -83,7 +87,7 @@ public:
     // addIpRange()/removeIpRange()
     // 	addr: 		full IPv4 address. Port is ignored.
     // 	masked_bytes: 	0=full IP, 1="/24", 2="/16"
-    // 	list_type: 	RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST
+    // 	list_type: 	RSBANLIST_TYPE_WHITELIST or RSBANLIST_TYPE_BLACKLIST
     // 	comment: 	anything, user-based.
 
     virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) =0;

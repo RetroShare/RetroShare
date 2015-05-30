@@ -67,6 +67,7 @@ uint32_t    RsBanListSerialiser::sizeList(RsBanListItem *item)
 uint32_t    RsBanListSerialiser::sizeListConfig(RsBanListConfigItem *item)
 {
     uint32_t s = 8; /* header */
+    s += 4 ; // type
     s += item->banned_peers.TlvSize();
     s += 8 ;	// update time
     s += item->peerId.serial_size() ;
@@ -132,6 +133,7 @@ bool     RsBanListSerialiser::serialiseListConfig(RsBanListConfigItem *item, voi
     /* skip the header */
     offset += 8;
 
+    ok &= setRawUInt32(data, tlvsize, &offset,item->type);
     ok &= item->peerId.serialise(data, tlvsize, offset);
     ok &= setRawTimeT(data, tlvsize, &offset,item->update_time);
 
@@ -228,6 +230,7 @@ RsBanListConfigItem *RsBanListSerialiser::deserialiseListConfig(void *data, uint
 	/* skip the header */
 	offset += 8;
 
+    ok &= getRawUInt32(data, tlvsize, &offset,&item->type);
     ok &= item->peerId.deserialise(data, tlvsize, offset);
     ok &= getRawTimeT(data, tlvsize, &offset,item->update_time);
 

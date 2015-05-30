@@ -81,6 +81,7 @@ private:
     // Alternative Versions for HiddenNode Mode.
     void addPeerToIPTable(QTableWidget *table, int row, const BanListPeer &blp);
     bool removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,int& masked_bytes);
+    bool removeCurrentRowFromWhiteList(sockaddr_storage &collected_addr, int &masked_bytes);
     void loadHiddenNode();
     void updateStatusHiddenNode();
     void saveAddressesHiddenNode();

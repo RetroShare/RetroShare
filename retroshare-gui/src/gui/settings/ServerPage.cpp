@@ -184,7 +184,7 @@ void ServerPage::addIpRangeToBlackList()
 
     bytes = 4 - ui.ipInputRange_SB->value()/8;
 
-    rsBanList->addIpRange(addr,bytes, RSBANLIST_CHECKING_FLAGS_BLACKLIST,ui.ipInputComment_LE->text().toStdString());
+    rsBanList->addIpRange(addr,bytes, RSBANLIST_TYPE_BLACKLIST,ui.ipInputComment_LE->text().toStdString());
 }
 
 void ServerPage::addIpRangeToWhiteList()
@@ -198,7 +198,7 @@ void ServerPage::addIpRangeToWhiteList()
 
     bytes = 4 - ui.ipInputRange_SB->value()/8;
 
-    rsBanList->addIpRange(addr,bytes, RSBANLIST_CHECKING_FLAGS_WHITELIST,ui.ipInputComment_LE->text().toStdString());
+    rsBanList->addIpRange(addr,bytes, RSBANLIST_TYPE_WHITELIST,ui.ipInputComment_LE->text().toStdString());
 }
 
 void ServerPage::clearKnownAddressList()
@@ -510,7 +510,7 @@ void ServerPage::ipFilterContextMenu(const QPoint& point)
 
     bool status = item->data(Qt::UserRole).toBool();
 
-    contextMenu.addAction(tr("Remove"),this,SLOT(removeBannedIp()))->setEnabled(false) ;
+    contextMenu.addAction(tr("Remove"),this,SLOT(removeBannedIp()));
 
     QString addr_string = ui.filteredIpsTable->item(row,COLUMN_RANGE)->text() ;
 
@@ -562,6 +562,26 @@ bool ServerPage::removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,
     return true ;
 }
 
+
+bool ServerPage::removeCurrentRowFromWhiteList(sockaddr_storage& collected_addr,int &masked_bytes)
+{
+    int row = ui.whiteListIpsTable->currentRow();
+    QTableWidgetItem *item = ui.whiteListIpsTable->item(row, COLUMN_STATUS);
+
+    if(item == NULL)
+        return false;
+
+    QString addr_string = ui.whiteListIpsTable->item(row,COLUMN_RANGE)->text() ;
+
+    if(!parseAddrFromQString(addr_string,collected_addr,masked_bytes))
+    {
+        std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
+        return false;
+    }
+    rsBanList->removeIpRange(collected_addr,masked_bytes,RSBANLIST_TYPE_WHITELIST);
+    return true ;
+}
+
 void ServerPage::moveToWhiteList0()
 {
     sockaddr_storage addr ;
@@ -569,7 +589,7 @@ void ServerPage::moveToWhiteList0()
 
     removeCurrentRowFromBlackList(addr,bytes) ;
 
-    rsBanList->addIpRange(addr,0,RSBANLIST_CHECKING_FLAGS_WHITELIST, tr("Added by you").toStdString());
+    rsBanList->addIpRange(addr,0,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
 void ServerPage::moveToWhiteList1()
 {
@@ -578,7 +598,7 @@ void ServerPage::moveToWhiteList1()
 
     removeCurrentRowFromBlackList(addr,bytes) ;
 
-    rsBanList->addIpRange(addr,1,RSBANLIST_CHECKING_FLAGS_WHITELIST, tr("Added by you").toStdString());
+    rsBanList->addIpRange(addr,1,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
 void ServerPage::moveToWhiteList2()
 {
@@ -587,7 +607,7 @@ void ServerPage::moveToWhiteList2()
 
     removeCurrentRowFromBlackList(addr,bytes) ;
 
-    rsBanList->addIpRange(addr,2,RSBANLIST_CHECKING_FLAGS_WHITELIST, tr("Added by you").toStdString());
+    rsBanList->addIpRange(addr,2,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
 void ServerPage::ipWhiteListContextMenu(const QPoint& point)
 {
@@ -601,8 +621,7 @@ void ServerPage::ipWhiteListContextMenu(const QPoint& point)
 
     bool status = item->data(Qt::UserRole).toBool();
 
-    if(!status)
-        contextMenu.addAction(tr("Remove"),this,SLOT(removeWhiteListedIp()))->setEnabled(false) ;
+    contextMenu.addAction(tr("Remove"),this,SLOT(removeWhiteListedIp()));
 
     QString addr_string = ui.whiteListIpsTable->item(row,COLUMN_RANGE)->text() ;
 
@@ -628,13 +647,17 @@ void ServerPage::ipWhiteListContextMenu(const QPoint& point)
 }
 void ServerPage::removeBannedIp()
 {
-#warning UNIMPLEMENTED CODE
-    std::cerr << "Removing banned IP" << std::endl;
+    sockaddr_storage addr;
+    int bytes ;
+
+    removeCurrentRowFromBlackList(addr,bytes) ;
 }
 void ServerPage::removeWhiteListedIp()
 {
-#warning UNIMPLEMENTED CODE
-    std::cerr << "Removing White-Listed IP" << std::endl;
+    sockaddr_storage addr;
+    int bytes ;
+
+    removeCurrentRowFromWhiteList(addr,bytes) ;
 }
 void ServerPage::enableBannedIp()
 {
