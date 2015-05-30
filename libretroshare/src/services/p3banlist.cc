@@ -693,6 +693,8 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                 blp.fromRsTlvBanListEntry(*it2) ;
 
                 mWhiteListedRanges[blp.addr] = blp ;
+
+        std::cerr << "Read whitelisted range " << sockaddr_storage_iptostring(blp.addr) << "/" << blp.masked_bytes << std::endl;
             }
         }
         else

@@ -114,6 +114,11 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 static bool parseAddrFromQString(const QString& s,struct sockaddr_storage& addr,int& bytes )
 {
     QStringList lst = s.split(".") ;
+    bytes = 0 ;
+
+    memset(&addr,0,sizeof(sockaddr_storage)) ;
+
+    addr.ss_family = AF_INET ;
 
     QStringList::const_iterator it = lst.begin();
     bool ok ;
@@ -147,7 +152,7 @@ static bool parseAddrFromQString(const QString& s,struct sockaddr_storage& addr,
     ((uint8_t*)&in->sin_addr.s_addr)[2] = s3 ;
     ((uint8_t*)&in->sin_addr.s_addr)[3] = s4 ;
 
-    return ok;
+    return true;
 }
 void ServerPage::checkIpRange(const QString& ipstr)
 {
@@ -558,7 +563,7 @@ bool ServerPage::removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,
         std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
         return false;
     }
-    rsBanList->removeIpRange(collected_addr,masked_bytes,RSBANLIST_CHECKING_FLAGS_BLACKLIST);
+    rsBanList->removeIpRange(collected_addr,masked_bytes,RSBANLIST_TYPE_BLACKLIST);
     return true ;
 }
 
@@ -587,7 +592,8 @@ void ServerPage::moveToWhiteList0()
     sockaddr_storage addr ;
     int bytes ;
 
-    removeCurrentRowFromBlackList(addr,bytes) ;
+    if(!removeCurrentRowFromBlackList(addr,bytes))
+        return ;
 
     rsBanList->addIpRange(addr,0,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
@@ -596,7 +602,8 @@ void ServerPage::moveToWhiteList1()
     sockaddr_storage addr ;
     int bytes ;
 
-    removeCurrentRowFromBlackList(addr,bytes) ;
+    if(!removeCurrentRowFromBlackList(addr,bytes))
+        return ;
 
     rsBanList->addIpRange(addr,1,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
@@ -605,7 +612,8 @@ void ServerPage::moveToWhiteList2()
     sockaddr_storage addr ;
     int bytes ;
 
-    removeCurrentRowFromBlackList(addr,bytes) ;
+    if(!removeCurrentRowFromBlackList(addr,bytes))
+        return ;
 
     rsBanList->addIpRange(addr,2,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
