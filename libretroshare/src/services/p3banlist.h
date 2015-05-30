@@ -62,9 +62,12 @@ public:
     /***** overloaded from RsBanList *****/
 
     virtual bool isAddressAccepted(const struct sockaddr_storage& addr, uint32_t checking_flags,uint32_t& check_result) ;
-    virtual void getListOfBannedIps(std::list<BanListPeer>& list) ;
 
-    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,const std::string& comment) ;
+    virtual void getBannedIps(std::list<BanListPeer>& list) ;
+    virtual void getWhiteListedIps(std::list<BanListPeer>& list) ;
+
+    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) ;
+    virtual void removeIpRange(const sockaddr_storage &addr, int masked_bytes, uint32_t list_type);
 
     virtual void enableIPFiltering(bool b) ;
     virtual bool ipFilteringEnabled() ;

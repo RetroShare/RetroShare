@@ -238,36 +238,38 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if(!mIPFilteringEnabled)
         return true ;
 
+    std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
+
     // we should normally work this including entire ranges of IPs. For now, just check the exact IPs.
 
     sockaddr_storage addr_24 = makeBitsRange(addr,1) ;
     sockaddr_storage addr_16 = makeBitsRange(addr,2) ;
 
-    if(checking_flags & RSBANLIST_CHECKING_FLAGS_WHITELIST)
+    bool white_list_found = false ;
+
+    white_list_found = white_list_found || (mWhiteListedRanges.find(addr_16) != mWhiteListedRanges.end()) ;
+    white_list_found = white_list_found || (mWhiteListedRanges.find(addr_24) != mWhiteListedRanges.end()) ;
+    white_list_found = white_list_found || (mWhiteListedRanges.find(addr   ) != mWhiteListedRanges.end()) ;
+
+    if(white_list_found)
     {
-        bool found = false ;
-
-        found = found || (mWhiteListedRanges.find(addr   ) != mWhiteListedRanges.end()) ;
-        found = found || (mWhiteListedRanges.find(addr_16) != mWhiteListedRanges.end()) ;
-        found = found || (mWhiteListedRanges.find(addr_24) != mWhiteListedRanges.end()) ;
-
-        if(found)
-        {
-            check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
-            return true ;
-        }
-        else
-        {
-            check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
-            return false ;
-        }
+        check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+    std::cerr << ". Address is in whitelist. Accepting" << std::endl;
+        return true ;
     }
 
-#ifdef DEBUG_BANLIST
-    std::cerr << "p3BanList::isAddressAccepted() testing " << sockaddr_storage_iptostring(addr) << " and range " << sockaddr_storage_iptostring(addr_24) ;
-#endif
+    if(checking_flags & RSBANLIST_CHECKING_FLAGS_WHITELIST)
+    {
+        check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
+    std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
+        return false ;
+    }
+
     if(!(checking_flags & RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+    {
+        std::cerr << ". No blacklisting required. Accepting." << std::endl;
         return true;
+    }
 
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
 
@@ -275,7 +277,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         ++it->second.connect_attempts;
 #ifdef DEBUG_BANLIST
-        std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
+        std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/16. returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
     check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
@@ -285,7 +287,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         ++it->second.connect_attempts;
 #ifdef DEBUG_BANLIST
-        std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
+        std::cerr << "found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
     check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
@@ -295,23 +297,31 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         ++it->second.connect_attempts;
 #ifdef DEBUG_BANLIST
-        std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
+        std::cerr << "found as blacklisted address " << sockaddr_storage_iptostring(it->first) << ".  returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
     check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
 #ifdef DEBUG_BANLIST
-    std::cerr << " returning true " << std::endl;
+    std::cerr << " not blacklisted. Accepting." << std::endl;
 #endif
     check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
     return true ;
 }
-
-void p3BanList::getListOfBannedIps(std::list<BanListPeer> &lst)
+void p3BanList::getWhiteListedIps(std::list<BanListPeer> &lst)
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
+    lst.clear() ;
+    for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mWhiteListedRanges.begin());it!=mWhiteListedRanges.end();++it)
+        lst.push_back(it->second) ;
+}
+void p3BanList::getBannedIps(std::list<BanListPeer> &lst)
+{
+    RS_STACK_MUTEX(mBanMtx) ;
+
+    lst.clear() ;
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanSet.begin());it!=mBanSet.end();++it)
         if(mBanRanges.find(makeBitsRange(it->first,1)) == mBanRanges.end()
                     && mBanRanges.find(makeBitsRange(it->first,2)) == mBanRanges.end())
@@ -321,7 +331,12 @@ void p3BanList::getListOfBannedIps(std::list<BanListPeer> &lst)
         lst.push_back(it->second) ;
 }
 
-void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,const std::string& comment)
+void p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type)
+{
+#warning NOT IMPLEMENTED YET
+}
+
+void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32_t list_type,const std::string& comment)
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
@@ -342,10 +357,15 @@ void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,const 
 
     sockaddr_storage addrrange = makeBitsRange(addr,masked_bytes) ;
 
-    mBanRanges[addrrange] = blp ;
+    if(list_type == RSBANLIST_CHECKING_FLAGS_BLACKLIST)
+        mBanRanges[addrrange] = blp ;
+    else if(list_type == RSBANLIST_CHECKING_FLAGS_WHITELIST)
+        mWhiteListedRanges[addrrange] = blp ;
+    else
+        std::cerr << "(EE) Cannot add IP range. Bad list_type. Should be eiter RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST" << std::endl;
 }
 
-int	p3BanList::tick()
+int p3BanList::tick()
 {
     processIncoming();
     sendPackets();

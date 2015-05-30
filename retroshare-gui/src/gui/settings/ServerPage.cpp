@@ -72,12 +72,14 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     ui.filteredIpsTable->verticalHeader()->hide() ;
 
     QObject::connect(ui.filteredIpsTable,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(ipFilterContextMenu(const QPoint&))) ;
+    QObject::connect(ui.whiteListIpsTable,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(ipWhiteListContextMenu(const QPoint&))) ;
     QObject::connect(ui.denyAll_CB,SIGNAL(toggled(bool)),this,SLOT(toggleIpFiltering(bool)));
     QObject::connect(ui.includeFromDHT_CB,SIGNAL(toggled(bool)),this,SLOT(toggleAutoIncludeDHT(bool)));
     QObject::connect(ui.includeFromFriends_CB,SIGNAL(toggled(bool)),this,SLOT(toggleAutoIncludeFriends(bool)));
     QObject::connect(ui.groupIPRanges_CB,SIGNAL(toggled(bool)),this,SLOT(toggleGroupIps(bool)));
     QObject::connect(ui.groupIPRanges_SB,SIGNAL(valueChanged(int)),this,SLOT(setGroupIpLimit(int)));
-    QObject::connect(ui.ipInputAdd_PB,SIGNAL(clicked()),this,SLOT(addIpRange()));
+    QObject::connect(ui.ipInputAddBlackList_PB,SIGNAL(clicked()),this,SLOT(addIpRangeToBlackList()));
+    QObject::connect(ui.ipInputAddWhiteList_PB,SIGNAL(clicked()),this,SLOT(addIpRangeToWhiteList()));
     QObject::connect(ui.ipInput_LE,SIGNAL(textChanged(const QString&)),this,SLOT(checkIpRange(const QString&)));
 
    QTimer *timer = new QTimer(this);
@@ -171,7 +173,7 @@ void ServerPage::checkIpRange(const QString& ipstr)
     ui.ipInput_LE->setPalette(palette);
 }
 
-void ServerPage::addIpRange()
+void ServerPage::addIpRangeToBlackList()
 {
     QString ipstr = ui.ipInput_LE->text() ;
     sockaddr_storage addr ;
@@ -182,7 +184,21 @@ void ServerPage::addIpRange()
 
     bytes = 4 - ui.ipInputRange_SB->value()/8;
 
-    rsBanList->addIpRange(addr,bytes,ui.ipInputComment_LE->text().toStdString());
+    rsBanList->addIpRange(addr,bytes, RSBANLIST_CHECKING_FLAGS_BLACKLIST,ui.ipInputComment_LE->text().toStdString());
+}
+
+void ServerPage::addIpRangeToWhiteList()
+{
+    QString ipstr = ui.ipInput_LE->text() ;
+    sockaddr_storage addr ;
+    int bytes = 0 ;
+
+    if(!parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
+        return ;
+
+    bytes = 4 - ui.ipInputRange_SB->value()/8;
+
+    rsBanList->addIpRange(addr,bytes, RSBANLIST_CHECKING_FLAGS_WHITELIST,ui.ipInputComment_LE->text().toStdString());
 }
 
 void ServerPage::clearKnownAddressList()
@@ -394,7 +410,8 @@ void ServerPage::loadFilteredIps()
         ui.ipInput_LE->setEnabled(true) ;
         ui.ipInputRange_SB->setEnabled(true) ;
         ui.ipInputComment_LE->setEnabled(true) ;
-        ui.ipInputAdd_PB->setEnabled(true) ;
+        ui.ipInputAddBlackList_PB->setEnabled(true) ;
+        ui.ipInputAddWhiteList_PB->setEnabled(true) ;
         ui.groupIPRanges_CB->setEnabled(true) ;
         ui.groupIPRanges_SB->setEnabled(true) ;
     }
@@ -407,7 +424,8 @@ void ServerPage::loadFilteredIps()
         ui.ipInput_LE->setEnabled(false) ;
         ui.ipInputRange_SB->setEnabled(false) ;
         ui.ipInputComment_LE->setEnabled(false) ;
-        ui.ipInputAdd_PB->setEnabled(false) ;
+        ui.ipInputAddBlackList_PB->setEnabled(false) ;
+        ui.ipInputAddWhiteList_PB->setEnabled(true) ;
         ui.groupIPRanges_CB->setEnabled(false) ;
         ui.groupIPRanges_SB->setEnabled(false) ;
     }
@@ -418,58 +436,62 @@ void ServerPage::loadFilteredIps()
     ui.groupIPRanges_SB->setValue(rsBanList->autoRangeLimit()) ;
 
     std::list<BanListPeer> lst ;
-
-    rsBanList->getListOfBannedIps(lst) ;
+    rsBanList->getBannedIps(lst) ;
 
     ui.filteredIpsTable->setRowCount(lst.size()) ;
 
-    //std::cerr << "Adding " << lst.size() << " entries to table." << std::endl;
-
     int row = 0 ;
     for(std::list<BanListPeer>::const_iterator it(lst.begin());it!=lst.end();++it,++row)
-    {
-       //std::cerr << "  adding banned lst peer: " << print_addr((*it).addr) << std::endl;
+        addPeerToIPTable(ui.filteredIpsTable,row,*it) ;
 
-       ui.filteredIpsTable->setItem(row,COLUMN_RANGE,new QTableWidgetItem(QString::fromStdString(print_addr_range((*it).addr,(*it).masked_bytes)))) ;
+    rsBanList->getWhiteListedIps(lst) ;
+    ui.whiteListIpsTable->setRowCount(lst.size()) ;
 
-       if( (*it).state )
-          ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString("active"))) ;
-       else
-          ui.filteredIpsTable->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString(""))) ;
-
-       ui.filteredIpsTable->item(row,COLUMN_STATUS)->setData(Qt::UserRole,QVariant( (*it).state )) ;
-
-       switch((*it).level)
-       {
-       case RSBANLIST_ORIGIN_FOF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend of a friend"))) ;
-          break ;
-       case RSBANLIST_ORIGIN_FRIEND:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend"))) ;
-          break ;
-       case RSBANLIST_ORIGIN_SELF:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From you"))) ;
-          break ;
-       default:
-       case RSBANLIST_ORIGIN_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("Unknown"))) ;
-          break ;
-       }
-
-       switch( (*it).reason )
-       {
-       case RSBANLIST_REASON_DHT:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Bad peer (DHT)"))) ;
-          break ;
-       case RSBANLIST_REASON_USER:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
-          break ;
-       case RSBANLIST_REASON_AUTO_RANGE:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Auto-generated range"))) ;
-                                            ui.filteredIpsTable->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(tr("Range made from %1 collected addresses").arg(QString::number((*it).connect_attempts)))) ;
-          break ;
-       default:
-       case RSBANLIST_REASON_UNKNOWN:  ui.filteredIpsTable->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Unknown"))) ;
-          break ;
-       }
-
-       ui.filteredIpsTable->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString((*it).comment))) ;
-    }
+    row = 0;
+    for(std::list<BanListPeer>::const_iterator it(lst.begin());it!=lst.end();++it,++row)
+        addPeerToIPTable(ui.whiteListIpsTable,row,*it) ;
 }
 
+void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer& blp)
+{
+    table->setItem(row,COLUMN_RANGE,new QTableWidgetItem(QString::fromStdString(print_addr_range(blp.addr,blp.masked_bytes)))) ;
+
+    if( blp.state )
+        table->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString("active"))) ;
+    else
+        table->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString(""))) ;
+
+    table->item(row,COLUMN_STATUS)->setData(Qt::UserRole,QVariant( blp.state )) ;
+
+    switch(blp.level)
+    {
+    case RSBANLIST_ORIGIN_FOF:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend of a friend"))) ;
+        break ;
+    case RSBANLIST_ORIGIN_FRIEND:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend"))) ;
+        break ;
+    case RSBANLIST_ORIGIN_SELF:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From you"))) ;
+        break ;
+    default:
+    case RSBANLIST_ORIGIN_UNKNOWN:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("Unknown"))) ;
+        break ;
+    }
+
+    switch( blp.reason )
+    {
+    case RSBANLIST_REASON_DHT:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Bad peer (DHT)"))) ;
+        break ;
+    case RSBANLIST_REASON_USER:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
+        break ;
+    case RSBANLIST_REASON_AUTO_RANGE:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Auto-generated range"))) ;
+        table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(tr("Range made from %1 collected addresses").arg(QString::number(blp.connect_attempts)))) ;
+        break ;
+    default:
+    case RSBANLIST_REASON_UNKNOWN:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Unknown"))) ;
+        break ;
+    }
+
+    table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString(blp.comment))) ;
+}
 
 
 void ServerPage::toggleGroupIps(bool b) { rsBanList->enableAutoRange(b) ; }
@@ -487,8 +509,7 @@ void ServerPage::ipFilterContextMenu(const QPoint& point)
 
     bool status = item->data(Qt::UserRole).toBool();
 
-    if(!status)
-        contextMenu.addAction(tr("Disable/remove"),this,SLOT(removeBannedIp()))->setEnabled(false) ;
+    contextMenu.addAction(tr("Remove"),this,SLOT(removeBannedIp()))->setEnabled(false) ;
 
     QString addr_string = ui.filteredIpsTable->item(row,COLUMN_RANGE)->text() ;
 
@@ -505,20 +526,115 @@ void ServerPage::ipFilterContextMenu(const QPoint& point)
     QString range1 = QString::fromStdString(print_addr_range(addr,1)) ;
     QString range2 = QString::fromStdString(print_addr_range(addr,2)) ;
 
-    contextMenu.addAction(QObject::tr("Filter IP "          )+range0,this,SLOT(enableBannedIp()))->setEnabled(false) ;
-#warning UNIMPLEMENTED CODE
-    contextMenu.addAction(QObject::tr("Filter entire range ")+range1,this,SLOT(enableBannedIp()))->setEnabled(false) ;
-    contextMenu.addAction(QObject::tr("Filter entire range ")+range2,this,SLOT(enableBannedIp()))->setEnabled(false) ;
+    if(masked_bytes != 0)
+        contextMenu.addAction(QObject::tr("Ban only IP %1").arg(range0),this,SLOT(enableBannedIp()))->setEnabled(false) ;
+
+    if(masked_bytes != 1)
+        contextMenu.addAction(QObject::tr("Ban entire range %2").arg(range1),this,SLOT(enableBannedIp()))->setEnabled(false) ;
+
+    if(masked_bytes != 2)
+        contextMenu.addAction(QObject::tr("Ban entire range %1").arg(range2),this,SLOT(enableBannedIp()))->setEnabled(false) ;
+
+    contextMenu.addAction(QObject::tr("Move IP %1 to whitelist"  ).arg(range0),this,SLOT(moveToWhiteList0())) ;
+    contextMenu.addAction(QObject::tr("Whitelist entire range %1").arg(range1),this,SLOT(moveToWhiteList1())) ;
+    contextMenu.addAction(QObject::tr("whitelist entire range %1").arg(range2),this,SLOT(moveToWhiteList2())) ;
 
     contextMenu.exec(QCursor::pos()) ;
 }
 
+bool ServerPage::removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,int &masked_bytes)
+{
+    int row = ui.filteredIpsTable->currentRow();
+    QTableWidgetItem *item = ui.filteredIpsTable->item(row, COLUMN_STATUS);
+
+    if(item == NULL)
+        return false;
+
+    QString addr_string = ui.filteredIpsTable->item(row,COLUMN_RANGE)->text() ;
+
+    if(!parseAddrFromQString(addr_string,collected_addr,masked_bytes))
+    {
+        std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
+        return false;
+    }
+    rsBanList->removeIpRange(collected_addr,masked_bytes,RSBANLIST_CHECKING_FLAGS_BLACKLIST);
+    return true ;
+}
+
+void ServerPage::moveToWhiteList0()
+{
+    sockaddr_storage addr ;
+    int bytes ;
+
+    removeCurrentRowFromBlackList(addr,bytes) ;
+
+    rsBanList->addIpRange(addr,0,RSBANLIST_CHECKING_FLAGS_WHITELIST, tr("Added by you").toStdString());
+}
+void ServerPage::moveToWhiteList1()
+{
+    sockaddr_storage addr ;
+    int bytes ;
+
+    removeCurrentRowFromBlackList(addr,bytes) ;
+
+    rsBanList->addIpRange(addr,1,RSBANLIST_CHECKING_FLAGS_WHITELIST, tr("Added by you").toStdString());
+}
+void ServerPage::moveToWhiteList2()
+{
+    sockaddr_storage addr ;
+    int bytes ;
+
+    removeCurrentRowFromBlackList(addr,bytes) ;
+
+    rsBanList->addIpRange(addr,2,RSBANLIST_CHECKING_FLAGS_WHITELIST, tr("Added by you").toStdString());
+}
+void ServerPage::ipWhiteListContextMenu(const QPoint& point)
+{
+    QMenu contextMenu(this) ;
+    int row = ui.whiteListIpsTable->currentRow();
+
+    QTableWidgetItem *item = ui.whiteListIpsTable->item(row, COLUMN_STATUS);
+
+    if(item == NULL)
+        return ;
+
+    bool status = item->data(Qt::UserRole).toBool();
+
+    if(!status)
+        contextMenu.addAction(tr("Remove"),this,SLOT(removeWhiteListedIp()))->setEnabled(false) ;
+
+    QString addr_string = ui.whiteListIpsTable->item(row,COLUMN_RANGE)->text() ;
+
+    sockaddr_storage addr ;
+    int masked_bytes ;
+
+    if(!parseAddrFromQString(addr_string,addr,masked_bytes))
+    {
+        std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
+        return ;
+    }
+
+    QString range0 = QString::fromStdString(print_addr_range(addr,0)) ;
+    QString range1 = QString::fromStdString(print_addr_range(addr,1)) ;
+    QString range2 = QString::fromStdString(print_addr_range(addr,2)) ;
+
+    contextMenu.addAction(QObject::tr("Whitelist only IP "          )+range0,this,SLOT(enableBannedIp()))->setEnabled(false) ;
+#warning UNIMPLEMENTED CODE
+    contextMenu.addAction(QObject::tr("Whitelist entire range ")+range1,this,SLOT(enableBannedIp()))->setEnabled(false) ;
+    contextMenu.addAction(QObject::tr("Whitelist entire range ")+range2,this,SLOT(enableBannedIp()))->setEnabled(false) ;
+
+    contextMenu.exec(QCursor::pos()) ;
+}
 void ServerPage::removeBannedIp()
 {
 #warning UNIMPLEMENTED CODE
     std::cerr << "Removing banned IP" << std::endl;
 }
-
+void ServerPage::removeWhiteListedIp()
+{
+#warning UNIMPLEMENTED CODE
+    std::cerr << "Removing White-Listed IP" << std::endl;
+}
 void ServerPage::enableBannedIp()
 {
 #warning UNIMPLEMENTED CODE

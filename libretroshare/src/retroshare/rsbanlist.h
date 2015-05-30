@@ -80,10 +80,25 @@ public:
     virtual void enableIPFiltering(bool b) =0;
     virtual bool ipFilteringEnabled() =0;
 
-    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,const std::string& comment) =0;
+    // addIpRange()/removeIpRange()
+    // 	addr: 		full IPv4 address. Port is ignored.
+    // 	masked_bytes: 	0=full IP, 1="/24", 2="/16"
+    // 	list_type: 	RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST
+    // 	comment: 	anything, user-based.
+
+    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) =0;
+    virtual void removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type) =0;
+
+    // isAddressAccepted()
+    // 	addr: 		full IPv4 address. Port is ignored.
+    // 	checking flags: any combination of  RSBANLIST_CHECKING_FLAGS_BLACKLIST and RSBANLIST_CHECKING_FLAGS_WHITELIST
+    // 	check_result: 	returned result of the check in RSBANLIST_CHECK_RESULT_*
+    // 	returned value: true=address is accepted, false=address is rejected.
 
     virtual bool isAddressAccepted(const struct sockaddr_storage& addr,uint32_t checking_flags,uint32_t& check_result) =0;
-    virtual void getListOfBannedIps(std::list<BanListPeer>& list) =0;
+
+    virtual void getBannedIps(std::list<BanListPeer>& list) =0;
+    virtual void getWhiteListedIps(std::list<BanListPeer>& list) =0;
 
     virtual bool autoRangeEnabled() =0;
     virtual void enableAutoRange(bool b) =0 ;

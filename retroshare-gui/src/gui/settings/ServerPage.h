@@ -28,6 +28,8 @@
 
 class QNetworkReply;
 class QNetworkAccessManager;
+class BanListPeer;
+struct sockaddr_storage;
 
 class ServerPage: public ConfigPage
 {
@@ -50,7 +52,12 @@ public slots:
     void updateStatus();
 
 private slots:
-    void addIpRange();
+    void addIpRangeToBlackList();
+    void addIpRangeToWhiteList();
+    void moveToWhiteList0();
+    void moveToWhiteList1();
+    void moveToWhiteList2();
+    void removeWhiteListedIp();
     void checkIpRange(const QString &);
     void setGroupIpLimit(int n);
     void toggleGroupIps(bool b);
@@ -58,6 +65,7 @@ private slots:
     void toggleAutoIncludeFriends(bool b);
     void toggleIpFiltering(bool b);
     void ipFilterContextMenu(const QPoint &);
+    void ipWhiteListContextMenu(const QPoint &point);
     void removeBannedIp();
     void enableBannedIp();
     void saveAddresses();
@@ -71,6 +79,8 @@ private slots:
 private:
 
     // Alternative Versions for HiddenNode Mode.
+    void addPeerToIPTable(QTableWidget *table, int row, const BanListPeer &blp);
+    bool removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,int& masked_bytes);
     void loadHiddenNode();
     void updateStatusHiddenNode();
     void saveAddressesHiddenNode();
