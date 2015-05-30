@@ -1799,6 +1799,8 @@ void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGx
         std::cerr << "  Encrypted item correctly deserialised. Passing on to incoming list." << std::endl;
 
     msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT ;
+    /* we expect complete msgs - remove partial flag just in case someone has funny ideas */
+    msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
 
         msg_item->PeerId(RsPeerId(signing_key)) ;	// hack to pass on GXS id.
         handleIncomingItem(msg_item) ;
