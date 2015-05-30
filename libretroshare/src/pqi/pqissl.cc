@@ -1311,9 +1311,11 @@ int 	pqissl::Authorise_SSL_Connection()
     bool res = AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
 	bool certCorrect = true; /* WE know it okay already! */
 
-    if(!rsBanList->isAddressAccepted(remote_addr))
+    uint32_t check_result ;
+
+    if(!rsBanList->isAddressAccepted(remote_addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,check_result))
     {
-        std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Attack??" << std::endl;
+        std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Reason: " << check_result << ". Attack??" << std::endl;
     reset_locked();
     return 0 ;
     }
@@ -1357,9 +1359,12 @@ int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr
 
 int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
 {
-    if(!rsBanList->isAddressAccepted(foreign_addr))
+    uint32_t check_result;
+
+    if(!rsBanList->isAddressAccepted(foreign_addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,check_result))
     {
-        std::cerr << "(SS) refusing incoming SSL connection from blacklisted foreign address " << sockaddr_storage_iptostring(foreign_addr) << std::endl;
+        std::cerr << "(SS) refusing incoming SSL connection from blacklisted foreign address " << sockaddr_storage_iptostring(foreign_addr)
+              << ". Reason: " << check_result << "." << std::endl;
             reset_locked();
         return -1;
     }

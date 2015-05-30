@@ -33,6 +33,7 @@
 #include "serialiser/rsbanlistitems.h"
 #include "serialiser/rsconfigitems.h"
 #include "retroshare/rsdht.h"
+#include "retroshare/rsbanlist.h"
 
 #include <sys/time.h>
 
@@ -230,8 +231,10 @@ void p3BanList::autoFigureOutBanRanges()
     condenseBanSources_locked() ;
 }
 
-bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
+bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checking_flags,uint32_t& check_result)
 {
+    check_result = RSBANLIST_CHECK_RESULT_NOCHECK ;
+
     if(!mIPFilteringEnabled)
         return true ;
 
@@ -240,9 +243,31 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
     sockaddr_storage addr_24 = makeBitsRange(addr,1) ;
     sockaddr_storage addr_16 = makeBitsRange(addr,2) ;
 
+    if(checking_flags & RSBANLIST_CHECKING_FLAGS_WHITELIST)
+    {
+        bool found = false ;
+
+        found = found || (mWhiteListedRanges.find(addr   ) != mWhiteListedRanges.end()) ;
+        found = found || (mWhiteListedRanges.find(addr_16) != mWhiteListedRanges.end()) ;
+        found = found || (mWhiteListedRanges.find(addr_24) != mWhiteListedRanges.end()) ;
+
+        if(found)
+        {
+            check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+            return true ;
+        }
+        else
+        {
+            check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
+            return false ;
+        }
+    }
+
 #ifdef DEBUG_BANLIST
     std::cerr << "p3BanList::isAddressAccepted() testing " << sockaddr_storage_iptostring(addr) << " and range " << sockaddr_storage_iptostring(addr_24) ;
 #endif
+    if(!(checking_flags & RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+        return true;
 
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
 
@@ -252,6 +277,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
 #ifdef DEBUG_BANLIST
         std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
+    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
@@ -261,6 +287,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
 #ifdef DEBUG_BANLIST
         std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
+    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
@@ -270,12 +297,14 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr)
 #ifdef DEBUG_BANLIST
         std::cerr << " returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
+    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
 #ifdef DEBUG_BANLIST
     std::cerr << " returning true " << std::endl;
 #endif
+    check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
     return true ;
 }
 

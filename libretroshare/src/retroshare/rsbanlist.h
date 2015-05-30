@@ -40,6 +40,20 @@ extern RsBanList *rsBanList ;
 #define RSBANLIST_REASON_DHT		2
 #define RSBANLIST_REASON_AUTO_RANGE     3
 
+// These are flags. Can be combined.
+
+#define RSBANLIST_CHECKING_FLAGS_NONE   	0x00
+#define RSBANLIST_CHECKING_FLAGS_BLACKLIST   	0x01
+#define RSBANLIST_CHECKING_FLAGS_WHITELIST   	0x02
+
+// These are not flags. Cannot be combined. Used to give the reson for acceptance/denial of connections.
+
+#define RSBANLIST_CHECK_RESULT_UNKNOWN  	0x00
+#define RSBANLIST_CHECK_RESULT_NOCHECK  	0x01
+#define RSBANLIST_CHECK_RESULT_BLACKLISTED  	0x02
+#define RSBANLIST_CHECK_RESULT_NOT_WHITELISTED  0x03
+#define RSBANLIST_CHECK_RESULT_ACCEPTED     	0x04
+
 class RsTlvBanListEntry ;
 
 class BanListPeer
@@ -68,7 +82,7 @@ public:
 
     virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,const std::string& comment) =0;
 
-    virtual bool isAddressAccepted(const struct sockaddr_storage& addr) =0;
+    virtual bool isAddressAccepted(const struct sockaddr_storage& addr,uint32_t checking_flags,uint32_t& check_result) =0;
     virtual void getListOfBannedIps(std::list<BanListPeer>& list) =0;
 
     virtual bool autoRangeEnabled() =0;

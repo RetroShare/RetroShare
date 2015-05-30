@@ -61,7 +61,7 @@ public:
 
     /***** overloaded from RsBanList *****/
 
-    virtual bool isAddressAccepted(const struct sockaddr_storage& addr) ;
+    virtual bool isAddressAccepted(const struct sockaddr_storage& addr, uint32_t checking_flags,uint32_t& check_result) ;
     virtual void getListOfBannedIps(std::list<BanListPeer>& list) ;
 
     virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,const std::string& comment) ;
@@ -139,6 +139,7 @@ private:
     std::map<RsPeerId, BanList> mBanSources;
     std::map<struct sockaddr_storage, BanListPeer> mBanSet;
     std::map<struct sockaddr_storage, BanListPeer> mBanRanges;
+    std::map<struct sockaddr_storage, BanListPeer> mWhiteListedRanges;
 
     p3ServiceControl *mServiceCtrl;
     p3NetMgr *mNetMgr;
