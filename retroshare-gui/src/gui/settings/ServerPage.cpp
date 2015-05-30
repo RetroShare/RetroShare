@@ -479,18 +479,19 @@ void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer&
     switch( blp.reason )
     {
     case RSBANLIST_REASON_DHT:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Bad peer (DHT)"))) ;
+                    table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(tr("Reported by DHT for IP masquerading"))) ;
         break ;
     case RSBANLIST_REASON_USER:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
+                    table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString(blp.comment))) ;
         break ;
     case RSBANLIST_REASON_AUTO_RANGE:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Auto-generated range"))) ;
-        table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(tr("Range made from %1 collected addresses").arg(QString::number(blp.connect_attempts)))) ;
+                        table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(tr("Range made from %1 collected addresses").arg(QString::number(blp.connect_attempts)))) ;
         break ;
     default:
     case RSBANLIST_REASON_UNKNOWN:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Unknown"))) ;
+                    table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString(blp.comment))) ;
         break ;
     }
-
-    table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString(blp.comment))) ;
 }
 
 

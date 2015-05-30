@@ -50,7 +50,7 @@
 #define RSBANLIST_ENTRY_MAX_AGE				(60 * 60 * 1) // 1 HOURS
 #define RSBANLIST_SEND_PERIOD				600	// 10 Minutes.
 
-#define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 		60	// should be more: e.g. 600 secs.
+#define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 		240	// every 4 mins.
 #define RSBANLIST_DEFAULT_AUTORANGE_LIMIT    		3	// default number of IPs in same range to trigger a complete IP range filter.
 #define RSBANLIST_DEFAULT_AUTORANGE_ENABLED  		true
 #define RSBANLIST_DEFAULT_FRIEND_GATHERING_ENABLED  	true
@@ -103,16 +103,22 @@ void p3BanList::enableIPsFromDHT(bool b)
 {
     mIPDHTGatheringEnabled = b;
     mLastDhtInfoRequest=0;
+
+    IndicateConfigChanged();
 }
 void p3BanList::enableAutoRange(bool b)
 {
     mAutoRangeIps = b;
     autoFigureOutBanRanges() ;
+
+    IndicateConfigChanged();
 }
 void p3BanList::setAutoRangeLimit(int n)
 {
     mAutoRangeLimit = n;
     autoFigureOutBanRanges();
+
+    IndicateConfigChanged();
 }
 
 class ZeroedInt
@@ -187,6 +193,8 @@ void p3BanList::autoFigureOutBanRanges()
         }
         else
             ++it;
+
+    IndicateConfigChanged();
 
     if(!mAutoRangeIps)
         return ;
@@ -363,6 +371,8 @@ void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32
         mWhiteListedRanges[addrrange] = blp ;
     else
         std::cerr << "(EE) Cannot add IP range. Bad list_type. Should be eiter RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST" << std::endl;
+
+    IndicateConfigChanged() ;
 }
 
 int p3BanList::tick()
@@ -686,7 +696,9 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 			it->second.mLastUpdate = now;
 			updated = true;
 		}
-	}
+    }
+    IndicateConfigChanged();
+
 	return updated;
 }
 

@@ -1590,10 +1590,11 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
-	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
-	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
-	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
-	mConfigMgr->addConfiguration("turtle.cfg", tr);
+    mConfigMgr->addConfiguration("chat.cfg", chatSrv);
+    mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
+    mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
+    mConfigMgr->addConfiguration("turtle.cfg", tr);
+    mConfigMgr->addConfiguration("banlist.cfg", mBanList);
     mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
@@ -1601,7 +1602,7 @@ int RsServer::StartupRetroShare()
     mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
 
 #ifdef RS_USE_BITDHT
-	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
+    mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
