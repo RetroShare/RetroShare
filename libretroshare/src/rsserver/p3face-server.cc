@@ -96,11 +96,12 @@ RsServer::RsServer()
     mMin = 0;
     mLoop = 0;
 
-    mAvgTickRate = mTimeDelta;
 
     mLastts = getCurrentTS();
     mLastSec = 0; /* for the slower ticked stuff */
     mTimeDelta = 0.25 ;
+
+    mAvgTickRate = mTimeDelta;
 
     /* caches (that need ticking) */
 
