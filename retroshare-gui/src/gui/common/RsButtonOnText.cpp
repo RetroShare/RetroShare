@@ -6,6 +6,8 @@
 #include <QToolTip>
 #include <QUrl>
 #include <QUuid>
+#include <QStylePainter>
+#include <QStyleOption>
 #include <iostream>
 
 RSButtonOnText::RSButtonOnText(QWidget *parent)
@@ -243,11 +245,27 @@ void RSButtonOnText::updateImage()
 	if (_textEdit){
 		adjustSize();
 		QPixmap pixmap;
-#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
-		pixmap = this->grab();//QT5
-#else
-		pixmap = QPixmap::grabWidget(this);
-#endif
+
+// Can't get Qt's grab functionality to draw a transparent background so we use our own drawing on a pixmap
+//#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+//		pixmap = this->grab();//QT5
+//#else
+//		pixmap = QPixmap::grabWidget(this);
+//#endif
+
+		// get a transparent pixmap
+		pixmap = QPixmap(size());
+		pixmap.fill(Qt::transparent);
+
+		// init options
+		QStyleOptionButton option;
+		initStyleOption(&option);
+
+		// draw the button onto the pixmap
+		QStylePainter painter(&pixmap, this);
+		painter.drawControl(QStyle::CE_PushButton, option);
+		painter.end();
+
 		_textEdit->setUpdatesEnabled(false);
 		_textEdit->document()->addResource(QTextDocument::ImageResource,QUrl(_uuid),QVariant(pixmap));
 		_textEdit->setUpdatesEnabled(true);
