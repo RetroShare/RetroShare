@@ -236,7 +236,7 @@ void GenCertDialog::init()
 	}
 
 #ifdef TO_REMOVE
-	QString text; /*= ui.header_label->text() + "\n";*/
+	QString text; /* = ui.header_label->text() + "\n";*/
 	text += tr("You can create a new profile with this form.");
 
 	if (mOnlyGenerateIdentity) {

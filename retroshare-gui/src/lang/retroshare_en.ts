@@ -751,11 +751,6 @@ p, li { white-space: pre-wrap; }
         <source>Talking to </source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Your friend has more than one nodes.
-Please choose one of it to chat with.</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ChatLobbyDialog</name>
@@ -4652,10 +4647,6 @@ the same profile (PGP key pair).</source>
         <source>Create a new profile and node</source>
         <translation type="unfinished"></translation>
     </message>
-    <message id="ui.header_label->text() + "\n";">
-        <source>You can create a new profile with this form.</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
         <translation type="unfinished"></translation>
@@ -4741,6 +4732,10 @@ and use the import button to load it</source>
         <source>Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7463,6 +7458,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show web interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Messenger</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10912,6 +10911,38 @@ Reported error is:
         <source> day(s) ago</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ban only IP %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ban entire range %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ban entire range %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move IP %1 to whitelist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whitelist entire range %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>whitelist entire range %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whitelist only IP </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whitelist entire range </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -12189,6 +12220,106 @@ Check your ports!</source>
     </message>
     <message>
         <source>Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP Filters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP blacklist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deny all connections from the following IP ranges:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list get automatically filled from information gathered at multiple sources: masquerading peers reported by the DHT, IP ranged entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. This case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include the  IPs reported by your friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto-group IPs by ranges when at least :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  IPs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically include masquerading IPs reported by DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP whitelist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to disallow connections to peers not in the white-list. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. If not activated, connections will still be checked w.r.t. the whitelist, and the blacklit above, but will pass if not in the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to blacklist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to whitelist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP Range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reported by DHT for IP masquerading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Range made from %1 collected addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Added by you</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -299,7 +299,7 @@ ChatPage::load()
 		 item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromUtf8(detail.name.c_str())) ;
 
 		 QString tt ;
-		 tt +=        tr("Name : ") + QString::fromUtf8(detail.name.c_str())) ;
+		 tt +=        tr("Name : ") + QString::fromUtf8(detail.name.c_str()) ;
 		 tt += "\n" + tr("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
 		 tt += "\n" + tr("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
 

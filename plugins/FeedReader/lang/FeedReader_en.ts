@@ -595,12 +595,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="153"/>
+        <location filename="../FeedReaderPlugin.cpp" line="154"/>
         <source>This plugin provides a Feedreader.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="158"/>
+        <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>FeedReader</source>
         <translation type="unfinished"></translation>
     </message>

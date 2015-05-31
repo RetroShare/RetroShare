@@ -506,113 +506,113 @@
 <context>
     <name>VOIPChatWidgetHolder</name>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="62"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="63"/>
         <source>Mute</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="75"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="76"/>
         <source>Start Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="103"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="104"/>
         <source>Start Video Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="89"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="90"/>
         <source>Hangup Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="168"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="169"/>
         <source>Mute yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="170"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="171"/>
         <source>Unmute yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="189"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="226"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="264"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="282"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="295"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="387"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="265"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="283"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="296"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="388"/>
         <source>VoIP Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="189"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
         <source>Outgoing Call stopped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="208"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="209"/>
         <source>Hold Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="226"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
         <source>Outgoing Call is started...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="241"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="242"/>
         <source>Resume Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="261"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="262"/>
         <source>Shut camera off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="265"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="266"/>
         <source>You&apos;re now sending video...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="277"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="298"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="278"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="299"/>
         <source>Activate camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="283"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="284"/>
         <source>Video call stopped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="296"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="297"/>
         <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="297"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="298"/>
         <source>Accept Video Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="388"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="389"/>
         <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="389"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="390"/>
         <source>Accept Call</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="390"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="391"/>
         <source>Activate audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="411"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="412"/>
         <source>Answer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -628,8 +628,13 @@
 <context>
     <name>VOIPToasterItem</name>
     <message>
-        <location filename="../gui/VOIPToasterItem.ui" line="133"/>
-        <source>Show Chat</source>
+        <location filename="../gui/VOIPToasterItem.cpp" line="43"/>
+        <source>Answer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.cpp" line="47"/>
+        <source>Answer with video</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -737,12 +742,8 @@
     </message>
     <message>
         <location filename="../gui/VOIPToasterNotify.cpp" line="325"/>
-        <source>Audio Call received from this peer.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/VOIPToasterNotify.cpp" line="349"/>
-        <source>Video Call received from this peer.</source>
+        <source>calling</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
