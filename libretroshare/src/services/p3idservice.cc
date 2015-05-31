@@ -601,6 +601,7 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
 
 bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId) const
 {
+    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	// if ids has beens confirmed as not physically present return
 	// immediately, id will be removed from list if found by auto nxs net search
 	if(mIdsNotPresent.find(gxsId) != mIdsNotPresent.end())
