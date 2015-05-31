@@ -987,83 +987,81 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
 bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, const struct sockaddr_storage &extAddr)
 {
 #ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
-	std::cerr << sockaddr_storage_tostring(localAddr);
-	std::cerr << ", ";
-	std::cerr << sockaddr_storage_tostring(extAddr);
-	std::cerr << ")" << std::endl;
+    std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
+    std::cerr << sockaddr_storage_tostring(localAddr);
+    std::cerr << ", ";
+    std::cerr << sockaddr_storage_tostring(extAddr);
+    std::cerr << ")" << std::endl;
 #endif
 
-    uint32_t banlist_response ;
-
-    if(!rsBanList->isAddressAccepted(localAddr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, banlist_response))
+    if(!rsBanList->isAddressAccepted(localAddr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
     {
-        std::cerr << "(SS) Trying to set own IP to a banned IP " << sockaddr_storage_iptostring(localAddr) << ". Attack?" << std::endl;
+        std::cerr << "(SS) Trying to set own IP to a banned IP " << sockaddr_storage_iptostring(localAddr) << ". This probably means that a friend in under traffic re-routing attack." << std::endl;
         return false ;
     }
 
-	{
-		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+    {
+        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		//update ip address list
-		pqiIpAddress ipAddressTimed;
-		ipAddressTimed.mAddr = localAddr;
-		ipAddressTimed.mSeenTime = time(NULL);
-		ipAddressTimed.mSrc = 0 ;
-		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
+        //update ip address list
+        pqiIpAddress ipAddressTimed;
+        ipAddressTimed.mAddr = localAddr;
+        ipAddressTimed.mSeenTime = time(NULL);
+        ipAddressTimed.mSrc = 0 ;
+        mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
 
-		mOwnState.localaddr = localAddr;
-	}
+        mOwnState.localaddr = localAddr;
+    }
 
 
-	{
-		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+    {
+        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		//update ip address list
-		pqiIpAddress ipAddressTimed;
-		ipAddressTimed.mAddr = extAddr;
-		ipAddressTimed.mSeenTime = time(NULL);
-		ipAddressTimed.mSrc = 0 ;
-		mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
+        //update ip address list
+        pqiIpAddress ipAddressTimed;
+        ipAddressTimed.mAddr = extAddr;
+        ipAddressTimed.mSeenTime = time(NULL);
+        ipAddressTimed.mSrc = 0 ;
+        mOwnState.ipAddrs.updateExtAddrs(ipAddressTimed);
 
-		/* Attempted Fix to MANUAL FORWARD Mode....
-		 * don't update the server address - if we are in this mode
-		 *
-		 * It is okay - if they get it wrong, as we put the address in the address list anyway.
-		 * This should keep people happy, and allow for misconfiguration!
-		 */
+        /* Attempted Fix to MANUAL FORWARD Mode....
+         * don't update the server address - if we are in this mode
+         *
+         * It is okay - if they get it wrong, as we put the address in the address list anyway.
+         * This should keep people happy, and allow for misconfiguration!
+         */
 
- 		if (mOwnState.netMode & RS_NET_MODE_TRY_EXT)
-		{
-			/**** THIS CASE SHOULD NOT BE TRIGGERED ****/
-			std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
-			std::cerr << " as MANUAL FORWARD Mode (ERROR - SHOULD NOT BE TRIGGERED: TRY_EXT_MODE)";
-			std::cerr << std::endl;
-			std::cerr << "Address is Now: ";
-			std::cerr << sockaddr_storage_tostring(mOwnState.serveraddr);
-			std::cerr << std::endl;
-		}
-        	else if (mOwnState.netMode & RS_NET_MODE_EXT)
-		{
-			sockaddr_storage_copyip(mOwnState.serveraddr,extAddr);
-			
-			std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
-			std::cerr << " as MANUAL FORWARD Mode";
-			std::cerr << std::endl;
-			std::cerr << "Address is Now: ";
-			std::cerr << sockaddr_storage_tostring(mOwnState.serveraddr);
-			std::cerr << std::endl;
-		}
-		else
-		{
-			mOwnState.serveraddr = extAddr;
-		}
-	}
+        if (mOwnState.netMode & RS_NET_MODE_TRY_EXT)
+        {
+            /**** THIS CASE SHOULD NOT BE TRIGGERED ****/
+            std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
+            std::cerr << " as MANUAL FORWARD Mode (ERROR - SHOULD NOT BE TRIGGERED: TRY_EXT_MODE)";
+            std::cerr << std::endl;
+            std::cerr << "Address is Now: ";
+            std::cerr << sockaddr_storage_tostring(mOwnState.serveraddr);
+            std::cerr << std::endl;
+        }
+        else if (mOwnState.netMode & RS_NET_MODE_EXT)
+        {
+            sockaddr_storage_copyip(mOwnState.serveraddr,extAddr);
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-	mLinkMgr->setLocalAddress(localAddr);
+            std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
+            std::cerr << " as MANUAL FORWARD Mode";
+            std::cerr << std::endl;
+            std::cerr << "Address is Now: ";
+            std::cerr << sockaddr_storage_tostring(mOwnState.serveraddr);
+            std::cerr << std::endl;
+        }
+        else
+        {
+            mOwnState.serveraddr = extAddr;
+        }
+    }
 
-	return true;
+    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+    mLinkMgr->setLocalAddress(localAddr);
+
+    return true;
 }
 
 

@@ -48,6 +48,7 @@ const int p3connectzone = 3431;
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsdht.h"
+#include "retroshare/rsbanlist.h"
 
 /* Network setup States */
 
@@ -146,7 +147,7 @@ p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
 
 		struct sockaddr_storage bip;
 		sockaddr_storage_clear(bip);
-		struct sockaddr_in *addr = (struct sockaddr_in *) &bip;
+        struct sockaddr_in *addr = (struct sockaddr_in *) &bip;
 		addr->sin_family = AF_INET;
 		addr->sin_addr.s_addr = 1;
 		addr->sin_port = htons(0);
@@ -1726,10 +1727,7 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 		return false;
 	}
 
-	/* if it is on the ban list - ignore */
-	/* checks - is it the dreaded 1.0.0.0 */
-
-	std::list<struct sockaddr_storage>::const_iterator it;
+    std::list<struct sockaddr_storage>::const_iterator it;
 	for(it = mBannedIpList.begin(); it != mBannedIpList.end(); ++it)
     {
 #ifdef LINKMGR_DEBUG
@@ -1746,14 +1744,13 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 		}
 	}
 
-    if(rsDht != NULL && rsDht->isAddressBanned(addr))
+    if(rsBanList != NULL && !rsBanList->isAddressAccepted(addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
     {
 #ifdef LINKMGR_DEBUG
-            std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() adding to local Banned IPList";
-            std::cerr << std::endl;
+        std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() adding to local Banned IPList";
+        std::cerr << std::endl;
 #endif
-            mBannedIpList.push_back(addr) ;
-            return false ;
+        return false ;
     }
 
 	/* if it is an external address, we'll accept it.

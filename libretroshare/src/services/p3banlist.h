@@ -61,7 +61,7 @@ public:
 
     /***** overloaded from RsBanList *****/
 
-    virtual bool isAddressAccepted(const struct sockaddr_storage& addr, uint32_t checking_flags,uint32_t& check_result) ;
+    virtual bool isAddressAccepted(const struct sockaddr_storage& addr, uint32_t checking_flags,uint32_t *check_result=NULL) ;
 
     virtual void getBannedIps(std::list<BanListPeer>& list) ;
     virtual void getWhiteListedIps(std::list<BanListPeer>& list) ;
@@ -137,6 +137,7 @@ private:
     int condenseBanSources_locked();
     int printBanSources_locked(std::ostream &out);
     int printBanSet_locked(std::ostream &out);
+    bool isWhiteListed_locked(const sockaddr_storage &addr);
 
     time_t mSentListTime;
     std::map<RsPeerId, BanList> mBanSources;

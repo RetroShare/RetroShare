@@ -99,7 +99,7 @@ public:
     // 	check_result: 	returned result of the check in RSBANLIST_CHECK_RESULT_*
     // 	returned value: true=address is accepted, false=address is rejected.
 
-    virtual bool isAddressAccepted(const struct sockaddr_storage& addr,uint32_t checking_flags,uint32_t& check_result) =0;
+    virtual bool isAddressAccepted(const struct sockaddr_storage& addr,uint32_t checking_flags,uint32_t *check_result=NULL) =0;
 
     virtual void getBannedIps(std::list<BanListPeer>& list) =0;
     virtual void getWhiteListedIps(std::list<BanListPeer>& list) =0;

@@ -1313,15 +1313,9 @@ int 	pqissl::Authorise_SSL_Connection()
 
     uint32_t check_result ;
 
-    if(!rsBanList->isAddressAccepted(remote_addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,check_result))
+    if(!rsBanList->isAddressAccepted(remote_addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,&check_result))
     {
         std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Reason: " << check_result << ". Attack??" << std::endl;
-    reset_locked();
-    return 0 ;
-    }
-    if(rsDht->isAddressBanned(remote_addr))
-    {
-        std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Attack??" << std::endl;
     reset_locked();
     return 0 ;
     }
@@ -1361,7 +1355,7 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 {
     uint32_t check_result;
 
-    if(!rsBanList->isAddressAccepted(foreign_addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,check_result))
+    if(!rsBanList->isAddressAccepted(foreign_addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,&check_result))
     {
         std::cerr << "(SS) refusing incoming SSL connection from blacklisted foreign address " << sockaddr_storage_iptostring(foreign_addr)
               << ". Reason: " << check_result << "." << std::endl;

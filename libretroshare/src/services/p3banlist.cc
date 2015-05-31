@@ -239,9 +239,10 @@ void p3BanList::autoFigureOutBanRanges()
     condenseBanSources_locked() ;
 }
 
-bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checking_flags,uint32_t& check_result)
+bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checking_flags,uint32_t *check_result)
 {
-    check_result = RSBANLIST_CHECK_RESULT_NOCHECK ;
+    if(check_result != NULL)
+        *check_result = RSBANLIST_CHECK_RESULT_NOCHECK ;
 
     if(!mIPFilteringEnabled)
         return true ;
@@ -261,21 +262,25 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
 
     if(white_list_found)
     {
-        check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
-    std::cerr << ". Address is in whitelist. Accepting" << std::endl;
+        if(check_result != NULL)
+            *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+        std::cerr << ". Address is in whitelist. Accepting" << std::endl;
         return true ;
     }
 
     if(checking_flags & RSBANLIST_CHECKING_FLAGS_WHITELIST)
     {
-        check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
-    std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
+        if(check_result != NULL)
+            *check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
+        std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
         return false ;
     }
 
     if(!(checking_flags & RSBANLIST_CHECKING_FLAGS_BLACKLIST))
     {
         std::cerr << ". No blacklisting required. Accepting." << std::endl;
+        if(check_result != NULL)
+            *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
         return true;
     }
 
@@ -287,7 +292,8 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
 #ifdef DEBUG_BANLIST
         std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/16. returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
-    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+        if(check_result != NULL)
+            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
@@ -297,7 +303,8 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
 #ifdef DEBUG_BANLIST
         std::cerr << "found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
-    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+        if(check_result != NULL)
+            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
@@ -307,14 +314,16 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
 #ifdef DEBUG_BANLIST
         std::cerr << "found as blacklisted address " << sockaddr_storage_iptostring(it->first) << ".  returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
-    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+        if(check_result != NULL)
+            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
 #ifdef DEBUG_BANLIST
     std::cerr << " not blacklisted. Accepting." << std::endl;
 #endif
-    check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+    if(check_result != NULL)
+        *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
     return true ;
 }
 void p3BanList::getWhiteListedIps(std::list<BanListPeer> &lst)
@@ -792,6 +801,21 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 	return updated;
 }
 
+bool p3BanList::isWhiteListed_locked(const sockaddr_storage& addr)
+{
+    if(mWhiteListedRanges.find(addr) != mWhiteListedRanges.end())
+        return true ;
+
+    if(mWhiteListedRanges.find(makeBitsRange(addr,1)) != mWhiteListedRanges.end())
+        return true ;
+
+    if(mWhiteListedRanges.find(makeBitsRange(addr,2)) != mWhiteListedRanges.end())
+        return true ;
+
+    return false ;
+
+}
+
 /***
  * EXTRA DEBUGGING.
  * #define DEBUG_BANLIST_CONDENSE		1
@@ -855,6 +879,9 @@ int p3BanList::condenseBanSources_locked()
         sockaddr_storage_clear(bannedaddr);
         sockaddr_storage_copyip(bannedaddr, lit->second.addr);
         sockaddr_storage_setport(bannedaddr, 0);
+
+    if(isWhiteListed_locked(bannedaddr))
+        continue ;
 
         /* check if it exists in the Set already */
         std::map<struct sockaddr_storage, BanListPeer>::iterator sit;
