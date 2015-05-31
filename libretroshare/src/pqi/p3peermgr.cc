@@ -47,7 +47,7 @@ const int p3peermgrzone = 9531;
 
 #include "retroshare/rsiface.h" // Needed for rsicontrol (should remove this dependancy)
 #include "retroshare/rspeers.h" // Needed for Group Parameters.
-#include "retroshare/rsdht.h" // Needed for banned IPs
+#include "retroshare/rsbanlist.h" // Needed for banned IPs
 
 /* Network setup States */
 
@@ -994,7 +994,9 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, 
 	std::cerr << ")" << std::endl;
 #endif
 
-    if(rsDht->isAddressBanned(localAddr))
+    uint32_t banlist_response ;
+
+    if(!rsBanList->isAddressAccepted(localAddr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, banlist_response))
     {
         std::cerr << "(SS) Trying to set own IP to a banned IP " << sockaddr_storage_iptostring(localAddr) << ". Attack?" << std::endl;
         return false ;
