@@ -295,12 +295,13 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.recipientWidget->setColumnCount(COLUMN_RECIPIENT_COUNT);
 
     QHeaderView *header = ui.recipientWidget->horizontalHeader();
-    header->resizeSection(COLUMN_RECIPIENT_TYPE, 60);
+//    header->resizeSection(COLUMN_RECIPIENT_TYPE, ui.fromLabel->size().width()); // see ::eventFilter
     header->resizeSection(COLUMN_RECIPIENT_ICON, 22);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
     QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_NAME, QHeaderView::Fixed);
     header->setStretchLastSection(true);
+    ui.fromLabel->installEventFilter(this);
 
     /* Set own item delegate */
     QItemDelegate *delegate = new MessageItemDelegate(this);
@@ -1683,6 +1684,14 @@ bool MessageComposer::eventFilter(QObject *obj, QEvent *event)
 //                    comboBox->setFocus();
                 }
             }
+        }
+    }
+
+    if (event->type() == QEvent::Resize) {
+        if (obj == ui.fromLabel) {
+            // Resize "Recipient" column
+            QHeaderView *header = ui.recipientWidget->horizontalHeader();
+            header->resizeSection(COLUMN_RECIPIENT_TYPE, ui.fromLabel->size().width());
         }
     }
 

@@ -674,6 +674,19 @@
            </layout>
           </widget>
          </item>
+         <item row="6" column="0">
+          <widget class="MimeTextEdit" name="msgText">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>4</horstretch>
+             <verstretch>4</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextEditorInteraction</set>
+           </property>
+          </widget>
+         </item>
          <item row="5" column="0">
           <widget class="QFrame" name="distantFrame">
            <property name="palette">
@@ -825,89 +838,9 @@ border-image: url(:/images/closepressed.png)
            </layout>
           </widget>
          </item>
-         <item row="6" column="0">
-          <widget class="MimeTextEdit" name="msgText">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-             <horstretch>4</horstretch>
-             <verstretch>4</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::TextEditorInteraction</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QTableWidget" name="recipientWidget">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>68</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>68</height>
-            </size>
-           </property>
-           <property name="tabKeyNavigation">
-            <bool>false</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::SingleSelection</enum>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderDefaultSectionSize">
-            <number>22</number>
-           </attribute>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="fromLabel">
-             <property name="minimumSize">
-              <size>
-               <width>60</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>From:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="GxsIdChooser" name="respond_to_CB">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="2" column="0">
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="1">
+           <item row="3" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
               <widget class="QPushButton" name="tagButton">
@@ -947,7 +880,7 @@ border-image: url(:/images/closepressed.png)
              </item>
             </layout>
            </item>
-           <item row="0" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="label_5">
              <property name="minimumSize">
               <size>
@@ -975,7 +908,7 @@ border-image: url(:/images/closepressed.png)
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="2" column="1">
             <widget class="QLineEdit" name="titleEdit">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -985,7 +918,7 @@ border-image: url(:/images/closepressed.png)
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="3" column="0">
             <widget class="QLabel" name="label_2">
              <property name="minimumSize">
               <size>
@@ -1005,6 +938,69 @@ border-image: url(:/images/closepressed.png)
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="GxsIdChooser" name="respond_to_CB">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="fromLabel">
+             <property name="minimumSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>From:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QTableWidget" name="recipientWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>68</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>68</height>
+              </size>
+             </property>
+             <property name="tabKeyNavigation">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>22</number>
+             </attribute>
             </widget>
            </item>
           </layout>
@@ -1227,7 +1223,6 @@ border-image: url(:/images/closepressed.png)
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>recipientWidget</tabstop>
   <tabstop>titleEdit</tabstop>
   <tabstop>msgText</tabstop>
   <tabstop>msgFileList</tabstop>
