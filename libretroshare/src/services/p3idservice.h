@@ -342,7 +342,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	bool cache_store(const RsGxsIdGroupItem *item);
 	bool cache_update_if_cached(const RsGxsId &id, std::string serviceString);
 
-	bool isPendingNetworkRequest(const RsGxsId& gxsId) const;
+    bool isPendingNetworkRequest(const RsGxsId& gxsId);
 	void requestIdsFromNet();
 
 	// Mutex protected.

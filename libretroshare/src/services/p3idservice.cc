@@ -599,7 +599,7 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
     return cache_request_load(id, peers);
 }
 
-bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId) const
+bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 	// if ids has beens confirmed as not physically present return
