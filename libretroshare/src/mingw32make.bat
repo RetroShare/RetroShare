@@ -3,7 +3,7 @@ set MINGW=C:\MinGW
 
 set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-"c:\Program Files\TortoiseSVN\bin\SubWCRev" . util\rsversion.in util\rsversion.h
+"c:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare\rsversion.in retroshare\rsversion.h
 
 mingw32-make clean
 
