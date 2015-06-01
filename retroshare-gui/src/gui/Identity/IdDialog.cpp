@@ -548,13 +548,13 @@ void IdDialog::requestIdDetails()
 static QString getHumanReadableDuration(uint32_t seconds)
 {
     if(seconds < 60)
-        return QString(tr("%1 seconds ago")).arg(seconds) ;
+        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
     else if(seconds < 3600)
-        return QString(tr("%1 minute(s) ago")).arg(seconds/60) ;
+        return QString(QObject::tr("%1 minute(s) ago")).arg(seconds/60) ;
     else if(seconds < 24*3600)
-        return QString(tr("%1 hour(s) ago")).arg(seconds/3600) ;
+        return QString(QObject::tr("%1 hour(s) ago")).arg(seconds/3600) ;
     else
-        return QString(tr("%1 day(s) ago")).arg(seconds/86400) ;
+        return QString(QObject::tr("%1 day(s) ago")).arg(seconds/86400) ;
 }
 
 void IdDialog::insertIdDetails(uint32_t token)
