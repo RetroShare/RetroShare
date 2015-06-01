@@ -55,6 +55,8 @@ ServicePermissionDialog::ServicePermissionDialog() :
     mColumns[column] = RS_NODE_PERM_DIRECT_DL;
     column = ui->servicePermissionList->addColumn(tr("Auto-download recommended files"));
     mColumns[column] = RS_NODE_PERM_ALLOW_PUSH;
+    column = ui->servicePermissionList->addColumn(tr("Require whitelist"));
+    mColumns[column] = RS_NODE_PERM_REQUIRE_WL;
 
 	ui->servicePermissionList->start();
 }

@@ -78,8 +78,9 @@ const uint32_t RS_PEER_STATE_UNREACHABLE= 0x0008;
 const ServicePermissionFlags RS_NODE_PERM_NONE       ( 0x00000000 ) ;// 0x1, 0x2 and Ox4 are deprecated.
 const ServicePermissionFlags RS_NODE_PERM_DIRECT_DL  ( 0x00000008 ) ;// Accept to directly DL from this peer (breaks anonymity)
 const ServicePermissionFlags RS_NODE_PERM_ALLOW_PUSH ( 0x00000010 ) ;// Auto-DL files recommended by this peer
-const ServicePermissionFlags RS_NODE_PERM_DEFAULT    =  RS_NODE_PERM_DIRECT_DL ;
-const ServicePermissionFlags RS_NODE_PERM_ALL        =  RS_NODE_PERM_DIRECT_DL | RS_NODE_PERM_ALLOW_PUSH;
+const ServicePermissionFlags RS_NODE_PERM_REQUIRE_WL ( 0x00000020 ) ;// Require white list clearance for connection
+const ServicePermissionFlags RS_NODE_PERM_DEFAULT    =  RS_NODE_PERM_DIRECT_DL | RS_NODE_PERM_REQUIRE_WL;
+const ServicePermissionFlags RS_NODE_PERM_ALL        =  RS_NODE_PERM_DIRECT_DL | RS_NODE_PERM_ALLOW_PUSH | RS_NODE_PERM_REQUIRE_WL;
 
 // ...
 

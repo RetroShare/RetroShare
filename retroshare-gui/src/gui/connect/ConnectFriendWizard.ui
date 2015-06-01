@@ -695,6 +695,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="_require_WL_CB">
+              <property name="text">
+               <string>Require whitelist clearance to connect</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_5">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -1017,6 +1024,13 @@
              <widget class="QCheckBox" name="_allow_push_CB_2">
               <property name="text">
                <string>Auto-download recommended files</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_require_WL_CB_2">
+              <property name="text">
+               <string>Require whitelist clearance to connect</string>
               </property>
              </widget>
             </item>
