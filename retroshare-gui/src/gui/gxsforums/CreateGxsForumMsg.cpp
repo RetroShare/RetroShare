@@ -33,6 +33,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/common/Emoticons.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/Identity/IdEditDialog.h"
 
 #include "util/HandleRichText.h"
 #include "util/misc.h"
@@ -294,12 +295,26 @@ void  CreateGxsForumMsg::createMsg()
 			std::cerr << std::endl;
 
 			break;
+            case GxsIdChooser::None:
+            {
+                // This is ONLY for the case where no id exists yet
+                // If an id exists, the chooser would not return None
+                IdEditDialog dlg(this);
+                dlg.setupNewId(false);
+                dlg.exec();
+                // fetch new id, we will then see if the identity creation was successful
+                std::list<RsGxsId> own_ids;
+                if(!rsIdentity->getOwnIds(own_ids) || own_ids.size() != 1)
+                    return;
+                // we have only a single id, so we can use the first one
+                authorId = own_ids.front();
+                break;
+            }
 			case GxsIdChooser::NoId:
-			case GxsIdChooser::None:
 			default:
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
-			QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id"), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(this, tr("RetroShare"),tr("Congrats, you found a bug! ")+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}//switch (ui.idChooser->getChosenId(authorId))
