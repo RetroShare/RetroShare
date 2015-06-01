@@ -10,6 +10,7 @@ Legend:
 
 To be done
 
+9999 [ ]    make vote button in channels work, or hide it (problem is: there is no selector for the voter id)
 0000 [ ]    merge the various help systems. there's 3 of them: (1) help buttons on most tabs that pop a flat panel with some 
             info; (2) help wizard accessible from the "!" button in friends details->Trust; (3) 'getting started tab'
 
@@ -58,7 +59,7 @@ To be done
             // some ppl dumb to use rightclich or keyboard)) and on the upper window some buttons exist, the lower one feels lonely.(from noname)
             comment: teach to use the context menu, else they are lost in RS
 
-0019 [ ]    no identity on first start makes impossible to start chat or post forums.
+0019 [X]    no identity on first start makes impossible to start chat or post forums.
             maybe config wizard should propose to create one, just asking a name desired.  (from noname)
             cyril: integrating in config wizard is a good idea: check if one identity is present, if not allow to create one.
             Note that all ID choosers allow to create a new identity
@@ -197,7 +198,7 @@ H        [X] marking all as read in channels takes time. The channel icon should
              during the operation to avoid the user to re-click many times in the hope to get the posts marked as read.
          [X] channels items show a 0 left to the up/Dn buttons. What is it??
          [X] allow to post on channels when attachment is not in shared files. Just display a warning.
-M        [ ] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
+M        [X] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
              another location with many friends => popularity is too big at that location (should be 1)
              the problem seems to be in RsGxsNetService::handleRecvSyncMessage
              peers send RsNxsSyncMsg for unsubscribed groups (they are not suppliers then)
@@ -297,5 +298,8 @@ H        [ ] add "chat with this peer" from lobbies to start a private distant c
 
       Msgs
 H        [ ] Merge the new messaging format
+
+      Channels
+M        [ ] allow to set a download directory per channel
 
 
