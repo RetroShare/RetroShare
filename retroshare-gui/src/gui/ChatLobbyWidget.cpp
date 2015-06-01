@@ -247,7 +247,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 
             if(own_identities.empty())
             {
-                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create a nickname and enter this lobby"), this, SLOT(createIdentityAndSubscribe()));
+                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create an identity and enter this lobby"), this, SLOT(createIdentityAndSubscribe()));
             }
             else if(own_identities.size() == 1)
             {

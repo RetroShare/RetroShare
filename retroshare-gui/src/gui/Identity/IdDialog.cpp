@@ -549,12 +549,18 @@ static QString getHumanReadableDuration(uint32_t seconds)
 {
     if(seconds < 60)
         return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
+    else if(seconds < 120)
+        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
     else if(seconds < 3600)
-        return QString(QObject::tr("%1 minute(s) ago")).arg(seconds/60) ;
+        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
+    else if(seconds < 7200)
+        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
     else if(seconds < 24*3600)
-        return QString(QObject::tr("%1 hour(s) ago")).arg(seconds/3600) ;
-    else
-        return QString(QObject::tr("%1 day(s) ago")).arg(seconds/86400) ;
+        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
+    else if(seconds < 2*24*3600)
+        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
+    else 
+        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
 }
 
 void IdDialog::insertIdDetails(uint32_t token)
@@ -720,15 +726,15 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 	if (data.mPgpKnown)
 	{
-		ui->line_RatingImplicit->setText("+50 Known PGP");
+		ui->line_RatingImplicit->setText(tr("+50 Known PGP"));
 	}
 	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 	{
-		ui->line_RatingImplicit->setText("+10 UnKnown PGP");
+		ui->line_RatingImplicit->setText(tr("+10 UnKnown PGP"));
 	}
 	else
 	{
-		ui->line_RatingImplicit->setText("+5 Anon Id");
+		ui->line_RatingImplicit->setText(tr("+5 Anon Id"));
 	}
 
 	{
@@ -858,7 +864,7 @@ void IdDialog::removeIdentity()
 		return;
 	}
 
-	if ((QMessageBox::question(this, tr("Really delete? "), tr("Do you really want to delete this Identity?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::No))== QMessageBox::Yes)
+	if ((QMessageBox::question(this, tr("Really delete? "), tr("Do you really want to delete this identity?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::No))== QMessageBox::Yes)
 	{
 		std::string keyId = item->text(RSID_COL_KEYID).toStdString();
 

@@ -1438,7 +1438,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
      if(mi.rsgxsid_srcId.isNull() && !(mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty()))
      {
-            QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove the distant peers fro the destination list."), QMessageBox::Ok);
+            QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove the distant peers from the destination list."), QMessageBox::Ok);
             return false; // Don't send if cannot sign.
      }
         if (rsMail->MessageSend(mi) == false) {
