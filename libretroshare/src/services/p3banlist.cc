@@ -40,8 +40,8 @@
 /****
  * #define DEBUG_BANLIST		1
  ****/
- #define DEBUG_BANLIST		1
- #define DEBUG_BANLIST_CONDENSE		1
+// #define DEBUG_BANLIST		1
+// #define DEBUG_BANLIST_CONDENSE		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -247,7 +247,9 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if(!mIPFilteringEnabled)
         return true ;
 
+#ifdef DEBUG_BANLIST
     std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
+#endif
 
     // we should normally work this including entire ranges of IPs. For now, just check the exact IPs.
 
@@ -264,7 +266,9 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+#ifdef DEBUG_BANLIST
         std::cerr << ". Address is in whitelist. Accepting" << std::endl;
+#endif
         return true ;
     }
 
@@ -272,13 +276,17 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
+#ifdef DEBUG_BANLIST
         std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
+#endif
         return false ;
     }
 
     if(!(checking_flags & RSBANLIST_CHECKING_FLAGS_BLACKLIST))
     {
+#ifdef DEBUG_BANLIST
         std::cerr << ". No blacklisting required. Accepting." << std::endl;
+#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
         return true;
@@ -677,7 +685,10 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                 BanListPeer blp ;
                 blp.fromRsTlvBanListEntry(*it2) ;
 
-                bl.mBanPeers[blp.addr] = blp ;
+        if(sockaddr_storage_isValidNet(blp.addr))
+            bl.mBanPeers[blp.addr] = blp ;
+        else
+            std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
             }
         }
         else if(citem->type == RSBANLIST_TYPE_BLACKLIST)
@@ -689,7 +700,10 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                 BanListPeer blp ;
                 blp.fromRsTlvBanListEntry(*it2) ;
 
-                mBanRanges[blp.addr] = blp ;
+        if(sockaddr_storage_isValidNet(blp.addr))
+            mBanRanges[blp.addr] = blp ;
+        else
+            std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
             }
         }
         else if(citem->type == RSBANLIST_TYPE_WHITELIST)
@@ -701,7 +715,10 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                 BanListPeer blp ;
                 blp.fromRsTlvBanListEntry(*it2) ;
 
-                mWhiteListedRanges[blp.addr] = blp ;
+        if(sockaddr_storage_isValidNet(blp.addr))
+            mWhiteListedRanges[blp.addr] = blp ;
+        else
+            std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
 
         std::cerr << "Read whitelisted range " << sockaddr_storage_iptostring(blp.addr) << "/" << blp.masked_bytes << std::endl;
             }
