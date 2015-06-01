@@ -152,6 +152,7 @@ virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<R
 virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns) = 0;
+virtual bool 	addCandidateForOwnExternalAddress(const RsPeerId& from, const struct sockaddr_storage &addr) = 0;
 
 virtual bool 	setNetworkMode(const RsPeerId &id, uint32_t netMode) = 0;
 virtual bool 	setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht) = 0;
@@ -254,6 +255,7 @@ virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<R
 virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
 virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
 virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns);
+virtual bool 	addCandidateForOwnExternalAddress(const RsPeerId& from, const struct sockaddr_storage &addr) ;
 
 virtual bool 	setNetworkMode(const RsPeerId &id, uint32_t netMode);
 virtual bool 	setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht);

@@ -677,6 +677,12 @@ void p3NetMgrIMPL::netUpnpCheck()
 
 }
 
+class ZeroInt
+{
+    public:
+        ZeroInt() { n=0; }
+        uint32_t n ;
+};
 
 void p3NetMgrIMPL::netExtCheck()
 {
@@ -690,10 +696,11 @@ void p3NetMgrIMPL::netExtCheck()
 		bool isStable = false;
 		struct sockaddr_storage tmpip ;
 
-			/* check for External Address */
+        std::map<sockaddr_storage,ZeroInt> address_votes ;
+
+        /* check for External Address */
 		/* in order of importance */
 		/* (1) UPnP -> which handles itself */
-		if (!mNetFlags.mExtAddrOk)
 		{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok" << std::endl;
@@ -711,7 +718,9 @@ void p3NetMgrIMPL::netExtCheck()
 					isStable = true;
 					mNetFlags.mExtAddr = tmpip;
 					mNetFlags.mExtAddrOk = true;
-					mNetFlags.mExtAddrStableOk = isStable;
+                    mNetFlags.mExtAddrStableOk = isStable;
+
+                    address_votes[tmpip].n++ ;
 				}	
 				else
 				{
@@ -724,7 +733,6 @@ void p3NetMgrIMPL::netExtCheck()
 		}
 
 		/* Next ask the DhtStunner */
-		if (!mNetFlags.mExtAddrOk)
 		{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok, Checking DhtStunner" << std::endl;
@@ -744,6 +752,7 @@ void p3NetMgrIMPL::netExtCheck()
 					mNetFlags.mExtAddrOk = true;
 					mNetFlags.mExtAddrStableOk = isStable;
 			
+                    address_votes[tmpaddr].n++ ;
 #ifdef	NETMGR_DEBUG_STATEBOX
 					std::cerr << "p3NetMgrIMPL::netExtCheck() From DhtStunner: ";
 					std::cerr << sockaddr_storage_tostring(tmpaddr);
@@ -755,7 +764,6 @@ void p3NetMgrIMPL::netExtCheck()
 		}
 
 		/* otherwise ask ExtAddrFinder */
-		if (!mNetFlags.mExtAddrOk)
 		{
 			/* ExtAddrFinder */
 			if (mUseExtAddrFinder)
@@ -782,6 +790,8 @@ void p3NetMgrIMPL::netExtCheck()
 					mNetFlags.mExtAddrOk = true;
 					mNetFlags.mExtAddrStableOk = isStable;
 
+                    address_votes[tmpip].n++ ;
+
 					/* XXX HACK TO FIX */
 #warning "ALLOWING ExtAddrFinder -> ExtAddrStableOk = true (which it is not normally)"
 					mNetFlags.mExtAddrStableOk = true;
@@ -794,7 +804,18 @@ void p3NetMgrIMPL::netExtCheck()
 		
 		/* finalise address */
 		if (mNetFlags.mExtAddrOk)
-		{
+        {
+            // look at votes.
+
+            std::cerr << "Figuring out ext addr from voting:" << std::endl;
+            uint32_t max = 0 ;
+            for(std::map<sockaddr_storage,ZeroInt>::const_iterator it(address_votes.begin());it!=address_votes.end();++it)
+            {
+                std::cerr << "  Vote 1: " << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << " votes." << std::endl;
+
+                if(it->second.n > max)
+                    mNetFlags.mExtAddr = it->first ;
+            }
 
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() ";
@@ -802,7 +823,7 @@ void p3NetMgrIMPL::netExtCheck()
 			std::cerr << std::endl;
 #endif
 			//update ip address list
-			mExtAddr = mNetFlags.mExtAddr;
+            mExtAddr = mNetFlags.mExtAddr;
 
 			mNetStatus = RS_NET_DONE;
 			netSetupDone = true;
@@ -818,7 +839,7 @@ void p3NetMgrIMPL::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 				std::cerr << "p3NetMgrIMPL::netUdpCheck() UDP Unstable :( ";
 				std::cerr <<  std::endl;
-				std::cerr << "p3NetMgrIMPL::netUdpCheck() We are unreachable";
+                std::cerr << "p3NetMgrIMPL::netUdpCheck() We are unreachable";
 				std::cerr <<  std::endl;
 				std::cerr << "netMode =>  RS_NET_MODE_UNREACHABLE";
 				std::cerr <<  std::endl;
@@ -1095,6 +1116,18 @@ bool    p3NetMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 		netReset();
 	}
 	return true;
+}
+bool    p3NetMgrIMPL::getExtAddress(struct sockaddr_storage& addr)
+{
+        RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+
+        if(mNetFlags.mExtAddrOk)
+        {
+            addr = mExtAddr ;
+            return true ;
+        }
+        else
+            return false ;
 }
 
 bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)

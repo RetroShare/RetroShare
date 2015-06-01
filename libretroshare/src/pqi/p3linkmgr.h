@@ -264,6 +264,8 @@ void 	tick();
 	/* THIS COULD BE ADDED TO INTERFACE */
 void    setFriendVisibility(const RsPeerId &id, bool isVisible);
 
+    void disconnectFriend(const RsPeerId& id) ;
+
 	/* add/remove friends */
 virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible);
 int 	removeFriend(const RsPeerId &ssl_id);

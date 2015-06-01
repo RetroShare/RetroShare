@@ -132,7 +132,17 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 #endif
 	}
 
-	return pqip;
+    return pqip;
+}
+
+void pqisslpersongrp::disconnectPeer(const RsPeerId &peer)
+{
+    std::map<RsPeerId,pqissl*>::iterator it = ssl_tunnels.find(peer) ;
+
+    if(it != ssl_tunnels.end())
+        it->second->disconnect() ;
+    else
+        std::cerr << "pqisslpersongrp::cannot find peer " << peer << ". cannot disconnect!" << std::endl;
 }
 
 

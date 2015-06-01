@@ -1225,6 +1225,25 @@ bool p3PeerMgrIMPL::setDynDNS(const RsPeerId &id, const std::string &dyndns)
     return changed;
 }
 
+bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, const sockaddr_storage &addr)
+{
+    //#ifdef PEER_DEBUG
+    std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr) << ", as reported by friend " << from << std::endl;
+    //#endif
+
+    // disconnect every friend that has reported a wrong external address
+
+    sockaddr_storage own_addr ;
+
+    if(mNetMgr->getExtAddress(own_addr) && !sockaddr_storage_sameip(own_addr,addr))
+    {
+        std::cerr << "(WW) peer reports an address that is not our current external address. This is weird." << std::endl;
+
+        //mLinkMgr->disconnectFriend(from) ;
+    }
+    return true ;
+}
+
 bool    p3PeerMgrIMPL::updateAddressList(const RsPeerId& id, const pqiIpAddrSet &addrs)
 {
 #ifdef PEER_DEBUG

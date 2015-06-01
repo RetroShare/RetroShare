@@ -2218,6 +2218,39 @@ int p3LinkMgrIMPL::removeFriend(const RsPeerId &id)
 	return 1;
 }
 
+void p3LinkMgrIMPL::disconnectFriend(const RsPeerId& id)
+{
+    std::list<pqiMonitor*> disconnect_clients ;
+
+    {
+        RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+        disconnect_clients = clients ;
+
+        std::cerr << "Disconnecting friend " << id << std::endl;
+
+        std::map<RsPeerId, peerConnectState>::iterator it;
+        it = mFriendList.find(id);
+
+        if (it == mFriendList.end())
+        {
+            std::cerr << "p3LinkMgrIMPL::removeFriend() ERROR, friend not there : " << id;
+            std::cerr << std::endl;
+            return ;
+        }
+
+        /* Move to OthersList (so remove can be handled via the action) */
+        peerConnectState peer = it->second;
+
+        peer.state &= (~RS_PEER_S_CONNECTED);
+        peer.state &= (~RS_PEER_S_ONLINE);
+        peer.actions = RS_PEER_DISCONNECTED;
+        peer.inConnAttempt = false;
+    }
+
+    for(std::list<pqiMonitor*>::const_iterator it(disconnect_clients.begin());it!=disconnect_clients.end();++it)
+        (*it)->disconnectPeer(id) ;
+}
 
 void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
 {

@@ -216,6 +216,7 @@ void 	tick();
 	// THESE MIGHT BE ADDED TO INTERFACE.
 bool 	setLocalAddress(const struct sockaddr_storage &addr);
 bool 	setExtAddress(const struct sockaddr_storage &addr);
+bool 	getExtAddress(sockaddr_storage &addr);
 
 	/*************** Setup ***************************/
 void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
@@ -225,7 +226,6 @@ void    addNetListener(pqiNetListener *listener);
 
 	// SHOULD MAKE THIS PROTECTED.
 bool	checkNetAddress(); /* check our address is sensible */
-
 
 protected:
 

@@ -427,7 +427,7 @@ void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
 	}
 	else
 	{
-		mPeerMgr->setDynDNS(item->sslId, item->dyndns);
+        mPeerMgr->setDynDNS(item->sslId, item->dyndns);
 
 		updatePeerAddressList(item);
 	}
@@ -797,10 +797,12 @@ void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toI
 		std::cerr << std::endl;
 #endif
 
-		if ((sit->first == rsPeers->getOwnId()) || (sit->first == toId))
-		{
+        if (sit->first == rsPeers->getOwnId())
+        {
+            // sending info of toId to himself will be used by toId to check that the IP it is connected as is the same
+            // as its external IP.
 #ifdef P3DISC_DEBUG
-			std::cerr << "p3discovery2::processContactInfo() not sending info on self or theirself";
+            std::cerr << "p3discovery2::processContactInfo() not sending info on self";
 			std::cerr << std::endl;
 #endif		
 			continue;
@@ -848,6 +850,7 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 
 	if (item->sslId == rsPeers->getOwnId())
 	{
+        mPeerMgr->addCandidateForOwnExternalAddress(item->PeerId(), item->extAddrV4.addr) ;
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3discovery2::processContactInfo(" << fromId << ") PGPID: ";
 		std::cerr << item->pgpId << " Ignoring Info on self";

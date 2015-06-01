@@ -133,6 +133,10 @@ virtual ~pqiMonitor() { return; }
 	 */
 virtual void	statusChange(const std::list<pqipeer> &plist) = 0;
 
+    // This is used to force disconnection of a peer, if e.g. something suspicious happenned.
+
+    virtual void disconnectPeer(const RsPeerId& peer) ;
+
 #ifdef WINDOWS_SYS
 ///////////////////////////////////////////////////////////
 // hack for too many connections
