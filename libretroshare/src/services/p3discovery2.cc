@@ -427,8 +427,6 @@ void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
 	}
 	else
 	{
-		mPeerMgr->setLocalAddress(item->sslId, item->localAddrV4.addr);
-		mPeerMgr->setExtAddress(item->sslId, item->extAddrV4.addr);
 		mPeerMgr->setDynDNS(item->sslId, item->dyndns);
 
 		updatePeerAddressList(item);
