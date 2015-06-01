@@ -1535,7 +1535,7 @@ QString MessageComposer::getRecipientEmailAddress(const RsPeerId& id,const RsPee
 {
     QString location_name = detail.location.empty()?tr("[Missing]"):QString::fromUtf8(detail.location.c_str()) ;
 
-    return (QString("%1 (")+tr("Friend node & location:")+" %2, %3)").arg(QString::fromUtf8(detail.name.c_str()))
+    return (QString("%1 (")+tr("Node name & id:")+" %2, %3)").arg(QString::fromUtf8(detail.name.c_str()))
                  .arg(location_name)
                  .arg(QString::fromUtf8(detail.id.toStdString().c_str())) ;
 }

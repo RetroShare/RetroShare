@@ -304,7 +304,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	the <img width=\"16\" src=\":/images/stock_signature_ok.png\"/> button \
  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</p>\
  <p>Generally, you may use messages to recommend files to your friends by pasting file links, \
- or recommend friend nodes to other friends nodes, in order to strenghten your network, or send feedback \
+ or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback \
  to a channel's owner.</p>                   \
  ") ;
 

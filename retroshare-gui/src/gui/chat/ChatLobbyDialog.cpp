@@ -551,7 +551,7 @@ void ChatLobbyDialog::distantChatParticipant()
         default:
             error_str = tr("Unknown error.") ;
         }
-        QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant cannot be initiated: ")+error_str
+        QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant chat cannot be initiated:")+" "+error_str
                              +QString::number(error_code)) ;
     }
 }

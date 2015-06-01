@@ -147,7 +147,7 @@
           </font>
          </property>
          <property name="text">
-          <string>This key has signed my own PGP key</string>
+          <string>This key has signed your own PGP key</string>
          </property>
         </widget>
        </item>

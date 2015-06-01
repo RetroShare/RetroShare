@@ -159,16 +159,16 @@ QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags, const QList<QS
 		res += tr("All friend nodes can browse this directory") + "\n" ;
 	else if(flags & DIR_FLAGS_BROWSABLE_GROUPS) 
 		if(!groupNames.empty())
-			res += tr("Only friends nodes in groups %1 can browse this directory").arg(groups_string) + "\n" ;
+			res += tr("Only friend nodes in groups %1 can browse this directory").arg(groups_string) + "\n" ;
 		else
 			res += tr("No one can browse this directory") + "\n" ;
 	else
 		res += tr("No one can browse this directory") + "\n" ;
 
 	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS)
-		res += tr("All friends nodes can relay anonymous tunnels to this directory") ;
+		res += tr("All friend nodes can relay anonymous tunnels to this directory") ;
 	else if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS)
-		res += tr("Only friends nodes in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
+		res += tr("Only friend nodes in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
 	else
 		res += tr("No one can anonymously access this directory.") ;
 
