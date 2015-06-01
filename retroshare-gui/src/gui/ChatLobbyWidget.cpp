@@ -715,7 +715,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     std::list<RsGxsId> own_ids;
     // not using rsMsgs->getDefaultIdentityForChatLobby(), to check if we have an identity
     // to work around the case when the identity was deleted and is invalid
-    // (the chatservervice does not know if a default identity was deleted)
+    // (the chatservice does not know if a default identity was deleted)
     // only rsIdentity knows the truth at the moment!
     if(!rsIdentity->getOwnIds(own_ids))
         return;
