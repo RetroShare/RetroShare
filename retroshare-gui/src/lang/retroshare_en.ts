@@ -859,7 +859,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Distant cannot be initiated: </source>
+        <source>Distant chat cannot be initiated:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1046,10 +1046,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create a nickname and enter this lobby</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enter this lobby</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1063,6 +1059,10 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Choose an identity for this lobby:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create an identity and enter this lobby</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1789,14 +1789,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, that is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted, but If DHE is present, the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PGP key :</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1846,6 +1838,22 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Require white list clearance</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2321,6 +2329,26 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Can be used as direct source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Require whitelist clearance to connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No IP in this certificate!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Added with certificate from %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3029,10 +3057,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please choose Signing Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Please choose Signing Id, it is required</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3063,6 +3087,10 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>Post as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Congrats, you found a bug! </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5147,15 +5175,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Only friends nodes in groups %1 can browse this directory</source>
+        <source>Only friend nodes in groups %1 can browse this directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>All friends nodes can relay anonymous tunnels to this directory</source>
+        <source>All friend nodes can relay anonymous tunnels to this directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Only friends nodes in groups </source>
+        <source>Only friend nodes in groups </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5181,31 +5209,31 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can let your friends know about your Forum by sharing it with them. Select the Friends with which you want to Share your Forum.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Please select at least one peer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share Channel admin permissions</source>
+        <source>Share channel admin permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can allow your friends to publish in your Channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the Friends which you want to allowed to publish in this Channel. Note: it is not possible to revoke channel admin permissions.</source>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share Forum admin permissions</source>
+        <source>Share forum admin permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share Topic admin permissions</source>
+        <source>You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can allow your friends to edit the Topic. Select them in the list below. Note: it is not possible to revoke posted admin permissions.</source>
+        <source>Share topic admin permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6980,10 +7008,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Do you really want to delete this Identity?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Distant chat cannot work</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7066,6 +7090,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Node Id  : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>+50 Known PGP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>+10 UnKnown PGP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>+5 Anon Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to delete this identity?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7157,11 +7197,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can have one or more nicknames. They are used when you write in Chatlobbies, Forums and Channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
+        <source>Linked to your profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Linked to your profile</source>
+        <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7458,10 +7498,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show web interface</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Messenger</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7910,10 +7946,6 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please create an identity to sign distant messages, or remove the distant peers fro the destination list.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Distant identity:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7922,7 +7954,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Friend node &amp; location:</source>
+        <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node name &amp; id:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8516,11 +8552,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friends nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <source>This message comes from a distant person.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This message comes from a distant person.</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8739,15 +8775,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Search Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Peer ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Peer ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8881,23 +8909,35 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This column indicates trust level and whether you signed his PGP key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Did that peer sign your own PGP key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Certificat ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Since when I use this Certificats</source>
+        <source>Make friend...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Make friend...</source>
+        <source>Did peer authenticate you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This column indicates trust level and whether you signed their PGP key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Did that peer sign your PGP key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Since when I use this certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search peer ID</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9303,10 +9343,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Ultimate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This key has signed my own PGP key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10896,34 +10932,6 @@ Reported error is:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> seconds ago</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> minute(s) ago</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> hour(s) ago</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> day(s) ago</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ban only IP %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ban entire range %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ban entire range %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Move IP %1 to whitelist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10936,11 +10944,31 @@ Reported error is:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Whitelist only IP </source>
+        <source>%1 seconds ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Whitelist entire range </source>
+        <source>%1 minute ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 minutes ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 hour ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 hours ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 day ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11339,6 +11367,56 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RsBanListDefs</name>
+    <message>
+        <source>IP address not checked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP address is blacklisted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP address is not whitelisted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP address accepted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListToolButton</name>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove IP from whitelist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add IP to blacklist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove IP from blacklist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only IP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Entire range</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>RsCollectionDialog</name>
     <message>
         <source>Collection</source>
@@ -11549,6 +11627,13 @@ If you believe it is correct, remove the corresponding line from the file and re
     <message>
         <source>Image is oversized for transmission.
 Reducing image to %1x%2 pixels?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RsNetUtil</name>
+    <message>
+        <source>Invalid format</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11862,6 +11947,49 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Collection</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SecurityIpItem</name>
+    <message>
+        <source>Peer details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Write Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12279,10 +12407,6 @@ Check your ports!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to disallow connections to peers not in the white-list. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. If not activated, connections will still be checked w.r.t. the whitelist, and the blacklit above, but will pass if not in the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Manual input</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12322,6 +12446,10 @@ Check your ports!</source>
         <source>Added by you</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ServicePermissionDialog</name>
@@ -12339,6 +12467,10 @@ Check your ports!</source>
     </message>
     <message>
         <source>Auto-download recommended files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Require whitelist</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13228,10 +13360,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;/p&gt;&lt;p&gt;than cache files for as many slots as requested. Setting that number &lt;/p&gt;&lt;p&gt;to be equal to the queue size above will always prioritize your files&lt;/p&gt;&lt;p&gt;over cache. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13245,6 +13373,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;br/&gt;than cache files for as many slots as requested. Setting that number &lt;br/&gt;to be equal to the queue size above will always prioritize your files&lt;br/&gt;over cache. &lt;br/&gt;&lt;br/&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
