@@ -40,7 +40,8 @@ AvatarWidget::AvatarWidget(QWidget *parent) :
 
 	mFlag.isOwnId = false;
 //	mFlag.isGpg = false;
-	defaultAvatar = ":/images/no_avatar_background.png";
+    defaultAvatar = ":/images/no_avatar_background.png";
+    mPeerState = RS_STATUS_OFFLINE ;
 
 	setFrameType(NO_FRAME);
 
