@@ -527,6 +527,9 @@ behind a firewall or a VPN.</string>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
             <property name="sortingEnabled">
              <bool>false</bool>
             </property>
@@ -626,10 +629,13 @@ behind a firewall or a VPN.</string>
              <enum>Qt::CustomContextMenu</enum>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to disallow connections to peers not in the white-list. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. If not activated, connections will still be checked w.r.t. the whitelist, and the blacklit above, but will pass if not in the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
             </property>
             <property name="sortingEnabled">
              <bool>false</bool>
@@ -694,7 +700,7 @@ behind a firewall or a VPN.</string>
                <number>16</number>
               </property>
               <property name="maximum">
-               <number>24</number>
+               <number>32</number>
               </property>
               <property name="singleStep">
                <number>8</number>

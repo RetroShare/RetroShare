@@ -52,6 +52,7 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 	uint32_t reason;
     uint32_t age;
     uint8_t masked_bytes ;
+    std::string comment ;
 };
 
 typedef t_RsTlvList<RsTlvBanListEntry,TLV_TYPE_BAN_LIST> RsTlvBanList;

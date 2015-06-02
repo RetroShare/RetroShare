@@ -52,6 +52,8 @@ public slots:
     void updateStatus();
 
 private slots:
+    void updateSelectedBlackListIP(int row, int, int, int);
+    void updateSelectedWhiteListIP(int row,int,int,int);
     void addIpRangeToBlackList();
     void addIpRangeToWhiteList();
     void moveToWhiteList0();
@@ -67,7 +69,6 @@ private slots:
     void ipFilterContextMenu(const QPoint &);
     void ipWhiteListContextMenu(const QPoint &point);
     void removeBannedIp();
-    void enableBannedIp();
     void saveAddresses();
     void toggleUPnP();
     void toggleIpDetermination(bool) ;

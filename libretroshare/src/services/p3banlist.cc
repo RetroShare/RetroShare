@@ -141,9 +141,10 @@ BanListPeer::BanListPeer()
 void BanListPeer::toRsTlvBanListEntry(RsTlvBanListEntry &e) const
 {
     e.addr.addr = addr;
-    e.level = level;
-    e.reason = reason;
     e.masked_bytes = masked_bytes;
+    e.reason = reason;
+    e.level = level;
+    e.comment = comment;
     e.age = time(NULL) - mTs;
 }
 
@@ -155,8 +156,8 @@ void BanListPeer::fromRsTlvBanListEntry(const RsTlvBanListEntry &e)
     level = e.level; 			// LOCAL, FRIEND, FoF.
     state = true; 				// true=>active, false=>just stored but inactive
     connect_attempts = 0; 			// recorded by the BanList service
+    comment = e.comment; 			// recorded by the BanList service
     mTs = time(NULL) - e.age;
-    comment.clear() ;			//
 }
 
 static sockaddr_storage makeBitsRange(const sockaddr_storage& addr,int masked_bytes)
@@ -409,6 +410,8 @@ void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32
         std::cerr << "(EE) Cannot add IP range. Bad list_type. Should be eiter RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST" << std::endl;
 
     IndicateConfigChanged() ;
+
+    condenseBanSources_locked() ;
 }
 
 int p3BanList::tick()
@@ -1026,6 +1029,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
             RsTlvBanListEntry bi;
             it->second.toRsTlvBanListEntry(bi) ;
 
+        bi.comment.clear() ;	// don't send comments.
             item->peerList.mList.push_back(bi);
         }
     }

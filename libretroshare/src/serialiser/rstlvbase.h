@@ -226,7 +226,8 @@ const uint16_t TLV_TYPE_DSDV_ENDPOINT = 0x1080;
 const uint16_t TLV_TYPE_DSDV_ENTRY    = 0x1081;
 const uint16_t TLV_TYPE_DSDV_ENTRY_SET= 0x1082;
 
-const uint16_t TLV_TYPE_BAN_ENTRY     = 0x1090;
+const uint16_t TLV_TYPE_BAN_ENTRY_dep = 0x1090;
+const uint16_t TLV_TYPE_BAN_ENTRY     = 0x1092;
 const uint16_t TLV_TYPE_BAN_LIST      = 0x1091;
 
 const uint16_t TLV_TYPE_MSG_ADDRESS   = 0x10A0;

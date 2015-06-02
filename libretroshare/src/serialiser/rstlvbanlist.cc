@@ -43,7 +43,8 @@ void RsTlvBanListEntry::TlvClear()
 	addr.TlvClear();
 	level = 0;
 	reason = 0;
-	age = 0;
+    age = 0;
+    comment.clear();
 }
 
 uint32_t RsTlvBanListEntry::TlvSize() const
@@ -55,6 +56,7 @@ uint32_t RsTlvBanListEntry::TlvSize() const
 	s += 4; // reason;
 	s += 4; // age;
     s += 1; // masked_bytes;
+    s += GetTlvStringSize(comment) ;
 
 	return s;
 
@@ -81,6 +83,7 @@ bool  RsTlvBanListEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) con
 	ok &= setRawUInt32(data, tlvend, offset, reason);
 	ok &= setRawUInt32(data, tlvend, offset, age);
     ok &= setRawUInt8(data, tlvend, offset, masked_bytes);
+    ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_COMMENT, comment);
 
     return ok;
 
@@ -118,6 +121,7 @@ bool  RsTlvBanListEntry::GetTlv(void *data, uint32_t size, uint32_t *offset)
     uint8_t tmp ;
     ok &= getRawUInt8(data, tlvend, offset, &(tmp));
     masked_bytes = tmp ;
+    ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_COMMENT, comment);
 
 	/***************************************************************************
 	 * NB: extra components could be added (for future expansion of the type).
