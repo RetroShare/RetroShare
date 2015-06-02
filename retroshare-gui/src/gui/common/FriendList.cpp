@@ -91,6 +91,9 @@
 #define ROLE_SORT        Qt::UserRole
 #define ROLE_ID          Qt::UserRole + 1
 #define ROLE_STANDARD    Qt::UserRole + 2
+// to store the best ssl id for pgp items
+// the best id decides which avatar image we want to display at the pgpg item
+#define ROLE_BEST_SSL    Qt::UserRole + 3
 
 #define TYPE_GPG   0
 #define TYPE_SSL   1
@@ -520,6 +523,7 @@ void FriendList::updateAvatar(const QString& id)
 
     QTreeWidgetItemIterator it(ui->peerTreeWidget);
     while (*it) {
+        // case ssl item
         if ((*it)->type() == TYPE_SSL && id == (*it)->data(COLUMN_DATA, ROLE_ID).toString()) {
             if ((*it)->parent() != NULL && (*it)->parent()->type() == TYPE_GPG) {
                 QPixmap avatar;
@@ -527,6 +531,13 @@ void FriendList::updateAvatar(const QString& id)
                 QIcon avatar_icon(avatar);
                 (*it)->setIcon(COLUMN_AVATAR, avatar_icon);
             }
+        }
+        // case pgp item
+        if ((*it)->type() == TYPE_GPG && id == (*it)->data(COLUMN_DATA, ROLE_BEST_SSL).toString()) {
+            QPixmap avatar;
+            AvatarDefs::getAvatarFromSslId(RsPeerId(id.toStdString()), avatar);
+            QIcon avatar_icon(avatar);
+            (*it)->setIcon(COLUMN_AVATAR, avatar_icon);
         }
         ++it;
     }
@@ -880,6 +891,9 @@ void  FriendList::insertPeers()
             /* not displayed, used to find back the item */
             sslItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id.toStdString()));
 
+            if (!isAvatarColumnHidden)
+                updateAvatar(QString::fromStdString(sslDetail.id.toStdString()));
+
             QString sText;
             QString customStateString;
             if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
@@ -1103,13 +1117,13 @@ void  FriendList::insertPeers()
             gpgIcon = QIcon(":/images/chat.png");
         }
 
-        if (!isAvatarColumnHidden && gpgItem->icon(COLUMN_AVATAR).isNull()) {
-            // only set the avatar image the first time, or when it changed
-            // otherwise getAvatarFromSslId sends request packages to peers.
+        if (!isAvatarColumnHidden){
             QPixmap avatar;
             AvatarDefs::getAvatarFromSslId(bestSslId, avatar);
             QIcon avatar_icon(avatar);
             gpgItem->setIcon(COLUMN_AVATAR, avatar_icon);
+            // tell the avatar callback which avatar must be filled in at this place
+            gpgItem->setData(COLUMN_DATA, ROLE_BEST_SSL, QString::fromStdString(bestSslId.toStdString()));
         }
 
         gpgItem->setText(COLUMN_NAME, gpgItemText);
