@@ -188,10 +188,10 @@ bool p3Notify::GetFeedItem(RsFeedItem &item)
 }
 
 
-bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4)
+bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, uint32_t result1)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3, id4));
+	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3, id4, result1));
 
 	return true;
 }

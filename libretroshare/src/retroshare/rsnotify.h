@@ -90,6 +90,7 @@ const uint32_t RS_FEED_ITEM_SEC_WRONG_SIGNATURE     = RS_FEED_TYPE_SECURITY  | 0
 const uint32_t RS_FEED_ITEM_SEC_BAD_CERTIFICATE     = RS_FEED_TYPE_SECURITY  | 0x0006;
 const uint32_t RS_FEED_ITEM_SEC_INTERNAL_ERROR      = RS_FEED_TYPE_SECURITY  | 0x0007;
 const uint32_t RS_FEED_ITEM_SEC_MISSING_CERTIFICATE = RS_FEED_TYPE_SECURITY  | 0x0008;
+const uint32_t RS_FEED_ITEM_SEC_IP_BLACKLISTED      = RS_FEED_TYPE_SECURITY  | 0x0010;
 
 const uint32_t RS_FEED_ITEM_CHANNEL_NEW      = RS_FEED_TYPE_CHANNEL  | 0x0001;
 //const uint32_t RS_FEED_ITEM_CHANNEL_UPDATE   = RS_FEED_TYPE_CHANNEL  | 0x0002;
@@ -147,13 +148,14 @@ const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
 class RsFeedItem
 {
 	public:
-		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2 = "", const std::string& id3 = "", const std::string& id4 = "")
-			:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4) {}
+		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, uint32_t result1)
+			:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4), mResult1(result1) {}
 
-		RsFeedItem() :mType(0) { return; }
+		RsFeedItem() :mType(0), mResult1(0) { return; }
 
 		uint32_t mType;
 		std::string mId1, mId2, mId3, mId4;
+		uint32_t mResult1;
 };
 
 // This class implements a generic notify client. To have your own components being notified by

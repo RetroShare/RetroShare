@@ -94,6 +94,7 @@ private:
 	void addFeedItemSecurityAuthDenied(const RsFeedItem &fi);
 	void addFeedItemSecurityUnknownIn(const RsFeedItem &fi);
 	void addFeedItemSecurityUnknownOut(const RsFeedItem &fi);
+	void addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTest);
 
 	void addFeedItemChannelNew(const RsFeedItem &fi);
 //	void addFeedItemChannelUpdate(const RsFeedItem &fi);

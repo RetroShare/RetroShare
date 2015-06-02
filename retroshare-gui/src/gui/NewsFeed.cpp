@@ -32,6 +32,7 @@
 #include <retroshare/rsposted.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
+#include <retroshare/rsbanlist.h>
 
 #include "feeds/GxsChannelGroupItem.h"
 #include "feeds/GxsChannelPostItem.h"
@@ -52,6 +53,7 @@
 #include "feeds/PeerItem.h"
 #include "feeds/ChatMsgItem.h"
 #include "feeds/SecurityItem.h"
+#include "feeds/SecurityIpItem.h"
 #include "feeds/NewsFeedUserNotify.h"
 
 #include "settings/rsharesettings.h"
@@ -246,6 +248,11 @@ void NewsFeed::updateDisplay()
 					addFeedItemSecurityUnknownOut(fi);
 				break;
 
+			case RS_FEED_ITEM_SEC_IP_BLACKLISTED:
+				if (flags & RS_FEED_TYPE_SECURITY)
+					addFeedItemSecurityIpBlacklisted(fi, false);
+				break;
+
 			case RS_FEED_ITEM_CHANNEL_NEW:
 				if (flags & RS_FEED_TYPE_CHANNEL)
 					addFeedItemChannelNew(fi);
@@ -410,6 +417,11 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			instance->addFeedItemSecurityAuthDenied(fi);
 			instance->addFeedItemSecurityUnknownIn(fi);
 			instance->addFeedItemSecurityUnknownOut(fi);
+
+			fi.mId1 = rsPeers->getOwnId().toStdString();
+			fi.mId2 = "0.0.0.0";
+			fi.mResult1 = RSBANLIST_CHECK_RESULT_BLACKLISTED;
+			instance->addFeedItemSecurityIpBlacklisted(fi, true);
 			break;
 
 		case RS_FEED_TYPE_CHANNEL:
@@ -872,10 +884,16 @@ void NewsFeed::addFeedItem(FeedItem *item)
 
 struct AddFeedItemIfUniqueData
 {
-	AddFeedItemIfUniqueData(int type, const RsPeerId &sslId) : mType(type), mSslId(sslId) {}
+	AddFeedItemIfUniqueData(FeedItem *feedItem, int type, const RsPeerId &sslId) : mType(type), mSslId(sslId)
+	{
+		mSecItem = dynamic_cast<SecurityItem*>(feedItem);
+		mSecurityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
+	}
 
 	int mType;
 	const RsPeerId &mSslId;
+	SecurityItem *mSecItem;
+	SecurityIpItem *mSecurityIpItem;
 };
 
 static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
@@ -885,13 +903,20 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 		return false;
 	}
 
-	SecurityItem *secitem = dynamic_cast<SecurityItem*>(feedItem);
-	if (!secitem) {
+	if (findData->mSecItem) {
+		SecurityItem *secitem = dynamic_cast<SecurityItem*>(feedItem);
+		if (secitem && secitem->isSame(findData->mSslId, findData->mType)) {
+			return true;
+		}
 		return false;
 	}
 
-	if (secitem->isSame(findData->mSslId, findData->mType)) {
-		return true;
+	if (findData->mSecurityIpItem) {
+		SecurityIpItem *securityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
+		if (securityIpItem && securityIpItem->isSame(findData->mSslId)) {
+			return true;
+		}
+		return false;
 	}
 
 	return false;
@@ -899,7 +924,7 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 
 void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, bool replace)
 {
-	AddFeedItemIfUniqueData data(itemType, sslId);
+	AddFeedItemIfUniqueData data(item, itemType, sslId);
 	FeedItem *feedItem = ui->feedWidget->findFeedItem(addFeedItemIfUniqueCallback, &data);
 
 	if (feedItem) {
@@ -1022,6 +1047,20 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";
+	std::cerr << std::endl;
+#endif
+}
+
+void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTest)
+{
+	/* make new widget */
+	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mResult1, isTest);
+
+	/* add to layout */
+	addFeedItemIfUnique(pi, 0, RsPeerId(fi.mId1), false);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemSecurityIpBlacklisted()";
 	std::cerr << std::endl;
 #endif
 }

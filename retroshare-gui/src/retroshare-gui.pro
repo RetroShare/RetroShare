@@ -365,6 +365,7 @@ HEADERS +=  rshare.h \
             lang/languagesupport.h \
             util/RsProtectedTimer.h \
             util/stringutil.h \
+            util/RsNetUtil.h \
             util/DateTime.h \
             util/win32.h \
             util/RetroStyleLabel.h \
@@ -477,6 +478,7 @@ HEADERS +=  rshare.h \
             gui/common/PeerDefs.h \
             gui/common/FilesDefs.h \
             gui/common/PopularityDefs.h \
+            gui/common/RsBanListDefs.h \
             gui/common/GroupTreeWidget.h \
             gui/common/RSTreeView.h \
             gui/common/AvatarWidget.h \
@@ -495,6 +497,7 @@ HEADERS +=  rshare.h \
             gui/common/UIStateHelper.h \
             gui/common/FloatingHelpBrowser.h \
             gui/common/SubscribeToolButton.h \
+            gui/common/RsBanListToolButton.h \
             gui/common/FlowLayout.h \
             gui/common/PictureFlow.h \
             gui/common/StyledLabel.h \
@@ -531,6 +534,7 @@ HEADERS +=  rshare.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/AttachFileItem.h \
             gui/feeds/SecurityItem.h \
+            gui/feeds/SecurityIpItem.h \
             gui/feeds/NewsFeedUserNotify.h \
             gui/connect/ConnectFriendWizard.h \
             gui/connect/ConnectProgressDialog.h \
@@ -636,6 +640,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/AttachFileItem.ui \
             gui/feeds/SecurityItem.ui \
+            gui/feeds/SecurityIpItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
             gui/groups/CreateGroup.ui \
             gui/common/GroupTreeWidget.ui \
@@ -716,6 +721,7 @@ SOURCES +=  main.cpp \
             lang/languagesupport.cpp \
             util/RsProtectedTimer.cpp \
             util/stringutil.cpp \
+            util/RsNetUtil.cpp \
             util/DateTime.cpp \
             util/win32.cpp \
             util/RetroStyleLabel.cpp \
@@ -784,6 +790,7 @@ SOURCES +=  main.cpp \
             gui/common/PeerDefs.cpp \
             gui/common/FilesDefs.cpp \
             gui/common/PopularityDefs.cpp \
+            gui/common/RsBanListDefs.cpp \
             gui/common/GroupTreeWidget.cpp \
             gui/common/RSTreeView.cpp \
             gui/common/AvatarWidget.cpp \
@@ -802,6 +809,7 @@ SOURCES +=  main.cpp \
             gui/common/UIStateHelper.cpp \
             gui/common/FloatingHelpBrowser.cpp \
             gui/common/SubscribeToolButton.cpp \
+            gui/common/RsBanListToolButton.cpp \
             gui/common/FlowLayout.cpp \
             gui/common/PictureFlow.cpp \
             gui/common/StyledLabel.cpp \
@@ -870,6 +878,7 @@ SOURCES +=  main.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/AttachFileItem.cpp \
             gui/feeds/SecurityItem.cpp \
+            gui/feeds/SecurityIpItem.cpp \
             gui/feeds/NewsFeedUserNotify.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/connect/ConnectProgressDialog.cpp \

@@ -42,6 +42,8 @@
 #include <retroshare/rsdht.h>
 #include <retroshare/rsbanlist.h>
 
+#include "rsserver/p3face.h"
+
 const int pqisslzone = 37714;
 
 /*********
@@ -1316,6 +1318,7 @@ int 	pqissl::Authorise_SSL_Connection()
     if(!rsBanList->isAddressAccepted(remote_addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,&check_result))
     {
         std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Reason: " << check_result << ". Attack??" << std::endl;
+        RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_BLACKLISTED, PeerId().toStdString(), sockaddr_storage_iptostring(remote_addr), "", "", check_result);
     reset_locked();
     return 0 ;
     }
@@ -1359,6 +1362,7 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
     {
         std::cerr << "(SS) refusing incoming SSL connection from blacklisted foreign address " << sockaddr_storage_iptostring(foreign_addr)
               << ". Reason: " << check_result << "." << std::endl;
+        RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_BLACKLISTED, PeerId().toStdString(), sockaddr_storage_iptostring(foreign_addr), "", "", check_result);
             reset_locked();
         return -1;
     }

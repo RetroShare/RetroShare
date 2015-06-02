@@ -90,7 +90,7 @@ class p3Notify: public RsNotify
 		bool AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg);
 		bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
 		bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
-		bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2 = "", const std::string& id3 = "", const std::string& id4 = "");
+		bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2 = "", const std::string& id3 = "", const std::string& id4 = "", uint32_t result1 = 0);
 		bool ClearFeedItems(uint32_t type);
 
 		// Notifications of clients. Can be called from anywhere inside libretroshare.

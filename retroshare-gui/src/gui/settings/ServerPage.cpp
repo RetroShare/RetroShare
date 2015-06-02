@@ -23,6 +23,7 @@
 
 #include "rshare.h"
 #include "rsharesettings.h"
+#include "util/RsNetUtil.h"
 
 #include <iostream>
 
@@ -116,56 +117,13 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	std::cerr << std::endl;
 #endif
 }
-static bool parseAddrFromQString(const QString& s,struct sockaddr_storage& addr,int& bytes )
-{
-    QStringList lst = s.split(".") ;
-    bytes = 0 ;
-
-    memset(&addr,0,sizeof(sockaddr_storage)) ;
-
-    addr.ss_family = AF_INET ;
-
-    QStringList::const_iterator it = lst.begin();
-    bool ok ;
-
-    uint32_t s1 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
-    uint32_t s2 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
-    uint32_t s3 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
-
-    QStringList lst2 = (*it).split("/") ;
-
-    it = lst2.begin();
-
-    uint32_t s4 ;
-    s4 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
-
-    if(it != lst2.end())
-    {
-        uint32_t x = (*it).toInt(&ok) ; if(!ok) return false ;
-        if(x%8 != 0)
-            return false ;
-
-        if(x != 16 &&  x != 24)
-            return false ;
-
-        bytes = 4 - x/8 ;
-    }
-
-    const sockaddr_in *in = (const sockaddr_in*)&addr ;
-    ((uint8_t*)&in->sin_addr.s_addr)[0] = s1 ;
-    ((uint8_t*)&in->sin_addr.s_addr)[1] = s2 ;
-    ((uint8_t*)&in->sin_addr.s_addr)[2] = s3 ;
-    ((uint8_t*)&in->sin_addr.s_addr)[3] = s4 ;
-
-    return true;
-}
 void ServerPage::checkIpRange(const QString& ipstr)
 {
     QColor color;
     struct sockaddr_storage addr;
     int bytes ;
 
-    if(!parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
+    if(!RsNetUtil::parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
     {
         std::cout << "setting palette 1" << std::endl ;
         color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
@@ -189,7 +147,7 @@ void ServerPage::addIpRangeToBlackList()
     sockaddr_storage addr ;
     int bytes = 0 ;
 
-    if(!parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
+    if(!RsNetUtil::parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
         return ;
 
     bytes = 4 - ui.ipInputRange_SB->value()/8;
@@ -203,7 +161,7 @@ void ServerPage::addIpRangeToWhiteList()
     sockaddr_storage addr ;
     int bytes = 0 ;
 
-    if(!parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
+    if(!RsNetUtil::parseAddrFromQString(ipstr,addr,bytes) || bytes != 0)
         return ;
 
     bytes = 4 - ui.ipInputRange_SB->value()/8;
@@ -359,41 +317,6 @@ void ServerPage::load()
     updateTorOutProxyIndicator();
 }
 
-static std::string print_addr(const struct sockaddr_storage& addr)
-{
-    const sockaddr_in *in = (const sockaddr_in*)&addr ;
-
-    char str[100];
-    uint8_t *bytes = (uint8_t *) &(in->sin_addr.s_addr);
-    sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
-
-    return std::string(str) ;
-}
-
-std::string print_addr_range(const struct sockaddr_storage& addr,uint8_t masked_bytes)
-{
-    const sockaddr_in *in = (const sockaddr_in*)&addr ;
-
-    char str[100];
-    uint8_t *bytes = (uint8_t *) &(in->sin_addr.s_addr);
-    str[0] = 0 ;
-
-    switch(masked_bytes)
-    {
-    case 0: sprintf(str, "%u.%u.%u.%u", (int) bytes[0], (int) bytes[1], (int) bytes[2], (int) bytes[3]);
-        break ;
-    case 1: sprintf(str, "%u.%u.%u.255/24", (int) bytes[0], (int) bytes[1], (int) bytes[2]);
-        break ;
-    case 2: sprintf(str, "%u.%u.255.255/16", (int) bytes[0], (int) bytes[1]);
-        break ;
-    default:
-        std::cerr << "ERROR: Wrong format : masked_bytes = " << masked_bytes << std::endl;
-    return std::string("Invalid format") ;
-    }
-
-    return std::string(str) ;
-}
-
 void ServerPage::toggleAutoIncludeFriends(bool b)
 {
     rsBanList->enableIPsFromFriends(b) ;
@@ -471,7 +394,7 @@ void ServerPage::updateSelectedBlackListIP(int row,int,int,int)
     sockaddr_storage addr ;
     int masked_bytes ;
 
-    if(!parseAddrFromQString(addr_string,addr,masked_bytes))
+    if(!RsNetUtil::parseAddrFromQString(addr_string,addr,masked_bytes))
     {
         std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
         return ;
@@ -488,7 +411,7 @@ void ServerPage::updateSelectedWhiteListIP(int row, int,int,int)
     sockaddr_storage addr ;
     int masked_bytes ;
 
-    if(!parseAddrFromQString(addr_string,addr,masked_bytes))
+    if(!RsNetUtil::parseAddrFromQString(addr_string,addr,masked_bytes))
     {
         std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
         return ;
@@ -501,7 +424,7 @@ void ServerPage::updateSelectedWhiteListIP(int row, int,int,int)
 
 void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer& blp)
 {
-    table->setItem(row,COLUMN_RANGE,new QTableWidgetItem(QString::fromStdString(print_addr_range(blp.addr,blp.masked_bytes)))) ;
+    table->setItem(row,COLUMN_RANGE,new QTableWidgetItem(RsNetUtil::printAddrRange(blp.addr,blp.masked_bytes))) ;
 
     if( blp.state )
         table->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString("active"))) ;
@@ -564,15 +487,15 @@ void ServerPage::ipFilterContextMenu(const QPoint& point)
     sockaddr_storage addr ;
     int masked_bytes ;
 
-    if(!parseAddrFromQString(addr_string,addr,masked_bytes))
+    if(!RsNetUtil::parseAddrFromQString(addr_string,addr,masked_bytes))
     {
         std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
         return ;
     }
 
-    QString range0 = QString::fromStdString(print_addr_range(addr,0)) ;
-    QString range1 = QString::fromStdString(print_addr_range(addr,1)) ;
-    QString range2 = QString::fromStdString(print_addr_range(addr,2)) ;
+    QString range0 = RsNetUtil::printAddrRange(addr,0) ;
+    QString range1 = RsNetUtil::printAddrRange(addr,1) ;
+    QString range2 = RsNetUtil::printAddrRange(addr,2) ;
 
     if(reason == RSBANLIST_REASON_USER)
         contextMenu.addAction(tr("Remove"),this,SLOT(removeBannedIp()));
@@ -594,7 +517,7 @@ bool ServerPage::removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,
 
     QString addr_string = ui.filteredIpsTable->item(row,COLUMN_RANGE)->text() ;
 
-    if(!parseAddrFromQString(addr_string,collected_addr,masked_bytes))
+    if(!RsNetUtil::parseAddrFromQString(addr_string,collected_addr,masked_bytes))
     {
         std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
         return false;
@@ -614,7 +537,7 @@ bool ServerPage::removeCurrentRowFromWhiteList(sockaddr_storage& collected_addr,
 
     QString addr_string = ui.whiteListIpsTable->item(row,COLUMN_RANGE)->text() ;
 
-    if(!parseAddrFromQString(addr_string,collected_addr,masked_bytes))
+    if(!RsNetUtil::parseAddrFromQString(addr_string,collected_addr,masked_bytes))
     {
         std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
         return false;
@@ -672,15 +595,15 @@ void ServerPage::ipWhiteListContextMenu(const QPoint& point)
     sockaddr_storage addr ;
     int masked_bytes ;
 
-    if(!parseAddrFromQString(addr_string,addr,masked_bytes))
+    if(!RsNetUtil::parseAddrFromQString(addr_string,addr,masked_bytes))
     {
         std::cerr <<"Cannot parse IP \"" << addr_string.toStdString() << "\"" << std::endl;
         return ;
     }
 
-    QString range0 = QString::fromStdString(print_addr_range(addr,0)) ;
-    QString range1 = QString::fromStdString(print_addr_range(addr,1)) ;
-    QString range2 = QString::fromStdString(print_addr_range(addr,2)) ;
+    QString range0 = RsNetUtil::printAddrRange(addr,0) ;
+    QString range1 = RsNetUtil::printAddrRange(addr,1) ;
+    QString range2 = RsNetUtil::printAddrRange(addr,2) ;
 
 //    contextMenu.addAction(QObject::tr("Whitelist only IP "          )+range0,this,SLOT(enableBannedIp()))->setEnabled(false) ;
 //#warning UNIMPLEMENTED CODE
