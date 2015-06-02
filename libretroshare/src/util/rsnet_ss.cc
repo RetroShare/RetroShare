@@ -529,7 +529,7 @@ bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isValidNet(addr);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_isValidNet() INVALID Family - error";
+            std::cerr << "sockaddr_storage_isValidNet() INVALID Family - error: " << sockaddr_storage_iptostring(addr);
 			std::cerr << std::endl;
 			break;
 	}
@@ -552,8 +552,8 @@ bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isLoopbackNet(addr);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_isLoopbackNet() INVALID Family - error";
-			std::cerr << std::endl;
+            std::cerr << "sockaddr_storage_isLoopbackNet() INVALID Family - error: " << sockaddr_storage_iptostring(addr);
+            std::cerr << std::endl;
 			break;
 	}
 	return false;
@@ -576,8 +576,8 @@ bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isPrivateNet(addr);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_isPrivateNet() INVALID Family - error";
-			std::cerr << std::endl;
+            std::cerr << "sockaddr_storage_isPrivateNet() INVALID Family - error: " << sockaddr_storage_iptostring(addr);
+            std::cerr << std::endl;
 			break;
 	}
 	return false;

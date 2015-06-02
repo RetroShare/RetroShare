@@ -723,9 +723,10 @@ void MessageWidget::anchorClicked(const QUrl &url)
 		return;
 	}
 
-	if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
-		link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
-	}
+    if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
+        std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
+    //	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
+    }
 
 	QList<RetroShareLink> links;
 	links.append(link);

@@ -40,6 +40,7 @@
 #include "gui/msgs/MessageComposer.h"
 
 #include <retroshare/rsiface.h>
+#include <retroshare/rsbanlist.h>
 
 #include "ConnectProgressDialog.h"
 
@@ -103,7 +104,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	ui->foffRadioButton->hide();
 	ui->rsidRadioButton->hide();
 
-	connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->optionsFrame,SLOT(setEnabled(bool))) ;
+    connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
 	connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
 }
 
@@ -140,9 +141,12 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 #ifdef FRIEND_WIZARD_DEBUG
 		std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
-		mCertificate = certificate.toUtf8().constData();
-		setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
-	} else {
+        mCertificate = certificate.toUtf8().constData();
+
+        // Cyril: I disabled this because it seems to be not used anymore.
+        //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
+        setStartId(Page_Conclusion);
+    } else {
 		// error message
 		setField("errorMessage", tr("Certificate Load Failed") + ": \n\n" + getErrorString(cert_load_error_code)) ;
 		setStartId(Page_ErrorMessage);
@@ -160,7 +164,8 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
 	/* Set ssl id when available */
 	peerDetails.id = sslId;
 
-	setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
+    //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
+    setStartId(Page_Conclusion);
 }
 
 ConnectFriendWizard::~ConnectFriendWizard()
@@ -259,6 +264,29 @@ void ConnectFriendWizard::initializePage(int id)
             ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
             ui->_allow_push_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
             ui->_require_WL_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
+
+        sockaddr_storage addr ;
+
+    std::cerr << "Cert IP = " << peerDetails.extAddr << std::endl;
+        if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
+        {
+            QString ipstring0 = QString::fromStdString(sockaddr_storage_iptostring(addr));
+
+            ui->_addIPToWhiteList_CB_2->setChecked(true) ;
+            ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0) ;
+            ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/24") ;
+            ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/16") ;
+            ui->_addIPToWhiteList_ComboBox_2->setEnabled(true) ;
+            ui->_addIPToWhiteList_CB_2->setEnabled(true) ;
+        }
+        else if(ui->_require_WL_CB_2->isChecked())
+        {
+        ui->_addIPToWhiteList_ComboBox_2->addItem(tr("No IP in this certificate!")) ;
+            ui->_addIPToWhiteList_ComboBox_2->setToolTip(tr("<p>This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.</p>")) ;
+            ui->_addIPToWhiteList_ComboBox_2->setEnabled(false) ;
+            ui->_addIPToWhiteList_CB_2->setChecked(false) ;
+            ui->_addIPToWhiteList_CB_2->setEnabled(false) ;
+        }
 
 			RsPeerDetails tmp_det ;
 			bool already_in_keyring = rsPeers->getGPGDetails(peerDetails.gpg_id, tmp_det) ;
@@ -674,6 +702,16 @@ void ConnectFriendWizard::accept()
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
         rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
         rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
+
+    if(ui->_addIPToWhiteList_CB_2->isChecked())
+    {
+        sockaddr_storage addr ;
+        if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
+        {
+            std::cerr << "ConclusionPage::adding IP " << sockaddr_storage_tostring(addr) << " to whitelist." << std::endl;
+            rsBanList->addIpRange(addr,ui->_addIPToWhiteList_ComboBox_2->currentIndex(),RSBANLIST_TYPE_WHITELIST,std::string(tr("Added with certificate from %1").arg(ui->nameEdit->text()).toUtf8().constData()));
+        }
+    }
 
 		if(sign)
 		{
