@@ -49,6 +49,11 @@ SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel
 	qproperty-fontSizeFactor: 175;
 }
 
+SecurityIpItem QLabel#titleLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
 PostedItem QLabel#titleLabel
 {
 	qproperty-fontSizeFactor: 120; 

@@ -475,6 +475,12 @@ SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel {
 	color: black;
 }
 
+SecurityIpItem > QFrame#frame {
+	border: 2px solid #FF9412; 
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFE8A4, stop: 1 #FFB252);
+	border-radius: 10px;
+}
+
 SubFileItem > QFrame#frame {
 	border: 2px solid #238;
 	background: white;
