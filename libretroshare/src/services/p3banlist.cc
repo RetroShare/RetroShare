@@ -359,6 +359,8 @@ void p3BanList::getBannedIps(std::list<BanListPeer> &lst)
 
 void p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type)
 {
+    RS_STACK_MUTEX(mBanMtx) ;
+
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
 
     if(list_type == RSBANLIST_TYPE_BLACKLIST)
