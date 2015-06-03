@@ -71,6 +71,7 @@ class RsAccountsDetail
 		bool 	loadAccounts();
 		bool	lockPreferredAccount();
 		void	unlockPreferredAccount();
+		bool	checkAccountDirectory();
 
 		// Paths.
         static std::string 	PathDataDirectory();

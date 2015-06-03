@@ -488,7 +488,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	// Hash the main executable.
 	
 	uint64_t tmp_size ;
-	std::string tmp_name ;
 
 	if(!RsDirUtil::getFileHash(argv[0],rsInitConfig->main_executable_hash,tmp_size,NULL))
 		std::cerr << "Cannot hash executable! Plugins will not be loaded correctly." << std::endl;
@@ -982,6 +981,15 @@ int RsServer::StartupRetroShare()
 	if (rsInitConfig->udpListenerOnly)
 	{
 		flags |= PQIPERSON_NO_LISTENER;
+	}
+
+	/* check account directory */
+	if (!rsAccounts->checkAccountDirectory())
+	{
+		std::cerr << "RsServer::StartupRetroShare() - Fatal Error....." << std::endl;
+		std::cerr << "checkAccount failed!" << std::endl;
+		std::cerr << std::endl;
+		return 0;
 	}
 
 	/**************************************************************************/

@@ -101,7 +101,16 @@ void RsAccountsDetail::unlockPreferredAccount()
 {
 	mAccountsLocked = false;
 }
-	
+
+bool RsAccountsDetail::checkAccountDirectory()
+{
+	if (!checkPreferredId())
+	{
+		return false;
+	}
+
+	return setupAccount(PathAccountDirectory());
+}
 
 bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 {
