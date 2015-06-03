@@ -11992,6 +11992,14 @@ Reducing image to %1x%2 pixels?</source>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>but reported:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wrong external ip address reported</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>

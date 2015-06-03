@@ -33,15 +33,28 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsbanlist.h>
+#include <retroshare/rsnotify.h>
 
 /*****
  * #define DEBUG_ITEM 1
  ****/
 
 /** Constructor */
-SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string &ipAddr, uint32_t result, bool isTest) :
-    FeedItem(NULL), mParent(parent), mSslId(sslId), mIPAddr(ipAddr), mResult(result), mIsTest(isTest),
+SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string &ipAddr, uint32_t result, uint32_t type, bool isTest) :
+    FeedItem(NULL), mParent(parent), mType(type), mSslId(sslId), mIpAddr(ipAddr), mResult(result), mIsTest(isTest),
     ui(new(Ui::SecurityIpItem))
+{
+	setup();
+}
+
+SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type, bool isTest) :
+    FeedItem(NULL), mParent(parent), mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported), mResult(0), mIsTest(isTest),
+    ui(new(Ui::SecurityIpItem))
+{
+	setup();
+}
+
+void SecurityIpItem::setup()
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
@@ -64,9 +77,9 @@ SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const 
 	updateItem();
 }
 
-bool SecurityIpItem::isSame(const RsPeerId &sslId)
+bool SecurityIpItem::isSame(const RsPeerId &sslId, uint32_t type)
 {
-	if ((mSslId == sslId)) {
+	if (mSslId == sslId && mType == type) {
 		return true;
 	}
 
@@ -84,6 +97,20 @@ void SecurityIpItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
+	/* Specific type */
+	switch (mType) {
+	case RS_FEED_ITEM_SEC_IP_BLACKLISTED:
+		ui->rsBanListButton->setDisabled(mIsTest);
+		ui->ipAddrReported->hide();
+		ui->ipAddrReportedLabel->hide();
+		break;
+	case RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED:
+		ui->rsBanListButton->hide();
+		break;
+	default:
+		std::cerr << "SecurityIpItem::updateItem() Wrong type" << std::endl;
+	}
+
 	QDateTime currentTime = QDateTime::currentDateTime();
 	ui->timeLabel->setText(DateTime::formatLongDateTime(currentTime.toTime_t()));
 }
@@ -100,24 +127,33 @@ void SecurityIpItem::updateItem()
 #endif
 
 	if(!RsAutoUpdatePage::eventsLocked()) {
-		ui->titleLabel->setText(RsBanListDefs::resultString(mResult));
-		ui->ipAddr->setText(QString::fromStdString(mIPAddr));
+		switch (mType) {
+		case RS_FEED_ITEM_SEC_IP_BLACKLISTED:
+			ui->titleLabel->setText(RsBanListDefs::resultString(mResult));
+			ui->ipAddr->setText(QString::fromStdString(mIpAddr));
 
-		if (mIsTest) {
-			ui->rsBanListButton->setEnabled(false);
-		} else {
-			switch (mResult) {
-			case RSBANLIST_CHECK_RESULT_NOCHECK:
-			case RSBANLIST_CHECK_RESULT_NOT_WHITELISTED:
-			case RSBANLIST_CHECK_RESULT_ACCEPTED:
-				ui->rsBanListButton->hide();
-				break;
-			case RSBANLIST_CHECK_RESULT_BLACKLISTED:
-				ui->rsBanListButton->setVisible(ui->rsBanListButton->setIpAddress(QString::fromStdString(mIPAddr)));
-				break;
-			default:
-				ui->rsBanListButton->hide();
+			if (!mIsTest) {
+				switch (mResult) {
+				case RSBANLIST_CHECK_RESULT_NOCHECK:
+				case RSBANLIST_CHECK_RESULT_NOT_WHITELISTED:
+				case RSBANLIST_CHECK_RESULT_ACCEPTED:
+					ui->rsBanListButton->hide();
+					break;
+				case RSBANLIST_CHECK_RESULT_BLACKLISTED:
+					ui->rsBanListButton->setVisible(ui->rsBanListButton->setIpAddress(QString::fromStdString(mIpAddr)));
+					break;
+				default:
+					ui->rsBanListButton->hide();
+				}
 			}
+			break;
+		case RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED:
+			ui->titleLabel->setText(tr("Wrong external ip address reported"));
+			ui->ipAddr->setText(QString::fromStdString(mIpAddr));
+			ui->ipAddrReported->setText(QString::fromStdString(mIpAddrReported));
+			break;
+		default:
+			std::cerr << "SecurityIpItem::updateItem() Wrong type" << std::endl;
 		}
 
 		RsPeerDetails details;

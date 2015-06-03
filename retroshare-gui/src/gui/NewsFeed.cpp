@@ -253,6 +253,11 @@ void NewsFeed::updateDisplay()
 					addFeedItemSecurityIpBlacklisted(fi, false);
 				break;
 
+			case RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED:
+				if (flags & RS_FEED_TYPE_SECURITY)
+					addFeedItemSecurityWrongExternalIpReported(fi, false);
+				break;
+
 			case RS_FEED_ITEM_CHANNEL_NEW:
 				if (flags & RS_FEED_TYPE_CHANNEL)
 					addFeedItemChannelNew(fi);
@@ -422,6 +427,12 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			fi.mId2 = "0.0.0.0";
 			fi.mResult1 = RSBANLIST_CHECK_RESULT_BLACKLISTED;
 			instance->addFeedItemSecurityIpBlacklisted(fi, true);
+
+			//fi.mId1 = rsPeers->getOwnId().toStdString();
+			fi.mId2 = "0.0.0.1";
+			fi.mId3 = "0.0.0.2";
+			fi.mResult1 = 0;
+			instance->addFeedItemSecurityWrongExternalIpReported(fi, true);
 			break;
 
 		case RS_FEED_TYPE_CHANNEL:
@@ -913,7 +924,7 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 
 	if (findData->mSecurityIpItem) {
 		SecurityIpItem *securityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
-		if (securityIpItem && securityIpItem->isSame(findData->mSslId)) {
+		if (securityIpItem && securityIpItem->isSame(findData->mSslId, findData->mType)) {
 			return true;
 		}
 		return false;
@@ -1054,13 +1065,27 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTest)
 {
 	/* make new widget */
-	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mResult1, isTest);
+	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mResult1, RS_FEED_ITEM_SEC_IP_BLACKLISTED, isTest);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, 0, RsPeerId(fi.mId1), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_BLACKLISTED, RsPeerId(fi.mId1), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityIpBlacklisted()";
+	std::cerr << std::endl;
+#endif
+}
+
+void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, bool isTest)
+{
+	/* make new widget */
+	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mId3, RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED, isTest);
+
+	/* add to layout */
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED, RsPeerId(fi.mId1), false);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemSecurityWrongExternalIpReported()";
 	std::cerr << std::endl;
 #endif
 }

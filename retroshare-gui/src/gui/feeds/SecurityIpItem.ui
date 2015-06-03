@@ -287,23 +287,7 @@
            <property name="verticalSpacing">
             <number>0</number>
            </property>
-           <item row="1" column="1">
-            <widget class="QLabel" name="ipAddr">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string notr="true">IP Address</string>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="StyledLabel" name="ipAddrLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
@@ -322,14 +306,57 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0" colspan="2">
+           <item row="2" column="1">
+            <widget class="QLabel" name="ipAddr">
+             <property name="text">
+              <string notr="true">IP Address</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="ipAddrReportedLabel">
+             <property name="text">
+              <string>but reported:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="ipAddrReported">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string notr="true">IP address reported</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="StyledLabel" name="peerLabel">
+             <property name="text">
+              <string notr="true">Peer:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="4">
             <widget class="StyledLabel" name="titleLabel">
              <property name="text">
               <string notr="true">Title</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="3" column="1" colspan="3">
             <widget class="QLabel" name="peer">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -342,16 +369,6 @@
              </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="StyledLabel" name="peerLabel">
-             <property name="text">
-              <string notr="true">Peer:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>

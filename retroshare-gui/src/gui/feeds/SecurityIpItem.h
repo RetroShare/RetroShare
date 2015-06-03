@@ -39,14 +39,18 @@ class SecurityIpItem : public FeedItem
 
 public:
 	/** Default Constructor */
-	SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, uint32_t result, bool isTest);
+	SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, uint32_t result, uint32_t type, bool isTest);
+	SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type, bool isTest);
 
 	void updateItemStatic();
 
-	bool isSame(const RsPeerId &sslId);
+	bool isSame(const RsPeerId &sslId, uint32_t type);
 
 	/* FeedItem */
 	virtual void expand(bool open);
+
+private:
+	void setup();
 
 private slots:
 	/* default stuff */
@@ -59,8 +63,10 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
+	uint32_t mType;
 	RsPeerId mSslId;
-	std::string mIPAddr;
+	std::string mIpAddr;
+	std::string mIpAddrReported;
 	uint32_t mResult;
 	bool mIsTest;
 

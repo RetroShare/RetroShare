@@ -1239,6 +1239,7 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
     {
         std::cerr << "(WW) peer reports an address that is not our current external address. This is weird." << std::endl;
 
+        RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED, from.toStdString(), sockaddr_storage_iptostring(own_addr), sockaddr_storage_iptostring(addr));
         //mLinkMgr->disconnectFriend(from) ;
     }
     return true ;
