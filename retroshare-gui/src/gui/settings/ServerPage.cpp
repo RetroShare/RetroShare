@@ -389,7 +389,11 @@ void ServerPage::loadFilteredIps()
 }
 void ServerPage::updateSelectedBlackListIP(int row,int,int,int)
 {
-    QString addr_string = ui.filteredIpsTable->item(row,COLUMN_RANGE)->text() ;
+    QTableWidgetItem *item = ui.filteredIpsTable->item(row,COLUMN_RANGE);
+    if (!item) {
+        return;
+    }
+    QString addr_string = item->text() ;
 
     sockaddr_storage addr ;
     int masked_bytes ;
@@ -406,7 +410,12 @@ void ServerPage::updateSelectedBlackListIP(int row,int,int,int)
 }
 void ServerPage::updateSelectedWhiteListIP(int row, int,int,int)
 {
-    QString addr_string = ui.whiteListIpsTable->item(row,COLUMN_RANGE)->text() ;
+    QTableWidgetItem *item = ui.whiteListIpsTable->item(row,COLUMN_RANGE);
+    if (!item) {
+        return;
+    }
+
+    QString addr_string = item->text() ;
 
     sockaddr_storage addr ;
     int masked_bytes ;
