@@ -435,7 +435,7 @@
        <item>
         <widget class="QCheckBox" name="chatLobbies_CheckNickName">
          <property name="text">
-          <string>Count occurences of my current nickname</string>
+          <string>Count occurences of my current identity</string>
          </property>
         </widget>
        </item>
