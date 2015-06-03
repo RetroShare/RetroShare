@@ -10,7 +10,6 @@ Legend:
 
 To be done
 
-9999 [ ]    make vote button in channels work, or hide it (problem is: there is no selector for the voter id)
 0000 [ ]    merge the various help systems. there's 3 of them: (1) help buttons on most tabs that pop a flat panel with some 
             info; (2) help wizard accessible from the "!" button in friends details->Trust; (3) 'getting started tab'
 

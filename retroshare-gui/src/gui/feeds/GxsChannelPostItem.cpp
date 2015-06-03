@@ -125,6 +125,9 @@ void GxsChannelPostItem::setup()
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 
+    // hide voting buttons, backend is not implemented yet
+    ui->voteUpButton->hide();
+    ui->voteDownButton->hide();
 	//connect(ui-> voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	//connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
 
