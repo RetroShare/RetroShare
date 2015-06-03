@@ -1130,7 +1130,14 @@ bool    p3PeerMgrIMPL::setLocalAddress(const RsPeerId &id, const struct sockaddr
 
 bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr)
 {
-	bool changed = false;
+    bool changed = false;
+    uint32_t check_res = 0 ;
+
+    if(!rsBanList->isAddressAccepted(addr,RSBANLIST_CHECKING_FLAGS_BLACKLIST,&check_res))
+    {
+        std::cerr << "(SS) trying to set external contact address for peer " << id << " to a banned address " << sockaddr_storage_iptostring(addr )<< std::endl;
+        return false ;
+    }
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -1164,7 +1171,7 @@ bool    p3PeerMgrIMPL::setExtAddress(const RsPeerId &id, const struct sockaddr_s
 
 	/* "it" points to peer */
 	if (!sockaddr_storage_same(it->second.serveraddr, addr))
-	{
+    {
 		it->second.serveraddr = addr;
 		changed = true;
 	}
@@ -1244,19 +1251,54 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
     }
     return true ;
 }
+static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
+{
+    bool changed = false ;
+    time_t now = time(NULL) ;
+
+    for(std::list<pqiIpAddress>::iterator it2(lst.begin());it2 != lst.end();)
+    {
+#ifdef PEER_DEBUG
+    std::cerr << "Checking IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " for peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
+#endif
+      if(!link_mgr->checkPotentialAddr( (*it2).mAddr,now - (*it2).mSeenTime))
+      {
+#ifdef PEER_DEBUG
+        std::cerr << "  (SS) Removing Banned/old IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " from peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
+#endif
+
+            std::list<pqiIpAddress>::iterator ittmp = it2 ;
+            ++ittmp ;
+            lst.erase(it2) ;
+            it2 = ittmp ;
+
+            changed = true ;
+        }
+        else
+            ++it2 ;
+    }
+
+    return changed ;
+}
 
 bool    p3PeerMgrIMPL::updateAddressList(const RsPeerId& id, const pqiIpAddrSet &addrs)
 {
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setAddressList() called for id : " << id << std::endl;
 #endif
+    // first clean the list from potentially banned IPs.
+
+    pqiIpAddrSet clean_set = addrs ;
+
+    cleanIpList(clean_set.mExt.mAddrs,id,mLinkMgr) ;
+    cleanIpList(clean_set.mLocal.mAddrs,id,mLinkMgr) ;
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check if it is our own ip */
 	if (id == getOwnId()) 
 	{
-		mOwnState.ipAddrs.updateAddrs(addrs);
+        mOwnState.ipAddrs.updateAddrs(clean_set);
 		return true;
 	}
 
@@ -1274,7 +1316,7 @@ bool    p3PeerMgrIMPL::updateAddressList(const RsPeerId& id, const pqiIpAddrSet 
 	}
 
 	/* "it" points to peer */
-	it->second.ipAddrs.updateAddrs(addrs);
+    it->second.ipAddrs.updateAddrs(clean_set);
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setLocalAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
@@ -2268,45 +2310,24 @@ bool	p3PeerMgrIMPL::getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId
 
 // goes through the list of known friend IPs and remove the ones that are banned by p3LinkMgr.
 
-static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
-{
-    bool changed = false ;
-    time_t now = time(NULL) ;
-
-    for(std::list<pqiIpAddress>::iterator it2(lst.begin());it2 != lst.end();)
-    {
-#ifdef PEER_DEBUG
-      std::cerr << "Checking IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " for peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
-#endif
-        if(!link_mgr->checkPotentialAddr( (*it2).mAddr,now - (*it2).mSeenTime))
-        {
-#ifdef PEER_DEBUG
-            std::cerr << "  ==> Removing Banned/old IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " from peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
-#endif
-
-            std::list<pqiIpAddress>::iterator ittmp = it2 ;
-            ++ittmp ;
-            lst.erase(it2) ;
-            it2 = ittmp ;
-
-            changed = true ;
-        }
-        else
-            ++it2 ;
-    }
-
-    return changed ;
-}
 
 bool p3PeerMgrIMPL::removeBannedIps()
 {
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+    std::cerr << "Cleaning known IPs for all peers." << std::endl;
 
     bool changed = false ;
     for( std::map<RsPeerId, peerState>::iterator it = mFriendList.begin(); it != mFriendList.end(); ++it)
     {
         if(cleanIpList(it->second.ipAddrs.mExt.mAddrs,it->first,mLinkMgr)) changed = true ;
         if(cleanIpList(it->second.ipAddrs.mLocal.mAddrs,it->first,mLinkMgr)) changed = true ;
+
+        if(!rsBanList->isAddressAccepted(it->second.serveraddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+        {
+            sockaddr_storage_clear(it->second.serveraddr) ;
+            std::cerr << "(SS) Peer " << it->first << " has a banned server address. Wiping it out." << std::endl;
+        }
     }
 
     if(cleanIpList(mOwnState.ipAddrs.mExt.mAddrs,mOwnState.id,mLinkMgr) ) changed = true ;

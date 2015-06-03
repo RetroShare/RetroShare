@@ -1111,10 +1111,10 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 
 int p3BanList::printBanSet_locked(std::ostream &out)
 {
+    time_t now = time(NULL);
+#ifdef DEBUG_BANLIST
     out << "p3BanList::printBanSet_locked()";
     out << std::endl;
-
-    time_t now = time(NULL);
 
     std::map<struct sockaddr_storage, BanListPeer>::iterator it;
     for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
@@ -1130,13 +1130,14 @@ int p3BanList::printBanSet_locked(std::ostream &out)
         out << " Age: " << now - it->second.mTs;
         out << std::endl;
     }
-    std::cerr << "Current black list: " << std::dec << std::endl;
+#endif
+    std::cerr << "Current IP black list (only showing manual ranges, not automatically banned IPs): " << std::dec << std::endl;
 
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanRanges.begin());it!=mBanRanges.end();++it)
         std::cerr << "  " << sockaddr_storage_iptostring(it->first) << ". masked_bytes=" << (int)it->second.masked_bytes
               << ", IP=" << sockaddr_storage_iptostring(it->second.addr) << "/" << ((int)32 - 8*(int)(it->second.masked_bytes)) << std::endl;
 
-    std::cerr << "Current white list: " << std::endl;
+    std::cerr << "Current IP white list: " << std::endl;
 
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mWhiteListedRanges.begin());it!=mWhiteListedRanges.end();++it)
         std::cerr << "  " << sockaddr_storage_iptostring(it->first) << ". masked_bytes=" << (int)it->second.masked_bytes
