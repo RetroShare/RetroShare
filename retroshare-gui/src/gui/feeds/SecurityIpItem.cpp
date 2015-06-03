@@ -67,7 +67,7 @@ void SecurityIpItem::setup()
 
 	/* specific ones */
 	connect(ui->peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
-	connect(ui->rsBanListButton, SIGNAL(banListChanged()), ui->rsBanListChangedLabel, SLOT(show()));
+	connect(ui->rsBanListButton, SIGNAL(banListChanged(QString)), this, SLOT(banIpListChanged(QString)));
 
 	ui->avatar->setId(ChatId(mSslId));
 	ui->rsBanListButton->setMode(RsBanListToolButton::LIST_WHITELIST, RsBanListToolButton::MODE_ADD);
@@ -249,4 +249,10 @@ void SecurityIpItem::peerDetails()
 	if (rsPeers->getPeerDetails(mSslId, details)) {
 		ConfCertDialog::showIt(mSslId, ConfCertDialog::PageDetails);
 	}
+}
+
+void SecurityIpItem::banIpListChanged(const QString &ipAddress)
+{
+	ui->rsBanListChangedLabel->setText(tr("IP address %1 was added to the whitelist").arg(ipAddress));
+	ui->rsBanListChangedLabel->show();
 }

@@ -135,7 +135,7 @@ void RsBanListToolButton::applyIp()
 		return;
 	}
 
-	sockaddr_storage addr ;
+	sockaddr_storage addr;
 	int masked_bytes;
 
 	if (!RsNetUtil::parseAddrFromQString(mIpAddress, addr, masked_bytes)) {
@@ -165,6 +165,6 @@ void RsBanListToolButton::applyIp()
 	}
 
 	if (changed) {
-		emit banListChanged();
+		emit banListChanged(RsNetUtil::printAddrRange(addr, masked_bytes));
 	}
 }

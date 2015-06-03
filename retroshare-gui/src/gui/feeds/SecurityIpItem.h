@@ -58,6 +58,7 @@ private slots:
 	void toggle();
 	void peerDetails();
 	void updateItem();
+	void banIpListChanged(const QString &ipAddress);
 
 private:
 	FeedHolder *mParent;

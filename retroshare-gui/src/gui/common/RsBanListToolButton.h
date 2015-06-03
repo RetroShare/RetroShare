@@ -47,7 +47,7 @@ public:
 	bool setIpAddress(const QString &ipAddress);
 
 signals:
-	void banListChanged();
+	void banListChanged(const QString &ipAddress);
 
 private:
 	void updateUi();
