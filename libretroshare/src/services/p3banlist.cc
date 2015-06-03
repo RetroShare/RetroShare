@@ -333,7 +333,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         ++it->second.connect_attempts;
 //#ifdef DEBUG_BANLIST
-        std::cerr << "found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
+        std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
 //#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
@@ -344,7 +344,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         ++it->second.connect_attempts;
 //#ifdef DEBUG_BANLIST
-        std::cerr << "found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/32.  returning false. attempts=" << it->second.connect_attempts << std::endl;
+        std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/32.  returning false. attempts=" << it->second.connect_attempts << std::endl;
 //#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;

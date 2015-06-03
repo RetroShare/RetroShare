@@ -849,8 +849,9 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
 	if (item->sslId == rsPeers->getOwnId())
-	{
-        mPeerMgr->addCandidateForOwnExternalAddress(item->PeerId(), item->extAddrV4.addr) ;
+    {
+        if(sockaddr_storage_isExternalNet(item->extAddrV4.addr))
+            mPeerMgr->addCandidateForOwnExternalAddress(item->PeerId(), item->extAddrV4.addr) ;
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3discovery2::processContactInfo(" << fromId << ") PGPID: ";
 		std::cerr << item->pgpId << " Ignoring Info on self";
