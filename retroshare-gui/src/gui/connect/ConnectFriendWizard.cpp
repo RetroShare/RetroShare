@@ -103,6 +103,9 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	/* disable not used pages */
 	ui->foffRadioButton->hide();
 	ui->rsidRadioButton->hide();
+	
+	ui->fr_label->hide();
+	ui->requestinfolabel->hide();
 
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
 	connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
@@ -146,6 +149,10 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
         // Cyril: I disabled this because it seems to be not used anymore.
         //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
         setStartId(Page_Conclusion);
+        if (friendRequest){
+        ui->fr_label->show();
+        ui->requestinfolabel->show();
+        }
     } else {
 		// error message
 		setField("errorMessage", tr("Certificate Load Failed") + ": \n\n" + getErrorString(cert_load_error_code)) ;
@@ -166,6 +173,10 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
 
     //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
     setStartId(Page_Conclusion);
+    if (friendRequest){
+    ui->fr_label->show();
+    ui->requestinfolabel->show();
+    }
 }
 
 ConnectFriendWizard::~ConnectFriendWizard()
@@ -364,6 +375,7 @@ void ConnectFriendWizard::initializePage(int id)
 				}
 			}
 
+			ui->fr_label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->trustEdit->setText(trustString);
 			ui->emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
@@ -441,7 +453,7 @@ void ConnectFriendWizard::initializePage(int id)
 
 			ui->fr_nodeEdit->setText(loc);
 			
-			ui->fr_label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->fr_label_3->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 
 			fillGroups(this, ui->fr_groupComboBox, groupId);
 		}

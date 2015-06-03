@@ -99,9 +99,14 @@ HeaderFrame QLabel#headerLabel
 	qproperty-fontSizeFactor: 225;
 }
 
-ConnectFrientWizard QLabel#fr_label, ConnectFrientWizard QLabel#requestinfolabel
+ConnectFrientWizard QLabel#fr_label
 {
-	qproperty-fontSizeFactor: 150;
+	qproperty-fontSizeFactor: 125;
+}
+
+ConnectFrientWizard QLabel#requestinfolabel
+{
+	qproperty-fontSizeFactor: 125;
 }
 
 ConnectFriendWizard QLabel#makefriend_infolabel

@@ -330,13 +330,22 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 
 /* ConnectFriendWizard */
 
-ConnectFriendWizard QWizardPage#FriendRequestPage > QFrame#frame {
+ConnectFriendWizard QWizardPage#ConclusionPage > QGroupBox#peerDetailsFrame {
 	border: 2px solid #CCCCCC;
 	border-radius:6px;
 	background: white;
+	padding: 12 12px;
 }
 
 ConnectFriendWizard QWizardPage#ConclusionPage > QLabel#makefriend_infolabel
+{
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+ConnectFriendWizard QLabel#fr_label, QLabel#requestinfolabel
 {
 	border: 1px solid #DCDC41;
 	border-radius: 6px;
@@ -520,13 +529,6 @@ ConfCertDialog QPlainTextEdit#plainTextEdit {
 }
 
 ServerPage QPlainTextEdit#plainTextEdit {
-	border: 1px solid #DCDC41;
-	border-radius: 6px;
-	background: #FFFFD7;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
-}
-
-ConnectFriendWizard QLabel#requestinfolabel {
 	border: 1px solid #DCDC41;
 	border-radius: 6px;
 	background: #FFFFD7;
