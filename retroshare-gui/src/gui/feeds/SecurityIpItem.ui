@@ -210,7 +210,7 @@
            <item>
             <widget class="QLabel" name="rsBanListChangedLabel">
              <property name="text">
-              <string>IP addres was added to the whitelist</string>
+              <string>IP address was added to the whitelist</string>
              </property>
             </widget>
            </item>

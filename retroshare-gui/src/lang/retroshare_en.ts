@@ -11981,10 +11981,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Write Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unknown Peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11998,6 +11994,10 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Wrong external ip address reported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP address was added to the whitelist</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
