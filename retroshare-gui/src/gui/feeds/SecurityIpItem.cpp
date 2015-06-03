@@ -135,10 +135,10 @@ void SecurityIpItem::updateItem()
 			if (!mIsTest) {
 				switch (mResult) {
 				case RSBANLIST_CHECK_RESULT_NOCHECK:
-				case RSBANLIST_CHECK_RESULT_NOT_WHITELISTED:
 				case RSBANLIST_CHECK_RESULT_ACCEPTED:
 					ui->rsBanListButton->hide();
 					break;
+				case RSBANLIST_CHECK_RESULT_NOT_WHITELISTED:
 				case RSBANLIST_CHECK_RESULT_BLACKLISTED:
 					ui->rsBanListButton->setVisible(ui->rsBanListButton->setIpAddress(QString::fromStdString(mIpAddr)));
 					break;
