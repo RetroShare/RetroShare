@@ -160,6 +160,28 @@ void BanListPeer::fromRsTlvBanListEntry(const RsTlvBanListEntry &e)
     mTs = time(NULL) - e.age;
 }
 
+static uint32_t getBitRange(const sockaddr_storage& addr)
+{
+    sockaddr_storage s ;
+    sockaddr_storage_clear(s) ;
+    sockaddr_storage_copyip(s,addr) ;
+
+    sockaddr_in *ad = (sockaddr_in*)(&s) ;
+
+    if( (ad->sin_addr.s_addr & 0xff000000) != 0xff000000)
+        return 0 ;
+
+    if( (ad->sin_addr.s_addr & 0x00ff0000) != 0x00ff0000)
+        return 1 ;
+
+    if( (ad->sin_addr.s_addr & 0x0000ff00) != 0x0000ff00)
+        return 2 ;
+
+    if( (ad->sin_addr.s_addr & 0x000000ff) != 0x000000ff)
+        return 3 ;
+
+    return 4 ;
+}
 static sockaddr_storage makeBitsRange(const sockaddr_storage& addr,int masked_bytes)
 {
     sockaddr_storage s ;
@@ -248,12 +270,13 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if(!mIPFilteringEnabled)
         return true ;
 
-#ifdef DEBUG_BANLIST
+//#ifdef DEBUG_BANLIST
     std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
-#endif
+//#endif
 
     // we should normally work this including entire ranges of IPs. For now, just check the exact IPs.
 
+    sockaddr_storage addr_32 = makeBitsRange(addr,0) ;	// this is necessay because it cleans the address
     sockaddr_storage addr_24 = makeBitsRange(addr,1) ;
     sockaddr_storage addr_16 = makeBitsRange(addr,2) ;
 
@@ -261,15 +284,15 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
 
     white_list_found = white_list_found || (mWhiteListedRanges.find(addr_16) != mWhiteListedRanges.end()) ;
     white_list_found = white_list_found || (mWhiteListedRanges.find(addr_24) != mWhiteListedRanges.end()) ;
-    white_list_found = white_list_found || (mWhiteListedRanges.find(addr   ) != mWhiteListedRanges.end()) ;
+    white_list_found = white_list_found || (mWhiteListedRanges.find(addr_32) != mWhiteListedRanges.end()) ;
 
     if(white_list_found)
     {
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
-#ifdef DEBUG_BANLIST
+//#ifdef DEBUG_BANLIST
         std::cerr << ". Address is in whitelist. Accepting" << std::endl;
-#endif
+//#endif
         return true ;
     }
 
@@ -277,17 +300,17 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
-#ifdef DEBUG_BANLIST
+//#ifdef DEBUG_BANLIST
         std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
-#endif
+//#endif
         return false ;
     }
 
     if(!(checking_flags & RSBANLIST_CHECKING_FLAGS_BLACKLIST))
     {
-#ifdef DEBUG_BANLIST
+//#ifdef DEBUG_BANLIST
         std::cerr << ". No blacklisting required. Accepting." << std::endl;
-#endif
+//#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
         return true;
@@ -298,9 +321,9 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if((it=mBanRanges.find(addr_16)) != mBanRanges.end())
     {
         ++it->second.connect_attempts;
-#ifdef DEBUG_BANLIST
+//#ifdef DEBUG_BANLIST
         std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/16. returning false. attempts=" << it->second.connect_attempts << std::endl;
-#endif
+//#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
@@ -309,28 +332,39 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if((it=mBanRanges.find(addr_24)) != mBanRanges.end())
     {
         ++it->second.connect_attempts;
-#ifdef DEBUG_BANLIST
+//#ifdef DEBUG_BANLIST
         std::cerr << "found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
-#endif
+//#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
-    if((it=mBanSet.find(addr)) != mBanSet.end())
+    if((it=mBanRanges.find(addr_32)) != mBanRanges.end())
     {
         ++it->second.connect_attempts;
-#ifdef DEBUG_BANLIST
-        std::cerr << "found as blacklisted address " << sockaddr_storage_iptostring(it->first) << ".  returning false. attempts=" << it->second.connect_attempts << std::endl;
-#endif
+//#ifdef DEBUG_BANLIST
+        std::cerr << "found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/32.  returning false. attempts=" << it->second.connect_attempts << std::endl;
+//#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
     }
 
-#ifdef DEBUG_BANLIST
+    if((it=mBanSet.find(addr_32)) != mBanSet.end())
+    {
+        ++it->second.connect_attempts;
+//#ifdef DEBUG_BANLIST
+        std::cerr << "found as blacklisted address " << sockaddr_storage_iptostring(it->first) << ".  returning false. attempts=" << it->second.connect_attempts << std::endl;
+//#endif
+        if(check_result != NULL)
+            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+        return false ;
+    }
+
+//#ifdef DEBUG_BANLIST
     std::cerr << " not blacklisted. Accepting." << std::endl;
-#endif
+//#endif
     if(check_result != NULL)
         *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
     return true ;
@@ -392,6 +426,12 @@ bool p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
+    if(getBitRange(addr) > masked_bytes)
+    {
+        std::cerr << "(EE) Input to p3BanList::addIpRange is inconsistent: ip=" << sockaddr_storage_iptostring(addr) << "/" << 32-8*masked_bytes << std::endl;
+        return false ;
+    }
+
     BanListPeer blp ;
     blp.level = RSBANLIST_ORIGIN_SELF ;
     blp.connect_attempts = 0 ;
@@ -406,29 +446,31 @@ bool p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32
         std::cerr << "Unhandled masked byte size " << masked_bytes << ". Should be 0,1 or 2" << std::endl;
         return false;
     }
-
-    bool changed = false;
-    sockaddr_storage addrrange = makeBitsRange(addr,masked_bytes) ;
-
-    if(list_type == RSBANLIST_TYPE_BLACKLIST)
+    if(list_type != RSBANLIST_TYPE_BLACKLIST && list_type != RSBANLIST_TYPE_WHITELIST)
     {
-        mBanRanges[addrrange] = blp ;
-        changed = true;
+        std::cerr << "(EE) Cannot add IP range. Bad list_type. Should be eiter RSBANLIST_TYPE_BLACKLIST or RSBANLIST_TYPE_WHITELIST" << std::endl;
+    return false ;
     }
-    else if(list_type == RSBANLIST_TYPE_WHITELIST)
+
+    // Remove all existing ranges that are included into current range.
+
+    std::map<sockaddr_storage,BanListPeer>& banlist( (list_type == RSBANLIST_TYPE_BLACKLIST)?mBanRanges:mWhiteListedRanges) ;
+
+    for(int i=0;i<masked_bytes;++i)
     {
-        mWhiteListedRanges[addrrange] = blp ;
-        changed = true;
+        std::map<sockaddr_storage,BanListPeer>::iterator it = banlist.find(makeBitsRange(addr,i)) ;
+
+        if(it != banlist.end())
+            banlist.erase(it) ;
     }
-    else
-        std::cerr << "(EE) Cannot add IP range. Bad list_type. Should be eiter RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST" << std::endl;
+    // Add range to list.
 
-    if (changed)
-        IndicateConfigChanged() ;
+    banlist[makeBitsRange(addr,masked_bytes)] = blp ;
 
+    IndicateConfigChanged() ;
     condenseBanSources_locked() ;
 
-    return changed;
+    return true;
 }
 
 int p3BanList::tick()
@@ -447,6 +489,15 @@ int p3BanList::tick()
 
         if(mAutoRangeIps)
             autoFigureOutBanRanges() ;
+    }
+
+    static time_t last_print = 0 ;
+
+    if(now > 10+last_print)
+    {
+        RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+        printBanSet_locked(std::cerr);
+        last_print = now ;
     }
 
     return 0;
@@ -689,63 +740,63 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
 
         RsBanListConfigItem *citem = dynamic_cast<RsBanListConfigItem*>( *it ) ;
 
-    if(citem != NULL)
-    {
-        if(citem->type == RSBANLIST_TYPE_PEERLIST)
+        if(citem != NULL)
         {
-            BanList& bl(mBanSources[citem->peerId]) ;
-
-            bl.mPeerId = citem->peerId ;
-            bl.mLastUpdate = citem->update_time ;
-
-            bl.mBanPeers.clear() ;
-
-            for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+            if(citem->type == RSBANLIST_TYPE_PEERLIST)
             {
-                BanListPeer blp ;
-                blp.fromRsTlvBanListEntry(*it2) ;
+                BanList& bl(mBanSources[citem->peerId]) ;
 
-        if(sockaddr_storage_isValidNet(blp.addr))
-            bl.mBanPeers[blp.addr] = blp ;
-        else
-            std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
+                bl.mPeerId = citem->peerId ;
+                bl.mLastUpdate = citem->update_time ;
+
+                bl.mBanPeers.clear() ;
+
+                for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+                {
+                    BanListPeer blp ;
+                    blp.fromRsTlvBanListEntry(*it2) ;
+
+                    if(sockaddr_storage_isValidNet(blp.addr))
+                        bl.mBanPeers[blp.addr] = blp ;
+                    else
+                        std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
+                }
             }
-        }
-        else if(citem->type == RSBANLIST_TYPE_BLACKLIST)
-        {
-            mBanRanges.clear() ;
-
-            for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+            else if(citem->type == RSBANLIST_TYPE_BLACKLIST)
             {
-                BanListPeer blp ;
-                blp.fromRsTlvBanListEntry(*it2) ;
+                mBanRanges.clear() ;
 
-        if(sockaddr_storage_isValidNet(blp.addr))
-            mBanRanges[blp.addr] = blp ;
-        else
-            std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
+                for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+                {
+                    BanListPeer blp ;
+                    blp.fromRsTlvBanListEntry(*it2) ;
+
+                    if(sockaddr_storage_isValidNet(blp.addr))
+                        mBanRanges[makeBitsRange(blp.addr,blp.masked_bytes)] = blp ;
+                    else
+                        std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
+                }
             }
-        }
-        else if(citem->type == RSBANLIST_TYPE_WHITELIST)
-        {
-            mWhiteListedRanges.clear() ;
-
-            for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+            else if(citem->type == RSBANLIST_TYPE_WHITELIST)
             {
-                BanListPeer blp ;
-                blp.fromRsTlvBanListEntry(*it2) ;
+                mWhiteListedRanges.clear() ;
 
-        if(sockaddr_storage_isValidNet(blp.addr))
-            mWhiteListedRanges[blp.addr] = blp ;
-        else
-            std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
+                for(std::list<RsTlvBanListEntry>::const_iterator it2(citem->banned_peers.mList.begin());it2!=citem->banned_peers.mList.end();++it2)
+                {
+                    BanListPeer blp ;
+                    blp.fromRsTlvBanListEntry(*it2) ;
 
-        std::cerr << "Read whitelisted range " << sockaddr_storage_iptostring(blp.addr) << "/" << blp.masked_bytes << std::endl;
+                    if(sockaddr_storage_isValidNet(blp.addr))
+                        mWhiteListedRanges[makeBitsRange(blp.addr,blp.masked_bytes)] = blp ;
+                    else
+                        std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
+
+                    std::cerr << "Read whitelisted range " << sockaddr_storage_iptostring(blp.addr) << "/" << blp.masked_bytes << std::endl;
+                }
             }
+            else
+                std::cerr << "(EE) BanList item unknown type " << citem->type << ". This is a bug." << std::endl;
         }
-        else
-            std::cerr << "(EE) BanList item unknown type " << citem->type << ". This is a bug." << std::endl;
-    }
 
         delete *it ;
     }
@@ -794,7 +845,8 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 	// index is FAMILY + IP - the rest should be Zeros..
 	struct sockaddr_storage bannedaddr;
 	sockaddr_storage_clear(bannedaddr);
-	sockaddr_storage_copyip(bannedaddr, addr);
+    bannedaddr.ss_family = AF_INET ;
+    sockaddr_storage_copyip(bannedaddr, addr);
 	sockaddr_storage_setport(bannedaddr, 0);
 
 	std::map<struct sockaddr_storage, BanListPeer>::iterator mit;
@@ -840,7 +892,7 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 
 bool p3BanList::isWhiteListed_locked(const sockaddr_storage& addr)
 {
-    if(mWhiteListedRanges.find(addr) != mWhiteListedRanges.end())
+    if(mWhiteListedRanges.find(makeBitsRange(addr,0)) != mWhiteListedRanges.end())
         return true ;
 
     if(mWhiteListedRanges.find(makeBitsRange(addr,1)) != mWhiteListedRanges.end())
@@ -914,6 +966,7 @@ int p3BanList::condenseBanSources_locked()
 
         struct sockaddr_storage bannedaddr;
         sockaddr_storage_clear(bannedaddr);
+    bannedaddr.ss_family = AF_INET ;
         sockaddr_storage_copyip(bannedaddr, lit->second.addr);
         sockaddr_storage_setport(bannedaddr, 0);
 
@@ -1058,26 +1111,38 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 
 int p3BanList::printBanSet_locked(std::ostream &out)
 {
-	out << "p3BanList::printBanSet_locked()";
-	out << std::endl;
-	
-	time_t now = time(NULL);
+    out << "p3BanList::printBanSet_locked()";
+    out << std::endl;
 
-	std::map<struct sockaddr_storage, BanListPeer>::iterator it;
-	for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
-	{
-		out << "Ban: " << sockaddr_storage_iptostring(it->second.addr);
-		out << " Reason: " << it->second.reason;
+    time_t now = time(NULL);
+
+    std::map<struct sockaddr_storage, BanListPeer>::iterator it;
+    for(it = mBanSet.begin(); it != mBanSet.end(); ++it)
+    {
+        out << "Ban: " << sockaddr_storage_iptostring(it->second.addr);
+        out << " Reason: " << it->second.reason;
         out << " Level: " << it->second.level;
         if (it->second.level > RSBANLIST_ORIGIN_FRIEND)
-		{
-			out << " (unused)";
-		}
-		
-		out << " Age: " << now - it->second.mTs;
-		out << std::endl;
-	}			
-	return true ;
+        {
+            out << " (unused)";
+        }
+
+        out << " Age: " << now - it->second.mTs;
+        out << std::endl;
+    }
+    std::cerr << "Current black list: " << std::dec << std::endl;
+
+    for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanRanges.begin());it!=mBanRanges.end();++it)
+        std::cerr << "  " << sockaddr_storage_iptostring(it->first) << ". masked_bytes=" << (int)it->second.masked_bytes
+              << ", IP=" << sockaddr_storage_iptostring(it->second.addr) << "/" << ((int)32 - 8*(int)(it->second.masked_bytes)) << std::endl;
+
+    std::cerr << "Current white list: " << std::endl;
+
+    for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mWhiteListedRanges.begin());it!=mWhiteListedRanges.end();++it)
+        std::cerr << "  " << sockaddr_storage_iptostring(it->first) << ". masked_bytes=" << (int)it->second.masked_bytes
+              << ", IP=" << sockaddr_storage_iptostring(it->second.addr) << "/" << ((int)32 - 8*(int)(it->second.masked_bytes)) << std::endl;
+
+    return true ;
 }
 
 
@@ -1104,7 +1169,8 @@ int p3BanList::printBanSources_locked(std::ostream &out)
 			out << " Age: " << now - lit->second.mTs;
 			out << std::endl;
 		}
-	}
+    }
+
     return true ;
 }
 
