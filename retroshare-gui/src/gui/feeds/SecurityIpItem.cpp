@@ -67,9 +67,11 @@ void SecurityIpItem::setup()
 
 	/* specific ones */
 	connect(ui->peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
+	connect(ui->rsBanListButton, SIGNAL(banListChanged()), ui->rsBanListChangedLabel, SLOT(show()));
 
 	ui->avatar->setId(ChatId(mSslId));
 	ui->rsBanListButton->setMode(RsBanListToolButton::LIST_WHITELIST, RsBanListToolButton::MODE_ADD);
+	ui->rsBanListChangedLabel->hide();
 
 	ui->expandFrame->hide();
 

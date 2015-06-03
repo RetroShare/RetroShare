@@ -46,6 +46,9 @@ public:
 	void setMode(List list, Mode mode);
 	bool setIpAddress(const QString &ipAddress);
 
+signals:
+	void banListChanged();
+
 private:
 	void updateUi();
 

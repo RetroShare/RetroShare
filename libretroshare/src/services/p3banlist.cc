@@ -357,10 +357,11 @@ void p3BanList::getBannedIps(std::list<BanListPeer> &lst)
         lst.push_back(it->second) ;
 }
 
-void p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type)
+bool p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type)
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
+    bool changed = false;
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
 
     if(list_type == RSBANLIST_TYPE_BLACKLIST)
@@ -369,6 +370,7 @@ void p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_byt
         {
             mBanRanges.erase(it) ;
             IndicateConfigChanged();
+            changed = true;
         }
     }
     else if(list_type == RSBANLIST_TYPE_WHITELIST)
@@ -377,13 +379,16 @@ void p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_byt
         {
             mWhiteListedRanges.erase(it) ;
             IndicateConfigChanged();
+            changed = true;
         }
     }
     else
         std::cerr << "(EE) Only whitelist or blacklist ranges can be removed." << std::endl;
+
+    return changed;
 }
 
-void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32_t list_type,const std::string& comment)
+bool p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32_t list_type,const std::string& comment)
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
@@ -399,21 +404,31 @@ void p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32
     if(masked_bytes != 0 && masked_bytes != 1 && masked_bytes != 2)
     {
         std::cerr << "Unhandled masked byte size " << masked_bytes << ". Should be 0,1 or 2" << std::endl;
-        return ;
+        return false;
     }
 
+    bool changed = false;
     sockaddr_storage addrrange = makeBitsRange(addr,masked_bytes) ;
 
     if(list_type == RSBANLIST_TYPE_BLACKLIST)
+    {
         mBanRanges[addrrange] = blp ;
+        changed = true;
+    }
     else if(list_type == RSBANLIST_TYPE_WHITELIST)
+    {
         mWhiteListedRanges[addrrange] = blp ;
+        changed = true;
+    }
     else
         std::cerr << "(EE) Cannot add IP range. Bad list_type. Should be eiter RSBANLIST_CHECKING_FLAGS_BLACKLIST or RSBANLIST_CHECKING_FLAGS_WHITELIST" << std::endl;
 
-    IndicateConfigChanged() ;
+    if (changed)
+        IndicateConfigChanged() ;
 
     condenseBanSources_locked() ;
+
+    return changed;
 }
 
 int p3BanList::tick()

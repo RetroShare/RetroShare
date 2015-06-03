@@ -153,13 +153,18 @@ void RsBanListToolButton::applyIp()
 	}
 
 	masked_bytes = action->data().toUInt();
+	bool changed = false;
 
 	switch (mMode) {
 	case MODE_ADD:
-		rsBanList->addIpRange(addr, masked_bytes, list_type, "");
+		changed = rsBanList->addIpRange(addr, masked_bytes, list_type, "");
 		break;
 	case MODE_REMOVE:
-		rsBanList->removeIpRange(addr, masked_bytes, list_type);
+		changed = rsBanList->removeIpRange(addr, masked_bytes, list_type);
 		break;
+	}
+
+	if (changed) {
+		emit banListChanged();
 	}
 }

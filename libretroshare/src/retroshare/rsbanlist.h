@@ -90,8 +90,8 @@ public:
     // 	list_type: 	RSBANLIST_TYPE_WHITELIST or RSBANLIST_TYPE_BLACKLIST
     // 	comment: 	anything, user-based.
 
-    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) =0;
-    virtual void removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type) =0;
+    virtual bool addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) =0;
+    virtual bool removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type) =0;
 
     // isAddressAccepted()
     // 	addr: 		full IPv4 address. Port is ignored.

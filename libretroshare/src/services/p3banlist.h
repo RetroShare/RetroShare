@@ -66,8 +66,8 @@ public:
     virtual void getBannedIps(std::list<BanListPeer>& list) ;
     virtual void getWhiteListedIps(std::list<BanListPeer>& list) ;
 
-    virtual void addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) ;
-    virtual void removeIpRange(const sockaddr_storage &addr, int masked_bytes, uint32_t list_type);
+    virtual bool addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) ;
+    virtual bool removeIpRange(const sockaddr_storage &addr, int masked_bytes, uint32_t list_type);
 
     virtual void enableIPFiltering(bool b) ;
     virtual bool ipFilteringEnabled() ;
