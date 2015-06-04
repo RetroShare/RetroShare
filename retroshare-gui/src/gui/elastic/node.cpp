@@ -78,6 +78,7 @@ Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget
     setZValue(1);
 	 mDeterminedBB = false ;
 	 mBBWidth = 0 ;
+	 mNodeDrawSize = 20;
 
 	 _speedx=_speedy=0;
 	 _steps=0;
@@ -284,7 +285,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::darkGray);
-	painter->drawEllipse(-7, -7, 20, 20);
+	painter->drawEllipse(-7, -7, mNodeDrawSize, mNodeDrawSize);
 
 	QRadialGradient gradient(-3, -3, 10);
 	if (option->state & QStyle::State_Sunken) 
@@ -311,7 +312,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	}
 	painter->setBrush(gradient);
 	painter->setPen(QPen(Qt::black, 0));
-	painter->drawEllipse(-10, -10, 20, 20);
+	painter->drawEllipse(-10, -10, mNodeDrawSize, mNodeDrawSize);
 	painter->drawText(-10, 0, QString::fromUtf8(_desc_string.c_str()));
 
 	if (!mDeterminedBB)

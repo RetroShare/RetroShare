@@ -86,6 +86,7 @@ public:
     virtual void itemMoved();
 
 	 void setEdgeLength(uint32_t l) ;
+	 void setNameSearch(QString) ;
 	 uint32_t edgeLength() const { return _edge_length ; }
 
 	 void forceRedraw() ;

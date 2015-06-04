@@ -47,6 +47,7 @@ class NetworkView : public RsAutoUpdatePage
 
 		void setMaxFriendLevel(int) ;
 		void setEdgeLength(int) ;
+		void setNameSearch(QString) ;
 
 		void changedFoFCheckBox( );
 		void redraw();

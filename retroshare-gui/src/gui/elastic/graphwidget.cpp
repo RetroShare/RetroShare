@@ -388,6 +388,33 @@ void GraphWidget::setEdgeLength(uint32_t l)
 	}
 }
 
+
+void GraphWidget::setNameSearch(QString s)
+{
+	if (s.length() == 0){
+		for(uint32_t i=0;i<_nodes.size();++i)
+			_nodes[i]->setNodeDrawSize(20);
+		forceRedraw();
+		return;
+	}
+	std::string qs = s.toLower().toStdString();
+	for(uint32_t i=0;i<_nodes.size();++i){
+		Node* ni = _nodes[i];
+		//std::cout << ni->descString() << std::endl;
+		std::string ns = QString::fromStdString(ni->descString()).toLower().toStdString();
+
+		if (ns.find(qs) != std::string::npos) {
+			std::cout << "found!" << '\n';
+			ni->setNodeDrawSize(22);
+			//std::cout << ni->getNodeDrawSize() << '\n';
+		} else {
+			ni->setNodeDrawSize(12);
+
+		}
+	}
+	forceRedraw();
+}
+
 void GraphWidget::forceRedraw()
 {
 	for(uint32_t i=0;i<_nodes.size();++i)

@@ -58,6 +58,7 @@ NetworkView::NetworkView(QWidget *parent)
   connect( ui.maxFriendLevelSB, SIGNAL(valueChanged(int)), this, SLOT(setMaxFriendLevel(int)));
   connect( ui.edgeLengthSB, SIGNAL(valueChanged(int)), this, SLOT(setEdgeLength(int)));
   connect( ui.freezeCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFreezeState(bool)));
+  connect( ui.nameBox, SIGNAL(textChanged(QString)), this, SLOT(setNameSearch(QString)));
 
   _should_update = true ;
 }
@@ -71,6 +72,10 @@ NetworkView::~NetworkView()
 void NetworkView::setEdgeLength(int l)
 {
 	ui.graphicsView->setEdgeLength(l);
+}
+void NetworkView::setNameSearch(QString s)
+{
+	ui.graphicsView->setNameSearch(s);
 }
 void NetworkView::setMaxFriendLevel(int m)
 {
