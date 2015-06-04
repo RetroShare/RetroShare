@@ -109,7 +109,7 @@ public:
     bool 	processIncoming();
 
     bool recvBanItem(RsBanListItem *item);
-    bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, time_t time_stamp, uint8_t masked_bytes);
+    bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, time_t time_stamp);
     void sendBanLists();
     int  sendBanSet(const RsPeerId& peerid);
 
@@ -133,6 +133,8 @@ private:
 
     RsMutex mBanMtx;
 
+    bool acceptedBanSet_locked(const BanListPeer &blp);
+    bool acceptedBanRanges_locked(const BanListPeer &blp);
     void autoFigureOutBanRanges();
     int condenseBanSources_locked();
     int printBanSources_locked(std::ostream &out);

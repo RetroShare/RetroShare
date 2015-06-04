@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -504,18 +504,18 @@ behind a firewall or a VPN.</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_11">
        <item>
+        <widget class="QCheckBox" name="denyAll_CB">
+         <property name="text">
+          <string>activate IP filtering</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>IP blacklist</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="QCheckBox" name="denyAll_CB">
-            <property name="text">
-             <string>Deny all connections from the following IP ranges:</string>
-            </property>
-           </widget>
-          </item>
           <item>
            <widget class="QTableWidget" name="filteredIpsTable">
             <property name="contextMenuPolicy">
@@ -566,7 +566,14 @@ behind a firewall or a VPN.</string>
           <item>
            <widget class="QCheckBox" name="includeFromFriends_CB">
             <property name="text">
-             <string>Include the  IPs reported by your friends</string>
+             <string>Ban all  IPs reported by your friends</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="includeFromDHT_CB">
+            <property name="text">
+             <string>Ban every masquerading IP reported by your DHT</string>
             </property>
            </widget>
           </item>
@@ -575,7 +582,7 @@ behind a firewall or a VPN.</string>
             <item>
              <widget class="QCheckBox" name="groupIPRanges_CB">
               <property name="text">
-               <string>Auto-group IPs by ranges when at least :</string>
+               <string>Automatically ban IP of DHT masquerading IPs starting at</string>
               </property>
              </widget>
             </item>
@@ -606,13 +613,6 @@ behind a firewall or a VPN.</string>
              </spacer>
             </item>
            </layout>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="includeFromDHT_CB">
-            <property name="text">
-             <string>Automatically include masquerading IPs reported by DHT</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>

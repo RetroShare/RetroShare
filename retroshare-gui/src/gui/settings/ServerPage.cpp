@@ -440,15 +440,13 @@ void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer&
     else
         table->setItem(row,COLUMN_STATUS,new QTableWidgetItem(QString(""))) ;
 
-    table->item(row,COLUMN_STATUS)->setData(Qt::UserRole,QVariant( blp.state )) ;
-
     switch(blp.level)
     {
     case RSBANLIST_ORIGIN_FOF:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend of a friend"))) ;
         break ;
     case RSBANLIST_ORIGIN_FRIEND:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From friend"))) ;
         break ;
-    case RSBANLIST_ORIGIN_SELF:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("From you"))) ;
+    case RSBANLIST_ORIGIN_SELF:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("Local"))) ;
         break ;
     default:
     case RSBANLIST_ORIGIN_UNKNOWN:  table->setItem(row,COLUMN_ORIGIN,new QTableWidgetItem(QString("Unknown"))) ;
@@ -457,7 +455,7 @@ void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer&
 
     switch( blp.reason )
     {
-    case RSBANLIST_REASON_DHT:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Bad peer (DHT)"))) ;
+    case RSBANLIST_REASON_DHT:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Masquerading peer"))) ;
                     table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(tr("Reported by DHT for IP masquerading"))) ;
         break ;
     case RSBANLIST_REASON_USER:  table->setItem(row,COLUMN_REASON,new QTableWidgetItem(QString("Home-made rule"))) ;
@@ -471,6 +469,10 @@ void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer&
                     table->setItem(row,COLUMN_COMMENT,new QTableWidgetItem(QString::fromStdString(blp.comment))) ;
         break ;
     }
+    table->item(row,COLUMN_STATUS)->setData(Qt::UserRole,QVariant( blp.state )) ;
+    table->item(row,COLUMN_REASON)->setData(Qt::UserRole,QVariant( blp.reason )) ;
+    table->item(row,COLUMN_ORIGIN)->setData(Qt::UserRole,QVariant( blp.level )) ;
+
 }
 
 
