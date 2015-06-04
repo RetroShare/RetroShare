@@ -565,13 +565,19 @@ behind a firewall or a VPN.</string>
           </item>
           <item>
            <widget class="QCheckBox" name="includeFromFriends_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends' IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
-             <string>Ban all  IPs reported by your friends</string>
+             <string>Ban every  IP reported by your friends</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="includeFromDHT_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends' IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Ban every masquerading IP reported by your DHT</string>
             </property>
@@ -581,8 +587,11 @@ behind a firewall or a VPN.</string>
            <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
              <widget class="QCheckBox" name="groupIPRanges_CB">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
-               <string>Automatically ban IP of DHT masquerading IPs starting at</string>
+               <string>Automatically ban ranges of DHT masquerading IPs starting at</string>
               </property>
              </widget>
             </item>
