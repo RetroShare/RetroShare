@@ -61,7 +61,7 @@ bool RsNetUtil::parseAddrFromQString(const QString& s, struct sockaddr_storage& 
 		if(x%8 != 0)
 			return false ;
 
-		if(x != 16 &&  x != 24)
+        if(x != 16 &&  x != 24 && x != 32)
 			return false ;
 
 		bytes = 4 - x/8 ;
