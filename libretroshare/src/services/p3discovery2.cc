@@ -811,11 +811,20 @@ void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toI
 		if (sit->second.mDiscStatus != RS_VS_DISC_OFF)
 		{
 			peerState detail;
-			if (mPeerMgr->getFriendNetStatus(sit->first, detail)) 
+            peerConnectState detail2;
+
+            if (mPeerMgr->getFriendNetStatus(sit->first, detail))
 			{
 				RsDiscContactItem *pkt = new RsDiscContactItem();
 				populateContactInfo(detail, pkt);
 				pkt->PeerId(toId);
+
+                // send to each peer its own connection address.
+
+                if(sit->first == toId && mLinkMgr->getFriendNetStatus(sit->first,detail2))
+                    pkt->currentConnectAddress.addr = detail2.connectaddr;
+                else
+                    sockaddr_storage_clear(pkt->currentConnectAddress.addr) ;
 
 #ifdef P3DISC_DEBUG
 				std::cerr << "p3discovery2::sendContactInfo_locked() Sending";
@@ -850,8 +859,8 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 
 	if (item->sslId == rsPeers->getOwnId())
     {
-        if(sockaddr_storage_isExternalNet(item->extAddrV4.addr))
-            mPeerMgr->addCandidateForOwnExternalAddress(item->PeerId(), item->extAddrV4.addr) ;
+        if(sockaddr_storage_isExternalNet(item->currentConnectAddress.addr))
+            mPeerMgr->addCandidateForOwnExternalAddress(item->PeerId(), item->currentConnectAddress.addr) ;
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3discovery2::processContactInfo(" << fromId << ") PGPID: ";
 		std::cerr << item->pgpId << " Ignoring Info on self";
