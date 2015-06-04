@@ -267,6 +267,9 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if(check_result != NULL)
         *check_result = RSBANLIST_CHECK_RESULT_NOCHECK ;
 
+    if(sockaddr_storage_isLoopbackNet(addr))
+        return true ;
+
     if(!mIPFilteringEnabled)
         return true ;
 
