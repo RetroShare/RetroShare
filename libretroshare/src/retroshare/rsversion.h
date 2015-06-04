@@ -2,4 +2,4 @@
 #define RS_MINOR_VERSION     6
 #define RS_BUILD_NUMBER      0
 #define RS_BUILD_NUMBER_ADD  "x" // <-- do we need this?
-#define RS_REVISION_NUMBER   0000
+#define RS_REVISION_NUMBER   0001
