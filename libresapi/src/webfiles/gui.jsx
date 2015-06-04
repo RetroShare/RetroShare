@@ -373,6 +373,9 @@ var OwnCert = React.createClass({
 var AddPeerWidget = React.createClass({
 	getInitialState: function(){
 		return {page: "start"};
+
+		// for testing
+		//return {page: "peer", data: {name: "some_test_name"}};
 	},
 	add_friend_handler: function(){
 		var cert_string = this.refs.cert.getDOMNode().value;
@@ -388,7 +391,19 @@ var AddPeerWidget = React.createClass({
 	},
 	final_add_handler: function(){
 		this.setState({page: "start"});
-		RS.request({path: "peers", data: {cert_string: this.state.cert_string}});
+		RS.request(
+		{
+			path: "peers",
+			data: {
+				cert_string: this.state.cert_string,
+				flags:{
+					allow_direct_download: this.refs.cb_direct_dl.getDOMNode().checked,
+					allow_push: this.refs.cb_push.getDOMNode().checked,
+					// set to false, until the webinterface supports managment of the blacklist/whitelist
+					require_whitelist: false,
+				}
+			}
+		});
 	},
 	render: function(){
 		if(this.state.page === "start")
@@ -415,7 +430,9 @@ var AddPeerWidget = React.createClass({
 			return(
 				<div>
 			        <p>Do you want to add {this.state.data.name} to your friendslist?</p>
-			        <span onClick={this.final_add_handler} className="btn">yes</span>
+			        <input className="checkbox" type="checkbox" ref="cb_direct_dl"/> Allow direct downloads from this node<br/>
+			        <input className="checkbox" type="checkbox" ref="cb_push"/> Auto download recommended files from this node<br/>
+			        <div onClick={this.final_add_handler} className="btn2">add to friendslist</div>
 				</div>
 			);
 	},

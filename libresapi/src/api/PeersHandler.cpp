@@ -191,11 +191,32 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
         {
             std::string cert_string;
             req.mStream << makeKeyValueReference("cert_string", cert_string);
+
+            ServicePermissionFlags flags;
+            StreamBase& flags_stream = req.mStream.getStreamToMember("flags");
+            if(req.mStream.isOK())
+            {
+                bool direct_dl = RS_NODE_PERM_DEFAULT & RS_NODE_PERM_DIRECT_DL;
+                flags_stream << makeKeyValueReference("allow_direct_download", direct_dl);
+                if(direct_dl) flags |= RS_NODE_PERM_DIRECT_DL;
+
+                bool allow_push = RS_NODE_PERM_DEFAULT & RS_NODE_PERM_ALLOW_PUSH;
+                flags_stream << makeKeyValueReference("allow_push", allow_push);
+                if(allow_push) flags |= RS_NODE_PERM_ALLOW_PUSH;
+
+                bool require_whitelist = RS_NODE_PERM_DEFAULT & RS_NODE_PERM_REQUIRE_WL;
+                flags_stream << makeKeyValueReference("require_whitelist", require_whitelist);
+                if(require_whitelist) flags |= RS_NODE_PERM_REQUIRE_WL;
+            }
+            else
+            {
+                flags = RS_NODE_PERM_DEFAULT;
+            }
             RsPeerId peer_id;
             RsPgpId pgp_id;
             std::string error_string;
             if(mRsPeers->loadCertificateFromString(cert_string, peer_id, pgp_id, error_string)
-                    && mRsPeers->addFriend(peer_id, pgp_id))
+                    && mRsPeers->addFriend(peer_id, pgp_id, flags))
             {
                 ok = true;
                 resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id);

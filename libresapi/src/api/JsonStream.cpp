@@ -224,6 +224,7 @@ StreamBase& JsonStream::getStreamToMember(std::string name)
     mChild = new JsonStream();
     if(!serialise())
     {
+        mChild->mSerialise = false;
         if(checkDeserialisation() && checkObjectMember(name))
         {
             mChild->mValue = mObject[name];
