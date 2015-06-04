@@ -216,6 +216,10 @@ Section $(Section_Main) Section_Main
   File /r "${SOURCEDIR}\retroshare-gui\src\translations\*.qm"
   File /r "${QTDIR}\translations\qt_*.qm"
 
+  ; WebUI
+  SetOutPath "$INSTDIR\webui"
+  File /r "${SOURCEDIR}\libresapi\src\webfiles\*.*"
+
   ; License
   SetOutPath "$INSTDIR\license"
   File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
