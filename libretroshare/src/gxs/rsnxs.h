@@ -61,6 +61,7 @@ class RsNetworkExchangeService
 public:
 
 	RsNetworkExchangeService(){ return;}
+    virtual ~RsNetworkExchangeService() {}
 
     /*!
      * Use this to set how far back synchronisation of messages should take place
