@@ -1,5 +1,84 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   GUI
+      * added IP banlist system to fight large scale traffic analysis using IP masquerading
+      * added security item for connection denial due to IP blacklist/whitelist
+      * make conclusionPage handle all make friend events 
+      * added search and highlighting to network graph (patch from Chozabu)
+      * Fixed typos in strings (Patch from Henry).
+      * fixed avatar display
+      * Set default stylesheet for the Edit Identity info label.
+      * fix black background in chunkmap display with Qt5 (patch from sehraf)
+      * added testing button for incoming TOR connections ;-)
+      * improved GenCertDialog (patch from Henry)
+      * Fixed layout of the ip addresses in ConfCertDialog
+      * added additional button to show statistics window in settings->node
+      * added a button to clear the IP address list. Also started to add
+        diagnostic for TOR status. This is unfinished so it does not work yet.
+        Show if TCP connection is incoming or outgoing (modified patch from sehraf)
+
+   WebUI
+      * added webUI files
+      * updated rules so as to include webui files in rs-nogui package
+      * webui: allow to set peer flags when adding friends (whitelist flag is set to false)
+
+   VOIP/plugins
+      * Beautfy the stylesheet for the "Accept Call" Button, display notify text for voip calls too.
+      * set RS_REVISION_NUMBER to 1 to avoid plugin loading failure if no version is set
+      * Beautify Answer Button for VOIP Toaster
+      * Display peername on voip notify text
+      * fixed memory leak in voip plugin
+      * added toasters for incoming audio/video call to voip plugin (patch from Phenom)
+      * show error string form plugin loading as tooltip in gui (patch from Phenom)
+      * reduce memory corruption in voip plugin
+
+   GXS
+      * hide voting buttons in channels (backend is missing)
+      * added virtual destructor to RsNetworkExchangeService (patch from Cyril)
+      * added missing mutex in idservice
+      * Renamed RS_TLVKEY_DISTRIB_PRIVATE into *_PUBLISH, as it is used as such.
+      * Allow to check signatures and validate groups using private keys in GxsSecurity
+      * removed inconsistency in key flags when full keys where mixed up with publish keys.
+      * improved IdEditDialog: added explanation text, removed unused space
+      * in ChatLobbyWidget: show dialog to create a new identity when there is no own identity
+
+      This should fix the following bugs:
+      * channel owners did not receive posts from other peers who have publish rights
+      * channels sometimes not gettign through
+
+      * Removed randomly forced updating of GUI in RsGxsUpdateBroadcastBase
+      * Added group changed notify when visible count or suppliers count of a group has changed
+      * Fixed suppliers count
+
+   Forums
+      * show new identity dialog when creating a forum post and no identities exist
+
+   Messages
+      * prevent crafted  distant msgs with partial message flag set (Patch from Henry)
+      * replaced multiple location warning with a location selector menu
+      * added chat friend and message friend actions to FriendsList/Friend context menu
+      * Fixed layout of From, Recipient, Subject and Tags in MessageComposer.
+
+   Discovery
+      * don't overwrite own/friends IPs with discovery info (patch from Cyril)
+
+   Other
+      * Added check of account directory (check for missing subdirectories) in RsInit::InitRetroShare
+      * fixed uninitialised memory read in AuthGPG
+      * listen on localhost if node is a hidden node (patch from Henry)
+      * moved the stop order up to RsThread to ease the test for stopping order in  single job threads
+      * created 2 subclasses of RsThread, one for ticking services, and one for single shot jobs. 
+         Now all threads use the same base code. Moved semaphore based thread logic up to RsThread. 
+         This should help terminating service threads properly and possibly remove the SIGSEGV when 
+         quitting
+      * added hability to disconnect friends which report our own IP as something different than what 
+        we know. Removed a test in discovery2 that prevented sending info to a peer about himself. 
+        Not active yet since it needs some testing
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 04 June 2015 18:00:00 +0100
+
+retroshare06 (0.6.0-0.8263~vivid) vivid; urgency=low
+
    GUI 
       * force loading of own ID to get a proper name to display in chat lobby dialog
       * improved alignment of IPs in friend list
