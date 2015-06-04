@@ -116,6 +116,7 @@ void bdFilter::loadBannedIpFile()
                     peer.mAddr = addr;
                     peer.mFilterTS = filter_ts;
                     peer.mLastSeen = last_seen;
+                    peer.mFilterFlags = filter_flags;
 
             mFiltered[addr.sin_addr.s_addr] = peer ;
     #ifdef DEBUG_FILTER
