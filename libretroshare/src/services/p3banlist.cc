@@ -270,9 +270,9 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if(!mIPFilteringEnabled)
         return true ;
 
-//#ifdef DEBUG_BANLIST
+#ifdef DEBUG_BANLIST
     std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
-//#endif
+#endif
 
     // we should normally work this including entire ranges of IPs. For now, just check the exact IPs.
 
@@ -290,9 +290,9 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
-//#ifdef DEBUG_BANLIST
-        std::cerr << ". Address is in whitelist. Accepting" << std::endl;
-//#endif
+#ifdef DEBUG_BANLIST
+      std::cerr << ". Address is in whitelist. Accepting" << std::endl;
+#endif
         return true ;
     }
 
@@ -300,17 +300,17 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     {
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
-//#ifdef DEBUG_BANLIST
-        std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
-//#endif
+#ifdef DEBUG_BANLIST
+      std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
+#endif
         return false ;
     }
 
     if(!(checking_flags & RSBANLIST_CHECKING_FLAGS_BLACKLIST))
     {
-//#ifdef DEBUG_BANLIST
-        std::cerr << ". No blacklisting required. Accepting." << std::endl;
-//#endif
+#ifdef DEBUG_BANLIST
+      std::cerr << ". No blacklisting required. Accepting." << std::endl;
+#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
         return true;
@@ -321,31 +321,31 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if((it=mBanRanges.find(addr_16)) != mBanRanges.end())
     {
         ++it->second.connect_attempts;
-//#ifdef DEBUG_BANLIST
-        std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/16. returning false. attempts=" << it->second.connect_attempts << std::endl;
-//#endif
-        if(check_result != NULL)
-            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
-        return false ;
-    }
+#ifdef DEBUG_BANLIST
+      std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/16. returning false. attempts=" << it->second.connect_attempts << std::endl;
+#endif
+      if(check_result != NULL)
+          *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+      return false ;
+  }
 
-    if((it=mBanRanges.find(addr_24)) != mBanRanges.end())
-    {
-        ++it->second.connect_attempts;
-//#ifdef DEBUG_BANLIST
-        std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
-//#endif
-        if(check_result != NULL)
-            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
-        return false ;
-    }
+  if((it=mBanRanges.find(addr_24)) != mBanRanges.end())
+  {
+      ++it->second.connect_attempts;
+#ifdef DEBUG_BANLIST
+      std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
+#endif
+      if(check_result != NULL)
+          *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+      return false ;
+  }
 
-    if((it=mBanRanges.find(addr_32)) != mBanRanges.end())
-    {
-        ++it->second.connect_attempts;
-//#ifdef DEBUG_BANLIST
-        std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/32.  returning false. attempts=" << it->second.connect_attempts << std::endl;
-//#endif
+  if((it=mBanRanges.find(addr_32)) != mBanRanges.end())
+  {
+      ++it->second.connect_attempts;
+#ifdef DEBUG_BANLIST
+      std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/32.  returning false. attempts=" << it->second.connect_attempts << std::endl;
+#endif
         if(check_result != NULL)
             *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
         return false ;
@@ -354,17 +354,17 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checkin
     if((it=mBanSet.find(addr_32)) != mBanSet.end())
     {
         ++it->second.connect_attempts;
-//#ifdef DEBUG_BANLIST
-        std::cerr << "found as blacklisted address " << sockaddr_storage_iptostring(it->first) << ".  returning false. attempts=" << it->second.connect_attempts << std::endl;
-//#endif
-        if(check_result != NULL)
-            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
-        return false ;
-    }
+#ifdef DEBUG_BANLIST
+      std::cerr << "found as blacklisted address " << sockaddr_storage_iptostring(it->first) << ".  returning false. attempts=" << it->second.connect_attempts << std::endl;
+#endif
+      if(check_result != NULL)
+          *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+      return false ;
+  }
 
-//#ifdef DEBUG_BANLIST
-    std::cerr << " not blacklisted. Accepting." << std::endl;
-//#endif
+#ifdef DEBUG_BANLIST
+  std::cerr << " not blacklisted. Accepting." << std::endl;
+#endif
     if(check_result != NULL)
         *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
     return true ;
@@ -491,6 +491,7 @@ int p3BanList::tick()
             autoFigureOutBanRanges() ;
     }
 
+#ifdef DEBUG_BANLIST
     static time_t last_print = 0 ;
 
     if(now > 10+last_print)
@@ -499,6 +500,7 @@ int p3BanList::tick()
         printBanSet_locked(std::cerr);
         last_print = now ;
     }
+#endif
 
     return 0;
 }
@@ -1112,7 +1114,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 int p3BanList::printBanSet_locked(std::ostream &out)
 {
     time_t now = time(NULL);
-#ifdef DEBUG_BANLIST
+
     out << "p3BanList::printBanSet_locked()";
     out << std::endl;
 
@@ -1130,7 +1132,7 @@ int p3BanList::printBanSet_locked(std::ostream &out)
         out << " Age: " << now - it->second.mTs;
         out << std::endl;
     }
-#endif
+
     std::cerr << "Current IP black list (only showing manual ranges, not automatically banned IPs): " << std::dec << std::endl;
 
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanRanges.begin());it!=mBanRanges.end();++it)
