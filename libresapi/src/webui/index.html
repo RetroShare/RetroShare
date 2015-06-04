@@ -3,13 +3,14 @@
 <head>
 	<title>New webinterface for Retroshare</title>
 
-	<script src="react.js"></script>
-	<script src="JSXTransformer.js"></script>
-
 	<script src="RsXHRConnection.js"></script>
 	<script src="RsApi.js"></script>
 
+	<!-- it seems to work more reliable, if the jsx file is loaded before react -->
 	<script type="text/jsx" src="gui.jsx"></script>
+
+	<script src="react.js"></script>
+	<script src="JSXTransformer.js"></script>
 
 	<link href="green-black.css" rel="stylesheet">
 
