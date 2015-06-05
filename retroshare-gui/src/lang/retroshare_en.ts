@@ -12355,10 +12355,6 @@ Check your ports!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Deny all connections from the following IP ranges:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>IP range</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12379,19 +12375,7 @@ Check your ports!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Include the  IPs reported by your friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto-group IPs by ranges when at least :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>  IPs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Automatically include masquerading IPs reported by DHT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12456,6 +12440,34 @@ Check your ports!</source>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>activate IP filtering</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ban every  IP reported by your friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends&apos; IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ban every masquerading IP reported by your DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
