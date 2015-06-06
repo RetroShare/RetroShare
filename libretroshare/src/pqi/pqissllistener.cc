@@ -922,16 +922,6 @@ int pqissllistener::finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId,
 	out += "\npqissllistener => Passing to pqissl module!";
 	pqioutput(PQL_WARNING, pqissllistenzone, out);
 
-    std::string addrstring = sockaddr_storage_tostring(remote_addr);
-
-    if(!strncmp(addrstring.c_str(),"IPv4=194.228",12))
-        std::cerr << "Caught connection from bad address " << addrstring << " for peer ID " << peerId << std::endl;
-
-    if(!strncmp(addrstring.c_str(),"IPv4=217.66",11))
-        std::cerr << "Caught connection from bad address " << addrstring << " for peer ID " << peerId << std::endl;
-
-    if(!strncmp(addrstring.c_str(),"IPv4=194.199",12))
-        std::cerr << "Caught connection from bad address " << addrstring << std::endl;
     std::cerr << "pqissllistenner::finaliseConnection() connected to " << sockaddr_storage_tostring(remote_addr) << std::endl;
 
 	// hand off ssl conection.
