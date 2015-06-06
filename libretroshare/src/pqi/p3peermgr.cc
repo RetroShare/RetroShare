@@ -1232,25 +1232,61 @@ bool p3PeerMgrIMPL::setDynDNS(const RsPeerId &id, const std::string &dyndns)
     return changed;
 }
 
+struct ZeroedInt
+{
+    ZeroedInt() { n=0 ;}
+    int n ;
+};
+
 bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, const sockaddr_storage &addr)
 {
-    //#ifdef PEER_DEBUG
-    std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr) << ", as reported by friend " << from << std::endl;
-    //#endif
+    // The algorithm is the following:
+    // - collect for each friend the last external connection address that is reported
+    // - everytime the list is changed, parse it entirely and
+    //		* emit a warnign when the address is unknown
+    // 		* if multiple peers report the same address => notify the LinkMgr that the external address had changed.
 
-    // disconnect every friend that has reported a wrong external address
+    sockaddr_storage addr_filtered ;
+    sockaddr_storage_copyip(addr_filtered,addr) ;
+    time_t now = time(NULL) ;
+
+#ifdef PEER_DEBUG
+    std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr_filtered) << ", as reported by friend " << from << std::endl;
+#endif
+
+    if(!sockaddr_storage_isExternalNet(addr_filtered))
+    {
+#ifdef PEER_DEBUG
+        std::cerr << "  address is not an external address. Returning false" << std::endl ;
+#endif
+        return false ;
+    }
 
     sockaddr_storage own_addr ;
 
-    if(mNetMgr->getExtAddress(own_addr) && !sockaddr_storage_sameip(own_addr,addr))
+    if(!mNetMgr->getExtAddress(own_addr))
     {
-        std::cerr << "(WW) peer reports an address that is not our current external address. This is weird." << std::endl;
+#ifdef PEER_DEBUG
+        std::cerr << "  cannot get current external address. Returning false" << std::endl;
+#endif
+        return false ;
+    }
+#ifdef PEER_DEBUG
+    std::cerr << "  current external address is known to be " << sockaddr_storage_iptostring(own_addr) << std::endl;
+#endif
+
+    // Notify for every friend that has reported a wrong external address
+
+    if(!sockaddr_storage_sameip(own_addr,addr_filtered))
+    {
+        std::cerr << "  Peer " << from << " reports a connexion address (" << sockaddr_storage_iptostring(addr_filtered) <<") that is not your current external address (" << sockaddr_storage_iptostring(own_addr) << "). This is weird." << std::endl;
 
         RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED, from.toStdString(), sockaddr_storage_iptostring(own_addr), sockaddr_storage_iptostring(addr));
-        //mLinkMgr->disconnectFriend(from) ;
     }
+
     return true ;
 }
+
 static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
 {
     bool changed = false ;

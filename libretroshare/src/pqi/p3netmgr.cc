@@ -1123,7 +1123,7 @@ bool    p3NetMgrIMPL::getExtAddress(struct sockaddr_storage& addr)
 
         if(mNetFlags.mExtAddrOk)
         {
-            addr = mExtAddr ;
+            addr = mNetFlags.mExtAddr ;
             return true ;
         }
         else

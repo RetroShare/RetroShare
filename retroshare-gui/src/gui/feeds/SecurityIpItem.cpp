@@ -154,7 +154,7 @@ void SecurityIpItem::updateItem()
 			ui->ipAddr->setText(QString::fromStdString(mIpAddr));
             ui->ipAddr->setToolTip(tr("<p>This is the external IP your Retroshare node thinks it is using.</p>")) ;
             ui->ipAddrReported->setText(QString::fromStdString(mIpAddrReported));
-            ui->ipAddrReported->setToolTip(tr("<p>This is the IP your friend claims it is connected to. If you changed IPs this is just a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.</p>")) ;
+            ui->ipAddrReported->setToolTip(tr("<p>This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.</p>")) ;
             break;
 		default:
 			std::cerr << "SecurityIpItem::updateItem() Wrong type" << std::endl;
