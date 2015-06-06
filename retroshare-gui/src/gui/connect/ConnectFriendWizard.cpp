@@ -73,12 +73,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	/* add stylesheet to title */
-	QList<int> ids = pageIds();
-	for (QList<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
-		QWizardPage *p = page(*it);
-		p->setTitle(QString("<span style=\"font-size:16pt; font-weight:500; color:white;\">%1</span>").arg(p->title()));
-	}
+	mTitleFontSize = 0; // Standard
+	mTitleFontWeight = 0; // Standard
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_WS_MAC
@@ -95,7 +91,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 
 // we have no good pictures for watermarks
 //	setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/connectFriendWatermark.png"));
-	setPixmap(QWizard::BannerPixmap, QPixmap(":/images/connect/connectFriendBanner1.png"));
 
 	/* register global fields */
 	ui->ErrorMessagePage->registerField("errorMessage", ui->messageLabel, "text");
@@ -109,6 +104,99 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
 	connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
+
+	updateStylesheet();
+}
+
+void ConnectFriendWizard::setBannerPixmap(const QString &pixmap)
+{
+	mBannerPixmap = pixmap;
+	setPixmap(QWizard::BannerPixmap, mBannerPixmap);
+}
+
+QString ConnectFriendWizard::bannerPixmap()
+{
+	return mBannerPixmap;
+}
+
+void ConnectFriendWizard::setTitleFontSize(int size)
+{
+	mTitleFontSize = size;
+	updateStylesheet();
+}
+
+int ConnectFriendWizard::titleFontSize()
+{
+	return mTitleFontSize;
+}
+
+void ConnectFriendWizard::setTitleFontWeight(int weight)
+{
+	mTitleFontWeight = weight;
+	updateStylesheet();
+}
+
+int ConnectFriendWizard::titleFontWeight()
+{
+	return mTitleFontWeight;
+}
+
+void ConnectFriendWizard::setTitleColor(const QString &color)
+{
+	mTitleColor = color;
+	updateStylesheet();
+}
+
+QString ConnectFriendWizard::titleColor()
+{
+	return mTitleColor;
+}
+
+void ConnectFriendWizard::setTitleText(QWizardPage *page, const QString &title)
+{
+	if (!page) {
+		return;
+	}
+
+	page->setTitle(title);
+
+	mTitleString.remove(page);
+	updateStylesheet();
+}
+
+void ConnectFriendWizard::updateStylesheet()
+{
+	/* add stylesheet to title */
+	QList<int> ids = pageIds();
+	for (QList<int>::iterator pageIt = ids.begin(); pageIt != ids.end(); ++pageIt) {
+		QWizardPage *p = page(*pageIt);
+
+		QString title;
+		QMap<QWizardPage*, QString>::iterator it = mTitleString.find(p);
+		if (it == mTitleString.end()) {
+			/* Save title string */
+			title = p->title();
+			mTitleString[p] = title;
+		} else {
+			title = it.value();
+		}
+
+		QString stylesheet = "<span style=\"";
+
+		if (mTitleFontSize) {
+			stylesheet += QString("font-size:%1pt; ").arg(mTitleFontSize);
+		}
+		if (mTitleFontWeight) {
+			stylesheet += QString("font-weight:%1; ").arg(mTitleFontWeight);
+		}
+		if (!mTitleColor.isEmpty()) {
+			stylesheet += QString("color:%1; ").arg(mTitleColor);
+		}
+
+		stylesheet += QString("\">%1</span>").arg(title);
+
+		p->setTitle(stylesheet);
+	}
 }
 
 QString ConnectFriendWizard::getErrorString(uint32_t error_code)

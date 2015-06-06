@@ -3,7 +3,7 @@
 
 #include <QWizard>
 #include <retroshare/rspeers.h>
-#include <map>
+#include <QMap>
 
 class QCheckBox;
 
@@ -24,6 +24,11 @@ class ConnectFriendWizard : public QWizard
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QString bannerPixmap READ bannerPixmap WRITE setBannerPixmap)
+	Q_PROPERTY(int titleFontSize READ titleFontSize WRITE setTitleFontSize)
+	Q_PROPERTY(int titleFontWeight READ titleFontWeight WRITE setTitleFontWeight)
+	Q_PROPERTY(QString titleColor READ titleColor WRITE setTitleColor)
+
 public:
 	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_Email, Page_FriendRequest, Page_FriendRecommendations };
 
@@ -38,6 +43,15 @@ public:
 	virtual void accept();
 
 	void setGroup(const std::string &id);
+
+	void setBannerPixmap(const QString &pixmap);
+	QString bannerPixmap();
+	void setTitleFontSize(int size);
+	int titleFontSize();
+	void setTitleFontWeight(int weight);
+	int titleFontWeight();
+	void setTitleColor(const QString &color);
+	QString titleColor();
 
 protected:
 	void initializePage(int id);
@@ -70,10 +84,20 @@ private slots:
 private:
 	// returns the translated error string for the error code (to be found in rspeers.h)
 	QString getErrorString(uint32_t) ;
+	void updateStylesheet();
+	void setTitleText(QWizardPage *page, const QString &title);
 
+private:
 	bool error;
 	RsPeerDetails peerDetails;
 	std::string mCertificate;
+
+	/* Stylesheet */
+	QString mBannerPixmap;
+	int mTitleFontSize;
+	int mTitleFontWeight;
+	QString mTitleColor;
+	QMap<QWizardPage*, QString> mTitleString;
 
 	/* TextPage */
 	QTimer *cleanfriendCertTimer;
