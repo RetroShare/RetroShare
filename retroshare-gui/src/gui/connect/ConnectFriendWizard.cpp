@@ -240,6 +240,8 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
         if (friendRequest){
         ui->fr_label->show();
         ui->requestinfolabel->show();
+        setTitleText(ui->ConclusionPage, tr("Friend request"));
+        ui->ConclusionPage->setSubTitle(tr("Details about the request"));
         }
     } else {
 		// error message
@@ -264,6 +266,8 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
     if (friendRequest){
     ui->fr_label->show();
     ui->requestinfolabel->show();
+    setTitleText(ui->ConclusionPage,tr("Friend request"));
+    ui->ConclusionPage->setSubTitle(tr("Details about the request"));
     }
 }
 
