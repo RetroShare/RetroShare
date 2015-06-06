@@ -1631,25 +1631,30 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 	bool changed = false;
 	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it;
 
-	{
-		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+    {
+        RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
 #ifdef DEBUG_CHAT_LOBBIES
-		std::cerr << "Changing nickname for chat lobby " << std::hex << lobby_id << std::dec << " to " << nick << std::endl;
+        std::cerr << "Changing nickname for chat lobby " << std::hex << lobby_id << std::dec << " to " << nick << std::endl;
 #endif
-		it = _chat_lobbys.find(lobby_id) ;
+        it = _chat_lobbys.find(lobby_id) ;
 
-		if(it == _chat_lobbys.end())
-		{
-			std::cerr << " (EE) lobby does not exist!!" << std::endl;
-			return false;
-		}
+        if(it == _chat_lobbys.end())
+        {
+            std::cerr << " (EE) lobby does not exist!!" << std::endl;
+            return false;
+        }
 
         if (!it->second.gxs_id.isNull() && it->second.gxs_id != nick)
-		{
-			changed = true;
-		}
-	}
+        {
+            RsIdentityDetails det1,det2 ;
+
+            // Only send a nickname change event if the two Identities are not anonymous
+
+            if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && det1.mPgpLinked && det2.mPgpLinked)
+                changed = true;
+        }
+    }
 
 	if (changed)
 	{
