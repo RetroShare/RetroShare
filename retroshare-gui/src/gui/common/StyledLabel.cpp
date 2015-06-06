@@ -34,10 +34,17 @@ StyledLabel::StyledLabel(const QString &text, QWidget *parent)
 {
 }
 
+int StyledLabel::fontSizeFactor()
+{
+	return mFontSizeFactor;
+}
+
 void StyledLabel::setFontSizeFactor(int factor)
 {
+	mFontSizeFactor = factor;
+
 	QFont f = font();
-	qreal fontSize = factor * f.pointSizeF() / 100;
+	qreal fontSize = mFontSizeFactor * f.pointSizeF() / 100;
 	f.setPointSizeF(fontSize);
 	setFont(f);
 }
