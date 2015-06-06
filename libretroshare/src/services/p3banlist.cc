@@ -36,6 +36,7 @@
 #include "retroshare/rsbanlist.h"
 
 #include <sys/time.h>
+#include <sstream>
 
 /****
  * #define DEBUG_BANLIST		1
@@ -786,6 +787,13 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
     kv.value = mIPDHTGatheringEnabled?"TRUE":"FALSE" ;
     vitem->tlvkvs.pairs.push_back(kv) ;
 
+    kv.key = "IP_FILTERING_AUTORANGE_IPS_LIMIT" ;
+    std::ostringstream os ;
+    os << mAutoRangeLimit ;
+    os.flush() ;
+    kv.value = os.str() ;
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
     itemlist.push_back(vitem) ;
 
     return true ;
@@ -806,6 +814,13 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                 if(it2->key == "IP_FILTERING_AUTORANGE_IPS") mAutoRangeIps = (it2->value=="TRUE") ;
                 if(it2->key == "IP_FILTERING_FRIEND_GATHERING_ENABLED") mIPFriendGatheringEnabled = (it2->value=="TRUE") ;
                 if(it2->key == "IP_FILTERING_DHT_GATHERING_ENABLED") mIPDHTGatheringEnabled = (it2->value=="TRUE") ;
+
+                if(it2->key == "IP_FILTERING_AUTORANGE_IPS_LIMIT")
+        {
+            int val ;
+            if(sscanf(it2->value.c_str(),"%d",&val) == 1)
+                mAutoRangeLimit = val ;
+        }
             }
 
         RsBanListConfigItem *citem = dynamic_cast<RsBanListConfigItem*>( *it ) ;
