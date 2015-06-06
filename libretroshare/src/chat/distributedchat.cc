@@ -1622,14 +1622,14 @@ bool DistributedChatService::getIdentityForChatLobby(const ChatLobbyId& lobby_id
 bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& nick)
 {
     if (nick.isNull())
-	{
+    {
         std::cerr << "(EE) Ignore empty nickname for chat lobby " << nick << std::endl;
-		return false;
-	}
+        return false;
+    }
 
-	// first check for change and send status peer changed nick name
-	bool changed = false;
-	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it;
+    // first check for change and send status peer changed nick name
+    bool changed = false;
+    std::map<ChatLobbyId,ChatLobbyEntry>::iterator it;
 
     {
         RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
@@ -1646,36 +1646,36 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
         }
 
         if (!it->second.gxs_id.isNull() && it->second.gxs_id != nick)
+            changed = true;
+    }
+
+    if (changed)
+    {
+        // Inform other peers of change the Nickname
         {
             RsIdentityDetails det1,det2 ;
 
             // Only send a nickname change event if the two Identities are not anonymous
 
             if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && det1.mPgpLinked && det2.mPgpLinked)
-                changed = true;
+                sendLobbyStatusPeerChangedNickname(lobby_id, nick.toStdString()) ;
         }
-    }
 
-	if (changed)
-	{
-		// Inform other peers of change the Nickname
-        sendLobbyStatusPeerChangedNickname(lobby_id, nick.toStdString()) ;
+        // set new nick name
+        RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
-		// set new nick name
-		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+        it = _chat_lobbys.find(lobby_id) ;
 
-		it = _chat_lobbys.find(lobby_id) ;
-
-		if(it == _chat_lobbys.end())
-		{
-			std::cerr << " (EE) lobby does not exist!!" << std::endl;
-			return false;
-		}
+        if(it == _chat_lobbys.end())
+        {
+            std::cerr << " (EE) lobby does not exist!!" << std::endl;
+            return false;
+        }
 
         it->second.gxs_id = nick ;
-	}
+    }
 
-	return true ;
+    return true ;
 }
 
 void DistributedChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)

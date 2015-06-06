@@ -372,8 +372,6 @@ private:
 	struct sockaddr_storage mProxyServerAddress;
     uint32_t mProxyServerStatus ;
 
-        //std::map<RsPeerId,std::pair<sockaddr_storage,time_t> > mReportedConnectionIps ;
-
 };
 
 #endif // MRK_PQI_PEER_MANAGER_HEADER
