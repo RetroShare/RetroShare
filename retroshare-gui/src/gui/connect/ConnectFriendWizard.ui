@@ -114,29 +114,35 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPushButton" name="userCertHelpButton">
+         <widget class="QToolButton" name="userCertHelpButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">
             <normaloff>:/images/info16.png</normaloff>:/images/info16.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertIncludeSignaturesButton">
+         <widget class="QToolButton" name="userCertIncludeSignaturesButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Include signatures</string>
@@ -148,18 +154,21 @@
           <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertCopyButton">
+         <widget class="QToolButton" name="userCertCopyButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Copy your Cert to Clipboard</string>
@@ -168,18 +177,21 @@
            <iconset resource="../images.qrc">
             <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertSaveButton">
+         <widget class="QToolButton" name="userCertSaveButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Save your Cert into a File</string>
@@ -188,18 +200,21 @@
            <iconset resource="../images.qrc">
             <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertMailButton">
+         <widget class="QToolButton" name="userCertMailButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Run Email program</string>
@@ -208,18 +223,21 @@
            <iconset resource="../images.qrc">
             <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertOldFormatButton">
+         <widget class="QToolButton" name="userCertOldFormatButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">
@@ -228,7 +246,7 @@
           <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
@@ -287,18 +305,35 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="friendCertCleanLabel">
+         <widget class="QToolButton" name="userCertPasteButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Paste Cert of your friend from Clipboard</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="friendCertCleanLabel">
           <property name="pixmap">
            <pixmap resource="../images.qrc">:/images/accepted16.png</pixmap>
           </property>
-          <property name="scaledContents">
-           <bool>true</bool>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>

@@ -64,6 +64,7 @@ private slots:
 	void runEmailClient();
 	void showHelpUserCert();
 	void copyCert();
+	void pasteCert();
 	void saveCert();
 	void friendCertChanged();
 	void cleanFriendCert();

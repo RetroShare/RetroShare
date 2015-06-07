@@ -2351,6 +2351,10 @@ even if you don&apos;t make friends.</source>
         <source>Added with certificate from %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Paste Cert of your friend from Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConnectProgressDialog</name>

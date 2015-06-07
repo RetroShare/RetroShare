@@ -54,7 +54,7 @@ To be done
 0017 [X]    no tab configuraion for uploads section. no cache transfer disable option comment: cachetransfers will be removed (from noname)
             cyril: rename "show cache transfers" into "show file lists transfers"
 
-0018 [ ]    add friend dialog - add button for pasting from clipboard. 
+0018 [X]    add friend dialog - add button for pasting from clipboard.
             // some ppl dumb to use rightclich or keyboard)) and on the upper window some buttons exist, the lower one feels lonely.(from noname)
             comment: teach to use the context menu, else they are lost in RS
 

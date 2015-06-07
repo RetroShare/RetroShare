@@ -303,6 +303,7 @@ void ConnectFriendWizard::initializePage(int id)
 		connect(ui->userCertIncludeSignaturesButton, SIGNAL(clicked()), this, SLOT(toggleSignatureState()));
 		connect(ui->userCertOldFormatButton, SIGNAL(clicked()), this, SLOT(toggleFormatState()));
 		connect(ui->userCertCopyButton, SIGNAL(clicked()), this, SLOT(copyCert()));
+		connect(ui->userCertPasteButton, SIGNAL(clicked()), this, SLOT(pasteCert()));
 		connect(ui->userCertSaveButton, SIGNAL(clicked()), this, SLOT(saveCert()));
 		connect(ui->userCertMailButton, SIGNAL(clicked()), this, SLOT(runEmailClient()));
 		connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
@@ -983,6 +984,12 @@ void ConnectFriendWizard::copyCert()
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(ui->userCertEdit->toPlainText());
 	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
+}
+
+void ConnectFriendWizard::pasteCert()
+{
+	QClipboard *clipboard = QApplication::clipboard();
+	ui->friendCertEdit->setPlainText(clipboard->text());
 }
 
 void ConnectFriendWizard::saveCert()
