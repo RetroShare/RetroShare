@@ -26,7 +26,6 @@
 
 #include <retroshare-gui/configpage.h>
 #include "ui_SoundPage.h"
-#include "gui/SoundManager.h"
 
 class SoundPage : public ConfigPage
 {
@@ -50,6 +49,7 @@ public:
 private slots:
 	void eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void filenameChanged(QString filename);
+	void defaultButtonClicked();
 	void browseButtonClicked();
 	void playButtonClicked();
 

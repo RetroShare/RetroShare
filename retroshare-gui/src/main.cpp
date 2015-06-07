@@ -335,6 +335,8 @@ int main(int argc, char *argv[])
 
 		Settings->setValue(QString::fromUtf8("FirstRun"), false);
 
+		soundManager->initDefault();
+
 #ifdef __APPLE__
 		/* For OSX, we set the default to "cleanlooks", as the AQUA style hides some input boxes 
 		 * only on the first run - as the user might want to change it ;)

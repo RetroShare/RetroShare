@@ -19,10 +19,19 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QApplication>
 #include <QSound>
+#include <QDir>
+
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+#include <QAudio>
+#include <QAudioDeviceInfo>
+#endif
 
 #include "SoundManager.h"
 #include "settings/rsharesettings.h"
+#include "retroshare/rsinit.h"
+#include <retroshare/rsplugin.h>
 
 #define GROUP_MAIN      "Sound"
 #define GROUP_ENABLE    "Enable"
@@ -34,14 +43,18 @@ SoundEvents::SoundEvents()
 {
 }
 
-void SoundEvents::addEvent(const QString &groupName, const QString &eventName, const QString &event)
+void SoundEvents::addEvent(const QString &groupName, const QString &eventName, const QString &event, const QString &defaultFilename)
 {
+	if (event.isEmpty()) {
+		return;
+	}
+
 	SoundEventInfo info;
 	info.mGroupName = groupName;
 	info.mEventName = eventName;
-	info.mEvent = event;
+	info.mDefaultFilename = defaultFilename;
 
-	mEventInfos.push_back(info);
+	mEventInfos[event] = info;
 }
 
 void SoundManager::create()
@@ -53,6 +66,70 @@ void SoundManager::create()
 
 SoundManager::SoundManager() : QObject()
 {
+}
+
+void SoundManager::soundEvents(SoundEvents &events)
+{
+	QDir baseDir = QDir(qApp->applicationDirPath());
+	baseDir.cd("sounds");
+
+	/* add standard events */
+	events.addEvent(tr("Friend"), tr("Go Online"), SOUND_USER_ONLINE, QFileInfo(baseDir, "online1.wav").absoluteFilePath());
+	events.addEvent(tr("Chatmessage"), tr("New Msg"), SOUND_NEW_CHAT_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
+	events.addEvent(tr("Message"), tr("Message arrived"), SOUND_MESSAGE_ARRIVED, QFileInfo(baseDir, "receive.wav").absoluteFilePath());
+	events.addEvent(tr("Download"), tr("Download complete"), SOUND_DOWNLOAD_COMPLETE, QFileInfo(baseDir, "ft_complete.wav").absoluteFilePath());
+
+	/* add plugin events */
+	int pluginCount = rsPlugins->nbPlugins();
+	for (int i = 0; i < pluginCount; ++i) {
+		RsPlugin *plugin = rsPlugins->plugin(i);
+
+		if (plugin) {
+			plugin->qt_sound_events(events);
+		}
+	}
+}
+
+QString SoundManager::defaultFilename(const QString &event, bool check)
+{
+	SoundEvents events;
+	soundEvents(events);
+
+	QMap<QString, SoundEvents::SoundEventInfo>::iterator eventIt = events.mEventInfos.find(event);
+	if (eventIt == events.mEventInfos.end()) {
+		return "";
+	}
+
+	QString filename = eventIt.value().mDefaultFilename;
+	if (filename.isEmpty()) {
+		return "";
+	}
+
+	if (!check) {
+		return convertFilename(filename);
+	}
+
+	if (QFileInfo(filename).exists()) {
+		return convertFilename(filename);
+	}
+
+	return "";
+}
+
+void SoundManager::initDefault()
+{
+	SoundEvents events;
+	soundEvents(events);
+
+	QString event;
+	foreach (event, events.mEventInfos.keys()) {
+		SoundEvents::SoundEventInfo &eventInfo = events.mEventInfos[event];
+
+		if (QFileInfo(eventInfo.mDefaultFilename).exists()) {
+			setEventFilename(event, convertFilename(eventInfo.mDefaultFilename));
+			setEventEnabled(event, true);
+		}
+	}
 }
 
 void SoundManager::setMute(bool mute)
@@ -113,14 +190,34 @@ void SoundManager::setEventFilename(const QString &event, const QString &filenam
 	Settings->endGroup();
 }
 
+QString SoundManager::convertFilename(const QString &filename)
+{
+	if (RsInit::isPortable ()) {
+		// Save path relative to application path
+		QDir baseDir = QDir(qApp->applicationDirPath());
+		QString relativeFilename = baseDir.relativeFilePath(filename);
+		if (!relativeFilename.startsWith("..")) {
+			// Save only subfolders as relative path
+			return relativeFilename;
+		}
+	}
+
+	return filename;
+}
+
+QString SoundManager::realFilename(const QString &filename)
+{
+	if (RsInit::isPortable ()) {
+		// Path relative to application path
+		QDir baseDir = QDir(qApp->applicationDirPath());
+		return baseDir.absoluteFilePath(filename);
+	}
+
+	return filename;
+}
+
 void SoundManager::play(const QString &event)
 {
-#if QT_VERSION < QT_VERSION_CHECK (5, 0, 0)
-	if (!QSound::isAvailable()) {
-		return;
-	}
-#endif
-
 	if (isMute() || !eventEnabled(event)) {
 		return;
 	}
@@ -134,5 +231,14 @@ void SoundManager::playFile(const QString &filename)
 	if (filename.isEmpty()) {
 		return;
 	}
-	QSound::play(filename);
+
+	QString playFilename = realFilename(filename);
+
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+	if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
+#else
+	if (QSound::isAvailable()) {
+#endif
+		QSound::play(playFilename);
+	}
 }

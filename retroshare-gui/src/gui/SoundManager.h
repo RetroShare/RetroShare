@@ -23,6 +23,7 @@
 #define SOUNDMANAGER_H
 
 #include <QObject>
+#include <QMap>
 
 #define SOUND_NEW_CHAT_MESSAGE  "NewChatMessage"
 #define SOUND_USER_ONLINE       "User_go_Online"
@@ -40,16 +41,16 @@ public:
 	public:
 		QString mGroupName;
 		QString mEventName;
-		QString mEvent;
+		QString mDefaultFilename;
 	};
 
 public:
 	SoundEvents();
 
-	void addEvent(const QString &groupName, const QString &eventName, const QString &event);
+	void addEvent(const QString &groupName, const QString &eventName, const QString &event, const QString &defaultFilename);
 
 public:
-	QList<SoundEventInfo> mEventInfos;
+	QMap<QString, SoundEventInfo> mEventInfos;
 };
 
 class SoundManager : public QObject
@@ -64,6 +65,13 @@ signals:
 
 public:
 	static void create();
+
+	void initDefault();
+	QString defaultFilename(const QString &event, bool check);
+	static QString convertFilename(const QString &filename);
+	static QString realFilename(const QString &filename);
+
+	void soundEvents(SoundEvents &events);
 
 	bool isMute();
 

@@ -5217,10 +5217,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Share forum admin permissions</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5234,6 +5230,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9429,10 +9429,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You havn&apos;t set a trust level for this key.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This key has signed your own PGP key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9454,6 +9450,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Maybe password is wrong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You haven&apos;t set a trust level for this key.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12000,6 +12000,14 @@ Reducing image to %1x%2 pixels?</source>
         <source>IP address %1 was added to the whitelist</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;p&gt;This is the external IP your Retroshare node thinks it is using.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -12774,33 +12782,13 @@ Select the Friends with which you want to Share your Channel.</source>
     </message>
 </context>
 <context>
-    <name>SoundPage</name>
-    <message>
-        <source>Event:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Filename:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Event</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Filename</source>
-        <translation type="unfinished"></translation>
-    </message>
+    <name>SoundManager</name>
     <message>
         <source>Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>go Online</source>
+        <source>Go Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12827,12 +12815,39 @@ Select the Friends with which you want to Share your Channel.</source>
         <source>Download complete</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>SoundPage</name>
+    <message>
+        <source>Event:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Open File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14176,10 +14191,6 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet omputer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Webinterface not enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14189,6 +14200,10 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Webinterface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
