@@ -79,7 +79,7 @@ void GroupShareKey::setTyp()
             
         ui->headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
         ui->headerFrame->setHeaderText(tr("Share channel admin permissions"));
-        ui->sharekeyinfo_label->setText(tr("You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions."));
+        ui->sharekeyinfo_label->setText(tr("You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions."));
     }
     else if(mGrpType == FORUM_KEY_SHARE)
     {

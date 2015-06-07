@@ -256,7 +256,7 @@ void PGPKeyDialog::load()
         break ;
 
     default:
-        truststring += tr("You havn't set a trust level for this key.");
+        truststring += tr("You haven't set a trust level for this key.");
         break ;
     }
     truststring += "</p>" ;
