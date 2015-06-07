@@ -61,6 +61,21 @@ install: build
 	install -D -m 644 src/libresapi/src/webfiles/index.html     		$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/index.html     		 
 	install -D -m 644 src/libresapi/src/webfiles/react.js     			$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/react.js     		 
 	install -D -m 644 src/retroshare-gui/src/gui/images/logo/logo_splash.png	$(CURDIR)/debian/retroshare06-nogui/usr/share/RetroShare06/webui/img/logo_splash.png    		 
+	install -D -m 644 src/retroshare-gui/src/sounds/alert.wav         $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/alert.wav        
+	install -D -m 644 src/retroshare-gui/src/sounds/chat1.wav         $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/chat1.wav        
+	install -D -m 644 src/retroshare-gui/src/sounds/chat2.wav         $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/chat2.wav        
+	install -D -m 644 src/retroshare-gui/src/sounds/file.wav          $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/file.wav         
+	install -D -m 644 src/retroshare-gui/src/sounds/ft_complete.wav   $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/ft_complete.wav  
+	install -D -m 644 src/retroshare-gui/src/sounds/ft_incoming.wav   $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/ft_incoming.wav  
+	install -D -m 644 src/retroshare-gui/src/sounds/incomingchat.wav  $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/incomingchat.wav 
+	install -D -m 644 src/retroshare-gui/src/sounds/notify.wav        $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/notify.wav       
+	install -D -m 644 src/retroshare-gui/src/sounds/offline.wav       $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/offline.wav      
+	install -D -m 644 src/retroshare-gui/src/sounds/online1.wav       $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/online1.wav      
+	install -D -m 644 src/retroshare-gui/src/sounds/online2.wav       $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/online2.wav      
+	install -D -m 644 src/retroshare-gui/src/sounds/receive.wav       $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/receive.wav      
+	install -D -m 644 src/retroshare-gui/src/sounds/send1.wav         $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/send1.wav        
+	install -D -m 644 src/retroshare-gui/src/sounds/send2.wav         $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/send2.wav        
+	install -D -m 644 src/retroshare-gui/src/sounds/startup.wav       $(CURDIR)/debian/retroshare06/usr/share/RetroShare06/sounds/startup.wav      
 
 # Add here commands to install the package into debian/your_appname
 #    cd builddir && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install

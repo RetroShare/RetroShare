@@ -70,7 +70,11 @@ SoundManager::SoundManager() : QObject()
 
 void SoundManager::soundEvents(SoundEvents &events)
 {
-	QDir baseDir = QDir(qApp->applicationDirPath() + "/sounds");
+#ifdef WINDOWS_SYS
+    QDir baseDir = QDir(qApp->applicationDirPath() + "/sounds");
+#else
+    QDir baseDir = QDir("/usr/share/Retroshare06/sounds");
+#endif
 
 	events.mDefaultPath = baseDir.absolutePath();
 
