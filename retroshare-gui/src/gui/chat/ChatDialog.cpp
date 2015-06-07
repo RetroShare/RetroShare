@@ -170,7 +170,7 @@ void ChatDialog::init(ChatId id, const QString &title)
 
     if(msg.incoming && (msg.chat_id.isPeerId() || msg.chat_id.isGxsId()))
         // play sound when recv a message
-        soundManager->play(SOUND_NEW_CHAT_MESSAGE);
+        SoundManager::play(SOUND_NEW_CHAT_MESSAGE);
 
     ChatDialog *cd = getChat(msg.chat_id, Settings->getChatFlags());   
     if(cd)

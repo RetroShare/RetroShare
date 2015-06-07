@@ -790,7 +790,7 @@ void NotifyQt::UpdateGUI()
 			switch(type)
 			{
 				case RS_POPUP_ENCRYPTED_MSG:
-					soundManager->play(SOUND_MESSAGE_ARRIVED);
+					SoundManager::play(SOUND_MESSAGE_ARRIVED);
 
 					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
 					{
@@ -798,7 +798,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_MSG:
-					soundManager->play(SOUND_MESSAGE_ARRIVED);
+					SoundManager::play(SOUND_MESSAGE_ARRIVED);
 
 					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
 					{
@@ -806,7 +806,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_CONNECT:
-					soundManager->play(SOUND_USER_ONLINE);
+					SoundManager::play(SOUND_USER_ONLINE);
 
 					if ((popupflags & RS_POPUP_CONNECT) && !_disableAllToaster)
 					{
@@ -814,7 +814,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
-					soundManager->play(SOUND_DOWNLOAD_COMPLETE);
+					SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
 
 					if ((popupflags & RS_POPUP_DOWNLOAD) && !_disableAllToaster)
 					{

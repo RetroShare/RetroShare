@@ -50,6 +50,7 @@ public:
 	void addEvent(const QString &groupName, const QString &eventName, const QString &event, const QString &defaultFilename);
 
 public:
+	QString mDefaultPath;
 	QMap<QString, SoundEventInfo> mEventInfos;
 };
 
@@ -58,7 +59,7 @@ class SoundManager : public QObject
 	Q_OBJECT
 
 public slots:
-	void setMute(bool mute);
+	void setMute(bool m);
 
 signals:
 	void mute(bool isMute);
@@ -66,23 +67,23 @@ signals:
 public:
 	static void create();
 
-	void initDefault();
-	QString defaultFilename(const QString &event, bool check);
+	static void initDefault();
+	static QString defaultFilename(const QString &event, bool check);
 	static QString convertFilename(const QString &filename);
 	static QString realFilename(const QString &filename);
 
-	void soundEvents(SoundEvents &events);
+	static void soundEvents(SoundEvents &events);
 
-	bool isMute();
+	static bool isMute();
 
-	void play(const QString &event);
-	void playFile(const QString &filename);
+	static void play(const QString &event);
+	static void playFile(const QString &filename);
 
-	bool eventEnabled(const QString &event);
-	void setEventEnabled(const QString &event, bool enabled);
+	static bool eventEnabled(const QString &event);
+	static void setEventEnabled(const QString &event, bool enabled);
 
-	QString eventFilename(const QString &event);
-	void setEventFilename(const QString &event, const QString &filename);
+	static QString eventFilename(const QString &event);
+	static void setEventFilename(const QString &event, const QString &filename);
 
 private:
 	SoundManager();

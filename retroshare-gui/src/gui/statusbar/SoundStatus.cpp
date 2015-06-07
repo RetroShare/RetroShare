@@ -44,7 +44,7 @@ SoundStatus::SoundStatus(QWidget *parent)
 
 	setLayout(hbox);
 
-	bool isMute = soundManager->isMute();
+	bool isMute = SoundManager::isMute();
 	imageButton->setChecked(isMute);
 
 	connect(soundManager, SIGNAL(mute(bool)), this, SLOT(mute(bool)));

@@ -70,8 +70,9 @@ SoundManager::SoundManager() : QObject()
 
 void SoundManager::soundEvents(SoundEvents &events)
 {
-	QDir baseDir = QDir(qApp->applicationDirPath());
-	baseDir.cd("sounds");
+	QDir baseDir = QDir(qApp->applicationDirPath() + "/sounds");
+
+	events.mDefaultPath = baseDir.absolutePath();
 
 	/* add standard events */
 	events.addEvent(tr("Friend"), tr("Go Online"), SOUND_USER_ONLINE, QFileInfo(baseDir, "online1.wav").absoluteFilePath());
@@ -132,13 +133,13 @@ void SoundManager::initDefault()
 	}
 }
 
-void SoundManager::setMute(bool mute)
+void SoundManager::setMute(bool m)
 {
 	Settings->beginGroup(GROUP_MAIN);
-	Settings->setValue("mute", mute);
+	Settings->setValue("mute", m);
 	Settings->endGroup();
 
-	emit SoundManager::mute(mute);
+	emit mute(m);
 }
 
 bool SoundManager::isMute()

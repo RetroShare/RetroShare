@@ -95,9 +95,9 @@ QTreeWidgetItem *SoundPage::addItem(QTreeWidgetItem *groupItem, const QString &n
 	QTreeWidgetItem *item = new QTreeWidgetItem(TYPE_ITEM);
 	item->setData(COLUMN_DATA, ROLE_EVENT, event);
 	item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-	item->setCheckState(COLUMN_NAME, soundManager->eventEnabled(event) ? Qt::Checked : Qt::Unchecked);
+	item->setCheckState(COLUMN_NAME, SoundManager::eventEnabled(event) ? Qt::Checked : Qt::Unchecked);
 	item->setText(COLUMN_NAME, name);
-	item->setText(COLUMN_FILENAME, soundManager->eventFilename(event));
+	item->setText(COLUMN_FILENAME, SoundManager::eventFilename(event));
 	groupItem->addChild(item);
 
 	return item;
@@ -113,8 +113,8 @@ bool SoundPage::save(QString &/*errmsg*/)
 
 		if (item->type() == TYPE_ITEM) {
 			const QString event = item->data(COLUMN_DATA, ROLE_EVENT).toString();
-			soundManager->setEventEnabled(event, item->checkState(COLUMN_NAME) == Qt::Checked);
-			soundManager->setEventFilename(event, item->text(COLUMN_FILENAME));
+			SoundManager::setEventEnabled(event, item->checkState(COLUMN_NAME) == Qt::Checked);
+			SoundManager::setEventFilename(event, item->text(COLUMN_FILENAME));
 		}
 	}
 
@@ -128,7 +128,7 @@ void SoundPage::load()
 
 	/* add sound events */
 	SoundEvents events;
-	soundManager->soundEvents(events);
+	SoundManager::soundEvents(events);
 
 	QString event;
 	foreach (event, events.mEventInfos.keys()) {
@@ -165,7 +165,7 @@ void SoundPage::eventChanged(QTreeWidgetItem *current, QTreeWidgetItem */*previo
 	ui.eventName->setText(eventName);
 
 	QString event = current->data(COLUMN_DATA, ROLE_EVENT).toString();
-	ui.defaultButton->setDisabled(soundManager->defaultFilename(event, true).isEmpty());
+	ui.defaultButton->setDisabled(SoundManager::defaultFilename(event, true).isEmpty());
 }
 
 void SoundPage::filenameChanged(QString filename)
@@ -186,7 +186,7 @@ void SoundPage::defaultButtonClicked()
 	}
 
 	QString event = item->data(COLUMN_DATA, ROLE_EVENT).toString();
-	ui.filenameEdit->setText(soundManager->defaultFilename(event, true));
+	ui.filenameEdit->setText(SoundManager::defaultFilename(event, true));
 }
 
 void SoundPage::browseButtonClicked()
@@ -206,5 +206,5 @@ void SoundPage::playButtonClicked()
 	}
 
 	QString filename = item->text(COLUMN_FILENAME);
-	soundManager->playFile(filename);
+	SoundManager::playFile(filename);
 }
