@@ -272,7 +272,7 @@ uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
 	s += GetTlvStringSize(item->author);
 	s += GetTlvStringSize(item->description);
 	s += GetTlvStringSize(item->descriptionTransformed);
-	s += sizeof(time_t); /* pubDate */
+	s += sizeof(uint32_t); /* pubDate */
 	s += sizeof(uint32_t); /* flag */
 
 	return s;
