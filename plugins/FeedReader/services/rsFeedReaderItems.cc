@@ -81,7 +81,7 @@ uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 	s += GetTlvStringSize(item->proxyAddress);
 	s += sizeof(uint16_t); /* proxyPort */
 	s += sizeof(uint32_t); /* updateInterval */
-	s += sizeof(time_t); /* lastscan */
+    s += sizeof(uint32_t); /* lastUpdate */
 	s += sizeof(uint32_t); /* storageTime */
 	s += sizeof(uint32_t); /* flag */
 	s += GetTlvStringSize(item->forumId);
