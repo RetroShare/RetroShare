@@ -457,7 +457,7 @@ function makeFriendlyUnit(bytes)
 {
 	if(bytes < 1e3)
 		return bytes.toFixed(1) + "B";
-	if(bytes < 1e3)
+	if(bytes < 1e6)
 		return (bytes/1e3).toFixed(1) + "kB";
 	if(bytes < 1e9)
 		return (bytes/1e6).toFixed(1) + "MB";
@@ -532,6 +532,7 @@ var DownloadsWidget = React.createClass({
 					<td>{this.props.data.name}</td>
 					<td>{makeFriendlyUnit(this.props.data.size)}</td>
 					<td><ProgressBar progress={this.props.data.transfered / this.props.data.size}/></td>
+					<td>{makeFriendlyUnit(this.props.data.transfer_rate*1e3)}/s</td>
 					<td>{this.props.data.download_status}</td>
 					<td>{ctrlBtn} <div className="btn" onClick={cancelFn}>cancel</div> {playBtn}</td>
 					</tr>);
@@ -543,6 +544,7 @@ var DownloadsWidget = React.createClass({
 				<th>name</th>
 				<th>size</th>
 				<th>completed</th>
+				<th>transfer rate</th>
 				<th>download status</th>
 				<th>actions</th>
 			</tr>

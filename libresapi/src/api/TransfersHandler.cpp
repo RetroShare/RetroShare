@@ -126,7 +126,8 @@ void TransfersHandler::handleDownloads(Request &req, Response &resp)
             double size = fi.size;
             double transfered = fi.transfered;
             stream << makeKeyValueReference("size", size)
-                   << makeKeyValueReference("transfered", transfered);
+                   << makeKeyValueReference("transfered", transfered)
+                   << makeKeyValue("transfer_rate", fi.tfRate);
 
             std::string dl_status;
             /*
