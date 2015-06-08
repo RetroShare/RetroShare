@@ -166,7 +166,7 @@
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="76"/>
+        <location filename="../gui/AudioInputConfig.h" line="75"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -459,72 +459,45 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="121"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;Plugin VOIP de RetroShare&lt;/h3&gt;&lt;br/&gt; * Colaboradores: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <location filename="../VOIPPlugin.cpp" line="122"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt;El plugin VOIP añade Voz IP a la ventana de chat privado de RetroShare. para usarlo, haga lo siguiente:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="101"/>
+        <location filename="../VOIPPlugin.cpp" line="123"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; Configure el nivel del micrófono mediante el panel de configuración&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="102"/>
+        <location filename="../VOIPPlugin.cpp" line="124"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt; Compruebe su micrófono mirando los VU-metters&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="103"/>
+        <location filename="../VOIPPlugin.cpp" line="125"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; en el chat privado, habilite la entrada/salida de sonido pulsando en los dos iconos de VOIP&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="104"/>
+        <location filename="../VOIPPlugin.cpp" line="126"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Por supuesto, su amigo también tiene que ejecutar el plugin para poder hablar/escuchar con usted.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="105"/>
+        <location filename="../VOIPPlugin.cpp" line="127"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;Esta es una característica experimental. No dude en enviar comentarios y sugerencias al equipo de RS dev team.</translation>
-    </message>
-    <message>
-        <location filename="../VOIPPlugin.cpp" line="130"/>
-        <source>RTT Statistics</source>
-        <translation>Estadísticas RTT</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="145"/>
-        <location filename="../gui/VoipStatistics.cpp" line="147"/>
-        <location filename="../gui/VoipStatistics.cpp" line="149"/>
-        <source>secs</source>
-        <translation>segs</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="151"/>
-        <source>Old</source>
-        <translation>Antes</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="152"/>
-        <source>Now</source>
-        <translation>Ahora</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="361"/>
-        <source>Round Trip Time:</source>
-        <translation>Tiempo de ida y vuelta:</translation>
     </message>
 </context>
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="164"/>
+        <location filename="../VOIPPlugin.cpp" line="176"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Este plugin permite la comunicación de voz entre amigos en RetroShare.</translation>
     </message>
@@ -532,85 +505,113 @@
 <context>
     <name>VOIPChatWidgetHolder</name>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="42"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="63"/>
         <source>Mute</source>
         <translation>Silenciar</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="55"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="76"/>
         <source>Start Call</source>
         <translation>Iniciar llamada</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="72"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="104"/>
         <source>Start Video Call</source>
         <translation>Comenzar vídeo-llamada</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="86"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="90"/>
         <source>Hangup Call</source>
         <translation>Colgar llamada</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="143"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="169"/>
         <source>Mute yourself</source>
         <translation>Silenciar</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="145"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="171"/>
         <source>Unmute yourself</source>
         <translation>Desilenciarse a si mismo</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="265"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="283"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="296"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="388"/>
         <source>VoIP Status</source>
         <translation>Estado VoIP</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
         <source>Outgoing Call stopped.</source>
         <translation>Llamada saliente detenida.</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="177"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="209"/>
         <source>Hold Call</source>
         <translation>Retener llamada</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
         <source>Outgoing Call is started...</source>
         <translation>La llamada saliente está inciada...</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="203"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="242"/>
         <source>Resume Call</source>
         <translation>Reanudar llamada</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="216"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="262"/>
         <source>Shut camera off</source>
         <translation>Cortar la cámara</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
-        <source>you&apos;re now sending video...</source>
-        <translation>ahora está enviando vídeo...</translation>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="266"/>
+        <source>You&apos;re now sending video...</source>
+        <translation>Se encuentra enviando vídeo...</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="224"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="278"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="299"/>
         <source>Activate camera</source>
         <translation>Activar cámara</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="284"/>
         <source>Video call stopped</source>
         <translation>Vídeo-llamada detenida</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="263"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="297"/>
+        <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
+        <translation>%1 le está invitando a iniciar una conversación de vídeo. ¿Quiere aceptar o declinar la invitación?</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="298"/>
+        <source>Accept Video Call</source>
+        <translation>Aceptar vídeo llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="389"/>
+        <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
+        <translation>%1 le está invitando a inciar una conversación de audio. ¿Quiere aceptar o declinar la invitación?</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="390"/>
+        <source>Accept Call</source>
+        <translation>Aceptar llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="391"/>
+        <source>Activate audio</source>
+        <translation>Activar audio</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="412"/>
         <source>Answer</source>
         <translation>Responder</translation>
     </message>
@@ -618,17 +619,131 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="169"/>
+        <location filename="../VOIPPlugin.cpp" line="181"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
 </context>
 <context>
-    <name>VoipStatistics</name>
+    <name>VOIPToasterItem</name>
     <message>
-        <location filename="../gui/VoipStatistics.ui" line="14"/>
-        <source>VoipTest Statistics</source>
-        <translation>Estadísticas de Voip</translation>
+        <location filename="../gui/VOIPToasterItem.cpp" line="43"/>
+        <source>Answer</source>
+        <translation>Responder</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.cpp" line="47"/>
+        <source>Answer with video</source>
+        <translation>Responder con vídeo</translation>
+    </message>
+</context>
+<context>
+    <name>VOIPToasterNotify</name>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="56"/>
+        <source>VOIP</source>
+        <translation>VOIP</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="59"/>
+        <source>Accept</source>
+        <translation>Aceptar</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="60"/>
+        <source>Bandwidth Information</source>
+        <translation>Información de ancho de banda</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="61"/>
+        <source>Audio or Video Data</source>
+        <translation>Datos de audio o vídeo</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="62"/>
+        <source>HangUp</source>
+        <translation>Colgar</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="63"/>
+        <source>Invitation</source>
+        <translation>Invitación</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="65"/>
+        <source>Audio Call</source>
+        <translation>Llamada de audio</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="66"/>
+        <source>Video Call</source>
+        <translation>Llamada de vídeo</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="176"/>
+        <source>Test VOIP Accept</source>
+        <translation>Prueba de aceptación de VOIP</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="177"/>
+        <source>Test VOIP BandwidthInfo</source>
+        <translation>Prueba de VOIP BandwidthInfo</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="178"/>
+        <source>Test VOIP Data</source>
+        <translation>Prueba de VOIP Datos</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="179"/>
+        <source>Test VOIP HangUp</source>
+        <translation>Prueba de VOIP HangUp (colgado)</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="180"/>
+        <source>Test VOIP Invitation</source>
+        <translation>Prueba de VOIP Invitación</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="182"/>
+        <source>Test VOIP Audio Call</source>
+        <translation>Prueba de VOIP Llamada de audio</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="183"/>
+        <source>Test VOIP Video Call</source>
+        <translation>Prueba de VOIP Llamada de vídeo</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="204"/>
+        <source>Accept received from this peer.</source>
+        <translation>Aceptación recibida desde este par.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="228"/>
+        <source>Bandwidth Info received from this peer:%1</source>
+        <translation>Información de ancho de banda recibida desde este par:%1</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="252"/>
+        <source>Audio or Video Data received from this peer.</source>
+        <translation>Datos de audio o vídeo recibidos desde este par.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="276"/>
+        <source>HangUp received from this peer.</source>
+        <translation>Colgado recibido desde este par.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="300"/>
+        <source>Invitation received from this peer.</source>
+        <translation>Invitación recibida desde este par.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="325"/>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="349"/>
+        <source>calling</source>
+        <translation>llamando</translation>
     </message>
 </context>
 </TS>

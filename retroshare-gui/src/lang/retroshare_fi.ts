@@ -3,7 +3,11 @@
     <name>AWidget</name>
     <message>
         <source>version</source>
-        <translation>versio</translation>
+        <translation>-versio</translation>
+    </message>
+    <message>
+        <source>RetroShare version</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -19,10 +23,6 @@
     <message>
         <source>close</source>
         <translation>sulje</translation>
-    </message>
-    <message>
-        <source>About RetroShare %1</source>
-        <translation>Tietoja RetroSharesta %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
@@ -104,7 +104,7 @@
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Haku</translation>
     </message>
 </context>
 <context>
@@ -430,6 +430,90 @@ p, li { white-space: pre-wrap; }
         <source>Appearance</source>
         <translation>Ulkoasu</translation>
     </message>
+    <message>
+        <source>Tool Bar</source>
+        <translation>Työkalupalkki</translation>
+    </message>
+    <message>
+        <source>On Tool Bar</source>
+        <translation>Työkalupalkissa</translation>
+    </message>
+    <message>
+        <source>On List Item</source>
+        <translation>Luettelonimikkeessä</translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for menu?</source>
+        <translation>Mihin haluat laittaa valikon painikkeet?</translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for the page?</source>
+        <translation>Mihin haluat laittaa sivun painikkeet?</translation>
+    </message>
+    <message>
+        <source>Icon Only</source>
+        <translation>Vain kuvakkeilla</translation>
+    </message>
+    <message>
+        <source>Text Only</source>
+        <translation>Vain tekstillä</translation>
+    </message>
+    <message>
+        <source>Text Beside Icon</source>
+        <translation>Teksti kuvakkeen vieressä</translation>
+    </message>
+    <message>
+        <source>Text Under Icon</source>
+        <translation>Teksti kuvakkeen alla</translation>
+    </message>
+    <message>
+        <source>Choose the style of Tool Buttons.</source>
+        <translation>Valitse työkalupainikkeiden tyyli.</translation>
+    </message>
+    <message>
+        <source>Choose the style of List Items.</source>
+        <translation>Valitse luettelonimikkeiden tyyli.</translation>
+    </message>
+    <message>
+        <source>Icon Size = 8x8</source>
+        <translation>Kuvakkeen koko = 8x8</translation>
+    </message>
+    <message>
+        <source>Icon Size = 16x16</source>
+        <translation>Kuvakkeen koko = 16x16</translation>
+    </message>
+    <message>
+        <source>Icon Size = 24x24</source>
+        <translation>Kuvakkeen koko = 24x24</translation>
+    </message>
+    <message>
+        <source>Status Bar</source>
+        <translation>Tilarivi</translation>
+    </message>
+    <message>
+        <source>Remove surplus text in status bar.</source>
+        <translation>Jätä ylijäämäteksti pois tilariviltä.</translation>
+    </message>
+    <message>
+        <source>Compact Mode</source>
+        <translation>Tiivis tila</translation>
+    </message>
+    <message>
+        <source>Hide Sound Status</source>
+        <translation>Piilota äänen tila</translation>
+    </message>
+    <message>
+        <source>Hide Toaster Disable</source>
+        <translation>Piilota ponnahdusviestin poiskytkentä</translation>
+    </message>
+    <message>
+        <source>Show SysTray on Status Bar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Icon Size = 32x32</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -450,14 +534,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Circles</source>
         <translation>Piirit</translation>
-    </message>
-    <message>
-        <source>Posted Links</source>
-        <translation>Lähetetyt linkit</translation>
-    </message>
-    <message>
-        <source>Wiki Pages</source>
-        <translation>Wikisivut</translation>
     </message>
     <message>
         <source>GxsForums</source>
@@ -492,10 +568,44 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AvatarDialog</name>
+    <message>
+        <source>Change Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your Avatar Picture</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Poista</translation>
+    </message>
+    <message>
+        <source>Set your Avatar picture</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
         <translation>Paina vaihtaaksesi avatarkuvasi</translation>
+    </message>
+</context>
+<context>
+    <name>BWGraphSource</name>
+    <message>
+        <source>KB/s</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -565,306 +675,7 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>BlogDetails</name>
-    <message>
-        <source>Blog Details</source>
-        <translation>Blogin tiedot</translation>
-    </message>
-    <message>
-        <source>Blog Info</source>
-        <translation>Tietoja blogista</translation>
-    </message>
-    <message>
-        <source>Blog Name</source>
-        <translation>Blogin nimi</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Suosio</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Viimeisin teksti</translation>
-    </message>
-    <message>
-        <source>Blog ID</source>
-        <translation>Blogin tunniste</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Blogin kuvaus</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Peru</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Sulje</translation>
-    </message>
-</context>
-<context>
-    <name>BlogMsgItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Aihe</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Toista media</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-</context>
-<context>
-    <name>BlogNewItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Tilaa blogi</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Blogin kuvaus</translation>
-    </message>
-    <message>
-        <source>Unknown Blog</source>
-        <translation>Tuntematon blogi</translation>
-    </message>
-    <message>
-        <source>New Blog</source>
-        <translation>Uusi blogi</translation>
-    </message>
-    <message>
-        <source>Updated Blog</source>
-        <translation>Päivitetty blogi</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsDialog</name>
-    <message>
-        <source>Form</source>
-        <translation>Lomake</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Lisää</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Kirjoita blogiin&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blogin nimi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Peru blogin tilaus&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Lopeta tilaus</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Tilaa blogi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Aloita tilaus</translation>
-    </message>
-    <message>
-        <source>Create New Blog</source>
-        <translation>Luo uusi blogi</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nimi</translation>
-    </message>
-    <message>
-        <source>ID</source>
-        <translation>Tunniste</translation>
-    </message>
-    <message>
-        <source>My Blogs</source>
-        <translation>Blogini</translation>
-    </message>
-    <message>
-        <source>Subscribed Blogs</source>
-        <translation>Tilatut blogit</translation>
-    </message>
-    <message>
-        <source>Popular Blogs</source>
-        <translation>Suositut blogit</translation>
-    </message>
-    <message>
-        <source>Other Blogs</source>
-        <translation>Muut blogit</translation>
-    </message>
-    <message>
-        <source>Post to Blog</source>
-        <translation>Kirjoita blogiin</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Tilaa blogi</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Blog</source>
-        <translation>Lopeta blogin tilaus</translation>
-    </message>
-    <message>
-        <source>Show Blog Details</source>
-        <translation>Näytä blogin tiedot</translation>
-    </message>
-    <message>
-        <source>Create a new Blog</source>
-        <translation>Luo uusi blogi</translation>
-    </message>
-    <message>
-        <source>Popularity: %1
-Fetches: %2
-Available: %3</source>
-        <translation>Suosio: %1
-Hakukerrat: %2
-Saatavilla: %3</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsMsgItem</name>
-    <message>
-        <source>Form</source>
-        <translation>Lomake</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blogin aihe&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Päiväys ja aika&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
-    </message>
-    <message>
-        <source>Comments here</source>
-        <translation>Kommentit tähän</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Kommentti</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-</context>
-<context>
     <name>BwCtrlWindow</name>
-    <message>
-        <source>Bandwidth Control Window</source>
-        <translation>Kaistanleveyden hallintaikkuna</translation>
-    </message>
-    <message>
-        <source>Bandwidth Measurements</source>
-        <translation>Kaistanleveyden mittaus</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Nimi</translation>
@@ -913,368 +724,44 @@ p, li { white-space: pre-wrap; }
         <source>Allowed Recvd</source>
         <translation>Sallittu vastaanotettu</translation>
     </message>
-</context>
-<context>
-    <name>CalDialog</name>
+    <message>
+        <source>TOTALS</source>
+        <translation>YHTEENSÄ</translation>
+    </message>
+    <message>
+        <source>Totals</source>
+        <translation>Yhteensä</translation>
+    </message>
     <message>
         <source>Form</source>
         <translation>Lomake</translation>
     </message>
-    <message>
-        <source>Local Calendars</source>
-        <translation>Paikalliset kalenterit</translation>
-    </message>
-    <message>
-        <source>Shared Calendar List</source>
-        <translation>Luettelo jaetuista kalenterista</translation>
-    </message>
-    <message>
-        <source>Share Details</source>
-        <translation>Jakamisen tiedot</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation>Nimi:</translation>
-    </message>
-    <message>
-        <source>Location:</source>
-        <translation>Sijainti:</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation>Tila:</translation>
-    </message>
-    <message>
-        <source>Private</source>
-        <translation>Yksityinen</translation>
-    </message>
-    <message>
-        <source>Public</source>
-        <translation>Julkinen</translation>
-    </message>
-    <message>
-        <source>Allow List:</source>
-        <translation>Sallittujen luettelo:</translation>
-    </message>
-    <message>
-        <source>&lt;Disabled&gt;</source>
-        <translation>&lt;Ei käytössä&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Lisää</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Poista</translation>
-    </message>
-    <message>
-        <source>Peer Calendars</source>
-        <translation>Vertaiskalenterit</translation>
-    </message>
 </context>
 <context>
-    <name>ChanMsgItem</name>
-    <message>
-        <source>Toggle Message Read Status</source>
-        <translation>Vaihda viestin tila luetuksi tai päinvastoin</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Uusi</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Lataa</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation>Toista</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Aseta luetuksi ja poista kohde</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Channel Feed</source>
-        <translation>Kanavan syöte</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Tiedostot</translation>
-    </message>
-    <message>
-        <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation>Varoitus! Sinulla on alle %1 tuntia ja %2 minuuttia aikaa, ennen kuin tämä tiedosto poistetaan. Harkitse sen tallentamista.</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Avaa</translation>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation>Avaa tiedosto</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Toista media</translation>
-    </message>
-</context>
-<context>
-    <name>ChanNewItem</name>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Tilaa kanava</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Kanavan kuvaus</translation>
-    </message>
-    <message>
-        <source>Unknown Channel</source>
-        <translation>Tuntematon kanava</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Uusi kanava</translation>
-    </message>
-    <message>
-        <source>Updated Channel</source>
-        <translation>Päivitetty kanava</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Kanavan tiedot</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Kanavan tiedot</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Kanavan nimi</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Suosio</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Viimeisin teksti</translation>
-    </message>
-    <message>
-        <source>Channel ID</source>
-        <translation>Kanavan tunniste</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Kanavan kuvaus</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Tyyppi</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Destination directory</source>
-        <translation>Kohdehakemisto</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDialog</name>
-    <message>
-        <source>GxsChannels</source>
-        <translation>GxsKanavat</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelFeed</name>
+    <name>ChannelPage</name>
     <message>
         <source>Channels</source>
         <translation>Kanavat</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Luo kanava</translation>
+        <source>Tabs</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Ladataan</translation>
+        <source>General</source>
+        <translation>Yleiset</translation>
     </message>
     <message>
-        <source>Post to Channel</source>
-        <translation>Lähetä viesti kanavaan</translation>
+        <source>Load posts in background (Thread)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Set all as read</source>
-        <translation>Aseta kaikki luetuiksi</translation>
-    </message>
-    <message>
-        <source>Enable Auto-Download</source>
-        <translation>Ota käyttöön automaattinen lataus</translation>
-    </message>
-    <message>
-        <source>My Channels</source>
-        <translation>Kanavani</translation>
-    </message>
-    <message>
-        <source>Subscribed Channels</source>
-        <translation>Tilatut kanavat</translation>
-    </message>
-    <message>
-        <source>Popular Channels</source>
-        <translation>Suositut kanavat</translation>
-    </message>
-    <message>
-        <source>Other Channels</source>
-        <translation>Muut kanavat</translation>
-    </message>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Tilaa kanava</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
-    </message>
-    <message>
-        <source>Disable Auto-Download</source>
-        <translation>Ota automaattinen lataus pois käytöstä</translation>
-    </message>
-    <message>
-        <source>Show Channel Details</source>
-        <translation>Näytä kanavan tiedot</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Palauta kanavan julkaisuoikeudet</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Muokkaa kanavan tietoja</translation>
-    </message>
-    <message>
-        <source>Share Channel</source>
-        <translation>Jaa kanava</translation>
-    </message>
-    <message>
-        <source>Set destination directory</source>
-        <translation>Määritä kohdehakemisto</translation>
-    </message>
-    <message>
-        <source>Other...</source>
-        <translation>Muu...</translation>
-    </message>
-    <message>
-        <source>[Default]</source>
-        <translation>[Oletus]</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>Select channel destination directory</source>
-        <translation>Valitse kanavan kohdehakemisto</translation>
-    </message>
-    <message>
-        <source>Publish rights restored.</source>
-        <translation>Julkaisuoikeudet palautettu.</translation>
-    </message>
-    <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>Julkaisuoikeudet kanavalle palautettu.</translation>
-    </message>
-    <message>
-        <source>Publish not restored.</source>
-        <translation>Julkaisuoikeuksia ei palautettu.</translation>
-    </message>
-    <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Julkaisuoikeuksia kanavalle ei voitu palauttaa.&lt;br/&gt;Et ole kanavan luoja.</translation>
-    </message>
-    <message>
-        <source>No Channel Selected</source>
-        <translation>Ei kanavaa valittuna</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanavat&lt;/h1&gt; &lt;p&gt;Kanavien avulla voit julkaista dataa (kuten elokuvia, musiikkia), joka leviää verkostossa niiden ihmisten välillä, jotka ovat tilanneet kanavasi.  Jos otat käyttöön automaattisen latauksen kanavalla, kanavaviestiin liitetyt tiedostot alkavat latautua automaattisesti, kun viesti on saatu.&lt;/p&gt; &lt;p&gt;Näet kanavat, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi kanavat ystävillesi. Tämä edistää laadukkaiden kanavien leviämistä verkostossa. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia kanavia ilmestyy saatavillesi. &lt;/p&gt; &lt;p&gt;Vain kanavan luoja voi lähettää viestejä kanavalle. Muut vertaiset voivat ainoastaan lukea sitä, ellei kanava ole yksityinen Voit kuitenkin antaa viestien lähetys- tai lukuoikeuksia ystävillesi.&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Aloita tilaus</translation>
-    </message>
-    <message>
-        <source>Post</source>
-        <translation>Viesti</translation>
-    </message>
-    <message>
-        <source>Subscribed</source>
-        <translation>Tilattu</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelUserNotify</name>
-    <message>
-        <source>Channel Post</source>
-        <translation>Kanavakirjoitus</translation>
+        <source>Open each channel in a new tab</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ChatDialog</name>
-    <message>
-        <source>Your friend has more than one locations.
-Please choose one of it to chat with.</source>
-        <translation>Ystävälläsi on useita sijainteja.
-Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
-    </message>
     <message>
         <source>Talking to </source>
         <translation>Puhutaan henkilölle</translation>
@@ -1319,10 +806,6 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <translation>Aihe: %1</translation>
     </message>
     <message>
-        <source>Please enter your new nick name</source>
-        <translation>Anna uusi nimimerkkisi</translation>
-    </message>
-    <message>
         <source>Lobby chat</source>
         <translation>Aulakeskustelu</translation>
     </message>
@@ -1351,14 +834,6 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <translation>Haluatko varmasti poistua tästä keskusteluaulasta?</translation>
     </message>
     <message>
-        <source>Hide Participants</source>
-        <translation>Piilota osallistujat</translation>
-    </message>
-    <message>
-        <source>Show Participants</source>
-        <translation>Näytä osallistujat</translation>
-    </message>
-    <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
         <translation>Käytä hiiren oikeaa painiketta mykistääksesi osanottajan tai päinvastoin&lt;br/&gt;Tuplaklikkaa kohdistaaksesi viestisi tietylle henkilölle&lt;br/&gt;</translation>
     </message>
@@ -1370,12 +845,75 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <source> seconds</source>
         <translation> sekuntia</translation>
     </message>
+    <message>
+        <source>Start private chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature mismatch</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot start distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant chat cannot be initiated:</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
         <translation>Näytä keskusteluaula</translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyUserNotify</name>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Keskusteluaulat</translation>
+    </message>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation>Sinulle on uusia viestejä %1 kpl</translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation>Sinulle on %1 uusi viesti</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation>%1 kpl uusia viestejä</translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation>%1 uusi viesti</translation>
+    </message>
+    <message>
+        <source>Unknown Lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation>Poista kaikki</translation>
     </message>
 </context>
 <context>
@@ -1409,14 +947,6 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <translation>Luo keskusteluaula</translation>
     </message>
     <message>
-        <source>Unsubscribe</source>
-        <translation>Lopeta tilaus</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Aloita tilaus</translation>
-    </message>
-    <message>
         <source>[No topic provided]</source>
         <translation>[Ei aihetta]</translation>
     </message>
@@ -1437,10 +967,6 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <translation>Et ole tilannut aulaa: tuplaklikkaa siirtyäksesi keskustelemaan</translation>
     </message>
     <message>
-        <source>Invitation to chat lobby</source>
-        <translation>Kutsu keskusteluaulaan</translation>
-    </message>
-    <message>
         <source>Remove Auto Subscribe</source>
         <translation>Poista automaattinen tilaus</translation>
     </message>
@@ -1459,10 +985,6 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
     <message>
         <source>Search Name</source>
         <translation>Hae nimeä</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Keskusteluaulat&lt;/h1&gt; &lt;p&gt;Keskusteluaulat ovat hajautettuja chat-huoneita ja toimivat kuten IRC.   Niiden avulla voit keskustella nimettömänä lukuisten ihmisten kanssa ilman, että sinun tarvitsee ystävystyä heidän kanssaan&lt;/p&gt; &lt;p&gt;Keskusteluaula voi olla julkinen (ystäväsi näkevät sen) tai yksityinen (ystäväsi eivät näe sitä,  ellet kutsu heitä &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Kun sinut on kutsuttu yksityiseen aulaan, näet sen, kun ystäväsi   käyttävät sitä.&lt;/p&gt;  &lt;p&gt;Vasemmalla oleva luettelo näyttää keskusteluaulat, joissa on ystäviäsi. Voit joko &lt;ul&gt;   &lt;li&gt;luoda uuden aulan painamalla hiiren oikeaa painiketta&lt;/li&gt; &lt;li&gt;kaksoisnapauttaa jotakin aulaa siirtyäksesi sinne&lt;/li&gt;  &lt;/ul&gt; Huom.: tietokoneesi on oltava oikeassa ajassa, jotta keskusteluaulat toimivat oikein, joten tarkista järjestelmäsi kello!   &lt;/p&gt; </translation>
     </message>
     <message>
         <source>Subscribed</source>
@@ -1527,6 +1049,38 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
     <message>
         <source>Public Subscribed Lobbies</source>
         <translation>Julkiset tilatut aulat</translation>
+    </message>
+    <message>
+        <source>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           	                      invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Keskusteluaulat&lt;/h1&gt; &lt;p&gt;Keskusteluaulat ovat hajautettuja chat-huoneita ja toimivat kuten IRC. Niiden avulla voit keskustella nimettömänä lukuisten ihmisten kanssa ilman, että sinun tarvitsee ystävystyä heidän kanssaan&lt;/p&gt; &lt;p&gt;Keskusteluaula voi olla julkinen (ystäväsi näkevät sen) tai yksityinen (ystäväsi eivät näe sitä, ellet kutsu heitä &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Kun sinut on kutsuttu yksityiseen aulaan, näet sen, kun ystäväsi käyttävät sitä.&lt;/p&gt; &lt;p&gt;Vasemmalla oleva luettelo näyttää keskusteluaulat, joissa on ystäviäsi. Voit joko &lt;ul&gt; &lt;li&gt;luoda uuden aulan painamalla hiiren oikeaa painiketta&lt;/li&gt; &lt;li&gt;kaksoisnapauttaa jotakin aulaa siirtyäksesi sinne&lt;/li&gt; &lt;/ul&gt; Huom.: tietokoneesi on oltava oikeassa ajassa, jotta keskusteluaulat toimivat oikein, joten tarkista järjestelmäsi kello! &lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Keskusteluaulat</translation>
+    </message>
+    <message>
+        <source>Leave this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby as...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You will need to create an identity in order to join chat lobbies.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose an identity for this lobby:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create an identity and enter this lobby</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1613,10 +1167,6 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
     <message>
         <source>Blink tab icon</source>
         <translation>Vilkuta välilehtikuvaketta</translation>
-    </message>
-    <message>
-        <source>Default nickname for chat lobbies:</source>
-        <translation>Oletusnimimerkki keskusteluauloihin:</translation>
     </message>
     <message>
         <source>Private Chat</source>
@@ -1719,56 +1269,8 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
         <translation>Keskustelu</translation>
     </message>
     <message>
-        <source>Distant chat</source>
-        <translation>Etäinen keskustelu</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retrosharen avulla voit keskustella nimettömänä ystäviesi ystävien kanssa salattuja tunneleita hyödyntäen. Henkilökohtaisten kutsujen luetteloon kerätään yhteydenottotarkoituksessa lähettämäsi keskustelulinkit. &amp;quot;Kerätyt kontaktit&amp;quot;-luetteloon kerätään sinulle yhteydenottotarkoituksessa lähetetyt keskustelulinkit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your personal invites</source>
-        <translation>Henkilökohtaiset kutsusi</translation>
-    </message>
-    <message>
-        <source>Collected contacts</source>
-        <translation>Kerätyt kontaktit</translation>
-    </message>
-    <message>
-        <source>Open secured chat tunnel</source>
-        <translation>Avaa suojattu keskustelutunneli</translation>
-    </message>
-    <message>
-        <source>Delete this invite</source>
-        <translation>Poista tämä kutsu</translation>
-    </message>
-    <message>
-        <source>Can&apos;t open distant chat</source>
-        <translation>Etäisen keskustelun avaaminen ei onnistu</translation>
-    </message>
-    <message>
-        <source>Cannot open distant chat. Error code=</source>
-        <translation>Etäisen keskustelun avaaminen ei onnistu. Virhekoodi=</translation>
-    </message>
-    <message>
-        <source>Cannot remove distant chat invite.</source>
-        <translation>Kutsua etäiseen keskusteluun ei voida poistaa</translation>
-    </message>
-    <message>
-        <source>Create a chat invitation</source>
-        <translation>Luo keskustelukutsu</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Kopioi linkki leikepöydälle</translation>
-    </message>
-    <message>
         <source>Private chat invite from </source>
         <translation>Kutsu yksityiseen keskusteluun henkilöltä</translation>
-    </message>
-    <message>
-        <source>Private chat invite to </source>
-        <translation>Kutsu yksityiseen keskusteluun henkilölle</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -1799,16 +1301,56 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
         <translation>Nimi:</translation>
     </message>
     <message>
-        <source>Signed with key not in keyring</source>
-        <translation>Allekirjoitettu avaimella, jota ei ole avainnipussa</translation>
+        <source>Search by default</source>
+        <translation>Haku oletuksena</translation>
     </message>
     <message>
-        <source>Not signed.</source>
-        <translation>Ei allekirjoitettu.</translation>
+        <source>Case sensitive</source>
+        <translation>Huomioi kirjainkoko</translation>
     </message>
     <message>
-        <source>Authenticated signature</source>
-        <translation>Vahvistettu allekirjoitus</translation>
+        <source>Whole Words</source>
+        <translation>Kokonaiset sanat</translation>
+    </message>
+    <message>
+        <source>Move to cursor</source>
+        <translation>Siirry kohdistimeen</translation>
+    </message>
+    <message>
+        <source>Color All Text Found</source>
+        <translation>Väritä kaikki löydetty teksti</translation>
+    </message>
+    <message>
+        <source>Color of found text</source>
+        <translation>Löydetyn tekstin väri</translation>
+    </message>
+    <message>
+        <source>Choose color of found text</source>
+        <translation>Valitse löydetyn tekstin väri</translation>
+    </message>
+    <message>
+        <source>PGP id : </source>
+        <translation>PGP-tunniste :</translation>
+    </message>
+    <message>
+        <source>Valid until : </source>
+        <translation>Voimassa tähän asti :</translation>
+    </message>
+    <message>
+        <source>Maximum count for coloring matching text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Threshold for automatic search</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Default identity for chat lobbies:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Bar by default</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1875,20 +1417,8 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
         <translation>Kursivointi</translation>
     </message>
     <message>
-        <source>Font</source>
-        <translation>Kirjasin</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Tekstin väri</translation>
-    </message>
-    <message>
         <source>Attach a Picture</source>
         <translation>Liitä kuva</translation>
-    </message>
-    <message>
-        <source>Add a File for your Friend</source>
-        <translation>Lisää tiedosto ystävällesi</translation>
     </message>
     <message>
         <source>Strike</source>
@@ -1973,6 +1503,109 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
     <message>
         <source>is Busy and may not reply</source>
         <translation>on kiireinen, eikä välttämättä vastaa</translation>
+    </message>
+    <message>
+        <source>Find Case Sensitively</source>
+        <translation>Huomioi kirjainkoko</translation>
+    </message>
+    <message>
+        <source>Find Whole Words</source>
+        <translation>Hae kokonaisia sanoja</translation>
+    </message>
+    <message>
+        <source>Move To Cursor</source>
+        <translation>Siirry kohdistimeen</translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after X items found (need more CPU)</source>
+        <translation>Älä lopeta värittämistä, kun X kohdetta löydetty (vaatii konetehoa)</translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> items found (need more CPU)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Hae edellinen &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Next &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Hae seuraava &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Hae &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Warning: </source>
+        <translation>Varoitus:</translation>
+    </message>
+    <message>
+        <source>(Status)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set text font &amp; color</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attach a File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>WARNING: Could take a long time on big history.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose color</source>
+        <translation>Valitse väri</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1This message consists of %2 characters.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> items found.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No items found.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Display Search Box</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search Box</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type a message here</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>CircleWidget</name>
+    <message>
+        <source>TextLabel</source>
+        <translation>TekstiMerkki</translation>
+    </message>
+    <message>
+        <source>Empty Circle</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2081,44 +1714,8 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <source>Friend Details</source>
-        <translation>Ystävän tiedot</translation>
-    </message>
-    <message>
         <source>Details</source>
         <translation>Tiedot</translation>
-    </message>
-    <message>
-        <source>Peer Info</source>
-        <translation>Vertaisen tiedot</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nimi</translation>
-    </message>
-    <message>
-        <source>RetroShare ID</source>
-        <translation>RetroSharen tunniste</translation>
-    </message>
-    <message>
-        <source>Other info</source>
-        <translation>Muut tiedot</translation>
-    </message>
-    <message>
-        <source>Loc</source>
-        <translation>Sijainti</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Tila</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Viimeisin kontakti</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>Versio</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -2145,111 +1742,8 @@ Tuplaklikkaa auloja siirtyäksesi keskustelemaan.</translation>
         <translation>Osoiteluettelo</translation>
     </message>
     <message>
-        <source>Trust </source>
-        <translation>Luottamus</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation>Luottamuksesi vertaiseen on:</translation>
-    </message>
-    <message>
-        <source>None </source>
-        <translation>Nolla</translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation>Rajallinen</translation>
-    </message>
-    <message>
-        <source>Full </source>
-        <translation>Täysi</translation>
-    </message>
-    <message>
-        <source>PGP Key</source>
-        <translation>PGP-avain</translation>
-    </message>
-    <message>
-        <source>Peer has signed my PGP key</source>
-        <translation>Vertainen on allekirjoittanut PGP-avaimeni</translation>
-    </message>
-    <message>
-        <source>Show Help for Trust Settings and Signing</source>
-        <translation>Näytä ohje luottamusasetuksille ja allekirjoittamiselle</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by :</source>
-        <translation>Vertaisen avaimen on allekirjoittanut:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ystävän avaimen allekirjoittaminen on tapa ilmaista muille ystävillesi, että luotat tähän henkilöön . Huomioi myös, että ainoastaan allekirjoitetut vertaiset voivat saada tietoja muista luotetuista ystävistäsi.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Avaimen allekirjoittamista ei voi perua, joten käytä harkintaasi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Sign PGP key</source>
-        <translation>Allekirjoita PGP-avain</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Torju ystävä</translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation>Tee ystäväksi</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Varmenne</translation>
-    </message>
-    <message>
         <source>Include signatures</source>
         <translation>Sisällytä allekirjoitukset</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Käytä vanhaa avainformaattia</translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation>Palvelut</translation>
-    </message>
-    <message>
-        <source>User service permissions</source>
-        <translation>Käyttäjän palvelujen käyttöoikeudet</translation>
-    </message>
-    <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>Tällä välilehdellä voit määritellä tarkasti, mitä palveluja kukin ystäväsi voi käyttää kanssasi
-Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasolla, jolloin käyttäjäkohtaiset asetukset ohitetaan.</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Nimetön reitittäminen</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Etsintä</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Foorumit/Kanavat</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Keskustelu</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2258,68 +1752,6 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Virhe: vertaisen yksityiskohtia ei saatu.</translation>
-    </message>
-    <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation>RetroShare ei tue antamaasi avainalgoritmia
-(Tällä hetkellä vain RSA-avaimet käyvät)</translation>
-    </message>
-    <message>
-        <source>My key is signed by : </source>
-        <translation>Avaimeni on allekirjoittanut :</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by : </source>
-        <translation>Vertaisen avaimen on allekirjoittanut:</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Luottamuksesi tähän vertaiseen on äärimmäinen, se on luultavasti oma avaimesi.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation>Luottamuksesi tähän vertaiseen on täysi.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation>Luottamuksesi tähän vertaiseen on rajallinen.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation>Luottamuksesi tähän vertaiseen on nolla.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation>Luottamustasi tähän vertaiseen ei ole asetettu.</translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>Vertainen on varmentanut minut ystäväkseen ja allekirjoittanut PGP-avaimeni</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>Vertainen ei ole varmentanut minua ystäväkseen, eikä allekirjoittanut PGP-avaimeni</translation>
-    </message>
-    <message>
-        <source>Signature Failure</source>
-        <translation>Virhe allekirjoitettaessa</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Salasana saattaa olla väärä</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&gt;Nimettömän reitittämisen poiskytkeminen estää kaikki tunneleita käyttävien ja nimettömien hakutulosten pyynnöt tältä/tälle käyttäjältä/-lle. Tämä käyttäjä ei täten voi käyttää nimettömiä siirtoja kauttasi.&lt;/p&gt;&lt;p align=&quot;justify&gt;Mene palvelinasetuksiin, jos haluat ottaa poiskytkemisen käyttöön yleisesti.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Etsinnän poiskytkeminen estää ystäviesi julkisten avainten lähettämisen tälle käyttäjälle. Myös käyttäjän itsensä lähettämät etsintätiedot ohitetaan.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Mene palvelinasetuksiin, jos haluat ottaa poiskytkemisen käyttöön yleisesti.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Poiskytkeminen aiheuttaa sen, että foorumit ja kanavaviestit eivät kulje kauttasi tälle ystävälle ja tältä ystävältä tulevat nimikkeet ohitetaan.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
@@ -2342,12 +1774,104 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
         <translation>Vertaisten osoitteet</translation>
     </message>
     <message>
-        <source>Location ID</source>
-        <translation>Sijaintitunniste</translation>
+        <source>Options</source>
+        <translation>Asetukset</translation>
     </message>
     <message>
-        <source>PGP fingerprint</source>
-        <translation>PGP-sormenjälki</translation>
+        <source>Retroshare node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Location info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Contact :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare version :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files from this node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hidden Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>ei mitään</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate contains:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> with </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;/li&gt; </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;onion address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;IP address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require white list clearance</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2543,22 +2067,6 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
         <translation>Lisää ystäväksi, johon otat yhteyden</translation>
     </message>
     <message>
-        <source>Service permissions</source>
-        <translation>Palvelujen käyttöoikeudet</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Nimetön reitittäminen</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Etsintä</translation>
-    </message>
-    <message>
-        <source>Forums/channels</source>
-        <translation>Foorumit/kanavat</translation>
-    </message>
-    <message>
         <source>To accept the Friend Request, click the Finish button.</source>
         <translation>Paina Valmis-painiketta hyväksyäksesi ystäväpyynnön</translation>
     </message>
@@ -2593,10 +2101,6 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
         <translation>Epänormaali koko luettu, suurempi kuin muistilohko.</translation>
-    </message>
-    <message>
-        <source>Invalid location id.</source>
-        <translation>Virheellinen sijaintitunniste.</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
@@ -2783,12 +2287,8 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
         <translation>Käytä suorana lähteenä, kun saatavilla</translation>
     </message>
     <message>
-        <source>Direct source</source>
-        <translation>Suora lähde</translation>
-    </message>
-    <message>
         <source>Recommend many friends to each others</source>
-        <translation>Suosittele monia ystäviä toisilleen</translation>
+        <translation>Suosittele useita ystäviä toisilleen</translation>
     </message>
     <message>
         <source>Friend Recommendations</source>
@@ -2835,6 +2335,46 @@ even if you don&apos;t make friends.</source>
 Tästä voi olla hyötyä etäisten viestien
 lähettämiseen tälle vertaiselle,
 vaikkette ystävystyisikään.</translation>
+    </message>
+    <message>
+        <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
+        <translation>Varmenteella on väärä versionumero. Muista, että versioiden 0.6 ja 0.5 verkot eivät ole keskenään yhteensopivia.</translation>
+    </message>
+    <message>
+        <source>Invalid node id.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can be used as direct source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist clearance to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No IP in this certificate!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Added with certificate from %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste Cert of your friend from Clipboard</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3128,10 +2668,6 @@ vaikkette ystävystyisikään.</translation>
         <translation>Ota heihin yhteyttä ja pyydä lisäämään koko varmenteesi</translation>
     </message>
     <message>
-        <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation>He tarvitsevat varmenteen ja sijainnin, jotta UDP-yhteyksien luominen onnistuu</translation>
-    </message>
-    <message>
         <source>We Cannot find your Friend.</source>
         <translation>Ystävääsi ei löydy.</translation>
     </message>
@@ -3223,539 +2759,9 @@ p, li { white-space: pre-wrap; }
         <source>Retroshare cannot connect without this information</source>
         <translation>Retroshare ei voi yhdistää ilman näitä tietoja</translation>
     </message>
-</context>
-<context>
-    <name>CreateBlog</name>
     <message>
-        <source>Create new Blog</source>
-        <translation>Luo uusi blogi</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Uusi blogi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nimi</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Kuvaus</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Tyyppi:</translation>
-    </message>
-    <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
-    </message>
-    <message>
-        <source>Blog Logo</source>
-        <translation>Blogin logo</translation>
-    </message>
-    <message>
-        <source>Add Blog Logo</source>
-        <translation>Lisää logo blogille</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Peru</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation>Luo</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Ole hyvä ja lisää nimi</translation>
-    </message>
-    <message>
-        <source>Load File</source>
-        <translation>Avaa tiedosto</translation>
-    </message>
-    <message>
-        <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation>Kuvat (*.png *.xpm *.jpg)</translation>
-    </message>
-</context>
-<context>
-    <name>CreateBlogMsg</name>
-    <message>
-        <source>New Blog Post</source>
-        <translation>Uusi blogiteksti</translation>
-    </message>
-    <message>
-        <source>Blog Post</source>
-        <translation>Blogiteksti</translation>
-    </message>
-    <message>
-        <source>Blog Post to:</source>
-        <translation>Blogiteksti vastaanottajalle:</translation>
-    </message>
-    <message>
-        <source>Visual Editor</source>
-        <translation>Visuaalinen muokkaustyökalu</translation>
-    </message>
-    <message>
-        <source>Blog Message</source>
-        <translation>Blogiviesti</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Aihe:</translation>
-    </message>
-    <message>
-        <source>Html Editor</source>
-        <translation>Html-editori</translation>
-    </message>
-    <message>
-        <source>toolBar</source>
-        <translation>Työkalupalkki</translation>
-    </message>
-    <message>
-        <source>toolBar_2</source>
-        <translation>Työkalupalkki_2</translation>
-    </message>
-    <message>
-        <source>blockquote</source>
-        <translation>lainauslohko</translation>
-    </message>
-    <message>
-        <source>Increase font Size</source>
-        <translation>Suurenna kirjasimen kokoa</translation>
-    </message>
-    <message>
-        <source>Decrease font size</source>
-        <translation>Pienennä kirjasimen kokoa</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Lihavointi</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Alleviivaus</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Kursivointi</translation>
-    </message>
-    <message>
-        <source>Publish</source>
-        <translation>Julkaise</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Uusi</translation>
-    </message>
-    <message>
-        <source>Code</source>
-        <translation>Koodi</translation>
-    </message>
-    <message>
-        <source>splitPost</source>
-        <translation>Halkaise viesti</translation>
-    </message>
-    <message>
-        <source>Ordered List</source>
-        <translation>Järjestetty lista (ol)</translation>
-    </message>
-    <message>
-        <source>Unordered List</source>
-        <translation>Järjestämätön lista (ul)</translation>
-    </message>
-    <message>
-        <source>Clipboard</source>
-        <translation>Leikepöytä</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>Kumoa</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Ole hyvä ja lisää aihe</translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation>&amp;Tiedosto</translation>
-    </message>
-    <message>
-        <source>&amp;New</source>
-        <translation>&amp;Uusi</translation>
-    </message>
-    <message>
-        <source>&amp;Open...</source>
-        <translation>&amp;Avaa...</translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <translation>&amp;Tallenna</translation>
-    </message>
-    <message>
-        <source>Save &amp;As...</source>
-        <translation>Tallenna ni&amp;mellä...</translation>
-    </message>
-    <message>
-        <source>&amp;Print...</source>
-        <translation>Tu&amp;losta...</translation>
-    </message>
-    <message>
-        <source>Print Preview...</source>
-        <translation>Tulostuksen esikatselu...</translation>
-    </message>
-    <message>
-        <source>&amp;Export PDF...</source>
-        <translation>&amp;Vie PDF...</translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation>Lo&amp;peta</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Muokkaa</translation>
-    </message>
-    <message>
-        <source>&amp;Undo</source>
-        <translation>K&amp;umoa</translation>
-    </message>
-    <message>
-        <source>&amp;Redo</source>
-        <translation>To&amp;ista</translation>
-    </message>
-    <message>
-        <source>Cu&amp;t</source>
-        <translation>&amp;Leikkaa</translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation>K&amp;opioi</translation>
-    </message>
-    <message>
-        <source>&amp;Paste</source>
-        <translation>Lii&amp;tä</translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation>&amp;Näytä</translation>
-    </message>
-    <message>
-        <source>&amp;Insert</source>
-        <translation>Lis&amp;ää</translation>
-    </message>
-    <message>
-        <source>&amp;Image</source>
-        <translation>&amp;Kuva</translation>
-    </message>
-    <message>
-        <source>F&amp;ormat</source>
-        <translation>Muotoil&amp;e</translation>
-    </message>
-    <message>
-        <source>&amp;Bold</source>
-        <translation>Liha&amp;vointi</translation>
-    </message>
-    <message>
-        <source>&amp;Italic</source>
-        <translation>Kur&amp;sivointi</translation>
-    </message>
-    <message>
-        <source>&amp;Underline</source>
-        <translation>Allev&amp;iivaus</translation>
-    </message>
-    <message>
-        <source>&amp;Left</source>
-        <translation>Tas&amp;aa vasemmalle</translation>
-    </message>
-    <message>
-        <source>C&amp;enter</source>
-        <translation>&amp;Keskitä</translation>
-    </message>
-    <message>
-        <source>&amp;Right</source>
-        <translation>Tasaa &amp;oikealle</translation>
-    </message>
-    <message>
-        <source>&amp;Justify</source>
-        <translation>Tasaa &amp;molemmat reunat</translation>
-    </message>
-    <message>
-        <source>&amp;Text Color...</source>
-        <translation>&amp;Tekstin väri...</translation>
-    </message>
-    <message>
-        <source>Application</source>
-        <translation>Sovellus</translation>
-    </message>
-    <message>
-        <source>The document has been modified.
-Do you want to save your changes?</source>
-        <translation>Asiakirjaa on muokattu.
-Haluatko tallentaa sen?</translation>
-    </message>
-    <message>
-        <source>Open File...</source>
-        <translation>Avaa tiedosto...</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
-    </message>
-    <message>
-        <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>ODF-tiedostot (*.odt);;HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation>Tulosta asiakirja</translation>
-    </message>
-    <message>
-        <source>Export PDF</source>
-        <translation>Vie PDF</translation>
-    </message>
-    <message>
-        <source>Choose Image</source>
-        <translation>Valitse kuva</translation>
-    </message>
-    <message>
-        <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannel</name>
-    <message>
-        <source>Create a new Channel</source>
-        <translation>Luo uusi kanava</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nimi</translation>
-    </message>
-    <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>rastita vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
-    </message>
-    <message>
-        <source>Share Key With</source>
-        <translation>Jaa avain</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Kuvaus</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Tyyppi:</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Avaimen jakaminen</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Avainten vastaanottajat voivat julkaista rajoitetuilla kanavilla ja lukea sekä julkaista  yksityisillä kanavilla</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Jaa yksityinen julkaisuavain</translation>
-    </message>
-    <message>
-        <source>Channel Logo</source>
-        <translation>Kanavan logo</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Lisää kanavan logo</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Uusi kanava</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Ole hyvä ja lisää nimi</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Lataa kanavan logo</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannelMsg</name>
-    <message>
-        <source>New Channel Post</source>
-        <translation>Uusi kirjoitus kanavalle</translation>
-    </message>
-    <message>
-        <source>Channel Post</source>
-        <translation>Kirjoitus kanavalle</translation>
-    </message>
-    <message>
-        <source>Channel Post to:</source>
-        <translation>Kirjoitus kanavalle:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Liitetiedostot:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Vedä ja pudota ja paina Lisää tiedostoja -painiketta uusien tiedostojen hash-arvojen laskemiseksi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Kopioi ja liitä RetroShare-linkkejä jaetuista tiedostoistasi.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add File to Attach</source>
-        <translation>Lisää liitettävä tiedosto</translation>
-    </message>
-    <message>
-        <source>Add Channel Thumbnail</source>
-        <translation>Lisää kanavan näytekuva</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Viesti</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Aihe:</translation>
-    </message>
-    <message>
-        <source>Attachments</source>
-        <translation>Liitetiedostot</translation>
-    </message>
-    <message>
-        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation>Salli kanavien ottaa viestin näytekuva videoliitetiedostosta tai älä</translation>
-    </message>
-    <message>
-        <source>Auto Thumbnail</source>
-        <translation>Automaattinen näytekuva</translation>
-    </message>
-    <message>
-        <source>Drag and Drop Files from Search Results</source>
-        <translation>Vedä ja pudota tiedostoja hakutuloksista</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Links</source>
-        <translation>Liitä RetroShare-linkit</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation>Olet aikeissa lisätä tiedostoja, joita et todellisuudessa jaa. Haluatko silti tehdä tämän?</translation>
-    </message>
-    <message>
-        <source>About to post un-owned files to a channel.</source>
-        <translation>Olet aikeissa lähettää kanavalle tiedostoja, jota et omista.</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation>Virhe pudotettaessa tiedostoa.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Hakemistoa ei voi pudottaa, ainostaan tiedostot käyvät.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation>Tiedostoa ei löytynyt tai tiedoston nimi ei kelpaa.</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>File already Added and Hashed</source>
-        <translation>Tiedosto on jo lisätty ja tiivistetty (hash)</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Ole hyvä ja lisää aihe</translation>
-    </message>
-    <message>
-        <source>Load thumbnail picture</source>
-        <translation>Lataa näytekuva</translation>
+        <source>They need a Certificate + Node for UDP connections to succeed</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3799,14 +2805,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Known Identities</source>
         <translation>Tiedetyt henkilöllisyydet</translation>
-    </message>
-    <message>
-        <source>All PGP IDs</source>
-        <translation>Kaikki PGP-tunnisteet</translation>
-    </message>
-    <message>
-        <source>Known PGP IDs</source>
-        <translation>Tiedetyt PGP-tunnisteet</translation>
     </message>
     <message>
         <source>Filter</source>
@@ -3870,145 +2868,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
-    </message>
-</context>
-<context>
-    <name>CreateForum</name>
-    <message>
-        <source>Create new Forum</source>
-        <translation>Luo uusi foorumi</translation>
+        <translation>Haku</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation>Nimi</translation>
+        <source>All</source>
+        <translation>Kaikki</translation>
     </message>
     <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>rastita vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
+        <source>Signed</source>
+        <translation>Allekirjoitettu</translation>
     </message>
     <message>
-        <source>Share Key With</source>
-        <translation>Jaa avain</translation>
+        <source>Signed by known nodes</source>
+        <translation>Tunnettujen solmujen allekirjoittama</translation>
     </message>
     <message>
-        <source>Description</source>
-        <translation>Kuvaus</translation>
+        <source>Edit Circle</source>
+        <translation>Muokkaa piiriä</translation>
     </message>
     <message>
-        <source>Type:</source>
-        <translation>Tyyppi:</translation>
+        <source>PGP Identity</source>
+        <translation>PGP-henkilöllisyys</translation>
     </message>
     <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
+        <source>Anon Id</source>
+        <translation>Nimetön tunniste</translation>
     </message>
     <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Avaimen jakaminen</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Avaimen vastaanottajat voivat julkaista rajoitetuille kanaville ja voivat nähdä sekä julkaista  yksityisille kanaville</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Jaa yksityinen julkaisuavain</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Ole hyvä ja lisää nimi</translation>
-    </message>
-</context>
-<context>
-    <name>CreateForumMsg</name>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Lähetä viesti foorumiin</translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation>Foorumi</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Aihe</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Liitä tiedosto</translation>
-    </message>
-    <message>
-        <source>Sign Message</source>
-        <translation>Allekirjoita viesti</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Foorumiviesti</translation>
-    </message>
-    <message>
-        <source>Attach files via drag and drop</source>
-        <translation>Liitä tiedostoja vetämällä ja pudottamalla</translation>
-    </message>
-    <message>
-        <source>You can attach files via drag and drop here in this window</source>
-        <translation>Voit liittää tiedostoja vetämällä ja pudottamalla niitä tähän ikkunaan</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Aloita uusi viestiketju</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Vastauksena</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Ole hyvä ja aseta foorumin aihe ja foorumiviesti</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation>Liitä kuva</translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
-        <translation>Lataa kuvatiedosto</translation>
+        <source>PGP Linked Id</source>
+        <translation>PGP:n linkitetty tunniste</translation>
     </message>
 </context>
 <context>
@@ -4097,24 +2985,12 @@ p, li { white-space: pre-wrap; }
         <translation>Vedä ja pudota tiedostoja hakutuloksista</translation>
     </message>
     <message>
-        <source>New GxsChannel Post</source>
-        <translation>Uusi kirjoitus kanavalle käyttäen Gxs:ää</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Links</source>
         <translation>Liitä RetroShare-linkit</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
         <translation>Liitä RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>GxsKanavan turvallisuuspolitiikka estää sinua lähettämästä tiedostoja, joita sinulla ei ole. Tiedostot tulee jakaa etukäteen tai liittää varta vasten:</translation>
-    </message>
-    <message>
-        <source>You can only post files that you do have</source>
-        <translation>Voit lähettää ainoastaan tiedostoja, joita sinulla jo on</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -4151,6 +3027,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Generate mass data</source>
         <translation>Luo massatietoja</translation>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation>Haluatko todella luoda %1 viestiä?</translation>
+    </message>
+    <message>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation>Olet aikeissa lisätä tiedostoja, joita et todellisuudessa jaa. Haluatko silti tehdä tämän?</translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
+        <translation>Olet aikeissa lähettää kanavalle tiedostoja, jota et omista.</translation>
     </message>
 </context>
 <context>
@@ -4208,10 +3096,6 @@ p, li { white-space: pre-wrap; }
         <translation>Ole hyvä ja aseta foorumin aihe ja foorumiviesti</translation>
     </message>
     <message>
-        <source>Please choose Signing Id</source>
-        <translation>Valitse allekirjoitustunniste</translation>
-    </message>
-    <message>
         <source>Please choose Signing Id, it is required</source>
         <translation>Valitse allekirjoitustunniste, se on pakollinen</translation>
     </message>
@@ -4222,6 +3106,31 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Generate mass data</source>
         <translation>Luo massatietoja</translation>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation>Haluatko todella luoda %1 viestiä?</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Lähetä</translation>
+    </message>
+    <message>
+        <source>Forum Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forum Message has not been Sent.
+Do you want to reject this message?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Post as</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Congrats, you found a bug! </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4241,10 +3150,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Lobby topic:</source>
         <translation>Aulan aihe:</translation>
-    </message>
-    <message>
-        <source>Your nick name:</source>
-        <translation>Nimimerkkisi:</translation>
     </message>
     <message>
         <source>Security policy:</source>
@@ -4267,111 +3172,16 @@ p, li { white-space: pre-wrap; }
         <translation>Kutsutut ystävät</translation>
     </message>
     <message>
-        <source>Put a sensible lobby name here</source>
-        <translation>Kirjoita tähän järkevä nimi aulalle</translation>
-    </message>
-    <message>
-        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>Nimimerkkisi tässä aulassa (vaihda oletusnimeä kohdasta asetukset-&gt;keskustelu)</translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation>Kontaktit:</translation>
     </message>
-</context>
-<context>
-    <name>CreateMsgLinkDialog</name>
     <message>
-        <source>Invite type:</source>
-        <translation>Kutsun tyyppi:</translation>
-    </message>
-    <message>
-        <source>Private chat</source>
-        <translation>Yksityinen keskustelu</translation>
-    </message>
-    <message>
-        <source>Validity time :</source>
-        <translation>Voimassaoloaika:</translation>
-    </message>
-    <message>
-        <source>hour</source>
-        <translation>tunti</translation>
-    </message>
-    <message>
-        <source>day</source>
-        <translation>päivä</translation>
-    </message>
-    <message>
-        <source>week</source>
-        <translation>viikko</translation>
-    </message>
-    <message>
-        <source>month</source>
-        <translation>kuukausi</translation>
-    </message>
-    <message>
-        <source>year</source>
-        <translation>vuosi</translation>
-    </message>
-    <message>
-        <source>Create!</source>
-        <translation>Luo!</translation>
-    </message>
-    <message>
-        <source>Private chat invite creation failed</source>
-        <translation>Kutsun luominen yksityiskeskusteluun epäonnistui</translation>
-    </message>
-    <message>
-        <source>The creation of the chat invite failed</source>
-        <translation>Kutsun luominen keskusteluun epäonnistui</translation>
-    </message>
-    <message>
-        <source>Private chat invite created</source>
-        <translation>Luotiin kutsu yksityiskeskusteluun</translation>
-    </message>
-    <message>
-        <source>Create distant chat invite</source>
-        <translation>Luo kutsu etäiseen keskusteluun</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Kun haluat kutsua ei-ystävän yksityiseen keskusteluun, valitse hänen avaimensa ja määritä kutsulle voimassaoloaika. Paina lopuksi &amp;quot;Luo&amp;quot;. Kutsu sisältää tarvittavat tiedot keskustelutunnelin avaamiseen kanssasi. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Kutsu on salattu, eikä paljasta henkilöllisyyttäsi. Vain valittu vertainen voi purkaa linkin salauksen ja käyttää sitä yhteydenottoon.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation>Uusi keskustelukutsusi on luotu. Voit nyt kopioida/liittää sen Retroshare-linkkinä.</translation>
-    </message>
-    <message>
-        <source>Messaging invite creation failed</source>
-        <translation>Keskustelukutsun luominen epäonnistui</translation>
-    </message>
-    <message>
-        <source>The creation of the messaging invite failed</source>
-        <translation>Keskustelukutsun luominen epäonnistui</translation>
-    </message>
-    <message>
-        <source>Messaging invite created</source>
-        <translation>Keskustelukutsu luotiin</translation>
-    </message>
-    <message>
-        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation>Uusi keskustelukutsu on kopioitu leikepöydälle. Voit nyt liittää sen Retroshare-linkkinä.</translation>
-    </message>
-    <message>
-        <source>Create distant chat</source>
-        <translation>Luo etäinen keskustelu</translation>
+        <source>Identity to use:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
-    <message>
-        <source>Profile</source>
-        <translation>Profiili</translation>
-    </message>
-    <message>
-        <source>Profile Manager</source>
-        <translation>Profiilin hallinta</translation>
-    </message>
     <message>
         <source>Public Information</source>
         <translation>Julkiset tiedot</translation>
@@ -4387,10 +3197,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Location ID:</source>
         <translation>Sijaintitunniste:</translation>
-    </message>
-    <message>
-        <source>Number of Friends:</source>
-        <translation>Ystävien lkm:</translation>
     </message>
     <message>
         <source>Software Version:</source>
@@ -4413,20 +3219,8 @@ p, li { white-space: pre-wrap; }
         <translation>Sisällytä allekirjoitukset</translation>
     </message>
     <message>
-        <source>Use old key format</source>
-        <translation>Käytä vanhaa avainformaattia</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Kopioi linkki leikepöydälle</translation>
-    </message>
-    <message>
         <source>Save Key into a file</source>
         <translation>Tallenna avain tiedostoon</translation>
-    </message>
-    <message>
-        <source>Save Key</source>
-        <translation>Tallenna avain</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -4457,16 +3251,51 @@ p, li { white-space: pre-wrap; }
         <translation>RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
     </message>
     <message>
-        <source>Identity ID</source>
-        <translation>Henkilöllisyystunniste</translation>
-    </message>
-    <message>
         <source>TextLabel</source>
         <translation>TekstiMerkki</translation>
     </message>
     <message>
         <source>PGP fingerprint:</source>
         <translation>PGP-sormenjälki:</translation>
+    </message>
+    <message>
+        <source>Node information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend nodes:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy certificate to clipboard</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save certificate to file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new node...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>show statistics window</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>DHTGraphSource</name>
+    <message>
+        <source>users</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4573,14 +3402,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DhtWindow</name>
     <message>
-        <source>DHT Details</source>
-        <translation>DHT:n tiedot</translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation>Vertaisen tiedot</translation>
-    </message>
-    <message>
         <source>Net Status</source>
         <translation>Verkon tila</translation>
     </message>
@@ -4603,14 +3424,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Peer Address</source>
         <translation>Vertaisen osoite</translation>
-    </message>
-    <message>
-        <source>Extra Label</source>
-        <translation>Ylimääräinen merkki</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
     </message>
     <message>
         <source>Name</source>
@@ -4877,38 +3690,6 @@ p, li { white-space: pre-wrap; }
         <translation>Tuntematon</translation>
     </message>
     <message>
-        <source>#Peers: </source>
-        <translation>#Vertaiset:</translation>
-    </message>
-    <message>
-        <source> DHT: (#off:</source>
-        <translation> DHT: (#pois:</translation>
-    </message>
-    <message>
-        <source>,unreach:</source>
-        <translation>.tavoittamattomissa:</translation>
-    </message>
-    <message>
-        <source>,online:</source>
-        <translation>.linjoilla.</translation>
-    </message>
-    <message>
-        <source>) Connections: (#dis:</source>
-        <translation>) Yhteydet: (#ei yht:</translation>
-    </message>
-    <message>
-        <source>,#dir:</source>
-        <translation>,#suora:</translation>
-    </message>
-    <message>
-        <source>,#proxy:</source>
-        <translation>,#välityspalvelin:</translation>
-    </message>
-    <message>
-        <source>,#relay:</source>
-        <translation>,#välitys:</translation>
-    </message>
-    <message>
         <source>RELAY END</source>
         <translation>VÄLITYKSEN LOPPU</translation>
     </message>
@@ -4947,6 +3728,70 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>never</source>
         <translation>ei ikinä</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Net Status:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network Mode:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Nat Type:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Nat Hole:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connect Mode:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unreach:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Online:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Offline:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Peers:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disconnected:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Direct:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proxy:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Relay:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Graph</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5049,129 +3894,6 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
     </message>
 </context>
 <context>
-    <name>EditChanDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Kanavan tiedot</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Muokkaa kanavan tietoja</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Kanavan tiedot</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Kanavan nimi</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Kanavan kuvaus</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Lisää kanavalle logo</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Lataa kanavan logo</translation>
-    </message>
-</context>
-<context>
-    <name>EditForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Foorumin tiedot</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Muokkaa foorumin tietoja</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Foorumin tiedot</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Foorumin nimi</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
-    </message>
-</context>
-<context>
-    <name>ExampleDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Ystävät&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Tila</translation>
-    </message>
-    <message>
-        <source>Person</source>
-        <translation>Henkilö</translation>
-    </message>
-    <message>
-        <source>Auto Connect</source>
-        <translation>Yhdistä automaattisesti</translation>
-    </message>
-    <message>
-        <source>Trust Level</source>
-        <translation>Luottamustaso</translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation>Vertaisen osoite</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Viimeisin kontakti</translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation>Järjestely</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Sijainti</translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation>Maa</translation>
-    </message>
-    <message>
-        <source>Person Id</source>
-        <translation>Henkilön tunniste</translation>
-    </message>
-    <message>
-        <source>Auth Code</source>
-        <translation>Varmennekoodi</translation>
-    </message>
-    <message>
-        <source>Vote Up</source>
-        <translation>Äänestä ylös</translation>
-    </message>
-    <message>
-        <source>Vote Down</source>
-        <translation>Äänestä alas</translation>
-    </message>
-</context>
-<context>
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
@@ -5202,7 +3924,7 @@ p, li { white-space: pre-wrap; }
     <name>ExpressionWidget</name>
     <message>
         <source>Expression Widget</source>
-        <translation>Lausekepienohjelma</translation>
+        <translation>Lausekevimpain</translation>
     </message>
     <message>
         <source>Delete this expression</source>
@@ -5422,147 +4144,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Foorumin tiedot</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Foorumin tiedot</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Foorumin nimi</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Suosio</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Viimeisin viesti</translation>
-    </message>
-    <message>
-        <source>Forum ID</source>
-        <translation>Foorumin tunniste</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Tietoturva</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
-    </message>
-</context>
-<context>
-    <name>ForumMsgItem</name>
-    <message>
-        <source>Subject: </source>
-        <translation>Aihe:</translation>
-    </message>
-    <message>
-        <source>Unsubscribe To Forum</source>
-        <translation>Lopeta foorumin tilaus</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Vastaa</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Merkitse luetuksi ja poista kohde</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Lähetä</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Allekirjoitettu</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Foorumikirjoitus</translation>
-    </message>
-    <message>
-        <source>Unknown Forum Post</source>
-        <translation>Tuntematon foorumikirjoitus</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Nimetön</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Vastauksena viestiin</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-    <message>
-        <source>Please give a Text Message</source>
-        <translation>Ole hyvä ja kirjoita tekstiä</translation>
-    </message>
-</context>
-<context>
-    <name>ForumNewItem</name>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Tilaa foorumi</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
-    </message>
-    <message>
-        <source>Unknown Forum</source>
-        <translation>Tuntematon foorumi</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
-    </message>
-    <message>
-        <source>Updated Forum</source>
-        <translation>Päivitetty foorumi</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-</context>
-<context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
@@ -5577,14 +4158,6 @@ p, li { white-space: pre-wrap; }
         <translation>Laajenna uudet viestit</translation>
     </message>
     <message>
-        <source>New forum</source>
-        <translation>Uusi foorumi</translation>
-    </message>
-    <message>
-        <source>Open all forums in new tab</source>
-        <translation>Avaa kaikki foorumit uudessa välilehdessä</translation>
-    </message>
-    <message>
         <source>Forum</source>
         <translation>Foorumi</translation>
     </message>
@@ -5592,294 +4165,17 @@ p, li { white-space: pre-wrap; }
         <source>Load embedded images</source>
         <translation>Lataa upotetut kuvat</translation>
     </message>
-</context>
-<context>
-    <name>ForumUserNotify</name>
     <message>
-        <source>Forum Post</source>
-        <translation>Foorumikirjoitus</translation>
+        <source>Tabs</source>
+        <translation type="unfinished"/>
     </message>
-</context>
-<context>
-    <name>ForumsDialog</name>
     <message>
-        <source>Forums</source>
-        <translation>Foorumit</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Luo foorumi</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Foorumi:</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Viimeisin viesti</translation>
-    </message>
-    <message>
-        <source>Threaded View</source>
-        <translation>Ketjunäkymä</translation>
-    </message>
-    <message>
-        <source>Flat View</source>
-        <translation>Tasanäkymä</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Otsikko</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Päiväys</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Kirjoittaja</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Allekirjoitettu</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Viestiketju:</translation>
-    </message>
-    <message>
-        <source>Previous Thread</source>
-        <translation>Edellinen viestiketju</translation>
-    </message>
-    <message>
-        <source>Next Thread</source>
-        <translation>Seuraava viestiketju</translation>
-    </message>
-    <message>
-        <source>Download all files</source>
-        <translation>Lataa kaikki tiedostot</translation>
-    </message>
-    <message>
-        <source>Next unread</source>
-        <translation>Seuraava lukematon</translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation>Aloita uusi viestiketju valitussa foorumissa</translation>
-    </message>
-    <message>
-        <source>Reply Message</source>
-        <translation>Vastaa viestiin</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Ladataan</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Tulosta</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>Tulostuksen esikatselu</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Foorumini</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Tilatut foorumit</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Suositut foorumit</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Muut foorumit</translation>
-    </message>
-    <message>
-        <source>Search Title</source>
-        <translation>Hae otsikkoa</translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation>Hae päivämäärää</translation>
-    </message>
-    <message>
-        <source>Search Author</source>
-        <translation>Hae kirjoittajaa</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation>Sisältö</translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation>Hae sisältöä</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Tilaa foorumi</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Lopeta foorumin tilaus</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Näytä foorumin tiedot</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Muokkaa foorumin tietoja</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Jaa foorumi</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Palauta julkaisuoikeudet foorumiin</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Merkitse kaikki luetuiksi</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Merkitse kaikki lukemattomiksi</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Vastaa</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Aloita uusi viestiketju</translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation>Vastaa kirjoittajalle</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation>Laajenna kaikki</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation>Kutista kaikki</translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation>Merkitse luetuksi</translation>
-    </message>
-    <message>
-        <source>with children</source>
-        <translation>lasten kanssa</translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation>Merkitse lukemattomaksi</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>VAHVST</translation>
-    </message>
-    <message>
-        <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Puuttuva viesti ... ]</translation>
-    </message>
-    <message>
-        <source>Placeholder for missing Message</source>
-        <translation>Puuttuvan viestin paikkamerkki</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation>Ei valittua foorumia!</translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation>Alkuperäinen viesti</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Lähettäjä</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation>Lähetetyt</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Aihe</translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation>%2 kirjoitti %1:</translation>
-    </message>
-    <message>
-        <source>You can&apos;t reply an Anonymous Author</source>
-        <translation>Et voi vastata nimettömälle kirjoittajalle</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foorumit&lt;/h1&gt; &lt;p&gt;Retrosharen foorumit toimivat hajautetusti: Näet foorumit, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi foorumit ystävillesi. Tällä tavoin kiinnostavien foorumeiden näkyvyys lisääntyy automaattisesti.&lt;/p&gt; &lt;p&gt;Foorumit ovat joko varmennettuja, (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) jolloin sinun on allekirjoitettava viestisi salausavaimella tai nimettömiä (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Ensinmainittu on vastustuskykyisempi roskapostittamiselle.&lt;/p&gt; &lt;p&gt;Foorumiviestit leviävät ystävältä toiselle pieniä välimuistitiedostoja vaihtamalla. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia foorumeita ilmestyy saatavillesi. &lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>Load images always for this message</source>
-        <translation>Lataa kuvat aina tämän viestin osalta</translation>
-    </message>
-</context>
-<context>
-    <name>ForumsFillThread</name>
-    <message>
-        <source>Unknown</source>
-        <translation>Tuntematon</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Nimetön</translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation>allekirjoitettu</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>ei mitään</translation>
+        <source>Open each forum in a new tab</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendList</name>
-    <message>
-        <source>Friends</source>
-        <translation>Ystävät</translation>
-    </message>
     <message>
         <source>Status</source>
         <translation>Tila</translation>
@@ -5957,14 +4253,6 @@ p, li { white-space: pre-wrap; }
         <translation>Ystävä</translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation>Sijainti</translation>
-    </message>
-    <message>
-        <source>Message Group</source>
-        <translation>Viestiryhmä</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Muokkaa ryhmää</translation>
     </message>
@@ -5977,28 +4265,12 @@ p, li { white-space: pre-wrap; }
         <translation>Keskustelu</translation>
     </message>
     <message>
-        <source>Message Friend</source>
-        <translation>Lähetä viesti ystävälle</translation>
-    </message>
-    <message>
-        <source>Friend Details</source>
-        <translation>Ystävän tiedot</translation>
-    </message>
-    <message>
         <source>Recommend this Friend to...</source>
         <translation>Suosittele tätä ystävää...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
         <translation>Kopioi varmennelinkki</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Torju ystävä</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation>Poista ystävän sijainti</translation>
     </message>
     <message>
         <source>Add to group</source>
@@ -6068,6 +4340,42 @@ p, li { white-space: pre-wrap; }
         <source>Paste certificate link</source>
         <translation>Liitä varmennelinkki</translation>
     </message>
+    <message>
+        <source>Sort by</source>
+        <translation>Järjestä</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove Friend Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you want to remove this node?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to whole group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Tiedot</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
@@ -6088,7 +4396,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search :</source>
-        <translation>Etsi :</translation>
+        <translation>Haku :</translation>
     </message>
     <message>
         <source>All</source>
@@ -6104,15 +4412,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Friends</source>
-        <translation>Etsi ystäviä</translation>
+        <translation>Hae ystäviä</translation>
     </message>
 </context>
 <context>
     <name>FriendsDialog</name>
-    <message>
-        <source>Friends</source>
-        <translation>Ystävät</translation>
-    </message>
     <message>
         <source>Edit status message</source>
         <translation>Muokkaa tilaviestiä</translation>
@@ -6120,38 +4424,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Broadcast</source>
         <translation>Kuulutus</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Lihavointi</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Alleviivaus</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Kursivointi</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Kirjasin</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Tekstin väri</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Liitä tiedosto</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Lähetä</translation>
-    </message>
-    <message>
-        <source>Messages entered here are sent to all connected friends</source>
-        <translation>Tähän kirjoitetut viestit lähtevät kaikille ystäville, joihin olet yhteydessä</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
@@ -6214,38 +4486,6 @@ p, li { white-space: pre-wrap; }
         <translation>Palauta oletuskirjasin</translation>
     </message>
     <message>
-        <source>Local network</source>
-        <translation>Paikallinen verkko</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>is typing...</source>
-        <translation>kirjoittaa...</translation>
-    </message>
-    <message>
-        <source>New group chat</source>
-        <translation>Uusi ryhmäkeskustelu</translation>
-    </message>
-    <message>
-        <source>Do you really want to physically delete the history?</source>
-        <translation>Haluatko todella lopullisesti tuhota historian?</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
-    </message>
-    <message>
-        <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
-    </message>
-    <message>
         <source>Keyring</source>
         <translation>Avainnippu</translation>
     </message>
@@ -6254,149 +4494,20 @@ p, li { white-space: pre-wrap; }
         <translation>Retrosharen kuulutus: viestit lähetetään kaikille linjoilla oleville ystäville.</translation>
     </message>
     <message>
-        <source>Attach a Picture</source>
-        <translation>Liitä kuva</translation>
+        <source>Network</source>
+        <translation>Verkko</translation>
     </message>
     <message>
-        <source>Load Picture File</source>
-        <translation>Lataa kuvatiedosto</translation>
+        <source>Network graph</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Ystävät&lt;/h1&gt;                                   		  &lt;p&gt;Ystävät-näkymä näyttää ystäväsi: luettelon henkilöistä, joihin yhdistämisen olet hyväksynyt.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;Voit ryhmitellä ystäviäsi ja näin hienosäätää pääsyä tietoihisi. Voit esimerkiksi      		  sallia vain tiettyjen ystävien nähdä tietyt tiedostot.&lt;/p&gt; 		  &lt;p&gt;Oikealla näet kolme hyödyllistä välilehteä:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Kuulutus lähettää viestejä kaikille linjoilla oleville ystävillesi samanaikaisesti&lt;/li&gt;                             		  		&lt;li&gt;Paikallinen verkko näyttää sinua ympäröivän verkoston, mukaanlukien ystäviesi ystävät&lt;/li&gt;                 		  		&lt;li&gt;Avainnippu sisältää keräämäsi avaimet, joista useimmat ovat ystäviesi välittämiä&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
-    </message>
-</context>
-<context>
-    <name>GamesDialog</name>
-    <message>
-        <source>Form</source>
-        <translation>Lomake</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Pelien käynnistys&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Game:</source>
-        <translation>Peli:</translation>
-    </message>
-    <message>
-        <source>GameType: 0. Want to Add your Game here?</source>
-        <translation>Pelityyppi: 0. Haluatko lisätä pelisi tähän?</translation>
-    </message>
-    <message>
-        <source>GameType: 1. Get In Touch with the developers</source>
-        <translation>Pelityyppi: 1. Ota yhteyttä kehittäjiin</translation>
-    </message>
-    <message>
-        <source>GameType: 2.</source>
-        <translation>Pelityyppi: 2.</translation>
-    </message>
-    <message>
-        <source>Title / Comment</source>
-        <translation>Otsikko / Kommentti</translation>
-    </message>
-    <message>
-        <source>Create New Game</source>
-        <translation>Luo uusi peli</translation>
-    </message>
-    <message>
-        <source>Invite All Friends</source>
-        <translation>Kutsu kaikki ystävät</translation>
-    </message>
-    <message>
-        <source>Game Type</source>
-        <translation>Pelityyppi</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Palvelin</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Tila</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Kommentti</translation>
-    </message>
-    <message>
-        <source>GameID</source>
-        <translation>Pelitunniste</translation>
-    </message>
-    <message>
-        <source>Player</source>
-        <translation>Pelaaja</translation>
-    </message>
-    <message>
-        <source>Invite</source>
-        <translation>Kutsu</translation>
-    </message>
-    <message>
-        <source>Interested</source>
-        <translation>Kiinnostunut</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Hyväksy</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Tuhoa</translation>
-    </message>
-    <message>
-        <source>Move Player</source>
-        <translation>Siirrä pelaajaa</translation>
-    </message>
-    <message>
-        <source>Play Game</source>
-        <translation>Pelaa</translation>
-    </message>
-    <message>
-        <source>Cancel Game</source>
-        <translation>Peru peli</translation>
-    </message>
-    <message>
-        <source>Add to Invite List</source>
-        <translation>Lisää kutsuluetteloon</translation>
-    </message>
-    <message>
-        <source>Remove from Invite List</source>
-        <translation>Poista kutsuluettelosta</translation>
-    </message>
-    <message>
-        <source>Interested in Playing</source>
-        <translation>Kiinnostunut pelaamaan</translation>
-    </message>
-    <message>
-        <source>Not Interested in Game</source>
-        <translation>Ei kiinnostunut pelaamaan</translation>
-    </message>
-    <message>
-        <source>Not Interested</source>
-        <translation>Ei kiinnostunut</translation>
-    </message>
-    <message>
-        <source>Confirm Peer in Game</source>
-        <translation>Hyväksy vertainen peliin</translation>
-    </message>
-    <message>
-        <source>Remove Peer from Game</source>
-        <translation>Poista vertainen pelistä</translation>
-    </message>
-    <message>
-        <source>Interested in Game</source>
-        <translation>Kiinnostunut pelaamaan</translation>
-    </message>
-    <message>
-        <source>Quit Game</source>
-        <translation>Poistu pelistä</translation>
+        <source>Set your status message here.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6404,18 +4515,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Create new Profile</source>
         <translation>Luo uusi profiili</translation>
-    </message>
-    <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>Voit asentaa RetroSharen eri laitteisiin käyttämällä samaa henkilöllisyyttä. Vie valittu henkilöllisyys ja tuo se toisen tietokoneen RetroShare-asennukseen ja luo uusi sijainti.</translation>
-    </message>
-    <message>
-        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Näyttää siltä, ettei sinulla ole profiilia (PGP-avaimia). Täytä allaoleva lomake luodaksesi sellaisen tai tuo olemassaoleva profiili.</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>Profiilisi on kytketty PGP-avaimeen. RetroShare ohittaa DSA-avaimet.</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6438,52 +4537,8 @@ ystävilleen. PGP tarvitsee tämän tiedon, mutta nimettömänä
 pysyäksesi voit käyttää tekaistua osoitetta.</translation>
     </message>
     <message>
-        <source>This Password is for PGP</source>
-        <translation>Tämä salasana on PGP:tä varten</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Salasana</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Anna hyvä salasana. Salasana suojelee PGP-avaintasi.</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Sijainti</translation>
-    </message>
-    <message>
-        <source>Create new identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>Use identity</source>
-        <translation>Käytä henkilöllisyyttä</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key</source>
-        <translation>Profiilisi on kytketty PGP-avaimeen</translation>
-    </message>
-    <message>
-        <source>Create a new identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation>Tuo uusi henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Vie valittu henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>Create a new Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>RetroShare käyttää PGP-avaimia henkilöllisyyksien hallintaan.</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -6498,116 +4553,8 @@ pysyäksesi voit käyttää tekaistua osoitetta.</translation>
         <translation>[Pakollinen] Näkyy ystävillesi ja heidän ystävilleen.</translation>
     </message>
     <message>
-        <source>[Required] This password protects your PGP key.</source>
-        <translation>[Pakollinen] Tämä salasana suojaa PGP-avaintasi.</translation>
-    </message>
-    <message>
-        <source>Create new Location</source>
-        <translation>Luo uusi sijainti</translation>
-    </message>
-    <message>
-        <source>Generate new Location</source>
-        <translation>Luo uusi sijainti</translation>
-    </message>
-    <message>
-        <source>Create a new Location</source>
-        <translation>Luo uusi sijainti</translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>Generate new Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>You can create a new identity with this form.</source>
-        <translation>Voit luoda uuden henkilöllisyyden tällä lomakkeella.</translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>Voit käyttää olemassaolevaa henkilöllisyyttä (eli PGP-avainparia) allaolevasta luettelosta tai luoda uuden tällä lomakkeella.</translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation>Vie henkilöllisyys</translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
-        <translation>RetroSharen henkilöllisyystiedostot (*.asc)</translation>
-    </message>
-    <message>
-        <source>Identity saved</source>
-        <translation>Henkilöllisyys tallennettu</translation>
-    </message>
-    <message>
-        <source>Your identity was successfully saved
-It is encrypted
-
-You can now copy it to another computer
-and use the import button to load it</source>
-        <translation>Henkilöllisyytesi on tallennettu
-Se on salattu
-
-Voit nyt kopioida sen toiselle koneelle
-ja käyttää &quot;Tuo&quot;-painiketta ladataksesi sen</translation>
-    </message>
-    <message>
-        <source>Identity not saved</source>
-        <translation>Henkilöllisyyttä ei tallennettu</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>Henkilöllisyyttäsi ei tallennettu. Tapahtui virhe.</translation>
-    </message>
-    <message>
-        <source>Identity not loaded</source>
-        <translation>Henkilöllisyyttä ei ladattu</translation>
-    </message>
-    <message>
-        <source>Your identity was not loaded properly:</source>
-        <translation>Henkilöllisyyttäsi ei kyetty lataamaan kunnolla:</translation>
-    </message>
-    <message>
-        <source>New identity imported</source>
-        <translation>Uusi henkilöllisyys tuotu</translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfully:</source>
-        <translation>Henkilöllisyytesi tuominen onnistui:</translation>
-    </message>
-    <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Nyt voit käyttää sitä luodaksesi uuden sijainnin.</translation>
-    </message>
-    <message>
-        <source>Generate PGP key Failure</source>
-        <translation>Virhe luotaessa PGP-avainta</translation>
-    </message>
-    <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation>Sijaintikenttä on pakollinen ja minimissään kolme merkkiä</translation>
-    </message>
-    <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Kaikki kentät ovat pakollisia ja minimissään kolme merkkiä</translation>
-    </message>
-    <message>
-        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your PGP password when asked, to sign your new key.</source>
-        <translation>Luodaan PGP-avainta, ole kärsivällinen: tämä prosessi luo suuria alkulukuja ja voi kestää joitakin minuutteja hitailla tietokoneilla.
-
-Anna PGP-salasanasi kysyttäessä allekirjoittaaksesi uuden avaimesi.</translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation>Virhe luotaessa tunnistetta</translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>Uuden varmenteesi luominen epäonnistui, PGP-salasana saattaa olla väärin!</translation>
     </message>
     <message>
         <source>Password (check)</source>
@@ -6622,16 +4569,246 @@ Anna PGP-salasanasi kysyttäessä allekirjoittaaksesi uuden avaimesi.</translati
         <translation>[Vaaditaan] Kirjoita sama salasana uudelleen tähän.</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. 
-This field will be used to differentiate different installations with
-the same identity (PGP key).</source>
-        <translation>Kirjoita jokin asiaankuuluva sijainti, esim. koti, kannettava jne.
-Tämän kentän avulla erotetaan asennukset eri kohteissa, mutta samalla
-henkilöllisyydellä (PGP-avain).</translation>
-    </message>
-    <message>
         <source>Passwords do not match</source>
         <translation>Salasanat eivät täsmää</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>Portti</translation>
+    </message>
+    <message>
+        <source>This password is for PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node field is required with a minimum of 3 characters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.
+Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node exists for this profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Advanced options</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key length</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Currently disabled. Please move your mouse around until you reach at least 20%</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to create your node and/or profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter a meaningful node description. e.g. : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same profile (PGP key pair).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.
+Alternatively you can import a (previously exported) profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node is associated with the profile named</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create a node for it by providing a node name.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare profile files (*.asc)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not saved. An error occurred.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not loaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not loaded properly:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New profile imported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was imported successfully:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key pair generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing PGP certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6949,30 +5126,65 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>GraphFrame</name>
+    <name>GlobalRouterStatistics</name>
     <message>
-        <source>Recv: </source>
-        <translation>Vast: </translation>
+        <source>Router Statistics</source>
+        <translation>Reitittimen tilastot</translation>
     </message>
     <message>
-        <source>%1 KB/s</source>
-        <translation>%1 kB/s</translation>
+        <source>Unknown Peer</source>
+        <translation>Tuntematon vertainen</translation>
+    </message>
+</context>
+<context>
+    <name>GlobalRouterStatisticsWidget</name>
+    <message>
+        <source>Pending packets</source>
+        <translation>Odottavia paketteja</translation>
     </message>
     <message>
-        <source>Sent: </source>
-        <translation>Läh: </translation>
+        <source>Managed keys</source>
+        <translation>Hallitut avaimet</translation>
     </message>
     <message>
-        <source>%1 KB</source>
-        <translation>%1 kt</translation>
+        <source> : Service ID = </source>
+        <translation>: Palvelun tunniste =</translation>
     </message>
     <message>
-        <source>%1 MB</source>
-        <translation>%1 MB</translation>
+        <source>Routing matrix  (</source>
+        <translation>Reititysmatriisi (</translation>
     </message>
     <message>
-        <source>%1 GB</source>
-        <translation>%1 GB</translation>
+        <source>Id</source>
+        <translation>Tunniste</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>Kohde</translation>
+    </message>
+    <message>
+        <source>Data status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Received</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Lähetä</translation>
     </message>
 </context>
 <context>
@@ -7047,24 +5259,8 @@ p, li { white-space: pre-wrap; }
         <translation>Hakemisto EI ole minkä hyvänsä ystävän selattavissa nimettömien tunneleiden kautta.</translation>
     </message>
     <message>
-        <source>All your friends can browse this directory</source>
-        <translation>Kaikki ystäväsi voivat selata tätä hakemistoa</translation>
-    </message>
-    <message>
-        <source>Only friends in groups %1 can browse this directory</source>
-        <translation>Vain ystävät ryhmissä %1 voivat selata tätä hakemistoa</translation>
-    </message>
-    <message>
         <source>No one can browse this directory</source>
         <translation>Kukaan ei voi selata tätä hakemistoa</translation>
-    </message>
-    <message>
-        <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Kaikki ystäväsi voivat välittää nimettömiä tunneleita tähän hakemistoon</translation>
-    </message>
-    <message>
-        <source>Only friends in groups </source>
-        <translation>Vain ryhmissä olevat ystävät</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
@@ -7073,6 +5269,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>No one can anonymously access this directory.</source>
         <translation>Kukaan ei voi selata tätä hakemistoa nimettömänä.</translation>
+    </message>
+    <message>
+        <source>All friend nodes can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups %1 can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All friend nodes can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GroupFrameSettingsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Lomake</translation>
+    </message>
+    <message>
+        <source>Hide tabbar with one open tab</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GroupShareKey</name>
+    <message>
+        <source>Share</source>
+        <translation>Jaa</translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation>Kontaktit:</translation>
+    </message>
+    <message>
+        <source>Please select at least one peer</source>
+        <translation>Valitse ainakin yksi vertainen</translation>
+    </message>
+    <message>
+        <source>Share channel admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share forum admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share topic admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7106,12 +5368,16 @@ p, li { white-space: pre-wrap; }
         <translation>Järjestä viimeisimmän viestin mukaan</translation>
     </message>
     <message>
-        <source>Private Key Available</source>
-        <translation>Yksityinen avain saatavilla</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Näytä</translation>
+    </message>
+    <message>
+        <source>You have admin rights</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe to download and read messages</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7204,18 +5470,6 @@ p, li { white-space: pre-wrap; }
         <translation>Luo kanava</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Ladataan</translation>
-    </message>
-    <message>
-        <source>Post to Channel</source>
-        <translation>Lähetä viesti kanavalle</translation>
-    </message>
-    <message>
-        <source>Set all as read</source>
-        <translation>Aseta kaikki luetuiksi</translation>
-    </message>
-    <message>
         <source>Enable Auto-Download</source>
         <translation>Ota käyttöön automaattinen lataus</translation>
     </message>
@@ -7240,56 +5494,78 @@ p, li { white-space: pre-wrap; }
         <translation>Ota automaattinen lataus pois käytöstä</translation>
     </message>
     <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesStatusWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Lomake</translation>
     </message>
     <message>
-        <source>Subscribe to Channel</source>
-        <translation>Tilaa kanava</translation>
+        <source>Download</source>
+        <translation>Lataa</translation>
     </message>
     <message>
-        <source>Edit Channel Details</source>
-        <translation>Muokkaa kanavan tietoja</translation>
+        <source>TextLabel</source>
+        <translation>TekstiMerkki</translation>
     </message>
     <message>
-        <source>Show Channel Details</source>
-        <translation>Näytä kanavan tiedot</translation>
+        <source>Open folder</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Palauta kanavan julkaisuoikeudet</translation>
+        <source>Error</source>
+        <translation>Virhe</translation>
     </message>
     <message>
-        <source>Share Channel</source>
-        <translation>Jaa kanava</translation>
+        <source>Paused</source>
+        <translation>Tauolla</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <source>Waiting</source>
+        <translation>Odotetaan</translation>
     </message>
     <message>
-        <source>Publish rights restored.</source>
-        <translation>Julkaisuoikeudet palautettu.</translation>
+        <source>Checking</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>Julkaisuoikeudet kanavalle palautettu.</translation>
+        <source>Are you sure that you want to cancel and delete the file?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Publish not restored.</source>
-        <translation>Julkaisuoikeuksia ei palautettu.</translation>
+        <source>Can&apos;t open folder</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Lomake</translation>
     </message>
     <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Julkaisuoikeuksia kanavalle ei voitu palauttaa.&lt;br/&gt;Et ole kanavan luoja.</translation>
+        <source>Filename</source>
+        <translation>Tiedostonimi</translation>
     </message>
     <message>
-        <source>No Channel Selected</source>
-        <translation>Ei kanavaa valittuna</translation>
+        <source>Size</source>
+        <translation>Koko</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <source>Title</source>
+        <translation>Otsikko</translation>
+    </message>
+    <message>
+        <source>Published</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Tila</translation>
     </message>
 </context>
 <context>
@@ -7315,8 +5591,47 @@ p, li { white-space: pre-wrap; }
         <translation>Valitse ylläpitäjiä kanavalle</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Luo kanava</translation>
+        <source>Update Channel</source>
+        <translation>Päivitä kanava</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Luo</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelGroupItem</name>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Subscribe to Channel</source>
+        <translation>Tilaa kanava</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Laajenna</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Poista kohde</translation>
+    </message>
+    <message>
+        <source>Channel Description</source>
+        <translation>Kanavan kuvaus</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>New Channel</source>
+        <translation>Uusi kanava</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Piilota</translation>
     </message>
 </context>
 <context>
@@ -7372,6 +5687,128 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Hide</source>
         <translation>Piilota</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Uusi</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Kommentti</translation>
+    </message>
+    <message>
+        <source>I like this</source>
+        <translation>Pidän tästä</translation>
+    </message>
+    <message>
+        <source>I dislike this</source>
+        <translation>En pidä tästä</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Avaa</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Avaa tiedosto</translation>
+    </message>
+    <message>
+        <source>Play Media</source>
+        <translation>Toista media</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelPostsWidget</name>
+    <message>
+        <source>Post to Channel</source>
+        <translation>Lähetä viesti kanavalle</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>Search channels</source>
+        <translation>Hae kanavia</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Otsikko</translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Hae otsikolla</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Viesti</translation>
+    </message>
+    <message>
+        <source>Search Message</source>
+        <translation>Hae viestejä</translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation>Tiedostonimi</translation>
+    </message>
+    <message>
+        <source>Search Filename</source>
+        <translation>Hae tiedostonimiä</translation>
+    </message>
+    <message>
+        <source>No Channel Selected</source>
+        <translation>Ei kanavaa valittuna</translation>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation>Ota automaattinen lataus pois käytöstä</translation>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation>Ota käyttöön automaattinen lataus</translation>
+    </message>
+    <message>
+        <source>Show feeds</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Feeds</source>
+        <translation>Syötteet</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>Tiedostot</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Kuvaus:</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes):</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelUserNotify</name>
+    <message>
+        <source>Channel Post</source>
+        <translation>Kanavakirjoitus</translation>
     </message>
 </context>
 <context>
@@ -7454,26 +5891,6 @@ p, li { white-space: pre-wrap; }
         <source>Vote Down</source>
         <translation>Äänestä alas</translation>
     </message>
-    <message>
-        <source>Reputation</source>
-        <translation>Maine</translation>
-    </message>
-    <message>
-        <source>Show Reputation</source>
-        <translation>Näytä maine</translation>
-    </message>
-    <message>
-        <source>Interesting User</source>
-        <translation>Kiinnostava käyttäjä</translation>
-    </message>
-    <message>
-        <source>Mark Spammy</source>
-        <translation>Merkitse roskapostiksi</translation>
-    </message>
-    <message>
-        <source>Ban User</source>
-        <translation>Estä käyttäjä</translation>
-    </message>
 </context>
 <context>
     <name>GxsCreateCommentDialog</name>
@@ -7523,8 +5940,90 @@ kuin voit kommentoida</translation>
         <translation>Muokkaa foorumia</translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation>Luo foorumi</translation>
+        <source>Update Forum</source>
+        <translation>Päivitä foorumi</translation>
+    </message>
+    <message>
+        <source>Add Forum Admins</source>
+        <translation>Lisää ylläpitäjiä foorumiin</translation>
+    </message>
+    <message>
+        <source>Select Forum Admins</source>
+        <translation>Valitse foorumin ylläpitäjiä</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Luo</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumGroupItem</name>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation>Tilaa foorumi</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Laajenna</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Poista kohde</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Foorumin kuvaus</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Uusi foorumi</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Piilota</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumMsgItem</name>
+    <message>
+        <source>Subject: </source>
+        <translation>Aihe:</translation>
+    </message>
+    <message>
+        <source>Unsubscribe To Forum</source>
+        <translation>Lopeta foorumin tilaus</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Laajenna</translation>
+    </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation>Merkitse luetuksi ja poista kohde</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Poista kohde</translation>
+    </message>
+    <message>
+        <source>In Reply to: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>Forum Feed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Piilota</translation>
     </message>
 </context>
 <context>
@@ -7539,7 +6038,7 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>Search forums</source>
-        <translation>Etsi foorumeista</translation>
+        <translation>Hae foorumeista</translation>
     </message>
     <message>
         <source>Last Post</source>
@@ -7564,10 +6063,6 @@ kuin voit kommentoida</translation>
     <message>
         <source>Author</source>
         <translation>Kirjoittaja</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Allekirjoitettu</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -7626,10 +6121,6 @@ kuin voit kommentoida</translation>
         <translation>Aloita uusi viestiketju</translation>
     </message>
     <message>
-        <source>Reply to Author</source>
-        <translation>Vastaa kirjoittajalle</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Laajenna kaikki</translation>
     </message>
@@ -7678,10 +6169,6 @@ kuin voit kommentoida</translation>
         <translation>[ ... Puuttuva viesti ... ]</translation>
     </message>
     <message>
-        <source>By</source>
-        <translation>käyttäjältä</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -7696,101 +6183,6 @@ kuin voit kommentoida</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Et voi vastata nimettömälle kirjoittajalle</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Foorumi:</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Viestiketju:</translation>
-    </message>
-</context>
-<context>
-    <name>GxsForumsDialog</name>
-    <message>
-        <source>Forums</source>
-        <translation>Foorumi</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Luo foorumi</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Tulosta</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>Tulostuksen esikatselu</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Foorumini</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Tilatut foorumit</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Suositut foorumit</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Muut foorumit</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Tilaa foorumi</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Lopeta foorumin tilaus</translation>
-    </message>
-    <message>
-        <source>Open in new tab</source>
-        <translation>Avaa uudessa välilehdessä</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Näytä foorumin tiedot</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Muokkaa foorumin tietoja</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Jaa foorumi</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Palauta julkaisuoikeudet foorumiin</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Merkitse kaikki luetuiksi</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Merkitse kaikki lukemattomiksi</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>VAHVST</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -7813,8 +6205,70 @@ kuin voit kommentoida</translation>
         <translation>%1, %2 kirjoitti:</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <source>Forum name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Kuvaus</translation>
+    </message>
+    <message>
+        <source>By </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;Subscribing to the forum will gather                                            available posts from your subscribed friends, and make the                                            forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply with private message</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsForumUserNotify</name>
+    <message>
+        <source>Forum Post</source>
+        <translation>Foorumiviesti</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumsDialog</name>
+    <message>
+        <source>Forums</source>
+        <translation>Foorumi</translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation>Luo foorumi</translation>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation>Foorumini</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation>Tilatut foorumit</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation>Suositut foorumit</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation>Muut foorumit</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7834,10 +6288,6 @@ kuin voit kommentoida</translation>
 </context>
 <context>
     <name>GxsGroupDialog</name>
-    <message>
-        <source>Create New</source>
-        <translation>Luo uusi</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Nimi</translation>
@@ -7943,12 +6393,138 @@ kuin voit kommentoida</translation>
         <translation>Lataa ryhmän logo</translation>
     </message>
     <message>
-        <source>Invalid Circle Selection - Personal disabled for now</source>
-        <translation>Virheellinen piirivalinta - henkilökohtainen toistaiseksi pois käytöstä</translation>
+        <source>Submit Group Changes</source>
+        <translation>Vahvista ryhmän muutokset</translation>
+    </message>
+    <message>
+        <source>Failed to Prepare Group MetaData - please Review</source>
+        <translation>Ryhmän metatietojen luonti epäonnistui - tarkista tiedot</translation>
+    </message>
+    <message>
+        <source>Will be used to send feedback</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owner:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set a descriptive description here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation>Tietoja</translation>
+    </message>
+    <message>
+        <source>Comments allowed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments not allowed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>Tunniste</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Viimeisin viesti</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation>Suosio</translation>
+    </message>
+    <message>
+        <source>Posts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Tyyppi</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Kirjoittaja</translation>
+    </message>
+    <message>
+        <source>GxsIdLabel</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsGroupFrameDialog</name>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Tehtävät</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Tulosta</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation>Tulostuksen esikatselu</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Lopeta tilaus</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Aloita tilaus</translation>
+    </message>
+    <message>
+        <source>Open in new tab</source>
+        <translation>Avaa uudessa välilehdessä</translation>
+    </message>
+    <message>
+        <source>Show Details</source>
+        <translation>Näytä tiedot</translation>
+    </message>
+    <message>
+        <source>Edit Details</source>
+        <translation>Muokkaa tietoja</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopioi RetroShare-linkki</translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation>Merkitse kaikki luetuiksi</translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation>Merkitse kaikki lukemattomiksi</translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation>VAHVST</translation>
+    </message>
+    <message>
+        <source>Share admin permissions</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GxsIdChooser</name>
+    <message>
+        <source>No Signature</source>
+        <translation>Ei allekirjoitusta</translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Luo uusi henkilöllisyys</translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdDetails</name>
     <message>
         <source>Loading</source>
         <translation>Ladataan</translation>
@@ -7960,6 +6536,45 @@ kuin voit kommentoida</translation>
     <message>
         <source>No Signature</source>
         <translation>Ei allekirjoitusta</translation>
+    </message>
+    <message>
+        <source>Authentication</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unknown Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>anonymous</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signed&amp;nbsp;by</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Unknown]</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsMessageFramePostWidget</name>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>No name</source>
+        <translation>Ei nimeä</translation>
     </message>
 </context>
 <context>
@@ -7985,19 +6600,19 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>Find:</source>
-        <translation>Etsi:</translation>
+        <translation>Haku:</translation>
     </message>
     <message>
         <source>Find Previous</source>
-        <translation>Etsi edellinen</translation>
+        <translation>Hae edellinen</translation>
     </message>
     <message>
         <source>Find Next</source>
-        <translation>Etsi seuraava</translation>
+        <translation>Hae seuraava</translation>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation>Merkkikokoriippuvainen</translation>
+        <translation>Huomioi kirjainkoko</translation>
     </message>
     <message>
         <source>Whole words only</source>
@@ -8013,7 +6628,7 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <source>Searching for:</source>
@@ -8061,11 +6676,11 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>Find</source>
-        <translation>Etsi</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <source>Search for a word or phrase on current page (Ctrl+F)</source>
-        <translation>Etsi sanaa tai lausetta tältä sivulta (Ctrl+F)</translation>
+        <translation>Hae sanaa tai lausetta tältä sivulta (Ctrl+F)</translation>
     </message>
     <message>
         <source>Ctrl+F</source>
@@ -8236,142 +6851,154 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>IdDialog</name>
+    <name>IdDetailsDialog</name>
     <message>
-        <source>Identities</source>
-        <translation>Henkilöllisyydet</translation>
+        <source>Person Details</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>New ID</source>
-        <translation>Uusi tunniste</translation>
+        <source>Identity Info</source>
+        <translation>Henkilöllisyyden tiedot</translation>
     </message>
     <message>
-        <source>Yourself</source>
-        <translation>Sinä itse</translation>
+        <source>Owner node ID :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Friends / Friends of Friends</source>
-        <translation>Ystävät / Ystävien ystävät</translation>
+        <source>Type:</source>
+        <translation>Tyyppi:</translation>
     </message>
     <message>
-        <source>Others</source>
-        <translation>Muut</translation>
+        <source>Owner node name :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Pseudonyms</source>
-        <translation>Nimimerkit</translation>
+        <source>Identity name :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>All</source>
-        <translation>Kaikki</translation>
+        <source>Identity ID :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Nickname</source>
-        <translation>Nimimerkki</translation>
-    </message>
-    <message>
-        <source>KeyId</source>
-        <translation>Avaintunniste</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Tyyppi</translation>
-    </message>
-    <message>
-        <source>Delete ID</source>
-        <translation>Tuhoa tunniste</translation>
-    </message>
-    <message>
-        <source>Edit Reputation</source>
-        <translation>Muokkaa mainetta</translation>
-    </message>
-    <message>
-        <source>Edit ID</source>
-        <translation>Muokkaa tunnistetta</translation>
-    </message>
-    <message>
-        <source>Identity Type</source>
-        <translation>Henkilöllisyyden tyyppi</translation>
-    </message>
-    <message>
-        <source>Friend</source>
-        <translation>Ystävä</translation>
-    </message>
-    <message>
-        <source>Friend of Friend</source>
-        <translation>Ystävän ystävä</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Muu</translation>
-    </message>
-    <message>
-        <source>Pseudonym</source>
-        <translation>Nimimerkki</translation>
-    </message>
-    <message>
-        <source>Key ID</source>
-        <translation>Avaintunniste</translation>
-    </message>
-    <message>
-        <source>PGP Name</source>
-        <translation>PGP-nimi</translation>
-    </message>
-    <message>
-        <source>PGP Id</source>
-        <translation>PGP-tunniste</translation>
-    </message>
-    <message>
-        <source>PGP Hash</source>
-        <translation>PGP-tiiviste (hash)</translation>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reputation</source>
         <translation>Maine</translation>
     </message>
     <message>
-        <source>Your Rating</source>
-        <translation>Sinun arviosi</translation>
+        <source>Overall</source>
+        <translation>Yhteensä</translation>
     </message>
     <message>
-        <source>Overall Rating</source>
-        <translation>Arvio kaikenkaikkiaan</translation>
+        <source>Implicit</source>
+        <translation>Epäsuora</translation>
     </message>
     <message>
-        <source>Implicit Score</source>
-        <translation>Epäsuorat pisteet</translation>
+        <source>Opinion</source>
+        <translation>Mielipide</translation>
     </message>
     <message>
-        <source>Rating</source>
-        <translation>Arvostelu</translation>
+        <source>Peers</source>
+        <translation>Vertaiset</translation>
     </message>
     <message>
-        <source>Comment</source>
-        <translation>Kommentti</translation>
+        <source>Edit Reputation</source>
+        <translation>Muokkaa mainetta</translation>
     </message>
     <message>
-        <source>Local Reputation</source>
-        <translation>Paikallinen maine</translation>
+        <source>Tweak Opinion</source>
+        <translation>Muokkaa mielipidettä</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Hyväksy (+100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Positiivinen (+10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Negatiivinen (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Estä (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Räätälöity</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Muokkaa</translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Tuntematon oikea nimi</translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation>Nimetön tunniste</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>IdDialog</name>
+    <message>
+        <source>New ID</source>
+        <translation>Uusi tunniste</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Kaikki</translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation>Muokkaa mainetta</translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation>Avaintunniste</translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Maine</translation>
     </message>
     <message>
         <source>Todo</source>
         <translation>Tehtävät</translation>
     </message>
     <message>
-        <source>Show:</source>
-        <translation>Näytä:</translation>
-    </message>
-    <message>
         <source>Search</source>
-        <translation>Etsi</translation>
-    </message>
-    <message>
-        <source>PGP Linked Id</source>
-        <translation>PGP:n linkitetty tunniste</translation>
-    </message>
-    <message>
-        <source>Anon Id</source>
-        <translation>Nimetön tunniste</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <source>Unknown real name</source>
@@ -8388,6 +7015,235 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Delete Identity</source>
         <translation>Poista henkilöllisyys</translation>
+    </message>
+    <message>
+        <source>Edit Identity</source>
+        <translation>Muokkaa henkilöllisyyttä</translation>
+    </message>
+    <message>
+        <source>Identity Info</source>
+        <translation>Henkilöllisyyden tiedot</translation>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation>Yhteensä</translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation>Epäsuora</translation>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation>Mielipide</translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation>Vertaiset</translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation>Muokkaa mielipidettä</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Hyväksy (+100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Positiivinen (+10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Negatiivinen (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Estä (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Räätälöity</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Muokkaa</translation>
+    </message>
+    <message>
+        <source>Chat with this peer</source>
+        <translation>Keskustele vertaisen kanssa</translation>
+    </message>
+    <message>
+        <source>Launches a distant chat with this peer</source>
+        <translation>Käynnistää etäisen keskustelun vertaisen kanssa</translation>
+    </message>
+    <message>
+        <source>Really delete? </source>
+        <translation>Tuhotaanko?</translation>
+    </message>
+    <message>
+        <source>Identity name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by node...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Tyyppi:</translation>
+    </message>
+    <message>
+        <source>Owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation>Nimetön</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This identity is owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown key ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant chat cannot work</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error code</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>People</source>
+        <translation>Ihmiset</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to your node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to neighbor nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to distant nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Näytä </translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation> Sarake</translation>
+    </message>
+    <message>
+        <source>Linked to a friend Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to a known Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to unknown Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat with this person</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat with this person as...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to this person</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Sarakkeet</translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this person.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Lähetä viesti</translation>
+    </message>
+    <message>
+        <source>Last used:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node Id  : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+50 Known PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+10 UnKnown PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+5 Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to delete this identity?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8411,10 +7267,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PGP Id</source>
         <translation>PGP-tunniste</translation>
-    </message>
-    <message>
-        <source>PGP Associated ID</source>
-        <translation>PGP:n kytketty tunniste</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -8456,6 +7308,74 @@ p, li { white-space: pre-wrap; }
         <source>Create New Identity</source>
         <translation>Luo uusi henkilöllisyys</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation>Tyyppi</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>TekstiMerkki</translation>
+    </message>
+    <message>
+        <source>RM</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Lisää</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to your profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>IdentityWidget</name>
+    <message>
+        <source>Name</source>
+        <translation>Nimi</translation>
+    </message>
+    <message>
+        <source>KeyId</source>
+        <translation>Avaintunniste</translation>
+    </message>
+    <message>
+        <source>GXSId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Lisää</translation>
+    </message>
+    <message>
+        <source>GXS name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>GXS id: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP id: </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
@@ -8491,10 +7411,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LocalSharedFilesDialog</name>
     <message>
-        <source>Create collection file</source>
-        <translation>Luo kokoelmatiedosto</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Avaa tiedosto</translation>
     </message>
@@ -8525,6 +7441,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Set command for opening this file</source>
         <translation>Määritä komento tämän tiedoston avaamiseksi</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kokoelma</translation>
     </message>
 </context>
 <context>
@@ -8570,46 +7490,6 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare %1 turvallinen hajautettu kommunikaatioalusta</translation>
     </message>
     <message>
-        <source>News feed</source>
-        <translation>Uutissyöte</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>Ystävät</translation>
-    </message>
-    <message>
-        <source>File sharing</source>
-        <translation>Tiedostojen jakaminen</translation>
-    </message>
-    <message>
-        <source>Chat Lobbies</source>
-        <translation>Keskusteluaulat</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation>Viestit</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation>Kanavat</translation>
-    </message>
-    <message>
-        <source>Blogs</source>
-        <translation>Blogit</translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation>Foorumit</translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation>Lisäosat</translation>
-    </message>
-    <message>
-        <source>Getting Started</source>
-        <translation>Aloittaminen</translation>
-    </message>
-    <message>
         <source>Unfinished</source>
         <translation>Kesken</translation>
     </message>
@@ -8650,24 +7530,12 @@ p, li { white-space: pre-wrap; }
         <translation>Huomauta</translation>
     </message>
     <message>
-        <source>Open Messenger</source>
-        <translation>Avaa pikaviestin</translation>
-    </message>
-    <message>
         <source>Open Messages</source>
         <translation>Avaa viestit</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
         <translation>Siirtonopeuskuvaaja</translation>
-    </message>
-    <message>
-        <source>DHT Details</source>
-        <translation>DHT:n tiedot</translation>
-    </message>
-    <message>
-        <source>Bandwidth Details</source>
-        <translation>Kaistanleveystiedot</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -8760,6 +7628,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Service permissions matrix</source>
         <translation>Palveluiden käyttöoikeudet</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Lisää</translation>
+    </message>
+    <message>
+        <source>Statistics</source>
+        <translation>Tilastot</translation>
+    </message>
+    <message>
+        <source>Show web interface</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8957,10 +7837,6 @@ p, li { white-space: pre-wrap; }
         <translation>Tätä ystävää suosittelee</translation>
     </message>
     <message>
-        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Kiittäen,&lt;br&gt;RetroShare-tiimi.</translation>
-    </message>
-    <message>
         <source>wants to be friends with you on RetroShare</source>
         <translation>haluaa olla ystäväsi RetroSharessa</translation>
     </message>
@@ -9057,10 +7933,6 @@ Haluatko tallentaa viestin luonnoslaatikkoon?</translation>
     <message>
         <source>Unknown</source>
         <translation>Tuntematon</translation>
-    </message>
-    <message>
-        <source>Unknown friend</source>
-        <translation>Tuntematon ystävä</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -9185,24 +8057,52 @@ Haluatko tallentaa viestin?</translation>
         <translation>Lisää ylimääräinen tiedosto</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Allekirjoita viesti etäisille vertaisille kryptografisesti. Tämä estää välissä olevia vertaisia tekeytymästä sinuksi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Show:</source>
+        <translation>Näytä:</translation>
     </message>
     <message>
-        <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation>Etäinen vertainen (nimi: %2, PGP-avain: %1)</translation>
+        <source>Close</source>
+        <translation>Sulje</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Näytä vain henkilöt, joihin luotat</translation>
+        <source>From:</source>
+        <translation>Lähettäjä:</translation>
     </message>
     <message>
-        <source>PGP key unknown</source>
-        <translation>Tuntematon PGP-avain</translation>
+        <source>All</source>
+        <translation>Kaikki</translation>
     </message>
     <message>
-        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
-        <translation>Sinulla ei ole viestin lähettäjän PGP-avainta, joten et voi vastata!</translation>
+        <source>Friend Nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Person Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer identities</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant identity:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Missing]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name &amp; id:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9365,22 +8265,6 @@ Haluatko tallentaa viestin?</translation>
         <translation>Lataa kaikki</translation>
     </message>
     <message>
-        <source>Hide</source>
-        <translation>Piilota</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Laajenna</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Tiedosto</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Tiedostot</translation>
-    </message>
-    <message>
         <source>Print Document</source>
         <translation>Tulosta asiakirja</translation>
     </message>
@@ -9397,32 +8281,12 @@ Haluatko tallentaa viestin?</translation>
         <translation>Lataa kuvat aina tämän viestin osalta</translation>
     </message>
     <message>
-        <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren oikeaa painiketta.</translation>
+        <source>Hide the attachment pane</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Decrypt</source>
-        <translation>Pura salaus</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Salattu viesti</translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation>Salauksen purkaminen epäonnistui!</translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Tämä viesti ei ole salattu. Ei voida purkaa!</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Tämän viestin salausta ei voitu purkaa.</translation>
-    </message>
-    <message>
-        <source>Unknown (needs decryption)</source>
-        <translation>Tuntematon (salaus täytyy purkaa)</translation>
+        <source>Show the attachment pane</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9815,24 +8679,12 @@ Haluatko tallentaa viestin?</translation>
         <translation>Yhteensä:</translation>
     </message>
     <message>
-        <source>Decrypt Message</source>
-        <translation>Pura viestin salaus</translation>
-    </message>
-    <message>
-        <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Salattu viesti. Pura napsauttamalla hiiren oikeaa painiketta.</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Viestit</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
         <translation>Järjestä allekirjoituksen mukaan</translation>
-    </message>
-    <message>
-        <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren oikeaa painiketta.</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
@@ -9843,12 +8695,12 @@ Haluatko tallentaa viestin?</translation>
         <translation>Tämä viesti on allekirjoitettu, mutta allekirjoitus ei täsmää</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Viestit&lt;/h1&gt;                         			 &lt;p&gt;Viestit ovat kuten &lt;b&gt;sähköposti&lt;/b&gt;: lähetät niitä ystävillesi ja päinvastoin, kun kumpikin teistä	on linjoilla.&lt;/p&gt; 			 &lt;p&gt;On myös mahdollista lähettää viestejä henkilöille, jotka eivät ole ystäviäsi. Tämä tapahtuu tunneleita käyttämällä ja tällaiset viestit ovat aina salattuja. Etäiset 			 viestit on suositeltavaa allekirjoittaa kryptografisesti, jotta henkilöllisyytesi voidaan todentaa, käyttämällä &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; -painiketta 			 viestinkirjoitusikkunassa. Etäiset viestit eivät välttämättä saavu perille, koska etäisen vertaisen on hyväksyttävä ne erikseen (sinun tulee kytkeä tämä päälle kohdasta Asetukset - Viesti).&lt;/p&gt;			 &lt;p&gt;Lisäominaisuudet mahdollistavat datan vaihtamisen viesteissä: voit suositella tiedostoja ystävillesi liittämällä tiedostolinkkejä 			 tai suositella potentiaalisia ystäviä muille ystävillesi verkostosi vahvistamiseksi.&lt;/p&gt;	                   			 </translation>
+        <source>This message comes from a distant person.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>This message has been successfully decrypted, and is unsigned.</source>
-        <translation>Tämän viestin salaus on purettu onnistuneesti ja sitä ei ole allekirjoitettu.</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9923,10 +8775,6 @@ Haluatko tallentaa viestin?</translation>
         <source>Hide</source>
         <translation>Piilota</translation>
     </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Salattu viesti</translation>
-    </message>
 </context>
 <context>
     <name>NATStatus</name>
@@ -9995,7 +8843,7 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>Search Network</source>
-        <translation>Etsi verkosta</translation>
+        <translation>Hae verkosta</translation>
     </message>
     <message>
         <source>Name</source>
@@ -10070,36 +8918,16 @@ Haluatko tallentaa viestin?</translation>
         <translation>Luo uusi profiili</translation>
     </message>
     <message>
-        <source>Search Name</source>
-        <translation>Hae nimeä</translation>
-    </message>
-    <message>
         <source>Peer ID</source>
         <translation>Vertaisen tunniste</translation>
-    </message>
-    <message>
-        <source>Search Peer ID</source>
-        <translation>Hae vertaisen tunnistetta</translation>
     </message>
     <message>
         <source>Deny friend</source>
         <translation>Torju ystävä</translation>
     </message>
     <message>
-        <source>Make friend</source>
-        <translation>Ystävysty</translation>
-    </message>
-    <message>
-        <source>Export my certificate...</source>
-        <translation>Vie varmenteeni...</translation>
-    </message>
-    <message>
         <source>Peer details...</source>
         <translation>Vertaisen tiedot...</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
@@ -10213,32 +9041,56 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <translation>Tietojen epäjohdonmukaisuus avainnipussa. Tämä on todennäköisesti bugi. Ota yhteyttä kehittäjiin.</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Näytä vain henkilöt, joihin luotat</translation>
+        <source>Export/create a new node</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Send Message</source>
-        <translation>Lähetä viesti</translation>
+        <source>Trusted keys only</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source> If I accept connection from peer</source>
-        <translation> Jos hyväksyn yhteyden vertaiselta</translation>
+        <source>Trust level</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Name of peer</source>
-        <translation>Vertaisen nimi</translation>
+        <source> Do you accept connections signed by this key?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Did peer sign mine PGP key</source>
-        <translation>Allekirjoittiko vertainen PGP-avaimeni</translation>
+        <source>Name of the key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Peer&apos;s Certificat ID</source>
-        <translation>Vertaisen varmennetunniste</translation>
+        <source>Certificat ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Since when I use this Certificat</source>
-        <translation>Mistä lähtien olen käyttänyt varmennetta</translation>
+        <source>Make friend...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did peer authenticate you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This column indicates trust level and whether you signed their PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did that peer sign your PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Since when I use this certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search peer ID</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10312,16 +9164,24 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Uutissyöte&lt;/h1&gt;                                                          		  &lt;p&gt;Uutissyöte näyttää uusimmat tapahtumat verkostossasi vastaanottohetken mukaan järjestettynä.                		  Näin saat yhteenvedon ystäviesi toiminnasta.                                                       		  Voit määrittää näytettävät tapahtumat &lt;b&gt;Asetuksista&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;Näytettäviä tapahtumia:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Yhteydenottoyritykset (hyödyllisiä ystävien hankkimiseen ja yhteydenottojen hallintaan)&lt;/li&gt; 		  		&lt;li&gt;Viestit kanaville ja foorumeille&lt;/li&gt;                                                                            		  		&lt;li&gt;Uudet kanavat ja foorumit, jotka ovat tilattavissasi&lt;/li&gt;                                                       		  		&lt;li&gt;Yksityisviestit ystäviltäsi&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
     </message>
+    <message>
+        <source>News feed</source>
+        <translation>Uutissyöte</translation>
+    </message>
+    <message>
+        <source>Newest on top</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Oldest on top</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
         <translation>Uutissyöte</translation>
-    </message>
-    <message>
-        <source>Peers</source>
-        <translation>Vertaiset</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -10346,10 +9206,6 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     <message>
         <source>Security</source>
         <translation>Turvallisuus</translation>
-    </message>
-    <message>
-        <source>Add feeds at end</source>
-        <translation>Lisää syötteet loppuun</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10451,6 +9307,42 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
         <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Ilmoita&lt;/h1&gt; 		  &lt;p&gt;Retroshare ilmoittaa uusista tapahtumista verkostossasi.         		  Käyttötavoistasi riippuen saatat haluta ottaa käyttöön tai pois käytöstä joitakin    		  ilmoituksia. Tämä osio on sitä varten!&lt;/p&gt;                        		  </translation>
     </message>
+    <message>
+        <source>Disable All Toasters</source>
+        <translation>Estä kaikki ponnahdusviestit</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Lähetetty</translation>
+    </message>
+    <message>
+        <source>Disable All Toaster temporarily</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Feed</source>
+        <translation>Syöte</translation>
+    </message>
+    <message>
+        <source>Systray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Keskusteluaulat</translation>
+    </message>
+    <message>
+        <source>Count all unread messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of any of the following texts (separate by newlines):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of my current identity</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10506,6 +9398,10 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <source>Encrypted message</source>
         <translation>Salattu viesti</translation>
     </message>
+    <message>
+        <source>Please enter your PGP password for key</source>
+        <translation>Anna PGP-avaimesi salasana</translation>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
@@ -10544,6 +9440,186 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     </message>
 </context>
 <context>
+    <name>OutQueueStatisticsWidget</name>
+    <message>
+        <source>Outqueue statistics</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>By priority: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>By service : </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PGPKeyDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Dialogi</translation>
+    </message>
+    <message>
+        <source>PGP Key info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fingerprint :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Trust level:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unset</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Tuntematon</translation>
+    </message>
+    <message>
+        <source>No trust</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation>Rajallinen</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Täysi</translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation>Äärimmäinen</translation>
+    </message>
+    <message>
+        <source>Key signatures :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ystävän avaimen allekirjoittaminen on tapa ilmaista muille ystävillesi, että luotat tähän henkilöön . Huomioi myös, että ainoastaan allekirjoitetut vertaiset voivat saada tietoja muista luotetuista ystävistäsi.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Avaimen allekirjoittamista ei voi perua, joten käytä harkintaasi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign this PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation>Allekirjoita PGP-avain</translation>
+    </message>
+    <message>
+        <source>Deny connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ASCII format</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Sisällytä allekirjoitukset</translation>
+    </message>
+    <message>
+        <source>PGP Key details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation>Virhe haettaessa vertaisen tietoja.</translation>
+    </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation>RetroShare ei tue antamaasi avainalgoritmia
+(Tällä hetkellä vain RSA-avaimet käyvät)</translation>
+    </message>
+    <message>
+        <source>This is your own PGP key, and it is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation>Luottamuksesi tähän vertaiseen on täysi.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation>Luottamuksesi tähän vertaiseen on rajallinen.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation>Luottamuksesi tähän vertaiseen on nolla.</translation>
+    </message>
+    <message>
+        <source>This key has signed your own PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This PGP key (ID=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have chosen to accept connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are currently not allowing connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation>Virhe allekirjoitettaessa</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation>Salasana saattaa olla väärin</translation>
+    </message>
+    <message>
+        <source>You haven&apos;t set a trust level for this key.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
@@ -10552,10 +9628,6 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
 </context>
 <context>
     <name>PeerItem</name>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Kirjoita pikaviesti</translation>
-    </message>
     <message>
         <source>Chat</source>
         <translation>Keskustelu</translation>
@@ -10571,14 +9643,6 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     <message>
         <source>Remove Item</source>
         <translation>Poista kohde</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Peru</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Lähetä</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -10641,8 +9705,8 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <translation>Piilota</translation>
     </message>
     <message>
-        <source>Quick Message</source>
-        <translation>Pikaviesti</translation>
+        <source>Send Message</source>
+        <translation>Lähetä viesti</translation>
     </message>
 </context>
 <context>
@@ -10658,6 +9722,25 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     <message>
         <source>Friends</source>
         <translation>Ystävät</translation>
+    </message>
+</context>
+<context>
+    <name>PeopleDialog</name>
+    <message>
+        <source>People</source>
+        <translation>Ihmiset</translation>
+    </message>
+    <message>
+        <source>External</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Drag your circles or people to each other.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Internal</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10932,6 +10015,37 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PluginManager</name>
+    <message>
+        <source>base folder %1 doesn&apos;t exist, default load failed</source>
+        <translation>juurihakemistoa %1 ei ole, oletuslataus epäonnistui</translation>
+    </message>
+    <message>
+        <source>Error: instance &apos;%1&apos;can&apos;t create a widget</source>
+        <translation>Virhe: kohde &apos;%1&apos; ei voi luoda vimpainta</translation>
+    </message>
+    <message>
+        <source>Error: no plugin with name &apos;%1&apos; found</source>
+        <translation>Virhe: lisäosaa &apos;%1&apos; ei löydy</translation>
+    </message>
+    <message>
+        <source>Error(uninstall): no plugin with name &apos;%1&apos; found</source>
+        <translation>Virhe (poisto): lisäosaa &apos;%1&apos; ei löydy</translation>
+    </message>
+    <message>
+        <source>Error(installation): plugin file %1 doesn&apos;t exist</source>
+        <translation>Virhe (poisto): lisäosan tiedostoa %1 ei ole</translation>
+    </message>
+    <message>
+        <source>Error: failed to remove file %1(uninstalling plugin &apos;%2&apos;)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error: can&apos;t copy %1 to %2</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
@@ -10944,6 +10058,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Plugins (*.so *.dll)</source>
         <translation>Lisäosat (*.so *.dll)</translation>
+    </message>
+    <message>
+        <source>Widget for plugin %1 not found on plugins frame</source>
+        <translation>Vimpainta lisäosalle %1 ei löydy</translation>
     </message>
 </context>
 <context>
@@ -11075,10 +10193,6 @@ vahingoittamistarkoituksessa tehdyiltä lisäosilta.</translation>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <source>Distant chat terminated</source>
-        <translation>Etäinen keskustelu lopetettiin</translation>
-    </message>
-    <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation>Keskustelukumppanisi poisti suojatun keskustelutunnelin. Voit sulkea keskusteluikkunan.</translation>
     </message>
@@ -11090,33 +10204,21 @@ vahingoittamistarkoituksessa tehdyiltä lisäosilta.</translation>
         <source>Kill the tunnel?</source>
         <translation>Suljetaanko tunneli?</translation>
     </message>
+    <message>
+        <source>Hash Error. No tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because there is no tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedCreatePostDialog</name>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Otsikko&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Linkki&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
     <message>
         <source>Signed by: </source>
         <translation>Allekirjoitettu:</translation>
@@ -11153,12 +10255,48 @@ p, li { white-space: pre-wrap; }
         <source>Please add a Title</source>
         <translation>Ole hyvä ja lisää otsikko</translation>
     </message>
+    <message>
+        <source>Title</source>
+        <translation>Otsikko</translation>
+    </message>
+    <message>
+        <source>Link</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedDialog</name>
     <message>
         <source>Posted Links</source>
         <translation>Lähetetyt linkit</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Lähetetty</translation>
+    </message>
+    <message>
+        <source>Create Topic</source>
+        <translation>Luo aihe</translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation>Aiheeni</translation>
+    </message>
+    <message>
+        <source>Subscribed Topics</source>
+        <translation>Tilatut viestiketjut</translation>
+    </message>
+    <message>
+        <source>Popular Topics</source>
+        <translation>Suositut viestiketjut</translation>
+    </message>
+    <message>
+        <source>Other Topics</source>
+        <translation>Muut viestiketjut</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11184,8 +10322,43 @@ p, li { white-space: pre-wrap; }
         <translation>Muokkaa aihetta</translation>
     </message>
     <message>
-        <source>Create Topic</source>
-        <translation>Luo aihe</translation>
+        <source>Update Topic</source>
+        <translation>Päivitä aihe</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Luo</translation>
+    </message>
+</context>
+<context>
+    <name>PostedGroupItem</name>
+    <message>
+        <source>Subscribe to Posted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Laajenna</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Poista kohde</translation>
+    </message>
+    <message>
+        <source>Posted Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>New Posted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Piilota</translation>
     </message>
 </context>
 <context>
@@ -11193,14 +10366,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
-        <translation>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Lähettäjä</translation>
     </message>
     <message>
         <source>Site</source>
@@ -11227,12 +10392,32 @@ p, li { white-space: pre-wrap; }
         <translation>\/</translation>
     </message>
     <message>
-        <source>Submitted</source>
-        <translation>Lähetetty</translation>
+        <source>Set as read and remove item</source>
+        <translation>Merkitse luetuksi ja poista kohde</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Uusi</translation>
+    </message>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation>Vaihda viestin tila luetuksi tai päinvastoin</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Poista kohde</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Ladataan</translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation>Käyttäjältä</translation>
     </message>
 </context>
 <context>
-    <name>PostedListDialog</name>
+    <name>PostedListWidget</name>
     <message>
         <source>Form</source>
         <translation>Lomake</translation>
@@ -11270,44 +10455,12 @@ p, li { white-space: pre-wrap; }
         <translation>Tänä vuonna</translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
-        <translation>Näytetään 1-100</translation>
-    </message>
-    <message>
-        <source>Prev</source>
-        <translation>Edell.</translation>
+        <source>Submit a new Post</source>
+        <translation>Lähetä uusi viesti</translation>
     </message>
     <message>
         <source>Next</source>
         <translation>Seur.</translation>
-    </message>
-    <message>
-        <source>My Topics</source>
-        <translation>Aiheeni</translation>
-    </message>
-    <message>
-        <source>Subscribed Topics</source>
-        <translation>Tilatut viestiketjut</translation>
-    </message>
-    <message>
-        <source>Popular Topics</source>
-        <translation>Suositut viestiketjut</translation>
-    </message>
-    <message>
-        <source>Other Topics</source>
-        <translation>Muut viestiketjut</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Aloita tilaus</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Lopeta tilaus</translation>
-    </message>
-    <message>
-        <source>Showing</source>
-        <translation>Näyttää</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11318,16 +10471,34 @@ p, li { white-space: pre-wrap; }
         <translation>Luo tai valitse allekirjoitustunniste ennen äänestämistä</translation>
     </message>
     <message>
-        <source>Create New Topic</source>
-        <translation>Luo uusi aihe</translation>
+        <source>Previous</source>
+        <translation>Edellinen</translation>
     </message>
     <message>
-        <source>Submit a new Post</source>
-        <translation>Lähetä uusi viesti</translation>
+        <source>1-10</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedPage</name>
+    <message>
+        <source>Tabs</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <source>Posted</source>
+        <translation>Lähetetty</translation>
+    </message>
+    <message>
+        <source>Open each topic in a new tab</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedUserNotify</name>
+    <message>
+        <source>Posted</source>
+        <translation>Lähetetty</translation>
     </message>
 </context>
 <context>
@@ -11368,10 +10539,6 @@ p, li { white-space: pre-wrap; }
         <translation>Profiilin hallinta</translation>
     </message>
     <message>
-        <source>Identities</source>
-        <translation>Henkilöllisyydet</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
@@ -11382,10 +10549,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GID</source>
         <translation>Ryhmätunnus (GID)</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Vie valittu henkilöllisyys</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -11440,10 +10603,6 @@ ja käyttää &quot;Tuo&quot;-painiketta ladataksesi sen</translation>
         <translation>Henkilöllisyytesi tuominen onnistui:</translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Nyt voit käyttää sitä luodaksesi uuden sijainnin.</translation>
-    </message>
-    <message>
         <source>Select Trusted Friend</source>
         <translation>Valitse luotettu ystävä</translation>
     </message>
@@ -11455,21 +10614,25 @@ ja käyttää &quot;Tuo&quot;-painiketta ladataksesi sen</translation>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Valitse luettelosta identiteetti, jota haluat käyttää toisessa tietokoneessa ja paina &amp;quot;Vie valittu identiteetti&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Käyttääksesi sitä toisessa tietokoneessa, valitse identiteettien hallinta kirjautumisikkunassa. Sieltä voit tuoda identiteettitiedoston ja luoda uuden sijainnin identiteetille.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Kun käytät samaa identiteettiä uudessa sijainnissa, ystäväsi hyväksyvät sinut automaattisesti.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select a Retroshare node key from the list below to be used on another computer, and press &amp;quot;Export selected key.&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To create a new location on a different computer,  select the identity manager in the login window. From there you can import the key file and create a new location for that key. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Creating a new node with the same key allows your  your friend nodes to accept you automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Full keys available in your keyring:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11648,14 +10811,6 @@ ja avataksesi aputoiminnon ystävän lisäämiseksi
         <translation>Lisää tiedostoja</translation>
     </message>
     <message>
-        <source>Add friend</source>
-        <translation>Lisää ystävä</translation>
-    </message>
-    <message>
-        <source>Add friends</source>
-        <translation>Lisää ystäviä</translation>
-    </message>
-    <message>
         <source>Do you want to process the link ?</source>
         <translation>Haluatko käsitellä linkin?</translation>
     </message>
@@ -11820,14 +10975,6 @@ Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä
 </translation>
     </message>
     <message>
-        <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Sinulla näyttäisi olevan sijainteja kytkettyinä DSA-avaimiin:</translation>
-    </message>
-    <message>
-        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>RetroShare ei tällä hetkellä tue DSA-avaimia. Et voi käyttää näitä sijainteja. Olemme pahoillamme.</translation>
-    </message>
-    <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>Tämä RetroSharen versio käyttää OpenPGP-SDK:ta. Tämän takia se ei käytä järjestelmäjaettua PGP-avainketjua, vaan sillä on oma avainketjunsa jaettuna kaikkien käynnissä olevien RetroSharejen kanssa.&lt;br&gt;&lt;br&gt;Sinulla ei näytä olevan tällaista avainketjua, vaikka olemassaolevissa RetroShare-tileissä mainitaan PGP-avaimet. Tämä johtuu todennäköisesti siitä, että siirryit juuri ohjelman uudempaan versioon.</translation>
     </message>
@@ -11884,60 +11031,12 @@ Lukitustiedosto:
         <translation>Käynnistys RetroShare-linkistä on mahdollinen ainoastaan Windowsia käytettäessä.</translation>
     </message>
     <message>
-        <source>Select who can contact you:</source>
-        <translation>Valitse, ketkä voivat ottaa sinuun yhteyttä:</translation>
-    </message>
-    <message>
-        <source>Chat link is expired</source>
-        <translation>Keskustelulinkki on vanhentunut</translation>
-    </message>
-    <message>
-        <source>This chat link is expired. The destination peer will not answer.</source>
-        <translation>Keskustelulinkki on vanhentunut. Kohteena oleva vertainen ei vastaa.</translation>
-    </message>
-    <message>
-        <source>Chat link cannot be decrypted</source>
-        <translation>Keskustelulinkin salausta ei voi purkaa</translation>
-    </message>
-    <message>
-        <source>The link could not be decrypted.</source>
-        <translation>Linkin salausta ei voitu purkaa.</translation>
-    </message>
-    <message>
-        <source>The link signature cannot be checked.</source>
-        <translation>Linkin allekirjoitusta ei voi tarkistaa.</translation>
-    </message>
-    <message>
-        <source>The link is signed by an unknown key.</source>
-        <translation>Linkki on allekirjoitettu tuntemattomalla avaimella.</translation>
-    </message>
-    <message>
-        <source>Hash error</source>
-        <translation>Tiivistevirhe</translation>
-    </message>
-    <message>
         <source>Distant peer has closed the chat</source>
         <translation>Etäinen vertainen sulki keskustelun.</translation>
     </message>
     <message>
         <source>Tunnel is pending...</source>
         <translation>Tunneli odottaa...</translation>
-    </message>
-    <message>
-        <source>Messaging link is expired</source>
-        <translation>Keskustelulinkki on vanhentunut</translation>
-    </message>
-    <message>
-        <source>This Messaging link is expired. The destination peer will not receive it.</source>
-        <translation>Keskustelulinkki on vanhentunut. Kohteena oleva vertainen ei vastaanota sitä.</translation>
-    </message>
-    <message>
-        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
-        <translation>Keskustelulinkki on salattu avaimella, joka ei ole sinun. Et voi käyttää sitä. Avaintunniste = </translation>
-    </message>
-    <message>
-        <source>Chat connection is not possible</source>
-        <translation>Keskusteluyhteyden muodostaminen ei onnistu</translation>
     </message>
     <message>
         <source>Secured tunnel established. Waiting for ACK...</source>
@@ -11958,18 +11057,116 @@ Virhe:
 %2</translation>
     </message>
     <message>
-        <source>Signature check failed!
-Make sure you know who you&apos;re talking to.</source>
-        <translation>Allekirjoituksen tarkistus epäonnistui!
-Varmista, että tiedät, kenen kanssa keskustelet.</translation>
-    </message>
-    <message>
-        <source>Chat connection is unauthenticated</source>
-        <translation>Keskusteluyhteys on vahvistamaton</translation>
-    </message>
-    <message>
         <source>Id: </source>
         <translation>Tunniste:</translation>
+    </message>
+    <message>
+        <source>Click to send a private message to %1 (%2).</source>
+        <translation>Lähetä yksityinen viesti henkilölle %1 (%2) napsauttamalla tätä.</translation>
+    </message>
+    <message>
+        <source>%1 (%2, Extra - Source included)</source>
+        <translation>%1 (%2, ylimääräinen - lähde mukana)</translation>
+    </message>
+    <message>
+        <source>This cert is malformed. Error code: </source>
+        <translation>Tämä varmenne on virheellinen. Virhekoodi: </translation>
+    </message>
+    <message>
+        <source>Click this link to send a private message to %1 (%2)</source>
+        <translation>Napsauttamalla tätä linkkiä voit lähettää yksityisen viestin henkilölle %1 (%2)</translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (%1, @%2)</source>
+        <translation>RetroSharen varmenne (%1, @%2)</translation>
+    </message>
+    <message>
+        <source>secs</source>
+        <translation>sekuntia</translation>
+    </message>
+    <message>
+        <source>TR up</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TR dn</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data up</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data dn</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data forward</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You appear to have nodes associated to DSA keys:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto Subscribe: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Join chat lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move IP %1 to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 seconds ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minute ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minutes ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hour ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hours ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 day ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation>%1 päivää sitten</translation>
     </message>
 </context>
 <context>
@@ -12190,6 +11387,44 @@ p, li { white-space: pre-wrap; }
         <source>Warning!</source>
         <translation>Varoitus!</translation>
     </message>
+    <message>
+        <source>Browsable</source>
+        <translation>Selattavissa</translation>
+    </message>
+    <message>
+        <source>Universal</source>
+        <translation>Yleinen</translation>
+    </message>
+    <message>
+        <source>If checked, the share is anonymously shared to anybody.</source>
+        <translation>Jos rastitat tämän, kyseinen jako on nimettömästi kaikkien saatavissa.</translation>
+    </message>
+    <message>
+        <source>If checked, the share is browsable by your friends.</source>
+        <translation>Jos rastitat tämän, kyseinen jako on ystäviesi selattavissa.</translation>
+    </message>
+    <message>
+        <source>Please decide whether this directory is
+* Network Wide: 	anonymously shared over the network (including your friends)
+* Browsable: 	browsable by your friends
+* Universal: 		both</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RSGraphWidget</name>
+    <message>
+        <source>%1 KB</source>
+        <translation>%1 kt</translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation>%1 MB</translation>
+    </message>
+    <message>
+        <source>%1 GB</source>
+        <translation>%1 GB</translation>
+    </message>
 </context>
 <context>
     <name>RSImageBlockWidget</name>
@@ -12204,6 +11439,49 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Load images</source>
         <translation>Lataa kuvat</translation>
+    </message>
+</context>
+<context>
+    <name>RSPermissionMatrixWidget</name>
+    <message>
+        <source>Service name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Allowed by default</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Denied by default</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Id: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled for this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disabled for this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled by remote peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disabled by remote peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Switched Off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12309,12 +11587,66 @@ p, li { white-space: pre-wrap; }
         <source>Recommend in a message to</source>
         <translation>Suosittele viestissä vastaanottajalle</translation>
     </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kokoelma</translation>
+    </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
     <message>
         <source>NEW</source>
         <translation>UUSI</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListDefs</name>
+    <message>
+        <source>IP address not checked</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is blacklisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is not whitelisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address accepted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Tuntematon</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListToolButton</name>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Entire range</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12330,18 +11662,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Total size :</source>
         <translation>Koko :</translation>
-    </message>
-    <message>
-        <source>Selected files:</source>
-        <translation>Valitut tiedostot:</translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation>Valitse kaikki</translation>
-    </message>
-    <message>
-        <source>Deselect all</source>
-        <translation>Tyhjennä valinta</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12375,6 +11695,114 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä &apos;_&apos;.
  Kyseenalaiset tiedostot on väritetty punaisella.</translation>
     </message>
+    <message>
+        <source>Selected files :</source>
+        <translation>Valitut tiedostot:</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection.&lt;/p&gt;&lt;p&gt;If a directory is selected, all of his children will be added.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+</source>
+        <translation>+</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Tallenna</translation>
+    </message>
+    <message>
+        <source>Collection Editor</source>
+        <translation>Kokoelman muokkaus</translation>
+    </message>
+    <message>
+        <source>File Count</source>
+        <translation>Tiedostojen määrä</translation>
+    </message>
+    <message>
+        <source>This is the root directory.</source>
+        <translation>Tämä on juurihakemisto.</translation>
+    </message>
+    <message>
+        <source>Real Size: Waiting child...</source>
+        <translation>Todellinen koko: Odotetaan alihakemistoja...</translation>
+    </message>
+    <message>
+        <source>Real File Count: Waiting child...</source>
+        <translation>Todellinen tiedostojen määrä: Odotetaan alihakemistoja...</translation>
+    </message>
+    <message>
+        <source>This is a directory. Double-click to expand it.</source>
+        <translation>Tämä on hakemisto. Laajenna se kaksoisnapsauttamalla.</translation>
+    </message>
+    <message>
+        <source>Real Size=%1</source>
+        <translation>Todellinen koko = %1</translation>
+    </message>
+    <message>
+        <source>Real File Count=%1</source>
+        <translation>Todellinen tiedostojen määrä = %1</translation>
+    </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation>Tallenna kokoelmatiedosto.</translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation>Mitä haluat tehdä?</translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation>Korvaa</translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation>Yhdistä</translation>
+    </message>
+    <message>
+        <source>Warning, selection contains more than %1 items.</source>
+        <translation>Varoitus, valinta sisältää yli %1 nimikettä.</translation>
+    </message>
+    <message>
+        <source>Do you want to remove them and all their children, too? &lt;br&gt;</source>
+        <translation>Haluatko poistaa ne ja niiden alinimikkeet? &lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>New Directory</source>
+        <translation>Uusi hakemisto</translation>
+    </message>
+    <message>
+        <source>Enter the new directory&apos;s name</source>
+        <translation>Kirjoita uuden hakemiston nimi</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file where collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
@@ -12406,6 +11834,30 @@ If you believe it is correct, remove the corresponding line from the file and re
 
 Jos se on mielestäsi kunnollinen, poista mainittu rivi tiedostosta ja avaa se uudelleen Retrosharessa.</translation>
     </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation>Tallenna kokoelmatiedosto.</translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation>Mitä haluat tehdä?</translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation>Korvaa</translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation>Yhdistä</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Peru</translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>RsHtml</name>
@@ -12414,6 +11866,13 @@ Jos se on mielestäsi kunnollinen, poista mainittu rivi tiedostosta ja avaa se u
 Reducing image to %1x%2 pixels?</source>
         <translation>Kuva on liian suuri siirron kannalta.
 Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
+    </message>
+</context>
+<context>
+    <name>RsNetUtil</name>
+    <message>
+        <source>Invalid format</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12470,6 +11929,21 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
         <source>built-in</source>
         <translation>sisäänrakennettu</translation>
     </message>
+    <message>
+        <source>Could not create data directory: %1</source>
+        <translation>Datahakemistoa ei voitu luoda: %1</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RttStatistics</name>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>Kiertoaikatilastot</translation>
+    </message>
 </context>
 <context>
     <name>SFListDelegate</name>
@@ -12502,7 +11976,7 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <source>Advanced Search</source>
@@ -12514,7 +11988,7 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation>Etsi ystäviesi &quot;selattavien&quot; tiedostojen joukosta</translation>
+        <translation>Hae ystäviesi &quot;selattavien&quot; tiedostojen joukosta</translation>
     </message>
     <message>
         <source>Browsable files</source>
@@ -12694,6 +12168,85 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
         <source>Open Folder</source>
         <translation>Avaa kansio</translation>
     </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Luo kokoelma...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Muokkaa kokoelmaa...</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Näytä kokoelma...</translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Lataa kokoelmatiedostosta...</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kokoelma</translation>
+    </message>
+</context>
+<context>
+    <name>SecurityIpItem</name>
+    <message>
+        <source>Peer details</source>
+        <translation>Vertaisen tiedot</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Laajenna</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Poista kohde</translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation>Vertaisen tunniste:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Sijainti:</translation>
+    </message>
+    <message>
+        <source>Peer Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation>Tuntematon vertainen</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Piilota</translation>
+    </message>
+    <message>
+        <source>but reported:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong external ip address reported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address %1 was added to the whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the external IP your Retroshare node thinks it is using.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -12712,10 +12265,6 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     <message>
         <source>Deny friend</source>
         <translation>Torju ystävä</translation>
-    </message>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Kirjoita pikaviesti</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -12799,18 +12348,22 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     </message>
     <message>
         <source>Certificate has wrong signature!! This peer is not who he claims to be.</source>
-        <translation type="unfinished"/>
+        <translation>Varmenteella on väärä allekirjoitus! Vertainen ei ole se, joka hän väittää olevansa.</translation>
     </message>
     <message>
         <source>Missing/Damaged SSL certificate for key </source>
-        <translation type="unfinished"/>
+        <translation>Puuttuva/vioittunut avaimen SSL-varmenne</translation>
     </message>
     <message>
         <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
-        <translation type="unfinished"/>
+        <translation>Puuttuva/vioittunut SSL-varmenne. Ei todellinen Retrosharen käyttäjä.</translation>
     </message>
     <message>
         <source>Certificate caused an internal error.</source>
+        <translation>Varmenne aiheutti sisäisen virheen.</translation>
+    </message>
+    <message>
+        <source>Peer/node not in friendlist (PGP id=</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12831,27 +12384,6 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     <message>
         <source>Manually Forwarded Port</source>
         <translation>Portti avattu käsin</translation>
-    </message>
-    <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and PGP 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>DHT sallii sinun vastata ystäviesi
-yhteyspyyntöihin käyttäen BitTorrentin DHT:tä.
-Se parantaa yhteydenpitoa huomattavasti.
-
-Etsintäpalvelu lähettää luotettujen ystäviesi
-sijainteja ja PGP-identiteettejä yhteydessä oleville
-vertaisille auttaakseen heitä valitsemaan uusia ystäviä.
-Ystävystyminen ei ole ikinä automaattista ja
-molempien vertaisten tulee luottaa toisiinsa,
-jotta yhteys voi syntyä.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
@@ -12884,10 +12416,6 @@ jotta yhteys voi syntyä.</translation>
     <message>
         <source>Port:</source>
         <translation>Portti:</translation>
-    </message>
-    <message>
-        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation>Hyväksyttävä porttiavaruus on välillä 1024-65535. Portit ennen 1024 ovat järjestelmäsi käyttöön varattuja.</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -12924,72 +12452,277 @@ vähän ystäviä. Tämä auttaa myös, jos olet palomuurin tai VPN:n takana.</t
         <translation>Salli RetroSharen kysyä IP:täni näiltä verkkosivuilta:</translation>
     </message>
     <message>
-        <source>Bandwidth</source>
-        <translation>Kaistanleveys</translation>
-    </message>
-    <message>
-        <source>Max Transfer Rates</source>
-        <translation>Maksimisiirtonopeudet</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>kB/s</translation>
     </message>
     <message>
-        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Jos poistat tästä rastin, RetroShare ei käytä tunneliyhteyttä palomuuria käyttävien vertaisten välillä, jotka eivät voi ottaa suoraa yhteyttä. Tämä ei riipu F2F-reitittämisestä (kilpikonnareititin).</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
+        <translation>Hyväksyttävä porttiavaruus on välillä 10-65535. Porttia 1024 pienemmät ovat yleensä järjestelmäsi käyttöön varattuja.</translation>
     </message>
     <message>
-        <source>Allow Tunnel Connection</source>
-        <translation>Salli tunneliyhteys</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</source>
+        <translation>Hyväksyttävä porttiavaruus on välillä 10-65535. Porttia 1024 pienemmät ovat yleensä järjestelmäsi käyttöön varattuja.</translation>
     </message>
     <message>
-        <source>Turtle router</source>
-        <translation>Kilpikonnareititin</translation>
+        <source>TOR Configuration</source>
+        <translation>TOR-asetukset</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Rastin poistaminen tästä ottaa pois käytöstä kaiken nimettömän reitittämisen, paitsi välimuistin tyhjentämisen. Sisääntulevat tunnelipyynnön hylätään, eikä tunnelipyyntöjä lähetetä.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Outgoing TOR Connections</source>
+        <translation>Lähtevät TOR-yhteydet</translation>
     </message>
     <message>
-        <source>Enabled</source>
-        <translation>Käytössä</translation>
+        <source>TOR Socks Proxy</source>
+        <translation>TOR Socks Proxy</translation>
     </message>
     <message>
-        <source>Show routing info</source>
-        <translation>Näytä reititystiedot</translation>
-    </message>
-    <message>
-        <source>Max. tunnel req. forwarded per second:</source>
-        <translation>Välitettyjen tunnelipyyntöjen maksimimäärä per sekunti:</translation>
-    </message>
-    <message>
-        <source>This value controls how many tunnel request your peer can forward per second. 
+        <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
 
-If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statistically longer tunnels to pass. Be very careful though, since this generates 
-many small packets that can significantly slow down your own file transfer. 
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup TOR? </source>
+        <translation>TOR Socks Proxy oletuksena: 127.0.01:9050.  Määritä torrc-asetuksissa ja päivitä tänne.
 
-The default value is 20.</source>
-        <translation>Tämä arvo määrittää, kuinka monta tunnelipyyntöä vertaisesi voi välittää sekunnin aikana.
-
-Jos sinulla on paljon internetkaistaa, voit nostaa tämän lukemaan 30-40 antaaksesi
-pitemmille tunneleille kulkumahdollisuuden. Ole silti varovainen, koska tämä luo
-paljon pieniä pakettejä, jotka voivat hidastaa omia tiedostojensiirtojasi huomattavasti.
-
-Oletusarvo on 20.</translation>
+Voit muodostaa yhteyden piilotettuihin solmuihin, vaikka
+käyttäisit normaalia solmua, joten miksipä et ottaisi TOR:ia käyttöön? </translation>
     </message>
     <message>
-        <source>Server</source>
-        <translation>Palvelin</translation>
+        <source>Incoming TOR Connections</source>
+        <translation>Saapuvat TOR-yhteydet</translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>Lataus (kB/s)</translation>
+        <source>Onion Address</source>
+        <translation>Onion-osoite</translation>
     </message>
     <message>
-        <source>Upload (KB/s) </source>
-        <translation>Lähetys (kB/s)</translation>
+        <source>Expected torrc Port Configuration:</source>
+        <translation>Oletettu torrc:n porttimääritys:</translation>
+    </message>
+    <message>
+        <source>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
+HiddenServicePort 9191 127.0.0.1:9191</source>
+        <translation>HiddenServiceDir &lt;/polkusi/piilotettuun/palveluun/&gt;
+HiddenServicePort 9191 127.0.0.1:9191</translation>
+    </message>
+    <message>
+        <source>To Receive Connections, you must first setup a TOR Hidden Service. 
+See TOR documentation for HOWTO details.
+
+Once this is done, paste the Onion Address in the box above.
+This is your external address on the TOR network.
+Finally make sure that the Ports match the TOR configuration.
+
+If you have issues connecting over TOR check the TOR logs too.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discovery On (recommended)</source>
+        <translation>Etsintä käytössä (suositus)</translation>
+    </message>
+    <message>
+        <source>Discovery Off</source>
+        <translation>Etsintä ei käytössä</translation>
+    </message>
+    <message>
+        <source>Hidden - See TOR Config</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proxy seems to work.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Hidden mode]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Tyhjennä</translation>
+    </message>
+    <message>
+        <source>Download limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Upload limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR outgoing Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>Test</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR incoming  ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are reachable through TOR.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled or broken.
+Are you running a TOR hidden service?
+Check your ports!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Verkko</translation>
+    </message>
+    <message>
+        <source>IP Filters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Tila</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Kommentti</translation>
+    </message>
+    <message>
+        <source>  IPs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Manual input</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP Range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reported by DHT for IP masquerading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Range made from %1 collected addresses</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Poista</translation>
+    </message>
+    <message>
+        <source>Added by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>activate IP filtering</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every  IP reported by your friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends&apos; IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every masquerading IP reported by your DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12999,24 +12732,43 @@ Oletusarvo on 20.</translation>
         <translation>Palvelujen käyttöoikeudet</translation>
     </message>
     <message>
-        <source>Anonymous routing</source>
-        <translation>Nimetön reitittäminen</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Etsintä</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Foorumit/Kanavat</translation>
-    </message>
-    <message>
         <source>Service Permissions</source>
         <translation>Palvelujen käyttöoikeudet</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
         <translation>Käytä suorana lähteenä, kun saatavilla</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>ServicePermissionsPage</name>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>Palveluiden käyttöoikeudet</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Palauta näkymä</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>Käyttöoikeudet</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>hide offline</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13068,10 +12820,6 @@ Oletusarvo on 20.</translation>
 <context>
     <name>ShareKey</name>
     <message>
-        <source>Share Channel</source>
-        <translation>Jaa kanava</translation>
-    </message>
-    <message>
         <source>check peers you would like to share private publish key with</source>
         <translation>rastita vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
     </message>
@@ -13080,16 +12828,13 @@ Oletusarvo on 20.</translation>
         <translation>Jaa ystävälle</translation>
     </message>
     <message>
-        <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation>Valitse ystävät, joille haluat jakaa kanavasi</translation>
+        <source>Share</source>
+        <translation>Jaa</translation>
     </message>
     <message>
-        <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
-    </message>
-    <message>
-        <source>Please select at least one peer</source>
-        <translation>Valitse ainakin yksi vertainen</translation>
+        <source>You can let your friends know about your Channel by sharing it with them. 
+Select the Friends with which you want to Share your Channel.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13187,11 +12932,11 @@ Oletusarvo on 20.</translation>
     </message>
     <message>
         <source>Search files</source>
-        <translation>Etsi tiedostoja</translation>
+        <translation>Hae tiedostoja</translation>
     </message>
     <message>
         <source>Start Search</source>
-        <translation>Aloita etsintä</translation>
+        <translation>Aloita haku</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -13261,6 +13006,61 @@ Oletusarvo on 20.</translation>
         <source>Recommendation(s)</source>
         <translation>Suositukset</translation>
     </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Lisää jako</translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Luo kokoelma...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Muokkaa kokoelmaa...</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Näytä kokoelma...</translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Lataa kokoelmatiedostosta...</translation>
+    </message>
+</context>
+<context>
+    <name>SoundManager</name>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Go Online</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatmessage</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Msg</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message arrived</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download complete</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundPage</name>
@@ -13285,38 +13085,6 @@ Oletusarvo on 20.</translation>
         <translation>Tiedostonimi</translation>
     </message>
     <message>
-        <source>Friend</source>
-        <translation>Ystävä</translation>
-    </message>
-    <message>
-        <source>go Online</source>
-        <translation>tulee linjoille</translation>
-    </message>
-    <message>
-        <source>Chatmessage</source>
-        <translation>Keskusteluviesti</translation>
-    </message>
-    <message>
-        <source>New Msg</source>
-        <translation>Uusi viesti</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Viesti</translation>
-    </message>
-    <message>
-        <source>Message arrived</source>
-        <translation>Viesti saapunut</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Lataa</translation>
-    </message>
-    <message>
-        <source>Download complete</source>
-        <translation>Lataus suoritettu</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Avaa tiedosto</translation>
     </message>
@@ -13324,16 +13092,20 @@ Oletusarvo on 20.</translation>
         <source>Sound</source>
         <translation>Ääni</translation>
     </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
-        <source>Sound on</source>
-        <translation>Äänet päälle</translation>
+        <source>Sound is off, click to turn it on</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sound off</source>
-        <translation>Äänet pois</translation>
+        <source>Sound is on, click to turn it off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13382,18 +13154,6 @@ sijaintien lisäämiseksi olemassaolevaan profiiliin.
 Ei vaikuta nykyisiin identiteetteihin/sijainteihin.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Hallitse profiileja ja sijainteja...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation>Henkilön lataaminen epäonnistui</translation>
     </message>
@@ -13406,40 +13166,103 @@ p, li { white-space: pre-wrap; }
         <translation>Varoitus</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>SSL-varmenteesi (sijaintisi) salasana tallennetaan salattuna Gnome-avainnippuusi.
-
-PGP-salasanaasi ei tallenneta.
-
-Tämä valinta voidaan kumota asetuksista.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>SSL-varmenteesi (sijaintisi) salasana tallennetaan salattuna avainnippuusi.
-
-PGP-salasanaasi ei tallenneta.
-
-Tämä valinta voidaan kumota asetuksista.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>SSL-varmenteesi (sijaintisi) salasana tallennetaan salattuna keys/help.dta-tiedostoon. Tämä ei ole turvallista.
-
-PGP-salasanaasi ei tallenneta.
-
-Tämä valinta voidaan kumota asetuksista.</translation>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>StatisticsWindow</name>
+    <message>
+        <source>Add Friend</source>
+        <translation>Lisää ystävä</translation>
+    </message>
+    <message>
+        <source>Add a Friend Wizard</source>
+        <translation>Ohjattu toiminto ystävän lisäämiseksi</translation>
+    </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Lisää jako</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Asetukset</translation>
+    </message>
+    <message>
+        <source>Messenger</source>
+        <translation>Pikaviestin</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Tietoja</translation>
+    </message>
+    <message>
+        <source>SMPlayer</source>
+        <translation>SMPlayer</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Lopeta</translation>
+    </message>
+    <message>
+        <source>Quick Start Wizard</source>
+        <translation>Ohjattu pika-aloitus</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>Palveluiden käyttöoikeudet</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Palveluiden käyttöoikeudet</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Bandwidth</source>
+        <translation>Kaistanleveys</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Global Router</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>Kiertoaikatilastot</translation>
     </message>
 </context>
 <context>
@@ -13501,10 +13324,6 @@ Tämä valinta voidaan kumota asetuksista.</translation>
         <translation>Naapuri</translation>
     </message>
     <message>
-        <source>Trying tunnel connection</source>
-        <translation>Yritetään tunneliyhteyttä</translation>
-    </message>
-    <message>
         <source>Trying TCP</source>
         <translation>Yritetään TCP:tä</translation>
     </message>
@@ -13521,16 +13340,40 @@ Tämä valinta voidaan kumota asetuksista.</translation>
         <translation>Yhdistetty: UDP</translation>
     </message>
     <message>
-        <source>Connected: Tunnel</source>
-        <translation>Yhdistetty: Tunneli</translation>
-    </message>
-    <message>
         <source>Connected: Unknown</source>
         <translation>Yhdistetty: Tuntematon</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
         <translation>DHT: yhteys</translation>
+    </message>
+    <message>
+        <source>Connected: TOR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>inbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>outbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TCP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unkown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13687,6 +13530,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>SubscribeToolButton</name>
+    <message>
+        <source>Subscribed</source>
+        <translation>Tilattu</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Lopeta tilaus</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Aloita tilaus</translation>
+    </message>
+</context>
+<context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
@@ -13728,6 +13586,17 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ToasterDisable</name>
+    <message>
+        <source>All Toasters are disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Toasters are enabled</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
@@ -13748,20 +13617,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Safety disk space limit :</source>
         <translation>Kiintolevytilan turvallisuusrajoitus:</translation>
-    </message>
-    <message>
-        <source>You can use this to force RetroShare to download your files rather 
-than cache files for as many slots as requested. Setting that number 
-to be equal to the queue size above will always prioritize your files
-over cache. 
-
-It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Voit käyttää tätä pakottaaksesi RetroSharen lataamaan tiedostosi sen sijaan,
-että se loisi välimuistitiedostoja pyydetyille latauspaikoille. Luvun asettaminen
-samaksi kuin jonon koko varmistaa, että tiedostot ovat aina
-tärkeysjärjestyksessä välimuistia edellä.
-
-On kuitenkin suositeltavaa jättää ainakin muutama paikka välimuistitiedostoja varten.</translation>
     </message>
     <message>
         <source>Streaming</source>
@@ -13800,8 +13655,28 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Nimettömästi jaettu&lt;/span&gt;: tiedostoihin pääsee käsiksi nimettömänä etäisten F2F-tunneleiden kautta.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Transfer</source>
-        <translation>Siirto</translation>
+        <source>Max. tunnel req. forwarded per second:</source>
+        <translation>Välitettyjen tunnelipyyntöjen maksimimäärä per sekunti:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value controls how many tunnel request your peer can forward per second. &lt;/p&gt;&lt;p&gt;If you have a large internet bandwidth, you may raise this up to 30-40, to allow statistically longer tunnels to pass. Be very careful though, since this generates  many small packets that can significantly slow down your own file transfer. &lt;/p&gt;&lt;p&gt;The default value is 20. If you&apos;re not sure, keep it that way.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File transfer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;br/&gt;than cache files for as many slots as requested. Setting that number &lt;br/&gt;to be equal to the queue size above will always prioritize your files&lt;br/&gt;over cache. &lt;br/&gt;&lt;br/&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13908,7 +13783,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <source>Friends files</source>
@@ -13917,10 +13792,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>My files</source>
         <translation>Omat tiedostoni</translation>
-    </message>
-    <message>
-        <source>Show cache transfers</source>
-        <translation>Näytä välimuistisiirrot</translation>
     </message>
     <message>
         <source>Download from collection file...</source>
@@ -14264,7 +14135,43 @@ Kärsivällisyyttä!</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Tiedostojen siirto&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare tarjoaa kaksi tapaa tiedostojen siirtoon: suorat siirrot ystäviltäsi ja                                     			 etäiset nimettömästi tunneloidut siirrot. Lisäksi, tiedostojen siirto tukee useita lähteitä ja parven hyödyntämistä                                      			 (olet lähde tiedostolle jo ladatessasi sitä)&lt;/p&gt;                                     			 &lt;p&gt;Voit jakaa tiedostoja käyttäen &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; -kuvaketta vasemmassa sivupalkissa. 				Nämä tiedostot on luetteloitu Omat tiedostoni -välilehdellä. Voit päättää jokaisen ystäväryhmän kohdalla, näkevätkö he tiedostosi. 				Ystävien tiedostot -välilehdellään&lt;/p&gt;			 &lt;p&gt;Etsi-välilehteä käyttäen voit löytää tiedostoja ystäviesi luetteloista sekä 			 etäisiä tiedostoja, joihin pääset käsiksi nimettömästi usean loikan tunnelointijärjestelmän avulla.&lt;/p&gt; 			 </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Tiedostojen siirto&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare tarjoaa kaksi tapaa tiedostojen siirtoon: suorat siirrot ystäviltäsi ja                                     			 etäiset nimettömästi tunneloidut siirrot. Lisäksi, tiedostojen siirto tukee useita lähteitä ja parven hyödyntämistä                                      			 (olet lähde tiedostolle jo ladatessasi sitä)&lt;/p&gt;                                     			 &lt;p&gt;Voit jakaa tiedostoja käyttäen &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; -kuvaketta vasemmassa sivupalkissa. 				Nämä tiedostot on luetteloitu Omat tiedostoni -välilehdellä. Voit päättää jokaisen ystäväryhmän kohdalla, näkevätkö he tiedostosi. 				Ystävien tiedostot -välilehdellään&lt;/p&gt;			 &lt;p&gt;Haku-välilehteä käyttäen voit löytää tiedostoja ystäviesi luetteloista sekä 			 etäisiä tiedostoja, joihin pääset käsiksi nimettömästi usean loikan tunnelointijärjestelmän avulla.&lt;/p&gt; 			 </translation>
+    </message>
+    <message>
+        <source>Could not delete preview file</source>
+        <translation>Esikatselutiedostoa ei voitu poistaa</translation>
+    </message>
+    <message>
+        <source>Try it again?</source>
+        <translation>Yritä uudelleen?</translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Luo kokoelma...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Muokkaa kokoelmaa...</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Näytä kokoelma...</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kokoelma</translation>
+    </message>
+    <message>
+        <source>File sharing</source>
+        <translation>Tiedostojen jakaminen</translation>
+    </message>
+    <message>
+        <source>Anonymous tunnel 0x</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show file list transfers</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14320,69 +14227,6 @@ Kärsivällisyyttä!</translation>
     <message>
         <source>Groups</source>
         <translation>Ryhmät</translation>
-    </message>
-</context>
-<context>
-    <name>TrustView</name>
-    <message>
-        <source>Zoom :</source>
-        <translation>Koko:</translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation>Päivitä</translation>
-    </message>
-    <message>
-        <source>Showing: whole network</source>
-        <translation>Näyttää: koko verkon</translation>
-    </message>
-    <message>
-        <source>This table normally auto-updates every 10 seconds.</source>
-        <translation>Tämä taulukko päivittää itsensä tavallisesti joka kymmenes sekunti.</translation>
-    </message>
-    <message>
-        <source>Self</source>
-        <translation>Itse</translation>
-    </message>
-    <message>
-        <source>Trust</source>
-        <translation>Luottamus</translation>
-    </message>
-    <message>
-        <source> is authenticated (one way) by </source>
-        <translation>on varmennettu (yksisuuntaisesti)</translation>
-    </message>
-    <message>
-        <source>Half</source>
-        <translation>Puolet</translation>
-    </message>
-    <message>
-        <source> authenticated himself</source>
-        <translation>varmensi itsensä</translation>
-    </message>
-    <message>
-        <source> authenticated each other</source>
-        <translation>varmensivat toisensa</translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation>Täysi</translation>
-    </message>
-    <message>
-        <source> is authenticated by </source>
-        <translation>on varmennettu</translation>
-    </message>
-    <message>
-        <source> peers, including him(her)self.</source>
-        <translation>vertaisen toimesta, mukaanlukien hänen itsensä.</translation>
-    </message>
-    <message>
-        <source> authenticated </source>
-        <translation>varmennettu</translation>
-    </message>
-    <message>
-        <source>Showing: peers connected to </source>
-        <translation>Näyttää: vertaiset yhteydessä</translation>
     </message>
 </context>
 <context>
@@ -14448,6 +14292,14 @@ Kärsivällisyyttä!</translation>
     <message>
         <source>Unknown Peer</source>
         <translation>Tuntematon vertainen</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel Requests</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14579,6 +14431,53 @@ Kärsivällisyyttä!</translation>
     <message>
         <source>Browse</source>
         <translation>Selaa</translation>
+    </message>
+</context>
+<context>
+    <name>WebuiPage</name>
+    <message>
+        <source>Form</source>
+        <translation>Lomake</translation>
+    </message>
+    <message>
+        <source>Enable Retroshare WEB Interface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Web parameters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Port :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>allow access from all IP adresses (Default: localhost only)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>apply setting and start browser</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Note: these settings do not affect retroshare-nogui. retroshare-nogui has a command line switch to active the webinterface.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>failed to start Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14728,7 +14627,7 @@ Kärsivällisyyttä!</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Haku</translation>
     </message>
     <message>
         <source>My Groups</source>
@@ -14759,8 +14658,12 @@ Kärsivällisyyttä!</translation>
         <translation>Tehtävät</translation>
     </message>
     <message>
-        <source>Edit Group</source>
-        <translation>Muokkaa ryhmää</translation>
+        <source>Show Wiki Group</source>
+        <translation>Näytä Wikiryhmä</translation>
+    </message>
+    <message>
+        <source>Edit Wiki Group</source>
+        <translation>Muokkaa wikiryhmää</translation>
     </message>
 </context>
 <context>
@@ -14887,6 +14790,10 @@ Kärsivällisyyttä!</translation>
     <message>
         <source>Create Group</source>
         <translation>Luo ryhmä</translation>
+    </message>
+    <message>
+        <source>Update Group</source>
+        <translation>Päivitä ryhmä</translation>
     </message>
 </context>
 <context>
@@ -15067,8 +14974,8 @@ Kärsivällisyyttä!</translation>
         <translation>Lataa avatarkuva</translation>
     </message>
     <message>
-        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Kuvat (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <source>Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

@@ -3,6 +3,10 @@
     <name>AWidget</name>
     <message>
         <source>version</source>
+        <translation>Versie</translation>
+    </message>
+    <message>
+        <source>RetroShare version</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -19,10 +23,6 @@
     <message>
         <source>close</source>
         <translation>Sluiten</translation>
-    </message>
-    <message>
-        <source>About RetroShare %1</source>
-        <translation>Over RetroShare %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
@@ -430,6 +430,90 @@ p, li { white-space: pre-wrap; }⏎
         <source>Appearance</source>
         <translation>Uiterlijk</translation>
     </message>
+    <message>
+        <source>Tool Bar</source>
+        <translation>Werkbalk</translation>
+    </message>
+    <message>
+        <source>On Tool Bar</source>
+        <translation>Op werkbalk</translation>
+    </message>
+    <message>
+        <source>On List Item</source>
+        <translation>Op lijstitem</translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for menu?</source>
+        <translation>Waar wilt u de knoppen voor het menu hebben?</translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for the page?</source>
+        <translation>Waar wilt u de knoppen voor de pagina hebben?</translation>
+    </message>
+    <message>
+        <source>Icon Only</source>
+        <translation>Alleen pictogram </translation>
+    </message>
+    <message>
+        <source>Text Only</source>
+        <translation>Alleen tekst</translation>
+    </message>
+    <message>
+        <source>Text Beside Icon</source>
+        <translation>Tekst naast het pictogram</translation>
+    </message>
+    <message>
+        <source>Text Under Icon</source>
+        <translation>Tekst onder het pictogram</translation>
+    </message>
+    <message>
+        <source>Choose the style of Tool Buttons.</source>
+        <translation>Kies de stijl van de gereedschaps knoppen.</translation>
+    </message>
+    <message>
+        <source>Choose the style of List Items.</source>
+        <translation>Kies de stijl van lijstitems.</translation>
+    </message>
+    <message>
+        <source>Icon Size = 8x8</source>
+        <translation>Pictogramgrootte = 8 x 8</translation>
+    </message>
+    <message>
+        <source>Icon Size = 16x16</source>
+        <translation>Pictogramgrootte = 16 x 16</translation>
+    </message>
+    <message>
+        <source>Icon Size = 24x24</source>
+        <translation>Pictogramgrootte = 24 x 24</translation>
+    </message>
+    <message>
+        <source>Status Bar</source>
+        <translation>Status Bar</translation>
+    </message>
+    <message>
+        <source>Remove surplus text in status bar.</source>
+        <translation>Verwijder overtollige tekst op statusbalk.</translation>
+    </message>
+    <message>
+        <source>Compact Mode</source>
+        <translation>Compacte modus</translation>
+    </message>
+    <message>
+        <source>Hide Sound Status</source>
+        <translation>Geluid verbergen Status</translation>
+    </message>
+    <message>
+        <source>Hide Toaster Disable</source>
+        <translation>Toaster verbergen uitschakelen</translation>
+    </message>
+    <message>
+        <source>Show SysTray on Status Bar</source>
+        <translation>Toon SysTray op statusbalk</translation>
+    </message>
+    <message>
+        <source>Icon Size = 32x32</source>
+        <translation>Pictogramgrootte = 32 x 32</translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -452,14 +536,6 @@ Maar onthoudt: Elke data hier *ZAL* verloren gaan als de protocollen een update 
         <translation>Cirkels</translation>
     </message>
     <message>
-        <source>Posted Links</source>
-        <translation>Geposte links</translation>
-    </message>
-    <message>
-        <source>Wiki Pages</source>
-        <translation>Wiki pagina&apos;s</translation>
-    </message>
-    <message>
         <source>GxsForums</source>
         <translation>GxsForums</translation>
     </message>
@@ -473,7 +549,7 @@ Maar onthoudt: Elke data hier *ZAL* verloren gaan als de protocollen een update 
     </message>
     <message>
         <source>Photos</source>
-        <translation type="unfinished"/>
+        <translation>Foto &apos;s</translation>
     </message>
 </context>
 <context>
@@ -492,10 +568,44 @@ Maar onthoudt: Elke data hier *ZAL* verloren gaan als de protocollen een update 
     </message>
 </context>
 <context>
+    <name>AvatarDialog</name>
+    <message>
+        <source>Change Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your Avatar Picture</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Verwijderen</translation>
+    </message>
+    <message>
+        <source>Set your Avatar picture</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
         <translation>Klik om je avatar te veranderen</translation>
+    </message>
+</context>
+<context>
+    <name>BWGraphSource</name>
+    <message>
+        <source>KB/s</source>
+        <translation>KB/s</translation>
     </message>
 </context>
 <context>
@@ -565,306 +675,7 @@ Maar onthoudt: Elke data hier *ZAL* verloren gaan als de protocollen een update 
     </message>
 </context>
 <context>
-    <name>BlogDetails</name>
-    <message>
-        <source>Blog Details</source>
-        <translation>Blogbeschrijving </translation>
-    </message>
-    <message>
-        <source>Blog Info</source>
-        <translation>Blog Info</translation>
-    </message>
-    <message>
-        <source>Blog Name</source>
-        <translation>Blognaam</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Populariteit</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Het laatste bericht</translation>
-    </message>
-    <message>
-        <source>Blog ID</source>
-        <translation>Blog ID</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Blogbeschrijving </translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>annuleren</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Sluiten</translation>
-    </message>
-</context>
-<context>
-    <name>BlogMsgItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Onderwerp</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Speel media</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-</context>
-<context>
-    <name>BlogNewItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Registreren bij Blog</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Blog Beschrijving </translation>
-    </message>
-    <message>
-        <source>Unknown Blog</source>
-        <translation>Onbekenden Blog</translation>
-    </message>
-    <message>
-        <source>New Blog</source>
-        <translation>Nieuwe Blog</translation>
-    </message>
-    <message>
-        <source>Updated Blog</source>
-        <translation>Aangepaste Blog</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsDialog</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Toevoegen</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post naar Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Naam&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Afmelden bij Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Uitschrijven</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Inschrrijven bij Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Registreren</translation>
-    </message>
-    <message>
-        <source>Create New Blog</source>
-        <translation>Maak een nieuwe Blog</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <source>ID</source>
-        <translation>ID</translation>
-    </message>
-    <message>
-        <source>My Blogs</source>
-        <translation>Mijn Blogs</translation>
-    </message>
-    <message>
-        <source>Subscribed Blogs</source>
-        <translation>Geabonneerde Blogs</translation>
-    </message>
-    <message>
-        <source>Popular Blogs</source>
-        <translation>Populaire Blogs</translation>
-    </message>
-    <message>
-        <source>Other Blogs</source>
-        <translation>Andere Blogs</translation>
-    </message>
-    <message>
-        <source>Post to Blog</source>
-        <translation>Verstuur naar Blog</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Registreer bij Blog</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Blog</source>
-        <translation>Uitschrijven</translation>
-    </message>
-    <message>
-        <source>Show Blog Details</source>
-        <translation>Blog instellingen weergeven</translation>
-    </message>
-    <message>
-        <source>Create a new Blog</source>
-        <translation>Maak een nieuwe Blog</translation>
-    </message>
-    <message>
-        <source>Popularity: %1
-Fetches: %2
-Available: %3</source>
-        <translation>Populariteit: %1⏎
-Opgehaald: %2⏎
-Beschikbaar: %3</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsMsgItem</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulier</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog onderwerp&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Datum Tijd&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Dit kanaal uitschrijven</translation>
-    </message>
-    <message>
-        <source>Comments here</source>
-        <translation>Opmerkingen hier</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Opmerkingen</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-</context>
-<context>
     <name>BwCtrlWindow</name>
-    <message>
-        <source>Bandwidth Control Window</source>
-        <translation>Bandbreedte Controle Scherm</translation>
-    </message>
-    <message>
-        <source>Bandwidth Measurements</source>
-        <translation>Bandbreedte Metingen</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Naam</translation>
@@ -913,368 +724,44 @@ p, li { white-space: pre-wrap; }⏎
         <source>Allowed Recvd</source>
         <translation>Toegestaan Ontv.</translation>
     </message>
-</context>
-<context>
-    <name>CalDialog</name>
+    <message>
+        <source>TOTALS</source>
+        <translation>TOTALEN</translation>
+    </message>
+    <message>
+        <source>Totals</source>
+        <translation>Totalen</translation>
+    </message>
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
     </message>
-    <message>
-        <source>Local Calendars</source>
-        <translation>Lokale kalender</translation>
-    </message>
-    <message>
-        <source>Shared Calendar List</source>
-        <translation>Gedeelde kalenders</translation>
-    </message>
-    <message>
-        <source>Share Details</source>
-        <translation>Deel gegevens</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation>Naam:</translation>
-    </message>
-    <message>
-        <source>Location:</source>
-        <translation>Woonplaats:</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation>Status:</translation>
-    </message>
-    <message>
-        <source>Private</source>
-        <translation>Privé</translation>
-    </message>
-    <message>
-        <source>Public</source>
-        <translation>Publiek</translation>
-    </message>
-    <message>
-        <source>Allow List:</source>
-        <translation>Lijst toestaan</translation>
-    </message>
-    <message>
-        <source>&lt;Disabled&gt;</source>
-        <translation>&lt;Uitgeschakeld&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Toevoegen</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Verwijderen</translation>
-    </message>
-    <message>
-        <source>Peer Calendars</source>
-        <translation>Verbindings kalenders</translation>
-    </message>
 </context>
 <context>
-    <name>ChanMsgItem</name>
-    <message>
-        <source>Toggle Message Read Status</source>
-        <translation>Verander boodschap gelezen status</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Nieuw</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Download</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation>Bespelen</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopieer RetroShare Link</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Uitschrijven bij dit kanaal</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Markeer als gelezen en verplaats item</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Channel Feed</source>
-        <translation>Input</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Bestanden</translation>
-    </message>
-    <message>
-        <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation>Waarschuwing! U heeft minder dan %1 uur en %2 minuten voordat dit bestand verwijderd is. Overweeg om het op te slaan.</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verbergen</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Open </translation>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation>Open bestand</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Speel media</translation>
-    </message>
-</context>
-<context>
-    <name>ChanNewItem</name>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Registreer bij dit kanaal</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Kanaal beschrijving</translation>
-    </message>
-    <message>
-        <source>Unknown Channel</source>
-        <translation>Onbekend kanaal</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Nieuw kanaal</translation>
-    </message>
-    <message>
-        <source>Updated Channel</source>
-        <translation>Kanaal updaten</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Kanaal gegevens</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Kanaal informatie</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Kanaal naam</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Populariteit</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Het laatste bericht</translation>
-    </message>
-    <message>
-        <source>Channel ID</source>
-        <translation>Kanaal ID</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Kanaal beschrijving</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Afgeschermd - Iedereen kan dit lezen, niet alles is openbaar (Privé Publieke Sleutel)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privé - (Privé Publieke Sleutel is nodig om dit te lezen)</translation>
-    </message>
-    <message>
-        <source>Destination directory</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>ChannelDialog</name>
-    <message>
-        <source>GxsChannels</source>
-        <translation>GxsKanalen</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelFeed</name>
+    <name>ChannelPage</name>
     <message>
         <source>Channels</source>
         <translation>Kanalen</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Maak een nieuw kanaal</translation>
+        <source>Tabs</source>
+        <translation>Tabbladen</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Laden</translation>
+        <source>General</source>
+        <translation>Algemeen</translation>
     </message>
     <message>
-        <source>Post to Channel</source>
-        <translation>Post op dit kanaal</translation>
+        <source>Load posts in background (Thread)</source>
+        <translation>Laad berichten op achtergrond (draad)</translation>
     </message>
     <message>
-        <source>Set all as read</source>
-        <translation>Merk alles als gelezen</translation>
-    </message>
-    <message>
-        <source>Enable Auto-Download</source>
-        <translation>Activeer automatisch downloaden</translation>
-    </message>
-    <message>
-        <source>My Channels</source>
-        <translation>Mijn Kanalen</translation>
-    </message>
-    <message>
-        <source>Subscribed Channels</source>
-        <translation>Geabonneerde kanalen</translation>
-    </message>
-    <message>
-        <source>Popular Channels</source>
-        <translation>Populaire kanalen</translation>
-    </message>
-    <message>
-        <source>Other Channels</source>
-        <translation>Andere kanalen</translation>
-    </message>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Registreer bij dit kanaal</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Dit kanaal uitschrijven</translation>
-    </message>
-    <message>
-        <source>Disable Auto-Download</source>
-        <translation>Automatisch downloaden uitschakelen</translation>
-    </message>
-    <message>
-        <source>Show Channel Details</source>
-        <translation>Kanaal gegevens</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Herstel publiceer rechten voor dit kanaal</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Bewerk kanaal gegevens</translation>
-    </message>
-    <message>
-        <source>Share Channel</source>
-        <translation>Kanaal delen</translation>
-    </message>
-    <message>
-        <source>Set destination directory</source>
-        <translation>Stel doel directory in</translation>
-    </message>
-    <message>
-        <source>Other...</source>
-        <translation>Anders...</translation>
-    </message>
-    <message>
-        <source>[Default]</source>
-        <translation>[Standaard]</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopieer RetroShare Link</translation>
-    </message>
-    <message>
-        <source>Select channel destination directory</source>
-        <translation>Stel kanaal doel directory in</translation>
-    </message>
-    <message>
-        <source>Publish rights restored.</source>
-        <translation>Publiceer rechten hersteld.</translation>
-    </message>
-    <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>Publiceer rechten zijn hersteld voor dit kanaal.</translation>
-    </message>
-    <message>
-        <source>Publish not restored.</source>
-        <translation>Publiceren niet hersteld</translation>
-    </message>
-    <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Publiceer rechten kunnen niet hersteld worden voor dit kanaal.&lt;br&gt;U bent niet de maker van dit kanaal.</translation>
-    </message>
-    <message>
-        <source>No Channel Selected</source>
-        <translation>Geen kanaal geselecteerd</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Registreren</translation>
-    </message>
-    <message>
-        <source>Post</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Subscribed</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>ChannelUserNotify</name>
-    <message>
-        <source>Channel Post</source>
-        <translation>Kanaal bericht</translation>
+        <source>Open each channel in a new tab</source>
+        <translation>Elk kanaal in een nieuw tabblad openen</translation>
     </message>
 </context>
 <context>
     <name>ChatDialog</name>
-    <message>
-        <source>Your friend has more than one locations.
-Please choose one of it to chat with.</source>
-        <translation>Uw vriend heeft meerdere locaties.⏎
-Kies er één om te chatten</translation>
-    </message>
     <message>
         <source>Talking to </source>
         <translation>Praat met</translation>
@@ -1319,10 +806,6 @@ Kies er één om te chatten</translation>
         <translation>Onderwerp: %1</translation>
     </message>
     <message>
-        <source>Please enter your new nick name</source>
-        <translation>Vul je nieuwe gebruikersnaam in</translation>
-    </message>
-    <message>
         <source>Lobby chat</source>
         <translation>Portaal chat</translation>
     </message>
@@ -1351,24 +834,48 @@ Kies er één om te chatten</translation>
         <translation>Wil je jezelf uitschrijven bij dit Portaal</translation>
     </message>
     <message>
-        <source>Hide Participants</source>
-        <translation>Verberg deelnemers</translation>
-    </message>
-    <message>
-        <source>Show Participants</source>
-        <translation>Toon deelnemers</translation>
-    </message>
-    <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Klik met de rechtermuisknop om deelnemers dempen/inschakelen &lt;br/&gt; tweemaal klikken aan het adres van deze persoon &lt;br/&gt;</translation>
     </message>
     <message>
         <source>This participant is not active since:</source>
-        <translation type="unfinished"/>
+        <translation>Deze deelnemer is niet actief sinds:</translation>
     </message>
     <message>
         <source> seconds</source>
         <translation>seconden</translation>
+    </message>
+    <message>
+        <source>Start private chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature mismatch</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot start distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant chat cannot be initiated:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1376,6 +883,37 @@ Kies er één om te chatten</translation>
     <message>
         <source>Show Chat Lobby</source>
         <translation>Toon chat Portaal</translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyUserNotify</name>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Chat Portaal</translation>
+    </message>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation>U heeft %1 nieuwe berichten</translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation>U heeft %1 nieuw bericht</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation>%1 nieuwe berichten</translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation>%1 nieuw bericht</translation>
+    </message>
+    <message>
+        <source>Unknown Lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation>Verwijder alles</translation>
     </message>
 </context>
 <context>
@@ -1409,14 +947,6 @@ Kies er één om te chatten</translation>
         <translation>Maak een nieuw chat Portaal</translation>
     </message>
     <message>
-        <source>Unsubscribe</source>
-        <translation>Uitschrijven</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Registreren</translation>
-    </message>
-    <message>
         <source>[No topic provided]</source>
         <translation>[Geen onderwerp ingevoerd]</translation>
     </message>
@@ -1437,10 +967,6 @@ Kies er één om te chatten</translation>
         <translation>U bent niet ingeschreven voor dit portaal; dubbelklik om aan te melden.</translation>
     </message>
     <message>
-        <source>Invitation to chat lobby</source>
-        <translation>Uitnodiging voor een chat Portaal</translation>
-    </message>
-    <message>
         <source>Remove Auto Subscribe</source>
         <translation>Niet Automatisch Abonneren</translation>
     </message>
@@ -1454,27 +980,23 @@ Kies er één om te chatten</translation>
     </message>
     <message>
         <source>Search Chat lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Zoek Chat lobby &apos;s</translation>
     </message>
     <message>
         <source>Search Name</source>
         <translation>Zoek Naam</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Subscribed</source>
-        <translation type="unfinished"/>
+        <translation>Geabonneerd</translation>
     </message>
     <message>
         <source>Show </source>
-        <translation type="unfinished"/>
+        <translation>Toon </translation>
     </message>
     <message>
         <source> Column</source>
-        <translation type="unfinished"/>
+        <translation> Kolom</translation>
     </message>
     <message>
         <source>Columns</source>
@@ -1490,15 +1012,15 @@ Kies er één om te chatten</translation>
     </message>
     <message>
         <source>Lobby Name:</source>
-        <translation type="unfinished"/>
+        <translation>Lobby naam:</translation>
     </message>
     <message>
         <source>Lobby Id:</source>
-        <translation type="unfinished"/>
+        <translation>Lobby-Id:</translation>
     </message>
     <message>
         <source>Topic:</source>
-        <translation type="unfinished"/>
+        <translation>Onderwerp:</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -1506,7 +1028,7 @@ Kies er één om te chatten</translation>
     </message>
     <message>
         <source>Peers:</source>
-        <translation type="unfinished"/>
+        <translation>Verbindingen:</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -1516,14 +1038,48 @@ Kies er één om te chatten</translation>
         <source>No lobby selected. 
 Select lobbies at left to show details.
 Double click lobbies to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>Geen lobby geselecteerd. 
+Selecteer lobby&apos;s aan de linkerkant om details te tonen.
+Tweevoudig tikken lobby te betreden en chat.</translation>
     </message>
     <message>
         <source>Private Subscribed Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Privé geabonneerd lobby &apos;s</translation>
     </message>
     <message>
         <source>Public Subscribed Lobbies</source>
+        <translation>Publiek geabonneerd lobby &apos;s</translation>
+    </message>
+    <message>
+        <source>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           	                      invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
+        <translation>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt; chat lobby&apos;s&lt;/h1&gt; &lt;p&gt;Chat lobby&apos;s zijn gedistribueerde praatjeruimten, en vrij veel als IRC werken.                                      	                      Ze laten u anoniem praten met mensen zonder de noodzaak om vrienden te maken tonnen.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby kan worden (uw vrienden zien) overheids- of particuliere (uw vrienden niet zien, tenzij u uitnodigt mee &lt; img src=&quot;:/images/add_24x24.png&quot; breedte = 12 / &gt;). 	                      Zodra u bent uitgenodigd naar een particuliere lobby, u zal zitten kundig voor zien wanneer uw vrienden zijn met behulp van it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;De lijst aan de linkerzijde toont chat lobby&apos;s aan uw vrienden deelnemen. U kunt ofwel &lt;ul&gt;&lt;li&gt;Klik met de rechtermuisknop om te maken een nieuwe chat-lobby&lt;/li&gt; &lt;li&gt;Dubbelklik een chat lobby te betreden, chat, en Toon het aan uw vrienden&lt;/li&gt;&lt;/ul&gt; Opmerking: voor de chat lobby&apos;s goed te laten werken, moet de computer worden op tijd.  Dus check uw systeemklok!	                      &lt;/p&gt;                                      	                      </translation>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Chat Portaal</translation>
+    </message>
+    <message>
+        <source>Leave this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby as...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You will need to create an identity in order to join chat lobbies.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose an identity for this lobby:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create an identity and enter this lobby</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1611,10 +1167,6 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>Blink tab icon</source>
         <translation>Knipper &quot;tab&quot; ikoon</translation>
-    </message>
-    <message>
-        <source>Default nickname for chat lobbies:</source>
-        <translation>Standaard gebruikersnaam voor een chat portaal</translation>
     </message>
     <message>
         <source>Private Chat</source>
@@ -1717,95 +1269,87 @@ Double click lobbies to enter and chat.</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <source>Distant chat</source>
-        <translation>Afstandschat</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Het is mogelijk om anoniem te chatten met mensen die verder zitten dan je vrienden via versleutelde tunnels. In je persoonlijke uitnodigingen lijst bewaar je uitnodigingen die je aan mensen hebt verstuurd. In de &amp;quot;verzamelde contacten&amp;quot; lijst bewaar je uitnodigingen die je van ander mensen hebt ontvangen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your personal invites</source>
-        <translation>Je persoonlijke uitnodigingen</translation>
-    </message>
-    <message>
-        <source>Collected contacts</source>
-        <translation>Verzamelde contacten</translation>
-    </message>
-    <message>
-        <source>Open secured chat tunnel</source>
-        <translation>Versleutelde chat-tunnel openen</translation>
-    </message>
-    <message>
-        <source>Delete this invite</source>
-        <translation>Verwijder deze uitnodiging</translation>
-    </message>
-    <message>
-        <source>Can&apos;t open distant chat</source>
-        <translation>Kan afstandschat niet openen</translation>
-    </message>
-    <message>
-        <source>Cannot open distant chat. Error code=</source>
-        <translation>Kan afstandschat niet openen. Foutcode=</translation>
-    </message>
-    <message>
-        <source>Cannot remove distant chat invite.</source>
-        <translation>Kan afstandchat uitnodiging niet verwijderen.</translation>
-    </message>
-    <message>
-        <source>Create a chat invitation</source>
-        <translation>Maak een chatuitnodiging</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Kopieer link naar het klembord</translation>
-    </message>
-    <message>
         <source>Private chat invite from </source>
         <translation>Privéchat uitnodiging van</translation>
     </message>
     <message>
-        <source>Private chat invite to </source>
-        <translation>Privéchat uitnodiging naar</translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt; &lt;body&gt;&lt;p align=&quot;justify&quot;&gt; op dit tabblad kunt u instellen hoeveel chatberichten Retroshare blijft opgeslagen op de schijf en hoeveel van de vorige conversatie wordt weergegeven, voor de verschillende chat-systemen. De maximale opslagperiode te ontdoen van oude berichten en voorkomt u dat de chatgeschiedenis uit te vullen met vluchtige chat (bijvoorbeeld chat lobby&apos;s en verre chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Chatlobbies</source>
-        <translation type="unfinished"/>
+        <translation>Chatlobbies</translation>
     </message>
     <message>
         <source>Enabled:</source>
-        <translation type="unfinished"/>
+        <translation>Ingeschakeld:</translation>
     </message>
     <message>
         <source>Saved messages (0 = unlimited):</source>
-        <translation type="unfinished"/>
+        <translation>Opgeslagen berichten (0 = ongelimiteerd):</translation>
     </message>
     <message>
         <source>Number of messages restored  (0 = off):</source>
-        <translation type="unfinished"/>
+        <translation>Aantal berichten hersteld (0 = uit):</translation>
     </message>
     <message>
         <source>Maximum storage period, in days (0=keep all):</source>
-        <translation type="unfinished"/>
+        <translation>Maximale opslagperiode, in dagen (0 = houden alle):</translation>
     </message>
     <message>
         <source>Name : </source>
+        <translation>Naam: </translation>
+    </message>
+    <message>
+        <source>Search by default</source>
+        <translation>Standaard zoeken</translation>
+    </message>
+    <message>
+        <source>Case sensitive</source>
+        <translation>Hoofdletter gevoelig</translation>
+    </message>
+    <message>
+        <source>Whole Words</source>
+        <translation>Hele woorden</translation>
+    </message>
+    <message>
+        <source>Move to cursor</source>
+        <translation>Naar de cursor verplaatsen</translation>
+    </message>
+    <message>
+        <source>Color All Text Found</source>
+        <translation>Kleur alle gevonden tekst </translation>
+    </message>
+    <message>
+        <source>Color of found text</source>
+        <translation>Kleur van gevonden tekst</translation>
+    </message>
+    <message>
+        <source>Choose color of found text</source>
+        <translation>Kies kleur van gevonden tekst</translation>
+    </message>
+    <message>
+        <source>PGP id : </source>
+        <translation>PGP-id: </translation>
+    </message>
+    <message>
+        <source>Valid until : </source>
+        <translation>Geldig tot: </translation>
+    </message>
+    <message>
+        <source>Maximum count for coloring matching text</source>
+        <translation>Maximale tellen voor overeenkomende tekst kleuren</translation>
+    </message>
+    <message>
+        <source>Threshold for automatic search</source>
+        <translation>Drempel voor automatisch zoeken</translation>
+    </message>
+    <message>
+        <source>Default identity for chat lobbies:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Signed with key not in keyring</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Not signed.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Authenticated signature</source>
+        <source>Show Bar by default</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1873,20 +1417,8 @@ Double click lobbies to enter and chat.</source>
         <translation>Schuin</translation>
     </message>
     <message>
-        <source>Font</source>
-        <translation>Lettertype</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Tekst kleur</translation>
-    </message>
-    <message>
         <source>Attach a Picture</source>
         <translation>Koppel een plaatje</translation>
-    </message>
-    <message>
-        <source>Add a File for your Friend</source>
-        <translation>Voeg een bestand toe voor een vriend</translation>
     </message>
     <message>
         <source>Strike</source>
@@ -1971,6 +1503,109 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>is Busy and may not reply</source>
         <translation>is bezig en kan mogelijk niet reageren</translation>
+    </message>
+    <message>
+        <source>Find Case Sensitively</source>
+        <translation>Zoek hoofdlettergevoelig</translation>
+    </message>
+    <message>
+        <source>Find Whole Words</source>
+        <translation>Zoek hele woorden</translation>
+    </message>
+    <message>
+        <source>Move To Cursor</source>
+        <translation>Verplaats naar cursor</translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after X items found (need more CPU)</source>
+        <translation>Niet stoppen met kleuren na X items gevonden (meer CPU nodig)</translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after </source>
+        <translation>Niet stoppen met kleuren na </translation>
+    </message>
+    <message>
+        <source> items found (need more CPU)</source>
+        <translation> items gevonden (meer CPU nodig)</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Zoek vorige&lt;/b&gt; &lt;br/&gt;&lt;i&gt;Ctrl + Shift + G&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Next &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Volgende zoeken&lt;/b&gt; &lt;br/&gt;&lt;i&gt;Ctrl + G&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Vinden&lt;/b&gt; &lt;br/&gt;&lt;i&gt;Ctrl + F&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Warning: </source>
+        <translation>Waarschuwing: </translation>
+    </message>
+    <message>
+        <source>(Status)</source>
+        <translation>(Status)</translation>
+    </message>
+    <message>
+        <source>Set text font &amp; color</source>
+        <translation>Tekst instellen lettertype &amp; kleur</translation>
+    </message>
+    <message>
+        <source>Attach a File</source>
+        <translation>Een bestand toevoegen</translation>
+    </message>
+    <message>
+        <source>WARNING: Could take a long time on big history.</source>
+        <translation>Waarschuwing: Kan lang duren bij een grote geschiedenis.</translation>
+    </message>
+    <message>
+        <source>Choose color</source>
+        <translation>Kies kleur</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Markeer deze geselecteerde tekst&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl + M&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>%1This message consists of %2 characters.</source>
+        <translation>% 1Dit bericht bestaat uit %2 tekens.</translation>
+    </message>
+    <message>
+        <source> items found.</source>
+        <translation> objecten gevonden.</translation>
+    </message>
+    <message>
+        <source>No items found.</source>
+        <translation>Geen items gevonden.</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Terugkeer naar gemarkeerde tekst&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl + M&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Display Search Box</source>
+        <translation>Zoekvak weergeven</translation>
+    </message>
+    <message>
+        <source>Search Box</source>
+        <translation>Zoekvak</translation>
+    </message>
+    <message>
+        <source>Type a message here</source>
+        <translation>Typ een bericht hier</translation>
+    </message>
+</context>
+<context>
+    <name>CircleWidget</name>
+    <message>
+        <source>TextLabel</source>
+        <translation>Tekst label</translation>
+    </message>
+    <message>
+        <source>Empty Circle</source>
+        <translation>Lege cirkel</translation>
     </message>
 </context>
 <context>
@@ -2079,44 +1714,8 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <source>Friend Details</source>
-        <translation>Vriend gegevens</translation>
-    </message>
-    <message>
         <source>Details</source>
         <translation>Gegevens</translation>
-    </message>
-    <message>
-        <source>Peer Info</source>
-        <translation>Verbindings informatie</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <source>RetroShare ID</source>
-        <translation>RetroShare ID</translation>
-    </message>
-    <message>
-        <source>Other info</source>
-        <translation>Andere informatie</translation>
-    </message>
-    <message>
-        <source>Loc</source>
-        <translation>Loc</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Laatste contact</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>Versie</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -2143,112 +1742,8 @@ Double click lobbies to enter and chat.</source>
         <translation>Adres lijst</translation>
     </message>
     <message>
-        <source>Trust </source>
-        <translation>Vertrouw</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation>Uw vertrouwen in deze verbinding is:</translation>
-    </message>
-    <message>
-        <source>None </source>
-        <translation>Geen</translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation>Gemiddeld</translation>
-    </message>
-    <message>
-        <source>Full </source>
-        <translation>Volledig</translation>
-    </message>
-    <message>
-        <source>PGP Key</source>
-        <translation>PGP Sleutel</translation>
-    </message>
-    <message>
-        <source>Peer has signed my PGP key</source>
-        <translation>Verbinding heeft mijn PGP sleutel getekend</translation>
-    </message>
-    <message>
-        <source>Show Help for Trust Settings and Signing</source>
-        <translation>Toon Help voor uitleg over Vertrouwen</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by :</source>
-        <translation>Verbindings sleutel is getekend door:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;⏎
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;⏎
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Sign PGP key</source>
-        <translation>Onderteken PGP Sleutel</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Weiger vriend</translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation>Maak een vriend</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Certificaat</translation>
-    </message>
-    <message>
         <source>Include signatures</source>
         <translation>Inclusief handtekeningen</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Gebruik een ouder sleutel format</translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation>Services</translation>
-    </message>
-    <message>
-        <source>User service permissions</source>
-        <translation>Gebruiker service toestemming</translation>
-    </message>
-    <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>Deze tab stelt je in staat om te bepalen welke service ieder van uw contacten samen met u mag gebruiken.⏎
-⏎
-Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgezet worden waardoor de instellingen per gebruiker overrulled worden.</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Anonieme routing</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Ontdekking</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Forums/Kanalen</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Chat</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2257,68 +1752,6 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Error: kan geen verbindings gegevens vinden.</translation>
-    </message>
-    <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation>De ingevoerde sleutel algoritme wordt niet ondersteund door RetroShare⏎
-(Alleen RSA sleutels worden op dit moment ondersteund)</translation>
-    </message>
-    <message>
-        <source>My key is signed by : </source>
-        <translation>Mijn sleutel is getekend door:</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by : </source>
-        <translation>Verbindings sleutel is getekend door:</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Uw vertrouwen in deze verbinding is uitermate goed, waarschijnlijk is het uw eigen sleutel</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation>Uw vertrouwen in deze verbinding uitstekend</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation>Uw vertrouwen in deze verbinding middelmatig</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation>Uw heeft geen vertrouwen in deze verbinding.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation>Uw vertrouwen in deze verbinding is nog niet ingesteld</translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>Deze verbinding heeft mij geverifieerd als vriend en heeft mijn PGP sleutel getekend</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>Deze verbinding heeft mij niet geverifieerd als vriend en heeft mijn PGP sleutel niet getekend</translation>
-    </message>
-    <message>
-        <source>Signature Failure</source>
-        <translation>Handtekening fout</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Misschien is uw wachtwoord fout</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Het uitschakelen van anonieme routing zal alle anonieme tunnels en anonieme zoek aanvragen tegenhouden. Deze gebruiker kan dan niet anoniem informatie delen via jou.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Om dit globaal uit te zetten, ga naar het server configuratiepaneel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ontdekking uitschakelen houd het uitwisselen van de publieke sleutels van je vrienden tegen naar deze gebruiker. Sleutels van deze gebruikers worden ook genegeerd.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Voor een globale instelling, ga naar het server confuguratie paneel&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Dit uitschakelen zorgt er voor dat forums en kanaalberichten niet zullen worden uitgewisseld met deze vriend, alle inkomende informatie zal ook worden genegeerd.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
@@ -2338,14 +1771,106 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
     </message>
     <message>
         <source>Peer Addresses</source>
+        <translation>Verbindings adres</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Opties</translation>
+    </message>
+    <message>
+        <source>Retroshare node details</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Location ID</source>
+        <source>Location info</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>PGP fingerprint</source>
+        <source>Node name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Contact :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare version :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files from this node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hidden Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>Geen</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate contains:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> with </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;/li&gt; </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;onion address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;IP address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require white list clearance</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2542,22 +2067,6 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
         <translation>Voeg toe als vriend om mee verbonden te worden</translation>
     </message>
     <message>
-        <source>Service permissions</source>
-        <translation>Service toestemming</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Anonieme routing</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Ontdekking</translation>
-    </message>
-    <message>
-        <source>Forums/channels</source>
-        <translation>Forums/Kanalen</translation>
-    </message>
-    <message>
         <source>To accept the Friend Request, click the Finish button.</source>
         <translation>Om je vriend&apos;s verzoek te accepteren klik de Klaar knop</translation>
     </message>
@@ -2592,10 +2101,6 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
         <translation>Abnormale grootte, te groot voor geheugen blok.</translation>
-    </message>
-    <message>
-        <source>Invalid location id.</source>
-        <translation>Niet geldige locatie ID.</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
@@ -2782,12 +2287,8 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
         <translation>Gebruiken als directe bron indien mogelijk</translation>
     </message>
     <message>
-        <source>Direct source</source>
-        <translation>Directe bron</translation>
-    </message>
-    <message>
         <source>Recommend many friends to each others</source>
-        <translation type="unfinished"/>
+        <translation>Alle vrienden aan elke anderen aanbevelen</translation>
     </message>
     <message>
         <source>Friend Recommendations</source>
@@ -2815,21 +2316,61 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
     </message>
     <message>
         <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
-        <translation type="unfinished"/>
+        <translation>Houd er rekening mee dat RetroShare grote hoeveelheden bandbreedte, geheugen en CPU vergt als u te veel vrienden toevoegt. U kunt toevoegen zoveel vrienden als u wilt, maar meer dan 40 zal waarschijnlijk problemen geeven.</translation>
     </message>
     <message>
         <source>Add key to keyring</source>
-        <translation type="unfinished"/>
+        <translation>Sleutel toevoegen aan keyring</translation>
     </message>
     <message>
         <source>This key is already in your keyring</source>
-        <translation type="unfinished"/>
+        <translation>Deze sleutel is al in uw keyring</translation>
     </message>
     <message>
         <source>Check this to add the key to your keyring
 This might be useful for sending
 distant messages to this peer
 even if you don&apos;t make friends.</source>
+        <translation>Schakel dit selectievakje in om de sleutel toe te voegen aan uw sleutelverzameling. Dit kan handig zijn voor het verzenden van verre berichten naar deze verbinding, zelfs als u vrienden maakt.</translation>
+    </message>
+    <message>
+        <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
+        <translation>Certificaat heeft verkeerde versienummer. Vergeet niet dat v0.6 en v0.5 netwerken niet compatibel zijn.</translation>
+    </message>
+    <message>
+        <source>Invalid node id.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can be used as direct source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist clearance to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No IP in this certificate!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Added with certificate from %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste Cert of your friend from Clipboard</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3101,75 +2642,71 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>We successfully reached your Friend.</source>
-        <translation type="unfinished"/>
+        <translation>We hebben met succes uw vriend bereikt </translation>
     </message>
     <message>
         <source>but they have not added you as a Friend.</source>
-        <translation type="unfinished"/>
+        <translation>maar zij hebben u nog niet toegevoegd als vriend.</translation>
     </message>
     <message>
         <source>Please contact them to add your Certificate</source>
-        <translation type="unfinished"/>
+        <translation>Neem contact op met hen als uw certificaat wilt toevoegen</translation>
     </message>
     <message>
         <source>Your Retroshare Node is configured Okay</source>
-        <translation type="unfinished"/>
+        <translation>Uw Retroshare-knooppunt is oke geconfigureerd</translation>
     </message>
     <message>
         <source>We successfully reached your Friend via UDP.</source>
-        <translation type="unfinished"/>
+        <translation>We bereikt met succes uw vriend via UDP.</translation>
     </message>
     <message>
         <source>Please contact them to add your Full Certificate</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation type="unfinished"/>
+        <translation>Neem contact op met hen als uw volledige certificaat wilt toevoegen</translation>
     </message>
     <message>
         <source>We Cannot find your Friend.</source>
-        <translation type="unfinished"/>
+        <translation>Wij kunnen uw vriend niet vinden.</translation>
     </message>
     <message>
         <source>They are either offline or their DHT is Off</source>
-        <translation type="unfinished"/>
+        <translation>Ze zijn ofwel off line of hun DHT is uitgeschakeld</translation>
     </message>
     <message>
         <source>Peer DHT is Disabled</source>
-        <translation type="unfinished"/>
+        <translation>Verbindings DHT is uitgeschakeld</translation>
     </message>
     <message>
         <source>Your Friend has configured Retroshare with DHT Disabled.</source>
-        <translation type="unfinished"/>
+        <translation>Uw vriend heeft Retroshare geconfigureerd met DHT uitgeschakeld.</translation>
     </message>
     <message>
         <source>You have previously connected to this Friend</source>
-        <translation type="unfinished"/>
+        <translation>U heeft eerder verbinding gemaakt met deze vriend</translation>
     </message>
     <message>
         <source>Retroshare has determined that they have DHT switched off</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare heeft vastgesteld dat zij DHT uitgeschakeld hebben</translation>
     </message>
     <message>
         <source>Without the DHT it is hard for Retroshare to locate your friend</source>
-        <translation type="unfinished"/>
+        <translation>Zonder de DHT is het moeilijk voor Retroshare om uw vriend te vinden</translation>
     </message>
     <message>
         <source>Try importing a fresh Certificate to get up-to-date connection information</source>
-        <translation type="unfinished"/>
+        <translation>Probeer een nieuw certificaat om up-to-date verbindingsgegevens te importeren</translation>
     </message>
     <message>
         <source>Incomplete Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>Onvolledige vriend Details</translation>
     </message>
     <message>
         <source>You have imported an incomplete Certificate</source>
-        <translation type="unfinished"/>
+        <translation>U heeft  een onvolledig certificaat geïmporteerd</translation>
     </message>
     <message>
         <source>Please retry importing the full Certificate</source>
-        <translation type="unfinished"/>
+        <translation>Probeer opnieuw de volledige certificaat te importeren</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3181,7 +2718,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;! DOCTYPE HTML OPENBARE &quot;-//W3C//DTD HTML 4.0 / / NL&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot; &gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt; &lt;style type=&quot;text/css&quot;&gt; p, li {witruimte: vooraf laten teruglopen;}&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt; Deze Widget toont de voortgang van uw verbinding naar uw nieuwe peer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt; het is nuttig voor probleemoplossing.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt; Als u een ervaren gebruiker van RS, of vertrouwen dat RS het juiste ding doen zal&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt; u kunt sluiten it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>N/A</source>
@@ -3189,561 +2728,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD!</source>
-        <translation type="unfinished"/>
+        <translation>ONCONTROLEERBARE DOORSTURINGEN!</translation>
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
-        <translation type="unfinished"/>
+        <translation>ONCONTROLEERBARE DOORSTURING &amp; GEEN DHT</translation>
     </message>
     <message>
         <source>Searching</source>
-        <translation type="unfinished"/>
+        <translation>Zoeken</translation>
     </message>
     <message>
         <source>UDP Connect Timeout</source>
-        <translation type="unfinished"/>
+        <translation>UDP verbinding Timeout</translation>
     </message>
     <message>
         <source>Only Advanced Retroshare users should switch off the DHT.</source>
-        <translation type="unfinished"/>
+        <translation>Alleen geavanceerde Retroshare gebruikers schakelen de DHT uit.</translation>
     </message>
     <message>
         <source>Retroshare cannot connect without this information</source>
+        <translation>Retroshare kan geen verbinding maken zonder deze informatie</translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Node for UDP connections to succeed</source>
         <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>CreateBlog</name>
-    <message>
-        <source>Create new Blog</source>
-        <translation>Maak een nieuwe Blog</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Nieuwe Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Beschrijving</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Openbaar- Iedereen kan dit lezen en beantwoorden (Gedeelde Publieke Sleutel)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Afgeschermd - Iedereen kan dit lezen, niet alles is openbaar (Privé Publieke Sleutel)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privé - (Privé Publieke Sleutel is nodig om dit te lezen)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Anonieme berichten</translation>
-    </message>
-    <message>
-        <source>Blog Logo</source>
-        <translation>Blog Logo</translation>
-    </message>
-    <message>
-        <source>Add Blog Logo</source>
-        <translation>Voeg Blog logo toe</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation>Maak</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Voeg een naam toe</translation>
-    </message>
-    <message>
-        <source>Load File</source>
-        <translation>Bestand laden</translation>
-    </message>
-    <message>
-        <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation>Pictures (*.png *.xpm *.jpg)</translation>
-    </message>
-</context>
-<context>
-    <name>CreateBlogMsg</name>
-    <message>
-        <source>New Blog Post</source>
-        <translation>Nieuw Blog bericht</translation>
-    </message>
-    <message>
-        <source>Blog Post</source>
-        <translation>Blog bericht</translation>
-    </message>
-    <message>
-        <source>Blog Post to:</source>
-        <translation>Blog bericht naar:</translation>
-    </message>
-    <message>
-        <source>Visual Editor</source>
-        <translation>Visual Bewerking</translation>
-    </message>
-    <message>
-        <source>Blog Message</source>
-        <translation>Blog bericht</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Onderwerp</translation>
-    </message>
-    <message>
-        <source>Html Editor</source>
-        <translation>Html Bewerking</translation>
-    </message>
-    <message>
-        <source>toolBar</source>
-        <translation>gereedschapsbalk</translation>
-    </message>
-    <message>
-        <source>toolBar_2</source>
-        <translation>gereedschapsbalk_2</translation>
-    </message>
-    <message>
-        <source>blockquote</source>
-        <translation>citaat blok</translation>
-    </message>
-    <message>
-        <source>Increase font Size</source>
-        <translation>Verklein font</translation>
-    </message>
-    <message>
-        <source>Decrease font size</source>
-        <translation>Vergroot font</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Vet</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Onderlijnd</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Schuin</translation>
-    </message>
-    <message>
-        <source>Publish</source>
-        <translation>Publiceer</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Nieuw</translation>
-    </message>
-    <message>
-        <source>Code</source>
-        <translation>Code</translation>
-    </message>
-    <message>
-        <source>splitPost</source>
-        <translation>splits bericht</translation>
-    </message>
-    <message>
-        <source>Ordered List</source>
-        <translation>geordende lijst</translation>
-    </message>
-    <message>
-        <source>Unordered List</source>
-        <translation>ongeordende lijst</translation>
-    </message>
-    <message>
-        <source>Clipboard</source>
-        <translation>Klembord</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>Ongedaan maken</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Voeg een onderwerp toe</translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation>&amp;bestand</translation>
-    </message>
-    <message>
-        <source>&amp;New</source>
-        <translation>&amp;nieuw</translation>
-    </message>
-    <message>
-        <source>&amp;Open...</source>
-        <translation>&amp;open...</translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <translation>&amp;opslaan</translation>
-    </message>
-    <message>
-        <source>Save &amp;As...</source>
-        <translation>Opslaan &amp;als...</translation>
-    </message>
-    <message>
-        <source>&amp;Print...</source>
-        <translation>&amp;Print...</translation>
-    </message>
-    <message>
-        <source>Print Preview...</source>
-        <translation>Print Voorbeeld...</translation>
-    </message>
-    <message>
-        <source>&amp;Export PDF...</source>
-        <translation>&amp;Export PDF...</translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation>&amp;stoppen</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Bewerk</translation>
-    </message>
-    <message>
-        <source>&amp;Undo</source>
-        <translation>&amp;ongedaan maken</translation>
-    </message>
-    <message>
-        <source>&amp;Redo</source>
-        <translation>&amp;herstel</translation>
-    </message>
-    <message>
-        <source>Cu&amp;t</source>
-        <translation>Cu&amp;t</translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;kopieer</translation>
-    </message>
-    <message>
-        <source>&amp;Paste</source>
-        <translation>&amp;plakken</translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation>&amp;kijken</translation>
-    </message>
-    <message>
-        <source>&amp;Insert</source>
-        <translation>&amp;Insert</translation>
-    </message>
-    <message>
-        <source>&amp;Image</source>
-        <translation>&amp;image</translation>
-    </message>
-    <message>
-        <source>F&amp;ormat</source>
-        <translation>F&amp;ormat</translation>
-    </message>
-    <message>
-        <source>&amp;Bold</source>
-        <translation>&amp;vet</translation>
-    </message>
-    <message>
-        <source>&amp;Italic</source>
-        <translation>&amp;schuin</translation>
-    </message>
-    <message>
-        <source>&amp;Underline</source>
-        <translation>&amp;Onderlijnd</translation>
-    </message>
-    <message>
-        <source>&amp;Left</source>
-        <translation>&amp;links</translation>
-    </message>
-    <message>
-        <source>C&amp;enter</source>
-        <translation>C&amp;enter</translation>
-    </message>
-    <message>
-        <source>&amp;Right</source>
-        <translation>&amp;rechts</translation>
-    </message>
-    <message>
-        <source>&amp;Justify</source>
-        <translation>&amp;Justify</translation>
-    </message>
-    <message>
-        <source>&amp;Text Color...</source>
-        <translation>&amp;Tekst kleur</translation>
-    </message>
-    <message>
-        <source>Application</source>
-        <translation>Applicatie</translation>
-    </message>
-    <message>
-        <source>The document has been modified.
-Do you want to save your changes?</source>
-        <translation>Het document is aangepast.⏎
-Wil je de veranderingen opslaan?</translation>
-    </message>
-    <message>
-        <source>Open File...</source>
-        <translation>Open bestand...</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML- bestand (*.htm *.html );;Alle bestanden (*)</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Sla op als...</translation>
-    </message>
-    <message>
-        <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>ODF bestanden (*.odt);;HTML-Bestanden (*.htm *.html);;Alle bestanden (*)</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation>Print Document</translation>
-    </message>
-    <message>
-        <source>Export PDF</source>
-        <translation>Export PDF</translation>
-    </message>
-    <message>
-        <source>Choose Image</source>
-        <translation>Kies plaatje</translation>
-    </message>
-    <message>
-        <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Image Files supported (*.png *.jpeg *.jpg *.gif)</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannel</name>
-    <message>
-        <source>Create a new Channel</source>
-        <translation>Maak een nieuw kanaal</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>Controleer welke verbinding je wilt delen met een openbare Privé sleutel</translation>
-    </message>
-    <message>
-        <source>Share Key With</source>
-        <translation>Deel sleutel met</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Beschrijving</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Afgeschermd - Iedereen kan dit lezen, niet alles is openbaar (Privé Publieke Sleutel)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privé - (Privé Publieke Sleutel is nodig om berichten te lezen)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Anonieme berichten</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Sleutel delen</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Sleutel ontvangers kunnen berichten plaatsen in beperkte kanalen en kunnen berichten plaatsen en bekijken in Privé kanalen</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Deel Openbare Privé Sleutel</translation>
-    </message>
-    <message>
-        <source>Channel Logo</source>
-        <translation>Kanaal logo</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Voeg kanaal logo toe</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Nieuw kanaal</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Contacts:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Voeg een naam toe</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Laad kanaal logo</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannelMsg</name>
-    <message>
-        <source>New Channel Post</source>
-        <translation>Nieuw kanaal bericht</translation>
-    </message>
-    <message>
-        <source>Channel Post</source>
-        <translation>Kanaal bericht</translation>
-    </message>
-    <message>
-        <source>Channel Post to:</source>
-        <translation>Kanaal bericht naar:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Bijlages:&lt;/span&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Gebruik Slepen en Neerzetten / Voeg Bestanden Toe knop om nieuwe bestanden te indexeren.&lt;/span&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Kopieer en plak RetroShare links van je gedeelden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add File to Attach</source>
-        <translation>Voeg bestand toe</translation>
-    </message>
-    <message>
-        <source>Add Channel Thumbnail</source>
-        <translation>Voeg kanaal miniatuur toe</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Bericht</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Onderwerp</translation>
-    </message>
-    <message>
-        <source>Attachments</source>
-        <translation>Attachments</translation>
-    </message>
-    <message>
-        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation>Allow channels to get frame for message thumbnail from movie media attachments or not</translation>
-    </message>
-    <message>
-        <source>Auto Thumbnail</source>
-        <translation>Automatisch een miniatuur maken</translation>
-    </message>
-    <message>
-        <source>Drag and Drop Files from Search Results</source>
-        <translation>Bestanden slepen en Neerzetten uit het zoek resultaat</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Links</source>
-        <translation>PLak RetroShare Link&apos;s</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>PLak RetroShare Link</translation>
-    </message>
-    <message>
-        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation>U gaat nu bestanden toevoegen die niet gedeeld zijn. Weet u zeker dat u dat wilt?</translation>
-    </message>
-    <message>
-        <source>About to post un-owned files to a channel.</source>
-        <translation>U staat op het punt om bestanden waar u geen eigenaar van bent naar een Kanaal te posten.</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation>Verwijder bestands error</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Alleen bestanden worden geacepteerd, geen directories</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation>Bestand niet gevonden of de bestandsnaam wordt niet geacepteerd</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Voeg extra bestand toe</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>File already Added and Hashed</source>
-        <translation>Bestand is reeds toegevoegd en in de hash opgenomen</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Voeg een onderwerp toe</translation>
-    </message>
-    <message>
-        <source>Load thumbnail picture</source>
-        <translation>Laad miniatuur plaatje</translation>
     </message>
 </context>
 <context>
@@ -3787,14 +2796,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Known Identities</source>
         <translation>Bekende Identiteiten</translation>
-    </message>
-    <message>
-        <source>All PGP IDs</source>
-        <translation>Alle PGP ID&apos;s</translation>
-    </message>
-    <message>
-        <source>Known PGP IDs</source>
-        <translation>Bekende PGP ID&apos;s</translation>
     </message>
     <message>
         <source>Filter</source>
@@ -3842,11 +2843,11 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Create New Personal Circle</source>
-        <translation type="unfinished"/>
+        <translation>Nieuwe persoonlijke cirkel maken</translation>
     </message>
     <message>
         <source>Create New External Circle</source>
-        <translation type="unfinished"/>
+        <translation>Nieuwe externe cirkel maken</translation>
     </message>
     <message>
         <source>Add</source>
@@ -3854,149 +2855,39 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Remove </source>
-        <translation type="unfinished"/>
+        <translation>Verwijder</translation>
     </message>
     <message>
         <source>Search</source>
         <translation>Zoek</translation>
     </message>
-</context>
-<context>
-    <name>CreateForum</name>
     <message>
-        <source>Create new Forum</source>
-        <translation>Maak een nieuw forum</translation>
+        <source>All</source>
+        <translation>Alles</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation>Naam</translation>
+        <source>Signed</source>
+        <translation>Getekend</translation>
     </message>
     <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>Controleer welke verbinding je wilt delen met een openbare Privé Sleutel</translation>
+        <source>Signed by known nodes</source>
+        <translation>Ondertekend door bekende knooppunten</translation>
     </message>
     <message>
-        <source>Share Key With</source>
-        <translation>Deel sleutel met</translation>
+        <source>Edit Circle</source>
+        <translation>Bewerk Cirkel</translation>
     </message>
     <message>
-        <source>Description</source>
-        <translation>Beschrijving</translation>
+        <source>PGP Identity</source>
+        <translation>PGP identiteit</translation>
     </message>
     <message>
-        <source>Type:</source>
-        <translation>Type</translation>
+        <source>Anon Id</source>
+        <translation>Anoniem ID</translation>
     </message>
     <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Openbaar- Iedereen kan dit lezen en beantwoorden (Gedeelde Publieke Sleutel)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Afgeschermd - Iedereen kan dit lezen, niet alles is openbaar (Privé Publieke Sleutel)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privé  - (Privé Publieke Sleutel is nodig om dit te lezen)</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Sleutel delen</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Sleutel ontvangers kunnen berichten plaatsen in beperkte kanalen en kunnen berichten plaatsen en bekijken in Privé Kanalen</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Deel Openbare Privé Sleutel</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Anonieme berichten</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nieuw forum</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Contacts:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Voeg een naam toe</translation>
-    </message>
-</context>
-<context>
-    <name>CreateForumMsg</name>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Post forum bericht</translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation>Forum</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Onderwerp</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Voeg bestand toe</translation>
-    </message>
-    <message>
-        <source>Sign Message</source>
-        <translation>Onderteken bericht</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Forum bericht</translation>
-    </message>
-    <message>
-        <source>Attach files via drag and drop</source>
-        <translation>Voeg een bestand toe via Slepen en Neerzetten</translation>
-    </message>
-    <message>
-        <source>You can attach files via drag and drop here in this window</source>
-        <translation>U kunt bestanden toevoegen via Slepen en Neerzetten in dit scherm</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Start nieuw draadje</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>In antwoord op</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Geef een forum onderwerp en forum bericht</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Voeg extra bestand toe</translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation>Koppel een plaatje</translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
-        <translation>Laad images bestand</translation>
+        <source>PGP Linked Id</source>
+        <translation>PGP geaccocieerd ID</translation>
     </message>
 </context>
 <context>
@@ -4085,24 +2976,12 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Bestanden Slepen en Neerzetten  uit het zoek resultaat</translation>
     </message>
     <message>
-        <source>New GxsChannel Post</source>
-        <translation>Nieuw GxsKanaal Bericht</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Links</source>
         <translation>PLak RetroShare Link&apos;s</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
         <translation>PLak RetroShare Link</translation>
-    </message>
-    <message>
-        <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>GxsKanaal veiligheidsbeleid behoedt u voor het posten van bestanden die u niet heeft. Heeft u deze bestanden wel dan moet u ze eerst delen of expliciet toevoegen:</translation>
-    </message>
-    <message>
-        <source>You can only post files that you do have</source>
-        <translation>U kunt alleen bestanden posten die u heeft</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -4139,6 +3018,18 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Generate mass data</source>
         <translation>Massa gegevens genereren</translation>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation>Wilt u echt %1 berichten genereren?</translation>
+    </message>
+    <message>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation>U gaat nu bestanden toevoegen die niet gedeeld zijn. Weet u zeker dat u dat wilt?</translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
+        <translation>U staat op het punt om bestanden waar u geen eigenaar van bent naar een Kanaal te posten.</translation>
     </message>
 </context>
 <context>
@@ -4196,10 +3087,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Geef een forum onderwerp en forum bericht</translation>
     </message>
     <message>
-        <source>Please choose Signing Id</source>
-        <translation>Kies een Getekende ID</translation>
-    </message>
-    <message>
         <source>Please choose Signing Id, it is required</source>
         <translation>Kies een Getekende ID, het is nodig</translation>
     </message>
@@ -4210,6 +3097,32 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Generate mass data</source>
         <translation>Massa gegevens genereren</translation>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation>Wilt u echt %1 berichten genereren?</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Verstuur</translation>
+    </message>
+    <message>
+        <source>Forum Message</source>
+        <translation>Forum bericht</translation>
+    </message>
+    <message>
+        <source>Forum Message has not been Sent.
+Do you want to reject this message?</source>
+        <translation>Forum bericht is niet verstuurd.
+Wilt u dit bericht negeren?</translation>
+    </message>
+    <message>
+        <source>Post as</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Congrats, you found a bug! </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4229,10 +3142,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Lobby topic:</source>
         <translation>Portaal onderwerp</translation>
-    </message>
-    <message>
-        <source>Your nick name:</source>
-        <translation>Uw gebruikersnaam:</translation>
     </message>
     <message>
         <source>Security policy:</source>
@@ -4255,111 +3164,16 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Uitgenodigde vrienden</translation>
     </message>
     <message>
-        <source>Put a sensible lobby name here</source>
-        <translation>Plaats je portaal naam hier</translation>
-    </message>
-    <message>
-        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>Uw gebruikersnaam voor dit portaal (verander de standaard naam in options-&gt;chat)</translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation>Contacts:</translation>
     </message>
-</context>
-<context>
-    <name>CreateMsgLinkDialog</name>
     <message>
-        <source>Invite type:</source>
-        <translation>Uitnodigingstype:</translation>
-    </message>
-    <message>
-        <source>Private chat</source>
-        <translation>Privé Chat</translation>
-    </message>
-    <message>
-        <source>Validity time :</source>
-        <translation>Geldigheidsduur:</translation>
-    </message>
-    <message>
-        <source>hour</source>
-        <translation>uur</translation>
-    </message>
-    <message>
-        <source>day</source>
-        <translation>dag</translation>
-    </message>
-    <message>
-        <source>week</source>
-        <translation>week</translation>
-    </message>
-    <message>
-        <source>month</source>
-        <translation>maand</translation>
-    </message>
-    <message>
-        <source>year</source>
-        <translation>jaar</translation>
-    </message>
-    <message>
-        <source>Create!</source>
-        <translation>Maak!</translation>
-    </message>
-    <message>
-        <source>Private chat invite creation failed</source>
-        <translation>Creatie van privéchat uitnodiging is mislukt</translation>
-    </message>
-    <message>
-        <source>The creation of the chat invite failed</source>
-        <translation>De creatie van de chatuitnodiging is mislukt</translation>
-    </message>
-    <message>
-        <source>Private chat invite created</source>
-        <translation>Privéchat uitnodiging aangemaakt</translation>
-    </message>
-    <message>
-        <source>Create distant chat invite</source>
-        <translation>Maak afstandchat uitnodiging</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Om een privéchat uitnodiging te maken voor iemand die geen vriend is, selecteer zijn sleutel hieronder, stel een verlooptijd in en druk op &amp;quot;Maak&amp;quot;. De uitnodiging bevat de benodigde informatie om een chat-tunnel te starten.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;De uitnodiging is versleuteld en anoniem. Alleen de geselecteerde persoon kan de link ontsleutelen om je te contacteren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation>Je nieuwe chatuitnodiging is gemaakt. Je kan het nu kopieren/plakken als Retroshare link.</translation>
-    </message>
-    <message>
-        <source>Messaging invite creation failed</source>
-        <translation>Creatie van chatuitnodiging mislukt</translation>
-    </message>
-    <message>
-        <source>The creation of the messaging invite failed</source>
-        <translation>De creatie van de chatuitnodiging is mislukt</translation>
-    </message>
-    <message>
-        <source>Messaging invite created</source>
-        <translation>Chatuitnodiging gemaakt</translation>
-    </message>
-    <message>
-        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation>Je nieuwe chatuitnodiging is gekopieerd naar het klipbord. Je kan het nu plakken als Retroshare link.</translation>
-    </message>
-    <message>
-        <source>Create distant chat</source>
+        <source>Identity to use:</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
-    <message>
-        <source>Profile</source>
-        <translation>Profiel</translation>
-    </message>
-    <message>
-        <source>Profile Manager</source>
-        <translation>Profiel Beheerder</translation>
-    </message>
     <message>
         <source>Public Information</source>
         <translation>Publieke informatie</translation>
@@ -4375,10 +3189,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Location ID:</source>
         <translation>Locatie ID:</translation>
-    </message>
-    <message>
-        <source>Number of Friends:</source>
-        <translation>Aantal vrienden</translation>
     </message>
     <message>
         <source>Software Version:</source>
@@ -4401,20 +3211,8 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Inclusief handtekeningen</translation>
     </message>
     <message>
-        <source>Use old key format</source>
-        <translation>Gebruik een ouder sleutel format</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Kopieer link naar het klembord</translation>
-    </message>
-    <message>
         <source>Save Key into a file</source>
         <translation>Sla sleutel op in een bestand</translation>
-    </message>
-    <message>
-        <source>Save Key</source>
-        <translation>Sla sleutel op</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -4445,16 +3243,51 @@ p, li { white-space: pre-wrap; }⏎
         <translation>RetroShare Certificaat (*.rsc );;Alle bestanden (*)</translation>
     </message>
     <message>
-        <source>Identity ID</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>TextLabel</source>
         <translation>Tekst label</translation>
     </message>
     <message>
         <source>PGP fingerprint:</source>
+        <translation>PGP vingerafdruk:</translation>
+    </message>
+    <message>
+        <source>Node information</source>
+        <translation>Knooppunt informatie</translation>
+    </message>
+    <message>
+        <source>PGP Id :</source>
+        <translation>PGP-Id:</translation>
+    </message>
+    <message>
+        <source>Friend nodes:</source>
+        <translation>Vriend knooppunten:</translation>
+    </message>
+    <message>
+        <source>Copy certificate to clipboard</source>
+        <translation>Kopieer certificaat naar het klembord</translation>
+    </message>
+    <message>
+        <source>Save certificate to file</source>
+        <translation>Certificaat opslaan in bestand</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Knooppunt</translation>
+    </message>
+    <message>
+        <source>Create new node...</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>show statistics window</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>DHTGraphSource</name>
+    <message>
+        <source>users</source>
+        <translation>gebruikers</translation>
     </message>
 </context>
 <context>
@@ -4561,14 +3394,6 @@ p, li { white-space: pre-wrap; }⏎
 <context>
     <name>DhtWindow</name>
     <message>
-        <source>DHT Details</source>
-        <translation>DHT gegevens</translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation>Verbindings gegevens</translation>
-    </message>
-    <message>
         <source>Net Status</source>
         <translation>Net Status</translation>
     </message>
@@ -4591,14 +3416,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Peer Address</source>
         <translation>Verbindings adres</translation>
-    </message>
-    <message>
-        <source>Extra Label</source>
-        <translation>Extra Label</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>Tekst label</translation>
     </message>
     <message>
         <source>Name</source>
@@ -4694,7 +3511,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Unknown NetState</source>
-        <translation type="unfinished"/>
+        <translation>Onbekende NetState</translation>
     </message>
     <message>
         <source>Offline</source>
@@ -4702,7 +3519,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Local Net</source>
-        <translation type="unfinished"/>
+        <translation>Lokale Net</translation>
     </message>
     <message>
         <source>Behind NAT</source>
@@ -4710,83 +3527,83 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>External IP</source>
-        <translation type="unfinished"/>
+        <translation>Externe IP</translation>
     </message>
     <message>
         <source>UNKNOWN NAT STATE</source>
-        <translation type="unfinished"/>
+        <translation>ONBEKENDE NAT STAAT</translation>
     </message>
     <message>
         <source>SYMMETRIC NAT</source>
-        <translation type="unfinished"/>
+        <translation>SYMMETRISCHE NAT</translation>
     </message>
     <message>
         <source>DETERMINISTIC SYM NAT</source>
-        <translation type="unfinished"/>
+        <translation>DETERMINISTISCHE SYM NAT</translation>
     </message>
     <message>
         <source>RESTRICTED CONE NAT</source>
-        <translation type="unfinished"/>
+        <translation>BEPERKTE CONE NAT</translation>
     </message>
     <message>
         <source>FULL CONE NAT</source>
-        <translation type="unfinished"/>
+        <translation>VOLLEDIGE CONE NAT</translation>
     </message>
     <message>
         <source>OTHER NAT</source>
-        <translation type="unfinished"/>
+        <translation>ANDERE NAT</translation>
     </message>
     <message>
         <source>NO NAT</source>
-        <translation type="unfinished"/>
+        <translation>GEEN NAT</translation>
     </message>
     <message>
         <source>UNKNOWN NAT HOLE STATUS</source>
-        <translation type="unfinished"/>
+        <translation>ONBEKENDE NAT (HOLE) STATUS</translation>
     </message>
     <message>
         <source>NO NAT HOLE</source>
-        <translation type="unfinished"/>
+        <translation>GEEN NAT HOLE</translation>
     </message>
     <message>
         <source>UPNP FORWARD</source>
-        <translation type="unfinished"/>
+        <translation>UPNP DOORSTURING</translation>
     </message>
     <message>
         <source>NATPMP FORWARD</source>
-        <translation type="unfinished"/>
+        <translation>NATPMP DOORSTURING</translation>
     </message>
     <message>
         <source>MANUAL FORWARD</source>
-        <translation type="unfinished"/>
+        <translation>HANDMATIGE DOORSTURING</translation>
     </message>
     <message>
         <source>NET BAD: Unknown State</source>
-        <translation type="unfinished"/>
+        <translation>NET SLECHT: Onbekend staat</translation>
     </message>
     <message>
         <source>NET BAD: Offline</source>
-        <translation type="unfinished"/>
+        <translation>NET SLECHT: off line</translation>
     </message>
     <message>
         <source>NET BAD: Behind Symmetric NAT</source>
-        <translation type="unfinished"/>
+        <translation>NET slecht: Achter symmetrische NAT</translation>
     </message>
     <message>
         <source>NET BAD: Behind NAT &amp; No DHT</source>
-        <translation type="unfinished"/>
+        <translation>NET slecht: Achter NAT &amp; geen DHT</translation>
     </message>
     <message>
         <source>NET WARNING: NET Restart</source>
-        <translation type="unfinished"/>
+        <translation>NET waarschuwing: NET opnieuw opstarten</translation>
     </message>
     <message>
         <source>NET WARNING: Behind NAT</source>
-        <translation type="unfinished"/>
+        <translation>NET waarschuwing: Achter NAT</translation>
     </message>
     <message>
         <source>NET WARNING: No DHT</source>
-        <translation type="unfinished"/>
+        <translation>NET waarschuwing: Geen DHT</translation>
     </message>
     <message>
         <source>NET STATE GOOD!</source>
@@ -4794,19 +3611,19 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>CAUTION: UNVERIFIABLE FORWARD!</source>
-        <translation type="unfinished"/>
+        <translation>LET OP: ONCONTROLEERBARE DOORSTURINGEN!</translation>
     </message>
     <message>
         <source>CAUTION: UNVERIFIABLE FORWARD &amp; NO DHT</source>
-        <translation type="unfinished"/>
+        <translation>LET OP: ONCONTROLEERBARE DOORSTURING &amp; GEEN DHT</translation>
     </message>
     <message>
         <source>Not Active (Maybe Connected!)</source>
-        <translation type="unfinished"/>
+        <translation>Niet actief (misschien verbonden!)</translation>
     </message>
     <message>
         <source>Searching</source>
-        <translation type="unfinished"/>
+        <translation>Zoeken</translation>
     </message>
     <message>
         <source>Failed</source>
@@ -4814,7 +3631,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>offline</source>
-        <translation type="unfinished"/>
+        <translation>off line</translation>
     </message>
     <message>
         <source>Unreachable</source>
@@ -4822,19 +3639,19 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>ONLINE</source>
-        <translation type="unfinished"/>
+        <translation>ONLINE</translation>
     </message>
     <message>
         <source>Direct</source>
-        <translation type="unfinished"/>
+        <translation>Direct</translation>
     </message>
     <message>
         <source>Proxy VIA </source>
-        <translation type="unfinished"/>
+        <translation>Proxy VIA </translation>
     </message>
     <message>
         <source>Relay VIA </source>
-        <translation type="unfinished"/>
+        <translation>Relais VIA </translation>
     </message>
     <message>
         <source>None</source>
@@ -4842,11 +3659,11 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="unfinished"/>
+        <translation>Verbinding verbroken</translation>
     </message>
     <message>
         <source>Udp Started</source>
-        <translation type="unfinished"/>
+        <translation>UDP begonnen</translation>
     </message>
     <message>
         <source>Connected</source>
@@ -4854,51 +3671,19 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Request Active</source>
-        <translation type="unfinished"/>
+        <translation>Aanvraag actief</translation>
     </message>
     <message>
         <source>No Request</source>
-        <translation type="unfinished"/>
+        <translation>Geen enkel verzoek</translation>
     </message>
     <message>
         <source>Unknown</source>
         <translation>Onbekend</translation>
     </message>
     <message>
-        <source>#Peers: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source> DHT: (#off:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>,unreach:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>,online:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>) Connections: (#dis:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>,#dir:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>,#proxy:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>,#relay:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>RELAY END</source>
-        <translation type="unfinished"/>
+        <translation>RELAY EINDE</translation>
     </message>
     <message>
         <source>Yourself</source>
@@ -4910,31 +3695,95 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>unlimited</source>
-        <translation type="unfinished"/>
+        <translation>onbeperkt</translation>
     </message>
     <message>
         <source>Own Relay</source>
-        <translation type="unfinished"/>
+        <translation>Eigen Relay</translation>
     </message>
     <message>
         <source>RELAY PROXY</source>
-        <translation type="unfinished"/>
+        <translation>RELAIS PROXY</translation>
     </message>
     <message>
         <source>%1 secs ago</source>
-        <translation type="unfinished"/>
+        <translation>%1 seconden geleden</translation>
     </message>
     <message>
         <source>%1B/s</source>
-        <translation type="unfinished"/>
+        <translation>%1b/s</translation>
     </message>
     <message>
         <source>0x%1 EX:0x%2</source>
-        <translation type="unfinished"/>
+        <translation>0 x %1 EX:0 x %2</translation>
     </message>
     <message>
         <source>never</source>
-        <translation type="unfinished"/>
+        <translation>nooit</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Net Status:</source>
+        <translation>Net Status:</translation>
+    </message>
+    <message>
+        <source>Network Mode:</source>
+        <translation>Netwerk mode:</translation>
+    </message>
+    <message>
+        <source>Nat Type:</source>
+        <translation>Nat type:</translation>
+    </message>
+    <message>
+        <source>Nat Hole:</source>
+        <translation>Nat Hole:</translation>
+    </message>
+    <message>
+        <source>Connect Mode:</source>
+        <translation>Verbinding modus:</translation>
+    </message>
+    <message>
+        <source>Peer Address:</source>
+        <translation>Verbindings adres:</translation>
+    </message>
+    <message>
+        <source>Unreach:</source>
+        <translation>Onbereikbaar</translation>
+    </message>
+    <message>
+        <source>Online:</source>
+        <translation>Online:</translation>
+    </message>
+    <message>
+        <source>Offline:</source>
+        <translation>Off line:</translation>
+    </message>
+    <message>
+        <source>DHT Peers:</source>
+        <translation>DHT Verbindingen:</translation>
+    </message>
+    <message>
+        <source>Disconnected:</source>
+        <translation>Verbinding verbroken:</translation>
+    </message>
+    <message>
+        <source>Direct:</source>
+        <translation>Direct:</translation>
+    </message>
+    <message>
+        <source>Proxy:</source>
+        <translation>Proxy:</translation>
+    </message>
+    <message>
+        <source>Relay:</source>
+        <translation>Relais</translation>
+    </message>
+    <message>
+        <source>DHT Graph</source>
+        <translation>DHT grafiek</translation>
     </message>
 </context>
 <context>
@@ -5032,129 +3881,6 @@ Dit kan handig zijn als je bijv. een externe HD deelt en wilt⏎ voorkomen dat e
     <message>
         <source>Start file</source>
         <translation>Start bestand</translation>
-    </message>
-</context>
-<context>
-    <name>EditChanDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Kanaal gegevens</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Bewerk kanaal gegevens</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Kanaal informatie</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Kanaal naam</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Kanaal beschrijving</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Voeg kanaal logo toe</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Laad kanaal logo</translation>
-    </message>
-</context>
-<context>
-    <name>EditForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Forum gegevens</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Bewerk forum gegevens</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Forum info</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Forum naam</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Forum beschrijving</translation>
-    </message>
-</context>
-<context>
-    <name>ExampleDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Vrienden&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <source>Person</source>
-        <translation>Persoon</translation>
-    </message>
-    <message>
-        <source>Auto Connect</source>
-        <translation>Automatisch verbinding maken</translation>
-    </message>
-    <message>
-        <source>Trust Level</source>
-        <translation>Betrouwbaarheids level</translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation>Verbindings adres</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Laatste contact</translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation>Organisatie</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Lokatie</translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation>Land</translation>
-    </message>
-    <message>
-        <source>Person Id</source>
-        <translation>Persoons ID</translation>
-    </message>
-    <message>
-        <source>Auth Code</source>
-        <translation>Auth Code</translation>
-    </message>
-    <message>
-        <source>Vote Up</source>
-        <translation>Stem omhoog</translation>
-    </message>
-    <message>
-        <source>Vote Down</source>
-        <translation>Stem omlaag</translation>
     </message>
 </context>
 <context>
@@ -5361,19 +4087,19 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Patch</source>
-        <translation type="unfinished"/>
+        <translation>Patch</translation>
     </message>
     <message>
         <source>C++</source>
-        <translation type="unfinished"/>
+        <translation>C++</translation>
     </message>
     <message>
         <source>Header</source>
-        <translation type="unfinished"/>
+        <translation>Koptekst</translation>
     </message>
     <message>
         <source>C </source>
-        <translation type="unfinished"/>
+        <translation>C </translation>
     </message>
 </context>
 <context>
@@ -5408,147 +4134,6 @@ p, li { white-space: pre-wrap; }⏎
     </message>
 </context>
 <context>
-    <name>ForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Forum gegevens</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Forum info</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Forum naam</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Populariteit</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Het laatste bericht</translation>
-    </message>
-    <message>
-        <source>Forum ID</source>
-        <translation>Forum ID</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Forum beschrijving</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Veiligheid</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Toegestane berichten</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Anonieme berichten</translation>
-    </message>
-</context>
-<context>
-    <name>ForumMsgItem</name>
-    <message>
-        <source>Subject: </source>
-        <translation>Onderwerp:</translation>
-    </message>
-    <message>
-        <source>Unsubscribe To Forum</source>
-        <translation>Uitschrijven bij dit forum</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Antwoord</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Markeer als gelezen en verplaats item</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Verstuur</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Getekend</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Forum bericht</translation>
-    </message>
-    <message>
-        <source>Unknown Forum Post</source>
-        <translation>Onbekend forum bericht</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Anoniem</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>In antwoord op</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-    <message>
-        <source>Please give a Text Message</source>
-        <translation>Geef je boodschap</translation>
-    </message>
-</context>
-<context>
-    <name>ForumNewItem</name>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Registreer bij dit forum</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Forum beschrijving</translation>
-    </message>
-    <message>
-        <source>Unknown Forum</source>
-        <translation>Onbekend Forum</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nieuw forum</translation>
-    </message>
-    <message>
-        <source>Updated Forum</source>
-        <translation>Aangepast Forum</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-</context>
-<context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
@@ -5563,309 +4148,24 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Lees alle nieuwe berichten</translation>
     </message>
     <message>
-        <source>New forum</source>
-        <translation>Nieuw forum</translation>
-    </message>
-    <message>
-        <source>Open all forums in new tab</source>
-        <translation>Open alle forums in een nieuwe tab</translation>
-    </message>
-    <message>
         <source>Forum</source>
         <translation>Forum</translation>
     </message>
     <message>
         <source>Load embedded images</source>
-        <translation type="unfinished"/>
+        <translation>Ingesloten afbeeldingen laden</translation>
     </message>
-</context>
-<context>
-    <name>ForumUserNotify</name>
     <message>
-        <source>Forum Post</source>
-        <translation>Forum bericht</translation>
+        <source>Tabs</source>
+        <translation>Tabbladen</translation>
     </message>
-</context>
-<context>
-    <name>ForumsDialog</name>
     <message>
-        <source>Forums</source>
-        <translation>Forums</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Maak een nieuw forum</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Forum:</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Het laatste bericht</translation>
-    </message>
-    <message>
-        <source>Threaded View</source>
-        <translation>Threaded View</translation>
-    </message>
-    <message>
-        <source>Flat View</source>
-        <translation>Flat View</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Titel</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Auteur</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Getekend</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Draadje</translation>
-    </message>
-    <message>
-        <source>Previous Thread</source>
-        <translation>Vorig draadje</translation>
-    </message>
-    <message>
-        <source>Next Thread</source>
-        <translation>Volgend draadje</translation>
-    </message>
-    <message>
-        <source>Download all files</source>
-        <translation>Download alle bestanden</translation>
-    </message>
-    <message>
-        <source>Next unread</source>
-        <translation>Volgende ongelezen</translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation>Start een nieuw draadje in het geselecteerde forum</translation>
-    </message>
-    <message>
-        <source>Reply Message</source>
-        <translation>Beantwoord bericht</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Laden</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Print</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>PrintVoorbeeld</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Mijn Forums</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Geabonneerde forums</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Populaire forums</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Andere forums</translation>
-    </message>
-    <message>
-        <source>Search Title</source>
-        <translation>Zoek Titel</translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation>Zoek Datum</translation>
-    </message>
-    <message>
-        <source>Search Author</source>
-        <translation>Zoek Auteur</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation>Inhoud</translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation>Zoek Inhoud</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Registreer bij dit forum</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Uitschrijven bij dit forum</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nieuw forum</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Toon forum gegevens</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Bewerk forum gegevens</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Deel forum</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Herstel publiceer rechten voor dit forum</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopieer RetroShare Link</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Merk alles als gelezen</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Merk alles als ongelezen</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Antwoord</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Start nieuw draadje</translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation>Antwoord naar auteur</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation>Alles uitbreiden</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation>Alles uitklappen</translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation>Merk alles als gelezen</translation>
-    </message>
-    <message>
-        <source>with children</source>
-        <translation>met kinderen</translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation>Merk als ongelezen</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>AUTHD</translation>
-    </message>
-    <message>
-        <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Bericht ontbreekt ... ]</translation>
-    </message>
-    <message>
-        <source>Placeholder for missing Message</source>
-        <translation>Placeholder voor ontbrekend bericht</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation>Geen forum geselecteerd!</translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation>Origineel bericht</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Van</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation>Zenden</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Onderwerp</translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation>Op %1, %2 schreef:</translation>
-    </message>
-    <message>
-        <source>You can&apos;t reply an Anonymous Author</source>
-        <translation>U kunt een Anonieme Auteur niet beantwoorden</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Forum Beschrijving</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Load images always for this message</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>ForumsFillThread</name>
-    <message>
-        <source>Unknown</source>
-        <translation>Onbekend</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Anoniem</translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation>Getekend</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>Geen</translation>
+        <source>Open each forum in a new tab</source>
+        <translation>Elk forum openen in een nieuw tabblad</translation>
     </message>
 </context>
 <context>
     <name>FriendList</name>
-    <message>
-        <source>Friends</source>
-        <translation>Vrienden</translation>
-    </message>
     <message>
         <source>Status</source>
         <translation>Status</translation>
@@ -5943,14 +4243,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Vriend</translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation>Lokatie</translation>
-    </message>
-    <message>
-        <source>Message Group</source>
-        <translation>Berichten groep</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Bewerk groep</translation>
     </message>
@@ -5963,28 +4255,12 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Chat</translation>
     </message>
     <message>
-        <source>Message Friend</source>
-        <translation>Bericht vriend</translation>
-    </message>
-    <message>
-        <source>Friend Details</source>
-        <translation>Vriend gegevens</translation>
-    </message>
-    <message>
         <source>Recommend this Friend to...</source>
         <translation>Beveel deze vriend aan bij...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
         <translation>Kopieer certificaat link</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Weiger vriend</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation>Verwijder vriend lokatie</translation>
     </message>
     <message>
         <source>Add to group</source>
@@ -6052,6 +4328,42 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Paste certificate link</source>
+        <translation>Certificaat koppeling plakken</translation>
+    </message>
+    <message>
+        <source>Sort by</source>
+        <translation>Sorteer op</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Knooppunt</translation>
+    </message>
+    <message>
+        <source>Remove Friend Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you want to remove this node?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to whole group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Gegevens</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6096,48 +4408,12 @@ p, li { white-space: pre-wrap; }⏎
 <context>
     <name>FriendsDialog</name>
     <message>
-        <source>Friends</source>
-        <translation>Vrienden</translation>
-    </message>
-    <message>
         <source>Edit status message</source>
         <translation>Bewerk berichten status</translation>
     </message>
     <message>
         <source>Broadcast</source>
         <translation>Uitzenden</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Vet</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Onderlijnd</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Schuin</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Lettertype</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Tekst kleur</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Voeg bestand toe</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Verstuur</translation>
-    </message>
-    <message>
-        <source>Messages entered here are sent to all connected friends</source>
-        <translation>Deze berichten worden naar alle aangesloten vrienden verzonden.</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
@@ -6200,38 +4476,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Reset lettertype naar standaard</translation>
     </message>
     <message>
-        <source>Local network</source>
-        <translation>Lokaal netwerk</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>PLak RetroShare Link</translation>
-    </message>
-    <message>
-        <source>is typing...</source>
-        <translation>typt....</translation>
-    </message>
-    <message>
-        <source>New group chat</source>
-        <translation>Nieuwe groeps chat</translation>
-    </message>
-    <message>
-        <source>Do you really want to physically delete the history?</source>
-        <translation>Wil je echt voorgoed de geschiedenis verwijderen?</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Voeg extra bestand toe</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Sla op als...</translation>
-    </message>
-    <message>
-        <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Tekst bestand (*.txt );;Alle bestanden (*)</translation>
-    </message>
-    <message>
         <source>Keyring</source>
         <translation>Sleutelbos</translation>
     </message>
@@ -6240,149 +4484,20 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Retroshare groepschat: berichten worden verstuurd naar alle verbonden vrienden.</translation>
     </message>
     <message>
-        <source>Attach a Picture</source>
-        <translation>Koppel een plaatje</translation>
+        <source>Network</source>
+        <translation>Netwerk</translation>
     </message>
     <message>
-        <source>Load Picture File</source>
-        <translation>Laad images bestand</translation>
+        <source>Network graph</source>
+        <translation>Netwerk grafiek</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>GamesDialog</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulier</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt; netwerk&lt;/h1&gt; &lt;p&gt;The Network tabblad toont uw vriend Retroshare knooppunten: de buurman Retroshare knooppunten waarmee u bent verbonden.     &lt;/p&gt; &lt;p&gt;Kunt u knooppunten samen aan het mogelijk maken een fijnere niveau van toegang tot informatie, bijvoorbeeld om alleen toestaan sommige knooppunten om te zien sommige van uw bestanden groeperen.&lt;/p&gt;     &lt;p&gt;Aan de rechterkant vindt u 3 nuttige tabbladen: &lt;ul&gt;&lt;li&gt;uitzending stuurt berichten naar alle verbonden knooppunten tegelijk&lt;/li&gt; &lt;li&gt;lokale netwerk grafiek toont het netwerk om je heen, gebaseerd op gegevens van de detectie&lt;/li&gt; &lt;li&gt;Keyring bevat knooppunt sleutels u verzameld, meestal doorgestuurd naar u door uw vriend knooppunten&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;                                                                                                        </translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spellen starter&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Game:</source>
-        <translation>Spel:</translation>
-    </message>
-    <message>
-        <source>GameType: 0. Want to Add your Game here?</source>
-        <translation>Spel type: 0. Wil je jouw spel hier toevoegen?</translation>
-    </message>
-    <message>
-        <source>GameType: 1. Get In Touch with the developers</source>
-        <translation>Spel type: 1. Maak contact met de ontwikkelaars</translation>
-    </message>
-    <message>
-        <source>GameType: 2.</source>
-        <translation>Spel type: 2.</translation>
-    </message>
-    <message>
-        <source>Title / Comment</source>
-        <translation>Titel / Opmerkingen</translation>
-    </message>
-    <message>
-        <source>Create New Game</source>
-        <translation>Maak een nieuw spel</translation>
-    </message>
-    <message>
-        <source>Invite All Friends</source>
-        <translation>Nodig al je vrienden uit</translation>
-    </message>
-    <message>
-        <source>Game Type</source>
-        <translation>Spel type</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Server</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Opmerkingen</translation>
-    </message>
-    <message>
-        <source>GameID</source>
-        <translation>SpelID</translation>
-    </message>
-    <message>
-        <source>Player</source>
-        <translation>Speler</translation>
-    </message>
-    <message>
-        <source>Invite</source>
-        <translation>Nodig uit</translation>
-    </message>
-    <message>
-        <source>Interested</source>
-        <translation>Geïnteresseerd</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Accepteren</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Verwijderen</translation>
-    </message>
-    <message>
-        <source>Move Player</source>
-        <translation>Verplaats speler</translation>
-    </message>
-    <message>
-        <source>Play Game</source>
-        <translation>Speel het spel</translation>
-    </message>
-    <message>
-        <source>Cancel Game</source>
-        <translation>Annuleer het spel</translation>
-    </message>
-    <message>
-        <source>Add to Invite List</source>
-        <translation>Voeg toe aan uitnodigings lijst</translation>
-    </message>
-    <message>
-        <source>Remove from Invite List</source>
-        <translation>Verwijder van uitnodigings lijst</translation>
-    </message>
-    <message>
-        <source>Interested in Playing</source>
-        <translation>Geïnteresseerd om te spelen</translation>
-    </message>
-    <message>
-        <source>Not Interested in Game</source>
-        <translation>Niet geïnteresseerd in dit spel</translation>
-    </message>
-    <message>
-        <source>Not Interested</source>
-        <translation>Niet geïnteresseerd</translation>
-    </message>
-    <message>
-        <source>Confirm Peer in Game</source>
-        <translation>Bevestig verbindingspunt in het spel</translation>
-    </message>
-    <message>
-        <source>Remove Peer from Game</source>
-        <translation>Verwijder het verbindingspunt uit het spel</translation>
-    </message>
-    <message>
-        <source>Interested in Game</source>
-        <translation>Geïnteresseerd in het spel</translation>
-    </message>
-    <message>
-        <source>Quit Game</source>
-        <translation>Stop spel</translation>
+        <source>Set your status message here.</source>
+        <translation>Stel hier uw statusbericht in.</translation>
     </message>
 </context>
 <context>
@@ -6390,18 +4505,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Create new Profile</source>
         <translation>Maak een nieuw profiel</translation>
-    </message>
-    <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>U kunt RetroShare op meerdere locaties gebruiken met dezelfde identiteit. Exporteer de gekozen identiteit, importeer deze op de andere computer en maak een nieuwe locatie aan.</translation>
-    </message>
-    <message>
-        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Het lijkt erop dat u geen eigenaar bent van een profiel (PGP sleutel). Vul onderstaand formulier in om er één te maken of importeer een bestaand profiel.</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>Uw profiel is geassocieerd met een PGP sleutel. RetroShare zal DSA sleutels negeren.</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6424,52 +4527,8 @@ vrienden van je vrienden. Deze informatie is benodigd voor PGP.⏎
 Om anoniem te blijven kun je een niet bestaand mail adres opgeven.</translation>
     </message>
     <message>
-        <source>This Password is for PGP</source>
-        <translation>Dit wachtwoord is voor PGP</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Wachtwoord</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Vul een sterk wachtwoord in. Dit wachtwoord beschermd jouw PGP sleutel.</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Lokatie</translation>
-    </message>
-    <message>
-        <source>Create new identity</source>
-        <translation>Maak een nieuwe identiteit</translation>
-    </message>
-    <message>
-        <source>Use identity</source>
-        <translation>Gebruik identiteit</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key</source>
-        <translation>Uw profiel is geassocieerd met een PGP Sleutel.</translation>
-    </message>
-    <message>
-        <source>Create a new identity</source>
-        <translation>Maak een nieuwe identiteit</translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation>Importeer een nieuwe identiteit</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Exporteer de geselecteerde identiteit</translation>
-    </message>
-    <message>
-        <source>Create a new Identity</source>
-        <translation>Maak een nieuwe identiteit</translation>
-    </message>
-    <message>
-        <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>RetroShare gebruikt PGP sleutels voor identiteits management.</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -6484,137 +4543,261 @@ Om anoniem te blijven kun je een niet bestaand mail adres opgeven.</translation>
         <translation>[Benodigd] Zichtbaar voor jouw vrienden en vrienden van vrienden</translation>
     </message>
     <message>
-        <source>[Required] This password protects your PGP key.</source>
-        <translation>[Benodigd] Dit wachtwoord beschermd jouw PGP sleutel.</translation>
-    </message>
-    <message>
-        <source>Create new Location</source>
-        <translation>Maak nieuwe lokatie</translation>
-    </message>
-    <message>
-        <source>Generate new Location</source>
-        <translation>Genereer een nieuwe lokatie</translation>
-    </message>
-    <message>
-        <source>Create a new Location</source>
-        <translation>Maak een nieuwe lokatie</translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation>Maak een nieuwe identiteit</translation>
-    </message>
-    <message>
-        <source>Generate new Identity</source>
-        <translation>Maak een nieuwe identiteit</translation>
-    </message>
-    <message>
-        <source>You can create a new identity with this form.</source>
-        <translation>U kunt dit formulier gebruiken om een nieuwe identiteit te maken.</translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>U kunt een bestaande identiteit (i.e. een PGP sleutel pair) kiezen uit onderstaande lijst of een nieuwe maken met dit formulier.</translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation>Exporteer identiteit</translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
-        <translation>RetroShare identiteits bestanden (*.asc)</translation>
-    </message>
-    <message>
-        <source>Identity saved</source>
-        <translation>Identiteit opgeslagen</translation>
-    </message>
-    <message>
-        <source>Your identity was successfully saved
-It is encrypted
-
-You can now copy it to another computer
-and use the import button to load it</source>
-        <translation>Uw identiteit is succesvol opgeslagen⏎
-Het is versleuteld⏎
-⏎
-U kunt het nu kopiëren naar een andere computer⏎
-en daar de importeer functie gebruiken</translation>
-    </message>
-    <message>
-        <source>Identity not saved</source>
-        <translation>Identiteit niet opgeslagen</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>Uw identiteit is niet opgeslagen. Er was een error.</translation>
-    </message>
-    <message>
-        <source>Identity not loaded</source>
-        <translation>Identiteit niet geladen</translation>
-    </message>
-    <message>
-        <source>Your identity was not loaded properly:</source>
-        <translation>Uw identiteit is niet correct geladen:</translation>
-    </message>
-    <message>
-        <source>New identity imported</source>
-        <translation>Nieuwe identiteit geimporteerd</translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfully:</source>
-        <translation>Uw identiteit is succesvol geimporteerd:</translation>
-    </message>
-    <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>U kunt dit nu gebruiken om een nieuwe locatie te maken.</translation>
-    </message>
-    <message>
-        <source>Generate PGP key Failure</source>
-        <translation>Het maken van een PGP sleutel is mislukt</translation>
-    </message>
-    <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation>In het Lokatie veld zijn minimaal 3 karakters nodig</translation>
-    </message>
-    <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Alle velden moet minimaal 3 karakters bevatten</translation>
     </message>
     <message>
-        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your PGP password when asked, to sign your new key.</source>
-        <translation>Genereer nieuwe PGP sleutel, moment geduld aub: dit proces genereert lange reeksen getallen en kan een paar minuten duren op langzame computers⏎
-⏎
-Om uw sleutel te ondertekenen vult uw PGP wachtwoord in zodra erom gevraagd wordt.</translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation>Het maken van een ID is mislukt</translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>NIeuw certificaat maken lukt niet, misschien is uw PGP wachtwoord fout!</translation>
-    </message>
-    <message>
         <source>Password (check)</source>
-        <translation type="unfinished"/>
+        <translation>Wachtwoord (controle)</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt; &lt;body&gt;&lt;p align=&quot;justify&quot;&gt; voordat u verdergaat, beweeg uw muis rond om te helpen Retroshare verzamelen zo veel willekeur als mogelijk. Vullen van de progressbar tot 20% is nodig, 100% wordt geadviseerd.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>[Required] Type the same password again here.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. 
-This field will be used to differentiate different installations with
-the same identity (PGP key).</source>
-        <translation type="unfinished"/>
+        <translation>[Vereist] Typ hetzelfde wachtwoord nogmaals hier.</translation>
     </message>
     <message>
         <source>Passwords do not match</source>
+        <translation>Wachtwoorden komen niet overeen</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>Poort</translation>
+    </message>
+    <message>
+        <source>This password is for PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Knooppunt</translation>
+    </message>
+    <message>
+        <source>TOR address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node field is required with a minimum of 3 characters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.
+Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node exists for this profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Advanced options</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key length</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Currently disabled. Please move your mouse around until you reach at least 20%</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to create your node and/or profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter a meaningful node description. e.g. : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same profile (PGP key pair).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.
+Alternatively you can import a (previously exported) profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node is associated with the profile named</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create a node for it by providing a node name.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare profile files (*.asc)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not saved. An error occurred.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not loaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not loaded properly:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New profile imported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was imported successfully:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key pair generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing PGP certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6933,30 +5116,65 @@ p, li { white-space: pre-wrap; }⏎
     </message>
 </context>
 <context>
-    <name>GraphFrame</name>
+    <name>GlobalRouterStatistics</name>
     <message>
-        <source>Recv: </source>
-        <translation>Ontv:</translation>
+        <source>Router Statistics</source>
+        <translation>Router Statistieken</translation>
     </message>
     <message>
-        <source>%1 KB/s</source>
-        <translation>%1 KB/s</translation>
+        <source>Unknown Peer</source>
+        <translation>Onbekenden verbinding</translation>
+    </message>
+</context>
+<context>
+    <name>GlobalRouterStatisticsWidget</name>
+    <message>
+        <source>Pending packets</source>
+        <translation>Pakketten in behandeling </translation>
     </message>
     <message>
-        <source>Sent: </source>
-        <translation>Verzonden:</translation>
+        <source>Managed keys</source>
+        <translation>Beheerde sleutels</translation>
     </message>
     <message>
-        <source>%1 KB</source>
-        <translation>%1 KB</translation>
+        <source> : Service ID = </source>
+        <translation> : Service ID = </translation>
     </message>
     <message>
-        <source>%1 MB</source>
-        <translation>%1 MB</translation>
+        <source>Routing matrix  (</source>
+        <translation>Routering matrix (</translation>
     </message>
     <message>
-        <source>%1 GB</source>
-        <translation>%1 GB</translation>
+        <source>Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>Doel</translation>
+    </message>
+    <message>
+        <source>Data status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Received</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Verstuur</translation>
     </message>
 </context>
 <context>
@@ -7031,24 +5249,8 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Directorie is niet beschikbaar via anonieme tunnels voor alle vrienden</translation>
     </message>
     <message>
-        <source>All your friends can browse this directory</source>
-        <translation>Al je vrienden kunnen deze directory bekijken</translation>
-    </message>
-    <message>
-        <source>Only friends in groups %1 can browse this directory</source>
-        <translation>Alleen vrienden in groep %1 kunnen deze directory bekijken</translation>
-    </message>
-    <message>
         <source>No one can browse this directory</source>
         <translation>Niemand kan deze directory bekijken</translation>
-    </message>
-    <message>
-        <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Al je vrienden kunnen gebruik maken van je relais via anonieme tunnels in deze directory</translation>
-    </message>
-    <message>
-        <source>Only friends in groups </source>
-        <translation>Alleen vrienden in groepen</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
@@ -7057,6 +5259,72 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>No one can anonymously access this directory.</source>
         <translation>Niemand kan anoniem deze directory gebruiken</translation>
+    </message>
+    <message>
+        <source>All friend nodes can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups %1 can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All friend nodes can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GroupFrameSettingsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulier</translation>
+    </message>
+    <message>
+        <source>Hide tabbar with one open tab</source>
+        <translation>Verberg tabbar met één open tab</translation>
+    </message>
+</context>
+<context>
+    <name>GroupShareKey</name>
+    <message>
+        <source>Share</source>
+        <translation>Delen</translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation>Contacts:</translation>
+    </message>
+    <message>
+        <source>Please select at least one peer</source>
+        <translation>Kies minstens één verbinding</translation>
+    </message>
+    <message>
+        <source>Share channel admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share forum admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share topic admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7090,12 +5358,16 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Sorteer op laatste post</translation>
     </message>
     <message>
-        <source>Private Key Available</source>
-        <translation>Privé Sleutel beschikbaar</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Toon</translation>
+    </message>
+    <message>
+        <source>You have admin rights</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe to download and read messages</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7188,18 +5460,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Maak een nieuw kanaal</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Laden</translation>
-    </message>
-    <message>
-        <source>Post to Channel</source>
-        <translation>Post op dit kanaal</translation>
-    </message>
-    <message>
-        <source>Set all as read</source>
-        <translation>Merk alles als gelezen</translation>
-    </message>
-    <message>
         <source>Enable Auto-Download</source>
         <translation>Activeer automatisch downloaden</translation>
     </message>
@@ -7224,56 +5484,78 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Automatisch downloaden uitschakelen</translation>
     </message>
     <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Dit kanaal uitschrijven</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesStatusWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulier</translation>
     </message>
     <message>
-        <source>Subscribe to Channel</source>
-        <translation>Registreer bij dit kanaal</translation>
+        <source>Download</source>
+        <translation>Download</translation>
     </message>
     <message>
-        <source>Edit Channel Details</source>
-        <translation>Edit kanaal gegevens</translation>
+        <source>TextLabel</source>
+        <translation>Tekst label</translation>
     </message>
     <message>
-        <source>Show Channel Details</source>
-        <translation>Kanaal gegevens</translation>
+        <source>Open folder</source>
+        <translation>Open map</translation>
     </message>
     <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Herstel publiceer rechten voor dit kanaal</translation>
+        <source>Error</source>
+        <translation>Error</translation>
     </message>
     <message>
-        <source>Share Channel</source>
-        <translation>Kanaal delen</translation>
+        <source>Paused</source>
+        <translation>Pauze</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopieer RetroShare Link</translation>
+        <source>Waiting</source>
+        <translation>Wachten</translation>
     </message>
     <message>
-        <source>Publish rights restored.</source>
-        <translation>Publiceer rechten hersteld.</translation>
+        <source>Checking</source>
+        <translation>Controleren</translation>
     </message>
     <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>Publiceer rechten zijn hersteld voor dit kanaal.</translation>
+        <source>Are you sure that you want to cancel and delete the file?</source>
+        <translation>Weet u zeker dat u wilt annuleren en daarna het bestand te verwijderen?</translation>
     </message>
     <message>
-        <source>Publish not restored.</source>
-        <translation>Publiceren niet hersteld</translation>
+        <source>Can&apos;t open folder</source>
+        <translation>Kan de map niet openen</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulier</translation>
     </message>
     <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Publiceer rechten kunnen niet hersteld worden voor dit kanaal.&lt;br&gt;U bent niet de maker van dit kanaal.</translation>
+        <source>Filename</source>
+        <translation>Bestandsnaam</translation>
     </message>
     <message>
-        <source>No Channel Selected</source>
-        <translation>Geen kanaal geselecteerd</translation>
+        <source>Size</source>
+        <translation>Grootte</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Nog te doen</translation>
+        <source>Title</source>
+        <translation>Titel</translation>
+    </message>
+    <message>
+        <source>Published</source>
+        <translation>Gepubliceerd</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Status</translation>
     </message>
 </context>
 <context>
@@ -7292,15 +5574,54 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Add Channel Admins</source>
-        <translation type="unfinished"/>
+        <translation>Kanaal beheerders toevoegen</translation>
     </message>
     <message>
         <source>Select Channel Admins</source>
-        <translation type="unfinished"/>
+        <translation>Selecteer kanaal beheerders</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Maak een nieuw kanaal</translation>
+        <source>Update Channel</source>
+        <translation>Kanaal updaten</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Maak</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelGroupItem</name>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopieer RetroShare Link</translation>
+    </message>
+    <message>
+        <source>Subscribe to Channel</source>
+        <translation>Registreer bij dit kanaal</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Uitbreiden</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Item verwijderen</translation>
+    </message>
+    <message>
+        <source>Channel Description</source>
+        <translation>Kanaal beschrijving</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>New Channel</source>
+        <translation>Nieuw kanaal</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
     </message>
 </context>
 <context>
@@ -7356,6 +5677,128 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Hide</source>
         <translation>Verberg</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Nieuw</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Opmerking</translation>
+    </message>
+    <message>
+        <source>I like this</source>
+        <translation>Ik vind dit leuk!</translation>
+    </message>
+    <message>
+        <source>I dislike this</source>
+        <translation>Ik vindt dit niet leuk</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Open </translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Open bestand</translation>
+    </message>
+    <message>
+        <source>Play Media</source>
+        <translation>Speel media</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelPostsWidget</name>
+    <message>
+        <source>Post to Channel</source>
+        <translation>Post op dit kanaal</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>Search channels</source>
+        <translation>Zoek kanalen</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Titel</translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Zoek Titel</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Bericht</translation>
+    </message>
+    <message>
+        <source>Search Message</source>
+        <translation>Zoek bericht</translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation>Bestandsnaam</translation>
+    </message>
+    <message>
+        <source>Search Filename</source>
+        <translation>Zoek bestandsnaam</translation>
+    </message>
+    <message>
+        <source>No Channel Selected</source>
+        <translation>Geen kanaal geselecteerd</translation>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation>Automatisch downloaden uitschakelen</translation>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation>Activeer automatisch downloaden</translation>
+    </message>
+    <message>
+        <source>Show feeds</source>
+        <translation>Toon feeds</translation>
+    </message>
+    <message>
+        <source>Show files</source>
+        <translation>Bestanden weergeven</translation>
+    </message>
+    <message>
+        <source>Feeds</source>
+        <translation>Feeds</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>Bestanden</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Beschrijving:</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes):</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelUserNotify</name>
+    <message>
+        <source>Channel Post</source>
+        <translation>Kanaal bericht</translation>
     </message>
 </context>
 <context>
@@ -7438,26 +5881,6 @@ p, li { white-space: pre-wrap; }⏎
         <source>Vote Down</source>
         <translation>Stem omlaag</translation>
     </message>
-    <message>
-        <source>Reputation</source>
-        <translation>Reputatie</translation>
-    </message>
-    <message>
-        <source>Show Reputation</source>
-        <translation>Toon Reputatie</translation>
-    </message>
-    <message>
-        <source>Interesting User</source>
-        <translation>Interessante Gebruiker</translation>
-    </message>
-    <message>
-        <source>Mark Spammy</source>
-        <translation>Markeer als Spam</translation>
-    </message>
-    <message>
-        <source>Ban User</source>
-        <translation>Ban Gebruiker</translation>
-    </message>
 </context>
 <context>
     <name>GxsCreateCommentDialog</name>
@@ -7507,8 +5930,90 @@ voor je een opmerking kan doen</translation>
         <translation>Bewerk forum</translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation>Maak een nieuw forum</translation>
+        <source>Update Forum</source>
+        <translation>Update Forum</translation>
+    </message>
+    <message>
+        <source>Add Forum Admins</source>
+        <translation>Toevoegen van Forum beheerders</translation>
+    </message>
+    <message>
+        <source>Select Forum Admins</source>
+        <translation>Selecteer Forum beheerders</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Maak</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumGroupItem</name>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation>Registreer bij dit forum</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Uitbreiden</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Item verwijderen</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Forum Beschrijving</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Nieuw forum</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumMsgItem</name>
+    <message>
+        <source>Subject: </source>
+        <translation>Onderwerp:</translation>
+    </message>
+    <message>
+        <source>Unsubscribe To Forum</source>
+        <translation>Uitschrijven bij dit forum</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Uitbreiden</translation>
+    </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation>Markeer als gelezen en verplaats item</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Item verwijderen</translation>
+    </message>
+    <message>
+        <source>In Reply to: </source>
+        <translation>In antwoord op: </translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>Forum Feed</source>
+        <translation>Forum Feed</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
     </message>
 </context>
 <context>
@@ -7548,10 +6053,6 @@ voor je een opmerking kan doen</translation>
     <message>
         <source>Author</source>
         <translation>Auteur</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Getekend</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -7610,10 +6111,6 @@ voor je een opmerking kan doen</translation>
         <translation>Start nieuw draadje</translation>
     </message>
     <message>
-        <source>Reply to Author</source>
-        <translation>Antwoord naar auteur</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Alles uitbreiden</translation>
     </message>
@@ -7662,10 +6159,6 @@ voor je een opmerking kan doen</translation>
         <translation>[ ... Bericht ontbreekt ... ]</translation>
     </message>
     <message>
-        <source>By</source>
-        <translation>Door</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -7680,101 +6173,6 @@ voor je een opmerking kan doen</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>U kunt niet antwoorden aan een Anonieme Auteur</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Forum Beschrijving</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Forum:</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Draadje:</translation>
-    </message>
-</context>
-<context>
-    <name>GxsForumsDialog</name>
-    <message>
-        <source>Forums</source>
-        <translation>Forums</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Maak een nieuw forum</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Print</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>PrintVoorbeeld</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Mijn Forums</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Geabonneerde forums</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Populaire forums</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Andere forums</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Registreer bij dit forum</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Uitschrijven bij dit forum</translation>
-    </message>
-    <message>
-        <source>Open in new tab</source>
-        <translation>Open in een nieuw tab</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nieuw forum</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Toon forum gegevens</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Bewerk forum gegevens</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Deel forum</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Herstel publiceer rechten voor dit forum</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopieer RetroShare Link</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Merk alles als gelezen</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Merk alles als ongelezen</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>AUTHD</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -7797,8 +6195,70 @@ voor je een opmerking kan doen</translation>
         <translation>Op %1, %2 schreef:</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Nog te doen</translation>
+        <source>Forum name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Beschrijving</translation>
+    </message>
+    <message>
+        <source>By </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;Subscribing to the forum will gather                                            available posts from your subscribed friends, and make the                                            forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply with private message</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsForumUserNotify</name>
+    <message>
+        <source>Forum Post</source>
+        <translation>Forum bericht</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumsDialog</name>
+    <message>
+        <source>Forums</source>
+        <translation>Forums</translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation>Maak een nieuw forum</translation>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation>Mijn Forums</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation>Geabonneerde forums</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation>Populaire forums</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation>Andere forums</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7818,10 +6278,6 @@ voor je een opmerking kan doen</translation>
 </context>
 <context>
     <name>GxsGroupDialog</name>
-    <message>
-        <source>Create New</source>
-        <translation>Maak nieuw</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Naam</translation>
@@ -7927,12 +6383,138 @@ voor je een opmerking kan doen</translation>
         <translation>Laad groep logo</translation>
     </message>
     <message>
-        <source>Invalid Circle Selection - Personal disabled for now</source>
-        <translation>Ongeldige Cirkel Selectie - Persoonlijk is tijdelijk uitgeschakeld</translation>
+        <source>Submit Group Changes</source>
+        <translation>Groep wijzigingen verzenden</translation>
+    </message>
+    <message>
+        <source>Failed to Prepare Group MetaData - please Review</source>
+        <translation>Mislukt te bereiden groep metagegevens - Lees</translation>
+    </message>
+    <message>
+        <source>Will be used to send feedback</source>
+        <translation>Zal worden gebruikt voor het verzenden van feedback</translation>
+    </message>
+    <message>
+        <source>Owner:</source>
+        <translation>Eigenaar:</translation>
+    </message>
+    <message>
+        <source>Set a descriptive description here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments allowed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments not allowed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Het laatste bericht</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation>Populariteit</translation>
+    </message>
+    <message>
+        <source>Posts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Auteur</translation>
+    </message>
+    <message>
+        <source>GxsIdLabel</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsGroupFrameDialog</name>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Nog te doen</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Print</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation>PrintVoorbeeld</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Uitschrijven</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Registreren</translation>
+    </message>
+    <message>
+        <source>Open in new tab</source>
+        <translation>Open in een nieuw tab</translation>
+    </message>
+    <message>
+        <source>Show Details</source>
+        <translation>Details weergeven</translation>
+    </message>
+    <message>
+        <source>Edit Details</source>
+        <translation>Bewerk Details</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopieer RetroShare Link</translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation>Merk alles als gelezen</translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation>Merk alles als ongelezen</translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation>AUTHD</translation>
+    </message>
+    <message>
+        <source>Share admin permissions</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GxsIdChooser</name>
+    <message>
+        <source>No Signature</source>
+        <translation>Geen handtekening</translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Maak een nieuwe identiteit</translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdDetails</name>
     <message>
         <source>Loading</source>
         <translation>Laden</translation>
@@ -7944,6 +6526,45 @@ voor je een opmerking kan doen</translation>
     <message>
         <source>No Signature</source>
         <translation>Geen handtekening</translation>
+    </message>
+    <message>
+        <source>Authentication</source>
+        <translation>Verificatie</translation>
+    </message>
+    <message>
+        <source>unknown Key</source>
+        <translation>onbekende sleutel</translation>
+    </message>
+    <message>
+        <source>anonymous</source>
+        <translation>anoniem</translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signed&amp;nbsp;by</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Unknown]</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsMessageFramePostWidget</name>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>No name</source>
+        <translation>Geen naam</translation>
     </message>
 </context>
 <context>
@@ -8177,7 +6798,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;! DOCTYPE HTML OPENBARE &quot;-//W3C//DTD HTML 4.0 / / NL&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot; &gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt; &lt;style type=&quot;text/css&quot;&gt; p, li {witruimte: vooraf laten teruglopen;}&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; RetroShare vertalingen:&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt; &lt;span style=&quot;text-decoration: underline; color:#0000ff;&quot;&gt; http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; RetroShare Website vertalers:&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; Zweeds:&lt;/span&gt; &lt;span style=&quot;font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt; &lt;span style=&quot;font-size:8pt;&quot;&gt; wester@speedmail.se&lt;/span&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; &amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; Duits:&lt;/span&gt; &lt;span style=&quot;font-size:8pt;&quot;&gt; Jan&lt;/span&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt;&lt;/span&gt; &lt;span style=&quot;font-size:8pt;&quot;&gt; Keller&lt;/span&gt; &amp;lt; &lt;span style=&quot;font-size:8pt;&quot;&gt; trilarion@users.sourceforge.net&lt;/span&gt; &amp;gt;&lt;/p&gt;
+&lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; Pools:&lt;/span&gt; &lt;span style=&quot;font-size:8pt;&quot;&gt; Maciej Mrug&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt; Nederlands:&lt;/span&gt; &lt;span style=&quot;font-size:8pt;&quot;&gt; Arthur&lt;/span&gt; &lt;span style=&quot;font-size:8pt; font-weight:600;&quot;&gt;&lt;/span&gt; &lt;span style=&quot;font-size:8pt;&quot;&gt; Krijgsman&lt;/span&gt; &amp;lt; &lt;span style=&quot;font-size:8pt;&quot;&gt; webmaster@zrhaaglanden.nl&lt;/span&gt; &amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -8208,142 +6834,154 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>IdDialog</name>
+    <name>IdDetailsDialog</name>
     <message>
-        <source>Identities</source>
-        <translation>Identiteiten</translation>
+        <source>Person Details</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>New ID</source>
-        <translation>Nieuwe ID</translation>
+        <source>Identity Info</source>
+        <translation>Identiteit Info</translation>
     </message>
     <message>
-        <source>Yourself</source>
-        <translation>Uzelf</translation>
+        <source>Owner node ID :</source>
+        <translation>Eigenaar knooppunt-ID:</translation>
     </message>
     <message>
-        <source>Friends / Friends of Friends</source>
-        <translation>Vriend / Vrienden van vrienden</translation>
-    </message>
-    <message>
-        <source>Others</source>
-        <translation>Anderen</translation>
-    </message>
-    <message>
-        <source>Pseudonyms</source>
-        <translation>Pseudoniemen</translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation>Alles</translation>
-    </message>
-    <message>
-        <source>Nickname</source>
-        <translation>Gebruikersnaam</translation>
-    </message>
-    <message>
-        <source>KeyId</source>
-        <translation>SleutelID</translation>
-    </message>
-    <message>
-        <source>Type</source>
+        <source>Type:</source>
         <translation>Type</translation>
     </message>
     <message>
-        <source>Delete ID</source>
-        <translation>Verwijder ID</translation>
+        <source>Owner node name :</source>
+        <translation>Knooppuntnaam van de eigenaar:</translation>
     </message>
     <message>
-        <source>Edit Reputation</source>
-        <translation>Bewerk Reputatie</translation>
+        <source>Identity name :</source>
+        <translation>Identiteitsnaam:</translation>
     </message>
     <message>
-        <source>Edit ID</source>
-        <translation>Bewerk ID</translation>
+        <source>Identity ID :</source>
+        <translation>Identiteit ID:</translation>
     </message>
     <message>
-        <source>Identity Type</source>
-        <translation>Identiteit Soort</translation>
-    </message>
-    <message>
-        <source>Friend</source>
-        <translation>Vriend</translation>
-    </message>
-    <message>
-        <source>Friend of Friend</source>
-        <translation>Vriend van vriend</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Anders</translation>
-    </message>
-    <message>
-        <source>Pseudonym</source>
-        <translation>Pseudoniem</translation>
-    </message>
-    <message>
-        <source>Key ID</source>
-        <translation>Sleutel ID</translation>
-    </message>
-    <message>
-        <source>PGP Name</source>
-        <translation>PGP Naam</translation>
-    </message>
-    <message>
-        <source>PGP Id</source>
-        <translation>PGP ID</translation>
-    </message>
-    <message>
-        <source>PGP Hash</source>
-        <translation>PGP Hash</translation>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reputation</source>
         <translation>Reputatie</translation>
     </message>
     <message>
-        <source>Your Rating</source>
-        <translation>Uw Rang</translation>
+        <source>Overall</source>
+        <translation>Algemene</translation>
     </message>
     <message>
-        <source>Overall Rating</source>
-        <translation>Globale Rang</translation>
+        <source>Implicit</source>
+        <translation>Impliciete</translation>
     </message>
     <message>
-        <source>Implicit Score</source>
-        <translation>Impliciete Score</translation>
+        <source>Opinion</source>
+        <translation>Mening</translation>
     </message>
     <message>
-        <source>Rating</source>
-        <translation>Rang</translation>
+        <source>Peers</source>
+        <translation>Verbindingen</translation>
     </message>
     <message>
-        <source>Comment</source>
-        <translation>Opmerking</translation>
+        <source>Edit Reputation</source>
+        <translation>Bewerk Reputatie</translation>
     </message>
     <message>
-        <source>Local Reputation</source>
-        <translation>Lokale Reputatie</translation>
+        <source>Tweak Opinion</source>
+        <translation>Tweak advies</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Accepteren (+ 100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Positieve (+ 10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Negatief (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Verbod (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Custom</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Wijzigen</translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Onbekende echte naam</translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation>Anoniem Id</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation>Identiteit eigendom van u, gekoppeld aan uw Retroshare knoop</translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation>Anonieme identiteit, eigendom van u</translation>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation>Eigendom van een vriend Retroshare knooppunt</translation>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation>Eigendom van 2-hops Retroshare knooppunt</translation>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation>Eigendom van onbekende Retroshare knooppunt</translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation>Anonieme identiteit</translation>
+    </message>
+</context>
+<context>
+    <name>IdDialog</name>
+    <message>
+        <source>New ID</source>
+        <translation>Nieuwe ID</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Alles</translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation>Bewerk Reputatie</translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation>Sleutel ID</translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Reputatie</translation>
     </message>
     <message>
         <source>Todo</source>
         <translation>Nog te doen</translation>
     </message>
     <message>
-        <source>Show:</source>
-        <translation>Toon:</translation>
-    </message>
-    <message>
         <source>Search</source>
         <translation>Zoek</translation>
-    </message>
-    <message>
-        <source>PGP Linked Id</source>
-        <translation>PGP geaccocieerd ID</translation>
-    </message>
-    <message>
-        <source>Anon Id</source>
-        <translation>Anoniem ID</translation>
     </message>
     <message>
         <source>Unknown real name</source>
@@ -8359,6 +6997,235 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Identity</source>
+        <translation>Identiteit verwijderen</translation>
+    </message>
+    <message>
+        <source>Edit Identity</source>
+        <translation>Identiteit bewerken</translation>
+    </message>
+    <message>
+        <source>Identity Info</source>
+        <translation>Identiteit Info</translation>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation>Algemene</translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation>Impliciete</translation>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation>Mening</translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation>Verbindingen</translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation>Tweak advies</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Accepteren (+ 100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Positieve (+ 10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Negatief (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Verbod (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Custom</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Wijzigen</translation>
+    </message>
+    <message>
+        <source>Chat with this peer</source>
+        <translation>Chat met deze verbinding</translation>
+    </message>
+    <message>
+        <source>Launches a distant chat with this peer</source>
+        <translation>Start een chat met deze verbinding</translation>
+    </message>
+    <message>
+        <source>Really delete? </source>
+        <translation>Echt verwijderen? </translation>
+    </message>
+    <message>
+        <source>Identity name</source>
+        <translation>Identiteitsnaam</translation>
+    </message>
+    <message>
+        <source>Owned by node...</source>
+        <translation>Eigendom van knooppunt...</translation>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation>Eigenaar knooppunt-ID:</translation>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation>Identiteitsnaam:</translation>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation>Identiteit ID:</translation>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation>Knooppuntnaam van de eigenaar:</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>Owned by you</source>
+        <translation>Eigendom van u</translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation>Anoniem</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt; identiteiten&lt;/h1&gt; &lt;p&gt;In dit tabblad u kunt maken/bewerken pseudo-anonieme identiteiten. 			&lt;/p&gt; &lt;p&gt;-Identiteiten worden gebruikt om uw gegevens veilig te identificeren: forum en kanaal posten, ondertekenen en krijgen feedback met Retroshare ingebouwde e-mailsysteem, commentaar na kanaal berichten, enz.&lt;/p&gt; 			&lt;p&gt;Identiteiten kunnen optioneel worden ondertekend door uw Retroshare knooppunt certificaat.   			Ondertekende identiteiten zijn gemakkelijker te vertrouwen maar gemakkelijk zijn gekoppeld aan het knooppunt IP-adres.  			&lt;/p&gt; &lt;p&gt;Anonieme identiteiten kunnen u anoniem communiceren met andere gebruikers. Ze kunnen niet worden vervalst, maar niemand kan aantonen wie echt de eigenaar van een bepaalde identiteit.  			&lt;/p&gt; 			</translation>
+    </message>
+    <message>
+        <source>This identity is owned by you</source>
+        <translation>Deze identiteit is eigendom van u</translation>
+    </message>
+    <message>
+        <source>Unknown PGP key</source>
+        <translation>Onbekende PGP sleutel</translation>
+    </message>
+    <message>
+        <source>Unknown key ID</source>
+        <translation>Onbekende sleutel ID</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation>Identiteit eigendom van u, gekoppeld aan uw Retroshare knoop</translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation>Anonieme identiteit, eigendom van u</translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation>Anonieme identiteit</translation>
+    </message>
+    <message>
+        <source>Distant chat cannot work</source>
+        <translation>Verre chat werkt niet</translation>
+    </message>
+    <message>
+        <source>Error code</source>
+        <translation>Foutcode</translation>
+    </message>
+    <message>
+        <source>People</source>
+        <translation>Mensen</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to your node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to neighbor nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to distant nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Toon </translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation> Kolom</translation>
+    </message>
+    <message>
+        <source>Linked to a friend Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to a known Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to unknown Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat with this person</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat with this person as...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to this person</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Kolommen</translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this person.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Verstuur bericht</translation>
+    </message>
+    <message>
+        <source>Last used:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node Id  : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+50 Known PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+10 UnKnown PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+5 Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to delete this identity?</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8383,10 +7250,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PGP Id</source>
         <translation>PGP ID</translation>
-    </message>
-    <message>
-        <source>PGP Associated ID</source>
-        <translation>PGP geassocieerde ID</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -8428,6 +7291,74 @@ p, li { white-space: pre-wrap; }
         <source>Create New Identity</source>
         <translation>Maak een nieuwe identiteit</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Tekst label</translation>
+    </message>
+    <message>
+        <source>RM</source>
+        <translation>RM</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Toevoegen</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to your profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>IdentityWidget</name>
+    <message>
+        <source>Name</source>
+        <translation>Naam</translation>
+    </message>
+    <message>
+        <source>KeyId</source>
+        <translation>SleutelID</translation>
+    </message>
+    <message>
+        <source>GXSId</source>
+        <translation>GXSId</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Toevoegen</translation>
+    </message>
+    <message>
+        <source>GXS name: </source>
+        <translation>GXS naam: </translation>
+    </message>
+    <message>
+        <source>PGP name: </source>
+        <translation>PGP naam: </translation>
+    </message>
+    <message>
+        <source>GXS id: </source>
+        <translation>GXS id: </translation>
+    </message>
+    <message>
+        <source>PGP id: </source>
+        <translation>PGP-id: </translation>
+    </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
@@ -8463,10 +7394,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LocalSharedFilesDialog</name>
     <message>
-        <source>Create collection file</source>
-        <translation>Maak collectie bestand</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Open bestand</translation>
     </message>
@@ -8497,6 +7424,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Set command for opening this file</source>
         <translation>Geef commando om dit bestand te openen</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Collectie</translation>
     </message>
 </context>
 <context>
@@ -8542,46 +7473,6 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare %1 is een beveiligd gedecentraliseerde communicatie platform</translation>
     </message>
     <message>
-        <source>News feed</source>
-        <translation>News Feed</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>Vrienden</translation>
-    </message>
-    <message>
-        <source>File sharing</source>
-        <translation>Bestand delen</translation>
-    </message>
-    <message>
-        <source>Chat Lobbies</source>
-        <translation>Chat Portaal</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation>Berichten</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation>Kanalen</translation>
-    </message>
-    <message>
-        <source>Blogs</source>
-        <translation>Blogs</translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation>Forums</translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation>Plugins</translation>
-    </message>
-    <message>
-        <source>Getting Started</source>
-        <translation>We gaan starten</translation>
-    </message>
-    <message>
         <source>Unfinished</source>
         <translation>Niet afgemaakt</translation>
     </message>
@@ -8621,24 +7512,12 @@ Maak meer ruimte vrij en klik Ok.</translation>
         <translation>Notify</translation>
     </message>
     <message>
-        <source>Open Messenger</source>
-        <translation>Open Messenger</translation>
-    </message>
-    <message>
         <source>Open Messages</source>
         <translation>Open berichten</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
         <translation>Grafische bandbreedte</translation>
-    </message>
-    <message>
-        <source>DHT Details</source>
-        <translation>DHT gegevens</translation>
-    </message>
-    <message>
-        <source>Bandwidth Details</source>
-        <translation>Bandbreedte details</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -8726,10 +7605,22 @@ Maak meer ruimte vrij en klik Ok.</translation>
     </message>
     <message>
         <source>ServicePermissions</source>
-        <translation type="unfinished"/>
+        <translation>ServicePermissions</translation>
     </message>
     <message>
         <source>Service permissions matrix</source>
+        <translation>Service toestemming matrix</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Toevoegen</translation>
+    </message>
+    <message>
+        <source>Statistics</source>
+        <translation>Statistieken</translation>
+    </message>
+    <message>
+        <source>Show web interface</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8928,10 +7819,6 @@ Maak meer ruimte vrij en klik Ok.</translation>
         <translation>Deze vriend is aanbevolen door</translation>
     </message>
     <message>
-        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Bedankt, &lt;br&gt;Het RetroShare Team</translation>
-    </message>
-    <message>
         <source>wants to be friends with you on RetroShare</source>
         <translation>wil vrienden met je zijn op RetroShare</translation>
     </message>
@@ -9028,10 +7915,6 @@ Wil je het bericht bewaren in de concepten map?</translation>
     <message>
         <source>Unknown</source>
         <translation>Onbekend</translation>
-    </message>
-    <message>
-        <source>Unknown friend</source>
-        <translation>Onbekende vriend</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -9156,23 +8039,51 @@ Wil je het bericht bewaren?</translation>
         <translation>Voeg extra bestand toe</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Teken bericht cryptografisch. Dit zorgt er voor dat niemand je bericht kan aanpassen of zich als jou kan voordoen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Show:</source>
+        <translation>Toon:</translation>
     </message>
     <message>
-        <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation>Afstands gebruiker (naam: %2, PGP sleutel: %1)</translation>
+        <source>Close</source>
+        <translation>Sluiten</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Alleen vertrouwde mensen tonen</translation>
+        <source>From:</source>
+        <translation>Van:</translation>
     </message>
     <message>
-        <source>PGP key unknown</source>
+        <source>All</source>
+        <translation>Alles</translation>
+    </message>
+    <message>
+        <source>Friend Nodes</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
+        <source>Person Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer identities</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant identity:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Missing]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name &amp; id:</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9244,7 +8155,7 @@ Wil je het bericht bewaren?</translation>
     </message>
     <message>
         <source>Load embedded images</source>
-        <translation type="unfinished"/>
+        <translation>Ingesloten afbeeldingen laden</translation>
     </message>
 </context>
 <context>
@@ -9336,22 +8247,6 @@ Wil je het bericht bewaren?</translation>
         <translation>Download alles</translation>
     </message>
     <message>
-        <source>Hide</source>
-        <translation>Verberg</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Uitbreiden</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Bestand</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Bestanden</translation>
-    </message>
-    <message>
         <source>Print Document</source>
         <translation>Print Document</translation>
     </message>
@@ -9365,35 +8260,15 @@ Wil je het bericht bewaren?</translation>
     </message>
     <message>
         <source>Load images always for this message</source>
-        <translation type="unfinished"/>
+        <translation> Afbeeldingen altijd laden voor dit bericht</translation>
     </message>
     <message>
-        <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation type="unfinished"/>
+        <source>Hide the attachment pane</source>
+        <translation>Het venster bijlage verbergen</translation>
     </message>
     <message>
-        <source>Decrypt</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Versleutelde berichten</translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation>Ontsleutelen is mislukt!</translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Dit bericht is niet versleuteld. Ontsleutelen is niet mogelijk!</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Dit bericht kon niet worden ontsleuteld.</translation>
-    </message>
-    <message>
-        <source>Unknown (needs decryption)</source>
-        <translation type="unfinished"/>
+        <source>Show the attachment pane</source>
+        <translation>Deelvenster met bijlage weergeven</translation>
     </message>
 </context>
 <context>
@@ -9786,24 +8661,12 @@ Wil je het bericht bewaren?</translation>
         <translation>Totaal:</translation>
     </message>
     <message>
-        <source>Decrypt Message</source>
-        <translation>Ontsleutel Bericht</translation>
-    </message>
-    <message>
-        <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Versleuteld bericht. Gebruik rechtermuisklik om te ontsleutelen.</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Berichten</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
         <translation>Klik om te sorteren op tekening</translation>
-    </message>
-    <message>
-        <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Dit bericht is versleuteld. Gebruik rechtermuisklik om te ontsleutelen.</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
@@ -9814,11 +8677,11 @@ Wil je het bericht bewaren?</translation>
         <translation>Dit bericht heeft een ongeldige handtekening</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <source>This message comes from a distant person.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>This message has been successfully decrypted, and is unsigned.</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9893,10 +8756,6 @@ Wil je het bericht bewaren?</translation>
     <message>
         <source>Hide</source>
         <translation>Verberg</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Versleutelde berichten</translation>
     </message>
 </context>
 <context>
@@ -10041,36 +8900,16 @@ Wil je het bericht bewaren?</translation>
         <translation>Maak een nieuw profiel</translation>
     </message>
     <message>
-        <source>Search Name</source>
-        <translation>Zoek Naam</translation>
-    </message>
-    <message>
         <source>Peer ID</source>
         <translation>Verbindings ID</translation>
-    </message>
-    <message>
-        <source>Search Peer ID</source>
-        <translation>Zoek verbindings ID</translation>
     </message>
     <message>
         <source>Deny friend</source>
         <translation>Weiger vriend</translation>
     </message>
     <message>
-        <source>Make friend</source>
-        <translation>Maak een vriend</translation>
-    </message>
-    <message>
-        <source>Export my certificate...</source>
-        <translation>Exporteer mijn certificaat...</translation>
-    </message>
-    <message>
         <source>Peer details...</source>
         <translation>Verbindings details...</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopieer RetroShare Link</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
@@ -10185,31 +9024,55 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
         <translation>Datainconsistentie in de sleutelbos. Dit is hoogstwaarschijnlijk een bug. Neem contact op met de ontwikkelaars.</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Alleen vertrouwde mensen tonen</translation>
-    </message>
-    <message>
-        <source>Send Message</source>
-        <translation>Verstuur bericht</translation>
-    </message>
-    <message>
-        <source> If I accept connection from peer</source>
+        <source>Export/create a new node</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Name of peer</source>
+        <source>Trusted keys only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Did peer sign mine PGP key</source>
+        <source>Trust level</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Peer&apos;s Certificat ID</source>
+        <source> Do you accept connections signed by this key?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Since when I use this Certificat</source>
+        <source>Name of the key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Certificat ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Make friend...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did peer authenticate you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This column indicates trust level and whether you signed their PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did that peer sign your PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Since when I use this certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search peer ID</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10236,7 +9099,7 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
     </message>
     <message>
         <source>Freeze</source>
-        <translation type="unfinished"/>
+        <translation>Bevries</translation>
     </message>
 </context>
 <context>
@@ -10282,6 +9145,18 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt; nieuwsfeed&lt;/h1&gt; &lt;p&gt;The News Feed wordt weergegeven van de laatste gebeurtenissen op uw netwerk, gesorteerd op tegen de tijd dat u ze ontvangen hebt.                   Dit geeft u een samenvatting van de activiteit van uw vrienden.                                                          U kunt configureren welke gebeurtenissen u wilt weergeven door op &lt;b&gt;Opties&lt;/b&gt; te drukken. &lt;/p&gt; &lt;p&gt;De verschillende gebeurtenissen weergegeven zijn: &lt;ul&gt;&lt;li&gt;verbindingspogingen (nuttig om vrienden te maken met nieuwe mensen en controle die probeert om u te bereiken)&lt;/li&gt; &lt;li&gt;kanaal en Forum berichten&lt;/li&gt; &lt;li&gt;New kanalen en Forums kunt u zich abonneren op&lt;/li&gt; &lt;li&gt;prive-berichten van je vrienden&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;                                                                                                       </translation>
+    </message>
+    <message>
+        <source>News feed</source>
+        <translation>News Feed</translation>
+    </message>
+    <message>
+        <source>Newest on top</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Oldest on top</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10290,10 +9165,6 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
     <message>
         <source>News Feed</source>
         <translation>News Feed</translation>
-    </message>
-    <message>
-        <source>Peers</source>
-        <translation>Verbindingen</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -10318,10 +9189,6 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
     <message>
         <source>Security</source>
         <translation>Veiligheid</translation>
-    </message>
-    <message>
-        <source>Add feeds at end</source>
-        <translation>Voeg feeds toe aan het eind</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10421,6 +9288,42 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt; waarschuwen&lt;/h1&gt; &lt;p&gt;Retroshare zal informeren u over wat er in uw netwerk gebeurt.         		  Afhankelijk van uw gebruik, kan u wilt in- of uitschakelen enkele van de kennisgevingen. Deze pagina is ontworpen voor die!&lt;/p&gt;                        		  </translation>
+    </message>
+    <message>
+        <source>Disable All Toasters</source>
+        <translation>Alle Toasters uitschakelen</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Gepost</translation>
+    </message>
+    <message>
+        <source>Disable All Toaster temporarily</source>
+        <translation>Alle Toasters tijdelijk uitschakelen</translation>
+    </message>
+    <message>
+        <source>Feed</source>
+        <translation>Feed</translation>
+    </message>
+    <message>
+        <source>Systray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Chat Portaal</translation>
+    </message>
+    <message>
+        <source>Count all unread messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of any of the following texts (separate by newlines):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of my current identity</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10478,6 +9381,10 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
         <source>Encrypted message</source>
         <translation>Versleutelde berichten</translation>
     </message>
+    <message>
+        <source>Please enter your PGP password for key</source>
+        <translation>Voer uw PGP paswoord in om sleutel te krijgen</translation>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
@@ -10516,6 +9423,186 @@ Laag verkeer: 10% standaard verkeerd en TODO: pauseerd alle bestands overdrachte
     </message>
 </context>
 <context>
+    <name>OutQueueStatisticsWidget</name>
+    <message>
+        <source>Outqueue statistics</source>
+        <translation>Outqueue statistieken</translation>
+    </message>
+    <message>
+        <source>By priority: </source>
+        <translation>Op prioriteit: </translation>
+    </message>
+    <message>
+        <source>By service : </source>
+        <translation>Op service: </translation>
+    </message>
+</context>
+<context>
+    <name>PGPKeyDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Dialoog</translation>
+    </message>
+    <message>
+        <source>PGP Key info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fingerprint :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Trust level:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unset</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Onbekend</translation>
+    </message>
+    <message>
+        <source>No trust</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation>Gemiddeld</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Volledig</translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation>Uiterst</translation>
+    </message>
+    <message>
+        <source>Key signatures :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign this PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation>Onderteken PGP Sleutel</translation>
+    </message>
+    <message>
+        <source>Deny connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ASCII format</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Inclusief handtekeningen</translation>
+    </message>
+    <message>
+        <source>PGP Key details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation>Error: kan geen verbindings gegevens vinden.</translation>
+    </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation>De ingevoerde sleutel algoritme wordt niet ondersteund door RetroShare⏎
+(Alleen RSA sleutels worden op dit moment ondersteund)</translation>
+    </message>
+    <message>
+        <source>This is your own PGP key, and it is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation>Uw vertrouwen in deze verbinding uitstekend</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation>Uw vertrouwen in deze verbinding middelmatig</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation>Uw heeft geen vertrouwen in deze verbinding.</translation>
+    </message>
+    <message>
+        <source>This key has signed your own PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This PGP key (ID=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have chosen to accept connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are currently not allowing connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation>Handtekening fout</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation>Misschien is uw wachtwoord fout</translation>
+    </message>
+    <message>
+        <source>You haven&apos;t set a trust level for this key.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
@@ -10524,10 +9611,6 @@ Laag verkeer: 10% standaard verkeerd en TODO: pauseerd alle bestands overdrachte
 </context>
 <context>
     <name>PeerItem</name>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Schrijf een kort bericht</translation>
-    </message>
     <message>
         <source>Chat</source>
         <translation>Chat</translation>
@@ -10543,14 +9626,6 @@ Laag verkeer: 10% standaard verkeerd en TODO: pauseerd alle bestands overdrachte
     <message>
         <source>Remove Item</source>
         <translation>Item verwijderen</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Verstuur</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -10613,8 +9688,8 @@ Laag verkeer: 10% standaard verkeerd en TODO: pauseerd alle bestands overdrachte
         <translation>Verberg</translation>
     </message>
     <message>
-        <source>Quick Message</source>
-        <translation>Korte boodschap</translation>
+        <source>Send Message</source>
+        <translation>Verstuur bericht</translation>
     </message>
 </context>
 <context>
@@ -10630,6 +9705,25 @@ Laag verkeer: 10% standaard verkeerd en TODO: pauseerd alle bestands overdrachte
     <message>
         <source>Friends</source>
         <translation>Vrienden</translation>
+    </message>
+</context>
+<context>
+    <name>PeopleDialog</name>
+    <message>
+        <source>People</source>
+        <translation>Mensen</translation>
+    </message>
+    <message>
+        <source>External</source>
+        <translation>Externe</translation>
+    </message>
+    <message>
+        <source>Drag your circles or people to each other.</source>
+        <translation>Sleep uw cirkels of mensen naar elkaar</translation>
+    </message>
+    <message>
+        <source>Internal</source>
+        <translation>Interne</translation>
     </message>
 </context>
 <context>
@@ -10904,6 +9998,37 @@ p, li { white-space: pre-wrap; }⏎
     </message>
 </context>
 <context>
+    <name>PluginManager</name>
+    <message>
+        <source>base folder %1 doesn&apos;t exist, default load failed</source>
+        <translation>Standaard map %1 bestaat niet , default laden mislukt</translation>
+    </message>
+    <message>
+        <source>Error: instance &apos;%1&apos;can&apos;t create a widget</source>
+        <translation>Fout: aanleg &apos;%1&apos; maken van een widget lukt niet</translation>
+    </message>
+    <message>
+        <source>Error: no plugin with name &apos;%1&apos; found</source>
+        <translation>Fout: geen plugin met de naam &apos;%1&apos; gevonden</translation>
+    </message>
+    <message>
+        <source>Error(uninstall): no plugin with name &apos;%1&apos; found</source>
+        <translation>Error(Uninstall): geen plugin met de naam &apos;%1&apos; gevonden</translation>
+    </message>
+    <message>
+        <source>Error(installation): plugin file %1 doesn&apos;t exist</source>
+        <translation>Error(Installation): plugin bestand %1 bestaat niet</translation>
+    </message>
+    <message>
+        <source>Error: failed to remove file %1(uninstalling plugin &apos;%2&apos;)</source>
+        <translation>Fout: bestand verplaatsen is mislukt %1(plug-in de-installeren &apos; %2 &apos;)</translation>
+    </message>
+    <message>
+        <source>Error: can&apos;t copy %1 to %2</source>
+        <translation>Fout: %1 op %2 kopiëren lukt niet </translation>
+    </message>
+</context>
+<context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
@@ -10916,6 +10041,10 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Plugins (*.so *.dll)</source>
         <translation>Plugins (*.so *.dll)</translation>
+    </message>
+    <message>
+        <source>Widget for plugin %1 not found on plugins frame</source>
+        <translation>Widget voor plugin %1 niet gevonden</translation>
     </message>
 </context>
 <context>
@@ -10989,7 +10118,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt; Plugins&lt;/h1&gt; &lt;p&gt;Plugins worden geladen vanuit de mappen die zijn opgenomen in de lijst onder.&lt;/p&gt;                       &lt;p&gt;Om veiligheidsredenen, aanvaard plugins laden automatisch tot de belangrijkste Retroshare uitvoerbare bestand of de plugin bibliotheek wijzigingen. In een dergelijk geval moet de gebruiker om te bevestigen hen opnieuw.                                              Nadat het programma is gestart, kunt u een plugin handmatig inschakelen door op de &quot;Enable&quot; knop te klikken en vervolgens herstarten Retroshare.&lt;/p&gt;                                              &lt;p&gt;Als u uw eigen plugins ontwikkelen wilt, neem dan contact op met het team van de ontwikkelaars ze zullen gelukkig zijn om u te helpen!&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -11044,10 +10173,6 @@ malicious behavior of crafted plugins.</source>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <source>Distant chat terminated</source>
-        <translation>Afstandschat beëindigd</translation>
-    </message>
-    <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation>De andere persoon heeft de chat-tunnel verwijderd. Je kan het chatvenster sluiten.</translation>
     </message>
@@ -11059,33 +10184,21 @@ malicious behavior of crafted plugins.</source>
         <source>Kill the tunnel?</source>
         <translation>Verwijder de tunnel?</translation>
     </message>
+    <message>
+        <source>Hash Error. No tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because there is no tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedCreatePostDialog</name>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Titel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
     <message>
         <source>Signed by: </source>
         <translation>Ondertekend door:</translation>
@@ -11108,7 +10221,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>You are submitting a link. The key to a successful submission is interesting content and a descriptive title.</source>
-        <translation type="unfinished"/>
+        <translation>U verzendt een link. De sleutel tot een succesvolle indiening is interessante inhoud en een beschrijvende titel.</translation>
     </message>
     <message>
         <source>Submit</source>
@@ -11116,11 +10229,19 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Submit a new Post</source>
-        <translation type="unfinished"/>
+        <translation>Een nieuw bericht verzenden</translation>
     </message>
     <message>
         <source>Please add a Title</source>
-        <translation type="unfinished"/>
+        <translation>Voeg een titel toe</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Titel</translation>
+    </message>
+    <message>
+        <source>Link</source>
+        <translation>Koppeling</translation>
     </message>
 </context>
 <context>
@@ -11128,6 +10249,34 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Posted Links</source>
         <translation>Geposte Links</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Gepost</translation>
+    </message>
+    <message>
+        <source>Create Topic</source>
+        <translation>Thema aanmaken</translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation>Mijn Onderwerpen</translation>
+    </message>
+    <message>
+        <source>Subscribed Topics</source>
+        <translation>Geabonneerde Onderwerpen</translation>
+    </message>
+    <message>
+        <source>Popular Topics</source>
+        <translation>Populaire Onderwerpen</translation>
+    </message>
+    <message>
+        <source>Other Topics</source>
+        <translation>Andere Onderwerpen</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11150,11 +10299,46 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Edit Topic</source>
-        <translation type="unfinished"/>
+        <translation>Onderwerp bewerken</translation>
     </message>
     <message>
-        <source>Create Topic</source>
-        <translation type="unfinished"/>
+        <source>Update Topic</source>
+        <translation>Bijwerken van onderwerp</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Maak</translation>
+    </message>
+</context>
+<context>
+    <name>PostedGroupItem</name>
+    <message>
+        <source>Subscribe to Posted</source>
+        <translation>Abonneren op onderwerp</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Uitbreiden</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Item verwijderen</translation>
+    </message>
+    <message>
+        <source>Posted Description</source>
+        <translation>Geplaatste beschrijving</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>New Posted</source>
+        <translation>Nieuw geplaatst</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
     </message>
 </context>
 <context>
@@ -11162,14 +10346,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
-        <translation>Dit is wel een hele hele hele laaaaaaaaaaaaaaaaaaaaaaaaaaaaange titel denk je niet?  Jawel je kan hem beter inkorten.</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Van</translation>
     </message>
     <message>
         <source>Site</source>
@@ -11185,23 +10361,43 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Vote up</source>
-        <translation type="unfinished"/>
+        <translation>Stemmen van</translation>
     </message>
     <message>
         <source>Vote down</source>
-        <translation type="unfinished"/>
+        <translation>Wegstemmen</translation>
     </message>
     <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
     <message>
-        <source>Submitted</source>
-        <translation type="unfinished"/>
+        <source>Set as read and remove item</source>
+        <translation>Markeer als gelezen en verplaats item</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Nieuw</translation>
+    </message>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation>Verander boodschap gelezen status</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Item verwijderen</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation>Door</translation>
     </message>
 </context>
 <context>
-    <name>PostedListDialog</name>
+    <name>PostedListWidget</name>
     <message>
         <source>Form</source>
         <translation>Formulier</translation>
@@ -11239,44 +10435,12 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Dit Jaar</translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
-        <translation>Toon 1-100</translation>
-    </message>
-    <message>
-        <source>Prev</source>
-        <translation>Vorig</translation>
+        <source>Submit a new Post</source>
+        <translation>Een nieuw bericht verzenden</translation>
     </message>
     <message>
         <source>Next</source>
         <translation>Volgend</translation>
-    </message>
-    <message>
-        <source>My Topics</source>
-        <translation>Mijn Onderwerpen</translation>
-    </message>
-    <message>
-        <source>Subscribed Topics</source>
-        <translation>Geabonneerde Onderwerpen</translation>
-    </message>
-    <message>
-        <source>Popular Topics</source>
-        <translation>Populaire Onderwerpen</translation>
-    </message>
-    <message>
-        <source>Other Topics</source>
-        <translation>Andere Onderwerpen</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Registreren</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Uitschrijven</translation>
-    </message>
-    <message>
-        <source>Showing</source>
-        <translation>Tonen</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11287,16 +10451,34 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Maak of kies een teken-identiteit voor het stemmen</translation>
     </message>
     <message>
-        <source>Create New Topic</source>
-        <translation>Maak een nieuw onderwerp</translation>
+        <source>Previous</source>
+        <translation>Vorige</translation>
     </message>
     <message>
-        <source>Submit a new Post</source>
+        <source>1-10</source>
         <translation type="unfinished"/>
     </message>
+</context>
+<context>
+    <name>PostedPage</name>
     <message>
-        <source>Todo</source>
-        <translation>Nog te doen</translation>
+        <source>Tabs</source>
+        <translation>Tabblad</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Gepost</translation>
+    </message>
+    <message>
+        <source>Open each topic in a new tab</source>
+        <translation>Elk onderwerp openen in een nieuw tabblad</translation>
+    </message>
+</context>
+<context>
+    <name>PostedUserNotify</name>
+    <message>
+        <source>Posted</source>
+        <translation>Gepost</translation>
     </message>
 </context>
 <context>
@@ -11337,10 +10519,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Profiel Beheerder</translation>
     </message>
     <message>
-        <source>Identities</source>
-        <translation>Identiteiten</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
@@ -11351,10 +10529,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>GID</source>
         <translation>GID</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Exporteer de geselecteerde identiteit</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -11409,10 +10583,6 @@ en daar de importeer functie gebruiken</translation>
         <translation>Uw identiteit is succesvol geimporteerd:</translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>U kunt dit nu gebruiken om een nieuwe locatie te maken.</translation>
-    </message>
-    <message>
         <source>Select Trusted Friend</source>
         <translation>Kies vertrouwde vriend</translation>
     </message>
@@ -11424,21 +10594,25 @@ en daar de importeer functie gebruiken</translation>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Selecteer een identiteit in de lijst hieronder om te gebruiken op een andere computer en druk op &amp;quot;Exporteer geselecteerde identiteit&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Om het te gebruiken op een andere computer, open de identiteitsmanager in het login scherm. Hier kan je het identiteitsbestand importeren en een nieuwe locatie maken voor deze identiteit. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Als je dezelfde identiteit gebruikt voor je neiuwe locatie zullen je vrienden je automatisch accepteren.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select a Retroshare node key from the list below to be used on another computer, and press &amp;quot;Export selected key.&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To create a new location on a different computer,  select the identity manager in the login window. From there you can import the key file and create a new location for that key. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Creating a new node with the same key allows your  your friend nodes to accept you automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;! DOCTYPE HTML OPENBARE &quot;-//W3C//DTD HTML 4.0 / / NL&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot; &gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt; &lt;style type=&quot;text/css&quot;&gt; p, li {witruimte: vooraf laten teruglopen;}&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot;font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; een Retroshare knooppunt sleutel uit de onderstaande lijst om te worden gebruikt op een andere computer, selecteer en druk op &quot;Export geselecteerd sleutel.&quot;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt; br / &gt;&lt;/p&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; Als u wilt maken een nieuwe locatie op een andere computer, selecteer de Identiteitenbeheer in het inlogvenster. Vanaf daar kunt u het sleutelbestand importeren en maak een nieuwe locatie voor die sleutel. &lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; &lt; br / &gt;&lt;/p&gt; &lt;p style=&quot;margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;-qt-block-indent:0; text-indent:0px;&quot;&gt; het maken van een nieuw knooppunt met dezelfde sleutel kan uw uw vriend knooppunten aan je automatisch accepteren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Full keys available in your keyring:</source>
+        <translation>Alle sleutels beschikbaar in je verzameling:</translation>
+    </message>
+    <message>
+        <source>Export selected key</source>
+        <translation>Geselecteerde sleutel exporteren</translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11617,14 +10791,6 @@ en open de &quot;Maak een vriend wizzard&quot;⏎
         <translation>Bestanden toevoegen</translation>
     </message>
     <message>
-        <source>Add friend</source>
-        <translation>Voeg een vriend toe</translation>
-    </message>
-    <message>
-        <source>Add friends</source>
-        <translation>Voeg vrienden toe</translation>
-    </message>
-    <message>
         <source>Do you want to process the link ?</source>
         <translation>Wil je verder gaan met deze link?</translation>
     </message>
@@ -11788,14 +10954,6 @@ Karakters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; worden vervangen
         <translation>Het volgende is niet toegevoegd aan je download lijst omdat je deze al bezit.⏎</translation>
     </message>
     <message>
-        <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Het schijnt dat u locaties heeft gerelateerd aan DSA sleutel:</translation>
-    </message>
-    <message>
-        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>DSA sleutels zijn nog niet ondersteund door deze versie van RetroShare. Sorry maar al deze locaties zijn onbruikbaar.</translation>
-    </message>
-    <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>Deze versie van RetroShare maakt gebruik van OpenPGP-SDK. Als bijeffect gebruikt het niet de gedeelde PGP sleutelring maar heeft zijn eigen sleutelring die gebruikt wordt door alle RetroShare gevallen.&lt;br&gt;&lt;br&gt;</translation>
     </message>
@@ -11852,60 +11010,12 @@ Lock file:⏎
         <translation>Starten met een RetroShare link wordt alleen door Windows ondersteunt.</translation>
     </message>
     <message>
-        <source>Select who can contact you:</source>
-        <translation>Geef aan wie contact met je mag opnemen:</translation>
-    </message>
-    <message>
-        <source>Chat link is expired</source>
-        <translation>Chatlink is verlopen</translation>
-    </message>
-    <message>
-        <source>This chat link is expired. The destination peer will not answer.</source>
-        <translation>Deze chatlink is verlopen. De ontvangende partij zal niet antwoorden.</translation>
-    </message>
-    <message>
-        <source>Chat link cannot be decrypted</source>
-        <translation>Chatlink kan niet worden ontsleuteld</translation>
-    </message>
-    <message>
-        <source>The link could not be decrypted.</source>
-        <translation>De link kon niet worden ontsleuteld.</translation>
-    </message>
-    <message>
-        <source>The link signature cannot be checked.</source>
-        <translation>De link handtekening kon niet worden gecontroleerd.</translation>
-    </message>
-    <message>
-        <source>The link is signed by an unknown key.</source>
-        <translation>De link is getekend door een onbekende sleutel.</translation>
-    </message>
-    <message>
-        <source>Hash error</source>
-        <translation>Hash-fout</translation>
-    </message>
-    <message>
         <source>Distant peer has closed the chat</source>
         <translation>Andere persoon heeft de chat gesloten</translation>
     </message>
     <message>
         <source>Tunnel is pending...</source>
         <translation>Tunnel wordt opgezet...</translation>
-    </message>
-    <message>
-        <source>Messaging link is expired</source>
-        <translation>Chatlink is verlopen</translation>
-    </message>
-    <message>
-        <source>This Messaging link is expired. The destination peer will not receive it.</source>
-        <translation>Deze chatlink is verlopen. De ontvangende partij zal deze niet ontvangen.</translation>
-    </message>
-    <message>
-        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
-        <translation>De chatlink is niet versleuteld voor jouw sleutel. Je kan hem niet gebruiken. Sleutel ID =</translation>
-    </message>
-    <message>
-        <source>Chat connection is not possible</source>
-        <translation>Chatverbinding is niet mogelijk</translation>
     </message>
     <message>
         <source>Secured tunnel established. Waiting for ACK...</source>
@@ -11924,17 +11034,116 @@ Reported error is:
 De error is: %2</translation>
     </message>
     <message>
-        <source>Signature check failed!
-Make sure you know who you&apos;re talking to.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Chat connection is unauthenticated</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Id: </source>
+        <translation>Id: </translation>
+    </message>
+    <message>
+        <source>Click to send a private message to %1 (%2).</source>
+        <translation>Klik om een prive-bericht te verzenden  naar %1 (%2).</translation>
+    </message>
+    <message>
+        <source>%1 (%2, Extra - Source included)</source>
+        <translation>%1 (%2, extra - bron inbegrepen)</translation>
+    </message>
+    <message>
+        <source>This cert is malformed. Error code: </source>
+        <translation>Deze cert heeft een ongeldige indeling. Foutcode: </translation>
+    </message>
+    <message>
+        <source>Click this link to send a private message to %1 (%2)</source>
+        <translation>Klik op deze koppeling als u een prive-bericht wilt sturen naar %1 (%2)</translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (%1, @%2)</source>
+        <translation>RetroShare certificaat (%1, @%2)</translation>
+    </message>
+    <message>
+        <source>secs</source>
+        <translation>secs</translation>
+    </message>
+    <message>
+        <source>TR up</source>
+        <translation>TR omhoog</translation>
+    </message>
+    <message>
+        <source>TR dn</source>
+        <translation>TR omlaag</translation>
+    </message>
+    <message>
+        <source>Data up</source>
+        <translation>Gegevens omhoog</translation>
+    </message>
+    <message>
+        <source>Data dn</source>
+        <translation>Gegevens omlaag</translation>
+    </message>
+    <message>
+        <source>Data forward</source>
+        <translation>Gegevens doorsturen</translation>
+    </message>
+    <message>
+        <source>You appear to have nodes associated to DSA keys:</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto Subscribe: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Join chat lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move IP %1 to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 seconds ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minute ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minutes ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hour ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hours ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 day ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation>%1 dag geleden</translation>
     </message>
 </context>
 <context>
@@ -12155,6 +11364,44 @@ p, li { white-space: pre-wrap; }⏎
         <source>Warning!</source>
         <translation>Waarschuwing!</translation>
     </message>
+    <message>
+        <source>Browsable</source>
+        <translation>Bladerbaar</translation>
+    </message>
+    <message>
+        <source>Universal</source>
+        <translation>Universeel</translation>
+    </message>
+    <message>
+        <source>If checked, the share is anonymously shared to anybody.</source>
+        <translation>Als dit is ingeschakeld, worden je bestanden anoniem gedeeld met iedereen.</translation>
+    </message>
+    <message>
+        <source>If checked, the share is browsable by your friends.</source>
+        <translation>Als dit is ingeschakeld, kunnen je vrienden door je bestanden bladeren.</translation>
+    </message>
+    <message>
+        <source>Please decide whether this directory is
+* Network Wide: 	anonymously shared over the network (including your friends)
+* Browsable: 	browsable by your friends
+* Universal: 		both</source>
+        <translation>Gelieve te beslissen of deze map is * breed netwerk: anoniem gedeelde via het netwerk (met inbegrip van uw vrienden) * Browsable: browsbare door uw vrienden * universele: beide</translation>
+    </message>
+</context>
+<context>
+    <name>RSGraphWidget</name>
+    <message>
+        <source>%1 KB</source>
+        <translation>%1 KB</translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation>%1 MB</translation>
+    </message>
+    <message>
+        <source>%1 GB</source>
+        <translation>%1 GB</translation>
+    </message>
 </context>
 <context>
     <name>RSImageBlockWidget</name>
@@ -12164,10 +11411,53 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>The loading of embedded images is blocked.</source>
-        <translation type="unfinished"/>
+        <translation>Het laden van ingesloten afbeeldingen is geblokkeerd.</translation>
     </message>
     <message>
         <source>Load images</source>
+        <translation>Afbeeldingen laden</translation>
+    </message>
+</context>
+<context>
+    <name>RSPermissionMatrixWidget</name>
+    <message>
+        <source>Service name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Allowed by default</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Denied by default</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Id: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled for this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disabled for this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled by remote peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disabled by remote peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Switched Off</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12261,7 +11551,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt; Relais&lt;/h1&gt; &lt;p&gt;door het activeren van Relais, u toestaan uw Retroshare knooppunt om op te treden als een brug tussen Retroshare gebruikers die geen verbinding kan direct, bijvoorbeeld maken omdat ze bent firewalled.&lt;/p&gt;                        				  &lt;p&gt;Kan u ervoor kiezen om te fungeren als een relais door te controleren &lt;i&gt;inschakelen relay-verbindingen&lt;/i&gt;, of gewoon profiteren van andere peers fungeert als relay, door het controleren van &lt;i&gt;relay servers gebruiken&lt;/i&gt;. Voor de voormalige, u kunt de bandbreedte toegewezen als fungeert als een relais voor vrienden van u, voor vrienden van je vrienden, of iemand in het netwerk Retroshare.&lt;/p&gt;                                      				  &lt;p&gt;In ieder geval een Retroshare knooppunt fungeert als een relais niet zien het indirecte verkeer, aangezien het is gecodeerd en geverifieerd door de twee indirecte knooppunten.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -12274,12 +11564,66 @@ p, li { white-space: pre-wrap; }⏎
         <source>Recommend in a message to</source>
         <translation>Aanbevolen in een bericht aan</translation>
     </message>
+    <message>
+        <source>Collection</source>
+        <translation>Collectie</translation>
+    </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
     <message>
         <source>NEW</source>
         <translation>NIEUW</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListDefs</name>
+    <message>
+        <source>IP address not checked</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is blacklisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is not whitelisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address accepted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Onbekend</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListToolButton</name>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Entire range</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12295,18 +11639,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Total size :</source>
         <translation>Totale grootte:</translation>
-    </message>
-    <message>
-        <source>Selected files:</source>
-        <translation>Geselecteerde bestanden:</translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation>Selecteer alles</translation>
-    </message>
-    <message>
-        <source>Deselect all</source>
-        <translation>Deselecteer alles</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12340,6 +11672,114 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 Karakters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; worden vervangen door &apos;_&apos;.⏎
 Betrokken bestanden zijn rood gekleurd</translation>
     </message>
+    <message>
+        <source>Selected files :</source>
+        <translation>Geselecteerde bestanden:</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt; &lt;body&gt;&lt;p&gt;Geselecteerde item toevoegen aan de collectie één voor één.&lt;/p&gt;&lt;p&gt;Selecteer bovenliggende dir toevoegen dit ook.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-style:italic; vertical-align:sub;&quot;&gt; &amp;lt; invoeren &amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection.&lt;/p&gt;&lt;p&gt;If a directory is selected, all of his children will be added.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt; &lt;body&gt;&lt;p&gt;Geselecteerde item toevoegen aan de collectie.&lt;/p&gt;&lt;p&gt;Als een map is geselecteerd, worden alle van zijn kinderen toegevoegd.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;text-decoration: underline; vertical-align:sub;&quot;&gt; &amp;lt; shift + Enter &amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt; &lt;body&gt;&lt;p&gt;Maak een nieuwe map in de collectie.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-style:italic; vertical-align:sub;&quot;&gt; &amp;lt;&amp;gt; +&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>+</source>
+        <translation>+</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Opslaan</translation>
+    </message>
+    <message>
+        <source>Collection Editor</source>
+        <translation>Collection Editor</translation>
+    </message>
+    <message>
+        <source>File Count</source>
+        <translation>Bestandstotaal</translation>
+    </message>
+    <message>
+        <source>This is the root directory.</source>
+        <translation>Dit is de root directory.</translation>
+    </message>
+    <message>
+        <source>Real Size: Waiting child...</source>
+        <translation>Werkelijke grootte: Wachten ...</translation>
+    </message>
+    <message>
+        <source>Real File Count: Waiting child...</source>
+        <translation>Echte Bestandstotaal: Wachten ...</translation>
+    </message>
+    <message>
+        <source>This is a directory. Double-click to expand it.</source>
+        <translation>Dit is een directory. Dubbelklik om te openen</translation>
+    </message>
+    <message>
+        <source>Real Size=%1</source>
+        <translation>Echte grootte = %1</translation>
+    </message>
+    <message>
+        <source>Real File Count=%1</source>
+        <translation>Echte Bestandstotaal = %1</translation>
+    </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation>Collectie opslaan.</translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation>Wat wilt u doen?</translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation>Overschrijven</translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation>Samenvoegen</translation>
+    </message>
+    <message>
+        <source>Warning, selection contains more than %1 items.</source>
+        <translation>Waarschuwing, selectie bevat meer dan %1 items.</translation>
+    </message>
+    <message>
+        <source>Do you want to remove them and all their children, too? &lt;br&gt;</source>
+        <translation>Wilt u dit en alle koppelingen verwijderen? &lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>New Directory</source>
+        <translation>Nieuwe map</translation>
+    </message>
+    <message>
+        <source>Enter the new directory&apos;s name</source>
+        <translation>Voer de naam van de nieuwe map in</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file where collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt; &lt;body&gt;&lt;p&gt;Wijzigen van het bestand waar collectie zal worden opgeslagen.&lt;/p&gt;&lt;p&gt;Als u een bestaand bestand, selecteert u it. kon samenvoegen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation>Bestand bestaat al.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt; &lt;body&gt;&lt;p&gt;Geselecteerd item verwijderen uit collectie.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-style:italic; vertical-align:sub;&quot;&gt; &amp;lt; Del &amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
@@ -12367,7 +11807,33 @@ Betrokken bestanden zijn rood gekleurd</translation>
         <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
 
 If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
-        <translation type="unfinished"/>
+        <translation>Dit bestand bevat de tekenreeks &apos;%1&apos; en is daarom een ongeldige collection-bestand. 
+
+Als u denkt dat het is juist dat, de bijbehorende regel uit het bestand verwijderd en opnieuw te openen met Retroshare.</translation>
+    </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation>Collectie opslaan.</translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation>Wat wilt u doen?</translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation>Overschrijven</translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation>Samenvoegen</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuleren</translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation>Bestand bestaat al.</translation>
     </message>
 </context>
 <context>
@@ -12377,6 +11843,13 @@ If you believe it is correct, remove the corresponding line from the file and re
 Reducing image to %1x%2 pixels?</source>
         <translation>Het plaatje is te groot om overgezonden te worden.⏎
 Maak het plaatje kleiner tot %1x%2 pixels</translation>
+    </message>
+</context>
+<context>
+    <name>RsNetUtil</name>
+    <message>
+        <source>Invalid format</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12432,6 +11905,21 @@ Maak het plaatje kleiner tot %1x%2 pixels</translation>
     <message>
         <source>built-in</source>
         <translation>ingebouwd</translation>
+    </message>
+    <message>
+        <source>Could not create data directory: %1</source>
+        <translation>Kan geen gegevensmap maken: %1</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RttStatistics</name>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>RTT Statistieken</translation>
     </message>
 </context>
 <context>
@@ -12657,6 +12145,85 @@ Maak het plaatje kleiner tot %1x%2 pixels</translation>
         <source>Open Folder</source>
         <translation>Open map</translation>
     </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Collectie maken...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Wijzig collectie...</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Bekijk collectie...</translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Download van collectief bestand...</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Collectie</translation>
+    </message>
+</context>
+<context>
+    <name>SecurityIpItem</name>
+    <message>
+        <source>Peer details</source>
+        <translation>Verbindings details</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Uitbreiden</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Item verwijderen</translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation>Verbindings ID:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Woonplaats:</translation>
+    </message>
+    <message>
+        <source>Peer Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation>Onbekenden verbinding</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
+    </message>
+    <message>
+        <source>but reported:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong external ip address reported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address %1 was added to the whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the external IP your Retroshare node thinks it is using.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -12675,10 +12242,6 @@ Maak het plaatje kleiner tot %1x%2 pixels</translation>
     <message>
         <source>Deny friend</source>
         <translation>Weiger vriend</translation>
-    </message>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Schrijf een kort bericht</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -12762,18 +12325,22 @@ Maak het plaatje kleiner tot %1x%2 pixels</translation>
     </message>
     <message>
         <source>Certificate has wrong signature!! This peer is not who he claims to be.</source>
-        <translation type="unfinished"/>
+        <translation>Certificaat heeft verkeerde handtekening! Deze verbinding is niet wie hij beweert te zijn.</translation>
     </message>
     <message>
         <source>Missing/Damaged SSL certificate for key </source>
-        <translation type="unfinished"/>
+        <translation>Ontbrekende/Damaged SSL-certificaat voor sleutel </translation>
     </message>
     <message>
         <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
-        <translation type="unfinished"/>
+        <translation>Ontbrekende/Beschadigd certificaat. Niet een echte Retroshare gebruiker.</translation>
     </message>
     <message>
         <source>Certificate caused an internal error.</source>
+        <translation>Certificaat heeft een interne fout veroorzaakt.</translation>
+    </message>
+    <message>
+        <source>Peer/node not in friendlist (PGP id=</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12794,25 +12361,6 @@ Maak het plaatje kleiner tot %1x%2 pixels</translation>
     <message>
         <source>Manually Forwarded Port</source>
         <translation>Handmatig doorgestuurde poort</translation>
-    </message>
-    <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and PGP 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>De DHT stelt je in staat verbindings aanvragen te doen via BitTorrent&apos;s DHT.⏎
-Het is een geweldige verbetering voor je verbinding.⏎
-⏎
-The Discovery service sends locations and PGP ⏎
-identities of your trusted contacts to connected ⏎
-peers, to help them choose new friends. ⏎
-The friendship is never automatic however, and both ⏎
-peers still need to trust each other to allow connection.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
@@ -12845,10 +12393,6 @@ peers still need to trust each other to allow connection.</translation>
     <message>
         <source>Port:</source>
         <translation>Poort:</translation>
-    </message>
-    <message>
-        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation>Acceptabele poorten van 1024 tot 65535. Poorten onder 1024 zijn gereserveerd voor het systeem.</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -12885,71 +12429,282 @@ je ook als ja achter een Firewall of VPN zit.</translation>
         <translation>Sta RetroShare toe om mijn ip-adres te vragen aan de volgende websites:</translation>
     </message>
     <message>
-        <source>Bandwidth</source>
-        <translation>Bandbreedte</translation>
-    </message>
-    <message>
-        <source>Max Transfer Rates</source>
-        <translation>Max Overdracht verhoudingen</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>kB/s</translation>
     </message>
     <message>
-        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Als je dit vinkje weghaalt zal RetroShare geen tunnel verbinding maken die door de Firewall beveiligd zijn en geen directe verbinding maken. Dit is onafhankelijk van F2F routing (turtle router).</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
+        <translation>Aanvaardbare poorten variëren van 10 tot 65535. Normaal zijn poorten onder 1024 gereserveerd door uw systeem.</translation>
     </message>
     <message>
-        <source>Allow Tunnel Connection</source>
-        <translation>Sta Tunnel verbinding toe</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</source>
+        <translation>Aanvaardbare poorten variëren van 10 tot 65535. Normaal zijn poorten onder 1024 gereserveerd door uw systeem.</translation>
     </message>
     <message>
-        <source>Turtle router</source>
-        <translation>Turtle router</translation>
+        <source>TOR Configuration</source>
+        <translation>TOR configuratie</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking dit schakelt alle anonieme routing activiteit uit, behalve cache schoonmaken. Binnenkomende tunnel aanvragen worden gestopt, en er worden geen tunnel verzoeken meer verzonden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Outgoing TOR Connections</source>
+        <translation>Uitgaande TOR verbindingen</translation>
     </message>
     <message>
-        <source>Enabled</source>
-        <translation>Ingeschakeld</translation>
+        <source>TOR Socks Proxy</source>
+        <translation>TOR Socks Proxy</translation>
     </message>
     <message>
-        <source>Show routing info</source>
-        <translation>Toon routing informatie</translation>
-    </message>
-    <message>
-        <source>Max. tunnel req. forwarded per second:</source>
-        <translation>Max. tunnel aanvraag. doorgestuurd per seconde:</translation>
-    </message>
-    <message>
-        <source>This value controls how many tunnel request your peer can forward per second. 
+        <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
 
-If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statistically longer tunnels to pass. Be very careful though, since this generates 
-many small packets that can significantly slow down your own file transfer. 
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup TOR? </source>
+        <translation>TOR Socks Proxy standaard: 127.0.01:9050.  Ingesteld in torrc config en hier bijgewerkt.
 
-The default value is 20.</source>
-        <translation>Deze waarde bepaalt hoeveel tunnel aanvragen jouw verbinding kan doorsturen per seconde.⏎
-⏎
-Als je een goede internetverbinding hebt kun je dit verhogen tot 30-40,
-om langere tunnels toe te staan. Wees voorzichtig want dit genereert veel kleine pakketjes die je eigen downloadsnelheid naar beneden kunnen halen.⏎
-⏎
-De standaard waarde is 20.</translation>
+U kunt verbinding maken met verborgen knooppunten, zelfs als u werkt met een standaard knooppunt, dus waarom niet setup TOR? </translation>
     </message>
     <message>
-        <source>Server</source>
-        <translation>Server</translation>
+        <source>Incoming TOR Connections</source>
+        <translation>Binnenkomende verbindingen van TOR</translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>Download (KB/s) </translation>
+        <source>Onion Address</source>
+        <translation>UI adres</translation>
     </message>
     <message>
-        <source>Upload (KB/s) </source>
-        <translation>Upload (KB/s)</translation>
+        <source>Expected torrc Port Configuration:</source>
+        <translation>Verwachte torrc poortconfiguratie:</translation>
+    </message>
+    <message>
+        <source>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
+HiddenServicePort 9191 127.0.0.1:9191</source>
+        <translation>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt; HiddenServicePort 9191 127.0.0.1:9191</translation>
+    </message>
+    <message>
+        <source>To Receive Connections, you must first setup a TOR Hidden Service. 
+See TOR documentation for HOWTO details.
+
+Once this is done, paste the Onion Address in the box above.
+This is your external address on the TOR network.
+Finally make sure that the Ports match the TOR configuration.
+
+If you have issues connecting over TOR check the TOR logs too.</source>
+        <translation>Ontvangen verbindingen, moet u eerst een TOR verborgen dienst instellen. 
+Zie TOR documentatie voor HOWTO details.
+
+Zodra dit is gedaan, plak het UI-adres in het vak hierboven.
+Dit is uw externe adres in het TOR netwerk.
+Tot slot ervoor te zorgen dat de havens overeenkomen met de TOR configuratie.
+
+Als u problemen ondervindt met elkaar verbinden via TOR selectievakje registreert de TOR ook.</translation>
+    </message>
+    <message>
+        <source>Discovery On (recommended)</source>
+        <translation>Discovery ingeschakeld (aanbevolen)</translation>
+    </message>
+    <message>
+        <source>Discovery Off</source>
+        <translation>Ontdekking uit</translation>
+    </message>
+    <message>
+        <source>Hidden - See TOR Config</source>
+        <translation>Verborgen - Zie TOR Config</translation>
+    </message>
+    <message>
+        <source>Proxy seems to work.</source>
+        <translation>Proxy lijkt te werken.</translation>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled</source>
+        <translation>TOR proxy is niet ingeschakeld</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Hidden mode]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Leeg</translation>
+    </message>
+    <message>
+        <source>Download limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Upload limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR outgoing Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>Test</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR incoming  ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are reachable through TOR.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled or broken.
+Are you running a TOR hidden service?
+Check your ports!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Netwerk</translation>
+    </message>
+    <message>
+        <source>IP Filters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Opmerking</translation>
+    </message>
+    <message>
+        <source>  IPs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Manual input</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP Range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reported by DHT for IP masquerading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Range made from %1 collected addresses</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Verwijderen</translation>
+    </message>
+    <message>
+        <source>Added by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>activate IP filtering</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every  IP reported by your friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends&apos; IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every masquerading IP reported by your DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12959,23 +12714,42 @@ De standaard waarde is 20.</translation>
         <translation>Service toestemming</translation>
     </message>
     <message>
-        <source>Anonymous routing</source>
-        <translation>Anonieme routing</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Ontdekking</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Forums/Kanalen</translation>
-    </message>
-    <message>
         <source>Service Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Servicemachtigingen</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
+        <translation>Gebruiken als directe bron, indien beschikbaar</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>ServicePermissionsPage</name>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>ServicePermissions</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Reset</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>Toestemmingen</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>hide offline</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -13028,10 +12802,6 @@ De standaard waarde is 20.</translation>
 <context>
     <name>ShareKey</name>
     <message>
-        <source>Share Channel</source>
-        <translation>Kanaal delen</translation>
-    </message>
-    <message>
         <source>check peers you would like to share private publish key with</source>
         <translation>Controleer welke verbinding je wilt delen met een openbare Privé Sleutel</translation>
     </message>
@@ -13040,16 +12810,14 @@ De standaard waarde is 20.</translation>
         <translation>Delen voor vriend</translation>
     </message>
     <message>
-        <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation>Selecteer de vrienden met wie je een kanaal wilt delen.</translation>
+        <source>Share</source>
+        <translation>Deel</translation>
     </message>
     <message>
-        <source>Contacts:</source>
-        <translation>Contacts:</translation>
-    </message>
-    <message>
-        <source>Please select at least one peer</source>
-        <translation>Kies minstens één verbinding</translation>
+        <source>You can let your friends know about your Channel by sharing it with them. 
+Select the Friends with which you want to Share your Channel.</source>
+        <translation>U kunt uw vrienden laten weten over uw kanaal door met hen te delen. 
+Selecteer de vrienden waarmee u uw kanaal wilt delen.</translation>
     </message>
 </context>
 <context>
@@ -13136,7 +12904,7 @@ De standaard waarde is 20.</translation>
     </message>
     <message>
         <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
-        <translation type="unfinished"/>
+        <translation>Dit is een lijst van gedeelde mappen. U kunt toevoegen en verwijderen van mappen met behulp van de knoppen aan de onderkant. Wanneer u een nieuwe map, aanvankelijk alle bestanden in die map worden gedeeld. U kunt delen vlaggen voor elke gedeelde map afzonderlijk instellen.</translation>
     </message>
 </context>
 <context>
@@ -13221,6 +12989,61 @@ De standaard waarde is 20.</translation>
         <source>Recommendation(s)</source>
         <translation>Aanbeveling(en)</translation>
     </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Voeg delen toe</translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Collectie maken...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Wijzig collectie..</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Bekijk collectie..</translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Download van collectief bestand...</translation>
+    </message>
+</context>
+<context>
+    <name>SoundManager</name>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Go Online</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatmessage</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Msg</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message arrived</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download complete</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundPage</name>
@@ -13245,38 +13068,6 @@ De standaard waarde is 20.</translation>
         <translation>Bestandsnaam</translation>
     </message>
     <message>
-        <source>Friend</source>
-        <translation>Vriend</translation>
-    </message>
-    <message>
-        <source>go Online</source>
-        <translation>ga Online</translation>
-    </message>
-    <message>
-        <source>Chatmessage</source>
-        <translation>Chat bericht</translation>
-    </message>
-    <message>
-        <source>New Msg</source>
-        <translation>Nieuw ber.</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Bericht</translation>
-    </message>
-    <message>
-        <source>Message arrived</source>
-        <translation>Bericht gearriveerd</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Download</translation>
-    </message>
-    <message>
-        <source>Download complete</source>
-        <translation>Download klaar</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Open bestand</translation>
     </message>
@@ -13284,16 +13075,20 @@ De standaard waarde is 20.</translation>
         <source>Sound</source>
         <translation>Geluid</translation>
     </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
-        <source>Sound on</source>
-        <translation>Geluid aan</translation>
+        <source>Sound is off, click to turn it on</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sound off</source>
-        <translation>Geluid uit</translation>
+        <source>Sound is on, click to turn it off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13342,18 +13137,6 @@ of locaties aan een bestaand profiel toe te voegen.
 De huidige identiteiten/locaties worden behouden.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Beheer profielen en locaties...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation>Load Person Failure</translation>
     </message>
@@ -13366,40 +13149,103 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Waarschuwing</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Het wachtwoord voor uw SSL certificaat (uw lokatie) zal encrypted worden opgeslagen in uw Gnome sleutelring⏎
-⏎
-Uw PGP wachtwoord wordt niet opgeslagen⏎
-⏎
-Deze keus kunt u aanpassen in de instellingen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Het wachtwoord voor uw SSL certificaat (uw lokatie) zal encrypted worden opgeslagen in uw Keychain⏎
-⏎
-Uw PGP wachtwoord wordt niet opgeslagen⏎
-⏎
-Deze keus kunt u aanpassen in de instellingen.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Het wachtwoord voor uw SSL certificaat (uw lokatie) zal encrypted worden opgeslagen in de keys/help.dta bestand. Dit is niet beveiligd.⏎
-⏎
-Uw PGP wachtwoord wordt niet opgeslagen⏎
-⏎
-Deze keus kunt u aanpassen in de instellingen.</translation>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>StatisticsWindow</name>
+    <message>
+        <source>Add Friend</source>
+        <translation>Vriend toevoegen</translation>
+    </message>
+    <message>
+        <source>Add a Friend Wizard</source>
+        <translation>Voeg een vriend toe Wizzard</translation>
+    </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Voeg delen toe</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Opties</translation>
+    </message>
+    <message>
+        <source>Messenger</source>
+        <translation>Messenger</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Over</translation>
+    </message>
+    <message>
+        <source>SMPlayer</source>
+        <translation>SMPlaye</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Stoppen</translation>
+    </message>
+    <message>
+        <source>Quick Start Wizard</source>
+        <translation>Snel start Wizard</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>ServicePermissions</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Service toestemming matrix</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Bandwidth</source>
+        <translation>Bandbreedte</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation>Turtle router</translation>
+    </message>
+    <message>
+        <source>Global Router</source>
+        <translation>Global Router</translation>
+    </message>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>RTT Statistieken</translation>
     </message>
 </context>
 <context>
@@ -13461,10 +13307,6 @@ Deze keus kunt u aanpassen in de instellingen.</translation>
         <translation>Buurman</translation>
     </message>
     <message>
-        <source>Trying tunnel connection</source>
-        <translation>Probeer tunnel verbinding</translation>
-    </message>
-    <message>
         <source>Trying TCP</source>
         <translation>Probeer TCP</translation>
     </message>
@@ -13481,16 +13323,40 @@ Deze keus kunt u aanpassen in de instellingen.</translation>
         <translation>Verbonden: UDP</translation>
     </message>
     <message>
-        <source>Connected: Tunnel</source>
-        <translation>Verbonden: Tunnel</translation>
-    </message>
-    <message>
         <source>Connected: Unknown</source>
         <translation>Verbonden: Onbekend</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
         <translation>DHT: Contact</translation>
+    </message>
+    <message>
+        <source>Connected: TOR</source>
+        <translation>Aangesloten: TOR</translation>
+    </message>
+    <message>
+        <source>inbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>outbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TCP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unkown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13647,6 +13513,21 @@ p, li { white-space: pre-wrap; }⏎
     </message>
 </context>
 <context>
+    <name>SubscribeToolButton</name>
+    <message>
+        <source>Subscribed</source>
+        <translation>Geabonneerd</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Uitschrijven</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Registreren</translation>
+    </message>
+</context>
+<context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
@@ -13688,6 +13569,17 @@ p, li { white-space: pre-wrap; }⏎
     </message>
 </context>
 <context>
+    <name>ToasterDisable</name>
+    <message>
+        <source>All Toasters are disabled</source>
+        <translation>Alle Toasters zijn uitgeschakeld</translation>
+    </message>
+    <message>
+        <source>Toasters are enabled</source>
+        <translation>Toasters zijn ingeschakeld</translation>
+    </message>
+</context>
+<context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
@@ -13708,19 +13600,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Safety disk space limit :</source>
         <translation>Veilige disk ruimte limiet:</translation>
-    </message>
-    <message>
-        <source>You can use this to force RetroShare to download your files rather 
-than cache files for as many slots as requested. Setting that number 
-to be equal to the queue size above will always prioritize your files
-over cache. 
-
-It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Je kan dit gebruiken om RetroShare te forceren om de download sneller binnen te halen⏎
-dan cache bestanden met zoveel sloten als aangevraagd. Door dit getal ⏎
-gelijk te maken als de aanvraag hierboven zal er altijd een prioriteit voor bestanden via de cahche zijn⏎
-⏎
-Het is echter aangeraden om een aantal sloten over te laten voor de cahce bestanden.</translation>
     </message>
     <message>
         <source>Streaming</source>
@@ -13759,8 +13638,28 @@ p, li { white-space: pre-wrap; }⏎
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Transfer</source>
-        <translation>Overbrengen</translation>
+        <source>Max. tunnel req. forwarded per second:</source>
+        <translation>Max. tunnel aanvraag. doorgestuurd per seconde:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value controls how many tunnel request your peer can forward per second. &lt;/p&gt;&lt;p&gt;If you have a large internet bandwidth, you may raise this up to 30-40, to allow statistically longer tunnels to pass. Be very careful though, since this generates  many small packets that can significantly slow down your own file transfer. &lt;/p&gt;&lt;p&gt;The default value is 20. If you&apos;re not sure, keep it that way.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File transfer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;br/&gt;than cache files for as many slots as requested. Setting that number &lt;br/&gt;to be equal to the queue size above will always prioritize your files&lt;br/&gt;over cache. &lt;br/&gt;&lt;br/&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13876,10 +13775,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>My files</source>
         <translation>Mijn bestand</translation>
-    </message>
-    <message>
-        <source>Show cache transfers</source>
-        <translation>Toon cache overdrachten</translation>
     </message>
     <message>
         <source>Download from collection file...</source>
@@ -14019,7 +13914,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Complete</source>
-        <translation>Komplete</translation>
+        <translation>Kompleet</translation>
     </message>
     <message>
         <source>Queued</source>
@@ -14217,10 +14112,46 @@ Even geduld a.u.b.!</translation>
     </message>
     <message>
         <source>Show Path Column</source>
-        <translation type="unfinished"/>
+        <translation>Pad kolom weergeven</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt; file Transfer&lt;/h1&gt; &lt;p&gt;Retroshare heeft twee manieren voor het overzetten van bestanden: rechtstreekse overdracht van uw vrienden en verre anonieme getunnelde bestandsoverdracht. Bovendien, bestandsoverdracht is multi bron en kunt zwermen (u kan ook een bron tijdens het downloaden)&lt;/p&gt; &lt;p&gt;kunt u het delen van bestanden met behulp van de &lt; img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; breedte = 16 / &gt; pictogram aan de linkerkant bar.     Deze bestanden zullen worden weergegeven op het tabblad mijn bestanden. U kunt bepalen voor elke vriendengroep of ze kunnen of niet zie deze bestanden in hun vrienden bestanden tabblad&lt;/p&gt; &lt;p&gt;het tabblad Zoeken rapporten van uw vrienden bestand lijsten, en verre bestanden dat kunnen worden bereikt anoniem met behulp van de multi hop tunneling systeem.&lt;/p&gt;     </translation>
+    </message>
+    <message>
+        <source>Could not delete preview file</source>
+        <translation>Kan geen gegevens verwijderen voorvertoningsbestand</translation>
+    </message>
+    <message>
+        <source>Try it again?</source>
+        <translation>Probeer het opnieuw?</translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Collectie maken..</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Wijzig collectie..</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Bekijk collectie..</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Collectie</translation>
+    </message>
+    <message>
+        <source>File sharing</source>
+        <translation>Bestand delen</translation>
+    </message>
+    <message>
+        <source>Anonymous tunnel 0x</source>
+        <translation>Anonieme tunnel 0x</translation>
+    </message>
+    <message>
+        <source>Show file list transfers</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -14277,69 +14208,6 @@ Even geduld a.u.b.!</translation>
     <message>
         <source>Groups</source>
         <translation>Groepen</translation>
-    </message>
-</context>
-<context>
-    <name>TrustView</name>
-    <message>
-        <source>Zoom :</source>
-        <translation>Inzoomen:</translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation>Update</translation>
-    </message>
-    <message>
-        <source>Showing: whole network</source>
-        <translation>Toon: hele netwerk</translation>
-    </message>
-    <message>
-        <source>This table normally auto-updates every 10 seconds.</source>
-        <translation>Deze tabel wordt automatisch elke 10 seconden geupdated</translation>
-    </message>
-    <message>
-        <source>Self</source>
-        <translation>Zelf</translation>
-    </message>
-    <message>
-        <source>Trust</source>
-        <translation>Vertrouw</translation>
-    </message>
-    <message>
-        <source> is authenticated (one way) by </source>
-        <translation>is toegevoegd (één richting) door</translation>
-    </message>
-    <message>
-        <source>Half</source>
-        <translation>Half</translation>
-    </message>
-    <message>
-        <source> authenticated himself</source>
-        <translation>Heeft zich zelf toegevoegd</translation>
-    </message>
-    <message>
-        <source> authenticated each other</source>
-        <translation>Hebben elkaar toegevoegd</translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation>Volledig</translation>
-    </message>
-    <message>
-        <source> is authenticated by </source>
-        <translation>Is toegevoegd door</translation>
-    </message>
-    <message>
-        <source> peers, including him(her)self.</source>
-        <translation>Vebindingen inclusief jezelf.</translation>
-    </message>
-    <message>
-        <source> authenticated </source>
-        <translation>Toegevoegd</translation>
-    </message>
-    <message>
-        <source>Showing: peers connected to </source>
-        <translation>Toon: verbindingen gemaakt met</translation>
     </message>
 </context>
 <context>
@@ -14405,6 +14273,14 @@ Even geduld a.u.b.!</translation>
     <message>
         <source>Unknown Peer</source>
         <translation>Onbekenden verbinding</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation>Turtle router</translation>
+    </message>
+    <message>
+        <source>Tunnel Requests</source>
+        <translation>Tunnel aanvragen</translation>
     </message>
 </context>
 <context>
@@ -14536,6 +14412,53 @@ Even geduld a.u.b.!</translation>
     <message>
         <source>Browse</source>
         <translation>Bladeren</translation>
+    </message>
+</context>
+<context>
+    <name>WebuiPage</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulier</translation>
+    </message>
+    <message>
+        <source>Enable Retroshare WEB Interface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Web parameters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Port :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>allow access from all IP adresses (Default: localhost only)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>apply setting and start browser</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Note: these settings do not affect retroshare-nogui. retroshare-nogui has a command line switch to active the webinterface.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>failed to start Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14716,8 +14639,12 @@ Even geduld a.u.b.!</translation>
         <translation>Nog te doen</translation>
     </message>
     <message>
-        <source>Edit Group</source>
-        <translation>Bewerk groep</translation>
+        <source>Show Wiki Group</source>
+        <translation>Wiki groep weergeven</translation>
+    </message>
+    <message>
+        <source>Edit Wiki Group</source>
+        <translation>Bewerk Wiki Groep</translation>
     </message>
 </context>
 <context>
@@ -14844,6 +14771,10 @@ Even geduld a.u.b.!</translation>
     <message>
         <source>Create Group</source>
         <translation>Maak een groep</translation>
+    </message>
+    <message>
+        <source>Update Group</source>
+        <translation>Update groep</translation>
     </message>
 </context>
 <context>
@@ -15024,8 +14955,8 @@ Even geduld a.u.b.!</translation>
         <translation>Laad avatar plaatje</translation>
     </message>
     <message>
-        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Plaatjes (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <source>Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

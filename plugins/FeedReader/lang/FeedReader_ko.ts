@@ -7,87 +7,92 @@
         <translation>새 피드 만들기</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="106"/>
+        <location filename="../gui/AddFeedDialog.ui" line="93"/>
         <source>Authentication (not yet supported)</source>
         <translation>인증 (아직 지원하지 않음)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="112"/>
+        <location filename="../gui/AddFeedDialog.ui" line="99"/>
         <source>Feed needs authentication</source>
         <translation>피드를 받는데 인증이 필요합니다</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="119"/>
+        <location filename="../gui/AddFeedDialog.ui" line="106"/>
         <source>User</source>
         <translation>사용자</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="126"/>
+        <location filename="../gui/AddFeedDialog.ui" line="113"/>
         <source>Password</source>
         <translation>암호</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="222"/>
+        <location filename="../gui/AddFeedDialog.ui" line="166"/>
+        <source>Clear cache</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AddFeedDialog.ui" line="216"/>
         <source>Update interval</source>
         <translation>업데이트 주기</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="228"/>
+        <location filename="../gui/AddFeedDialog.ui" line="222"/>
         <source>Use standard update interval</source>
         <translation>표준 업데이트 주기 사용</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="235"/>
+        <location filename="../gui/AddFeedDialog.ui" line="229"/>
         <source>Interval in minutes (0 = manual)</source>
         <translation>분 단위 시간 간격 (0 = 수동설정)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="254"/>
+        <location filename="../gui/AddFeedDialog.ui" line="248"/>
         <source>Last update</source>
         <translation>최종 업데이트</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="267"/>
+        <location filename="../gui/AddFeedDialog.ui" line="261"/>
         <source>Never</source>
         <translation>안함</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="388"/>
+        <location filename="../gui/AddFeedDialog.ui" line="382"/>
         <source>Embed images</source>
         <translation>포함한 그림</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="146"/>
+        <location filename="../gui/AddFeedDialog.ui" line="133"/>
         <source>Storage time</source>
         <translation>저장소 시간</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="152"/>
+        <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Use standard storage time</source>
         <translation>표준 저장소 시간 사용</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="159"/>
+        <location filename="../gui/AddFeedDialog.ui" line="139"/>
         <source>Days (0 = off)</source>
         <translation>일 (0 = 끔)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="182"/>
+        <location filename="../gui/AddFeedDialog.ui" line="176"/>
         <source>Proxy</source>
         <translation>프록시</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="188"/>
+        <location filename="../gui/AddFeedDialog.ui" line="182"/>
         <source>Use standard proxy</source>
         <translation>표준 프록시 사용</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="195"/>
+        <location filename="../gui/AddFeedDialog.ui" line="189"/>
         <source>Server</source>
         <translation>서버</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="205"/>
+        <location filename="../gui/AddFeedDialog.ui" line="199"/>
         <source>:</source>
         <translation>:</translation>
     </message>
@@ -102,109 +107,94 @@
         <translation>포럼</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="96"/>
+        <location filename="../gui/AddFeedDialog.ui" line="83"/>
         <source>Local Feed</source>
         <translation>로컬 피드</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="328"/>
+        <location filename="../gui/AddFeedDialog.ui" line="322"/>
         <source>Transformation</source>
         <translation>변환</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="336"/>
+        <location filename="../gui/AddFeedDialog.ui" line="330"/>
         <source>Transformation type</source>
         <translation>변환 형식</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="349"/>
+        <location filename="../gui/AddFeedDialog.ui" line="343"/>
         <source>Preview &amp;&amp; Transformation</source>
         <translation>미리보기 및 변환</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="361"/>
+        <location filename="../gui/AddFeedDialog.ui" line="355"/>
         <source>Misc</source>
         <translation>기타</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="367"/>
+        <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Activated</source>
         <translation>활성화됨</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="374"/>
+        <location filename="../gui/AddFeedDialog.ui" line="368"/>
         <source>Use name and description from feed</source>
         <translation>피드의 이름과 설명 사용</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="381"/>
+        <location filename="../gui/AddFeedDialog.ui" line="375"/>
         <source>Update forum information</source>
         <translation>포럼 정보 업데이트</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="395"/>
+        <location filename="../gui/AddFeedDialog.ui" line="389"/>
         <source>Save complete web page (experimental for local feeds)</source>
         <translation>전체 웹페이지 저장 (로컬 피드에 대해서는 시험중)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="292"/>
+        <location filename="../gui/AddFeedDialog.ui" line="286"/>
         <source>Description:</source>
         <translation>설명:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="306"/>
+        <location filename="../gui/AddFeedDialog.ui" line="300"/>
         <source>RSS-Feed-URL:</source>
         <translation>RSS-Feed-URL</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="316"/>
+        <location filename="../gui/AddFeedDialog.ui" line="310"/>
         <source>Name:</source>
         <translation>이름:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="63"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="75"/>
         <source>Feed Details</source>
         <translation>피드 세부정보</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="96"/>
-        <source>Create a new anonymous public forum</source>
-        <translation>새 익명 공개 포럼 생성</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="212"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="217"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Edit feed</source>
         <translation>피드 편집</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="237"/>
-        <source>Not yet created</source>
-        <translation>아직 만들지 않음</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="243"/>
-        <source>Unknown forum</source>
-        <translation>알 수 없는 포럼</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
         <translation>피드를 편집할 수 없습니다. 피드가 존재하지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Create feed</source>
         <translation>피드 생성</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Cannot create feed.</source>
         <translation>피드를 만들 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Cannot change feed.</source>
         <translation>피드를 변경할 수 없습니다.</translation>
     </message>
@@ -285,17 +275,17 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="68"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="73"/>
         <source>Feeds</source>
         <translation>피드</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="91"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="96"/>
         <source>Add new feed</source>
         <translation>새 피드 추가</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="108"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="113"/>
         <source>Update feed</source>
         <translation>피드 업데이트</translation>
     </message>
@@ -305,104 +295,104 @@
         <translation>메시지 폴더</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="291"/>
         <source>New</source>
         <translation>새 피드</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="289"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="292"/>
         <source>Feed</source>
         <translation>피드</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="296"/>
         <source>Folder</source>
         <translation>폴더</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="304"/>
         <source>Open in new tab</source>
         <translation>새 탭에서 열기</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="312"/>
         <source>Edit</source>
         <translation>편집</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="317"/>
         <source>Delete</source>
         <translation>삭제</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Update</source>
         <translation>업데이트</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Activate</source>
         <translation>활성화</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Deactivate</source>
         <translation>비활성화</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="527"/>
         <source>No name</source>
         <translation>이름 없음</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="739"/>
         <source>Add new folder</source>
         <translation>새 폴더 추가</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <source>Please enter a name for the folder</source>
         <translation>폴더 이름을 입력하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Create folder</source>
         <translation>폴더 만들기</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Cannot create folder.</source>
         <translation>폴더를 만들 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove folder</source>
         <translation>폴더 제거</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove feed</source>
         <translation>피드 제거</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>%1 폴더를 제거하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>%1 피드를 제거하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="792"/>
         <source>Edit folder</source>
         <translation>폴더 편집</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Please enter a new name for the folder</source>
         <translation>폴더의 새 이름을 입력하십시오</translation>
     </message>
@@ -411,7 +401,7 @@
     <name>FeedReaderFeedItem</name>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="116"/>
         <source>Expand</source>
         <translation>확장</translation>
     </message>
@@ -436,7 +426,7 @@
         <translation>클립보드에 복사</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="110"/>
         <source>Hide</source>
         <translation>숨김</translation>
     </message>
@@ -603,12 +593,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="160"/>
+        <location filename="../FeedReaderPlugin.cpp" line="154"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>이 플러그인은 피드리더를 제공합니다</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="165"/>
+        <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>FeedReader</source>
         <translation>피드리더</translation>
     </message>
@@ -667,7 +657,7 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
         <source>Unknown</source>
         <translation>알 수 없음</translation>
     </message>
@@ -722,62 +712,57 @@
         <translation>포럼의 관리자가 아닙니다</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
-        <source>The forum is no anonymous forum</source>
-        <translation>익명 포럼이 아닙니다</translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="124"/>
         <source>Can&apos;t read html</source>
         <translation>HTML을 읽을 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
         <source>Internal XPath error</source>
         <translation>내부 XPath 오류</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
         <source>Wrong XPath expression</source>
         <translation>잘못된 XPath 표현식</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
         <source>Empty XPath result</source>
         <translation>빈 XPath 결과</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
         <source>XSLT format error</source>
         <translation>XSLT 형식 오류</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
         <source>XSLT transformation error</source>
         <translation>XSLT 변환 오류</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
         <source>Empty XSLT result</source>
         <translation>빈 XSLT 결과</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="146"/>
         <source>Unknown error</source>
         <translation>알 수 없는 오류</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="160"/>
         <source>No transformation</source>
         <translation>변환하지 않음</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="162"/>
         <source>XPath</source>
         <translation>XPath</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="164"/>
         <source>XSLT</source>
         <translation>XSLT</translation>
     </message>

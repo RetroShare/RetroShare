@@ -1,54 +1,5 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.0">
 <context>
-    <name>AudioChatWidgetHolder</name>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="27"/>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="95"/>
-        <source>Mute yourself</source>
-        <translation>关闭麦克风</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="47"/>
-        <source>Start Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="69"/>
-        <source>Hangup Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="97"/>
-        <source>Unmute yourself</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="126"/>
-        <source>Hold Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
-        <source>VoIP Status</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
-        <source>Outgoing Call is started...</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="151"/>
-        <source>Resume Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioChatWidgetHolder.cpp" line="175"/>
-        <source>Answer</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>AudioInput</name>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
@@ -137,80 +88,85 @@
         <translation>空</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="240"/>
+        <location filename="../gui/AudioInputConfig.ui" line="242"/>
         <source>Audio Processing</source>
         <translation>声音处理</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="246"/>
+        <location filename="../gui/AudioInputConfig.ui" line="248"/>
         <source>Noise Suppression</source>
         <translation>噪音抑制</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="259"/>
+        <location filename="../gui/AudioInputConfig.ui" line="261"/>
         <source>Noise suppression</source>
         <translation>噪音抑制</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="262"/>
+        <location filename="../gui/AudioInputConfig.ui" line="264"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;此项设置应用的噪音抑制强度。&lt;/b&gt;&lt;br /&gt;数值越大，静态噪音受到的抑制约大。</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="294"/>
+        <location filename="../gui/AudioInputConfig.ui" line="296"/>
         <source>Amplification</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="304"/>
+        <location filename="../gui/AudioInputConfig.ui" line="306"/>
         <source>Maximum amplification of input sound</source>
         <translation>输入音频的最大放大值</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="307"/>
+        <location filename="../gui/AudioInputConfig.ui" line="309"/>
         <source>&lt;b&gt;Maximum amplification of input.&lt;/b&gt;&lt;br /&gt;RetroShare normalizes the input volume before compressing, and this sets how much it&apos;s allowed to amplify.&lt;br /&gt;The actual level is continually updated based on your current speech pattern, but it will never go above the level specified here.&lt;br /&gt;If the &lt;i&gt;Microphone loudness&lt;/i&gt; level of the audio statistics hover around 100%, you probably want to set this to 2.0 or so, but if, like most people, you are unable to reach 100%, set this to something much higher.&lt;br /&gt;Ideally, set it so &lt;i&gt;Microphone Loudness * Amplification Factor &gt;= 100&lt;/i&gt;, even when you&apos;re speaking really soft.&lt;br /&gt;&lt;br /&gt;Note that there is no harm in setting this to maximum, but RetroShare will start picking up other conversations if you leave it to auto-tune to that level.</source>
         <translation>&lt;b&gt;输入音频最大放大值。&lt;/b&gt;&lt;br /&gt;Mumble 在压缩声音前对音频进行正常化，此项设置允许的最大放大量。&lt;br /&gt;实际的放大级别根据您当前的语音模式持续调整，但总是在这里指定的最大值之内。&lt;br /&gt;如果“音频统计”中 &lt;i&gt;话筒响度&lt;/i&gt; 级别总是在 100% 左右，建议您将此项设置为 2.0 左右。但如果您跟多数人一样无法达到 100%，就将此项调大。&lt;br /&gt;理想情况下将此设置为 &lt;i&gt;麦克风响度 * 放大因数 &gt;= 100&lt;/i&gt;，即使您此时在轻声讲话。&lt;br /&gt;&lt;br /&gt;注意将此项设置为最大并无大碍。但如果对程序的自动调整音量不加限制，RetroShare 会将放大后的对应强度的声音作为语音。</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="339"/>
+        <location filename="../gui/AudioInputConfig.ui" line="341"/>
         <source>Echo Cancellation Processing</source>
         <translation>回声抑制</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioInputConfig.ui" line="354"/>
+        <source>Video Processing</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="115"/>
         <source>Continuous</source>
         <translation>连续</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="101"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="116"/>
         <source>Voice Activity</source>
         <translation>语音检测</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="102"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="117"/>
         <source>Push To Talk</source>
         <translation>按键送话</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="204"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="222"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="212"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="230"/>
         <source>Off</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="215"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="233"/>
         <source>-%1 dB</source>
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="72"/>
+        <location filename="../gui/AudioInputConfig.h" line="75"/>
         <source>VOIP</source>
         <translation>语音</translation>
     </message>
@@ -503,90 +459,291 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="121"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP 插件&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="122"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt; VOIP 插件为 RetroShare 私聊窗口提供 VOIP 功能，请按如下方法使用：&lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="123"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; 通过配置面板，设置麦克风音量等级&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="124"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt; 您可以通过观察音量指示可检查麦克风是否工作正常。&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="125"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; 私聊中，点击这两个口形和耳机状的 VOIP 图标即可启用音频的输入输出。&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <location filename="../VOIPPlugin.cpp" line="126"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>当然，您的好友需要启用此插件才能与您接收和发送语音。</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="101"/>
+        <location filename="../VOIPPlugin.cpp" line="127"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;这是一项实验性功能。您有任何意见建议请发送给 RS 开发小组。</translation>
-    </message>
-    <message>
-        <location filename="../VOIPPlugin.cpp" line="126"/>
-        <source>RTT Statistics</source>
-        <translation>RTT 统计</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="145"/>
-        <location filename="../gui/VoipStatistics.cpp" line="147"/>
-        <location filename="../gui/VoipStatistics.cpp" line="149"/>
-        <source>secs</source>
-        <translation>s</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="151"/>
-        <source>Old</source>
-        <translation>之前</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="152"/>
-        <source>Now</source>
-        <translation>现在</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="361"/>
-        <source>Round Trip Time:</source>
-        <translation>往返时间RTT:</translation>
     </message>
 </context>
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="163"/>
+        <location filename="../VOIPPlugin.cpp" line="176"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>本插件为 RetroShare 好友间提供语音通信支持。</translation>
     </message>
 </context>
 <context>
+    <name>VOIPChatWidgetHolder</name>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="63"/>
+        <source>Mute</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="76"/>
+        <source>Start Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="104"/>
+        <source>Start Video Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="90"/>
+        <source>Hangup Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="169"/>
+        <source>Mute yourself</source>
+        <translation>关闭麦克风</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="171"/>
+        <source>Unmute yourself</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="265"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="283"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="296"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="388"/>
+        <source>VoIP Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
+        <source>Outgoing Call stopped.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="209"/>
+        <source>Hold Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
+        <source>Outgoing Call is started...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="242"/>
+        <source>Resume Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="262"/>
+        <source>Shut camera off</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="266"/>
+        <source>You&apos;re now sending video...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="278"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="299"/>
+        <source>Activate camera</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="284"/>
+        <source>Video call stopped</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="297"/>
+        <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="298"/>
+        <source>Accept Video Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="389"/>
+        <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="390"/>
+        <source>Accept Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="391"/>
+        <source>Activate audio</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="412"/>
+        <source>Answer</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="168"/>
+        <location filename="../VOIPPlugin.cpp" line="181"/>
         <source>VOIP</source>
         <translation>语音</translation>
     </message>
 </context>
 <context>
-    <name>VoipStatistics</name>
+    <name>VOIPToasterItem</name>
     <message>
-        <location filename="../gui/VoipStatistics.ui" line="14"/>
-        <source>VoipTest Statistics</source>
-        <translation>VoipTest 统计</translation>
+        <location filename="../gui/VOIPToasterItem.cpp" line="43"/>
+        <source>Answer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.cpp" line="47"/>
+        <source>Answer with video</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>VOIPToasterNotify</name>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="56"/>
+        <source>VOIP</source>
+        <translation>语音</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="59"/>
+        <source>Accept</source>
+        <translation>接受</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="60"/>
+        <source>Bandwidth Information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="61"/>
+        <source>Audio or Video Data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="62"/>
+        <source>HangUp</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="63"/>
+        <source>Invitation</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="65"/>
+        <source>Audio Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="66"/>
+        <source>Video Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="176"/>
+        <source>Test VOIP Accept</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="177"/>
+        <source>Test VOIP BandwidthInfo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="178"/>
+        <source>Test VOIP Data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="179"/>
+        <source>Test VOIP HangUp</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="180"/>
+        <source>Test VOIP Invitation</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="182"/>
+        <source>Test VOIP Audio Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="183"/>
+        <source>Test VOIP Video Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="204"/>
+        <source>Accept received from this peer.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="228"/>
+        <source>Bandwidth Info received from this peer:%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="252"/>
+        <source>Audio or Video Data received from this peer.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="276"/>
+        <source>HangUp received from this peer.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="300"/>
+        <source>Invitation received from this peer.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="325"/>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="349"/>
+        <source>calling</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

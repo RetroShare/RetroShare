@@ -7,87 +7,92 @@
         <translation>Új hírcsatorna létrehozása</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="106"/>
+        <location filename="../gui/AddFeedDialog.ui" line="93"/>
         <source>Authentication (not yet supported)</source>
         <translation>Hitelesítés (még nem támogatott)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="112"/>
+        <location filename="../gui/AddFeedDialog.ui" line="99"/>
         <source>Feed needs authentication</source>
         <translation>A hírcsatorna hitelesítést igényel</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="119"/>
+        <location filename="../gui/AddFeedDialog.ui" line="106"/>
         <source>User</source>
         <translation>Felhasználó</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="126"/>
+        <location filename="../gui/AddFeedDialog.ui" line="113"/>
         <source>Password</source>
         <translation>Jelszó</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="222"/>
+        <location filename="../gui/AddFeedDialog.ui" line="166"/>
+        <source>Clear cache</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AddFeedDialog.ui" line="216"/>
         <source>Update interval</source>
         <translation>Frissítés gyakorisága</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="228"/>
+        <location filename="../gui/AddFeedDialog.ui" line="222"/>
         <source>Use standard update interval</source>
         <translation>Általános frissítési gyakoriság használata</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="235"/>
+        <location filename="../gui/AddFeedDialog.ui" line="229"/>
         <source>Interval in minutes (0 = manual)</source>
         <translation>Gyakoriság percekben (0 = kézi)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="254"/>
+        <location filename="../gui/AddFeedDialog.ui" line="248"/>
         <source>Last update</source>
         <translation>Utolsó frissítés</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="267"/>
+        <location filename="../gui/AddFeedDialog.ui" line="261"/>
         <source>Never</source>
         <translation>Soha</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="388"/>
+        <location filename="../gui/AddFeedDialog.ui" line="382"/>
         <source>Embed images</source>
         <translation>Beágyazott képek</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="146"/>
+        <location filename="../gui/AddFeedDialog.ui" line="133"/>
         <source>Storage time</source>
         <translation>Tárolás ideje</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="152"/>
+        <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Use standard storage time</source>
         <translation>Általános tárolási idő használata</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="159"/>
+        <location filename="../gui/AddFeedDialog.ui" line="139"/>
         <source>Days (0 = off)</source>
         <translation>Napok (0 = kikapcsolva)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="182"/>
+        <location filename="../gui/AddFeedDialog.ui" line="176"/>
         <source>Proxy</source>
         <translation>Proxy</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="188"/>
+        <location filename="../gui/AddFeedDialog.ui" line="182"/>
         <source>Use standard proxy</source>
         <translation>Használja az általános proxyt</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="195"/>
+        <location filename="../gui/AddFeedDialog.ui" line="189"/>
         <source>Server</source>
         <translation>Kiszolgáló</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="205"/>
+        <location filename="../gui/AddFeedDialog.ui" line="199"/>
         <source>:</source>
         <translation>:</translation>
     </message>
@@ -102,109 +107,94 @@
         <translation>Fórum</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="96"/>
+        <location filename="../gui/AddFeedDialog.ui" line="83"/>
         <source>Local Feed</source>
         <translation>Helyi hírcsatorna</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="328"/>
+        <location filename="../gui/AddFeedDialog.ui" line="322"/>
         <source>Transformation</source>
         <translation>Átalakítás</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="336"/>
+        <location filename="../gui/AddFeedDialog.ui" line="330"/>
         <source>Transformation type</source>
         <translation>Átalakítás típusa</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="349"/>
+        <location filename="../gui/AddFeedDialog.ui" line="343"/>
         <source>Preview &amp;&amp; Transformation</source>
         <translation>Előnézet &amp;&amp; Átalakítás</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="361"/>
+        <location filename="../gui/AddFeedDialog.ui" line="355"/>
         <source>Misc</source>
         <translation>Vegyes</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="367"/>
+        <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Activated</source>
         <translation>Aktiválva</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="374"/>
+        <location filename="../gui/AddFeedDialog.ui" line="368"/>
         <source>Use name and description from feed</source>
         <translation>Név és részletek a hírcsatornából származzanak</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="381"/>
+        <location filename="../gui/AddFeedDialog.ui" line="375"/>
         <source>Update forum information</source>
         <translation>Fórum adatainak frissítése</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="395"/>
+        <location filename="../gui/AddFeedDialog.ui" line="389"/>
         <source>Save complete web page (experimental for local feeds)</source>
         <translation>Teljes weboldal mentése (helyi hírcsatornáknál kísérleti állapotban)</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="292"/>
+        <location filename="../gui/AddFeedDialog.ui" line="286"/>
         <source>Description:</source>
         <translation>Leírás:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="306"/>
+        <location filename="../gui/AddFeedDialog.ui" line="300"/>
         <source>RSS-Feed-URL:</source>
         <translation>RSS-Hírcsatorna-URL:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.ui" line="316"/>
+        <location filename="../gui/AddFeedDialog.ui" line="310"/>
         <source>Name:</source>
         <translation>Név:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="63"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="75"/>
         <source>Feed Details</source>
         <translation>Hírcsatorna részletei</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="96"/>
-        <source>Create a new anonymous public forum</source>
-        <translation>Új névtelen publikus fórum létrehozása</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="212"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="217"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Edit feed</source>
         <translation>Hírcsatorna szerkesztése</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="237"/>
-        <source>Not yet created</source>
-        <translation>Még nincs létrehozva</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="243"/>
-        <source>Unknown forum</source>
-        <translation>Ismeretlen fórum</translation>
-    </message>
-    <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="325"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="332"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
         <translation>Nem szerkesztheted a hírcsatornát, mert az nem létezik.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Create feed</source>
         <translation>Hírcsatorna létrehozása</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="335"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Cannot create feed.</source>
         <translation>A hírcsatorna nem hozható létre.</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="340"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Cannot change feed.</source>
         <translation>A hírcsatorna változtatásai sikertelenek.</translation>
     </message>
@@ -285,17 +275,17 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="68"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="73"/>
         <source>Feeds</source>
         <translation>Hírcsatornák</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="91"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="96"/>
         <source>Add new feed</source>
         <translation>Új hírcsatorna hozzáadása</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="108"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="113"/>
         <source>Update feed</source>
         <translation>Hírcsatorna frissítése</translation>
     </message>
@@ -305,104 +295,104 @@
         <translation>Üzenetek mappái</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="291"/>
         <source>New</source>
         <translation>Új</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="289"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="292"/>
         <source>Feed</source>
         <translation>Hírcsatorna</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="296"/>
         <source>Folder</source>
         <translation>Mappa</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="304"/>
         <source>Open in new tab</source>
         <translation>Megnyitás új fülön</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="312"/>
         <source>Edit</source>
         <translation>Szerkesztés</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="317"/>
         <source>Delete</source>
         <translation>Törlés</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Update</source>
         <translation>Frissítés</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Activate</source>
         <translation>Engedélyezés</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="332"/>
         <source>Deactivate</source>
         <translation>Letiltás</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="527"/>
         <source>No name</source>
         <translation>Nincs név</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="739"/>
         <source>Add new folder</source>
         <translation>Új mappa hozzáadása</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <source>Please enter a name for the folder</source>
         <translation>Kérlek, nevezd el a mappát</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Create folder</source>
         <translation>Mappa létrehozása</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="746"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="799"/>
         <source>Cannot create folder.</source>
         <translation>Nem hozható létre a mappa</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove folder</source>
         <translation>Mappa eltávolítása</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Remove feed</source>
         <translation>Hírcsatorna eltávolítása</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>Biztos el szeretnéd távolítani a %1 mappát?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="772"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>Biztos el szeretnéd távolítani a %1 hírcsatornát?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="792"/>
         <source>Edit folder</source>
         <translation>Mappa szerkesztése</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Please enter a new name for the folder</source>
         <translation>Kérlek, adj meg egy új nevet a mappának</translation>
     </message>
@@ -411,7 +401,7 @@
     <name>FeedReaderFeedItem</name>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="116"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
     </message>
@@ -436,7 +426,7 @@
         <translation>Hivatkozás másolása a vágólapra</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
+        <location filename="../gui/FeedReaderFeedItem.cpp" line="110"/>
         <source>Hide</source>
         <translation>Elrejt</translation>
     </message>
@@ -603,12 +593,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="160"/>
+        <location filename="../FeedReaderPlugin.cpp" line="154"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Ez a beépítülő egy hírolvasót biztosít.</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="165"/>
+        <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>FeedReader</source>
         <translation>Hírolvasó</translation>
     </message>
@@ -667,7 +657,7 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
         <source>Unknown</source>
         <translation>Ismeretlen</translation>
     </message>
@@ -722,62 +712,57 @@
         <translation>Nem vagy fórumadmin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
-        <source>The forum is no anonymous forum</source>
-        <translation>A fórum nem névtelen</translation>
-    </message>
-    <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="124"/>
         <source>Can&apos;t read html</source>
         <translation>Html nem olvasható</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
         <source>Internal XPath error</source>
         <translation>Belső XPath hiba</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
         <source>Wrong XPath expression</source>
         <translation>Rossz XPath kifejezés</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
         <source>Empty XPath result</source>
         <translation>Üres XPath eredmény</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
         <source>XSLT format error</source>
         <translation>XSLT formátum hiba</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
         <source>XSLT transformation error</source>
         <translation>XSLT átalakítási hiba</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
         <source>Empty XSLT result</source>
         <translation>Üres XSLT eredmény</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="146"/>
         <source>Unknown error</source>
         <translation>Ismeretlen hiba</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="160"/>
         <source>No transformation</source>
         <translation>Nincs átalakítás</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="162"/>
         <source>XPath</source>
         <translation>XPath</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="164"/>
         <source>XSLT</source>
         <translation>XSLT</translation>
     </message>

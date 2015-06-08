@@ -4,7 +4,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="14"/>
         <source>Create new feed</source>
-        <translation>Создать новый канал</translation>
+        <translation>Создать новый поток</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="93"/>
@@ -14,7 +14,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="99"/>
         <source>Feed needs authentication</source>
-        <translation>Канал требует проверки подлинности</translation>
+        <translation>Поток требует проверки подлинности</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="106"/>
@@ -44,7 +44,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="229"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation>Интервал в минутах (0 = ручной)</translation>
+        <translation>Интервал в минутах (0 = вручную)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="248"/>
@@ -59,7 +59,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="382"/>
         <source>Embed images</source>
-        <translation>Встроенные изображения</translation>
+        <translation>Внедрять изображения</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="133"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="83"/>
         <source>Local Feed</source>
-        <translation>Местный Канал</translation>
+        <translation>Локальный поток</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="322"/>
@@ -124,7 +124,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="343"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation>Просмотр &amp;&amp; Преобразование</translation>
+        <translation>Предпросмотр и преобразование</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="355"/>
@@ -139,17 +139,17 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="368"/>
         <source>Use name and description from feed</source>
-        <translation>Использовать имя и описание из канала</translation>
+        <translation>Извлечь имя и описание из потока</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="375"/>
         <source>Update forum information</source>
-        <translation>Обновить информацию форума</translation>
+        <translation>Обновить информацию о форуме</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="389"/>
         <source>Save complete web page (experimental for local feeds)</source>
-        <translation>Сохранить полные веб-страницы (экспериментальная функция для местных каналов)</translation>
+        <translation>Сохранять веб-страницы полностью (экспериментальная функция для локальных потоков)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="286"/>
@@ -159,39 +159,39 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="300"/>
         <source>RSS-Feed-URL:</source>
-        <translation>RSS-Канал-URL:</translation>
+        <translation>Ссылка на RSS-поток:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="310"/>
         <source>Name:</source>
-        <translation>Имя:</translation>
+        <translation>Название:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="75"/>
         <source>Feed Details</source>
-        <translation>Подробности о Канале</translation>
+        <translation>Подробности о потоке</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="217"/>
         <location filename="../gui/AddFeedDialog.cpp" line="332"/>
         <location filename="../gui/AddFeedDialog.cpp" line="347"/>
         <source>Edit feed</source>
-        <translation>Редактировать канал</translation>
+        <translation>Редактировать поток</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="332"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
-        <translation>Не удается редактировать канал. Канал не существует.</translation>
+        <translation>Отредактировать поток невозможно. Поток не существует.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Create feed</source>
-        <translation>Создать канал</translation>
+        <translation>Создать поток</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="342"/>
         <source>Cannot create feed.</source>
-        <translation>Не удалось создать канал.</translation>
+        <translation>Создать поток не удалось.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="347"/>
@@ -593,12 +593,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="153"/>
+        <location filename="../FeedReaderPlugin.cpp" line="154"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Плагин предоставляет возможность загрузки RSS-рассылок</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="158"/>
+        <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>FeedReader</source>
         <translation>RSS-агрегатор</translation>
     </message>

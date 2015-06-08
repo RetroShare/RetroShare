@@ -6,8 +6,8 @@
         <translation>Version</translation>
     </message>
     <message>
-        <source>About RetroShare </source>
-        <translation>Über RetroShare</translation>
+        <source>RetroShare version</source>
+        <translation>RetroShare-Version</translation>
     </message>
 </context>
 <context>
@@ -39,10 +39,6 @@
     <message>
         <source>Have fun ;-)</source>
         <translation>Viel Spaß ;-)</translation>
-    </message>
-    <message>
-        <source>About RetroShare </source>
-        <translation>Über RetroShare</translation>
     </message>
 </context>
 <context>
@@ -236,7 +232,7 @@
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation>Jedwede Kommentare erlaubt</translation>
+        <translation>Jegliche Kommentare erlaubt</translation>
     </message>
     <message>
         <source>Publish with Identity</source>
@@ -367,7 +363,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Publish Photos</source>
-        <translation>Foto veröffentlichen</translation>
+        <translation>Fotos veröffentlichen</translation>
     </message>
 </context>
 <context>
@@ -457,7 +453,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Icon Only</source>
-        <translation>Nur Icons</translation>
+        <translation>Nur Symbole</translation>
     </message>
     <message>
         <source>Text Only</source>
@@ -465,11 +461,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Text Beside Icon</source>
-        <translation>Text neben dem Icon</translation>
+        <translation>Text neben Symbol</translation>
     </message>
     <message>
         <source>Text Under Icon</source>
-        <translation>Text unter dem Icon</translation>
+        <translation>Text unter Symbol</translation>
     </message>
     <message>
         <source>Choose the style of Tool Buttons.</source>
@@ -481,15 +477,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Icon Size = 8x8</source>
-        <translation>Icongröße = 8x8</translation>
+        <translation>Symbolgröße = 8x8</translation>
     </message>
     <message>
         <source>Icon Size = 16x16</source>
-        <translation>Icongröße = 16x16</translation>
+        <translation>Symbolgröße = 16x16</translation>
     </message>
     <message>
         <source>Icon Size = 24x24</source>
-        <translation>Icongröße = 24x24</translation>
+        <translation>Symbolgröße = 24x24</translation>
     </message>
     <message>
         <source>Status Bar</source>
@@ -517,7 +513,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Icon Size = 32x32</source>
-        <translation>Icongröße = 32x32</translation>
+        <translation>Symbolgröße = 32x32</translation>
     </message>
 </context>
 <context>
@@ -542,11 +538,11 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     </message>
     <message>
         <source>GxsForums</source>
-        <translation>GXS-Foren</translation>
+        <translation>Gxs-Foren</translation>
     </message>
     <message>
         <source>GxsChannels</source>
-        <translation>GxsKanäle</translation>
+        <translation>Gxs-Kanäle</translation>
     </message>
     <message>
         <source>The Wire</source>
@@ -573,6 +569,33 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     </message>
 </context>
 <context>
+    <name>AvatarDialog</name>
+    <message>
+        <source>Change Avatar</source>
+        <translation>Avatar wechseln</translation>
+    </message>
+    <message>
+        <source>Your Avatar Picture</source>
+        <translation>Dein Avatarbild</translation>
+    </message>
+    <message>
+        <source>Add Avatar</source>
+        <translation>Avatar hinzufügen</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <source>Set your Avatar picture</source>
+        <translation>Dein Avatarbild festlegen</translation>
+    </message>
+    <message>
+        <source>Load Avatar</source>
+        <translation>Avatar laden</translation>
+    </message>
+</context>
+<context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
@@ -590,7 +613,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <name>BWListDelegate</name>
     <message>
         <source>N/A</source>
-        <translation>N/A</translation>
+        <translation>N/V</translation>
     </message>
 </context>
 <context>
@@ -741,12 +764,6 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
 <context>
     <name>ChatDialog</name>
     <message>
-        <source>Your friend has more than one locations.
-Please choose one of it to chat with.</source>
-        <translation>Dein Freund verwendet mehrere Orte.
-Bitte wähle einen zum Chatten aus.</translation>
-    </message>
-    <message>
         <source>Talking to </source>
         <translation>Unterhaltung mit</translation>
     </message>
@@ -767,7 +784,7 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>Invite friends to this lobby</source>
-        <translation>Lade Freunde in diese Lobby ein</translation>
+        <translation>Freunde in diese Lobby einladen</translation>
     </message>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
@@ -788,10 +805,6 @@ Bitte wähle einen zum Chatten aus.</translation>
     <message>
         <source>Topic: %1</source>
         <translation>Thema: %1</translation>
-    </message>
-    <message>
-        <source>Please enter your new nick name</source>
-        <translation>Bitte gib deinen neuen Spitznamen ein</translation>
     </message>
     <message>
         <source>Lobby chat</source>
@@ -822,16 +835,8 @@ Bitte wähle einen zum Chatten aus.</translation>
         <translation>Möchtest du diese Lobby abbestellen?</translation>
     </message>
     <message>
-        <source>Hide Participants</source>
-        <translation>Teilnehmer ausblenden</translation>
-    </message>
-    <message>
-        <source>Show Participants</source>
-        <translation>Teilnehmer anzeigen</translation>
-    </message>
-    <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
-        <translation>Rechtsklick um die Stummschaltung des Teilnehmers zu aktivieren/deaktivieren&lt;br/&gt;Doppelklick um diese Person anzusprechen&lt;br/&gt;</translation>
+        <translation>Rechtsklick, um die Stummschaltung von Teilnehmern zu aktivieren/deaktivieren&lt;br/&gt;Doppelklick, um diese Person anzusprechen&lt;br/&gt;</translation>
     </message>
     <message>
         <source>This participant is not active since:</source>
@@ -840,6 +845,38 @@ Bitte wähle einen zum Chatten aus.</translation>
     <message>
         <source> seconds</source>
         <translation>Sekunden</translation>
+    </message>
+    <message>
+        <source>Start private chat</source>
+        <translation>Privaten Chat starten</translation>
+    </message>
+    <message>
+        <source>Decryption failed.</source>
+        <translation>Entschlüsselung fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>Signature mismatch</source>
+        <translation>Signatur stimmt nicht überein</translation>
+    </message>
+    <message>
+        <source>Unknown key</source>
+        <translation>Unbekannter Schlüssel</translation>
+    </message>
+    <message>
+        <source>Unknown hash</source>
+        <translation>Unbekannter Hash</translation>
+    </message>
+    <message>
+        <source>Unknown error.</source>
+        <translation>Unbekannter Fehler.</translation>
+    </message>
+    <message>
+        <source>Cannot start distant chat</source>
+        <translation>Fernchat kann nicht gestartet werden</translation>
+    </message>
+    <message>
+        <source>Distant chat cannot be initiated:</source>
+        <translation>Fernchat kann nicht eingeleitet werden:</translation>
     </message>
 </context>
 <context>
@@ -854,6 +891,30 @@ Bitte wähle einen zum Chatten aus.</translation>
     <message>
         <source>Chat Lobbies</source>
         <translation>Chatlobbys</translation>
+    </message>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation>Du hast %1 neue Nachrichten</translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation>Du hast %1 neue Nachricht</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation>%1 neue Nachrichten</translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation>%1 neue Nachricht</translation>
+    </message>
+    <message>
+        <source>Unknown Lobby</source>
+        <translation>Unbekannte Lobby</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation>Alle entfernen</translation>
     </message>
 </context>
 <context>
@@ -887,20 +948,12 @@ Bitte wähle einen zum Chatten aus.</translation>
         <translation>Chatlobby erstellen</translation>
     </message>
     <message>
-        <source>Unsubscribe</source>
-        <translation>Abbestellen</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Abonnieren</translation>
-    </message>
-    <message>
         <source>[No topic provided]</source>
         <translation>[Kein Thema angegeben]</translation>
     </message>
     <message>
         <source>Selected lobby info</source>
-        <translation>Info zu ausgewählter Lobby</translation>
+        <translation>Info zur ausgewählten Lobby</translation>
     </message>
     <message>
         <source>Private</source>
@@ -913,10 +966,6 @@ Bitte wähle einen zum Chatten aus.</translation>
     <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
         <translation>Du hast diese Lobby nicht abonniert. Doppelklicke um sie zu betreten und zu chatten.</translation>
-    </message>
-    <message>
-        <source>Invitation to chat lobby</source>
-        <translation>Einladung zur Chatlobby</translation>
     </message>
     <message>
         <source>Remove Auto Subscribe</source>
@@ -944,7 +993,7 @@ Bitte wähle einen zum Chatten aus.</translation>
     </message>
     <message>
         <source>Show </source>
-        <translation>Zeige</translation>
+        <translation>Anzeigen</translation>
     </message>
     <message>
         <source> Column</source>
@@ -1009,6 +1058,30 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     <message>
         <source>Chat Lobbies</source>
         <translation>Chatlobbys</translation>
+    </message>
+    <message>
+        <source>Leave this lobby</source>
+        <translation>Lobby verlassen</translation>
+    </message>
+    <message>
+        <source>Enter this lobby</source>
+        <translation>Lobby betreten</translation>
+    </message>
+    <message>
+        <source>Enter this lobby as...</source>
+        <translation>Lobby betreten als …</translation>
+    </message>
+    <message>
+        <source>You will need to create an identity in order to join chat lobbies.</source>
+        <translation>Du musst eine Identität erstellen, bevor du die Chatlobby betreten kannst.</translation>
+    </message>
+    <message>
+        <source>Choose an identity for this lobby:</source>
+        <translation>Identität für Lobby auswählen:</translation>
+    </message>
+    <message>
+        <source>Create an identity and enter this lobby</source>
+        <translation>Identität erstellen und Lobby betreten</translation>
     </message>
 </context>
 <context>
@@ -1097,10 +1170,6 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
         <translation>Blinkendes Reitersymbol</translation>
     </message>
     <message>
-        <source>Default nickname for chat lobbies:</source>
-        <translation>Standard-Spitzname für Chatlobbys:</translation>
-    </message>
-    <message>
         <source>Private Chat</source>
         <translation>Privater Chat</translation>
     </message>
@@ -1118,7 +1187,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Blink window/tab icon</source>
-        <translation>Blinkendes Fenster/ Reitersymbol</translation>
+        <translation>Blinkendes Fenster/Reitersymbol</translation>
     </message>
     <message>
         <source>Chat Font</source>
@@ -1206,7 +1275,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In diesem Reiter kannst du festlegen, wieviele Chatnachrichten Retroshare für die verschiedenen Chatsysteme auf Platte gespeichert hält und wieviel der vorangehenden Unterhaltung es anzeigen wird. Die maximale Speicherzeit erlaubt es alte Nachrichten zu verwerfen und verhindertm dass sich der Chatverlauf unberechnbar füllt (z.B. Chatlobbys und Fernchat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In diesem Tab kannst du für die verschiedenen Chatsysteme festlegen, wieviele Nachrichten RetroShare auf Festplatte gespeichert hält, und wieviel der vorangehenden Unterhaltung angezeigt wird. Die maximale Speicherzeit erlaubt das Verwerfen alter Nachrichten und verhindert das unberechenbare Füllen des Unterhaltungsverlaufs (z. B. Chatlobbys und Fernchat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Chatlobbies</source>
@@ -1238,7 +1307,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation>unterscheide Groß/Klein</translation>
+        <translation>Groß-/Kleinschreibung unterscheiden</translation>
     </message>
     <message>
         <source>Whole Words</source>
@@ -1250,15 +1319,15 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Color All Text Found</source>
-        <translation>Färbe alle Fundstellen</translation>
+        <translation>Alle Fundstellen einfärben</translation>
     </message>
     <message>
         <source>Color of found text</source>
-        <translation>Farbe der Fundstellen</translation>
+        <translation>Fundstellenfarbe</translation>
     </message>
     <message>
         <source>Choose color of found text</source>
-        <translation>Wähle die Farbe der Fundstellen</translation>
+        <translation>Fundstellenfarbe auswählen</translation>
     </message>
     <message>
         <source>PGP id : </source>
@@ -1270,11 +1339,19 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Maximum count for coloring matching text</source>
-        <translation>Höchstzahl der Fundstellen, die gefärbt werden sollen</translation>
+        <translation>Höchstzahl der einzufärbenden Fundstellen</translation>
     </message>
     <message>
         <source>Threshold for automatic search</source>
         <translation>Grenzwert für automatische Suche</translation>
+    </message>
+    <message>
+        <source>Default identity for chat lobbies:</source>
+        <translation>Standardidentität für Chatlobbys</translation>
+    </message>
+    <message>
+        <source>Show Bar by default</source>
+        <translation>Leiste standardmäßig anzeigen</translation>
     </message>
 </context>
 <context>
@@ -1366,7 +1443,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation>Nachrichtenverlauf</translation>
+        <translation>Verlauf anzeigen</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
@@ -1382,7 +1459,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation>Schriftart auf den Standard zurücksetzen</translation>
+        <translation>Schriftart auf Standard zurücksetzen</translation>
     </message>
     <message>
         <source>is typing...</source>
@@ -1430,7 +1507,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Find Case Sensitively</source>
-        <translation>Beachte Groß-/kleinschreibung</translation>
+        <translation>Unter Berücksichtigung von Groß-/Kleinschreibung suchen</translation>
     </message>
     <message>
         <source>Find Whole Words</source>
@@ -1442,27 +1519,27 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Don&apos;t stop to color after X items found (need more CPU)</source>
-        <translation>Höre mit dem Einfärben nach dem Finden von X Elementen nicht auf (benötigt mehr CPU)</translation>
+        <translation>Nach Finden von X Elementen mit dem Einfärben nicht aufhören (benötigt mehr CPU)</translation>
     </message>
     <message>
         <source>Don&apos;t stop to color after </source>
-        <translation>Höre mit dem Einfärben nach dem Finden von</translation>
+        <translation>Nach Finden von</translation>
     </message>
     <message>
         <source> items found (need more CPU)</source>
-        <translation>Elementen nicht auf (benötigt mehr CPU)</translation>
+        <translation>Elementen mit dem Einfärben nicht aufhören (benötigt mehr CPU)</translation>
     </message>
     <message>
         <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
-        <translation>&lt;b&gt;Finde vorherige &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Strg+Shift+G&lt;/i&gt;</translation>
+        <translation>&lt;b&gt;Vorherige finden &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Strg+Umschalt+G&lt;/i&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Find Next &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</source>
-        <translation>&lt;b&gt;Finde nächste&lt;/b&gt;&lt;br/&gt;&lt;i&gt;Strg+G&lt;/i&gt;</translation>
+        <translation>&lt;b&gt;Nächste finden &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Strg+G&lt;/i&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
-        <translation>&lt;b&gt;Finde &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Strg+F&lt;/i&gt;</translation>
+        <translation>&lt;b&gt;Finden &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Strg+F&lt;/i&gt;</translation>
     </message>
     <message>
         <source>Warning: </source>
@@ -1474,11 +1551,11 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Set text font &amp; color</source>
-        <translation>Lege Font &amp; Farbe des Textes fest</translation>
+        <translation>Schriftart &amp; Textfarbe festlegen</translation>
     </message>
     <message>
         <source>Attach a File</source>
-        <translation>Eine Datei anhängen</translation>
+        <translation>Datei anhängen</translation>
     </message>
     <message>
         <source>WARNING: Could take a long time on big history.</source>
@@ -1486,7 +1563,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation>Farbe wählen</translation>
+        <translation>Farbe auswählen</translation>
     </message>
     <message>
         <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
@@ -1518,7 +1595,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Type a message here</source>
-        <translation>Gib hier eine Nachricht ein</translation>
+        <translation>Hier eine Nachricht eingeben</translation>
     </message>
 </context>
 <context>
@@ -1638,44 +1715,8 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <source>Friend Details</source>
-        <translation>Freunddetails</translation>
-    </message>
-    <message>
         <source>Details</source>
         <translation>Details</translation>
-    </message>
-    <message>
-        <source>Peer Info</source>
-        <translation>Nachbar-Info</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <source>RetroShare ID</source>
-        <translation>RetroShare-ID</translation>
-    </message>
-    <message>
-        <source>Other info</source>
-        <translation>Andere Informationen</translation>
-    </message>
-    <message>
-        <source>Loc</source>
-        <translation>Ort</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Letzter Kontakt</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>Version</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -1702,112 +1743,8 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
         <translation>Adressliste</translation>
     </message>
     <message>
-        <source>Trust </source>
-        <translation>Vertrauen </translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation>Dein Vertrauen zu diesem Nachbarn ist:</translation>
-    </message>
-    <message>
-        <source>None </source>
-        <translation>Nicht </translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation>Geringfügig </translation>
-    </message>
-    <message>
-        <source>Full </source>
-        <translation>Voll </translation>
-    </message>
-    <message>
-        <source>PGP Key</source>
-        <translation>PGP-Schlüssel</translation>
-    </message>
-    <message>
-        <source>Peer has signed my PGP key</source>
-        <translation>Nachbar hat meinen PGP-Schlüssel unterzeichnet</translation>
-    </message>
-    <message>
-        <source>Show Help for Trust Settings and Signing</source>
-        <translation>Hilfe anzeigen</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by :</source>
-        <translation>Schlüssel des Nachbarn wurde unterzeichnet von:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Einen Schlüssel eines Freundes zu unterzeichnen, zeigt deinen anderen Freunden, dass du ihm vertraust. Nur Freunde, deren Schlüssel du unterzeichnest, erhalten Informationen über die Freunde, denen du vertraust.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Das Unterzeichnen eines Schlüssels kann nicht rückgängig gemacht werden, deshalb nutze es weise.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Sign PGP key</source>
-        <translation>PGP-Schlüssel unterzeichnen</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Blockiere Freund</translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation>Als Freund wählen</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Zertifikat</translation>
-    </message>
-    <message>
         <source>Include signatures</source>
         <translation>Signaturen einschließen</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Altes Format benutzen</translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation>Dienste</translation>
-    </message>
-    <message>
-        <source>User service permissions</source>
-        <translation>Berechtigungen für Nutzerdienste</translation>
-    </message>
-    <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>Dieser Reiter erlaubt dir die Feineinstellung welchen deiner Dienste jeder einzelne deiner Nachbarn benutzen darf.
-
-Einige Dienste (Discovery, anonymer Datenverkehr) können global ausgeschaltet werden. Diese Einstellung hat immer Vorrang vor den Einstellungen für einzelne Nachbarn.</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Anonymer Datenverkehr</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Discovery</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Foren/Kanäle</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Chat</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -1818,74 +1755,12 @@ Einige Dienste (Discovery, anonymer Datenverkehr) können global ausgeschaltet w
         <translation>Fehler: Kann Nachbardetails nicht ermitteln.</translation>
     </message>
     <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation>Der angegebene Schlüsselalgorithmus wird von RetroShare nicht unterstützt.
-(Im Moment werden nur RSA-Schlüssel unterstützt)</translation>
-    </message>
-    <message>
-        <source>My key is signed by : </source>
-        <translation>Eigener Schlüssel wurde unterzeichnet von: </translation>
-    </message>
-    <message>
-        <source>Peer key is signed by : </source>
-        <translation>Schlüssel des Nachbarn wurde unterzeichnet von: </translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Du hast das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von dir.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation>Du vertraust diesem Nachbarn voll.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation>Du vertraust diesem Nachbarn geringfügig.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation>Du vertraust diesem Nachbarn nicht.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation>Dein Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>Nachbar hat mich als Freund authentifiziert und meinen PGP-Schlüssel unterzeichnet</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>Nachbar hat mich nicht als Freund authentifiziert und meinen PGP-Schlüssel nicht unterzeichnet</translation>
-    </message>
-    <message>
-        <source>Signature Failure</source>
-        <translation>Fehler beim Signieren</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Vielleicht ist das Passwort falsch</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Das Abschalten des anonymen Datenverkehrs unterbindet jedwedes Erstellen von Tunneln und anonyme Suchanfragen von/zu diesem Nachbarn. Dieser Nachbar wird keine anonyme Transfers über dich durchführen.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Den globalen Schalter dafür findest du auf der Seite &amp;quot;Server&amp;quot; in den Einstellungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Das Abschalten von Discovery unterbindet das Senden der öffentlichen Schlüssel deiner Freunde an diesen Nachbarn. Discovery-Informationen, die von diesem Nachbarn kommen werden verworfen&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Den globalen Schalter dafür findest du auf der Seite &amp;quot;Server&amp;quot; in den Einstellungen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Das Deaktivieren hiervon bedeutet, das Foren- und Kanalbeiträge werden von dir nicht an diesen Freund weitergeleitet werden und von diesem Freund kommende Beiträge werden verworfen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Use as direct source, when available</source>
         <translation>Wenn verfügbar als direkte Quelle nutzen.</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Um eine direkte Übertragung herzustellen, prüft Retroshare periodisch die Dateilisten deiner Freunde auf Dateien, die deinen Transfers entsprechen. In diesem Fall weiß dein Freund das DU die Datei herunterlädst&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Um dieses Verhalten nur für diesen Freund zu verhindern, entferne den Haken aus der Checkbox. Du kannst dennoch eine direkte Übertragung durchführen, wenn du es ausdrücklich wünschst, z.B. durch herunterladen von der Dateiliste deines Freundes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Zur Herstellung einer direkten Übertragung prüft Retroshare periodisch die Dateilisten deiner Freunde auf deinen Transfers entsprechende Dateien. In diesem Fall weiß dein Freund, dass DU die Datei herunterlädst&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Um dieses Verhalten nur für diesen Freund zu verhindern, entferne den Haken aus der Checkbox. Du kannst dennoch eine direkte Übertragung durchführen, wenn du es ausdrücklich wünschst, z. B. durch Herunterladen aus der Dateiliste deines Freundes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Encryption</source>
@@ -1900,12 +1775,104 @@ Einige Dienste (Discovery, anonymer Datenverkehr) können global ausgeschaltet w
         <translation>Adressen des Nachbarn</translation>
     </message>
     <message>
-        <source>Location ID</source>
-        <translation>Standort-ID</translation>
+        <source>Options</source>
+        <translation>Optionen</translation>
     </message>
     <message>
-        <source>PGP fingerprint</source>
-        <translation>PGP-Fingerprint</translation>
+        <source>Retroshare node details</source>
+        <translation>RetroShare-Knotendetails</translation>
+    </message>
+    <message>
+        <source>Location info</source>
+        <translation>Standortinformationen</translation>
+    </message>
+    <message>
+        <source>Node name :</source>
+        <translation>Knotenname :</translation>
+    </message>
+    <message>
+        <source>Status :</source>
+        <translation>Status :</translation>
+    </message>
+    <message>
+        <source>Last Contact :</source>
+        <translation>Letzter Kontakt :</translation>
+    </message>
+    <message>
+        <source>Retroshare version :</source>
+        <translation>RetroShare-Version :</translation>
+    </message>
+    <message>
+        <source>Node ID :</source>
+        <translation>Knoten-ID :</translation>
+    </message>
+    <message>
+        <source>PGP key :</source>
+        <translation>PGP-Schlüssel :</translation>
+    </message>
+    <message>
+        <source>Retroshare Certificate</source>
+        <translation>RetroShare-Zertifikat</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files from this node</source>
+        <translation>Empfohlene Dateien automatisch von diesem Knoten herunterladen</translation>
+    </message>
+    <message>
+        <source>Friend node details</source>
+        <translation>Freundknotendetails</translation>
+    </message>
+    <message>
+        <source>Hidden Address</source>
+        <translation>Versteckte Adresse</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>keine</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate contains:</source>
+        <translation>&lt;p&gt;Dieses Zertifikat enthält:</translation>
+    </message>
+    <message>
+        <source> with </source>
+        <translation>mit</translation>
+    </message>
+    <message>
+        <source>&lt;/li&gt; </source>
+        <translation>&lt;/li&gt; </translation>
+    </message>
+    <message>
+        <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
+        <translation>&lt;li&gt;eine &lt;b&gt;Knoten-ID&lt;/b&gt; und &lt;b&gt;Name&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>an &lt;b&gt;onion address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation>eine &lt;b&gt;Onion-Adresse&lt;/b&gt; und &lt;b&gt;Port&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>an &lt;b&gt;IP address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation>eine &lt;b&gt;IP-Adresse&lt;/b&gt; und &lt;b&gt;Port&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
+        <translation>Du kannst dieses Zertifikat zum Schließen von neuen Freundschaften verwenden. Versende es per E-Mail oder gib es von Hand zu Hand.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist die ID des &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;-Zertifikates des Netzknotens, welches mit obigem &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt;-Schlüssel signiert wurde.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nachbarn mit dieser Option können sich nicht verbinden, wenn ihre Adresse nicht in der Whitelist eingetragen ist. Das schützt dich vor Attacken per Verbindungsweiterleitung. Bei Benutzung wirst du über abgelehnte Nachbarn mit einem &amp;quot;Sicherheitshinweis&amp;quot; in Neuigkeiten informiert. Von dort aus kannst du iihre IP sperren/freigeben&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Require white list clearance</source>
+        <translation>Whitelist-Freigabe erfordern</translation>
     </message>
 </context>
 <context>
@@ -1925,7 +1892,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation>Gib das Zertifikat &amp;manuell ein</translation>
+        <translation>Zertifikat &amp;manuell eingeben</translation>
     </message>
     <message>
         <source>&amp;You get a certificate file from your friend</source>
@@ -1937,12 +1904,12 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation>Gib die RetroShare &amp;ID manuell ein</translation>
+        <translation>RetroShare-&amp;ID manuell eingeben</translation>
     </message>
     <message>
         <source>&amp;Send an Invitation by Email 
  (She/He receives an email with instructions how to to download RetroShare)</source>
-        <translation>&amp;Sende eine Einladung per E-Mail 
+        <translation>&amp;Einladung per E-Mail senden
 (er/sie erhält eine E-Mail mit der Anleitung zum Herunterladen von RetroShare)</translation>
     </message>
     <message>
@@ -1951,7 +1918,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation>Verwende diesen Text als PGP Zertifikat.</translation>
+        <translation>Text als PGP-Zertifikate verwenden.</translation>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend</source>
@@ -2027,19 +1994,19 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation>Benutze die RetroShare-ID, um Freunde aus deinem Netzwerk hinzuzufügen.</translation>
+        <translation>RetroShare-ID benutzen, um einen Freund aus deinem Netzwerk hinzuzufügen.</translation>
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation>Füge die RetroShare-ID des Freundes ein...</translation>
+        <translation>RetroShare-ID des Freundes einfügen...</translation>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below</source>
-        <translation>Füge die RetroShare-ID eines Freunde in das Feld ein</translation>
+        <translation>RetroShare-ID des Freundes in das Feld unten einfügen</translation>
     </message>
     <message>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
-        <translation>Füge die RetroShare-ID eines Freundes ein, Beispiel Nachbar@BDE8D16A46D938CF </translation>
+        <translation>RetroShare-ID des Freundes eingeben, z. B. Nachbar@BDE8D16A46D938CF </translation>
     </message>
     <message>
         <source>Invite Friends by Email</source>
@@ -2102,24 +2069,8 @@ Die folgenden Wege sind möglich:</translation>
         <translation>Als Freund hinzufügen, zu dem verbunden wird</translation>
     </message>
     <message>
-        <source>Service permissions</source>
-        <translation>Berechtigungen für Dienste</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Anonymer Datenverkehr</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Discovery</translation>
-    </message>
-    <message>
-        <source>Forums/channels</source>
-        <translation>Foren/Kanäle</translation>
-    </message>
-    <message>
         <source>To accept the Friend Request, click the Finish button.</source>
-        <translation>Klicke den Abschließen-Knopf, um die Anfrage zu akzeptieren</translation>
+        <translation>Abschließen-Knopf anklicken, um die Anfrage zu akzeptieren</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
@@ -2152,10 +2103,6 @@ Die folgenden Wege sind möglich:</translation>
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
         <translation>Größe der eingehenden Daten ist größer als Speicherblock</translation>
-    </message>
-    <message>
-        <source>Invalid location id.</source>
-        <translation>Ungültige Location-ID.</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
@@ -2207,7 +2154,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Peer name</source>
-        <translation>Nachbar Name</translation>
+        <translation>Nachbarname</translation>
     </message>
     <message>
         <source>Also signed by</source>
@@ -2303,7 +2250,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Dein Zertifikat ist in die Zwischenablage kopiert worden. Du kannst es per E-Mail oder auf andere Weise an deinen Freund senden.</translation>
+        <translation>Dein Zertifikat wurde in die Zwischenablage kopiert. Du kannst es per E-Mail oder auf andere Weise an deinen Freund senden.</translation>
     </message>
     <message>
         <source>Save as...</source>
@@ -2319,7 +2266,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation>Zertifikatdatei konnte nicht erstellt werden</translation>
     </message>
     <message>
         <source>Please choose a filename</source>
@@ -2327,11 +2274,11 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation>Zertifikat-Datei erfolgreich erstellt</translation>
+        <translation>Zertifikatdatei erfolgreich erstellt</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation>Zertifikatdatei konnte nicht erstellt werden</translation>
     </message>
     <message>
         <source>*** None ***</source>
@@ -2340,10 +2287,6 @@ Die folgenden Wege sind möglich:</translation>
     <message>
         <source>Use as direct source, when available</source>
         <translation>Wenn verfügbar als direkte Quelle nutzen.</translation>
-    </message>
-    <message>
-        <source>Direct source</source>
-        <translation>Direkte Quelle</translation>
     </message>
     <message>
         <source>Recommend many friends to each others</source>
@@ -2390,13 +2333,49 @@ Die folgenden Wege sind möglich:</translation>
 This might be useful for sending
 distant messages to this peer
 even if you don&apos;t make friends.</source>
-        <translation>Aktiviere dies um den Schlüssel zu deinem Schlüsselbund hinzu zu fügen.
-Selbst wenn ihr euch nicht anfreundet könnte es nützlich sein, um entfernte Nachrichten an diesen Teilnehmer zu senden.</translation>
+        <translation>Aktivieren, um den Schlüssel zu deinem Schlüsselbund hinzuzufügen.
+Selbst wenn ihr euch nicht anfreundet, könnte es nützlich sein, um Fernnachrichten an diesen Teilnehmer zu senden.</translation>
     </message>
     <message>
         <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
         <translation>
 Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netze inkompatibel sind.</translation>
+    </message>
+    <message>
+        <source>Invalid node id.</source>
+        <translation>Ungülitge Netzknoten-ID.</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation>Empfohlene Dateien automatisch herunterladen</translation>
+    </message>
+    <message>
+        <source>Can be used as direct source</source>
+        <translation>Kann als direkte Quelle verwendet werden</translation>
+    </message>
+    <message>
+        <source>Require whitelist clearance to connect</source>
+        <translation>Zum Verbinden Whitelist-Freigabe erfordern</translation>
+    </message>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation>IP zu Whitelist hinzufügen</translation>
+    </message>
+    <message>
+        <source>No IP in this certificate!</source>
+        <translation>Zertifikat enthält keine IP!</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Dieses Zertifikat enthält keine IP. Du wirst auf Discovery und DHT angewiesen sein un sie herauszufinden. Da du  Whitelist-Freigabe forderst wird der Nachbar eine Sicherheitswarnung im Neuigkeitenreiter auslösen. Von dort kannst die die IP freigeben.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Added with certificate from %1</source>
+        <translation>Hinzugefügt mit Zertifikat von %1</translation>
+    </message>
+    <message>
+        <source>Paste Cert of your friend from Clipboard</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2407,7 +2386,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Connecting to:</source>
-        <translation>Verbinde mit:</translation>
+        <translation>Verbinden mit:</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -2499,7 +2478,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation>DHT ausgeschaltet</translation>
+        <translation>DHT deaktiviert</translation>
     </message>
     <message>
         <source>DHT Okay</source>
@@ -2507,7 +2486,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Finding RS Peers</source>
-        <translation>Finde RS-Nachbarn</translation>
+        <translation>RS-Nachbarn werden gesucht</translation>
     </message>
     <message>
         <source>Lookup requires DHT</source>
@@ -2515,7 +2494,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Searching DHT</source>
-        <translation>Durchsuche DHT</translation>
+        <translation>DHT wird durchsucht</translation>
     </message>
     <message>
         <source>Lookup Timeout</source>
@@ -2523,11 +2502,11 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Peer DHT NOT ACTIVE</source>
-        <translation>Nachbar DHT NICHT AKTIV</translation>
+        <translation>Nachbar-DHT NICHT AKTIV</translation>
     </message>
     <message>
         <source>Lookup Failure</source>
-        <translation>Fehlschlag bei Suche</translation>
+        <translation>Suche fehlgeschlagen</translation>
     </message>
     <message>
         <source>Peer Offline</source>
@@ -2579,7 +2558,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>If you continue to get this message, please contact developers</source>
-        <translation>Wenn du diese Meldung weiterhin bekommst, benachrichtige bitte die Entwickler.</translation>
+        <translation>Falls du diese Nachricht weiterhin erhälst, benachrichtige bitte die Entwickler</translation>
     </message>
     <message>
         <source>DHT Lookup Timeout</source>
@@ -2603,7 +2582,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>We are continually working to improve connectivity.</source>
-        <translation>Wir arbeiten ständig daran die Konnektivität zu verbessern.</translation>
+        <translation>Wir arbeiten ständig daran, die Konnektivität zu verbessern.</translation>
     </message>
     <message>
         <source>In this case the UDP connection attempt has failed.</source>
@@ -2611,7 +2590,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Improve connectivity by opening a Port in your Firewall.</source>
-        <translation>Verbessere die Konnektivität durch das Öffnen eines Port in deiner Firewall.</translation>
+        <translation>Verbessere die Konnektivität durch Öffnen eines Ports in deiner Firewall.</translation>
     </message>
     <message>
         <source>Connected</source>
@@ -2619,7 +2598,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Congratulations, you are connected</source>
-        <translation>Gratulation, du bist verbunden.</translation>
+        <translation>Gratulation, du bist verbunden</translation>
     </message>
     <message>
         <source>DHT startup Failed</source>
@@ -2627,7 +2606,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Your DHT has not started properly</source>
-        <translation>Dein DHT ist nicht richtig gestartet.</translation>
+        <translation>Dein DHT wurde nicht richtig gestartet</translation>
     </message>
     <message>
         <source>Common causes of this problem are:</source>
@@ -2651,7 +2630,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Retroshare has tried All Known Addresses, with no success</source>
-        <translation>Retroshare hat alle bekannten Adressen ohne Erfolg probiert.</translation>
+        <translation>RetroShare hat alle bekannten Adressen erfolglos versucht</translation>
     </message>
     <message>
         <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
@@ -2679,7 +2658,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Your Retroshare Node is configured Okay</source>
-        <translation>Dein Retroshare ist richtig konfiguriert.</translation>
+        <translation>Dein RetroShare-Knoten ist richtig konfiguriert.</translation>
     </message>
     <message>
         <source>We successfully reached your Friend via UDP.</source>
@@ -2688,10 +2667,6 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     <message>
         <source>Please contact them to add your Full Certificate</source>
         <translation>Bitte kontaktiere ihn/sie, damit sie dein vollständiges Zertifikat hinzufügen.</translation>
-    </message>
-    <message>
-        <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation>Er/Sie benötigt ein Zertifikat + Ort, damit UDP Verbindungen erfolgreich sind.</translation>
     </message>
     <message>
         <source>We Cannot find your Friend.</source>
@@ -2719,7 +2694,7 @@ Das Zertifikat hat die falsche Versionsnummer. Beachte, dass v0.6- und v0.5-Netz
     </message>
     <message>
         <source>Without the DHT it is hard for Retroshare to locate your friend</source>
-        <translation>Ohne DHT ist es für Retroshare schwierig deine Freunde zu lokalisieren</translation>
+        <translation>Ohne DHT ist es für RetroShare schwierig, deine Freunde zu finden</translation>
     </message>
     <message>
         <source>Try importing a fresh Certificate to get up-to-date connection information</source>
@@ -2759,7 +2734,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>N/A</source>
-        <translation>N/A</translation>
+        <translation>N/V</translation>
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD!</source>
@@ -2771,7 +2746,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Searching</source>
-        <translation>Suche</translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <source>UDP Connect Timeout</source>
@@ -2779,11 +2754,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Only Advanced Retroshare users should switch off the DHT.</source>
-        <translation>Nur fortgeschrittene Retrosharebenutzer sollten DHT ausschalten</translation>
+        <translation>Nur fortgeschrittene RetroShare-Benutzer sollten DHT ausschalten</translation>
     </message>
     <message>
         <source>Retroshare cannot connect without this information</source>
         <translation>Retroshare kann ohne diese Informationen keine Verbindung herstellen</translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Node for UDP connections to succeed</source>
+        <translation>Für eine erfolgreiche UDP-Verbindung benötigen sie ein Zertifikat und einen Netzknoten.</translation>
     </message>
 </context>
 <context>
@@ -2902,7 +2881,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed by known nodes</source>
-        <translation>Von bekannten Knoten signiert</translation>
+        <translation>Von bekannten Knoten unterzeichnet</translation>
     </message>
     <message>
         <source>Edit Circle</source>
@@ -2914,11 +2893,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anon Id</source>
-        <translation>Anon ID</translation>
+        <translation>Anonyme ID</translation>
     </message>
     <message>
         <source>PGP Linked Id</source>
-        <translation>PGP verknüpfte ID</translation>
+        <translation>PGP-verknüpfte ID</translation>
     </message>
 </context>
 <context>
@@ -2956,7 +2935,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Post to:</source>
-        <translation>Kanal:</translation>
+        <translation>Kanalbeitrag an:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3015,10 +2994,6 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare-Link einfügen</translation>
     </message>
     <message>
-        <source>You can only post files that you do have</source>
-        <translation>Du kannst nur Dateien anfügen, die du besitzt</translation>
-    </message>
-    <message>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
@@ -3044,7 +3019,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation>Bitte Betreff nicht vergessen</translation>
+        <translation>Bitte einen Betreff hinzufügen</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
@@ -3059,15 +3034,19 @@ p, li { white-space: pre-wrap; }
         <translation>Möchtest du wirklich %1 Nachrichten erzeugen?</translation>
     </message>
     <message>
-        <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>Die Sicherheitsrichtlinie des Kanals verhindert das Veröffentlichen von Dateien, die du nicht besitzt. Wenn du diese Dateien besitzt, müssen sie vorher freigegeben oder eigens hinzugefügt werden:</translation>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation>Du bist dabei, Dateien hinzuzufügen, die du nicht freigegeben hast. Willst du das wirklich tun?</translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
+        <translation>Du willst Dateien zu einem Kanal hinzufügen, die dir nicht gehören.</translation>
     </message>
 </context>
 <context>
     <name>CreateGxsForumMsg</name>
     <message>
         <source>Post Forum Message</source>
-        <translation>Beitrag erstellen</translation>
+        <translation>Forumsbeitrag veröffentlichen</translation>
     </message>
     <message>
         <source>Forum</source>
@@ -3083,11 +3062,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sign Message</source>
-        <translation>Beitrag unterschreiben</translation>
+        <translation>Beitrag unterzeichnen</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation>Beitrag</translation>
+        <translation>Forumsbeitrag</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
@@ -3118,10 +3097,6 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte einen Betreff und eine Beitrag eingeben</translation>
     </message>
     <message>
-        <source>Please choose Signing Id</source>
-        <translation>Bitte Signier-ID auswählen</translation>
-    </message>
-    <message>
         <source>Please choose Signing Id, it is required</source>
         <translation>Bitte Signier-ID auswählen. Sie ist erforderlich.</translation>
     </message>
@@ -3131,7 +3106,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Generate mass data</source>
-        <translation>MAssendaten erzeugen</translation>
+        <translation>Massendaten erzeugen</translation>
     </message>
     <message>
         <source>Do you really want to generate %1 messages ?</source>
@@ -3151,6 +3126,14 @@ Do you want to reject this message?</source>
         <translation>Forumbeitrag wurde nicht gesendet.
 Willst du diesen Beitrag verwerfen</translation>
     </message>
+    <message>
+        <source>Post as</source>
+        <translation>Veröffentlichen als</translation>
+    </message>
+    <message>
+        <source>Congrats, you found a bug! </source>
+        <translation>Gratulation, du hast einen Programmfehler gefunden!</translation>
+    </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
@@ -3168,11 +3151,7 @@ Willst du diesen Beitrag verwerfen</translation>
     </message>
     <message>
         <source>Lobby topic:</source>
-        <translation>Thema:</translation>
-    </message>
-    <message>
-        <source>Your nick name:</source>
-        <translation>Dein Spitzname:</translation>
+        <translation>Lobbythema:</translation>
     </message>
     <message>
         <source>Security policy:</source>
@@ -3195,16 +3174,12 @@ Willst du diesen Beitrag verwerfen</translation>
         <translation>Freunde einladen</translation>
     </message>
     <message>
-        <source>Put a sensible lobby name here</source>
-        <translation>Gib einen Lobbynamen ein</translation>
-    </message>
-    <message>
-        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>Dein Spitzname für diese Lobby (Ändere den Defaultnamen in den Optionen-&gt;Chat)</translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation>Kontakte:</translation>
+    </message>
+    <message>
+        <source>Identity to use:</source>
+        <translation>Zu verwendende Identität:</translation>
     </message>
 </context>
 <context>
@@ -3267,7 +3242,7 @@ Willst du diesen Beitrag verwerfen</translation>
     </message>
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Dein öffentlicher Schlüssel ist in die Zwischenablage kopiert worden. Sende ihn per Mail oder auf anderem Wege zu deinem Freund</translation>
+        <translation>Dein öffentlicher Schlüssel wurde in die Zwischenablage kopiert. Sende ihn per Mail oder auf anderem Wege an deinen Freund</translation>
     </message>
     <message>
         <source>Save as...</source>
@@ -3283,11 +3258,11 @@ Willst du diesen Beitrag verwerfen</translation>
     </message>
     <message>
         <source>PGP fingerprint:</source>
-        <translation>PGP-Fingerprint:</translation>
+        <translation>PGP-Fingerabdruck</translation>
     </message>
     <message>
         <source>Node information</source>
-        <translation>Information des Knoten</translation>
+        <translation>Knoteninformation</translation>
     </message>
     <message>
         <source>PGP Id :</source>
@@ -3306,12 +3281,16 @@ Willst du diesen Beitrag verwerfen</translation>
         <translation>Zertifikat in Datei speichern</translation>
     </message>
     <message>
-        <source>Create new location...</source>
-        <translation>Neuen Ort erstellen...</translation>
-    </message>
-    <message>
         <source>Node</source>
         <translation>Knoten</translation>
+    </message>
+    <message>
+        <source>Create new node...</source>
+        <translation>Neuen Netzknoten erstellen...</translation>
+    </message>
+    <message>
+        <source>show statistics window</source>
+        <translation>Statistikfenster anzeigen</translation>
     </message>
 </context>
 <context>
@@ -3654,11 +3633,11 @@ Willst du diesen Beitrag verwerfen</translation>
     </message>
     <message>
         <source>Searching</source>
-        <translation>Suche</translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <source>Failed</source>
-        <translation>Gescheitert</translation>
+        <translation>Fehlgeschlagen</translation>
     </message>
     <message>
         <source>offline</source>
@@ -3814,7 +3793,7 @@ Willst du diesen Beitrag verwerfen</translation>
     </message>
     <message>
         <source>DHT Graph</source>
-        <translation>DHT Graph</translation>
+        <translation>DHT-Graph</translation>
     </message>
 </context>
 <context>
@@ -3922,7 +3901,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>ignore case</source>
-        <translation>groß/klein ignorieren</translation>
+        <translation>Groß-/Kleinschreibung ignorieren</translation>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
@@ -3949,7 +3928,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Delete this expression</source>
-        <translation>Den Ausdruck löschen</translation>
+        <translation>Diesen Ausdruck löschen</translation>
     </message>
 </context>
 <context>
@@ -4198,10 +4177,6 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
 <context>
     <name>FriendList</name>
     <message>
-        <source>Friends</source>
-        <translation>Freunde</translation>
-    </message>
-    <message>
         <source>Status</source>
         <translation>Status</translation>
     </message>
@@ -4215,7 +4190,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation>Offline Freunde verstecken</translation>
+        <translation>Offline-Freunde verstecken</translation>
     </message>
     <message>
         <source>State</source>
@@ -4223,7 +4198,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Sort by State</source>
-        <translation>Sortiere nach Status</translation>
+        <translation>Nach Status sortieren</translation>
     </message>
     <message>
         <source>Hide State</source>
@@ -4247,23 +4222,23 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation>Sortiere nach Name</translation>
+        <translation>Nach Name sortieren</translation>
     </message>
     <message>
         <source>Sort by last contact</source>
-        <translation>Sortiere nach letztem Kontakt</translation>
+        <translation>Nach letztem Kontakt sortieren</translation>
     </message>
     <message>
         <source>Show Last Contact Column</source>
-        <translation>Letzten Kontakt anzeigen</translation>
+        <translation>Spalte für letzten Kontakt anzeigen</translation>
     </message>
     <message>
         <source>Set root is Decorated</source>
-        <translation>Zeige Baumstruktur</translation>
+        <translation>Baumstruktur anzeigen</translation>
     </message>
     <message>
         <source>Set Root Decorated</source>
-        <translation>Zeige Baumstruktur</translation>
+        <translation>Baumstruktur anzeigen</translation>
     </message>
     <message>
         <source>Show Groups</source>
@@ -4278,14 +4253,6 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
         <translation>Freund</translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation>Ort</translation>
-    </message>
-    <message>
-        <source>Message Group</source>
-        <translation>Gruppe anschreiben</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Gruppe ändern</translation>
     </message>
@@ -4298,28 +4265,12 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
         <translation>Chat</translation>
     </message>
     <message>
-        <source>Message Friend</source>
-        <translation>Freund anschreiben</translation>
-    </message>
-    <message>
-        <source>Friend Details</source>
-        <translation>Freunddetails</translation>
-    </message>
-    <message>
         <source>Recommend this Friend to...</source>
         <translation>Freund weiterempfehlen...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
         <translation>Zertifikat-Link kopieren</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Freund blockieren</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation>Ort entfernen</translation>
     </message>
     <message>
         <source>Add to group</source>
@@ -4375,7 +4326,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Attempt to connect</source>
-        <translation>Versuche zu verbinden</translation>
+        <translation>Verbindung versuchen</translation>
     </message>
     <message>
         <source>Create new group</source>
@@ -4391,7 +4342,39 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Sort by</source>
-        <translation>Sortiere nach</translation>
+        <translation>Sortieren nach</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Knoten</translation>
+    </message>
+    <message>
+        <source>Remove Friend Node</source>
+        <translation>Freundknoten entfernen</translation>
+    </message>
+    <message>
+        <source>Do you want to remove this node?</source>
+        <translation>Möchtest du diesen Knoten entfernen?</translation>
+    </message>
+    <message>
+        <source>Friend nodes</source>
+        <translation>Befreundete Netzknoten</translation>
+    </message>
+    <message>
+        <source>Send message to whole group</source>
+        <translation>Nachricht an ganze Gruppe senden</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Details</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation>Ablehnen</translation>
+    </message>
+    <message>
+        <source>Send message</source>
+        <translation>Nachricht senden</translation>
     </message>
 </context>
 <context>
@@ -4436,43 +4419,11 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     <name>FriendsDialog</name>
     <message>
         <source>Edit status message</source>
-        <translation>Statusnachricht ändern</translation>
+        <translation>Statusnachricht bearbeiten</translation>
     </message>
     <message>
         <source>Broadcast</source>
         <translation>Rundschreiben</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Fett</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Unterstrichen</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Kursiv</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Schriftart</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Textfarbe</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Datei anhängen</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Senden</translation>
-    </message>
-    <message>
-        <source>Messages entered here are sent to all connected friends</source>
-        <translation>Nachrichten, die du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
@@ -4496,7 +4447,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Edit your status message</source>
-        <translation>Deine Statusnachricht ändern</translation>
+        <translation>Deine Statusnachricht bearbeiten</translation>
     </message>
     <message>
         <source>Browse Message History</source>
@@ -4520,7 +4471,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Löscht den gespeicherten und angezeigten Chat Verlauf</translation>
+        <translation>Löscht den gespeicherten und angezeigten Chat-Verlauf</translation>
     </message>
     <message>
         <source>Create new Chat lobby</source>
@@ -4535,48 +4486,12 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
         <translation>Schriftart auf den Standard setzen</translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation>RetroShare-Link einfügen</translation>
-    </message>
-    <message>
-        <source>is typing...</source>
-        <translation>tippt...</translation>
-    </message>
-    <message>
-        <source>New group chat</source>
-        <translation>Neuer Gruppenchat</translation>
-    </message>
-    <message>
-        <source>Do you really want to physically delete the history?</source>
-        <translation>Möchtest du wirklich den Nachrichtenverlauf löschen?</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Zusätzliche Datei hinzufügen</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Speichern unter...</translation>
-    </message>
-    <message>
-        <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
-    </message>
-    <message>
         <source>Keyring</source>
         <translation>Schlüsselbund</translation>
     </message>
     <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
-        <translation>RetroShare Rundschreiben: Nachrichten werden an alle verbundenen Freunde geschickt.</translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation>Bild anhängen</translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
-        <translation>Bilddatei laden</translation>
+        <translation>RetroShare-Rundschreiben: Nachrichten werden an alle verbundenen Freunde gesendet.</translation>
     </message>
     <message>
         <source>Network</source>
@@ -4588,7 +4503,7 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Netzwerk&lt;/h1&gt;&lt;p&gt;Der Netzwerkreiter zeigt deine befreundeten etroshareknoten: die benachbarten  Retroshareknoten sind mit die verbunden.&lt;/p&gt;&lt;p&gt;Du kannst Knoten gruppieren, um einen detailierteren Zuagang zu Informationen zu ermöglichen. Beispielsweise nur einigen Knoten zu erlauben nur einige deiner Dateien zu sehen.&lt;/p&gt;&lt;p&gt;Rechts findest du drei nützliche Reiter:                                                                  &lt;ul&gt;&lt;li&gt;Broadcast sendet gleichzeitig Nachrichten an alle verbundenen Knoten&lt;/li&gt;&lt;li&gt;Lokaler Netzwerkgraph zeigt das Netz um dich herum, basierend auf Discoveryinformationen&lt;/li&gt;&lt;li&gt;SChlüsselbund enthält Schlüssel von Knoten, die du gesammelt hast, meist durch Weiterleitung von deinen befreundeten Knoten&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;                                                                                                        </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Netzwerk&lt;/h1&gt;&lt;p&gt;Der Netzwerkreiter zeigt deine befreundeten RetroShare-Knoten: Die mit dir verbundenen benachbarten  RetroShare-Knoten.&lt;/p&gt;&lt;p&gt;Du kannst Knoten gruppieren, um einen abgestufteren Informationszugang zu ermöglichen. Beispielsweise es nur einigen Knoten zu erlauben, nur einige deiner Dateien zu sehen.&lt;/p&gt;&lt;p&gt;Rechts findest du drei nützliche Reiter:                                                                  &lt;ul&gt;&lt;li&gt;&quot;Rundschreiben&quot; sendet gleichzeitig Nachrichten an alle verbundenen Knoten&lt;/li&gt;&lt;li&gt;&quot;Lokaler Netzwerkgraph&quot; zeigt das Netz um dich herum, basierend auf Discovery-Informationen&lt;/li&gt;&lt;li&gt;&quot;Schlüsselbund&quot; enthält von dir gesammelte Knotenschlüssel, meist durch Weiterleitung von deinen befreundeten Knoten&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;                                                                                                        </translation>
     </message>
     <message>
         <source>Set your status message here.</source>
@@ -4600,18 +4515,6 @@ Das ist nützlich, wenn du eine externe Festplatte freigibst und die Dateien nic
     <message>
         <source>Create new Profile</source>
         <translation>Neues Profil erstellen</translation>
-    </message>
-    <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>Du kannst RetroShare an mehreren Orten mit der selben Identität installieren. Dafür kannst du die ausgewählte Identität exportieren und auf einem anderen Computer importieren und eine neue Identität erstellen.</translation>
-    </message>
-    <message>
-        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Es sieht so aus, als ob du kein Profil (PGP-Schlüssel) besitzt. Bitte fülle die Felder aus und erstelle dir ein Profil oder importiere ein bestehendes Profil.</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>Dein Profil ist mit einem PGP-Schlüssel verknüpft. RetroShare ignoriert im Moment DSA-Schlüssel.</translation>
     </message>
     <message>
         <source>Name</source>
@@ -4634,52 +4537,8 @@ Diese Information ist für PGP erforderlich, aber du kannst durch
 Eingabe einer falschen E-Mail-Adresse anonym bleiben.</translation>
     </message>
     <message>
-        <source>This Password is for PGP</source>
-        <translation>Dieses Passwort ist für PGP</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Passwort</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Gib ein schwieriges Passwort ein. Dieses Passwort schützt deinen PGP-Schlüssel.</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Ort</translation>
-    </message>
-    <message>
-        <source>Create new identity</source>
-        <translation>Neue Identität erstellen</translation>
-    </message>
-    <message>
-        <source>Use identity</source>
-        <translation>Identität benutzen</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key</source>
-        <translation>Dein Profil ist mit einem PGP-Schlüssel verknüpft.</translation>
-    </message>
-    <message>
-        <source>Create a new identity</source>
-        <translation>Eine neue Identität erstellen</translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation>Eine Identität importieren</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Ausgewählte Identität exportieren</translation>
-    </message>
-    <message>
-        <source>Create a new Identity</source>
-        <translation>Neue Identität erstellen</translation>
-    </message>
-    <message>
-        <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>RetroShare benutzt PGP-Schlüssel für die Identität</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -4694,116 +4553,8 @@ Eingabe einer falschen E-Mail-Adresse anonym bleiben.</translation>
         <translation>[Benötigt] Sichtbar für deine Freunde und Freunde von Freunden.</translation>
     </message>
     <message>
-        <source>[Required] This password protects your PGP key.</source>
-        <translation>[Benötigt] Dieses Passwort schützt deinen PGP Schlüssel.</translation>
-    </message>
-    <message>
-        <source>Create new Location</source>
-        <translation>Neuen Ort erstellen</translation>
-    </message>
-    <message>
-        <source>Generate new Location</source>
-        <translation>Neuen Ort erstellen</translation>
-    </message>
-    <message>
-        <source>Create a new Location</source>
-        <translation>Einen neuen Ort erstellen</translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation>Neue Identität erstellen</translation>
-    </message>
-    <message>
-        <source>Generate new Identity</source>
-        <translation>Neue Identität generieren</translation>
-    </message>
-    <message>
-        <source>You can create a new identity with this form.</source>
-        <translation>Mit diesem Formular kannst du eine neue Identität erstellen.</translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>Du kannst eine existierende Identität (d.h. ein PGP-Schlüsselpaar) aus der Liste unten benutzen oder mit diesem Formular eine neue erstellen.</translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation>Identität exportieren</translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
-        <translation>RetroShare-Identitätsdateien (*.asc)</translation>
-    </message>
-    <message>
-        <source>Identity saved</source>
-        <translation>Identität gespeichert</translation>
-    </message>
-    <message>
-        <source>Your identity was successfully saved
-It is encrypted
-
-You can now copy it to another computer
-and use the import button to load it</source>
-        <translation>Deine Identität wurde erfolgreich gespeichert
-Sie ist verschlüsselt
-
-Du kannst die Identität nun auf einen anderen Computer kopieren
-und den Import zum Laden verwenden</translation>
-    </message>
-    <message>
-        <source>Identity not saved</source>
-        <translation>Identität nicht gespeichert</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>Deine Identität wurde nicht gespeichert. Ein Fehler ist aufgetreten.</translation>
-    </message>
-    <message>
-        <source>Identity not loaded</source>
-        <translation>Identität nicht geladen</translation>
-    </message>
-    <message>
-        <source>Your identity was not loaded properly:</source>
-        <translation>Deine Identität wurde nicht korrekt geladen:</translation>
-    </message>
-    <message>
-        <source>New identity imported</source>
-        <translation>Neue Identität importiert</translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfully:</source>
-        <translation>Deine Identität wurde erfolgreich importiert:</translation>
-    </message>
-    <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Du kannst sie jetzt benutzen, um einen neuen Ort anzulegen.</translation>
-    </message>
-    <message>
-        <source>Generate PGP key Failure</source>
-        <translation>Fehler beim Generieren des PGP-Schlüssels</translation>
-    </message>
-    <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation>Das Feld Ort ist mit min. 3 Zeichen zu versehen</translation>
-    </message>
-    <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Alle Felder sind mit min. 3 Zeichen zu versehen</translation>
-    </message>
-    <message>
-        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your PGP password when asked, to sign your new key.</source>
-        <translation>Erstelle einen neuen PGP-Schlüssel. Bitte habe etwas Geduld. Dieser Prozess generiert große Primzahlen und kann auf langsamen Rechnern einige Minuten dauern.
-
-Gib, wenn du gefragt wirst, dein PGP Passwort ein, um deinen neuen Schlüssel zu unterzeichnen.</translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation>Fehler beim Generieren der ID</translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>Das Erstellen deines neuen Zertifikats ist fehlgeschlagen. Vielleicht ist das PGP-Passwort falsch?</translation>
     </message>
     <message>
         <source>Password (check)</source>
@@ -4811,45 +4562,262 @@ Gib, wenn du gefragt wirst, dein PGP Passwort ein, um deinen neuen Schlüssel zu
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Bewege deine Maus vor dem Fortfahren umher, um Retroshare zu helfen soviel wie möglich Zufallswerte zu sammeln. Die Fortschrittsanzeige zu 20% zu füllen is notwendig, 100% ist empfohlen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Vor dem Fortfahren bitte die Maus umherbewegen, um für Retroshare möglichst viele Zufallswerte zu sammeln. Das Auffüllen des Fortschrittsbalkens auf 20% ist erforderlich, 100% werden empfohlen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>[Required] Type the same password again here.</source>
-        <translation>[Erforderlich] Gib das selbe Passwort hier noch einmal ein.</translation>
-    </message>
-    <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. 
-This field will be used to differentiate different installations with
-the same identity (PGP key).</source>
-        <translation>Nutze einen aussagekräftigen Ort (z.B. home, laptop). Dieses Feld wird genutzt, um verschiedene Installationen mit derselben Identität (PGP-Schlüssel) auseinander zu halten.</translation>
+        <translation>[Erforderlich] Dasselbe Passwort hier noch einmal eingeben.</translation>
     </message>
     <message>
         <source>Passwords do not match</source>
         <translation>Passwörter stimmen nicht überein.</translation>
     </message>
     <message>
-        <source>Create a Hidden Location.</source>
-        <translation>Einen versteckten Ort erstellen</translation>
-    </message>
-    <message>
-        <source>Tor Address</source>
-        <translation>TOR-Adresse</translation>
-    </message>
-    <message>
         <source>Port</source>
         <translation>Port</translation>
     </message>
     <message>
-        <source>This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion and your selected port,  you must first launch TOR and create a new hidden service to generate this address.</source>
-        <translation>Dies ist eine TOR-Onionadresse in der Form: xa76giaf6ifda7ri63i263.onion und dein gewählter Port. Du musst zunächst TOR starten und einen Versteckten Dienst erstellen, um sie zu erzeugen.</translation>
+        <source>This password is for PGP</source>
+        <translation>Das ist das Passwort für PGP</translation>
     </message>
     <message>
-        <source>Invalid Hidden Location</source>
-        <translation>Ungültiger versteckter Ort</translation>
+        <source>Node</source>
+        <translation>Knoten</translation>
     </message>
     <message>
-        <source>Please put in a valid address of the form: 31769173498.onion:7800</source>
-        <translation>Bitte gib eine gültige Adresse in der Form 31769173498.onion:7800 ein!</translation>
+        <source>TOR address</source>
+        <translation>TOR-Adresse</translation>
+    </message>
+    <message>
+        <source>Create new node</source>
+        <translation>Neuen Netzknoten erstellen</translation>
+    </message>
+    <message>
+        <source>Generate new node</source>
+        <translation>Neuen Netzknoten erzeugen</translation>
+    </message>
+    <message>
+        <source>Create a new node</source>
+        <translation>Einen neuen Netzknoten erstellen</translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation>Du kannst es jetzt benutzen, um einen neuen Netzknoten zu erstellen.</translation>
+    </message>
+    <message>
+        <source>Invalid hidden node</source>
+        <translation>Ungültiger versteckter Netzknoten</translation>
+    </message>
+    <message>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
+        <translation>Bitte gib eine gültige Adresse in der Form 31769173498.onion:7800 ein</translation>
+    </message>
+    <message>
+        <source>Node field is required with a minimum of 3 characters</source>
+        <translation>Das Feld Netzknoten ist mit min. 3 Zeichen zu versehen</translation>
+    </message>
+    <message>
+        <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
+        <translation>Das Erzeugen deines neuen Zertifikats ist fehlgeschlagen. Vielleicht ist das PGP-Passwort falsch?</translation>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.
+Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation>Mit diesem Formular kannst du ein neues Profil erstellen.
+Alternativ kannst Du ein bereits existierendes Profil benutzen. Entferne einfach den Haken bei &quot;Neues Profil erstellen&quot;</translation>
+    </message>
+    <message>
+        <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
+        <translation>Du kannst RetroShare-Netzknoten mit demselben Profil auf verschiedenen Rechnern erstellen und benutzen. Dazu exportierst du einfach das ausgewählte Profil und importierst es auf einem anderen Rechner um dort damit einen neuen Netzknoten zu erstellen.</translation>
+    </message>
+    <message>
+        <source>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</source>
+        <translation>Es sieht so aus, als ob kein Profil (PGP-Schlüssel) existiert. Bitte fülle zum Erstellen eines Profils die Felder unten aus oder importiere ein bestehendes Profil.</translation>
+    </message>
+    <message>
+        <source>No node exists for this profile.</source>
+        <translation>Für dieses Profil existiert kein Netzknoten.</translation>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair</source>
+        <translation>Dein Profil ist mit einem PGP-Schlüsselpaar verknüpft.</translation>
+    </message>
+    <message>
+        <source>Create a new profile</source>
+        <translation>Neues Profil erstellen</translation>
+    </message>
+    <message>
+        <source>Import new profile</source>
+        <translation>Neues Profil importieren</translation>
+    </message>
+    <message>
+        <source>Export selected profile</source>
+        <translation>Ausgewähltes Profil exportieren</translation>
+    </message>
+    <message>
+        <source>Advanced options</source>
+        <translation>Erweiterte Einstellungen</translation>
+    </message>
+    <message>
+        <source>Create a hidden node</source>
+        <translation>Versteckten Knoten erstellen</translation>
+    </message>
+    <message>
+        <source>Use profile</source>
+        <translation>Profil verwenden</translation>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
+        <translation>Dein Profil ist mit einem PGP-Schlüsselpaar verknüpft. RetroShare ignoriert derzeit DSA-Schlüssel.</translation>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your private PGP key.</source>
+        <translation>Gib hier ein starkes Passwort ein. Dieses Passwort schützt deinen privaten PGP-Schlüssel.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist dein Verbindungsport.&lt;/p&gt;&lt;p&gt;Ein Wert zwischen 1024 und 65535 &lt;/p&gt;&lt;p&gt;sollte ok sein. Du kannst ihn später ändern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist eine TOR-Onion-Adresse in der Form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;Um eine solche zu erhalten, musst du TOR entsprechend einrichten und einen neuen versteckten Dienst erstellen. Falls du noch keinen Dienst hast, kannst du trotzdem fortfahren und es später in Optionen-&amp;gt;Netzwerk-&amp;gt;TOR-Konfiguration korrigieren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>PGP key length</source>
+        <translation>PGP-Schlüssellänge</translation>
+    </message>
+    <message>
+        <source>Create new profile</source>
+        <translation>Neues Profil erstellen</translation>
+    </message>
+    <message>
+        <source>Currently disabled. Please move your mouse around until you reach at least 20%</source>
+        <translation>Momentan deaktiviert. Bitte bewege deine Maus umher, bis du mindestens 20 % erreichst</translation>
+    </message>
+    <message>
+        <source>Click to create your node and/or profile</source>
+        <translation>Zur Erstellung deines Knotens und/oder Profils anklicken</translation>
+    </message>
+    <message>
+        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)</source>
+        <translation>[Erforderlich] Beispiel: xa76giaf6ifda7ri63i263.onion (von dir von TOR erhalten)</translation>
+    </message>
+    <message>
+        <source>[Required] This password protects your private PGP key.</source>
+        <translation>[Erforderlich] Dieses Passwort schützt deinen privaten PGP-Schlüssel.</translation>
+    </message>
+    <message>
+        <source>Enter a meaningful node description. e.g. : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same profile (PGP key pair).</source>
+        <translation>Gib eine aussagekräftige Beschreibung des Netzknotens ein, z. B. Zuhause, Laptop etc.
+Dieses Feld wird benutzt, um verschiedene Installationen mit demselben Profil (PGP-Schlüsselpaar) auseinanderzuhalten.</translation>
+    </message>
+    <message>
+        <source>Generate new profile and node</source>
+        <translation>Neues Profil und neuen Knoten erzeugen</translation>
+    </message>
+    <message>
+        <source>Create a new profile and node</source>
+        <translation>Neues Profil und neuen Knoten erstellen</translation>
+    </message>
+    <message>
+        <source>Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation>Alternativ kannst Du eine schon existierendes Profil benutzen. Entferne einfach den Haken bei &quot;Neues Profil erstellen&quot;</translation>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.
+Alternatively you can import a (previously exported) profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation>Willkommen zu RetroShare. Bevor du fortfahren kannst, musst du ein Profil erstellen und einen Netzknoten damit verknüpfen. Fülle dafür bitte dieses Formular aus.
+Alternativ kannst du ein (zuvor exportiertes) Profil importieren. Entferne einfach den Haken bei &quot;Neues Profil erstellen&quot;.</translation>
+    </message>
+    <message>
+        <source>No node is associated with the profile named</source>
+        <translation>Mit dem Profil</translation>
+    </message>
+    <message>
+        <source>Please create a node for it by providing a node name.</source>
+        <translation>Bitte einen Netzknoten durch Angabe eines Knotennames erstellen.</translation>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it.</source>
+        <translation>Willkommen zu RetroShare. Bevor du fortfahren kannst, musst du ein Profil importieren und danach einen Netzknoten damit verknüpfen.</translation>
+    </message>
+    <message>
+        <source>Export profile</source>
+        <translation>Profil exportieren</translation>
+    </message>
+    <message>
+        <source>RetroShare profile files (*.asc)</source>
+        <translation>RetroShare-Profildateien (*.asc)</translation>
+    </message>
+    <message>
+        <source>Profile saved</source>
+        <translation>Profil gespeichert</translation>
+    </message>
+    <message>
+        <source>Your profile was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation>Dein Profil wurde erfolgreich gespeichert
+Es ist verschlüsselt
+
+Du kannst das Profil nun auf einen anderen Computer kopieren
+und den Import zum Laden verwenden</translation>
+    </message>
+    <message>
+        <source>Profile not saved</source>
+        <translation>Profil nicht gespeichert</translation>
+    </message>
+    <message>
+        <source>Your profile was not saved. An error occurred.</source>
+        <translation>Dein Profil wurde nicht gespeichert. Ein Fehler ist aufgetreten.</translation>
+    </message>
+    <message>
+        <source>Import profile</source>
+        <translation>Profil importieren</translation>
+    </message>
+    <message>
+        <source>Profile not loaded</source>
+        <translation>Profil nicht geladen</translation>
+    </message>
+    <message>
+        <source>Your profile was not loaded properly:</source>
+        <translation>Dein Profil wurde nicht korrekt geladen:</translation>
+    </message>
+    <message>
+        <source>New profile imported</source>
+        <translation>Neues Profil importiert</translation>
+    </message>
+    <message>
+        <source>Your profile was imported successfully:</source>
+        <translation>Dein Profil wurde erfolgreich importiert:</translation>
+    </message>
+    <message>
+        <source>PGP key pair generation failure</source>
+        <translation>Erzeugung des PGP-Schlüsselpaars fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Profile generation failure</source>
+        <translation>Profilerzeugung fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Missing PGP certificate</source>
+        <translation>Fehlendes PGP-Zertifikat</translation>
+    </message>
+    <message>
+        <source>Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation>Neues PGP-Schlüsselpaar wird erstellt, bitte habe etwas Geduld. Dieser Prozess erzeugt große Primzahlen und kann auf langsamen Rechnern einige Minuten dauern.
+
+Gib dein PGP-Passwort ein sobald Du gefragt wirst, um deinen neuen Schlüssel zu unterzeichnen.</translation>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.</source>
+        <translation>Mit diesem Formular kannst du ein neues Profil erstellen.</translation>
     </message>
 </context>
 <context>
@@ -4932,7 +4900,7 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Minimize to Tray Icon</source>
-        <translation>In Systemabschnitt minimieren</translation>
+        <translation>In Benachrichtigungsfeld minimieren</translation>
     </message>
 </context>
 <context>
@@ -5184,22 +5152,6 @@ p, li { white-space: pre-wrap; }
         <translation>Wartende Pakete</translation>
     </message>
     <message>
-        <source> by </source>
-        <translation>von</translation>
-    </message>
-    <message>
-        <source> size=</source>
-        <translation>Größe=</translation>
-    </message>
-    <message>
-        <source> Status </source>
-        <translation>Status</translation>
-    </message>
-    <message>
-        <source>To: </source>
-        <translation>An:</translation>
-    </message>
-    <message>
         <source>Managed keys</source>
         <translation>Verwaltete Schlüssel</translation>
     </message>
@@ -5212,8 +5164,36 @@ p, li { white-space: pre-wrap; }
         <translation>Routingmatrix  (</translation>
     </message>
     <message>
-        <source>%1 secs ago</source>
-        <translation>vor %1 Sek.</translation>
+        <source>Id</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>Ziel</translation>
+    </message>
+    <message>
+        <source>Data status</source>
+        <translation>Datenstatus</translation>
+    </message>
+    <message>
+        <source>Tunnel status</source>
+        <translation>Tunnelstatus</translation>
+    </message>
+    <message>
+        <source>Data size</source>
+        <translation>Datengröße</translation>
+    </message>
+    <message>
+        <source>Data hash</source>
+        <translation>Daten-Hash</translation>
+    </message>
+    <message>
+        <source>Received</source>
+        <translation>Empfangen</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Senden</translation>
     </message>
 </context>
 <context>
@@ -5288,24 +5268,8 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner ist NICHT über anonyme Tunnel die von irgendeinem Freund ausgehen zugänglich</translation>
     </message>
     <message>
-        <source>All your friends can browse this directory</source>
-        <translation>Alle deine Freunde können diesen Ordner durchsuchen</translation>
-    </message>
-    <message>
-        <source>Only friends in groups %1 can browse this directory</source>
-        <translation>Nur Freunde in den Gruppen %1 können diesen Ordner durchsuchen</translation>
-    </message>
-    <message>
         <source>No one can browse this directory</source>
         <translation>Niemand kann diesen Ordner durchsuchen</translation>
-    </message>
-    <message>
-        <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Alle deine Freunde können anonyme Tunnel zu diesem Ordner weiterleiten</translation>
-    </message>
-    <message>
-        <source>Only friends in groups </source>
-        <translation>Nur Freunde in den Gruppen</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
@@ -5314,6 +5278,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>No one can anonymously access this directory.</source>
         <translation>Niemand kann anonym auf diesen Ordner zugreifen.</translation>
+    </message>
+    <message>
+        <source>All friend nodes can browse this directory</source>
+        <translation>Alle befreundete Netzknoten können diesen Ordner durchsuchen</translation>
+    </message>
+    <message>
+        <source>Only friend nodes in groups %1 can browse this directory</source>
+        <translation>Nur befreundete Netzknoten in den Gruppen %1 können diesen Ordner durchsuchen</translation>
+    </message>
+    <message>
+        <source>All friend nodes can relay anonymous tunnels to this directory</source>
+        <translation>Alle deine befreundeten Netzknoten können anonyme Tunnel zu diesem Ordner weiterleiten</translation>
+    </message>
+    <message>
+        <source>Only friend nodes in groups </source>
+        <translation>Nur befreundete Netzknoten in Gruppen</translation>
     </message>
 </context>
 <context>
@@ -5338,32 +5318,32 @@ p, li { white-space: pre-wrap; }
         <translation>Kontakte:</translation>
     </message>
     <message>
-        <source>Share Channel</source>
-        <translation>Kanal freigeben</translation>
+        <source>Please select at least one peer</source>
+        <translation>Bitte wähle mindestens einen Nachbarn</translation>
     </message>
     <message>
-        <source>You can let your friends know about your Channel by sharing it with them. Select the Friends with which you want to Share your Channel.</source>
-        <translation>Du kannst deine Freunde von deinem Kanal wissen lassen, indem du ihn mit ihnen teilst. Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
+        <source>Share channel admin permissions</source>
+        <translation>Kanal-Administratorrechte teilen</translation>
     </message>
     <message>
-        <source>Share Forum</source>
-        <translation>Privaten Veröffentlichungsschlüssel verteilen</translation>
+        <source>Share forum admin permissions</source>
+        <translation>Forum-Administratorrechte teilen</translation>
     </message>
     <message>
-        <source>You can let your friends know about your Forum by sharing it with them. Select the Friends with which you want to Share your Forum.</source>
+        <source>You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum.</source>
         <translation>Du kannst deine Freunde von deinem Forum wissen lassen, indem du es mit ihnen teilst. Wähle die Freunde, mit denen du das Forum teilen willst.</translation>
     </message>
     <message>
-        <source>Share Posted</source>
-        <translation>Posted teilen</translation>
+        <source>Share topic admin permissions</source>
+        <translation>Thema-Administratorrechte teilen</translation>
     </message>
     <message>
-        <source>You can let your friends know about your Posted by sharing it with them. Select the Friends with which you want to Share your Posted.</source>
-        <translation>Du kannst deine Freunde von deinem Posted wissen lassen, indem du es mit ihnen teilst. Wähle die Freunde, mit denen du das Postedl teilen willst.</translation>
+        <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
+        <translation>Du kannst deinen Freunden die Bearbeitung des Themas erlauben, indem du sie in der Liste unten auswählst. Hinweis: Der Widerruf von Posted-Administratorrechten ist nicht möglich.</translation>
     </message>
     <message>
-        <source>Please select at least one peer</source>
-        <translation>Bitte wähle mindestens einen Nachbarn</translation>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5397,12 +5377,16 @@ p, li { white-space: pre-wrap; }
         <translation>Nach letztem Beitrag sortieren</translation>
     </message>
     <message>
-        <source>Private Key Available</source>
-        <translation>Privater Schlüssel verfügbar</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Anzeigen</translation>
+    </message>
+    <message>
+        <source>You have admin rights</source>
+        <translation>Sie haben Administratorrechte</translation>
+    </message>
+    <message>
+        <source>Subscribe to download and read messages</source>
+        <translation>Abonnieren, um Nachrichten herunterzuladen und zu lesen</translation>
     </message>
 </context>
 <context>
@@ -5519,8 +5503,8 @@ p, li { white-space: pre-wrap; }
         <translation>Auto-Download deaktivieren</translation>
     </message>
     <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanäle&lt;/h1&gt;&lt;p&gt;Kanäle erlauben es dir Daten (z.B. Filme, Musik) zu veröffentllichen, die sich im Netzwerk verbreiten werden.&lt;/p&gt;&lt;p&gt;Du kannst die Kanäle, die deine Freunde abonniert haben, sehen und automatisch die von dir abonnierten Kanäle an deine Freude weiterleiten. Dies fördert gute Kanäle im Netzwerk.&lt;/p&gt;&lt;p&gt;Nur der Ersteller eines Kanals kann Beiträge in dem Kanal veröffentlichen. Andere Netzwerkteilnehmer können nur lesend darauf zugreifen außer der Kanal ist privat. Du kannst mit deinen befreundeten Retroshareknoten allerdings die Veröffentlichungs- oder Leserechte teielen.&lt;/p&gt;&lt;p&gt;Kanäle können anonymisiert oder einer Retroshareidentität zugeordnet werden, so dass Leser dich wenn nötig kontaktieren können. Aktiviere &quot;Kommentare erlauben&quot;, wenn du Nutzern erlauben willst, deine Veröffentlichungen zu kommentieren.&lt;/p&gt;    </translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanäle&lt;/h1&gt;&lt;p&gt;Kanäle erlauben dir die Veröffentlichung von Daten (z. B. Filme, Musik), die sich im Netzwerk verbreiten werden.&lt;/p&gt;&lt;p&gt;Du kannst die von deinen Freunden abonnierten Kanäle sehen und automatisch die von dir abonnierten Kanäle an deine Freude weiterleiten. Dies fördert gute Kanäle im Netzwerk.&lt;/p&gt;&lt;p&gt;Nur der Ersteller eines Kanals kann Beiträge in dem Kanal veröffentlichen. Andere Netzwerkteilnehmer können nur lesend darauf zugreifen, es sei denn, der Kanal ist privat. Du kannst mit deinen befreundeten RetroShare-Knoten allerdings die Veröffentlichungs- oder Leserechte teilen.&lt;/p&gt;&lt;p&gt;Kanäle können anonymisiert oder aber einer RetroShare-Identität zugeordnet werden, sodass Leser dich falls nötig kontaktieren können. Aktiviere &quot;Kommentare erlauben&quot;, falls du Nutzern die Kommentierung deiner Veröffentlichungen erlauben willst.&lt;/p&gt;&lt;p&gt;Kanalbeiträge werden nach %1 Monaten gelöscht.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -5609,19 +5593,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Channel Admins</source>
-        <translation>Kanalverwalter hinzufügen</translation>
+        <translation>Kanal-Administratoren hinzufügen</translation>
     </message>
     <message>
         <source>Select Channel Admins</source>
-        <translation>Kanalverwalter auswählen</translation>
-    </message>
-    <message>
-        <source>Create Channel</source>
-        <translation>Kanal erstellen</translation>
+        <translation>Kanal-Administratoren auswählen</translation>
     </message>
     <message>
         <source>Update Channel</source>
         <translation>Kanal aktualisieren</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Erstellen</translation>
     </message>
 </context>
 <context>
@@ -5754,7 +5738,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsChannelPostsWidget</name>
     <message>
         <source>Post to Channel</source>
-        <translation>Kanalbeitrag erstellen</translation>
+        <translation>In Kanal veröffentlichen</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -5815,6 +5799,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Files</source>
         <translation>Dateien</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation>Abonnenten</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Beschreibung:</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes):</source>
+        <translation>Beiträge (bei Nachbarknoten)</translation>
     </message>
 </context>
 <context>
@@ -5904,26 +5900,6 @@ p, li { white-space: pre-wrap; }
         <source>Vote Down</source>
         <translation>Dagegen stimmen</translation>
     </message>
-    <message>
-        <source>Reputation</source>
-        <translation>Reputation</translation>
-    </message>
-    <message>
-        <source>Show Reputation</source>
-        <translation>Reputation anzeigen</translation>
-    </message>
-    <message>
-        <source>Interesting User</source>
-        <translation>Interessanter User</translation>
-    </message>
-    <message>
-        <source>Mark Spammy</source>
-        <translation>Als Spam markieren</translation>
-    </message>
-    <message>
-        <source>Ban User</source>
-        <translation>User verbannen</translation>
-    </message>
 </context>
 <context>
     <name>GxsCreateCommentDialog</name>
@@ -5945,11 +5921,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed by</source>
-        <translation>Signiert von</translation>
+        <translation>Unterzeichnet von</translation>
     </message>
     <message>
         <source>Comment Signing Error</source>
-        <translation>Fehler beim Signieren des Kommentars</translation>
+        <translation>Fehler beim Unterzeichnen des Kommentars</translation>
     </message>
     <message>
         <source>You need to create an Identity
@@ -5973,20 +5949,20 @@ bevor du kommentieren kannst.</translation>
         <translation>Forum bearbeiten</translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation>Forum erstellen</translation>
-    </message>
-    <message>
         <source>Update Forum</source>
         <translation>Forum aktualisieren</translation>
     </message>
     <message>
         <source>Add Forum Admins</source>
-        <translation>Forenadmin hinzufügen</translation>
+        <translation>Forum-Administratoren hinzufügen</translation>
     </message>
     <message>
         <source>Select Forum Admins</source>
-        <translation>Forenadmin auswählen</translation>
+        <translation>Forum-Administratoren auswählen</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Erstellen</translation>
     </message>
 </context>
 <context>
@@ -6098,10 +6074,6 @@ bevor du kommentieren kannst.</translation>
         <translation>Autor</translation>
     </message>
     <message>
-        <source>Signed</source>
-        <translation>Unterzeichnet</translation>
-    </message>
-    <message>
         <source>Loading</source>
         <translation>Lade</translation>
     </message>
@@ -6158,10 +6130,6 @@ bevor du kommentieren kannst.</translation>
         <translation>Ein neues Thema erstellen</translation>
     </message>
     <message>
-        <source>Reply to Author</source>
-        <translation>Dem Autor antworten</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -6210,10 +6178,6 @@ bevor du kommentieren kannst.</translation>
         <translation>[ ... Fehlender Beitrag ... ]</translation>
     </message>
     <message>
-        <source>By</source>
-        <translation>Von</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -6228,18 +6192,6 @@ bevor du kommentieren kannst.</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Forenbeschreibung</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Forum:</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Thema:</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -6261,12 +6213,40 @@ bevor du kommentieren kannst.</translation>
         <source>On %1, %2 wrote:</source>
         <translation>Am %1, schrieb %2:</translation>
     </message>
+    <message>
+        <source>Forum name</source>
+        <translation>Forumsname</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation>Abonnenten</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes)</source>
+        <translation>Beiträge (an Nachbarknoten)</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Beschreibung</translation>
+    </message>
+    <message>
+        <source>By </source>
+        <translation>Von</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Subscribing to the forum will gather                                            available posts from your subscribed friends, and make the                                            forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Das Abonnieren eines Foums sammelt verfügbare Beiträge von deinen Freunden, die das Forum ebenfalls abonniert haben und macht das Forum für alle anderen Freunde sichtbar&lt;/p&gt;&lt;p&gt;Danach kannst du das Forum über das Kontextmenü der Forenliste auf der linken Seite wieder abbestellen&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Reply with private message</source>
+        <translation>Mit privater Nachricht antworten</translation>
+    </message>
 </context>
 <context>
     <name>GxsForumUserNotify</name>
     <message>
         <source>Forum Post</source>
-        <translation>Beitrag</translation>
+        <translation>Forumsbeitrag</translation>
     </message>
 </context>
 <context>
@@ -6296,23 +6276,23 @@ bevor du kommentieren kannst.</translation>
         <translation>Andere Foren</translation>
     </message>
     <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;            			&lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) 			or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former            			class is more resistant to spamming because posts are                                       			cryptographically signed using a Retroshare pseudo-identity.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foren&lt;/h1&gt;&lt;p&gt;Retroshare&apos;s Foren sehen wie Internetforen aus, aber sie arbeiten dezentralisiert.&lt;/p&gt;&lt;p&gt;Du siehst die Foren, die deine Freunde abonniert haben und du leitest die von dir abonnierten Foren an deine Freunde weiter. So werden interessante Foren im Netz gefördert.&lt;/p&gt;&lt;p&gt;Foren sind entweder authentifiziert (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) oder anonym (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Die erstere Klasse ist widerstandsfähiger gegen Spamming weil die Beiträge von einer Retrosharepseudoidentität kryptographisch signiert sind.&lt;/p&gt;</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foren&lt;/h1&gt;&lt;p&gt;RetroShare-Foren sehen aus wie Internetforen, aber sie arbeiten dezentralisiert.&lt;/p&gt;&lt;p&gt;Du siehst die von deinen Freunden abonnierten Foren, und du leitest die von dir selbst abonnierten Foren an deine Freunde weiter. So werden interessante Foren im Netz gefördert.&lt;/p&gt;&lt;p&gt;Forenbeiträge werden nach %1 Monaten gelöscht.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
     <message>
         <source>Waiting</source>
-        <translation>Warte</translation>
+        <translation>Warten</translation>
     </message>
     <message>
         <source>Retrieving</source>
-        <translation>Rufe ab</translation>
+        <translation>Abrufen</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Lade</translation>
+        <translation>Laden</translation>
     </message>
 </context>
 <context>
@@ -6363,7 +6343,7 @@ bevor du kommentieren kannst.</translation>
     </message>
     <message>
         <source>Publish Signatures</source>
-        <translation>Publish Signatures</translation>
+        <translation>Signaturen veröffentlichen</translation>
     </message>
     <message>
         <source>Open</source>
@@ -6419,15 +6399,11 @@ bevor du kommentieren kannst.</translation>
     </message>
     <message>
         <source>Load Group Logo</source>
-        <translation>Lade Gruppenlogo</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Forum erstellen</translation>
+        <translation>Gruppenlogo laden</translation>
     </message>
     <message>
         <source>Submit Group Changes</source>
-        <translation>Änderung an Gruppe abschicken</translation>
+        <translation>Gruppenänderungen übermitteln</translation>
     </message>
     <message>
         <source>Failed to Prepare Group MetaData - please Review</source>
@@ -6435,11 +6411,55 @@ bevor du kommentieren kannst.</translation>
     </message>
     <message>
         <source>Will be used to send feedback</source>
-        <translation>Wird zum senden von Rückmeldungen benutzt werden.</translation>
+        <translation>Wird zum Senden von Rückmeldungen genutzt werden</translation>
     </message>
     <message>
         <source>Owner:</source>
         <translation>Eigentümer:</translation>
+    </message>
+    <message>
+        <source>Set a descriptive description here</source>
+        <translation>Gib hier eine aussagekräftige Beschreibung ein</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation>Info</translation>
+    </message>
+    <message>
+        <source>Comments allowed</source>
+        <translation>Kommentare erlaubt</translation>
+    </message>
+    <message>
+        <source>Comments not allowed</source>
+        <translation>Kommentare nicht erlaubt</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Letzter Beitrag</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation>Beliebtheit</translation>
+    </message>
+    <message>
+        <source>Posts</source>
+        <translation>Beiträge</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Autor</translation>
+    </message>
+    <message>
+        <source>GxsIdLabel</source>
+        <translation>GxsIdLabel</translation>
     </message>
 </context>
 <context>
@@ -6481,10 +6501,6 @@ bevor du kommentieren kannst.</translation>
         <translation>Details bearbeiten</translation>
     </message>
     <message>
-        <source>Share</source>
-        <translation>Verteilen</translation>
-    </message>
-    <message>
         <source>Copy RetroShare Link</source>
         <translation>RetroShare-Link kopieren</translation>
     </message>
@@ -6499,6 +6515,10 @@ bevor du kommentieren kannst.</translation>
     <message>
         <source>AUTHD</source>
         <translation>AUTHD</translation>
+    </message>
+    <message>
+        <source>Share admin permissions</source>
+        <translation>Administratorrechte teilen</translation>
     </message>
 </context>
 <context>
@@ -6527,20 +6547,8 @@ bevor du kommentieren kannst.</translation>
         <translation>Keine Signatur</translation>
     </message>
     <message>
-        <source>Identity name</source>
-        <translation>Identitätsname</translation>
-    </message>
-    <message>
-        <source>Identity Id</source>
-        <translation>Identitäts-ID</translation>
-    </message>
-    <message>
         <source>Authentication</source>
         <translation>Authentifizierung</translation>
-    </message>
-    <message>
-        <source>signed by</source>
-        <translation>signiert von</translation>
     </message>
     <message>
         <source>unknown Key</source>
@@ -6550,12 +6558,28 @@ bevor du kommentieren kannst.</translation>
         <source>anonymous</source>
         <translation>anonym</translation>
     </message>
+    <message>
+        <source>Identity&amp;nbsp;name</source>
+        <translation>Identitätsname</translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;Id</source>
+        <translation>Identitäts-ID</translation>
+    </message>
+    <message>
+        <source>Signed&amp;nbsp;by</source>
+        <translation>Unterzeichnet&amp;nbsp;von</translation>
+    </message>
+    <message>
+        <source>[Unknown]</source>
+        <translation>[Unbekannt]</translation>
+    </message>
 </context>
 <context>
     <name>GxsMessageFramePostWidget</name>
     <message>
         <source>Loading</source>
-        <translation>Lade</translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <source>No name</source>
@@ -6597,7 +6621,7 @@ bevor du kommentieren kannst.</translation>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation>unterscheide Groß/Klein</translation>
+        <translation>Groß-/Kleinschreibung unterscheiden</translation>
     </message>
     <message>
         <source>Whole words only</source>
@@ -6609,7 +6633,7 @@ bevor du kommentieren kannst.</translation>
     </message>
     <message>
         <source>Help Topics</source>
-        <translation>Hilfe-Kapitel</translation>
+        <translation>Hilfethemen</translation>
     </message>
     <message>
         <source>Search</source>
@@ -6836,11 +6860,127 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>IdDialog</name>
+    <name>IdDetailsDialog</name>
     <message>
-        <source>Identities</source>
-        <translation>Identitäten</translation>
+        <source>Person Details</source>
+        <translation>Personendetails</translation>
     </message>
+    <message>
+        <source>Identity Info</source>
+        <translation>Information zur Identität</translation>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation>Eigentümerknoten-ID</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Typ:</translation>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation>Eigentümerknotenname :</translation>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation>Identitätsname :</translation>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation>Identitäts-ID :</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>Dein Avatar</translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Reputation</translation>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation>Insgesamt</translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation>implizit</translation>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation>Meinung</translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation>Nachbarn</translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation>Reputation bearbeiten</translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation>Meinung optimieren</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Akzeptieren (+100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Positiv (+10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Negativ (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Sperren (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Benutzerdefiniert</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Ändern</translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Unbekannter Klarname</translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation>Anonyme ID</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation>Dir gehörende, mit deinem RetroShare-Knoten verknüpfte Identität</translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation>Anonyme Identität, die dir gehört.</translation>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation>Einem befreundetem RetroShare-Knoten gehörend</translation>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation>Einem 2 Hops entfernten RetroShare-Knoten gehörend</translation>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation>Einem unbekannten RetroShare-Knoten gehörend</translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation>Anonyme Identität</translation>
+    </message>
+</context>
+<context>
+    <name>IdDialog</name>
     <message>
         <source>New ID</source>
         <translation>Neue ID</translation>
@@ -6982,20 +7122,12 @@ p, li { white-space: pre-wrap; }
         <translation>In deinem Besitz</translation>
     </message>
     <message>
-        <source>Owned by neighbor nodes</source>
-        <translation>Im Besitz von Nachbarknoten</translation>
-    </message>
-    <message>
-        <source>Owned by distant nodes</source>
-        <translation>Im Besitz von entfernten Knoten</translation>
-    </message>
-    <message>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identitäten&lt;/h1&gt;&lt;p&gt;In diesem Reiter kannst du pseudoanonyme Identitäten erstellen/bearbeiten.&lt;/p&gt;&lt;p&gt;Identitäten werden benutzt um deine Daten sicher zu identifizieren: signiere Foren- und Kanalbeiträge, und empfange Rückmeldungen mit dem in Retroshare eingebauten E-Mailsystem, schreibe Kommentare zu Kanalbeiträgen etc.&lt;/p&gt;&lt;p&gt;Identitäten können optinal mit dem Zertifikat deines Retroshareknotens signiert werden. Signierte Identitäten sind vertrauenswürdiger, lassen sich aber mit der IP-Adresse deines Retroshareknotens in Verbindung bringen.&lt;/p&gt;&lt;p&gt;Anonyme Identitäten erlauben es dir anonym mit anderen Nutzern zu interagieren. Sie können nicht gefälscht werden, aber niemand kann beweisen wem eine bestimmte Identität wirklich gehört.&lt;/p&gt; 			</translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identitäten&lt;/h1&gt;&lt;p&gt;In diesem Reiter kannst du pseudoanonyme Identitäten erstellen/bearbeiten.&lt;/p&gt;&lt;p&gt;Identitäten werden benutzt, um deine Daten sicher zu identifizieren: signiere Foren- und Kanalbeiträge und empfange Rückmeldungen mit dem in RetroShare eingebauten E-Mail-System, veröffentliche Kommentare zu Kanalbeiträgen etc.&lt;/p&gt;&lt;p&gt;Identitäten können optional mit dem Zertifikat deines RetroShare-Knotens signiert werden. Signierte Identitäten sind vertrauenswürdiger, lassen sich aber mit der IP-Adresse deines RetroShare-Knotens in Verbindung bringen.&lt;/p&gt;&lt;p&gt;Anonyme Identitäten erlauben es dir, anonym mit anderen Nutzern zu interagieren. Sie können nicht gefälscht werden, aber niemand kann beweisen, wem eine bestimmte Identität wirklich gehört.&lt;/p&gt; </translation>
     </message>
     <message>
         <source>This identity is owned by you</source>
@@ -7011,47 +7143,116 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Identity owned by you, linked to your Retroshare node</source>
-        <translation>Dir gehörende, mit deinem Retroshareknoten verknüpfte Identität</translation>
+        <translation>Dir gehörende, mit deinem RetroShare-Knoten verknüpfte Identität</translation>
     </message>
     <message>
         <source>Anonymous identity, owned by you</source>
         <translation>Anonyme Identität, die dir gehört.</translation>
     </message>
     <message>
-        <source>Owned by a friend Retroshare node</source>
-        <translation>Einem befreundetem Retroshareknoten gehörend</translation>
-    </message>
-    <message>
-        <source>Owned by 2-hops Retroshare node</source>
-        <translation>Einem 2 Hops entfernten Retroshareknoten gehörend</translation>
-    </message>
-    <message>
-        <source>Owned by unknown Retroshare node</source>
-        <translation>Einem unbekannten Retroshareknoten gehörend</translation>
-    </message>
-    <message>
         <source>Anonymous identity</source>
         <translation>Anonyme Identität</translation>
-    </message>
-    <message>
-        <source>Do you really want to delete this Identity?</source>
-        <translation>Möchtest du diese Identität wirklich löschen?</translation>
-    </message>
-    <message>
-        <source>Chat with this peer as...</source>
-        <translation>Chatte mit diesem Nachbarn als...</translation>
     </message>
     <message>
         <source>Distant chat cannot work</source>
         <translation>Fernchat funktioniert nicht</translation>
     </message>
     <message>
-        <source>Distant chat refused with this peer.</source>
-        <translation>Fernchat mit diesem Nachbarn verwehrt</translation>
-    </message>
-    <message>
         <source>Error code</source>
         <translation>Fehlercode</translation>
+    </message>
+    <message>
+        <source>People</source>
+        <translation>Leute</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>Dein Avatar</translation>
+    </message>
+    <message>
+        <source>Linked to your node</source>
+        <translation>Mit deinem Knoten verknüpft</translation>
+    </message>
+    <message>
+        <source>Linked to neighbor nodes</source>
+        <translation>Mit Nachbarknoten verknüpft</translation>
+    </message>
+    <message>
+        <source>Linked to distant nodes</source>
+        <translation>Mit entfernten Knoten verknüpft</translation>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Anzeigen</translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation>Spalte</translation>
+    </message>
+    <message>
+        <source>Linked to a friend Retroshare node</source>
+        <translation>Mit befreundetem RetroShare-Knoten verknüpft</translation>
+    </message>
+    <message>
+        <source>Linked to a known Retroshare node</source>
+        <translation>Mit bekanntem RetroShare-Knoten verknüpft</translation>
+    </message>
+    <message>
+        <source>Linked to unknown Retroshare node</source>
+        <translation>Mit unbekanntem RetroShare-Knoten verknüpft</translation>
+    </message>
+    <message>
+        <source>Chat with this person</source>
+        <translation>Mit dieser Person chatten</translation>
+    </message>
+    <message>
+        <source>Chat with this person as...</source>
+        <translation>Mit dieser Person chatten als...</translation>
+    </message>
+    <message>
+        <source>Send message to this person</source>
+        <translation>Nachricht an diese Person senden</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Spalten</translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this person.</source>
+        <translation>Fernchat abgelehnt mit dieser Person.</translation>
+    </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Nachricht senden</translation>
+    </message>
+    <message>
+        <source>Last used:</source>
+        <translation>Zuletzt verwendet:</translation>
+    </message>
+    <message>
+        <source>Node name: </source>
+        <translation>Knotenname:</translation>
+    </message>
+    <message>
+        <source>Node Id  : </source>
+        <translation>Knoten-ID :</translation>
+    </message>
+    <message>
+        <source>+50 Known PGP</source>
+        <translation>+50 PGP bekannt</translation>
+    </message>
+    <message>
+        <source>+10 UnKnown PGP</source>
+        <translation>+10 PGP unbekannt</translation>
+    </message>
+    <message>
+        <source>+5 Anon Id</source>
+        <translation>+5 Anonyme ID</translation>
+    </message>
+    <message>
+        <source>Do you really want to delete this identity?</source>
+        <translation>Möchtest du diese Identität wirklich löschen?</translation>
     </message>
 </context>
 <context>
@@ -7075,10 +7276,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PGP Id</source>
         <translation>PGP-ID</translation>
-    </message>
-    <message>
-        <source>PGP Associated ID</source>
-        <translation>Mit PGP verknüpfte ID</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -7135,6 +7332,23 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add</source>
         <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>Dein Avatar</translation>
+    </message>
+    <message>
+        <source>Set Avatar</source>
+        <translation>Avatar festlegen</translation>
+    </message>
+    <message>
+        <source>Linked to your profile</source>
+        <translation>Mit deinem Profil verknüpft</translation>
+    </message>
+    <message>
+        <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
+        <translation>Du kannst eine oder mehrere Identitäten haben. Sie werden genutzt, um in Chatlobbys, Foren und Kanalkommentaren zu schreiben. Sie dienen als Zieladresse für Fernchat und das RetroShare-Fernnachrichtensystem.</translation>
     </message>
 </context>
 <context>
@@ -7432,6 +7646,10 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <source>Statistics</source>
         <translation>Statistiken</translation>
     </message>
+    <message>
+        <source>Show web interface</source>
+        <translation>Web-Oberfläche anzeigen</translation>
+    </message>
 </context>
 <context>
     <name>MessageComposer</name>
@@ -7626,10 +7844,6 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <message>
         <source>This friend is suggested by</source>
         <translation>Dieser Freund wurde vorgeschlagen von</translation>
-    </message>
-    <message>
-        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Grüße, &lt;br&gt;Das RetroShare Team</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
@@ -7852,28 +8066,52 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nachricht an entfernten Nachbarn kryptografisch signieren. Dies verhindert, dass zwischengeschaltete Nachbarn sich für dich ausgeben können.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Show:</source>
+        <translation>Anzeigen:</translation>
     </message>
     <message>
-        <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation>Entfernter Nachbar (Name: %2, PGP-Schlüssel: %1)</translation>
+        <source>Close</source>
+        <translation>Schließen</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Nur Personen denen du vertraust anzeigen</translation>
+        <source>From:</source>
+        <translation>Von:</translation>
     </message>
     <message>
-        <source>Respond to:</source>
-        <translation>Antworte an:</translation>
+        <source>All</source>
+        <translation>Alle</translation>
     </message>
     <message>
-        <source>Cannot send distant messages</source>
-        <translation>Kann keine Fernnachrichten senden</translation>
+        <source>Friend Nodes</source>
+        <translation>Befreundete Knoten</translation>
     </message>
     <message>
-        <source>In order to send distant messages, you need an identity to sign with. Please go to the Identities tab and create one first.</source>
-        <translation>Um Fernnachrichten zu senden benötigst du für das Signieren eine Identität. Bitte rufe zuerst den Identitätsreiter auf und erstelle eine.</translation>
+        <source>Person Details</source>
+        <translation>Personendetails</translation>
+    </message>
+    <message>
+        <source>Distant peer identities</source>
+        <translation>Identitäten ferner Nachbarn</translation>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;</source>
+        <translation>Danke, &lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Distant identity:</source>
+        <translation>Fernidentität:</translation>
+    </message>
+    <message>
+        <source>[Missing]</source>
+        <translation>[Fehlend]</translation>
+    </message>
+    <message>
+        <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
+        <translation>Bitte erstelle eine Identität, um Fernnachrichten zu signieren oder entferne die fernen Nachbarn aus der Zieladressliste.</translation>
+    </message>
+    <message>
+        <source>Node name &amp; id:</source>
+        <translation>Knotenname &amp; ID:</translation>
     </message>
 </context>
 <context>
@@ -7940,7 +8178,7 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
-        <translation>Akzeptiere verschlüsselte Fernnachrichten von jedermann.</translation>
+        <translation>Verschlüsselte Fernnachrichten von jedem annehmen</translation>
     </message>
     <message>
         <source>Load embedded images</source>
@@ -8052,40 +8290,12 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation>Bilde für diese Nachricht immer laden</translation>
     </message>
     <message>
-        <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation>Diese Nachricht ist verschlüsselt. Klicke rechte Taste zum Entschlüsseln.</translation>
-    </message>
-    <message>
-        <source>Decrypt</source>
-        <translation>Entschlüsseln</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Verschlüsselte Nachr.</translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation>Entschlüsseln fehlgeschlagen!</translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Diese Nachricht ist nicht verschlüsselt. Kann nicht entschlüsseln!</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Diese Nachricht konnte nicht entschlüsselt werden.</translation>
-    </message>
-    <message>
-        <source>Unknown (needs decryption)</source>
-        <translation>Unbekannt (benötigt Entschlüsselung)</translation>
-    </message>
-    <message>
         <source>Hide the attachment pane</source>
-        <translation>Verstecke die Anhangsanzeige</translation>
+        <translation>Anhangsansicht verstecken</translation>
     </message>
     <message>
         <source>Show the attachment pane</source>
-        <translation>Zeige die Anhangsanzeige an</translation>
+        <translation>Anhangsansicht anzeigen</translation>
     </message>
 </context>
 <context>
@@ -8478,24 +8688,12 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation>Gesamt:</translation>
     </message>
     <message>
-        <source>Decrypt Message</source>
-        <translation>Nachricht entschlüsseln</translation>
-    </message>
-    <message>
-        <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Verschlüsselte Nachricht. Rechtsklick zum Entschlüsseln</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Nachrichten</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
-        <translation>Klicke, um nach Signatur zu sortieren</translation>
-    </message>
-    <message>
-        <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Diese Nachricht ist verschlüsselt. Rechtsklick zum Entschlüsseln</translation>
+        <translation>Anklicken, um nach Signatur zu sortieren</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
@@ -8506,12 +8704,12 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation>Diese Nachricht wurde signiert und die Signatur stimmt nicht überein.</translation>
     </message>
     <message>
-        <source>This message has been successfully decrypted, and is unsigned.</source>
-        <translation>Diese Nachricht wurde erfolgreich entschlüsselt und ist unsigniert.</translation>
+        <source>This message comes from a distant person.</source>
+        <translation>Diese Nachricht kommt von einer fernen Person.</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friends nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Nachrichten&lt;/h1&gt;&lt;p&gt;Retroshare hat sein eigenes internes E-Mailsystem. Du kannst E-Mails an befreundete Knoten schicken und von ihnen erhalten.&lt;/p&gt;&lt;p&gt;Es ist auch möglich Nachrichten über das globale Routingsystem an die Identitäten anderer Teilnehmer zu schicken. Diese Nachrichten sind immer verschlüsselt und werden von zwischenliegenden Knoten weitergeleitet, bis sie ihr Endziel erreicht haben.&lt;/p&gt;&lt;p&gt;Es empfiehlt sich dies Fernnachrichten kryptografisch mittels der &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; Schaltfläche des Nachrichteneditors zu signieren, damit der Empfänger sicher sein kann, dass sie wirklich von dir kommen. Fernachrichten verbleiben in deinem Postausgang bis eine Empfangsbestätigung eingegangen ist.&lt;/p&gt;&lt;p&gt;Im Allgemeinen kannst du diese Nachrichten dazu benutzen deinen Freunden Dateien zu empfehlen indem du Dateilinks einfügst, Oder deinen befreundeten Knoten andere Knoten als Freund empfehlen um dein Netzwerk zu stärken, oder Rückmeldungen an Kanalbetreiber zu senden.&lt;/p&gt;                    </translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Nachrichten&lt;/h1&gt;&lt;p&gt;RetroShare hat sein eigenes internes E-Mail-System. Du kannst E-Mails an befreundete Knoten schicken und von ihnen erhalten.&lt;/p&gt;&lt;p&gt;Es ist auch möglich, Nachrichten über das globale Routingsystem an die Identitäten anderer Teilnehmer zu schicken. Diese Nachrichten sind immer verschlüsselt und werden von zwischenliegenden Knoten weitergeleitet, bis sie ihr Endziel erreicht haben.&lt;/p&gt;&lt;p&gt;Es empfiehlt sich, diese Fernnachrichten kryptografisch mittels der &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt;-Schaltfläche des Nachrichteneditors zu signieren, damit der Empfänger sicher sein kann, dass sie wirklich von dir kommen. Fernnachrichten verbleiben in deinem Postausgang bis eine Empfangsbestätigung eingegangen ist.&lt;/p&gt;&lt;p&gt;Im Allgemeinen kannst du diese Nachrichten dazu benutzen, durch Hinzufügen von Dateilinks deinen Freunden Dateien zu empfehlen, zur Stärkung deines Netzwerks deinen befreundeten Knoten andere Knoten als Freund zu empfehlen, oder Rückmeldungen an Kanalbetreiber zu senden.&lt;/p&gt;                    </translation>
     </message>
 </context>
 <context>
@@ -8585,10 +8783,6 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <source>Hide</source>
         <translation>Verbergen</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Verschlüsselte Nachricht</translation>
     </message>
 </context>
 <context>
@@ -8733,24 +8927,12 @@ Möchtest du die Nachricht speichern ?</translation>
         <translation>Ein neues Profil erstellen</translation>
     </message>
     <message>
-        <source>Search Name</source>
-        <translation>Name durchsuchen</translation>
-    </message>
-    <message>
         <source>Peer ID</source>
         <translation>Nachbar-ID</translation>
     </message>
     <message>
-        <source>Search Peer ID</source>
-        <translation>Nachbar-ID durchsuchen</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Freund blockieren</translation>
-    </message>
-    <message>
-        <source>Make friend</source>
-        <translation>Freund hinzufügen</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -8800,7 +8982,7 @@ Der Schlüsselbund wurde aus Sicherheitsgründen zuvor in einer Datei gesichert.
     </message>
     <message>
         <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
-        <translation>Sicherungsdatei kann nicht erstellt werden. Überprüfe bitte die Schreibrechte im PGP-Verzeichnis, den verfügbaren Speicherplatz usw.</translation>
+        <translation>Sicherungsdatei kann nicht erstellt werden. Bitte die Schreibrechte im PGP-Verzeichnis, den verfügbaren Speicherplatz usw. überprüfen.</translation>
     </message>
     <message>
         <source>Key removal has failed. Your keyring remains intact.
@@ -8812,7 +8994,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Personal signature</source>
-        <translation>Persönliche Unterschrift</translation>
+        <translation>Persönliche Signatur</translation>
     </message>
     <message>
         <source>PGP key signed by you</source>
@@ -8869,32 +9051,56 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
         <translation>Dateninkonsistenz im Schlüsselbund. Dies ist wahrscheinlich ein Bug. Bitte die Entwickler kontaktieren.</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Nur Personen denen du vertraust anzeigen</translation>
+        <source>Export/create a new node</source>
+        <translation>Einen neuen Netzknoten exportieren/erstellen</translation>
     </message>
     <message>
-        <source> If I accept connection from peer</source>
-        <translation>Wenn ich Verbindungen vom Nachbarn akzeptiere</translation>
+        <source>Trusted keys only</source>
+        <translation>Nur vertrauenswürdige Schlüssel</translation>
     </message>
     <message>
-        <source>Name of peer</source>
-        <translation>Name des Nachbarn</translation>
+        <source>Trust level</source>
+        <translation>Vertrauensniveau</translation>
     </message>
     <message>
-        <source>Did peer sign mine PGP key</source>
-        <translation>Hat Nachbar meinen PGP-Schlüssel unterzeichnet</translation>
+        <source> Do you accept connections signed by this key?</source>
+        <translation>Mit diesem Schlüssel signierte Verbindungen annehmen?</translation>
     </message>
     <message>
-        <source>Peer&apos;s Certificat ID</source>
-        <translation>Zertifikat-ID des Nachbarn</translation>
+        <source>Name of the key</source>
+        <translation>Name des Schlüssels</translation>
     </message>
     <message>
-        <source>Since when I use this Certificat</source>
+        <source>Certificat ID</source>
+        <translation>Zertifikats-ID</translation>
+    </message>
+    <message>
+        <source>Make friend...</source>
+        <translation>Freundschaft schließen …</translation>
+    </message>
+    <message>
+        <source>Did peer authenticate you</source>
+        <translation>Hat der Nachbar dich authentifiziert</translation>
+    </message>
+    <message>
+        <source>This column indicates trust level and whether you signed their PGP key</source>
+        <translation>Diese Spalte zeigt das Vertrauensniveau und ob du den PGP-Schlüssel signiert hast an</translation>
+    </message>
+    <message>
+        <source>Did that peer sign your PGP key</source>
+        <translation>Hat dieser Nachbar deinen PGP-Schlüssel signiert</translation>
+    </message>
+    <message>
+        <source>Since when I use this certificate</source>
         <translation>Seit wann ich dieses Zertifikat benutze</translation>
     </message>
     <message>
-        <source>Export/create a new location</source>
-        <translation>Einen neuen Ort exportieren/erstellen</translation>
+        <source>Search name</source>
+        <translation>Name suchen</translation>
+    </message>
+    <message>
+        <source>Search peer ID</source>
+        <translation>Nachbar-ID suchen</translation>
     </message>
 </context>
 <context>
@@ -8966,12 +9172,22 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Info&lt;/h1&gt;&lt;p&gt;Die Infoseite zeigt die letzten Ereignisse in deinem Netz, sortiert nach der Empfangszeit. Das gibt dir eine Zusammenfassung über die Aktivität deiner Freunde.
-Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;Optionen&lt;/b&gt; einstellen.&lt;/p&gt;                                      		  &lt;p&gt;Die verschiedenen anzeigbaren Ereignisse sind:                                                                                		  &lt;ul&gt;&lt;li&gt;Verbindungsversuche (nützlich um neue Freundschaften zu schließen und um zu prüfen wer dich erreichen will)&lt;/li&gt;&lt;li&gt;Kanal- und Forenbeiträge&lt;/li&gt;&lt;li&gt;Neue Kanäle und Foren, die du abonnieren kannst&lt;/li&gt; &lt;li&gt;Private Nachrichten von deinen Freunden&lt;/li&gt;&lt;/ul&gt; &lt;/p&gt;</translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Info&lt;/h1&gt;&lt;p&gt;Die Infoseite zeigt die letzten Ereignisse innerhalb deines Netzes, sortiert nach Empfangszeit. Dies gibt dir eine Zusammenfassung über die Aktivität deiner Freunde.
+Die anzuzeigenden Ereignisse kannst du durch Klicken auf &lt;b&gt;Optionen&lt;/b&gt; einstellen.&lt;/p&gt;
+&lt;p&gt;Die verschiedenen anzeigbaren Ereignisse sind:
+&lt;ul&gt;&lt;li&gt;Verbindungsversuche (nützlich, um neue Freundschaften zu schließen und um zu prüfen, wer dich erreichen will)&lt;/li&gt;&lt;li&gt;Kanal- und Forenbeiträge&lt;/li&gt;&lt;li&gt;Neue Kanäle und Foren, die du abonnieren kannst&lt;/li&gt; &lt;li&gt;Private Nachrichten von deinen Freunden&lt;/li&gt;&lt;/ul&gt; &lt;/p&gt;</translation>
     </message>
     <message>
         <source>News feed</source>
-        <translation>Info</translation>
+        <translation>Neuigkeiten</translation>
+    </message>
+    <message>
+        <source>Newest on top</source>
+        <translation>Neueste oben</translation>
+    </message>
+    <message>
+        <source>Oldest on top</source>
+        <translation>Älteste oben</translation>
     </message>
 </context>
 <context>
@@ -9003,10 +9219,6 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
     <message>
         <source>Security</source>
         <translation>Sicherheit</translation>
-    </message>
-    <message>
-        <source>Add feeds at end</source>
-        <translation>Infos am Ende anfügen</translation>
     </message>
     <message>
         <source>Test</source>
@@ -9114,11 +9326,35 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
     </message>
     <message>
         <source>Posted</source>
-        <translation>Posted</translation>
+        <translation>Veröffentlicht</translation>
     </message>
     <message>
         <source>Disable All Toaster temporarily</source>
         <translation>Alle Hinweise vorübergehend deaktivieren</translation>
+    </message>
+    <message>
+        <source>Feed</source>
+        <translation>Feed</translation>
+    </message>
+    <message>
+        <source>Systray</source>
+        <translation>Benachrichtigungsfeld</translation>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Chatlobbys</translation>
+    </message>
+    <message>
+        <source>Count all unread messages</source>
+        <translation>Alle ungelesenen Nachrichten zählen</translation>
+    </message>
+    <message>
+        <source>Count occurences of any of the following texts (separate by newlines):</source>
+        <translation>Häufigkeit irgendeines der folgenden Texte zählen (durch Zeilenvorschub trennen):</translation>
+    </message>
+    <message>
+        <source>Count occurences of my current identity</source>
+        <translation>Häufigkeit meiner aktuellen Identität zählen</translation>
     </message>
 </context>
 <context>
@@ -9229,6 +9465,171 @@ Minimalmodus: 10% vom Standarddatenaufkommen und (unfertig) pausiert alle Datei�
     <message>
         <source>By service : </source>
         <translation>Nach Dienst:</translation>
+    </message>
+</context>
+<context>
+    <name>PGPKeyDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Dialog</translation>
+    </message>
+    <message>
+        <source>PGP Key info</source>
+        <translation>PGP-Schlüsselinformationen</translation>
+    </message>
+    <message>
+        <source>PGP name :</source>
+        <translation>PGP-Name :</translation>
+    </message>
+    <message>
+        <source>Fingerprint :</source>
+        <translation>Fingerabdruck :</translation>
+    </message>
+    <message>
+        <source>Trust level:</source>
+        <translation>Vertrauensniveau:</translation>
+    </message>
+    <message>
+        <source>Unset</source>
+        <translation>Nicht festgelegt</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
+    </message>
+    <message>
+        <source>No trust</source>
+        <translation>Kein Vertrauen</translation>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation>Geringfügig </translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Voll</translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation>Ultimativ</translation>
+    </message>
+    <message>
+        <source>Key signatures :</source>
+        <translation>Schlüsselsignaturen :</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Einen Schlüssel eines Freundes zu unterzeichnen, zeigt deinen anderen Freunden, dass du ihm vertraust. Nur Freunde, deren Schlüssel du unterzeichnest, erhalten Informationen über die Freunde, denen du vertraust.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Das Unterzeichnen eines Schlüssels kann nicht rückgängig gemacht werden, deshalb nutze es weise.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign this PGP key</source>
+        <translation>PGP-Schlüssel unterzeichnen</translation>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation>PGP-Schlüssel unterzeichnen</translation>
+    </message>
+    <message>
+        <source>Deny connections</source>
+        <translation>Verbindungen ablehnen</translation>
+    </message>
+    <message>
+        <source>Accept connections</source>
+        <translation>Verbindungen annehmen</translation>
+    </message>
+    <message>
+        <source>ASCII format</source>
+        <translation>ASCII-Format</translation>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Signaturen einschließen</translation>
+    </message>
+    <message>
+        <source>PGP Key details</source>
+        <translation>PGP-Schlüsseldetails</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation>Fehler: Kann Nachbardetails nicht ermitteln.</translation>
+    </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation>Der angegebene Schlüsselalgorithmus wird von RetroShare nicht unterstützt.
+(Im Moment werden nur RSA-Schlüssel unterstützt)</translation>
+    </message>
+    <message>
+        <source>This is your own PGP key, and it is signed by : </source>
+        <translation>Dies ist dein eigener PGP-Schlüssel und er wurde signiert von:</translation>
+    </message>
+    <message>
+        <source>This key is signed by : </source>
+        <translation>Schlüssel unterzeichnet von : </translation>
+    </message>
+    <message>
+        <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
+        <translation>Das Vertrauensniveau drückt dein eigenes Vertrauen in diesen Schlüssel aus. Es wird weder von der Software genutzt noch geteilt, kann aber zum Merken guter bzw. schlechter Schlüssel nützlich sein.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate</source>
+        <translation>Du vertraust diesem Nachbarn ultimativ.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation>Du vertraust diesem Nachbarn voll.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation>Du vertraust diesem Nachbarn geringfügig.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation>Du vertraust diesem Nachbarn nicht.</translation>
+    </message>
+    <message>
+        <source>This key has signed your own PGP key</source>
+        <translation>Dieser Schlüssel hat deinen eigenen PGP-Schlüssel signiert</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This PGP key (ID=</source>
+        <translation>&lt;p&gt;Dieser PGP-Schlüssel (ID=</translation>
+    </message>
+    <message>
+        <source>You have chosen to accept connections from Retroshare nodes signed by this key.</source>
+        <translation>Du hast entschieden, mit diesem Schlüssel signierte Verbindungen von RetroShare-Netzknoten zu akzeptieren.</translation>
+    </message>
+    <message>
+        <source>You are currently not allowing connections from Retroshare nodes signed by this key.</source>
+        <translation>Du erlaubst momentan keine mit diesem Schlüssel signierte Verbindungen von RetroShare-Netzknoten.</translation>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation>Signaturfehler</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation>Vielleicht ist das Passwort falsch</translation>
+    </message>
+    <message>
+        <source>You haven&apos;t set a trust level for this key.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9804,10 +10205,6 @@ schädlichem Verhalten von Plug-ins.</translation>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <source>Distant chat terminated</source>
-        <translation>Fernchat beendet</translation>
-    </message>
-    <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation>Die Person mit der du dich unterhälst hat den gesicherten Tunnel gelöscht. Du kannst das Chatfenster jetzt schließen.</translation>
     </message>
@@ -9819,12 +10216,24 @@ schädlichem Verhalten von Plug-ins.</translation>
         <source>Kill the tunnel?</source>
         <translation>Tunnel schließen?</translation>
     </message>
+    <message>
+        <source>Hash Error. No tunnel.</source>
+        <translation>Hash-Fehler. Kein Tunnel.</translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because there is no tunnel.</source>
+        <translation>Nachricht kann nicht gesendet werden, da kein Tunnel vorhanden.</translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
+        <translation>Nachricht kann nicht gesendet werden, da der sichere Tunnel vom Unterhaltungspartner gelöscht wurde.</translation>
+    </message>
 </context>
 <context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Signed by: </source>
-        <translation>Signiert von:</translation>
+        <translation>Unterzeichnet von:</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -9878,10 +10287,6 @@ schädlichem Verhalten von Plug-ins.</translation>
         <translation>Posted</translation>
     </message>
     <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt; 	 &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;&lt;p&gt;Der Posteddienst erlaubt es dir Internetlinks zu teilen, die sich zwischen Retroshareknoen wie Foren und Kanäle verbreiten.&lt;/p&gt;&lt;p&gt;Links können durch Nutzer die denDienst abonniert haben kommentiert werden. Ein Promotionsystem bietet die Möglichkeit wichtige Links hervorzuheben.&lt;/p&gt;&lt;p&gt;Es gibt keine Beschränkung, welche Links geteilt werden können. Sei vorsichtig wenn du auf sie klickst.&lt;/p&gt;</translation>
-    </message>
-    <message>
         <source>Create Topic</source>
         <translation>Thema erstellen</translation>
     </message>
@@ -9901,16 +10306,20 @@ schädlichem Verhalten von Plug-ins.</translation>
         <source>Other Topics</source>
         <translation>Andere Themen</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;&lt;p&gt;Der Posted-Dienst erlaubt es dir, Internetlinks zu teilen, die sich zwischen RetroShare-Knoten verbreiten, wie z. B. Foren und Kanäle.&lt;/p&gt;&lt;p&gt;Links können durch Nutzer kommentiert werden, die den Dienst abonniert haben. Ein Promotionsystem bietet auch die Möglichkeit, wichtige Links hervorzuheben.&lt;/p&gt;&lt;p&gt;Es gibt keine Beschränkung hinsichtlich der zu teilenden Links. Sei vorsichtig, wenn du auf sie klickst.&lt;/p&gt;&lt;p&gt;Posted-Links werden nach %1 Monaten gelöscht.&lt;/p&gt;</translation>
+    </message>
 </context>
 <context>
     <name>PostedGroupDialog</name>
     <message>
         <source>Posted Topic</source>
-        <translation>Posted Thema</translation>
+        <translation>Posted-Thema</translation>
     </message>
     <message>
         <source>Add Topic Admins</source>
-        <translation>Themenverwalter hinzufügen</translation>
+        <translation>Thema-Aministratoren hinzufügen</translation>
     </message>
     <message>
         <source>Select Topic Admins</source>
@@ -9925,12 +10334,12 @@ schädlichem Verhalten von Plug-ins.</translation>
         <translation>Thema bearbeiten</translation>
     </message>
     <message>
-        <source>Create Topic</source>
-        <translation>Thema erstellen</translation>
-    </message>
-    <message>
         <source>Update Topic</source>
         <translation>Thema aktualisieren</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Erstellen</translation>
     </message>
 </context>
 <context>
@@ -9971,10 +10380,6 @@ schädlichem Verhalten von Plug-ins.</translation>
         <translation>0</translation>
     </message>
     <message>
-        <source>From</source>
-        <translation>Von</translation>
-    </message>
-    <message>
         <source>Site</source>
         <translation>Site</translation>
     </message>
@@ -9999,10 +10404,6 @@ schädlichem Verhalten von Plug-ins.</translation>
         <translation>\/</translation>
     </message>
     <message>
-        <source>Submitted</source>
-        <translation>Eingereicht</translation>
-    </message>
-    <message>
         <source>Set as read and remove item</source>
         <translation>Als gelesen markieren und Eintrag entfernen</translation>
     </message>
@@ -10021,6 +10422,10 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <source>Loading</source>
         <translation>Lade</translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation>Von</translation>
     </message>
 </context>
 <context>
@@ -10066,20 +10471,8 @@ schädlichem Verhalten von Plug-ins.</translation>
         <translation>Einen neuen Beitrag einreichen</translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
-        <translation>Zeige 1–100</translation>
-    </message>
-    <message>
-        <source>Prev</source>
-        <translation>Vorheriges</translation>
-    </message>
-    <message>
         <source>Next</source>
         <translation>Nächstes</translation>
-    </message>
-    <message>
-        <source>Showing</source>
-        <translation>Zeige</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -10087,7 +10480,15 @@ schädlichem Verhalten von Plug-ins.</translation>
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
-        <translation>Vor dem Abstimmen bitte eine Signier ID erstellen oder auswählen</translation>
+        <translation>Vor dem Abstimmen bitte eine Signier-ID erstellen oder auswählen</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>Vorherige</translation>
+    </message>
+    <message>
+        <source>1-10</source>
+        <translation>1-10</translation>
     </message>
 </context>
 <context>
@@ -10214,10 +10615,6 @@ und den Import zum Laden verwenden</translation>
         <translation>Deine Identität wurde erfolgreich importiert:</translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Du kannst sie jetzt benutzen, um einen neuen Ort anzulegen.</translation>
-    </message>
-    <message>
         <source>Select Trusted Friend</source>
         <translation>Wähle vertrauten Freund</translation>
     </message>
@@ -10252,6 +10649,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Export selected key</source>
         <translation>Exportiere ausgewählten Schlüssel</translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation>Du kannst es jetzt benutzen, um einen neuen Netzknoten zu erstellen.</translation>
     </message>
 </context>
 <context>
@@ -10430,14 +10831,6 @@ hinzufügen und den Assistent zum Hinzufügen von Freunden zu starten.
         <translation>Dateien hinzufügen</translation>
     </message>
     <message>
-        <source>Add friend</source>
-        <translation>Freund hinzufügen</translation>
-    </message>
-    <message>
-        <source>Add friends</source>
-        <translation>Freunde hinzufügen</translation>
-    </message>
-    <message>
         <source>Do you want to process the link ?</source>
         <translation>Möchtest du den Link verarbeiten ?</translation>
     </message>
@@ -10602,14 +10995,6 @@ Die Zeichen &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; werden durch &
 </translation>
     </message>
     <message>
-        <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Du scheinst Orte zu besitzen, die mit DSA-Schlüsseln verknüpft sind:</translation>
-    </message>
-    <message>
-        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>DSA-Schlüssel werden von dieser Version von RetroShare noch nicht unterstützt. Alle diese Orte können nicht benutzt werden. Das tut uns sehr leid.</translation>
-    </message>
-    <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>Diese Version von RetroShare benutzt das OpenPGP-SDK. Der Schlüsselring des Systems wird nicht mehr verwendet, sondern ein eigener Schlüsselring für alle laufenden Instanzen.&lt;br&gt;&lt;br&gt;Du scheinst keinen solchen Schlüsselring zu besitzen, obwohl Schlüssel von existierenden RetroShare-Accounts benötigt werden. Vielleicht hast du auch gerade zu dieser Version gewechselt.</translation>
     </message>
@@ -10664,10 +11049,6 @@ Lockdatei:
         <translation>Der Start mit einem RetroShare-Link wird nur unter Windows unterstützt.</translation>
     </message>
     <message>
-        <source>Hash error</source>
-        <translation>Hashfehler</translation>
-    </message>
-    <message>
         <source>Distant peer has closed the chat</source>
         <translation>Der Gesprächspartner hat den Chat beendet.</translation>
     </message>
@@ -10699,7 +11080,7 @@ Der gemeldete Fehler ist:
     </message>
     <message>
         <source>Click to send a private message to %1 (%2).</source>
-        <translation>Klicke um eine private Nachricht an %1 (%2) zu senden.</translation>
+        <translation>Anklicken, um eine private Nachricht an %1 (%2) zu senden.</translation>
     </message>
     <message>
         <source>%1 (%2, Extra - Source included)</source>
@@ -10711,11 +11092,11 @@ Der gemeldete Fehler ist:
     </message>
     <message>
         <source>Click this link to send a private message to %1 (%2)</source>
-        <translation>Klicke diesen Link, um eine private Nachricht an %1 (%2) zu senden</translation>
+        <translation>Diesen Link anklicken, um eine private Nachricht an %1 (%2) zu senden</translation>
     </message>
     <message>
         <source>RetroShare Certificate (%1, @%2)</source>
-        <translation>Retrosharezertifikat (%1, @%2)</translation>
+        <translation>RetroShare-Zertifikat (%1, @%2)</translation>
     </message>
     <message>
         <source>secs</source>
@@ -10740,6 +11121,70 @@ Der gemeldete Fehler ist:
     <message>
         <source>Data forward</source>
         <translation>Daten weiter</translation>
+    </message>
+    <message>
+        <source>You appear to have nodes associated to DSA keys:</source>
+        <translation>Du scheinst Netzknoten zu besitzen, die mit DSA-Schlüsseln verknüpft sind:</translation>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
+        <translation>DSA-Schlüssel werden von dieser Version von RetroShare noch nicht unterstützt. Alle diese Netzknoten können nicht benutzt werden. Das tut uns sehr leid.</translation>
+    </message>
+    <message>
+        <source>Auto Subscribe: </source>
+        <translation>Automatisches Abonnieren:</translation>
+    </message>
+    <message>
+        <source>enabled</source>
+        <translation>aktiviert</translation>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation>deaktivert</translation>
+    </message>
+    <message>
+        <source>Join chat lobby</source>
+        <translation>Chatlobby betreten</translation>
+    </message>
+    <message>
+        <source>Move IP %1 to whitelist</source>
+        <translation>IP %1 in Whitelist verschieben</translation>
+    </message>
+    <message>
+        <source>Whitelist entire range %1</source>
+        <translation>Gesamten Bereich %1 zu Whitelist hinzufügen</translation>
+    </message>
+    <message>
+        <source>whitelist entire range %1</source>
+        <translation>gesamten Bereich %1 zu Whitelist hinzufügen</translation>
+    </message>
+    <message>
+        <source>%1 seconds ago</source>
+        <translation>Vor %1 Sekunden</translation>
+    </message>
+    <message>
+        <source>%1 minute ago</source>
+        <translation>Vor %1 Minute</translation>
+    </message>
+    <message>
+        <source>%1 minutes ago</source>
+        <translation>Vor %1 Minuten</translation>
+    </message>
+    <message>
+        <source>%1 hour ago</source>
+        <translation>Vor %1 Stunde</translation>
+    </message>
+    <message>
+        <source>%1 hours ago</source>
+        <translation>Vor %1 Stunden</translation>
+    </message>
+    <message>
+        <source>%1 day ago</source>
+        <translation>Vor %1 Tag</translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation>Vor %1 Tagen</translation>
     </message>
 </context>
 <context>
@@ -11019,6 +11464,49 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RSPermissionMatrixWidget</name>
+    <message>
+        <source>Service name: </source>
+        <translation>Dienstname: </translation>
+    </message>
+    <message>
+        <source>Allowed by default</source>
+        <translation>Standardmäßig erlaubt</translation>
+    </message>
+    <message>
+        <source>Denied by default</source>
+        <translation>Standardmäßig verweigert</translation>
+    </message>
+    <message>
+        <source>Peer name: </source>
+        <translation>Nachbarname</translation>
+    </message>
+    <message>
+        <source>Peer Id: </source>
+        <translation>Nachbar-ID</translation>
+    </message>
+    <message>
+        <source>Enabled for this peer</source>
+        <translation>Für diesen Nachbarn aktiviert</translation>
+    </message>
+    <message>
+        <source>Disabled for this peer</source>
+        <translation>Für diesen Nachbarn deaktiviert</translation>
+    </message>
+    <message>
+        <source>Enabled by remote peer</source>
+        <translation>Von Gegenstelle aktiviert</translation>
+    </message>
+    <message>
+        <source>Disabled by remote peer</source>
+        <translation>Von Gegenstelle deaktiviert</translation>
+    </message>
+    <message>
+        <source>Switched Off</source>
+        <translation>Ausgeschaltet</translation>
+    </message>
+</context>
+<context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -11119,7 +11607,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation>Empfehle in einer Nachricht an</translation>
+        <translation>In einer Nachricht empfehlen an</translation>
     </message>
     <message>
         <source>Collection</source>
@@ -11131,6 +11619,56 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>NEW</source>
         <translation>NEU</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListDefs</name>
+    <message>
+        <source>IP address not checked</source>
+        <translation>IP-Adresse nicht überprüft</translation>
+    </message>
+    <message>
+        <source>IP address is blacklisted</source>
+        <translation>IP-Adresse befindet sich auf Blacklist</translation>
+    </message>
+    <message>
+        <source>IP address is not whitelisted</source>
+        <translation>IP-Adresse befindet sich nicht auf Whitelist</translation>
+    </message>
+    <message>
+        <source>IP address accepted</source>
+        <translation>IP-Adresse akzeptiert</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListToolButton</name>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation>IP zu Whitelist hinzufügen</translation>
+    </message>
+    <message>
+        <source>Remove IP from whitelist</source>
+        <translation>IP von Whitelist entfernen</translation>
+    </message>
+    <message>
+        <source>Add IP to blacklist</source>
+        <translation>IP zu Blacklist hinzufügen</translation>
+    </message>
+    <message>
+        <source>Remove IP from blacklist</source>
+        <translation>IP von Blacklist entfernen</translation>
+    </message>
+    <message>
+        <source>Only IP</source>
+        <translation>Nur IP</translation>
+    </message>
+    <message>
+        <source>Entire range</source>
+        <translation>Gesamter Bereich</translation>
     </message>
 </context>
 <context>
@@ -11353,10 +11891,17 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
 </context>
 <context>
+    <name>RsNetUtil</name>
+    <message>
+        <source>Invalid format</source>
+        <translation>Ungültiges Format</translation>
+    </message>
+</context>
+<context>
     <name>Rshare</name>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation>Setzt alle RetroShare Einstellungen zurück.</translation>
+        <translation>Setzt alle RetroShare-Einstellungen zurück.</translation>
     </message>
     <message>
         <source>Sets the directory RetroShare uses for data files.</source>
@@ -11372,11 +11917,11 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation>Setzt den RetroShare Interface Stil.</translation>
+        <translation>Setzt RetroShares Oberflächenstil.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation>Setzt das RetroShare Stylesheet.</translation>
+        <translation>Setzt RetroShares Oberflächen-Stylesheet.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
@@ -11400,7 +11945,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation>Kann Logdatei nicht öffnen &apos;%1&apos;: %2</translation>
+        <translation>Logdatei &quot;%1&quot;: %2 kann nicht geöffnet werden</translation>
     </message>
     <message>
         <source>built-in</source>
@@ -11408,14 +11953,18 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>Could not create data directory: %1</source>
-        <translation>Konnte Datenverzeichnis nicht erstellen: %1</translation>
+        <translation>Datenverzeichnis konnte nicht erstellt werden: %1</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation>Revision</translation>
     </message>
 </context>
 <context>
     <name>RttStatistics</name>
     <message>
         <source>RTT Statistics</source>
-        <translation>RTT Statistiken</translation>
+        <translation>RTT-Statistiken</translation>
     </message>
 </context>
 <context>
@@ -11603,7 +12152,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>Download Notice</source>
-        <translation>Download</translation>
+        <translation>Download-Hinweis</translation>
     </message>
     <message>
         <source>Skipping Local Files</source>
@@ -11660,6 +12209,65 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     <message>
         <source>Collection</source>
         <translation>Kollektion</translation>
+    </message>
+</context>
+<context>
+    <name>SecurityIpItem</name>
+    <message>
+        <source>Peer details</source>
+        <translation>Nachbardetails</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Erweitern</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Element entfernen</translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation>IP-Adresse:</translation>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation>Nachbar-ID:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Ort:</translation>
+    </message>
+    <message>
+        <source>Peer Name:</source>
+        <translation>Nachbarname:</translation>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation>Unbekannter Nachbar</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
+    </message>
+    <message>
+        <source>but reported:</source>
+        <translation>aber gemeldet:</translation>
+    </message>
+    <message>
+        <source>Wrong external ip address reported</source>
+        <translation>Falsche externe IP-Adresse gemeldet</translation>
+    </message>
+    <message>
+        <source>IP address %1 was added to the whitelist</source>
+        <translation>IP-Adresse %1 wurde zur Whitelist hinzugefügt</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the external IP your Retroshare node thinks it is using.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11762,27 +12370,23 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>Certificate has wrong signature!! This peer is not who he claims to be.</source>
-        <translation>Zertifikat hat die falsche Signatur!! Dieser Nachbar ist nicht wer er vorgibt zu sein.</translation>
+        <translation>Zertifikat hat die falsche Signatur!! Dieser Nachbar ist nicht, wer er vorgibt zu sein.</translation>
     </message>
     <message>
         <source>Missing/Damaged SSL certificate for key </source>
-        <translation>Fehlendes / beschädigtes  SSL-Zertifikat für Schlüssel</translation>
+        <translation>Fehlendes/beschädigtes SSL-Zertifikat für Schlüssel</translation>
     </message>
     <message>
         <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
-        <translation>Fehlendes / beschädigtes  SSL-Zertifikat. Kein echter Retrosharebenutzer</translation>
+        <translation>Fehlendes/beschädigtes SSL-Zertifikat. Kein echter Retroshare-Benutzer</translation>
     </message>
     <message>
         <source>Certificate caused an internal error.</source>
         <translation>Zertifikat verursachte einen internen Fehler.</translation>
     </message>
     <message>
-        <source>Peer/location not in friendlist (PGP id=</source>
-        <translation>Nachbar/Ort nicht in Freundliste (PGP-ID=</translation>
-    </message>
-    <message>
-        <source>Send Message</source>
-        <translation>Nachricht senden</translation>
+        <source>Peer/node not in friendlist (PGP id=</source>
+        <translation>Nachbar/Netzknoten nicht in Freundesliste (PGP-ID=</translation>
     </message>
 </context>
 <context>
@@ -11802,26 +12406,6 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     <message>
         <source>Manually Forwarded Port</source>
         <translation>Portweiterleitung von Hand</translation>
-    </message>
-    <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and PGP 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>DHT erlaubt dir das Verbinden
-mit Freunden, die das BitTorrent-DHT benutzen.
-Das verbessert den Verbindungsaufbau.
-
-Der Discovery-Dienst sendet die Orte und PGP-Schlüssel
-deiner vertrauenswürdigen Kontakte zu deinen verbundenen Freunden,
-um bei der Suche nach neuen Freunden zu helfen.
-Die Freundschaft wird nicht automatisch erstellt. Beide Freunde
-müssen sich vertrauen um eine Verbindung zu erstellen.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
@@ -11887,75 +12471,11 @@ Es hilft auch, wenn du dich hinter einer Firewall/VPN befindest.</translation>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation>Erlaube RetroShare folgende Webseiten nach deiner IP zu fragen:</translation>
-    </message>
-    <message>
-        <source>Bandwidth</source>
-        <translation>Bandbreite</translation>
-    </message>
-    <message>
-        <source>Max Transfer Rates</source>
-        <translation>Max. Übertragungsrate</translation>
+        <translation>RetroShare erlauben, folgende Webseiten nach deiner IP zu fragen:</translation>
     </message>
     <message>
         <source>kB/s</source>
         <translation>KiB/s</translation>
-    </message>
-    <message>
-        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Wenn du dies abwählst, wird RetroShare keinen Tunnel zwischen Nachbarn aufbauen, die sich aufgrund einer Firewall nicht direkt miteinander verbinden können. Dies ist unabhängig vom &quot;Turtle router&quot; F2F-Routing-Prinzip.</translation>
-    </message>
-    <message>
-        <source>Allow Tunnel Connection</source>
-        <translation>Erlaube Tunnelverbindungen</translation>
-    </message>
-    <message>
-        <source>Turtle router</source>
-        <translation>Turtle-Router</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Das Entfernen des Hakens deaktiviert jedwedes anonymes Datenrouting, ausgenommen das Säubern des Caches. Eingehende Tunnelanfragen werden verworfen und es werden keine Tunnelanfragen versandt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Enabled</source>
-        <translation>Aktiviert</translation>
-    </message>
-    <message>
-        <source>Max. tunnel req. forwarded per second:</source>
-        <translation>Max. weiterzuleitende Tunnelanfragen pro Sekunde:</translation>
-    </message>
-    <message>
-        <source>This value controls how many tunnel request your peer can forward per second. 
-
-If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statistically longer tunnels to pass. Be very careful though, since this generates 
-many small packets that can significantly slow down your own file transfer. 
-
-The default value is 20.</source>
-        <translation>Dieser Wert kontrolliert, wie viele Tunnel-Anfragen dein Nachbar pro Sekunde weiterleiten darf.
-
-Wenn du eine große Internet-Bandbreite hast, kannst du diesen auf 30–40 erhöhen,
-um statistisch längere Tunnel zu ermöglichen. Vorsicht! Dies erzeugt
-viele kleine Pakete die deine eigenen Dateitransfers merklich verlangsamen können.
-
-Voreinstellung ist 20.</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Server</translation>
-    </message>
-    <message>
-        <source>Download (KB/s) </source>
-        <translation>Download (KiB/s) </translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation>Upload (KiB/s) </translation>
-    </message>
-    <message>
-        <source>Hidden Node</source>
-        <translation>Knoten verstecken</translation>
     </message>
     <message>
         <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
@@ -11978,10 +12498,6 @@ Voreinstellung ist 20.</translation>
         <translation>TOR Socks Proxy</translation>
     </message>
     <message>
-        <source>Outgoing Okay</source>
-        <translation>Ausgehend okay</translation>
-    </message>
-    <message>
         <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
 
 You can connect to Hidden Nodes, even if you 
@@ -11996,16 +12512,12 @@ einen Standardknoten betreibst. Also warum nicht TOR einrichten?</translation>
         <translation>Eingehende TOR-Verbindungen</translation>
     </message>
     <message>
-        <source>Incoming Okay</source>
-        <translation>Eingehend okay</translation>
-    </message>
-    <message>
         <source>Onion Address</source>
         <translation>Onion-Adresse</translation>
     </message>
     <message>
         <source>Expected torrc Port Configuration:</source>
-        <translation>Erwartete torrc Portkonfiguration</translation>
+        <translation>Erwartete torrc-Portkonfiguration</translation>
     </message>
     <message>
         <source>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
@@ -12040,15 +12552,7 @@ Wenn beim Verbinden über TOR Probleme auftreten überprüfe auch die TOR Logdat
     </message>
     <message>
         <source>Hidden - See TOR Config</source>
-        <translation>Versteckt - Siehe TOR-Konfiguration</translation>
-    </message>
-    <message>
-        <source>TOR proxy is working correctly</source>
-        <translation>TOR-Proxy funktioniert korrekt</translation>
-    </message>
-    <message>
-        <source>TOR status unknown</source>
-        <translation>TOR-Status unbekannt</translation>
+        <translation>Versteckt - siehe TOR-Konfiguration</translation>
     </message>
     <message>
         <source>Proxy seems to work.</source>
@@ -12058,6 +12562,198 @@ Wenn beim Verbinden über TOR Probleme auftreten überprüfe auch die TOR Logdat
         <source>TOR proxy is not enabled</source>
         <translation>TOR-Proxy ist nicht aktiviert</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dieser RetroShare-Netzknoten läuft im &amp;quot;Versteckten Modus&amp;quot;. Das bedeutet, er kann nur über das TOR-Netzwerk erreicht werden.&lt;/p&gt;&lt;p&gt;Aus diesem Grund sind einige Netzwerkeinstellungen deaktiviert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>[Hidden mode]</source>
+        <translation>[Versteckter Modus]</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies löscht die Liste der bekannten Adressen. Diese Funktion ist nützlich, wenn deine Adressliste aus irgendeinem Grund ungültige/irrelevante/abgelaufene Adressen enthält, von denen du nicht willst, dass sie an deine Freunde als Kontaktadressen weitergegeben werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Leeren</translation>
+    </message>
+    <message>
+        <source>Download limit (KB/s) </source>
+        <translation>Download-Limit (KB/s) </translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Diese Downloadbegrenzung gilt für die gesamte Anwendung. In einigen Situationen, wie etwa dem Transfer vieler kleiner Dateien gleichzeitig, kann die berechnete Bandbreite jedoch nicht zuverlässig sein und der Gesamtwert den Retroshare meldet kan diese Grenze übersteigen. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Upload limit (KB/s) </source>
+        <translation>Upload-Limit (KB/s) </translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Uploadbegrenzung deckt die gesamte Saoftware ab. Eine zu kleine Uploadbegrenzung kann letztendlich Dienste mit niedriger Priorität (Foren, Kanäle) blockieren. Ein Minimumwert von 50KB/s wird empfohlen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>TOR outgoing Okay</source>
+        <translation>TOR ausgehend o. k.</translation>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>Test</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist deine Onion-Adresse. Sie sollte so aussehen: &lt;span style=&quot; font-weight:600;&quot;&gt;[irgendwas].onion. &lt;/span&gt;Wenn du einen versteckten Dienst mit TOR konfiguriert hast, wird die Onion-Adresse automatisch von TOR erzeugt.  Du kannst sie z. B. in &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[dienst_name/hostname&lt;/span&gt; finden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist die lokale Adresse zu welcher dein versteckter TOR Dienst auf deinem lokalen Host zeigt Meistens ist &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; der richtige Eintrag.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>TOR incoming  ok</source>
+        <translation>TOR eingehend o. k.</translation>
+    </message>
+    <message>
+        <source>You are reachable through TOR.</source>
+        <translation>Du bist über TOR erreichbar.</translation>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled or broken.
+Are you running a TOR hidden service?
+Check your ports!</source>
+        <translation>TOR-Proxy ist nicht aktiviert oder defekt
+Betreibst du einen versteckten TOR-Dienst?
+Überprüfe deine Ports!</translation>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Netzwerk</translation>
+    </message>
+    <message>
+        <source>IP Filters</source>
+        <translation>IP-Filter</translation>
+    </message>
+    <message>
+        <source>IP blacklist</source>
+        <translation>IP-Blacklist</translation>
+    </message>
+    <message>
+        <source>IP range</source>
+        <translation>IP-Bereich</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation>Ursprung</translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation>Grund</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Kommentar</translation>
+    </message>
+    <message>
+        <source>  IPs</source>
+        <translation>  IPs</translation>
+    </message>
+    <message>
+        <source>IP whitelist</source>
+        <translation>IP-Whitelist</translation>
+    </message>
+    <message>
+        <source>Manual input</source>
+        <translation>Manuelle Eingabe</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP-Bereich eingeben.  Akzeptierte Formate:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einen beliebigen Kommentar eingeben&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Add to blacklist</source>
+        <translation>Zu Blacklist hinzufügen</translation>
+    </message>
+    <message>
+        <source>Add to whitelist</source>
+        <translation>Zu Whitelist hinzufügen</translation>
+    </message>
+    <message>
+        <source>IP Range</source>
+        <translation>IP-Bereich</translation>
+    </message>
+    <message>
+        <source>Reported by DHT for IP masquerading</source>
+        <translation>Von DHT für IP-Maskierung gemeldet</translation>
+    </message>
+    <message>
+        <source>Range made from %1 collected addresses</source>
+        <translation>Bereich aus %1 gesammelten Adressen erstellt</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <source>Added by you</source>
+        <translation>Von dir hinzugefügt</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IPs auf der Whitelist werden aus folgenden Quellen gesammelt: IPs eines manuell ausgetauschten Zertifikats, von dir in diesem Fenster oder in den Sicherheitseingabeelementen eingegebene IP-Bereiche.&lt;/p&gt;&lt;p&gt;Das Standardverhalten von RetroShare ist (1) Verbindungen zu Nachbarn mit IP-Adressen in der Whitelist immer zulassen, auch wenn die IP ebenfalls in der Blacklist eingetragen ist;  (2) optional erfordern, dass die IPs in der Whitelist eingetragen sind. Du kannst dieses Verhalten für jeden Nachbarn im &amp;quot;Details&amp;quot;-Fenster eines jeden RetroShare-Netzknotens ändern.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DHT erlaubt es dir Verbindungdsanfragen von deinen Freunden mit Hilfe von BitTorrent&apos;s DHT zu beantworten. Es verbessert die Konnektivität enorm. Im DHT werden keine Informationen gespeichert. Es dient nur als Proxysystem um Verbindung mit anderen Retroshare Netzknoten aufzunehmen.&lt;/p&gt;&lt;p&gt;Der Discovery Dienst sendet node namen und ids deiner vertreuenswürdigen Konakte an verbundene Nachbarn, um ihnen bei der Wahl neuer Freunde zu helfen. Die Freundschaft wird jedoch nie automatisch hergestellt und beide Nachbarn müssen sich immer noch gegenseitig vertrauen, um eine Verbindung zu erlauben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Kugel wird grün, sobald es RetroShare gelingt, deine eigene IP von den unten aufgeführten Webseiten zu bekommen - sofern du diese Aktion aktiviert hast. RetroShare nutzt auch noch andere Wege, um deine IP herauszufinden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Diese Liste wird automatisch mit Informationen aus veschiedenen Quellen gefüllt: Maskierte Nachbarn gemeldet vom DHT, von dir eingetragene IP Bereiche und von deinen Freunden übermittelte IP Bereiche. Die Grundeinstellung sollte dich gegen groß angelegte Verbindungsweiterleitungsattacken schützen.&lt;/p&gt;&lt;p&gt;Automatisches eintragen von markierten IPs kan die IPs deiner Freunde auf die Blacklist setzen. Benutze in diesem Fall das Kontextmenü, um sie auf die Whitelist zu verschieben.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Diese Schaltfläche simuliert eine SSL-Verbindung zu deiner TOR-Adresse durch Nutzung des TOR-Proxys. Falls dein TOR-Netzknoten erreichbar ist, sollte dies einen Fehler bei der SSL-Verbindungsaufnahme verursachen, was RetroShare wiederum als gültigen Verbindungsstatus interpretiert. Diese Operation kann außerdem diverse &quot;Sicherheitswarnungen&quot; hinsichlich Verbindungen von deiner lokalen Host-IP (127.0.0.1) im Nachrichten-Feed auslösen, falls du dies aktiviert hast.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>activate IP filtering</source>
+        <translation>IP-Filterung aktivieren</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist eine drastische Maßnahme. Sei vorsichtig. Da maskierte IPs auch echte IPs sein könnten, kann diese Option zu Verbindungsabbrüchen führen und wird dich wahrscheinlich dazu zwingen, deine Feunde auf die Whitelist zu setzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Ban every  IP reported by your friends</source>
+        <translation>Jede von Freunden gemeldete IP sperren</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends&apos; IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Eine weitere drastische Option. Wenn du sie benutzt solltest du darauf vorbereitet sein, die IPs deiner Freunde auf die Whitelist zu setzen falls nötig.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Ban every masquerading IP reported by your DHT</source>
+        <translation>Jede von DHT gemeldete maskierte IP sperren</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn allein benutzt, schützt diese Option dich ganz gut vor groß angelegter IP Maskierung.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
+        <translation>Automatisch Bereiche DHT-maskierender IPs sperren, beginnend ab</translation>
+    </message>
 </context>
 <context>
     <name>ServicePermissionDialog</name>
@@ -12066,24 +12762,20 @@ Wenn beim Verbinden über TOR Probleme auftreten überprüfe auch die TOR Logdat
         <translation>Berechtigungen für Nutzerdienste</translation>
     </message>
     <message>
-        <source>Anonymous routing</source>
-        <translation>Anonymer Datenverkehr</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Discovery</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Foren/Kanäle</translation>
-    </message>
-    <message>
         <source>Service Permissions</source>
         <translation>Berechtigungen für Dienste</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
         <translation>Wenn verfügbar als direkte Quelle nutzen.</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation>Empfohlene Dateien automatisch herunterladen</translation>
+    </message>
+    <message>
+        <source>Require whitelist</source>
+        <translation>Whitelist erfordern</translation>
     </message>
 </context>
 <context>
@@ -12097,72 +12789,16 @@ Wenn beim Verbinden über TOR Probleme auftreten überprüfe auch die TOR Logdat
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <source>Chat</source>
-        <translation>Chat</translation>
-    </message>
-    <message>
-        <source>Row2</source>
-        <translation>Row2</translation>
-    </message>
-    <message>
-        <source>Shares</source>
-        <translation>Shares</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation>Kanäle</translation>
-    </message>
-    <message>
-        <source>Default</source>
-        <translation>Standard</translation>
-    </message>
-    <message>
-        <source>Joe</source>
-        <translation>Joe</translation>
-    </message>
-    <message>
-        <source>Sally</source>
-        <translation>Sally</translation>
-    </message>
-    <message>
-        <source>Anne</source>
-        <translation>Anne</translation>
-    </message>
-    <message>
-        <source>Jacki</source>
-        <translation>Jacki</translation>
-    </message>
-    <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;		   &lt;p&gt;Permissions allow you to control which services are available to which friends &lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Berechtigungen&lt;/h1&gt;&lt;p&gt;Berechtigungen erlauben es dir zu kontrollieren welche Dienste welchen deiner Freunde zur Verfügung stehen.&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>Nein</translation>
-    </message>
-    <message>
-        <source>Other Service</source>
-        <translation>Anderer Dienst</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation>Ja</translation>
-    </message>
-    <message>
-        <source>Incompatible</source>
-        <translation>Inkompatibel</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>N/A</translation>
-    </message>
-    <message>
         <source>Permissions</source>
         <translation>Berechtigungen</translation>
     </message>
     <message>
-        <source>Permission changes are not saved permanently. (TODO)</source>
-        <translation>Änderungen der Berechtigungen werden nicht dauerhaft gespeichert.(TODO)</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Berechtigungen&lt;/h1&gt; &lt;p&gt;Berechtigungen erlauben die Kontrolle darüber, welche Dienste welchen Freunden zur Verfügung stehen&lt;/p&gt; &lt;p&gt;Jeder Schalter zeigt zwei Leuchten an, welche die Aktivierung dieses Dienstes durch dich oder deinen Freund angeben. Beide müssen AN (&lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt; wird angezeigt)  sein, um Informationen für eine bestimmte Dienst/Freund-Kombination übertragen zu können.&lt;/p&gt; &lt;p&gt;Für jeden Dienst erlaubt es der globale Schalter &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;, einen Dienst für alle Freunde gleichzeitig AN- bzw. AUSzuschalten.&lt;/p&gt; &lt;p&gt;Bitte Vorsicht: Einige Dienste sind voneinander abhängig. Beispielsweise wird das AUSschalten von &quot;Turtle&quot; auch alle anonymen Übertragungen, Fernchats und Fernnachrichten stoppen.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>hide offline</source>
+        <translation>Offline verbergen</translation>
     </message>
 </context>
 <context>
@@ -12176,7 +12812,7 @@ Wenn beim Verbinden über TOR Probleme auftreten überprüfe auch die TOR Logdat
     <name>ShareDialog</name>
     <message>
         <source>RetroShare Share Folder</source>
-        <translation>RetroShare Ordner freigeben</translation>
+        <translation>RetroShare-Ordner freigeben</translation>
     </message>
     <message>
         <source>Share Folder</source>
@@ -12215,15 +12851,15 @@ Wenn beim Verbinden über TOR Probleme auftreten überprüfe auch die TOR Logdat
     <name>ShareKey</name>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
+        <translation>Wähle die Nachbarn, mit denen du den privaten Veröffentlichungsschlüssel teilen möchtest</translation>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation>Für Freund verteilen</translation>
+        <translation>Für Freund teilen</translation>
     </message>
     <message>
         <source>Share</source>
-        <translation>Verteilen</translation>
+        <translation>Teilen</translation>
     </message>
     <message>
         <source>You can let your friends know about your Channel by sharing it with them. 
@@ -12363,7 +12999,7 @@ Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
     </message>
     <message>
         <source>check files</source>
-        <translation>Prüfe Dateien</translation>
+        <translation>Dateien prüfen</translation>
     </message>
     <message>
         <source>Download selected</source>
@@ -12423,6 +13059,41 @@ Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
     </message>
 </context>
 <context>
+    <name>SoundManager</name>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Go Online</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatmessage</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Msg</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message arrived</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download complete</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>SoundPage</name>
     <message>
         <source>Event:</source>
@@ -12445,38 +13116,6 @@ Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
         <translation>Dateiname</translation>
     </message>
     <message>
-        <source>Friend</source>
-        <translation>Freund</translation>
-    </message>
-    <message>
-        <source>go Online</source>
-        <translation>Online</translation>
-    </message>
-    <message>
-        <source>Chatmessage</source>
-        <translation>Chatnachricht</translation>
-    </message>
-    <message>
-        <source>New Msg</source>
-        <translation>Neue Nachricht</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Nachricht</translation>
-    </message>
-    <message>
-        <source>Message arrived</source>
-        <translation>Nachricht eingetroffen</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Herunterladen</translation>
-    </message>
-    <message>
-        <source>Download complete</source>
-        <translation>Download fertig</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
@@ -12484,16 +13123,20 @@ Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
         <source>Sound</source>
         <translation>Ton</translation>
     </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
-        <source>Sound on</source>
-        <translation>Ton an</translation>
+        <source>Sound is off, click to turn it on</source>
+        <translation>Ton ist aus, zum Anschalten anklicken</translation>
     </message>
     <message>
-        <source>Sound off</source>
-        <translation>Ton aus</translation>
+        <source>Sound is on, click to turn it off</source>
+        <translation>Ton ist an, zum Ausschalten anklicken</translation>
     </message>
 </context>
 <context>
@@ -12542,18 +13185,6 @@ zum Hinzufügen von Orten zu deinem vorhandenen Profil.
 Die aktuellen Identitäten/Orte werden nicht geändert.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Verwalte Profile und Orte...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation>Personen-Ladefehler</translation>
     </message>
@@ -12566,36 +13197,48 @@ p, li { white-space: pre-wrap; }
         <translation>Warnung</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Profile und Netzknoten verwalten...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL-Zertifikates (deines Ortes) wird verschlüsselt in deinem Gnome-Keyring gespeichert.
+        <translation>Das Passwort deines SSL-Zertifikates (deines Netzknotens) wird verschlüsselt in deinem Gnome-Keyring gespeichert.
 
 Dein PGP-Passwort wird nicht gespeichert.
 
 Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL-Zertifikates (deines Ortes) wird verschlüsselt in deinem Schlüsselbund gespeichert.
+        <translation>Das Passwort deines SSL-Zertifikates (deines Netzknotens) wird verschlüsselt in deinem Schlüsselbund gespeichert.
 
 Dein PGP-Passwort wird nicht gespeichert.
 
 Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Das Passwort deines SSL-Zertifikates (deines Ortes) wird verschlüsselt in der Datei keys/help.dta gespeichert - das ist nicht sicher.
+        <translation>Das Passwort deines SSL-Zertifikates (deines Netzknotens) wird verschlüsselt in der Datei keys/help.dta gespeichert. Das ist nicht sicher.
 
 Dein PGP-Passwort wird nicht gespeichert.
 
@@ -12666,7 +13309,7 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     </message>
     <message>
         <source>RTT Statistics</source>
-        <translation>RTT Statistiken</translation>
+        <translation>RTT-Statistiken</translation>
     </message>
 </context>
 <context>
@@ -12754,6 +13397,30 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     <message>
         <source>Connected: TOR</source>
         <translation>Verbunden: TOR</translation>
+    </message>
+    <message>
+        <source>inbound connection</source>
+        <translation>eingehende Verbindung</translation>
+    </message>
+    <message>
+        <source>outbound connection</source>
+        <translation>ausgehende Verbindung</translation>
+    </message>
+    <message>
+        <source>TCP</source>
+        <translation>TCP</translation>
+    </message>
+    <message>
+        <source>UDP</source>
+        <translation>UDP</translation>
+    </message>
+    <message>
+        <source>TOR</source>
+        <translation>TOR</translation>
+    </message>
+    <message>
+        <source>unkown</source>
+        <translation>unbekannt</translation>
     </message>
 </context>
 <context>
@@ -12992,23 +13659,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation>Standard Blockstrategie:</translation>
+        <translation>Standard-Blockstrategie:</translation>
     </message>
     <message>
         <source>Safety disk space limit :</source>
         <translation>Sicherheitsgrenze Festplattenspeicher:</translation>
-    </message>
-    <message>
-        <source>You can use this to force RetroShare to download your files rather 
-than cache files for as many slots as requested. Setting that number 
-to be equal to the queue size above will always prioritize your files
-over cache. 
-
-It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Diese Einstellung du kannst verwenden, um RetroShare dazu zu zwingen, deine Dateien eher herunterzuladen
-als Cache-Dateien. Deine Dateien werden immer bevorzugt, wenn die Zahl gleich der Warteschlagengröße oben ist.
-
-Es wird jedoch empfohlen, mindestens einige Slots für Cache-Dateien freizulassen.</translation>
     </message>
     <message>
         <source>Streaming</source>
@@ -13047,15 +13702,35 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonym freigegeben&lt;/span&gt;: Dateien sind anonym über F2F-Tunnel zugänglich.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Transfer</source>
-        <translation>Übertragung</translation>
+        <source>Max. tunnel req. forwarded per second:</source>
+        <translation>Max. weiterzuleitende Tunnelanfragen pro Sekunde:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;bewirkt dass die Übertragung 1MB große Dateistücke in aufsteigender Ordnung anfordert, so dass eine Vorschau während des Downloads ermögllicht wird. &lt;span style=&quot; font-weight:600;&quot;&gt;Zufällig&lt;/span&gt; ist rein zufällig und begünstigt Schwarmverhalten. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressiv&lt;/span&gt; ist ein Kompromiss der das nächste Teilstück zufällig innerhalb von weniger als 50 MB nach dem Ende der patiellen Datei auswählt. Das erlaubt etwas Zufälligket während es hohe Initialisationzeiten für leere Dateien vehindert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RetroShare wird alle Übertragungen und das Speichern von Konfigurationsdaten aussetzen, wenn der freie Festplattenspeicher unter dieses Limit fällt. Auf einigen Systemen verhindert dies Informationsverlust. Ein Hinweisfenster wird dich warnen, wenn das passiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value controls how many tunnel request your peer can forward per second. &lt;/p&gt;&lt;p&gt;If you have a large internet bandwidth, you may raise this up to 30-40, to allow statistically longer tunnels to pass. Be very careful though, since this generates  many small packets that can significantly slow down your own file transfer. &lt;/p&gt;&lt;p&gt;The default value is 20. If you&apos;re not sure, keep it that way.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dieser Wert kontrolliert, wie viele Tunnel-Anfragen dein Nachbar pro Sekunde weiterleiten darf.&lt;/p&gt;&lt;p&gt;Wenn du eine große Internet-Bandbreite hast, kannst du diesen auf 30–40 erhöhen, um statistisch längere Tunnel zu ermöglichen. Vorsicht! Dies erzeugt viele kleine Pakete die deine eigenen Dateitransfers merklich verlangsamen können.&lt;/p&gt;&lt;p&gt;Voreinstellung ist 20. Wenn du dir nicht sicher bist, belasse es dabei.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>File transfer</source>
+        <translation>Dateiübertragung</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;br/&gt;than cache files for as many slots as requested. Setting that number &lt;br/&gt;to be equal to the queue size above will always prioritize your files&lt;br/&gt;over cache. &lt;br/&gt;&lt;br/&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Diese Einstellung zwingt RetroShare, für soviele Slots wie angefordert eher deine Dateien herunterzuladen &lt;br/&gt;als Cache-Dateien. Deine Dateien werden immer bevorzugt, &lt;br/&gt;wenn die Zahl gleich der Warteschlagengröße&lt;br/&gt;oben ist.&lt;br/&gt;&lt;br/&gt;Es wird jedoch empfohlen, mindestens einige Slots für Cache-Dateien freizulassen. Derzeitig werden Cache-Dateien nur für die Übertragung von Freundes-Dateinlisten genutzt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>TransferUserNotify</name>
     <message>
         <source>Download completed</source>
-        <translation>Download fertig</translation>
+        <translation>Download abgeschlossen</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
@@ -13166,10 +13841,6 @@ p, li { white-space: pre-wrap; }
         <translation>Eigene Dateien</translation>
     </message>
     <message>
-        <source>Show cache transfers</source>
-        <translation>Cache-Übertragungen anzeigen</translation>
-    </message>
-    <message>
         <source>Download from collection file...</source>
         <translation>Von Kollektion herunterladen...</translation>
     </message>
@@ -13207,7 +13878,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear Completed</source>
-        <translation>Fertige ausblenden</translation>
+        <translation>Abgeschlossene ausblenden</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -13267,7 +13938,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Specify...</source>
-        <translation>Spezifiziere</translation>
+        <translation>Spezifizieren...</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
@@ -13291,7 +13962,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Failed</source>
-        <translation>Gescheitert</translation>
+        <translation>Fehlgeschlagen</translation>
     </message>
     <message>
         <source>Okay</source>
@@ -13299,11 +13970,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Waiting</source>
-        <translation>Warte</translation>
+        <translation>Warten</translation>
     </message>
     <message>
         <source>Downloading</source>
-        <translation>Ladend</translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <source>Complete</source>
@@ -13319,7 +13990,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Checking...</source>
-        <translation>Überprüfe...</translation>
+        <translation>Überprüfen...</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -13352,7 +14023,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Transferring</source>
-        <translation>Übertrage</translation>
+        <translation>Übertragen</translation>
     </message>
     <message>
         <source>Uploading</source>
@@ -13380,7 +14051,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation>Drücke OK sobald das Programm beendet ist!</translation>
+        <translation>&quot;OK&quot; anklicken sobald das Programm beendet ist!</translation>
     </message>
     <message>
         <source>Open Transfer</source>
@@ -13388,7 +14059,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation>Datei %1 ist nicht komplett. Wenn es eine Mediadatei ist dann versuche &quot;Vorschau&quot;.</translation>
+        <translation>Datei %1 ist nicht komplett. Falls es eine Mediadatei ist, dann versuche &quot;Vorschau&quot;.</translation>
     </message>
     <message>
         <source>Change file name</source>
@@ -13425,11 +14096,11 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Show Size Column</source>
-        <translation>Größenspalte anzeigen</translation>
+        <translation>Größen-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Show Completed Column</source>
-        <translation>Komplettsplate anzeigen</translation>
+        <translation>Komplett-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Speed</source>
@@ -13437,7 +14108,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Show Speed Column</source>
-        <translation>Geschwindigkeitsspalte anzeigen</translation>
+        <translation>Geschwindigkeits-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Progress / Availability</source>
@@ -13445,7 +14116,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Show Progress / Availability Column</source>
-        <translation>Fortschritts-/Verfügbarkeitsspalte anzeigen</translation>
+        <translation>Fortschritts-/Verfügbarkeits-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Sources</source>
@@ -13453,19 +14124,19 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Show Sources Column</source>
-        <translation>Quellenspalte anzeigen</translation>
+        <translation>Quellen-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Show Status Column</source>
-        <translation>Statusspalte anzeigen</translation>
+        <translation>Status-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Show Speed / Queue position Column</source>
-        <translation>Geschwindigkeits-/Warteschlangenpositionsspalte anzeigen</translation>
+        <translation>Geschwindigkeits-/Warteschlangenpositions-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Show Remaining Column</source>
-        <translation>Verbleibendspalte anzeigen</translation>
+        <translation>Verbleibend-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Download time</source>
@@ -13473,7 +14144,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Show Download time Column</source>
-        <translation>Downloadzeitspalte anzeigen</translation>
+        <translation>Download-Zeit-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Show Hash Column</source>
@@ -13485,7 +14156,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Show Last Time Seen Column</source>
-        <translation>Zuletztgesehenspalte anzeigen</translation>
+        <translation>Zuletzt-gesehen-Spalte anzeigen</translation>
     </message>
     <message>
         <source>Columns</source>
@@ -13543,6 +14214,10 @@ Bitte habe etwas Geduld!</translation>
     <message>
         <source>Anonymous tunnel 0x</source>
         <translation>Anonymer Tunnel 0x</translation>
+    </message>
+    <message>
+        <source>Show file list transfers</source>
+        <translation>Dateilistenübertragungen anzeigen</translation>
     </message>
 </context>
 <context>
@@ -13616,7 +14291,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Tunnel id</source>
-        <translation>Tunnel ID</translation>
+        <translation>Tunnel-ID</translation>
     </message>
     <message>
         <source>last transfer</source>
@@ -13628,7 +14303,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation>Anfrage ID: %1  von [%2]  vor %3 Sekunden</translation>
+        <translation>Anfrage-ID: %1  von [%2]  vor %3 Sekunden</translation>
     </message>
 </context>
 <context>
@@ -13805,6 +14480,53 @@ Bitte habe etwas Geduld!</translation>
     </message>
 </context>
 <context>
+    <name>WebuiPage</name>
+    <message>
+        <source>Form</source>
+        <translation>Formular</translation>
+    </message>
+    <message>
+        <source>Enable Retroshare WEB Interface</source>
+        <translation>RetroShare-Web-Oberfläche aktivieren</translation>
+    </message>
+    <message>
+        <source>Web parameters</source>
+        <translation>Web-Parameter</translation>
+    </message>
+    <message>
+        <source>Port :</source>
+        <translation>Port :</translation>
+    </message>
+    <message>
+        <source>allow access from all IP adresses (Default: localhost only)</source>
+        <translation>Zugriff von allen IP-Adressen erlauben (standardmäßig nur localhost)</translation>
+    </message>
+    <message>
+        <source>apply setting and start browser</source>
+        <translation>Einstellung anwenden und Browser starten</translation>
+    </message>
+    <message>
+        <source>Note: these settings do not affect retroshare-nogui. retroshare-nogui has a command line switch to active the webinterface.</source>
+        <translation>Anmerkung: Diese Einstellungen wirken sich nicht auf retroshare-nogui aus. Retroshare-nogui hat einen Kommandozeilenschalter zur Aktivierung der Web-Oberfläche.</translation>
+    </message>
+    <message>
+        <source>Webinterface not enabled</source>
+        <translation>Web-Oberfläche nicht aktiviert</translation>
+    </message>
+    <message>
+        <source>failed to start Webinterface</source>
+        <translation>Start der Web-Oberfläche fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Webinterface</source>
+        <translation>Web-Oberfläche</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>WikiAddDialog</name>
     <message>
         <source>Basic Details</source>
@@ -13864,7 +14586,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>N/A</source>
-        <translation>N/A</translation>
+        <translation>N/V</translation>
     </message>
     <message>
         <source>University Friends</source>
@@ -13907,7 +14629,7 @@ Bitte habe etwas Geduld!</translation>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Pages</source>
-        <translation>Wikiseiten</translation>
+        <translation>Wiki-Seiten</translation>
     </message>
     <message>
         <source>New Group</source>
@@ -13987,7 +14709,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Edit Wiki Group</source>
-        <translation>Wikigruppe bearbeiten</translation>
+        <translation>Wiki-Gruppe bearbeiten</translation>
     </message>
 </context>
 <context>
@@ -14018,7 +14740,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>PageId</source>
-        <translation>Seiten ID</translation>
+        <translation>Seiten-ID</translation>
     </message>
     <message>
         <source>\/</source>
@@ -14042,7 +14764,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Tags</translation>
+        <translation>Schlagwörter</translation>
     </message>
     <message>
         <source>Show Edit History</source>
@@ -14078,7 +14800,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Create New Wiki Page</source>
-        <translation>Neue Wikiseite erstellen</translation>
+        <translation>Neue Wiki-Seite erstellen</translation>
     </message>
     <message>
         <source>Republish</source>
@@ -14086,22 +14808,22 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Edit Wiki Page</source>
-        <translation>Wikiseite bearbeiten</translation>
+        <translation>Wiki-Seite bearbeiten</translation>
     </message>
 </context>
 <context>
     <name>WikiGroupDialog</name>
     <message>
         <source>Create New Wiki Group</source>
-        <translation>Neue Wikigruppe erstellen</translation>
+        <translation>Neue Wiki-Gruppe erstellen</translation>
     </message>
     <message>
         <source>Wiki Group</source>
-        <translation>Wikigruppe</translation>
+        <translation>Wiki-Gruppe</translation>
     </message>
     <message>
         <source>Edit Wiki Group</source>
-        <translation>Wikigruppe bearbeiten</translation>
+        <translation>Wiki-Gruppe bearbeiten</translation>
     </message>
     <message>
         <source>Add Wiki Moderators</source>
@@ -14295,11 +15017,11 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Load avatar image</source>
-        <translation>Lade Avatar Bild</translation>
+        <translation>Avatarbild laden</translation>
     </message>
     <message>
-        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Bilder (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <source>Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</source>
+        <translation>Bilder (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</translation>
     </message>
 </context>
 </TS>

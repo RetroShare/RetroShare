@@ -5,6 +5,10 @@
         <source>version</source>
         <translation>verzió</translation>
     </message>
+    <message>
+        <source>RetroShare version</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>AboutDialog</name>
@@ -19,10 +23,6 @@
     <message>
         <source>close</source>
         <translation>bezár</translation>
-    </message>
-    <message>
-        <source>About RetroShare %1</source>
-        <translation>A RetroShare névjegye: %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
@@ -430,6 +430,90 @@ p, li { white-space: pre-wrap; }
         <source>Appearance</source>
         <translation>Megjelenés</translation>
     </message>
+    <message>
+        <source>Tool Bar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>On Tool Bar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>On List Item</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for menu?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for the page?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Icon Only</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Text Only</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Text Beside Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Text Under Icon</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose the style of Tool Buttons.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose the style of List Items.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Icon Size = 8x8</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Icon Size = 16x16</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Icon Size = 24x24</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status Bar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove surplus text in status bar.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Compact Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide Sound Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide Toaster Disable</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show SysTray on Status Bar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Icon Size = 32x32</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -450,14 +534,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Circles</source>
         <translation>Körök</translation>
-    </message>
-    <message>
-        <source>Posted Links</source>
-        <translation>Közzétett hivatkozások</translation>
-    </message>
-    <message>
-        <source>Wiki Pages</source>
-        <translation>Wiki oldalak</translation>
     </message>
     <message>
         <source>GxsForums</source>
@@ -492,10 +568,44 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AvatarDialog</name>
+    <message>
+        <source>Change Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your Avatar Picture</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Set your Avatar picture</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
         <translation>Kattints az avatár megváltoztatásához</translation>
+    </message>
+</context>
+<context>
+    <name>BWGraphSource</name>
+    <message>
+        <source>KB/s</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -565,306 +675,7 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>BlogDetails</name>
-    <message>
-        <source>Blog Details</source>
-        <translation>Blog részletei</translation>
-    </message>
-    <message>
-        <source>Blog Info</source>
-        <translation>Blog adatai</translation>
-    </message>
-    <message>
-        <source>Blog Name</source>
-        <translation>Blog neve</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Népszerűség</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Utolsó bejegyzés</translation>
-    </message>
-    <message>
-        <source>Blog ID</source>
-        <translation>Blog ID</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Blog leírása</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Mégse</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Ok</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Bezárás</translation>
-    </message>
-</context>
-<context>
-    <name>BlogMsgItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Tárgy</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Lejátszás</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-</context>
-<context>
-    <name>BlogNewItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Feliratkozás a blogra</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Blog leírása</translation>
-    </message>
-    <message>
-        <source>Unknown Blog</source>
-        <translation>Ismeretlen blog</translation>
-    </message>
-    <message>
-        <source>New Blog</source>
-        <translation>Új blog</translation>
-    </message>
-    <message>
-        <source>Updated Blog</source>
-        <translation>Frissített blog</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsDialog</name>
-    <message>
-        <source>Form</source>
-        <translation>Forma</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogok&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Hozzáadás</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Blogbejegyzés küldése&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog neve&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Leiratkozás a blogról&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Leiratkozás</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Feliratkozás a blogra&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Feliratkozás</translation>
-    </message>
-    <message>
-        <source>Create New Blog</source>
-        <translation>Új blog létrehozása</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Név</translation>
-    </message>
-    <message>
-        <source>ID</source>
-        <translation>ID</translation>
-    </message>
-    <message>
-        <source>My Blogs</source>
-        <translation>Blogjaim</translation>
-    </message>
-    <message>
-        <source>Subscribed Blogs</source>
-        <translation>Feliratkozások</translation>
-    </message>
-    <message>
-        <source>Popular Blogs</source>
-        <translation>Népszerű blogok</translation>
-    </message>
-    <message>
-        <source>Other Blogs</source>
-        <translation>Egyéb blogok</translation>
-    </message>
-    <message>
-        <source>Post to Blog</source>
-        <translation>Új bejegyzés írása</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Feliratkozás a blogra</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Blog</source>
-        <translation>Leiratkozás a blogról</translation>
-    </message>
-    <message>
-        <source>Show Blog Details</source>
-        <translation>Blog részleteinek mutatása</translation>
-    </message>
-    <message>
-        <source>Create a new Blog</source>
-        <translation>Új blog létrehozása</translation>
-    </message>
-    <message>
-        <source>Popularity: %1
-Fetches: %2
-Available: %3</source>
-        <translation>Népszerűség: %1
-Lekérdezések: %2
-Elérhető: %3</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsMsgItem</name>
-    <message>
-        <source>Form</source>
-        <translation>Forma</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog témája&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Dátum és idő&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Leiratkozás a csatornáról</translation>
-    </message>
-    <message>
-        <source>Comments here</source>
-        <translation>Hozzászólások</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Hozzászólás</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-</context>
-<context>
     <name>BwCtrlWindow</name>
-    <message>
-        <source>Bandwidth Control Window</source>
-        <translation>Sávszélesség kezelése ablak</translation>
-    </message>
-    <message>
-        <source>Bandwidth Measurements</source>
-        <translation>Sávszélesség mérései</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Név</translation>
@@ -913,368 +724,44 @@ p, li { white-space: pre-wrap; }
         <source>Allowed Recvd</source>
         <translation>Engedélyezett fogadott</translation>
     </message>
-</context>
-<context>
-    <name>CalDialog</name>
+    <message>
+        <source>TOTALS</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Totals</source>
+        <translation type="unfinished"/>
+    </message>
     <message>
         <source>Form</source>
         <translation>Forma</translation>
     </message>
-    <message>
-        <source>Local Calendars</source>
-        <translation>Helyi naptárak</translation>
-    </message>
-    <message>
-        <source>Shared Calendar List</source>
-        <translation>Megosztott naptárak</translation>
-    </message>
-    <message>
-        <source>Share Details</source>
-        <translation>Megosztás részletei</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation>Név:</translation>
-    </message>
-    <message>
-        <source>Location:</source>
-        <translation>Hely:</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation>Állapot:</translation>
-    </message>
-    <message>
-        <source>Private</source>
-        <translation>Privát</translation>
-    </message>
-    <message>
-        <source>Public</source>
-        <translation>Publikus</translation>
-    </message>
-    <message>
-        <source>Allow List:</source>
-        <translation>Engedélyezési lista:</translation>
-    </message>
-    <message>
-        <source>&lt;Disabled&gt;</source>
-        <translation>&lt;Letiltva&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Hozzáadás</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Peer Calendars</source>
-        <translation>Partnerek naptárai</translation>
-    </message>
 </context>
 <context>
-    <name>ChanMsgItem</name>
-    <message>
-        <source>Toggle Message Read Status</source>
-        <translation>Üzenet olvasottságának váltása</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Új</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Letölt</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation>Lejátszás</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>RetroShare link másolása</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Leiratkozás a csatornáról</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Megjelölés olvasottként és eltávolítás</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Channel Feed</source>
-        <translation>Csatorna feed</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Fájlok</translation>
-    </message>
-    <message>
-        <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation>Vigyázz! A fájl törlődni fog kevesbb, mint %1 óra %2 perc múlva. Ha menteni szeretnéd, tedd meg időben.</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Megnyitás</translation>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation>Fájl megnyitása</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Média lejátszása</translation>
-    </message>
-</context>
-<context>
-    <name>ChanNewItem</name>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Feliratkozás a csatornára</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Csatorna leírása</translation>
-    </message>
-    <message>
-        <source>Unknown Channel</source>
-        <translation>Ismeretlen csatorna</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Új csatorna</translation>
-    </message>
-    <message>
-        <source>Updated Channel</source>
-        <translation>Frissült csatorna</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Csatorna részletei</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Csatorna adatai</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Csatorna neve</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Népszerűség</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Utolsó bejegyzés</translation>
-    </message>
-    <message>
-        <source>Channel ID</source>
-        <translation>Csatorna ID</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Csatorna leírás</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Típus</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Korlátozott - Akárki olvashatja, korlátozott írási lehetőség (Privát kulcs)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privát - (Privát kulcs szükséges)</translation>
-    </message>
-    <message>
-        <source>Destination directory</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>ChannelDialog</name>
-    <message>
-        <source>GxsChannels</source>
-        <translation>Gxs csatornák</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelFeed</name>
+    <name>ChannelPage</name>
     <message>
         <source>Channels</source>
         <translation>Csatornák</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Csatorna létrehozása</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Töltés</translation>
-    </message>
-    <message>
-        <source>Post to Channel</source>
-        <translation>Új bejegyzés</translation>
-    </message>
-    <message>
-        <source>Set all as read</source>
-        <translation>Összes megjelölése olvasottként</translation>
-    </message>
-    <message>
-        <source>Enable Auto-Download</source>
-        <translation>Automatikus letöltés engedélyezése</translation>
-    </message>
-    <message>
-        <source>My Channels</source>
-        <translation>Csatornáim</translation>
-    </message>
-    <message>
-        <source>Subscribed Channels</source>
-        <translation>Feliratkozások</translation>
-    </message>
-    <message>
-        <source>Popular Channels</source>
-        <translation>Népszerű csatornák</translation>
-    </message>
-    <message>
-        <source>Other Channels</source>
-        <translation>Egyéb csatornák</translation>
-    </message>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Feliratkozás a csatornára</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Leiratkozás a csatornáról</translation>
-    </message>
-    <message>
-        <source>Disable Auto-Download</source>
-        <translation>Automatikus letöltés tiltása</translation>
-    </message>
-    <message>
-        <source>Show Channel Details</source>
-        <translation>Csatorna részletei</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Írási jog visszaállítása</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Csatorna részleteinek szerkesztése</translation>
-    </message>
-    <message>
-        <source>Share Channel</source>
-        <translation>Csatorna megosztása</translation>
-    </message>
-    <message>
-        <source>Set destination directory</source>
-        <translation>Célmappa kiválasztása</translation>
-    </message>
-    <message>
-        <source>Other...</source>
-        <translation>Egyéb...</translation>
-    </message>
-    <message>
-        <source>[Default]</source>
-        <translation>[Alapértelmezett]</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>RetroShare link másolása</translation>
-    </message>
-    <message>
-        <source>Select channel destination directory</source>
-        <translation>Csatorna letöltési mappájának kiválasztása</translation>
-    </message>
-    <message>
-        <source>Publish rights restored.</source>
-        <translation>Írási jogok visszaállítva.</translation>
-    </message>
-    <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>A csatorna írási jogai vissza lettek állítva.</translation>
-    </message>
-    <message>
-        <source>Publish not restored.</source>
-        <translation>Írási jogok visszaállítása sikertelen.</translation>
-    </message>
-    <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>A csatorna írási jogai nem visszaállíthatóak.&lt;br/&gt;Nem te vagy a csatorna létrehozója.</translation>
-    </message>
-    <message>
-        <source>No Channel Selected</source>
-        <translation>Nincs csatorna kiválasztva</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
+        <source>Tabs</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Subscribe</source>
-        <translation>Feliratkozás</translation>
+        <source>General</source>
+        <translation>Általános</translation>
     </message>
     <message>
-        <source>Post</source>
+        <source>Load posts in background (Thread)</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Subscribed</source>
-        <translation>Feliratkozva</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelUserNotify</name>
-    <message>
-        <source>Channel Post</source>
-        <translation>Csatorna bejegyzés</translation>
+        <source>Open each channel in a new tab</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ChatDialog</name>
-    <message>
-        <source>Your friend has more than one locations.
-Please choose one of it to chat with.</source>
-        <translation>A barátod egynél több hellyel rendelkezik.
-Please choose one of it to chat with.</translation>
-    </message>
     <message>
         <source>Talking to </source>
         <translation>Vele beszélsz</translation>
@@ -1319,10 +806,6 @@ Please choose one of it to chat with.</translation>
         <translation>Téma: %1</translation>
     </message>
     <message>
-        <source>Please enter your new nick name</source>
-        <translation>Kérlek, írd be az új beceneved</translation>
-    </message>
-    <message>
         <source>Lobby chat</source>
         <translation>Csevegőszoba</translation>
     </message>
@@ -1351,14 +834,6 @@ Please choose one of it to chat with.</translation>
         <translation>Ki szeretnél lépni a szobából?</translation>
     </message>
     <message>
-        <source>Hide Participants</source>
-        <translation>Résztvevő elrejtése</translation>
-    </message>
-    <message>
-        <source>Show Participants</source>
-        <translation>Résztvevő mutatása</translation>
-    </message>
-    <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
         <translation>Némításhoz kattints jobb gombbal&lt;br/&gt;A személy megszólításához kattints duplán&lt;br/&gt;</translation>
     </message>
@@ -1370,12 +845,75 @@ Please choose one of it to chat with.</translation>
         <source> seconds</source>
         <translation>másodpercek</translation>
     </message>
+    <message>
+        <source>Start private chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature mismatch</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot start distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant chat cannot be initiated:</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
         <translation>Chatszoba mutatása</translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyUserNotify</name>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Csevegőszobák</translation>
+    </message>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation>%1 új üzeneted van</translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation>%1 új üzeneted van</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation>%1 új üzenet</translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation>%1 új üzenet</translation>
+    </message>
+    <message>
+        <source>Unknown Lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation>Összes eltávolítása</translation>
     </message>
 </context>
 <context>
@@ -1409,14 +947,6 @@ Please choose one of it to chat with.</translation>
         <translation>Új chatszoba létrehozása</translation>
     </message>
     <message>
-        <source>Unsubscribe</source>
-        <translation>Leiratkozás</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Feliratkozás</translation>
-    </message>
-    <message>
         <source>[No topic provided]</source>
         <translation>[Nincs téma beállítva]</translation>
     </message>
@@ -1437,10 +967,6 @@ Please choose one of it to chat with.</translation>
         <translation>Nem iratkoztál fel erre a csevegőszobára. Kattints duplán a belépéshez.</translation>
     </message>
     <message>
-        <source>Invitation to chat lobby</source>
-        <translation>Meghívás a chatszobába</translation>
-    </message>
-    <message>
         <source>Remove Auto Subscribe</source>
         <translation>Automatikus feliratkozás megszüntetése</translation>
     </message>
@@ -1459,10 +985,6 @@ Please choose one of it to chat with.</translation>
     <message>
         <source>Search Name</source>
         <translation>Név keresése</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Subscribed</source>
@@ -1529,6 +1051,38 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
     <message>
         <source>Public Subscribed Lobbies</source>
         <translation>Publikus szoba feliratkozások</translation>
+    </message>
+    <message>
+        <source>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           	                      invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Csevegőszobák</translation>
+    </message>
+    <message>
+        <source>Leave this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby as...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You will need to create an identity in order to join chat lobbies.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose an identity for this lobby:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create an identity and enter this lobby</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1615,10 +1169,6 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
     <message>
         <source>Blink tab icon</source>
         <translation>Villogó ikon a fülön</translation>
-    </message>
-    <message>
-        <source>Default nickname for chat lobbies:</source>
-        <translation>Alapértelmezett név chatszobákhoz</translation>
     </message>
     <message>
         <source>Private Chat</source>
@@ -1721,56 +1271,8 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
         <translation>Csevegés</translation>
     </message>
     <message>
-        <source>Distant chat</source>
-        <translation>Távoli csevegés</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A Retroshare használatával névtelenül, titkosított csatornákon cseveghetsz a barátaid közvetítésével elérhető emberekkel. A személyes meghívóid listájában megtarthatsz hivatkozásokat, hogy bizonyos személyek kapcsolatba léphessenek veled. Az &amp;quot;összegyűjtött kapcsolatok&amp;quot; listában azokat a csevegési hivatkozásokat találod, amiket mások küldtek neked, hogy elérhesd őket.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your personal invites</source>
-        <translation>A személyes meghívóid</translation>
-    </message>
-    <message>
-        <source>Collected contacts</source>
-        <translation>Összegyűjtött kapcsolatok</translation>
-    </message>
-    <message>
-        <source>Open secured chat tunnel</source>
-        <translation>Biztonságos csevegő alagút nyitása</translation>
-    </message>
-    <message>
-        <source>Delete this invite</source>
-        <translation>Meghívó törlése</translation>
-    </message>
-    <message>
-        <source>Can&apos;t open distant chat</source>
-        <translation>A távoli beszélgetést nem lehet megnyitni</translation>
-    </message>
-    <message>
-        <source>Cannot open distant chat. Error code=</source>
-        <translation>A távoli beszélgetést nem lehet megnyitni. Hibakód=</translation>
-    </message>
-    <message>
-        <source>Cannot remove distant chat invite.</source>
-        <translation>A távoli beszélgetés meghívót nem lehet eltávolítani.</translation>
-    </message>
-    <message>
-        <source>Create a chat invitation</source>
-        <translation>Beszélgetési meghívás létrehozása</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Hivatkozás másolása a vágólapra</translation>
-    </message>
-    <message>
         <source>Private chat invite from </source>
         <translation>Privát beszélgetés meghívás tőle</translation>
-    </message>
-    <message>
-        <source>Private chat invite to </source>
-        <translation>Privát beszélgetés meghívás neki</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -1801,16 +1303,56 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
         <translation>Név :</translation>
     </message>
     <message>
-        <source>Signed with key not in keyring</source>
-        <translation>Kulcstartóban nem található kulccsal aláírva</translation>
+        <source>Search by default</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Not signed.</source>
-        <translation>Nincs aláírva.</translation>
+        <source>Case sensitive</source>
+        <translation>Kis- és nagybetű érzékeny</translation>
     </message>
     <message>
-        <source>Authenticated signature</source>
-        <translation>Hitelesített aláírás</translation>
+        <source>Whole Words</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move to cursor</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Color All Text Found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Color of found text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose color of found text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP id : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Valid until : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Maximum count for coloring matching text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Threshold for automatic search</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Default identity for chat lobbies:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Bar by default</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1877,20 +1419,8 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
         <translation>Dőlt</translation>
     </message>
     <message>
-        <source>Font</source>
-        <translation>Betűtípus</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Szövegszín</translation>
-    </message>
-    <message>
         <source>Attach a Picture</source>
         <translation>Kép csatolása</translation>
-    </message>
-    <message>
-        <source>Add a File for your Friend</source>
-        <translation>Fájl hozzáadása</translation>
     </message>
     <message>
         <source>Strike</source>
@@ -1975,6 +1505,109 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
     <message>
         <source>is Busy and may not reply</source>
         <translation>elfoglalt és valószínűleg nem fog válaszolni</translation>
+    </message>
+    <message>
+        <source>Find Case Sensitively</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Find Whole Words</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move To Cursor</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after X items found (need more CPU)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> items found (need more CPU)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Next &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Warning: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>(Status)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set text font &amp; color</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attach a File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>WARNING: Could take a long time on big history.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose color</source>
+        <translation>Szín választása</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1This message consists of %2 characters.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> items found.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No items found.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Display Search Box</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search Box</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type a message here</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>CircleWidget</name>
+    <message>
+        <source>TextLabel</source>
+        <translation>Szövegcímke</translation>
+    </message>
+    <message>
+        <source>Empty Circle</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2083,44 +1716,8 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <source>Friend Details</source>
-        <translation>Barát részletei</translation>
-    </message>
-    <message>
         <source>Details</source>
         <translation>Részletek</translation>
-    </message>
-    <message>
-        <source>Peer Info</source>
-        <translation>Partner adatai</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Név</translation>
-    </message>
-    <message>
-        <source>RetroShare ID</source>
-        <translation>RetroShare ID</translation>
-    </message>
-    <message>
-        <source>Other info</source>
-        <translation>Egyéb adatok</translation>
-    </message>
-    <message>
-        <source>Loc</source>
-        <translation>Hely</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Állapot</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Utoljára látva</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>Verzió</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -2147,112 +1744,8 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
         <translation>Címlista</translation>
     </message>
     <message>
-        <source>Trust </source>
-        <translation>Bizalom</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation>Bizalmad a partnerben:</translation>
-    </message>
-    <message>
-        <source>None </source>
-        <translation>Nincs</translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation>Részleges</translation>
-    </message>
-    <message>
-        <source>Full </source>
-        <translation>Teljes</translation>
-    </message>
-    <message>
-        <source>PGP Key</source>
-        <translation>PGP kulcs</translation>
-    </message>
-    <message>
-        <source>Peer has signed my PGP key</source>
-        <translation>A személy aláírta a PGP kulcsomat</translation>
-    </message>
-    <message>
-        <source>Show Help for Trust Settings and Signing</source>
-        <translation>A bizalmi beállítások és az aláírások segítségének mutatása</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by :</source>
-        <translation>A partner kulcsát aláírta:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Egy barátod kulcsának aláírása egy lehetőség arra, hogy kifejezd a barátba fektetett bizalmadat. Csak az aláírt kulcsal rendelkező barátaid szerezhetnek információt a bizalmi kapcsolataidról.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Sign PGP key</source>
-        <translation>PGP kulcs aláírása</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Barát elutasítása</translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation>Baráti kapcsolat létrehozása</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Tanúsítvány</translation>
-    </message>
-    <message>
         <source>Include signatures</source>
         <translation>Aláírásokat tartalmaz</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Régi típusú kulcs használata</translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation>Szolgáltatások</translation>
-    </message>
-    <message>
-        <source>User service permissions</source>
-        <translation>Szolgáltatás jogosultságok</translation>
-    </message>
-    <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>Ez a fül lehetővé teszi, hogy szabályozd mely szolgáltatásokat szeretnéd engedélyezni partnereidnek.
-
-Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható globálisan is, ami mindig felülbírálj a kapcsolatonkénti szabályozást.</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Névtelen forgalmazás</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Felfedezés</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Fórumok/Csatornák</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Csevegés</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2261,68 +1754,6 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Hiba: a partner adatai nem elérhetőek.</translation>
-    </message>
-    <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation>A RetroShare nem támogatja a kulcsot.
-(Jelenleg csak RSA kulcsok engedélyezettek)</translation>
-    </message>
-    <message>
-        <source>My key is signed by : </source>
-        <translation>A kulcsomat aláírta:</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by : </source>
-        <translation>A partner kulcsát aláírta:</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Teljesen megbízol a partnerben, met valószínűleg ismered a kulcsát.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation>Teljesen megbízol ebben a partnerben.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation>Csak részlegesen bízol meg ebben a partnerben.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation>Nem bízol meg ebben a partnerben.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation>Nincs beállítva bizalmi szint a partnerhez.</translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>A személy barátjaként jelölt és aláírta a PGP kulcsomat</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>A személy nem jelölt barátjának és nem írta alá a PGP kulcsomat</translation>
-    </message>
-    <message>
-        <source>Signature Failure</source>
-        <translation>Hibás aláírás</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Talán rossz a jelszó</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A névtelen alagutak letiltásával felfüggesztesz minden alagutat használó forgalmat  és keresést a felhasználó irányába. Ez a felhasználó képtelen lesz adatforgalmazásra rajtad keresztül.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Teljes körű, minden felhasználóra kiterjedő alagút tiltást a a beállításokban a kiszolgáló fülön tudsz alkalmazni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A felfedezés letiltásával nem fogod tovább küldeni a barátaid publikus kulcsát a felhasználónak, valamint te se fogsz tőle ilyen információkat kapni..&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Teljes körű, minden felhasználóra kiterjedő felfedezés tiltást a beállításokban a kiszolgáló fülön tudsz alkalmazni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ennek letiltásával nem fogsz fórum és csatorna üzeneteket küldeni illetve fogadni ezen barátod irányába.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
@@ -2345,11 +1776,103 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
         <translation>Partner címei</translation>
     </message>
     <message>
-        <source>Location ID</source>
+        <source>Options</source>
+        <translation>Beállítások</translation>
+    </message>
+    <message>
+        <source>Retroshare node details</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>PGP fingerprint</source>
+        <source>Location info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Contact :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare version :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files from this node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hidden Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>nincs</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate contains:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> with </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;/li&gt; </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;onion address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;IP address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require white list clearance</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2546,22 +2069,6 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
         <translation>Barát hozzáadása</translation>
     </message>
     <message>
-        <source>Service permissions</source>
-        <translation>Szolgáltatások jogosultságai</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Névtelen forgalmazás</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Felfedezés</translation>
-    </message>
-    <message>
-        <source>Forums/channels</source>
-        <translation>Fórumok/csatornák</translation>
-    </message>
-    <message>
         <source>To accept the Friend Request, click the Finish button.</source>
         <translation>A baráti kérelem elfogadásához kattints a kész gombra.</translation>
     </message>
@@ -2596,10 +2103,6 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
         <translation>Helytelen méret olvasás. Nagyobb, mint a memória blokk.</translation>
-    </message>
-    <message>
-        <source>Invalid location id.</source>
-        <translation>Érvénytelen helyszín id.</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
@@ -2786,10 +2289,6 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
         <translation>Közvetlen forrásként használat, amikor lehetséges</translation>
     </message>
     <message>
-        <source>Direct source</source>
-        <translation>Közvetlen forrás</translation>
-    </message>
-    <message>
         <source>Recommend many friends to each others</source>
         <translation>Barátaid ajánlása egymásnak</translation>
     </message>
@@ -2834,6 +2333,46 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
 This might be useful for sending
 distant messages to this peer
 even if you don&apos;t make friends.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid node id.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can be used as direct source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist clearance to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No IP in this certificate!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Added with certificate from %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste Cert of your friend from Clipboard</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3128,10 +2667,6 @@ even if you don&apos;t make friends.</source>
         <translation>Kérlek, lépj vele kapcsolatba és juttasd el hozzá a tanúsítványodat</translation>
     </message>
     <message>
-        <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation>Szüksége van a tanúsítványodra, valamint egy helyszínre, hogy létrejöhessen az UDP kapcsolat</translation>
-    </message>
-    <message>
         <source>We Cannot find your Friend.</source>
         <translation>A barátod nem található meg.</translation>
     </message>
@@ -3215,539 +2750,9 @@ p, li { white-space: pre-wrap; }
         <source>Retroshare cannot connect without this information</source>
         <translation>A Retroshare képtelen csatlakozni ezen információk nélkül</translation>
     </message>
-</context>
-<context>
-    <name>CreateBlog</name>
     <message>
-        <source>Create new Blog</source>
-        <translation>Új blog létrehozása</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Új blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Név</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Leírás</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Típus:</translation>
-    </message>
-    <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Publikus - Bárki számára olvasható és írható (Megosztott kulcs)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Korlátozott - Akárki olvashatja, de az írás korlátozott (Privát kulcs)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privát - (Privát kulcs szükséges az üzenetek eléréséhez)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Engedélyezett üzenetek</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Hitelesített üzenetek</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Névtelen üzenetek</translation>
-    </message>
-    <message>
-        <source>Blog Logo</source>
-        <translation>Blog logó</translation>
-    </message>
-    <message>
-        <source>Add Blog Logo</source>
-        <translation>Blog logó hozzáadása</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Mégse</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation>Létrehozás</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Kérlek, adj meg egy nevet</translation>
-    </message>
-    <message>
-        <source>Load File</source>
-        <translation>File betöltése</translation>
-    </message>
-    <message>
-        <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation>Képek (*.png *.xpm *.jpg)</translation>
-    </message>
-</context>
-<context>
-    <name>CreateBlogMsg</name>
-    <message>
-        <source>New Blog Post</source>
-        <translation>Új blogbejegyzés</translation>
-    </message>
-    <message>
-        <source>Blog Post</source>
-        <translation>Blogbejegyzés</translation>
-    </message>
-    <message>
-        <source>Blog Post to:</source>
-        <translation>Blogbejegyzés neki:</translation>
-    </message>
-    <message>
-        <source>Visual Editor</source>
-        <translation>Vizuális szerkesztő</translation>
-    </message>
-    <message>
-        <source>Blog Message</source>
-        <translation>Blog üzenet</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Tárgy:</translation>
-    </message>
-    <message>
-        <source>Html Editor</source>
-        <translation>Html szerkesztő</translation>
-    </message>
-    <message>
-        <source>toolBar</source>
-        <translation>Eszköztár</translation>
-    </message>
-    <message>
-        <source>toolBar_2</source>
-        <translation>Eszköztár_2</translation>
-    </message>
-    <message>
-        <source>blockquote</source>
-        <translation>blokkidézet</translation>
-    </message>
-    <message>
-        <source>Increase font Size</source>
-        <translation>Betűméret növelése</translation>
-    </message>
-    <message>
-        <source>Decrease font size</source>
-        <translation>Betűméret csökkentése</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Félkövér</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Aláhúzás</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Dőlt</translation>
-    </message>
-    <message>
-        <source>Publish</source>
-        <translation>Közzétesz</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Új</translation>
-    </message>
-    <message>
-        <source>Code</source>
-        <translation>Kód</translation>
-    </message>
-    <message>
-        <source>splitPost</source>
+        <source>They need a Certificate + Node for UDP connections to succeed</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Ordered List</source>
-        <translation>Rendezett lista</translation>
-    </message>
-    <message>
-        <source>Unordered List</source>
-        <translation>Rendezetlen lista</translation>
-    </message>
-    <message>
-        <source>Clipboard</source>
-        <translation>Vágólap</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>Visszavonás</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Kérlek, adj meg egy tárgyat</translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation>&amp;Fájl</translation>
-    </message>
-    <message>
-        <source>&amp;New</source>
-        <translation>&amp;Új</translation>
-    </message>
-    <message>
-        <source>&amp;Open...</source>
-        <translation>&amp;Megnyitás</translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <translation>&amp;Mentés</translation>
-    </message>
-    <message>
-        <source>Save &amp;As...</source>
-        <translation>Mentés &amp;Másként...</translation>
-    </message>
-    <message>
-        <source>&amp;Print...</source>
-        <translation>&amp;Nyomtatás...</translation>
-    </message>
-    <message>
-        <source>Print Preview...</source>
-        <translation>Nyomtatási kép...</translation>
-    </message>
-    <message>
-        <source>&amp;Export PDF...</source>
-        <translation>&amp;PDF exportálása...</translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation>&amp;Kilépés</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Szerkesztés</translation>
-    </message>
-    <message>
-        <source>&amp;Undo</source>
-        <translation>&amp;Visszavonás</translation>
-    </message>
-    <message>
-        <source>&amp;Redo</source>
-        <translation>&amp;Újra</translation>
-    </message>
-    <message>
-        <source>Cu&amp;t</source>
-        <translation>Kivágás</translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;Másolás</translation>
-    </message>
-    <message>
-        <source>&amp;Paste</source>
-        <translation>&amp;Beillesztés</translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation>&amp;Nézet</translation>
-    </message>
-    <message>
-        <source>&amp;Insert</source>
-        <translation>&amp;Beszúrás</translation>
-    </message>
-    <message>
-        <source>&amp;Image</source>
-        <translation>&amp;Kép</translation>
-    </message>
-    <message>
-        <source>F&amp;ormat</source>
-        <translation>&amp;Formátum</translation>
-    </message>
-    <message>
-        <source>&amp;Bold</source>
-        <translation>&amp;Félkövér</translation>
-    </message>
-    <message>
-        <source>&amp;Italic</source>
-        <translation>&amp;Dőlt</translation>
-    </message>
-    <message>
-        <source>&amp;Underline</source>
-        <translation>&amp;Aláhúzott</translation>
-    </message>
-    <message>
-        <source>&amp;Left</source>
-        <translation>&amp;Bal</translation>
-    </message>
-    <message>
-        <source>C&amp;enter</source>
-        <translation>&amp;Középre</translation>
-    </message>
-    <message>
-        <source>&amp;Right</source>
-        <translation>&amp;Jobbra</translation>
-    </message>
-    <message>
-        <source>&amp;Justify</source>
-        <translation>&amp;sorkizárt</translation>
-    </message>
-    <message>
-        <source>&amp;Text Color...</source>
-        <translation>&amp;Szövegszín</translation>
-    </message>
-    <message>
-        <source>Application</source>
-        <translation>Alkalmazás</translation>
-    </message>
-    <message>
-        <source>The document has been modified.
-Do you want to save your changes?</source>
-        <translation>A dokumentum megváltozott.
-Szeretnéd elmenteni a változtatásaidat?</translation>
-    </message>
-    <message>
-        <source>Open File...</source>
-        <translation>Fájl megnyitása...</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-Fájlok (*.htm *.html);;Összes fájl (*)</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Mentés másként...</translation>
-    </message>
-    <message>
-        <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>ODF fájlok (*.odt);;HTML-Fájlok (*.htm *.html);;Összes fájl (*)</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation>Dokumentum nyomtatása</translation>
-    </message>
-    <message>
-        <source>Export PDF</source>
-        <translation>Exportálás PDF-be</translation>
-    </message>
-    <message>
-        <source>Choose Image</source>
-        <translation>Kép választása</translation>
-    </message>
-    <message>
-        <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Támogatott képformátumok (*.png *.jpeg *.jpg *.gif)</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannel</name>
-    <message>
-        <source>Create a new Channel</source>
-        <translation>Új csatorna létrehozása</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Név</translation>
-    </message>
-    <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>Jelöld be, hogy mely partnereiddel szeretnél privát kulcsot megosztani</translation>
-    </message>
-    <message>
-        <source>Share Key With</source>
-        <translation>Kulcs megosztása</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Leírás</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Típus:</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Korlátozott - Akárki olvashatja, de az írás korlátozott (Privát kulcs)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Private - (Privát kulcs szükséges az üzenetek olvasásához)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Engedélyezett üzenetek</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Névtelen üzenetek</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Hitelesített üzenetek</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Kulcs megosztása</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Kulccsal rendelkező személyek írhatnak a korlátozott csatornákra és olvashatják, valamint írhatnak a privát csatornákra is.</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Privát kulcs megosztása</translation>
-    </message>
-    <message>
-        <source>Channel Logo</source>
-        <translation>Csatorna logó</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Csatorna logó hozzáadása</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Új csatorna</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Kapcsolatok:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Kérlek, adj meg egy nevet</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Csatorna logó betöltése</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannelMsg</name>
-    <message>
-        <source>New Channel Post</source>
-        <translation>Új bejegyzés a csatornán</translation>
-    </message>
-    <message>
-        <source>Channel Post</source>
-        <translation>Csatorna bejegyzés</translation>
-    </message>
-    <message>
-        <source>Channel Post to:</source>
-        <translation>Csatorna bejegyzés neki:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Csatolmányok:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Dobáld be a fájlokat / Használd a fájl hozzáadása gombot új fájlok megosztásához.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Másolj/Illessz be RetroShare hivatkozásokat a megosztásaidból&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add File to Attach</source>
-        <translation>Melléklet csatolása</translation>
-    </message>
-    <message>
-        <source>Add Channel Thumbnail</source>
-        <translation>Előnézeti kép hozzáadása</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Üzenet</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Tárgy:</translation>
-    </message>
-    <message>
-        <source>Attachments</source>
-        <translation>Mellékletek</translation>
-    </message>
-    <message>
-        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation>Engedélyezed, hogy a csatorna keretet adjon az üzenet előnézeti képének a médiafájlokból?</translation>
-    </message>
-    <message>
-        <source>Auto Thumbnail</source>
-        <translation>Automatikus előnézet</translation>
-    </message>
-    <message>
-        <source>Drag and Drop Files from Search Results</source>
-        <translation>Fájlok megragadása és bedobása a keresési találatokból</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Links</source>
-        <translation>RetroShare linkek beillesztése</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>RetroShare link beillesztése</translation>
-    </message>
-    <message>
-        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation>Fájlokat fogsz hozzáadni a megosztásodhoz. Biztos ezt szeretnéd tenni?</translation>
-    </message>
-    <message>
-        <source>About to post un-owned files to a channel.</source>
-        <translation>Nem birtokolt fájlok beküldése a csatornára.</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation>Hiba a fájl megadásánál.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Nem adhatsz meg könyvtárat, mert csak fájlok engedélyezettek.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation>A fájl nem található vagy hibás a fájlnév.</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Extra fájl hozzáadása</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>Retroshare</translation>
-    </message>
-    <message>
-        <source>File already Added and Hashed</source>
-        <translation>A fájl már hozzá van adva és hashelve van.</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Kérlek, adj meg egy tárgyat</translation>
-    </message>
-    <message>
-        <source>Load thumbnail picture</source>
-        <translation>Előnézeti kép betöltése</translation>
     </message>
 </context>
 <context>
@@ -3791,14 +2796,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Known Identities</source>
         <translation>Ismert személyazonosságok</translation>
-    </message>
-    <message>
-        <source>All PGP IDs</source>
-        <translation>Összes PGP ID</translation>
-    </message>
-    <message>
-        <source>Known PGP IDs</source>
-        <translation>Ismert PGP azonosítók</translation>
     </message>
     <message>
         <source>Filter</source>
@@ -3864,143 +2861,33 @@ p, li { white-space: pre-wrap; }
         <source>Search</source>
         <translation>Keresés</translation>
     </message>
-</context>
-<context>
-    <name>CreateForum</name>
     <message>
-        <source>Create new Forum</source>
-        <translation>Új fórum létrehozása</translation>
+        <source>All</source>
+        <translation>Összes</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation>Név</translation>
+        <source>Signed</source>
+        <translation>Aláírt</translation>
     </message>
     <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>Jelöld ki azon partnereidet, akikkel szeretnél privát kulcsot megosztani.</translation>
+        <source>Signed by known nodes</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Share Key With</source>
-        <translation>Kulcs megosztása velük:</translation>
+        <source>Edit Circle</source>
+        <translation>Kör szerkesztése</translation>
     </message>
     <message>
-        <source>Description</source>
-        <translation>Leírás</translation>
+        <source>PGP Identity</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Type:</source>
-        <translation>Típus:</translation>
+        <source>Anon Id</source>
+        <translation>Névtelen ID</translation>
     </message>
     <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Publikus - Akárki olvashatja és írhat bele (Megosztott kulcs)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Korlátozott - Akárki olvashatja, de az írás korlátozott (Privát kulcs)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privát - (Privát kulcs szükséges az üzenetek olvasásához)</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Kulcs megosztás</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Kulccsal rendelkező személyek írhatnak a korlátozott csatornákra és olvashatják, valamint írhatnak a privát csatornákra is.</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Privát kulcs megosztása</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Engedélyezett üzenetek</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Hitelesített üzenetek</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Névtelen üzenetek</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Új fórum</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Kapcsolatok:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Kérlek, adj meg egy nevet</translation>
-    </message>
-</context>
-<context>
-    <name>CreateForumMsg</name>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Fórum üzenet beküldése</translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation>Fórum</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Tárgy</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Fájl csatolása</translation>
-    </message>
-    <message>
-        <source>Sign Message</source>
-        <translation>Üzenet aláírása</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Fórum üzenet</translation>
-    </message>
-    <message>
-        <source>Attach files via drag and drop</source>
-        <translation>Dobj be csatolandó fájlokat</translation>
-    </message>
-    <message>
-        <source>You can attach files via drag and drop here in this window</source>
-        <translation>Az ablakba dobva fájlokat csatolhatsz</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Új szál indítása</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Válasz neki</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Kérlek, állíts be egy tárgyat és egy üzenetet a fórumnak</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Extra fájl hozzáadása</translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation>Kép csatolása</translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
-        <translation>Kép betöltése</translation>
+        <source>PGP Linked Id</source>
+        <translation>PGP-hez linkelt ID</translation>
     </message>
 </context>
 <context>
@@ -4089,24 +2976,12 @@ p, li { white-space: pre-wrap; }
         <translation>Fájlok megragadása és bedobása a keresési találatokból</translation>
     </message>
     <message>
-        <source>New GxsChannel Post</source>
-        <translation>Új Gxs csatorna bejegyzés</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Links</source>
         <translation>RetroShare linkek beillesztése</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare hivatkozás beillesztése</translation>
-    </message>
-    <message>
-        <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>A Gxs-csatorna biztonsági szabályai nem engedélyezik, hogy olyan fájlokat adj meg, amik nem a tieid. Amennyiben ezek a te fájljaid, először meg kell osztanod vagy csatolnod kell őket:</translation>
-    </message>
-    <message>
-        <source>You can only post files that you do have</source>
-        <translation>Csak olyan fájlokat adhatsz meg, melyekkel rendelkezel</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -4143,6 +3018,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Generate mass data</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation>Fájlokat fogsz hozzáadni a megosztásodhoz. Biztos ezt szeretnéd tenni?</translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
+        <translation>Nem birtokolt fájlok beküldése a csatornára.</translation>
     </message>
 </context>
 <context>
@@ -4200,10 +3087,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kérlek, állíts be egy tárgyat és egy üzenetet a fórumnak</translation>
     </message>
     <message>
-        <source>Please choose Signing Id</source>
-        <translation>Kérlek válassz egy aláírás Id-t</translation>
-    </message>
-    <message>
         <source>Please choose Signing Id, it is required</source>
         <translation>Kérlek, válassz egy aláírás Id-t, ez szükséges.</translation>
     </message>
@@ -4213,6 +3096,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Generate mass data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Küldés</translation>
+    </message>
+    <message>
+        <source>Forum Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forum Message has not been Sent.
+Do you want to reject this message?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Post as</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Congrats, you found a bug! </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4235,10 +3143,6 @@ p, li { white-space: pre-wrap; }
         <translation>A szoba témája:</translation>
     </message>
     <message>
-        <source>Your nick name:</source>
-        <translation>Beceneved:</translation>
-    </message>
-    <message>
         <source>Security policy:</source>
         <translation>Biztonsági szabályzat:</translation>
     </message>
@@ -4259,111 +3163,16 @@ p, li { white-space: pre-wrap; }
         <translation>Meghívott barátok</translation>
     </message>
     <message>
-        <source>Put a sensible lobby name here</source>
-        <translation>Írj be ide egy szobanevet</translation>
-    </message>
-    <message>
-        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>A szobában használandó beceneved (Az alapértelmezett becenevet a beállítások -&gt; chat menüben állíthatod át)</translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation>Kapcsolatok:</translation>
     </message>
-</context>
-<context>
-    <name>CreateMsgLinkDialog</name>
     <message>
-        <source>Invite type:</source>
-        <translation>Meghívó típusa:</translation>
-    </message>
-    <message>
-        <source>Private chat</source>
-        <translation>Privát csevegés</translation>
-    </message>
-    <message>
-        <source>Validity time :</source>
-        <translation>Érvényesség ideje:</translation>
-    </message>
-    <message>
-        <source>hour</source>
-        <translation>óra</translation>
-    </message>
-    <message>
-        <source>day</source>
-        <translation>nap</translation>
-    </message>
-    <message>
-        <source>week</source>
-        <translation>hét</translation>
-    </message>
-    <message>
-        <source>month</source>
-        <translation>hónap</translation>
-    </message>
-    <message>
-        <source>year</source>
-        <translation>év</translation>
-    </message>
-    <message>
-        <source>Create!</source>
-        <translation>Létrehozás!</translation>
-    </message>
-    <message>
-        <source>Private chat invite creation failed</source>
-        <translation>Privát csevegésbe meghívás sikertelen</translation>
-    </message>
-    <message>
-        <source>The creation of the chat invite failed</source>
-        <translation>A meghívó létrehozása sikertelen</translation>
-    </message>
-    <message>
-        <source>Private chat invite created</source>
-        <translation>Privát csevegés meghívó létrehozva</translation>
-    </message>
-    <message>
-        <source>Create distant chat invite</source>
-        <translation>Távoli beszélgetés meghívó létrehozása</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ahhoz, hogy privát csevegési meghívót küldj valakinek, aki nem közvetlen barátod, választ ki alul a kulcsát és egy elavulási időt, majd kattints a &amp;quot;Létrehozás&amp;quot; gombra. A meghívó olyan adatokat fog tartalmazni, melyek segítségével egy alagút építhető ki a beszélgetéshez. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;A meghívó névtelen és nem fedi fel a valódi személyazonosságodat. Csak a kiválasztott személy dekódolhatja a hivatkozás, hogy kapcsolatba léphessen veled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation>Az új csevegési meghívód létrejött. Most már másolhatod és beillesztheted Retroshare hivatkozásként.</translation>
-    </message>
-    <message>
-        <source>Messaging invite creation failed</source>
-        <translation>Üzenetküldés meghívó létrehozása sikertelen</translation>
-    </message>
-    <message>
-        <source>The creation of the messaging invite failed</source>
-        <translation>Üzenetküldés meghívó létrehozása sikertelen</translation>
-    </message>
-    <message>
-        <source>Messaging invite created</source>
-        <translation>Üzenetküldés meghívó létrehozva</translation>
-    </message>
-    <message>
-        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation>Az új üzenetküldés meghívó a vágólapra lett másolva. Most már beillesztheted Retroshare hivatkozásként.</translation>
-    </message>
-    <message>
-        <source>Create distant chat</source>
-        <translation>Távoli beszélgetés kezdeményezése</translation>
+        <source>Identity to use:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
-    <message>
-        <source>Profile</source>
-        <translation>Profil</translation>
-    </message>
-    <message>
-        <source>Profile Manager</source>
-        <translation>Profilkezelő</translation>
-    </message>
     <message>
         <source>Public Information</source>
         <translation>Publikus adatok</translation>
@@ -4379,10 +3188,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Location ID:</source>
         <translation>Helyszín ID:</translation>
-    </message>
-    <message>
-        <source>Number of Friends:</source>
-        <translation>Barátok száma:</translation>
     </message>
     <message>
         <source>Software Version:</source>
@@ -4405,20 +3210,8 @@ p, li { white-space: pre-wrap; }
         <translation>Aláírásokat tartalmaz</translation>
     </message>
     <message>
-        <source>Use old key format</source>
-        <translation>Régi típusú kulcs használata</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Hivatkozás másolása vágólapra</translation>
-    </message>
-    <message>
         <source>Save Key into a file</source>
         <translation>Kulcs mentése fájlba</translation>
-    </message>
-    <message>
-        <source>Save Key</source>
-        <translation>Kulcs mentése</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -4449,16 +3242,51 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare tanúsítvány (*.rsc );;Minden fájl (*)</translation>
     </message>
     <message>
-        <source>Identity ID</source>
-        <translation>Személyazonosság ID</translation>
-    </message>
-    <message>
         <source>TextLabel</source>
         <translation>Szövegcímke</translation>
     </message>
     <message>
         <source>PGP fingerprint:</source>
         <translation>PGP ujjlenyomat:</translation>
+    </message>
+    <message>
+        <source>Node information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Id :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend nodes:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy certificate to clipboard</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save certificate to file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new node...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>show statistics window</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>DHTGraphSource</name>
+    <message>
+        <source>users</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4565,14 +3393,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DhtWindow</name>
     <message>
-        <source>DHT Details</source>
-        <translation>DHT adatok</translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation>Partner adatai</translation>
-    </message>
-    <message>
         <source>Net Status</source>
         <translation>Hálózat állapota</translation>
     </message>
@@ -4595,14 +3415,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Peer Address</source>
         <translation>Partner címe</translation>
-    </message>
-    <message>
-        <source>Extra Label</source>
-        <translation>Extra címke</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>Szövegcímke</translation>
     </message>
     <message>
         <source>Name</source>
@@ -4869,38 +3681,6 @@ p, li { white-space: pre-wrap; }
         <translation>Ismeretlen</translation>
     </message>
     <message>
-        <source>#Peers: </source>
-        <translation>#Partnerek:</translation>
-    </message>
-    <message>
-        <source> DHT: (#off:</source>
-        <translation>DHT: (#kikapcsolva:</translation>
-    </message>
-    <message>
-        <source>,unreach:</source>
-        <translation>,elérhetetlen:</translation>
-    </message>
-    <message>
-        <source>,online:</source>
-        <translation>,elérhető:</translation>
-    </message>
-    <message>
-        <source>) Connections: (#dis:</source>
-        <translation>) Kapcsolódások: (#dis:</translation>
-    </message>
-    <message>
-        <source>,#dir:</source>
-        <translation>,#dir:</translation>
-    </message>
-    <message>
-        <source>,#proxy:</source>
-        <translation>,#proxy:</translation>
-    </message>
-    <message>
-        <source>,#relay:</source>
-        <translation>,#relay:</translation>
-    </message>
-    <message>
         <source>RELAY END</source>
         <translation>Relay vége</translation>
     </message>
@@ -4939,6 +3719,70 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>never</source>
         <translation>soha</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Net Status:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network Mode:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Nat Type:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Nat Hole:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connect Mode:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unreach:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Online:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Offline:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Peers:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disconnected:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Direct:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proxy:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Relay:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Graph</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5037,129 +3881,6 @@ minden csatlakoztatáskor újra hash értéket számoljon a program.</translatio
     <message>
         <source>Start file</source>
         <translation>Fájl indítása</translation>
-    </message>
-</context>
-<context>
-    <name>EditChanDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Csatorna részletei</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Csatorna részleteinek szerkesztése</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Csatorna adatai</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Csatorna neve</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Csatorna leírása</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Csatorna logó hozzáadása</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Csatorna logó betöltése</translation>
-    </message>
-</context>
-<context>
-    <name>EditForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Fórum részletei</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Fórum részleteinek szerkesztése</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Fórum adatai</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Fórum neve</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Fórum leírása</translation>
-    </message>
-</context>
-<context>
-    <name>ExampleDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Barátok&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Állapot</translation>
-    </message>
-    <message>
-        <source>Person</source>
-        <translation>Személy</translation>
-    </message>
-    <message>
-        <source>Auto Connect</source>
-        <translation>Automatikus csatlakozás</translation>
-    </message>
-    <message>
-        <source>Trust Level</source>
-        <translation>Bizalmi szint</translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation>Partner címe</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Utolsó kapcsolat</translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation>Szervezet</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Hely</translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation>Ország</translation>
-    </message>
-    <message>
-        <source>Person Id</source>
-        <translation>Partner ID</translation>
-    </message>
-    <message>
-        <source>Auth Code</source>
-        <translation>Hitelesítési kód</translation>
-    </message>
-    <message>
-        <source>Vote Up</source>
-        <translation>Szavazás mellette</translation>
-    </message>
-    <message>
-        <source>Vote Down</source>
-        <translation>Szavazás ellene</translation>
     </message>
 </context>
 <context>
@@ -5413,147 +4134,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Fórum részletei</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Fórum adatai</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Fórum neve</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Népszerűség</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Utolsó bejegyzés</translation>
-    </message>
-    <message>
-        <source>Forum ID</source>
-        <translation>Fórum ID</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Fórum leírás</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Biztonság</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Engedélyezett üzenetek</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Hitelesített üzenetek</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Névtelen üzenetek</translation>
-    </message>
-</context>
-<context>
-    <name>ForumMsgItem</name>
-    <message>
-        <source>Subject: </source>
-        <translation>Tárgy:</translation>
-    </message>
-    <message>
-        <source>Unsubscribe To Forum</source>
-        <translation>Leiratkozás a fórumról</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Válasz</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Olvasottként megjelölés és eltávolítás</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Küldés</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Aláírt</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Fórum hozzászólás</translation>
-    </message>
-    <message>
-        <source>Unknown Forum Post</source>
-        <translation>Ismeretlen fórum hozzászólás</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Névtelen</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Válasz</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-    <message>
-        <source>Please give a Text Message</source>
-        <translation>Kérlek, írj be egy üzenetet</translation>
-    </message>
-</context>
-<context>
-    <name>ForumNewItem</name>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Feliratkozás a fórumra</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Fórum leírása</translation>
-    </message>
-    <message>
-        <source>Unknown Forum</source>
-        <translation>Ismeretlen fórum</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Új fórum</translation>
-    </message>
-    <message>
-        <source>Updated Forum</source>
-        <translation>Frissült fórum</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-</context>
-<context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
@@ -5568,14 +4148,6 @@ p, li { white-space: pre-wrap; }
         <translation>Új üzenetek lenyitása</translation>
     </message>
     <message>
-        <source>New forum</source>
-        <translation>Új fórum</translation>
-    </message>
-    <message>
-        <source>Open all forums in new tab</source>
-        <translation>Összes fórum megnyitása új fülön</translation>
-    </message>
-    <message>
         <source>Forum</source>
         <translation>Fórum</translation>
     </message>
@@ -5583,294 +4155,17 @@ p, li { white-space: pre-wrap; }
         <source>Load embedded images</source>
         <translation>Beágyazott képek megjelenítése</translation>
     </message>
-</context>
-<context>
-    <name>ForumUserNotify</name>
     <message>
-        <source>Forum Post</source>
-        <translation>Fórum hozzászólás</translation>
-    </message>
-</context>
-<context>
-    <name>ForumsDialog</name>
-    <message>
-        <source>Forums</source>
-        <translation>Fórumok</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Fórum létrehozása</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Fórum:</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Utolsó üzenet</translation>
-    </message>
-    <message>
-        <source>Threaded View</source>
-        <translation>Fa nézet</translation>
-    </message>
-    <message>
-        <source>Flat View</source>
-        <translation>Egyszerű nézet</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Cím</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Dátum</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Szerző</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Aláírva</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Szál:</translation>
-    </message>
-    <message>
-        <source>Previous Thread</source>
-        <translation>Előző szál</translation>
-    </message>
-    <message>
-        <source>Next Thread</source>
-        <translation>Következő szál</translation>
-    </message>
-    <message>
-        <source>Download all files</source>
-        <translation>Összes fájl letöltése</translation>
-    </message>
-    <message>
-        <source>Next unread</source>
-        <translation>Következő olvasatlan</translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation>Új szál indítása a kiválasztott fórumban</translation>
-    </message>
-    <message>
-        <source>Reply Message</source>
-        <translation>Válasz</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Töltés</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Nyomtatás</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>Nyomtatási kép</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Saját fórumaim</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Feliratkozások</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Népszerű fórumok</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Egyéb fórumok</translation>
-    </message>
-    <message>
-        <source>Search Title</source>
-        <translation>Cím keresése</translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation>Dátum keresése</translation>
-    </message>
-    <message>
-        <source>Search Author</source>
-        <translation>Szerző keresése</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation>Tartalom</translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation>Tartalom keresése</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Feliratkozás a fórumra</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Leiratkozás a fórumról</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Új fórum</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Fórum részleteinek mutatása</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Fórum részleteinek szerkesztése</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Fórum megosztása</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Fórum írási jogainak visszaállítása</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>RetroShare link másolása</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Összes megjelölése olvasottként</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Összes megjelölése olvasatlanként</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Válasz</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Új szál indítása</translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation>Válasz a szerzőnek</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation>Összes lenyitása</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation>Összes becsukása</translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation>Megjelölés olvasottként</translation>
-    </message>
-    <message>
-        <source>with children</source>
-        <translation>alszálakkal együtt</translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation>Megjelölés olvasatlanként</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Elrejtés</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>HITELESÍTETT</translation>
-    </message>
-    <message>
-        <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... hiányzó üzenet ... ]</translation>
-    </message>
-    <message>
-        <source>Placeholder for missing Message</source>
-        <translation>Hiányzó üzenet helyfoglalója</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation>Nincs fórum kiválasztva!</translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation>Eredeti üzenet</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Feladó</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation>Elküldve</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Tárgy</translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation>%1, %2 írta:</translation>
-    </message>
-    <message>
-        <source>You can&apos;t reply an Anonymous Author</source>
-        <translation>Nem válaszolhatsz névtelen írónak</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Fórum leírása</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
+        <source>Tabs</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Load images always for this message</source>
-        <translation>Ezen üzenethez mindig töltse be a képeket</translation>
-    </message>
-</context>
-<context>
-    <name>ForumsFillThread</name>
-    <message>
-        <source>Unknown</source>
-        <translation>Ismeretlen</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Névtelen</translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation>aláírt</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>nincs</translation>
+        <source>Open each forum in a new tab</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FriendList</name>
-    <message>
-        <source>Friends</source>
-        <translation>Barátok</translation>
-    </message>
     <message>
         <source>Status</source>
         <translation>Állapot</translation>
@@ -5948,14 +4243,6 @@ p, li { white-space: pre-wrap; }
         <translation>Barát</translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation>Hely</translation>
-    </message>
-    <message>
-        <source>Message Group</source>
-        <translation>Üzenetcsoport</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Csoport szerkesztése</translation>
     </message>
@@ -5968,28 +4255,12 @@ p, li { white-space: pre-wrap; }
         <translation>Csevegés</translation>
     </message>
     <message>
-        <source>Message Friend</source>
-        <translation>Üzenet küldése a barátnak</translation>
-    </message>
-    <message>
-        <source>Friend Details</source>
-        <translation>Barát részletei</translation>
-    </message>
-    <message>
         <source>Recommend this Friend to...</source>
         <translation>Barát ajánlása...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
         <translation>Tanúsítvány hivatkozásának másolása</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Barát elutasítása</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation>Hely eltávolítása</translation>
     </message>
     <message>
         <source>Add to group</source>
@@ -6059,6 +4330,42 @@ p, li { white-space: pre-wrap; }
         <source>Paste certificate link</source>
         <translation>Tanúsítvány beillesztése</translation>
     </message>
+    <message>
+        <source>Sort by</source>
+        <translation>Rendezés</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove Friend Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you want to remove this node?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to whole group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Részletek</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
@@ -6101,48 +4408,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FriendsDialog</name>
     <message>
-        <source>Friends</source>
-        <translation>Barátok</translation>
-    </message>
-    <message>
         <source>Edit status message</source>
         <translation>Állapot szerkesztése</translation>
     </message>
     <message>
         <source>Broadcast</source>
         <translation>Üzenőfal</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Félkövér</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Aláhúzott</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Dőlt</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Betűtípus</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Szövegszín</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Fájl csatolása</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Küldés</translation>
-    </message>
-    <message>
-        <source>Messages entered here are sent to all connected friends</source>
-        <translation>Az ide írt üzeneteket az összes csatlakozott barátod megkapja</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
@@ -6205,38 +4476,6 @@ p, li { white-space: pre-wrap; }
         <translation>Alapértelmezett betűtípus visszaállítása</translation>
     </message>
     <message>
-        <source>Local network</source>
-        <translation>Helyi hálózat</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>RetroShare link beillesztése</translation>
-    </message>
-    <message>
-        <source>is typing...</source>
-        <translation>éppen ír...</translation>
-    </message>
-    <message>
-        <source>New group chat</source>
-        <translation>Új csoportos csevegés</translation>
-    </message>
-    <message>
-        <source>Do you really want to physically delete the history?</source>
-        <translation>Tényleg törölni szeretnéd az előzményeket?</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Extra fájl hozzáadása</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Mentés másként...</translation>
-    </message>
-    <message>
-        <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Szöveges fájl (*.txt );;Összes fájl (*)</translation>
-    </message>
-    <message>
         <source>Keyring</source>
         <translation>Kulcstartó</translation>
     </message>
@@ -6245,149 +4484,20 @@ p, li { white-space: pre-wrap; }
         <translation>Retroshare üzenőfal: az ide írt üzeneteidet az összes barátod láthatja.</translation>
     </message>
     <message>
-        <source>Attach a Picture</source>
-        <translation>Kép csatolása</translation>
+        <source>Network</source>
+        <translation>Hálózat</translation>
     </message>
     <message>
-        <source>Load Picture File</source>
-        <translation>Kép betöltése</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <source>Network graph</source>
         <translation type="unfinished"/>
     </message>
-</context>
-<context>
-    <name>GamesDialog</name>
     <message>
-        <source>Form</source>
-        <translation>Forma</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Játék indító&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Game:</source>
-        <translation>Játék</translation>
-    </message>
-    <message>
-        <source>GameType: 0. Want to Add your Game here?</source>
-        <translation>Játéktípus: 0. Szeretnéd hozzáadni a játékodat?</translation>
-    </message>
-    <message>
-        <source>GameType: 1. Get In Touch with the developers</source>
-        <translation>Játéktípus: 1. Lépj kapcsolatba a fejlesztőkkel</translation>
-    </message>
-    <message>
-        <source>GameType: 2.</source>
-        <translation>Játéktípus: 2.</translation>
-    </message>
-    <message>
-        <source>Title / Comment</source>
-        <translation>Cím / Hozzászólás</translation>
-    </message>
-    <message>
-        <source>Create New Game</source>
-        <translation>Új játék létrehozása</translation>
-    </message>
-    <message>
-        <source>Invite All Friends</source>
-        <translation>Összes barát meghívása</translation>
-    </message>
-    <message>
-        <source>Game Type</source>
-        <translation>Játék típusa</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Kiszolgáló</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Állapot</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Hozzászólás</translation>
-    </message>
-    <message>
-        <source>GameID</source>
-        <translation>Játék ID</translation>
-    </message>
-    <message>
-        <source>Player</source>
-        <translation>Játékos</translation>
-    </message>
-    <message>
-        <source>Invite</source>
-        <translation>Meghívás</translation>
-    </message>
-    <message>
-        <source>Interested</source>
-        <translation>Érdekelt</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Elfogadás</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Törlés</translation>
-    </message>
-    <message>
-        <source>Move Player</source>
-        <translation>Játékos mozgatása</translation>
-    </message>
-    <message>
-        <source>Play Game</source>
-        <translation>Játék indítása</translation>
-    </message>
-    <message>
-        <source>Cancel Game</source>
-        <translation>Játék megállítása</translation>
-    </message>
-    <message>
-        <source>Add to Invite List</source>
-        <translation>Meghívottakhoz adás</translation>
-    </message>
-    <message>
-        <source>Remove from Invite List</source>
-        <translation>Meghívottaktól eltávolítás</translation>
-    </message>
-    <message>
-        <source>Interested in Playing</source>
-        <translation>Érdekli a játék</translation>
-    </message>
-    <message>
-        <source>Not Interested in Game</source>
-        <translation>Nem érdekli a játék</translation>
-    </message>
-    <message>
-        <source>Not Interested</source>
-        <translation>Nem érdekli</translation>
-    </message>
-    <message>
-        <source>Confirm Peer in Game</source>
-        <translation>Partner megerősítése a játékhoz</translation>
-    </message>
-    <message>
-        <source>Remove Peer from Game</source>
-        <translation>Partner eltávolítása a játékból</translation>
-    </message>
-    <message>
-        <source>Interested in Game</source>
-        <translation>Érdekli a játék</translation>
-    </message>
-    <message>
-        <source>Quit Game</source>
-        <translation>Kilépés a játékból</translation>
+        <source>Set your status message here.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6395,18 +4505,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Create new Profile</source>
         <translation>Új profil létrehozása</translation>
-    </message>
-    <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>Egyetlen személyazonossággal használhatsz több helyszínt is. Ennek beállításához exportáld a kiválasztott személyazonosságot, majd importáld egy másik számítógépen és állítsd be egy új helyszínt.</translation>
-    </message>
-    <message>
-        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Úgy tűnik még nincs fiókod (PGP kulcs). Kérlek, töltsd ki az űrlapot, hogy létrehozz egyet, vagy importálhatsz egy már meglévőt is.</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>A fiókod egy PGP kulcshoz van kapcsolva. A RetroShare jelenleg figyelmen kívül hagyja a DSA kulcsokat.</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6429,52 +4527,8 @@ Az adat szükséges a GPG-hez, de használhatsz kitalált címet is,
 hogy névtelen maradj.</translation>
     </message>
     <message>
-        <source>This Password is for PGP</source>
-        <translation>PGP jelszava</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Jelszó</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Adj meg egy bonyolult jelszót. Ez fogja védeni a PGP kulcsodat.</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Hely</translation>
-    </message>
-    <message>
-        <source>Create new identity</source>
-        <translation>Új személyazonosság létrehozása</translation>
-    </message>
-    <message>
-        <source>Use identity</source>
-        <translation>Személyazonosság használata</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key</source>
-        <translation>A fiókod a PGP kulcshoz lett kapcsolva.</translation>
-    </message>
-    <message>
-        <source>Create a new identity</source>
-        <translation>Új személyazonosság létrehozása</translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation>Új személyazonosság importálása</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Kiválasztott személyazonosság exportálása</translation>
-    </message>
-    <message>
-        <source>Create a new Identity</source>
-        <translation>Új személyazonosság létrehozása</translation>
-    </message>
-    <message>
-        <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>A RetroShare PGP kulcsokat használ a személyazonosságok kezeléséhez.</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -6489,114 +4543,8 @@ hogy névtelen maradj.</translation>
         <translation>[Szükséges] Látható a barátaid és a barátaid barátai számára.</translation>
     </message>
     <message>
-        <source>[Required] This password protects your PGP key.</source>
-        <translation>[Szükséges] Ez a jelszó védi a PGP kulcsodat.</translation>
-    </message>
-    <message>
-        <source>Create new Location</source>
-        <translation>Új hely létrehozása</translation>
-    </message>
-    <message>
-        <source>Generate new Location</source>
-        <translation>Új hely generálása</translation>
-    </message>
-    <message>
-        <source>Create a new Location</source>
-        <translation>Egy új hely létrehozása</translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation>Új személyazonosság létrehozása</translation>
-    </message>
-    <message>
-        <source>Generate new Identity</source>
-        <translation>Új személyazonosság generálása</translation>
-    </message>
-    <message>
-        <source>You can create a new identity with this form.</source>
-        <translation>Létrehozhatsz egy új személyazonosságot az űrlappal.</translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>Használhatsz egy már meglévő személyazonosságot (tehát egy PGP kulcspárt) az alábbi listából, vagy létrehozhatsz egyet az űrlappal.</translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation>Személyazonosság exportálása</translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
-        <translation>RetroShare személyazonosság fájlok (*.asc)</translation>
-    </message>
-    <message>
-        <source>Identity saved</source>
-        <translation>Személyazonosság elmentve</translation>
-    </message>
-    <message>
-        <source>Your identity was successfully saved
-It is encrypted
-
-You can now copy it to another computer
-and use the import button to load it</source>
-        <translation>A titkosított személyazonosságod mentése megtörtént. 
-Most már már másolhatod egy másik számítógépre, 
-majd használd az importálást, hogy betöltsd.</translation>
-    </message>
-    <message>
-        <source>Identity not saved</source>
-        <translation>A személyazonosság nincs elmentve</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>A személyazonosságod nem lett elmentve. Hiba történt.</translation>
-    </message>
-    <message>
-        <source>Identity not loaded</source>
-        <translation>Személyazonosság betöltése sikertelen</translation>
-    </message>
-    <message>
-        <source>Your identity was not loaded properly:</source>
-        <translation>A személyazonosságod betöltése nem megfelelő</translation>
-    </message>
-    <message>
-        <source>New identity imported</source>
-        <translation>Új személyazonosság importálva</translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfully:</source>
-        <translation>A személyazonosságod sikeresen importálva lett.</translation>
-    </message>
-    <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Most már létrehozhatsz egy új helyszínt.</translation>
-    </message>
-    <message>
-        <source>Generate PGP key Failure</source>
-        <translation>Hiba történt a PGP kulcs létrehozásakor</translation>
-    </message>
-    <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation>A helynek legalább 3 karakter hosszúnak kell lennie</translation>
-    </message>
-    <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Az összes adatnak legalább 3 karakter hosszúnak kell lennie</translation>
-    </message>
-    <message>
-        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your PGP password when asked, to sign your new key.</source>
-        <translation>Új PGP kulcs létrehozása. Kérlek, legyél türelmes, mert ez a folyamat prím számok generálásával dolgozik, ami lassú számítógépeken eltarthat pár percig is.
-
-Mikor majd arra kér, írd be a PGP jelszavad, hogy aláírd az új kulcsodat.</translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation>ID létrehozása sikertelen</translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>Az új tanúsítványod létrehozása sikertelen. Talán rossz a PGP jelszó.</translation>
     </message>
     <message>
         <source>Password (check)</source>
@@ -6611,14 +4559,246 @@ Mikor majd arra kér, írd be a PGP jelszavad, hogy aláírd az új kulcsodat.</
         <translation>[Szükséges] Írd be mégegyszer a jelszavadat.</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. 
-This field will be used to differentiate different installations with
-the same identity (PGP key).</source>
+        <source>Passwords do not match</source>
+        <translation>A jelszavak nem egyeznek</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>Port</translation>
+    </message>
+    <message>
+        <source>This password is for PGP</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Passwords do not match</source>
-        <translation>A jelszavak nem egyeznek</translation>
+        <source>Node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node field is required with a minimum of 3 characters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.
+Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node exists for this profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Advanced options</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key length</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Currently disabled. Please move your mouse around until you reach at least 20%</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to create your node and/or profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter a meaningful node description. e.g. : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same profile (PGP key pair).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.
+Alternatively you can import a (previously exported) profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node is associated with the profile named</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create a node for it by providing a node name.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare profile files (*.asc)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not saved. An error occurred.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not loaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not loaded properly:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New profile imported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was imported successfully:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key pair generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing PGP certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6936,30 +5116,65 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>GraphFrame</name>
+    <name>GlobalRouterStatistics</name>
     <message>
-        <source>Recv: </source>
-        <translation>Fogadás:</translation>
+        <source>Router Statistics</source>
+        <translation>Útválasztó statisztikái</translation>
     </message>
     <message>
-        <source>%1 KB/s</source>
-        <translation>%1 KB/s</translation>
+        <source>Unknown Peer</source>
+        <translation>Ismeretlen partner</translation>
+    </message>
+</context>
+<context>
+    <name>GlobalRouterStatisticsWidget</name>
+    <message>
+        <source>Pending packets</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sent: </source>
-        <translation>Küldés:</translation>
+        <source>Managed keys</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>%1 KB</source>
-        <translation>%1 KB</translation>
+        <source> : Service ID = </source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>%1 MB</source>
-        <translation>%1 MB</translation>
+        <source>Routing matrix  (</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>%1 GB</source>
-        <translation>%1 GB</translation>
+        <source>Id</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>Célpont</translation>
+    </message>
+    <message>
+        <source>Data status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Received</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Küldés</translation>
     </message>
 </context>
 <context>
@@ -7034,24 +5249,8 @@ p, li { white-space: pre-wrap; }
         <translation>A mappa NEM elérhető névtelen csatornákon keresztül akármelyik barátod által</translation>
     </message>
     <message>
-        <source>All your friends can browse this directory</source>
-        <translation>Az összes barátod böngészhati a mappát</translation>
-    </message>
-    <message>
-        <source>Only friends in groups %1 can browse this directory</source>
-        <translation>Csak a %1 csoportban szereplő barátaid böngészhetik a mappát</translation>
-    </message>
-    <message>
         <source>No one can browse this directory</source>
         <translation>Senki nem böngészheti a mappát</translation>
-    </message>
-    <message>
-        <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Az összes barátod továbbíthat névtelen alagutakat a mappához</translation>
-    </message>
-    <message>
-        <source>Only friends in groups </source>
-        <translation>Csak a csoportokban szereplő barátok</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
@@ -7060,6 +5259,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>No one can anonymously access this directory.</source>
         <translation>Senki nem kapcsolódhat névtelenül a mappához.</translation>
+    </message>
+    <message>
+        <source>All friend nodes can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups %1 can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All friend nodes can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GroupFrameSettingsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Forma</translation>
+    </message>
+    <message>
+        <source>Hide tabbar with one open tab</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GroupShareKey</name>
+    <message>
+        <source>Share</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation>Kapcsolatok:</translation>
+    </message>
+    <message>
+        <source>Please select at least one peer</source>
+        <translation>Kérlek, válassz ki legalább egy partnert</translation>
+    </message>
+    <message>
+        <source>Share channel admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share forum admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share topic admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7093,12 +5358,16 @@ p, li { white-space: pre-wrap; }
         <translation>Rendezés utolsó üzenet szerint</translation>
     </message>
     <message>
-        <source>Private Key Available</source>
-        <translation>Elérhető privát kulcs</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Megjelenítés beállításai</translation>
+    </message>
+    <message>
+        <source>You have admin rights</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe to download and read messages</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7191,18 +5460,6 @@ p, li { white-space: pre-wrap; }
         <translation>Csatorna létrehozása</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Töltés</translation>
-    </message>
-    <message>
-        <source>Post to Channel</source>
-        <translation>Új bejegyzés</translation>
-    </message>
-    <message>
-        <source>Set all as read</source>
-        <translation>Összes megjelölése olvasottként</translation>
-    </message>
-    <message>
         <source>Enable Auto-Download</source>
         <translation>Automatikus letöltés engedélyezése</translation>
     </message>
@@ -7227,56 +5484,78 @@ p, li { white-space: pre-wrap; }
         <translation>Automatikus letöltés tiltása</translation>
     </message>
     <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Leiratkozás a csatornáról</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesStatusWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Forma</translation>
     </message>
     <message>
-        <source>Subscribe to Channel</source>
-        <translation>Feliratkozás a csatornára</translation>
+        <source>Download</source>
+        <translation>Letöltés</translation>
     </message>
     <message>
-        <source>Edit Channel Details</source>
-        <translation>Csatorna részleteinek szerkesztése</translation>
+        <source>TextLabel</source>
+        <translation>Szövegcímke</translation>
     </message>
     <message>
-        <source>Show Channel Details</source>
-        <translation>Csatorna részletei</translation>
+        <source>Open folder</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Írási jog visszaállítása</translation>
+        <source>Error</source>
+        <translation>Hiba</translation>
     </message>
     <message>
-        <source>Share Channel</source>
-        <translation>Csatorna megosztása</translation>
+        <source>Paused</source>
+        <translation>Szüneteltetve</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>RetroShare hivatkozás másolása</translation>
+        <source>Waiting</source>
+        <translation>Várakozás</translation>
     </message>
     <message>
-        <source>Publish rights restored.</source>
-        <translation>Írási jogok visszaállítva.</translation>
+        <source>Checking</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>A csatorna írási jogai vissza lettek állítva.</translation>
+        <source>Are you sure that you want to cancel and delete the file?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Publish not restored.</source>
-        <translation>Írási jogok visszaállítása sikertelen.</translation>
+        <source>Can&apos;t open folder</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Forma</translation>
     </message>
     <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>A csatorna írási jogai nem visszaállíthatóak.&lt;br/&gt;Nem te vagy a csatorna létrehozója.</translation>
+        <source>Filename</source>
+        <translation>Fájlnév</translation>
     </message>
     <message>
-        <source>No Channel Selected</source>
-        <translation>Nincs csatorna kiválasztva</translation>
+        <source>Size</source>
+        <translation>Méret</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Tennivaló</translation>
+        <source>Title</source>
+        <translation>Cím</translation>
+    </message>
+    <message>
+        <source>Published</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Állapot</translation>
     </message>
 </context>
 <context>
@@ -7302,8 +5581,47 @@ p, li { white-space: pre-wrap; }
         <translation>Csatorna adminok kiválasztása</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Csatorna létrehozása</translation>
+        <source>Update Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Létrehozás</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelGroupItem</name>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>RetroShare hivatkozás másolása</translation>
+    </message>
+    <message>
+        <source>Subscribe to Channel</source>
+        <translation>Feliratkozás a csatornára</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Lenyitás</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Channel Description</source>
+        <translation>Csatorna leírása</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>New Channel</source>
+        <translation>Új csatorna</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Elrejt</translation>
     </message>
 </context>
 <context>
@@ -7360,6 +5678,128 @@ p, li { white-space: pre-wrap; }
         <source>Hide</source>
         <translation>Elrejt</translation>
     </message>
+    <message>
+        <source>New</source>
+        <translation>Új</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Hozzászólás</translation>
+    </message>
+    <message>
+        <source>I like this</source>
+        <translation>Tetszik</translation>
+    </message>
+    <message>
+        <source>I dislike this</source>
+        <translation>Nem tetszik</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Megnyitás</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Fájl megnyitása</translation>
+    </message>
+    <message>
+        <source>Play Media</source>
+        <translation>Média lejátszása</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelPostsWidget</name>
+    <message>
+        <source>Post to Channel</source>
+        <translation>Új bejegyzés</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>Search channels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Cím</translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Cím keresése</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Üzenet</translation>
+    </message>
+    <message>
+        <source>Search Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation>Fájlnév</translation>
+    </message>
+    <message>
+        <source>Search Filename</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Channel Selected</source>
+        <translation>Nincs csatorna kiválasztva</translation>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation>Automatikus letöltés tiltása</translation>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation>Automatikus letöltés engedélyezése</translation>
+    </message>
+    <message>
+        <source>Show feeds</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Feeds</source>
+        <translation>Hírcsatornák</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>Fájlok</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Leírás:</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes):</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelUserNotify</name>
+    <message>
+        <source>Channel Post</source>
+        <translation>Üzenet</translation>
+    </message>
 </context>
 <context>
     <name>GxsCommentContainer</name>
@@ -7376,7 +5816,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hot</source>
-        <translation>Forró</translation>
+        <translation>Népszerű</translation>
     </message>
     <message>
         <source>New</source>
@@ -7441,26 +5881,6 @@ p, li { white-space: pre-wrap; }
         <source>Vote Down</source>
         <translation>Szavazás ellene</translation>
     </message>
-    <message>
-        <source>Reputation</source>
-        <translation>Népszerűség</translation>
-    </message>
-    <message>
-        <source>Show Reputation</source>
-        <translation>Népszerűség mutatása</translation>
-    </message>
-    <message>
-        <source>Interesting User</source>
-        <translation>Érdekes felhasználó</translation>
-    </message>
-    <message>
-        <source>Mark Spammy</source>
-        <translation>Megjelölés spamecskeként</translation>
-    </message>
-    <message>
-        <source>Ban User</source>
-        <translation>Felhasználó tiltása</translation>
-    </message>
 </context>
 <context>
     <name>GxsCreateCommentDialog</name>
@@ -7510,8 +5930,90 @@ mielőtt hozzászólhatsz</translation>
         <translation>Fórum szerkesztése</translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation>Fórum létrehozása</translation>
+        <source>Update Forum</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Forum Admins</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select Forum Admins</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Létrehozás</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumGroupItem</name>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation>Feliratkozás a fórumra</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Lenyitás</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Fórum leírása</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Új fórum</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Elrejt</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumMsgItem</name>
+    <message>
+        <source>Subject: </source>
+        <translation>Tárgy:</translation>
+    </message>
+    <message>
+        <source>Unsubscribe To Forum</source>
+        <translation>Leiratkozás a fórumról</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Lenyitás</translation>
+    </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation>Megjelölés olvasottként és eltávolítás</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>In Reply to: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>Forum Feed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Elrejt</translation>
     </message>
 </context>
 <context>
@@ -7551,10 +6053,6 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <source>Author</source>
         <translation>Szerző</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Aláírt</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -7613,10 +6111,6 @@ mielőtt hozzászólhatsz</translation>
         <translation>Új szál indítása</translation>
     </message>
     <message>
-        <source>Reply to Author</source>
-        <translation>Válasz a szerzőnek</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Összes lenyitása</translation>
     </message>
@@ -7665,10 +6159,6 @@ mielőtt hozzászólhatsz</translation>
         <translation>[ ... Hiányzó üzenet ... ]</translation>
     </message>
     <message>
-        <source>By</source>
-        <translation>által</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -7683,101 +6173,6 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Válaszolhatsz névtelen szerzőnek</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Fórum leírása</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Fórum:</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Szál:</translation>
-    </message>
-</context>
-<context>
-    <name>GxsForumsDialog</name>
-    <message>
-        <source>Forums</source>
-        <translation>Fórum</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Fórum létrehozása</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Nyomtatás</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>Nyomtatási kép</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Saját fórumaim</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Követett fórumok</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Népszerű fórumok</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Egyéb fórumok</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Feliratkozás a fórumra</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Leiratkozás a fórumról</translation>
-    </message>
-    <message>
-        <source>Open in new tab</source>
-        <translation>Megnyitás új fülön</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Új fórum</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Fórum részleteinek megjelenítése</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Fórum részleteinek szerkesztése</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Fórum megosztása</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Fórum írási jogainak visszaállítása</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>RetroShare hivatkozás másolása</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Összes megjelölése olvasottként</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Összes megjelölése olvasatlanként</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>HITELESÍTETT</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -7800,8 +6195,70 @@ mielőtt hozzászólhatsz</translation>
         <translation>%1, %2 írta:</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Tennivaló</translation>
+        <source>Forum name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Leírás</translation>
+    </message>
+    <message>
+        <source>By </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;Subscribing to the forum will gather                                            available posts from your subscribed friends, and make the                                            forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply with private message</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsForumUserNotify</name>
+    <message>
+        <source>Forum Post</source>
+        <translation>Fórum hozzászólás</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumsDialog</name>
+    <message>
+        <source>Forums</source>
+        <translation>Fórum</translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation>Fórum létrehozása</translation>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation>Saját fórumaim</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation>Követett fórumok</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation>Népszerű fórumok</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation>Egyéb fórumok</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7821,10 +6278,6 @@ mielőtt hozzászólhatsz</translation>
 </context>
 <context>
     <name>GxsGroupDialog</name>
-    <message>
-        <source>Create New</source>
-        <translation>Új létrehozása</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Név</translation>
@@ -7930,12 +6383,138 @@ mielőtt hozzászólhatsz</translation>
         <translation>Csoport logó betöltése</translation>
     </message>
     <message>
-        <source>Invalid Circle Selection - Personal disabled for now</source>
-        <translation>Helytelen körválasztás - a személyes jelenleg le van tiltva</translation>
+        <source>Submit Group Changes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to Prepare Group MetaData - please Review</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Will be used to send feedback</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owner:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set a descriptive description here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments allowed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comments not allowed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Utolsó beküldés</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation>Népszerűség</translation>
+    </message>
+    <message>
+        <source>Posts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Típus</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Szerző</translation>
+    </message>
+    <message>
+        <source>GxsIdLabel</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsGroupFrameDialog</name>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Tennivaló</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Nyomtatás</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation>Nyomtatási kép</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Leiratkozás</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Feliratkozás</translation>
+    </message>
+    <message>
+        <source>Open in new tab</source>
+        <translation>Megnyitás új fülön</translation>
+    </message>
+    <message>
+        <source>Show Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>RetroShare hivatkozás másolása</translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation>Összes megjelölése olvasottként</translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation>Összes megjelölése olvasatlanként</translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation>HITELESÍTETT</translation>
+    </message>
+    <message>
+        <source>Share admin permissions</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GxsIdChooser</name>
+    <message>
+        <source>No Signature</source>
+        <translation>Nincs aláírás</translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Új személyazonosság létrehozása</translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdDetails</name>
     <message>
         <source>Loading</source>
         <translation>Töltés</translation>
@@ -7947,6 +6526,45 @@ mielőtt hozzászólhatsz</translation>
     <message>
         <source>No Signature</source>
         <translation>Nincs aláírás</translation>
+    </message>
+    <message>
+        <source>Authentication</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unknown Key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>anonymous</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signed&amp;nbsp;by</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Unknown]</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsMessageFramePostWidget</name>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>No name</source>
+        <translation>Nincs név</translation>
     </message>
 </context>
 <context>
@@ -8211,142 +6829,154 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>IdDialog</name>
+    <name>IdDetailsDialog</name>
     <message>
-        <source>Identities</source>
-        <translation>Személyazonosságok</translation>
+        <source>Person Details</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>New ID</source>
-        <translation>Új ID</translation>
+        <source>Identity Info</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Yourself</source>
-        <translation>Téged</translation>
+        <source>Owner node ID :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Friends / Friends of Friends</source>
-        <translation>Barátok / Barátok barátai</translation>
+        <source>Type:</source>
+        <translation>Típus:</translation>
     </message>
     <message>
-        <source>Others</source>
-        <translation>Egyebek</translation>
+        <source>Owner node name :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Pseudonyms</source>
-        <translation>Álnevek</translation>
+        <source>Identity name :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>All</source>
-        <translation>Összes</translation>
+        <source>Identity ID :</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Nickname</source>
-        <translation>Becenév</translation>
-    </message>
-    <message>
-        <source>KeyId</source>
-        <translation>Kulcs ID</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Típus</translation>
-    </message>
-    <message>
-        <source>Delete ID</source>
-        <translation>ID törlése</translation>
-    </message>
-    <message>
-        <source>Edit Reputation</source>
-        <translation>Népszerűség szerkesztése</translation>
-    </message>
-    <message>
-        <source>Edit ID</source>
-        <translation>ID szerkesztése</translation>
-    </message>
-    <message>
-        <source>Identity Type</source>
-        <translation>Személyazonosság típusa</translation>
-    </message>
-    <message>
-        <source>Friend</source>
-        <translation>Barát</translation>
-    </message>
-    <message>
-        <source>Friend of Friend</source>
-        <translation>Barát barátja</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Egyéb</translation>
-    </message>
-    <message>
-        <source>Pseudonym</source>
-        <translation>Álnév</translation>
-    </message>
-    <message>
-        <source>Key ID</source>
-        <translation>Kulcs ID</translation>
-    </message>
-    <message>
-        <source>PGP Name</source>
-        <translation>PGP név</translation>
-    </message>
-    <message>
-        <source>PGP Id</source>
-        <translation>PGP id</translation>
-    </message>
-    <message>
-        <source>PGP Hash</source>
-        <translation>PGP hash</translation>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Reputation</source>
         <translation>Népszerűség</translation>
     </message>
     <message>
-        <source>Your Rating</source>
-        <translation>Értékelésed</translation>
+        <source>Overall</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Overall Rating</source>
-        <translation>Összefoglaló értékelés</translation>
+        <source>Implicit</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Implicit Score</source>
-        <translation>Értékelés</translation>
+        <source>Opinion</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Rating</source>
-        <translation>Értékelés</translation>
+        <source>Peers</source>
+        <translation>Kapcsolatok</translation>
     </message>
     <message>
-        <source>Comment</source>
-        <translation>Hozzászólás</translation>
+        <source>Edit Reputation</source>
+        <translation>Népszerűség szerkesztése</translation>
     </message>
     <message>
-        <source>Local Reputation</source>
-        <translation>Helyi népszerűség</translation>
+        <source>Tweak Opinion</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Testreszabott</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Ismeretlen igazi név</translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation>Névtelen Id</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>IdDialog</name>
+    <message>
+        <source>New ID</source>
+        <translation>Új ID</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Összes</translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation>Népszerűség szerkesztése</translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation>Kulcs ID</translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Népszerűség</translation>
     </message>
     <message>
         <source>Todo</source>
         <translation>Tennivaló</translation>
     </message>
     <message>
-        <source>Show:</source>
-        <translation>Mutatás:</translation>
-    </message>
-    <message>
         <source>Search</source>
         <translation>Keresés</translation>
-    </message>
-    <message>
-        <source>PGP Linked Id</source>
-        <translation>PGP-hez linkelt ID</translation>
-    </message>
-    <message>
-        <source>Anon Id</source>
-        <translation>Névtelen ID</translation>
     </message>
     <message>
         <source>Unknown real name</source>
@@ -8363,6 +6993,235 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Delete Identity</source>
         <translation>Személyazonosság törlése</translation>
+    </message>
+    <message>
+        <source>Edit Identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity Info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation>Kapcsolatok</translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Testreszabott</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat with this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Launches a distant chat with this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Really delete? </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owned by node...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Típus:</translation>
+    </message>
+    <message>
+        <source>Owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation>Névtelen</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This identity is owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown key ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant chat cannot work</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error code</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>People</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to your node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to neighbor nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to distant nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Mutatás</translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation>Oszlop</translation>
+    </message>
+    <message>
+        <source>Linked to a friend Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to a known Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to unknown Retroshare node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat with this person</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat with this person as...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to this person</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Oszlopok</translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this person.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Üzenet küldése</translation>
+    </message>
+    <message>
+        <source>Last used:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node Id  : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+50 Known PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+10 UnKnown PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+5 Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to delete this identity?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8386,10 +7245,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PGP Id</source>
         <translation>PGP id</translation>
-    </message>
-    <message>
-        <source>PGP Associated ID</source>
-        <translation>PGP-hez társított ID</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -8431,6 +7286,74 @@ p, li { white-space: pre-wrap; }
         <source>Create New Identity</source>
         <translation>Új személyazonosság létrehozása</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation>Típus</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Szövegcímke</translation>
+    </message>
+    <message>
+        <source>RM</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set Avatar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Linked to your profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>IdentityWidget</name>
+    <message>
+        <source>Name</source>
+        <translation>Név</translation>
+    </message>
+    <message>
+        <source>KeyId</source>
+        <translation>Kulcs ID</translation>
+    </message>
+    <message>
+        <source>GXSId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <source>GXS name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>GXS id: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP id: </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
@@ -8466,10 +7389,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LocalSharedFilesDialog</name>
     <message>
-        <source>Create collection file</source>
-        <translation>Kollekciófájl létrehozása</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Fájl megnyitása</translation>
     </message>
@@ -8500,6 +7419,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Set command for opening this file</source>
         <translation>Parancs beállítása a fájl megnyitásához</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kollekció</translation>
     </message>
 </context>
 <context>
@@ -8545,46 +7468,6 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare %1 egy biztonságos, központosítatlan kommunikációs platform</translation>
     </message>
     <message>
-        <source>News feed</source>
-        <translation>Hírek</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>Barátok</translation>
-    </message>
-    <message>
-        <source>File sharing</source>
-        <translation>Fájlmegosztás</translation>
-    </message>
-    <message>
-        <source>Chat Lobbies</source>
-        <translation>Csevegőszobák</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation>Üzenetek</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation>Csatornák</translation>
-    </message>
-    <message>
-        <source>Blogs</source>
-        <translation>Blogok</translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation>Fórumok</translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation>Beépülők</translation>
-    </message>
-    <message>
-        <source>Getting Started</source>
-        <translation>Kezdő lépések</translation>
-    </message>
-    <message>
         <source>Unfinished</source>
         <translation>Befejezetlen</translation>
     </message>
@@ -8625,24 +7508,12 @@ p, li { white-space: pre-wrap; }
         <translation>Értesítés</translation>
     </message>
     <message>
-        <source>Open Messenger</source>
-        <translation>Üzenetküldő megnyitása</translation>
-    </message>
-    <message>
         <source>Open Messages</source>
         <translation>Levelek megnyitása</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
         <translation>Sávszélesség grafikon</translation>
-    </message>
-    <message>
-        <source>DHT Details</source>
-        <translation>DHT részletei</translation>
-    </message>
-    <message>
-        <source>Bandwidth Details</source>
-        <translation>Sávszélesség részletei</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -8735,6 +7606,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Service permissions matrix</source>
         <translation>Szolgáltatás jogosultságok mátrix</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <source>Statistics</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show web interface</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8932,10 +7815,6 @@ p, li { white-space: pre-wrap; }
         <translation>Ezt a barátot ajánlotta</translation>
     </message>
     <message>
-        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Köszönettel, &lt;br&gt;a RetroShare csapat</translation>
-    </message>
-    <message>
         <source>wants to be friends with you on RetroShare</source>
         <translation>szeretne a barátod lenni</translation>
     </message>
@@ -9032,10 +7911,6 @@ Szeretnéd piszkozatként menteni az üzenetet?</translation>
     <message>
         <source>Unknown</source>
         <translation>Ismeretlen</translation>
-    </message>
-    <message>
-        <source>Unknown friend</source>
-        <translation>Ismeretlen barát</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -9160,24 +8035,52 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Extra fájl hozzáadása</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A távoli partnereknek szánt üzenetek kriptografikus aláírása megelőzi, hogy a közöttetek lévő személyek a személyazonosságotokat felvéve hamis üzenetet küldhessenek.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Show:</source>
+        <translation>Mutatás:</translation>
     </message>
     <message>
-        <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation>Távoli partner (név: %2, PGP kulcs: %1)</translation>
+        <source>Close</source>
+        <translation>Bezárás</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Csak az általad megbízhatónak jelölt partnereket mutassa</translation>
+        <source>From:</source>
+        <translation>Feladó:</translation>
     </message>
     <message>
-        <source>PGP key unknown</source>
-        <translation>Ismeretlen PGP kulcs</translation>
+        <source>All</source>
+        <translation>Összes</translation>
     </message>
     <message>
-        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
-        <translation>Nem ismered az üzenet feladójának PGP kulcsát, így nem tudsz neki válaszolni!</translation>
+        <source>Friend Nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Person Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer identities</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant identity:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Missing]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name &amp; id:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9340,22 +8243,6 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Az összes letöltése</translation>
     </message>
     <message>
-        <source>Hide</source>
-        <translation>Elrejt</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Lenyitás</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Fájl</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Fájlok</translation>
-    </message>
-    <message>
         <source>Print Document</source>
         <translation>Dokumentum nyomtatása</translation>
     </message>
@@ -9372,32 +8259,12 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Ezen üzenethez mindig töltse be a képeket</translation>
     </message>
     <message>
-        <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation>Az üzenet titkosítva van. Kattins jobb gombbal, hogy visszafejtsd.</translation>
+        <source>Hide the attachment pane</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Decrypt</source>
-        <translation>Visszafejtés</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Titkosított üzenet</translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation>Dekódolás sikertelen!</translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Az üzenet nincs titkosítva. Nincs mit dekódolni.</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Az üzenet nem dekódolható.</translation>
-    </message>
-    <message>
-        <source>Unknown (needs decryption)</source>
-        <translation>Ismeretlen (visszafejtést igényel)</translation>
+        <source>Show the attachment pane</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9790,24 +8657,12 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Összes:</translation>
     </message>
     <message>
-        <source>Decrypt Message</source>
-        <translation>Üzenet dekódolása</translation>
-    </message>
-    <message>
-        <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Titkosított üzenet. Kattints jobb gombbal a dekódoláshoz.</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Üzenetek</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
         <translation>Rendezés aláírás szerint</translation>
-    </message>
-    <message>
-        <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Az üzenet titkosítva van. Kattins jobb gombbal, hogy dekódold.</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
@@ -9818,12 +8673,12 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Az üzenet aláírást tartalmazott, de az értéke nem egyezik meg</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <source>This message comes from a distant person.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>This message has been successfully decrypted, and is unsigned.</source>
-        <translation>Az üzenet sikeresen vissza lett fejtve.</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9897,10 +8752,6 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <source>Hide</source>
         <translation>Elrejt</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Titkosított üzenet</translation>
     </message>
 </context>
 <context>
@@ -10045,36 +8896,16 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Egy új profil létrehozása</translation>
     </message>
     <message>
-        <source>Search Name</source>
-        <translation>Név keresése</translation>
-    </message>
-    <message>
         <source>Peer ID</source>
         <translation>Partner ID</translation>
-    </message>
-    <message>
-        <source>Search Peer ID</source>
-        <translation>Partner ID keresése</translation>
     </message>
     <message>
         <source>Deny friend</source>
         <translation>Barát elutasítása</translation>
     </message>
     <message>
-        <source>Make friend</source>
-        <translation>Barátság kezdeményezése</translation>
-    </message>
-    <message>
-        <source>Export my certificate...</source>
-        <translation>Tanúsítványom exportálása...</translation>
-    </message>
-    <message>
         <source>Peer details...</source>
         <translation>Partner részletei...</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>RetroShare link másolása</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
@@ -10189,32 +9020,56 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <translation>Adatrendezési hiba a kulcstartóban. Ez valószínűleg egy programhiba. Kérlek lépj kapcsolatba a fejlesztőkkel.</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Csak az általad megbízhatónak jelölt partnereket mutassa</translation>
+        <source>Export/create a new node</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Send Message</source>
-        <translation>Üzenet küldése</translation>
+        <source>Trusted keys only</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source> If I accept connection from peer</source>
-        <translation>Amennyiben elfogadom a csatlakozást a partnertől</translation>
+        <source>Trust level</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Name of peer</source>
-        <translation>Partner neve</translation>
+        <source> Do you accept connections signed by this key?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Did peer sign mine PGP key</source>
-        <translation>A személy aláírta a PGP kulcsomat</translation>
+        <source>Name of the key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Peer&apos;s Certificat ID</source>
-        <translation>Partner tanúsítványának azonosítója</translation>
+        <source>Certificat ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Since when I use this Certificat</source>
-        <translation>Mióta ezt a tanúsítványt használom</translation>
+        <source>Make friend...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did peer authenticate you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This column indicates trust level and whether you signed their PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did that peer sign your PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Since when I use this certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search peer ID</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10288,16 +9143,24 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>News feed</source>
+        <translation>Hírek</translation>
+    </message>
+    <message>
+        <source>Newest on top</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Oldest on top</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
         <translation>Hírek</translation>
-    </message>
-    <message>
-        <source>Peers</source>
-        <translation>Partnerek</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -10322,10 +9185,6 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     <message>
         <source>Security</source>
         <translation>Biztonság</translation>
-    </message>
-    <message>
-        <source>Add feeds at end</source>
-        <translation>Új hírek alulra</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10427,6 +9286,42 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Disable All Toasters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Beküldve</translation>
+    </message>
+    <message>
+        <source>Disable All Toaster temporarily</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Feed</source>
+        <translation>Hírcsatorna</translation>
+    </message>
+    <message>
+        <source>Systray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Csevegőszobák</translation>
+    </message>
+    <message>
+        <source>Count all unread messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of any of the following texts (separate by newlines):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of my current identity</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10482,6 +9377,10 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <source>Encrypted message</source>
         <translation>Titkosított üzenet</translation>
     </message>
+    <message>
+        <source>Please enter your PGP password for key</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
@@ -10520,6 +9419,186 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     </message>
 </context>
 <context>
+    <name>OutQueueStatisticsWidget</name>
+    <message>
+        <source>Outqueue statistics</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>By priority: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>By service : </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PGPKeyDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Párbeszéd</translation>
+    </message>
+    <message>
+        <source>PGP Key info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fingerprint :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Trust level:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unset</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
+    </message>
+    <message>
+        <source>No trust</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation>Részleges</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Teljes</translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation>Teljes</translation>
+    </message>
+    <message>
+        <source>Key signatures :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Egy barátod kulcsának aláírása egy lehetőség arra, hogy kifejezd a barátba fektetett bizalmadat. Csak az aláírt kulcsal rendelkező barátaid szerezhetnek információt a bizalmi kapcsolataidról.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign this PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation>PGP kulcs aláírása</translation>
+    </message>
+    <message>
+        <source>Deny connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ASCII format</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Aláírásokat tartalmaz</translation>
+    </message>
+    <message>
+        <source>PGP Key details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation>Hiba: a partner adatai nem elérhetőek.</translation>
+    </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation>A RetroShare nem támogatja a kulcsot.
+(Jelenleg csak RSA kulcsok engedélyezettek)</translation>
+    </message>
+    <message>
+        <source>This is your own PGP key, and it is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation>Teljesen megbízol ebben a partnerben.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation>Csak részlegesen bízol meg ebben a partnerben.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation>Nem bízol meg ebben a partnerben.</translation>
+    </message>
+    <message>
+        <source>This key has signed your own PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This PGP key (ID=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have chosen to accept connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are currently not allowing connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation>Hibás aláírás</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation>Talán rossz a jelszó</translation>
+    </message>
+    <message>
+        <source>You haven&apos;t set a trust level for this key.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
@@ -10528,10 +9607,6 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
 </context>
 <context>
     <name>PeerItem</name>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Gyors üzenet írása</translation>
-    </message>
     <message>
         <source>Chat</source>
         <translation>Csevegés</translation>
@@ -10547,14 +9622,6 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     <message>
         <source>Remove Item</source>
         <translation>Eltávolítás</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Mégse</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Küldés</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -10617,8 +9684,8 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <translation>Elrejt</translation>
     </message>
     <message>
-        <source>Quick Message</source>
-        <translation>Gyors üzenet</translation>
+        <source>Send Message</source>
+        <translation>Üzenet küldése</translation>
     </message>
 </context>
 <context>
@@ -10634,6 +9701,25 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     <message>
         <source>Friends</source>
         <translation>Barátok</translation>
+    </message>
+</context>
+<context>
+    <name>PeopleDialog</name>
+    <message>
+        <source>People</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Drag your circles or people to each other.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Internal</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10907,6 +9993,37 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PluginManager</name>
+    <message>
+        <source>base folder %1 doesn&apos;t exist, default load failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error: instance &apos;%1&apos;can&apos;t create a widget</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error: no plugin with name &apos;%1&apos; found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error(uninstall): no plugin with name &apos;%1&apos; found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error(installation): plugin file %1 doesn&apos;t exist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error: failed to remove file %1(uninstalling plugin &apos;%2&apos;)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error: can&apos;t copy %1 to %2</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
@@ -10919,6 +10036,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Plugins (*.so *.dll)</source>
         <translation>Beépülők (*.so *.dll)</translation>
+    </message>
+    <message>
+        <source>Widget for plugin %1 not found on plugins frame</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11049,10 +10170,6 @@ a kártevőként működő beépülők használatától.</translation>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <source>Distant chat terminated</source>
-        <translation>Távoli csevegés lezárva</translation>
-    </message>
-    <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation>A csevegőpartnered megszűntette a biztonságos csevegő alagutat. Bezárhatod a csevegőablakot.</translation>
     </message>
@@ -11064,33 +10181,21 @@ a kártevőként működő beépülők használatától.</translation>
         <source>Kill the tunnel?</source>
         <translation>Alagút bezárása?</translation>
     </message>
+    <message>
+        <source>Hash Error. No tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because there is no tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedCreatePostDialog</name>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Cím&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Hivatkozás&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
     <message>
         <source>Signed by: </source>
         <translation>Általa aláírva:</translation>
@@ -11127,12 +10232,48 @@ p, li { white-space: pre-wrap; }
         <source>Please add a Title</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Title</source>
+        <translation>Cím</translation>
+    </message>
+    <message>
+        <source>Link</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedDialog</name>
     <message>
         <source>Posted Links</source>
         <translation>Közzétett hivatkozások</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Beküldve</translation>
+    </message>
+    <message>
+        <source>Create Topic</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation>Topikjaim</translation>
+    </message>
+    <message>
+        <source>Subscribed Topics</source>
+        <translation>Feliratkozott témák</translation>
+    </message>
+    <message>
+        <source>Popular Topics</source>
+        <translation>Népszerű témák</translation>
+    </message>
+    <message>
+        <source>Other Topics</source>
+        <translation>Egyéb témák</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11158,8 +10299,43 @@ p, li { white-space: pre-wrap; }
         <translation>Téma szerkesztése</translation>
     </message>
     <message>
-        <source>Create Topic</source>
+        <source>Update Topic</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Létrehozás</translation>
+    </message>
+</context>
+<context>
+    <name>PostedGroupItem</name>
+    <message>
+        <source>Subscribe to Posted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Lenyitás</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Posted Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>New Posted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Elrejt</translation>
     </message>
 </context>
 <context>
@@ -11167,14 +10343,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
-        <translation>Ez egy nagyon nagyon nagyon nagyon hoooooooooooooooooooooooosszú cím, nem gondolod? Igen, az és remélem le lesz belőle vágva.</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Feladó</translation>
     </message>
     <message>
         <source>Site</source>
@@ -11201,12 +10369,32 @@ p, li { white-space: pre-wrap; }
         <translation>\/</translation>
     </message>
     <message>
-        <source>Submitted</source>
-        <translation type="unfinished"/>
+        <source>Set as read and remove item</source>
+        <translation>Megjelölés olvasottként és eltávolítás</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Új</translation>
+    </message>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation>Üzenet olvasottságának váltása</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Töltés</translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation>által</translation>
     </message>
 </context>
 <context>
-    <name>PostedListDialog</name>
+    <name>PostedListWidget</name>
     <message>
         <source>Form</source>
         <translation>Forma</translation>
@@ -11244,44 +10432,12 @@ p, li { white-space: pre-wrap; }
         <translation>Az évben</translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
-        <translation>Mutatás 1-től 100-ig</translation>
-    </message>
-    <message>
-        <source>Prev</source>
-        <translation>Előző</translation>
+        <source>Submit a new Post</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Next</source>
         <translation>Következő</translation>
-    </message>
-    <message>
-        <source>My Topics</source>
-        <translation>Topikjaim</translation>
-    </message>
-    <message>
-        <source>Subscribed Topics</source>
-        <translation>Feliratkozott témák</translation>
-    </message>
-    <message>
-        <source>Popular Topics</source>
-        <translation>Népszerű témák</translation>
-    </message>
-    <message>
-        <source>Other Topics</source>
-        <translation>Egyéb témák</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Feliratkozás</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Leiratkozás</translation>
-    </message>
-    <message>
-        <source>Showing</source>
-        <translation>Mutatás</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11292,16 +10448,34 @@ p, li { white-space: pre-wrap; }
         <translation>Kérlek, hozz létre vagy válassz ki egy aláírás azonosítót a szavazás előtt</translation>
     </message>
     <message>
-        <source>Create New Topic</source>
-        <translation>Új téma létrehozása</translation>
+        <source>Previous</source>
+        <translation>Előző</translation>
     </message>
     <message>
-        <source>Submit a new Post</source>
+        <source>1-10</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedPage</name>
+    <message>
+        <source>Tabs</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Tennivaló</translation>
+        <source>Posted</source>
+        <translation>Beküldve</translation>
+    </message>
+    <message>
+        <source>Open each topic in a new tab</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedUserNotify</name>
+    <message>
+        <source>Posted</source>
+        <translation>Beküldve</translation>
     </message>
 </context>
 <context>
@@ -11342,10 +10516,6 @@ p, li { white-space: pre-wrap; }
         <translation>Profilkezelő</translation>
     </message>
     <message>
-        <source>Identities</source>
-        <translation>Személyazonosságok</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Név</translation>
     </message>
@@ -11356,10 +10526,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GID</source>
         <translation>GID</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Kiválasztott személyazonosság exportálása</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -11412,10 +10578,6 @@ az importálás gombot, hogy betöltsd.</translation>
         <translation>A személyazonosságod sikeresen importálva lett:</translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Most létrehozhatsz egy új helyszínt.</translation>
-    </message>
-    <message>
         <source>Select Trusted Friend</source>
         <translation>Megbízható barátok kiválasztása</translation>
     </message>
@@ -11427,12 +10589,24 @@ az importálás gombot, hogy betöltsd.</translation>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select a Retroshare node key from the list below to be used on another computer, and press &amp;quot;Export selected key.&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To create a new location on a different computer,  select the identity manager in the login window. From there you can import the key file and create a new location for that key. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Creating a new node with the same key allows your  your friend nodes to accept you automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Full keys available in your keyring:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11612,14 +10786,6 @@ and open the Make Friend Wizard.
         <translation>Fájlok hozzáadása</translation>
     </message>
     <message>
-        <source>Add friend</source>
-        <translation>Barát hozzáadása</translation>
-    </message>
-    <message>
-        <source>Add friends</source>
-        <translation>Barátok hozzáadása</translation>
-    </message>
-    <message>
         <source>Do you want to process the link ?</source>
         <translation>Meg szeretnéd nyitni a hivatkozást?</translation>
     </message>
@@ -11783,14 +10949,6 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek le lesznek cs
         <translation>Nem lett hozzáadva a letöltési listádhoz, mert már szerepel a megosztásodban:</translation>
     </message>
     <message>
-        <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Úgy tűnik vannak DSA kulcsokkal összekötött helyszíneid:</translation>
-    </message>
-    <message>
-        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>A DSA kulcsok még nem támogatottak a RetroShare ezen verziójában. Az összes ilyen helyszíned használhatatlan lesz. Sajnáljuk.</translation>
-    </message>
-    <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>A RetroShare ezen verziója OpenPGP-SDK-t használ. Ennek hála, nem használja a rendszer PGP kulcstartóját, viszont van egy saját kulcstartója, amit az összes futó RetroShare elérhet. &lt;br&gt;&lt;br&gt;Úgy tűnik, hogy még nem rendelkezel ilyen kulcstartóval annak ellenére, hogy már létrehozott RetroShare fiókjaidban szerepelnek PGP kulcsok. Ez valószínűleg azért lehetséges, mert most frissítettél az alkalmazás új verziójára.</translation>
     </message>
@@ -11847,60 +11005,12 @@ Zárolófájl:
         <translation>Indítás egy csak Windowson támogatott RetroShare hivatkozással.</translation>
     </message>
     <message>
-        <source>Select who can contact you:</source>
-        <translation>Válaszd ki, hogy kik léphetnek veled kapcsolatba:</translation>
-    </message>
-    <message>
-        <source>Chat link is expired</source>
-        <translation>A csevegés hivatkozás lejárt</translation>
-    </message>
-    <message>
-        <source>This chat link is expired. The destination peer will not answer.</source>
-        <translation>A csevegés hivatkozás lejárt. A célpartner nem fog válaszolni.</translation>
-    </message>
-    <message>
-        <source>Chat link cannot be decrypted</source>
-        <translation>A csevegés hivatkozás nem dekódolható.</translation>
-    </message>
-    <message>
-        <source>The link could not be decrypted.</source>
-        <translation>A hivatkozás nem dekódolható.</translation>
-    </message>
-    <message>
-        <source>The link signature cannot be checked.</source>
-        <translation>A hivatkozás aláírása ellenőrízhetetlen.</translation>
-    </message>
-    <message>
-        <source>The link is signed by an unknown key.</source>
-        <translation>A hivatkozás egy ismeretlen kulcs által lett aláírva.</translation>
-    </message>
-    <message>
-        <source>Hash error</source>
-        <translation>Hash hiba</translation>
-    </message>
-    <message>
         <source>Distant peer has closed the chat</source>
         <translation>A távoli partner kilépett a csevegésből</translation>
     </message>
     <message>
         <source>Tunnel is pending...</source>
         <translation>Függőben lévő alagút...</translation>
-    </message>
-    <message>
-        <source>Messaging link is expired</source>
-        <translation>Üzenetküldési hivatkozás lejárt</translation>
-    </message>
-    <message>
-        <source>This Messaging link is expired. The destination peer will not receive it.</source>
-        <translation>Ez az üzenetküldési hivatkozás lejárt. A célpartner nem fogja megkapni az üzeneted.</translation>
-    </message>
-    <message>
-        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
-        <translation>Ez a csevegés hivatkozás nem a te kulcsoddal van titkosítva. Nem használhatod. Kulcs ID =</translation>
-    </message>
-    <message>
-        <source>Chat connection is not possible</source>
-        <translation>Csevegési csatlakozás nem lehetséges</translation>
     </message>
     <message>
         <source>Secured tunnel established. Waiting for ACK...</source>
@@ -11921,18 +11031,116 @@ A hibajelentés:
 %2</translation>
     </message>
     <message>
-        <source>Signature check failed!
-Make sure you know who you&apos;re talking to.</source>
-        <translation>Az aláírás ellenőrzése sikertelen!
-Bizonyosodj meg róla, hogy jó emberrel beszélsz.</translation>
-    </message>
-    <message>
-        <source>Chat connection is unauthenticated</source>
-        <translation>A csevegési kapcsolat nem hitelesített</translation>
-    </message>
-    <message>
         <source>Id: </source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to send a private message to %1 (%2).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 (%2, Extra - Source included)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This cert is malformed. Error code: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click this link to send a private message to %1 (%2)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare Certificate (%1, @%2)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>secs</source>
+        <translation>másodpercek</translation>
+    </message>
+    <message>
+        <source>TR up</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TR dn</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data up</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data dn</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data forward</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You appear to have nodes associated to DSA keys:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto Subscribe: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Join chat lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move IP %1 to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 seconds ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minute ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minutes ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hour ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hours ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 day ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation>%1 nappal ezelőtt</translation>
     </message>
 </context>
 <context>
@@ -12153,6 +11361,44 @@ p, li { white-space: pre-wrap; }
         <source>Warning!</source>
         <translation>Vigyázat!</translation>
     </message>
+    <message>
+        <source>Browsable</source>
+        <translation>Böngészhető</translation>
+    </message>
+    <message>
+        <source>Universal</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>If checked, the share is anonymously shared to anybody.</source>
+        <translation>Ha bejelölöd, a megosztás névtelen elérhető lesz bárki által.</translation>
+    </message>
+    <message>
+        <source>If checked, the share is browsable by your friends.</source>
+        <translation>Ha bejelölöd, a megosztás böngészhető lesz a barátaid által.</translation>
+    </message>
+    <message>
+        <source>Please decide whether this directory is
+* Network Wide: 	anonymously shared over the network (including your friends)
+* Browsable: 	browsable by your friends
+* Universal: 		both</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RSGraphWidget</name>
+    <message>
+        <source>%1 KB</source>
+        <translation>%1 KB</translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation>%1 MB</translation>
+    </message>
+    <message>
+        <source>%1 GB</source>
+        <translation>%1 GB</translation>
+    </message>
 </context>
 <context>
     <name>RSImageBlockWidget</name>
@@ -12167,6 +11413,49 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Load images</source>
         <translation>Képek betöltése</translation>
+    </message>
+</context>
+<context>
+    <name>RSPermissionMatrixWidget</name>
+    <message>
+        <source>Service name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Allowed by default</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Denied by default</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Id: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled for this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disabled for this peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled by remote peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Disabled by remote peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Switched Off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12272,12 +11561,66 @@ p, li { white-space: pre-wrap; }
         <source>Recommend in a message to</source>
         <translation>Ajánlása üzenetben</translation>
     </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kollekció</translation>
+    </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
     <message>
         <source>NEW</source>
         <translation>ÚJ</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListDefs</name>
+    <message>
+        <source>IP address not checked</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is blacklisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is not whitelisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address accepted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListToolButton</name>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Entire range</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12293,18 +11636,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Total size :</source>
         <translation>Teljes méret:</translation>
-    </message>
-    <message>
-        <source>Selected files:</source>
-        <translation>Kiválasztott fájlok:</translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation>Összes kiválasztása</translation>
-    </message>
-    <message>
-        <source>Deselect all</source>
-        <translation>Összes kiválasztás megszüntetése</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12338,6 +11669,114 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos; karakterrel lesznek lecserélve.
  Az érintett fájlokat pirossal kiemelve láthatod.</translation>
     </message>
+    <message>
+        <source>Selected files :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection.&lt;/p&gt;&lt;p&gt;If a directory is selected, all of his children will be added.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Mentés</translation>
+    </message>
+    <message>
+        <source>Collection Editor</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Count</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This is the root directory.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Real Size: Waiting child...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Real File Count: Waiting child...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This is a directory. Double-click to expand it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Real Size=%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Real File Count=%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Warning, selection contains more than %1 items.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you want to remove them and all their children, too? &lt;br&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter the new directory&apos;s name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file where collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
@@ -12367,6 +11806,30 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
 If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>RsHtml</name>
@@ -12375,6 +11838,13 @@ If you believe it is correct, remove the corresponding line from the file and re
 Reducing image to %1x%2 pixels?</source>
         <translation>A kép túl nagy az átvitelhez.
 Lecsökkented a méretét %1x%2 pixelre?</translation>
+    </message>
+</context>
+<context>
+    <name>RsNetUtil</name>
+    <message>
+        <source>Invalid format</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12430,6 +11900,21 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <source>built-in</source>
         <translation>beépített</translation>
+    </message>
+    <message>
+        <source>Could not create data directory: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RttStatistics</name>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>RTT statisztika</translation>
     </message>
 </context>
 <context>
@@ -12655,6 +12140,85 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Letöltés kollekciófájlból...</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kollekció</translation>
+    </message>
+</context>
+<context>
+    <name>SecurityIpItem</name>
+    <message>
+        <source>Peer details</source>
+        <translation>Partner részletei</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Lenyitás</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation>Partner ID:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Hely:</translation>
+    </message>
+    <message>
+        <source>Peer Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation>Ismeretlen partner</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Elrejt</translation>
+    </message>
+    <message>
+        <source>but reported:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong external ip address reported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address %1 was added to the whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the external IP your Retroshare node thinks it is using.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -12673,10 +12237,6 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <source>Deny friend</source>
         <translation>Barát elutasítása</translation>
-    </message>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Gyors üzenet írása</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -12774,6 +12334,10 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <source>Certificate caused an internal error.</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Peer/node not in friendlist (PGP id=</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ServerPage</name>
@@ -12792,26 +12356,6 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
     <message>
         <source>Manually Forwarded Port</source>
         <translation>Manuálisan továbbított port</translation>
-    </message>
-    <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and PGP 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>A DHT lehetővé teszi, hogy kapcsolatba
-lépj barátaiddal, akik szintén DHT-t használnak.
-Jelentősen elősegíti a hozzájuk történő kapcsolódást.
-
-A Felfedező szolgáltatás a kapcsolataid
-helyszíneit és PGP azonosítóit küldi szét, hogy
-új kapcsolatok jöhessenek létre.
-A barátságok persze nem jöhetnek létre automatikusan,
-mivel mindkét félnek engedélyeznie kell azt.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
@@ -12846,10 +12390,6 @@ mivel mindkét félnek engedélyeznie kell azt.</translation>
         <translation>Port:</translation>
     </message>
     <message>
-        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation>Az elfogadható porttartomány 1024 és 65535 között található. Az 1024 alatti portok a rendszer számára vannak fenntartva.</translation>
-    </message>
-    <message>
         <source>Local network</source>
         <translation>Helyi hálózat</translation>
     </message>
@@ -12881,69 +12421,273 @@ behind a firewall or a VPN.</source>
         <translation>Engedélyezem a RetroSharenek, hogy a következő oldalakon lekérdezze az IP címemet:</translation>
     </message>
     <message>
-        <source>Bandwidth</source>
-        <translation>Sávszélesség</translation>
-    </message>
-    <message>
-        <source>Max Transfer Rates</source>
-        <translation>Maximális átviteli sebességek</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>KB/s</translation>
     </message>
     <message>
-        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Amennyiben ezt nem jelölöd be, a RetroShare nem fog létrehozni alagút kapcsolatokat olyan partnerek között, akik a tűzfalaik miatt képtelen egymáshoz közvetlenül csatlakozni. Ez független a F2F útválasztástól.</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Allow Tunnel Connection</source>
-        <translation>Alagútként csatlakozás engedélyezése</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Turtle router</source>
-        <translation>Teknőc útválasztó</translation>
+        <source>TOR Configuration</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ezen opció tiltása megszünteti az összes névtelen útválasztási tevékenységet. A bejövő alagút kérelmek el lesznek utasítva és kimenő alagút kérelmeket se lehet majd küldeni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Outgoing TOR Connections</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Enabled</source>
-        <translation>Engedélyezve</translation>
+        <source>TOR Socks Proxy</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Show routing info</source>
-        <translation>Útválasztó adatainak megjelenítése</translation>
-    </message>
-    <message>
-        <source>Max. tunnel req. forwarded per second:</source>
-        <translation>Maximális továbbított csatornák száma másodpercenként:</translation>
-    </message>
-    <message>
-        <source>This value controls how many tunnel request your peer can forward per second. 
+        <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
 
-If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statistically longer tunnels to pass. Be very careful though, since this generates 
-many small packets that can significantly slow down your own file transfer. 
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup TOR? </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Incoming TOR Connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Onion Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expected torrc Port Configuration:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
+HiddenServicePort 9191 127.0.0.1:9191</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>To Receive Connections, you must first setup a TOR Hidden Service. 
+See TOR documentation for HOWTO details.
 
-The default value is 20.</source>
-        <translation>Ez az érték szabályozza, hogy hány alagút kérelmet tudsz továbbítani másodpercenként. 
-Amennyiben a sávszélességed gyors, növelheted 30-40-ig, hogy hosszabb alagutakat engedélyezz. 
-Légy óvatos, mert ez sok kis csomagot hozhat létre, melyek jelentősen lassíthatják a fájlátviteleidet. 
-Az alapértelmezett érték 20.</translation>
+Once this is done, paste the Onion Address in the box above.
+This is your external address on the TOR network.
+Finally make sure that the Ports match the TOR configuration.
+
+If you have issues connecting over TOR check the TOR logs too.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Server</source>
-        <translation>Kiszolgáló</translation>
+        <source>Discovery On (recommended)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>Letöltés (KB/s)</translation>
+        <source>Discovery Off</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Upload (KB/s) </source>
-        <translation>Feltöltés (KB/s)</translation>
+        <source>Hidden - See TOR Config</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proxy seems to work.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Hidden mode]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Tisztítás</translation>
+    </message>
+    <message>
+        <source>Download limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Upload limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR outgoing Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>Teszt</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR incoming  ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are reachable through TOR.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled or broken.
+Are you running a TOR hidden service?
+Check your ports!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Hálózat</translation>
+    </message>
+    <message>
+        <source>IP Filters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Állapot</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Hozzászólás</translation>
+    </message>
+    <message>
+        <source>  IPs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Manual input</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP Range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reported by DHT for IP masquerading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Range made from %1 collected addresses</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Added by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>activate IP filtering</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every  IP reported by your friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends&apos; IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every masquerading IP reported by your DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12953,24 +12697,43 @@ Az alapértelmezett érték 20.</translation>
         <translation>Szolgáltatások jogosultságai</translation>
     </message>
     <message>
-        <source>Anonymous routing</source>
-        <translation>Névtelen forgalmazás</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Felfedezés</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Fórumok/Csatornák</translation>
-    </message>
-    <message>
         <source>Service Permissions</source>
         <translation>Szolgáltatás jogosultságok</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
         <translation>Közvetlen forrásként használat, amikor csak lehetséges</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>ServicePermissionsPage</name>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>Szolgáltatás jogosultságok</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>Jogosultságok</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>hide offline</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13022,10 +12785,6 @@ Az alapértelmezett érték 20.</translation>
 <context>
     <name>ShareKey</name>
     <message>
-        <source>Share Channel</source>
-        <translation>Csatorna megosztása</translation>
-    </message>
-    <message>
         <source>check peers you would like to share private publish key with</source>
         <translation>Jelöld be, hogy mely partnereiddel szeretnél privát kulcsot megosztani</translation>
     </message>
@@ -13034,16 +12793,13 @@ Az alapértelmezett érték 20.</translation>
         <translation>Megosztás barátnak</translation>
     </message>
     <message>
-        <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation>Válaszd ki azon barátaidat, akikkel szeretnéd megosztani a csatornád írási jogát.</translation>
+        <source>Share</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Contacts:</source>
-        <translation>Kapcsolatok:</translation>
-    </message>
-    <message>
-        <source>Please select at least one peer</source>
-        <translation>Kérlek, válassz ki legalább egy partnert</translation>
+        <source>You can let your friends know about your Channel by sharing it with them. 
+Select the Friends with which you want to Share your Channel.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13215,6 +12971,61 @@ Az alapértelmezett érték 20.</translation>
         <source>Recommendation(s)</source>
         <translation>Ajánlás(ok)</translation>
     </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Megosztás</translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Letöltés kollekciófájlból...</translation>
+    </message>
+</context>
+<context>
+    <name>SoundManager</name>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Go Online</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatmessage</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Msg</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message arrived</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download complete</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundPage</name>
@@ -13239,38 +13050,6 @@ Az alapértelmezett érték 20.</translation>
         <translation>Fájlnév</translation>
     </message>
     <message>
-        <source>Friend</source>
-        <translation>Barát</translation>
-    </message>
-    <message>
-        <source>go Online</source>
-        <translation>Bejelentkezett</translation>
-    </message>
-    <message>
-        <source>Chatmessage</source>
-        <translation>Csevegés</translation>
-    </message>
-    <message>
-        <source>New Msg</source>
-        <translation>Új üzenet</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Üzenet</translation>
-    </message>
-    <message>
-        <source>Message arrived</source>
-        <translation>Üzenet érkezett</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Letöltés</translation>
-    </message>
-    <message>
-        <source>Download complete</source>
-        <translation>Letöltés elkészült</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Fájl megnyitása</translation>
     </message>
@@ -13278,16 +13057,20 @@ Az alapértelmezett érték 20.</translation>
         <source>Sound</source>
         <translation>Hang</translation>
     </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
-        <source>Sound on</source>
-        <translation>Hang bekapcsolása</translation>
+        <source>Sound is off, click to turn it on</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sound off</source>
-        <translation>Hang kikapcsolása</translation>
+        <source>Sound is on, click to turn it off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13336,18 +13119,6 @@ The current identities/locations will not be affected.</source>
 A jelenlegi személyazonosságok, helyszínek nem érintettek.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Profilok és helyszínek kezelése...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation>A személy betöltése sikertelen</translation>
     </message>
@@ -13360,40 +13131,103 @@ p, li { white-space: pre-wrap; }
         <translation>Vigyázat</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Az SSL tanúsítványod (helyszíned) jelszava a Gnome Kulcskezelőben titkosítva lesz tárolva.
-
-A PGP jelszavad nem lesz tárolva.
-
-Ez a választás módosítható a beállításokban.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Az SSL tanúsítványod (helyszíned) jelszava a kulcstartódban titkosítva lesz tárolva.
-
-A PGP jelszavad nem lesz tárolva.
-
-Ez a választás módosítható a beállításokban.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Az SSL tanúsítványod (helyszíned) jelszava a keys/help.dta fájlban titkosítva lesz tárolva.
-
-A PGP jelszavad nem lesz tárolva.
-
-Ez a választás módosítható a beállításokban.</translation>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>StatisticsWindow</name>
+    <message>
+        <source>Add Friend</source>
+        <translation>Barát hozzáadása</translation>
+    </message>
+    <message>
+        <source>Add a Friend Wizard</source>
+        <translation>Barát hozzáadása varázsló</translation>
+    </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Megosztás</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Beállítások</translation>
+    </message>
+    <message>
+        <source>Messenger</source>
+        <translation>Üzenetküldő</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Névjegy</translation>
+    </message>
+    <message>
+        <source>SMPlayer</source>
+        <translation>SMPlayer</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Kilépés</translation>
+    </message>
+    <message>
+        <source>Quick Start Wizard</source>
+        <translation>Gyors beállítások varázsló</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>Szolgáltatás jogosultságok</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Szolgáltatás jogosultságok mátrix</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Bandwidth</source>
+        <translation>Sávszélesség</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Global Router</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>RTT statisztika</translation>
     </message>
 </context>
 <context>
@@ -13455,10 +13289,6 @@ Ez a választás módosítható a beállításokban.</translation>
         <translation>Szomszéd</translation>
     </message>
     <message>
-        <source>Trying tunnel connection</source>
-        <translation>Alagút csatlakozással próbálkozás</translation>
-    </message>
-    <message>
         <source>Trying TCP</source>
         <translation>TCP csatlakozással próbálkozás</translation>
     </message>
@@ -13475,16 +13305,40 @@ Ez a választás módosítható a beállításokban.</translation>
         <translation>Csatlakozott: UDP</translation>
     </message>
     <message>
-        <source>Connected: Tunnel</source>
-        <translation>Csatlakozott: Alagút</translation>
-    </message>
-    <message>
         <source>Connected: Unknown</source>
         <translation>Csatlakozott: Ismeretlen</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
         <translation>DHT: Kapcsolat</translation>
+    </message>
+    <message>
+        <source>Connected: TOR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>inbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>outbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TCP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unkown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13641,6 +13495,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>SubscribeToolButton</name>
+    <message>
+        <source>Subscribed</source>
+        <translation>Feliratkozva</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Leiratkozás</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Feliratkozás</translation>
+    </message>
+</context>
+<context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
@@ -13682,6 +13551,17 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ToasterDisable</name>
+    <message>
+        <source>All Toasters are disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Toasters are enabled</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
@@ -13702,15 +13582,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Safety disk space limit :</source>
         <translation>Szabad hely biztonsági határa:</translation>
-    </message>
-    <message>
-        <source>You can use this to force RetroShare to download your files rather 
-than cache files for as many slots as requested. Setting that number 
-to be equal to the queue size above will always prioritize your files
-over cache. 
-
-It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Ezen beállítással kényszerítheted a RetroSharet, hogy a cache fájlok helyett inkább a tényleges letöltéseiddel foglalkozzon. Amennyiben az értéket az egyidejű letöltések értékével egyezőre állítod, a cache töltések mindig másodlagosak lesznek. Ajánlott, hogy hagyj legalább egy pár helyet a cache töltéseknek is.</translation>
     </message>
     <message>
         <source>Streaming</source>
@@ -13741,8 +13612,28 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Transfer</source>
-        <translation>Átvitel</translation>
+        <source>Max. tunnel req. forwarded per second:</source>
+        <translation>Maximális továbbított csatornák száma másodpercenként:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value controls how many tunnel request your peer can forward per second. &lt;/p&gt;&lt;p&gt;If you have a large internet bandwidth, you may raise this up to 30-40, to allow statistically longer tunnels to pass. Be very careful though, since this generates  many small packets that can significantly slow down your own file transfer. &lt;/p&gt;&lt;p&gt;The default value is 20. If you&apos;re not sure, keep it that way.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File transfer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;br/&gt;than cache files for as many slots as requested. Setting that number &lt;br/&gt;to be equal to the queue size above will always prioritize your files&lt;br/&gt;over cache. &lt;br/&gt;&lt;br/&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13858,10 +13749,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>My files</source>
         <translation>Fájljaim</translation>
-    </message>
-    <message>
-        <source>Show cache transfers</source>
-        <translation>Cache átvitelek mutatása</translation>
     </message>
     <message>
         <source>Download from collection file...</source>
@@ -14202,6 +14089,42 @@ Kérlek, légy türelmes!</translation>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Could not delete preview file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Try it again?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Kollekció</translation>
+    </message>
+    <message>
+        <source>File sharing</source>
+        <translation>Fájlmegosztás</translation>
+    </message>
+    <message>
+        <source>Anonymous tunnel 0x</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show file list transfers</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -14256,69 +14179,6 @@ Kérlek, légy türelmes!</translation>
     <message>
         <source>Groups</source>
         <translation>Csoportok</translation>
-    </message>
-</context>
-<context>
-    <name>TrustView</name>
-    <message>
-        <source>Zoom :</source>
-        <translation>Nagyítás</translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation>Frissítés</translation>
-    </message>
-    <message>
-        <source>Showing: whole network</source>
-        <translation>Az egész hálózat mutatása</translation>
-    </message>
-    <message>
-        <source>This table normally auto-updates every 10 seconds.</source>
-        <translation>Ez a táblázat 10 másodpercenként automatikusan frissül.</translation>
-    </message>
-    <message>
-        <source>Self</source>
-        <translation>Maga</translation>
-    </message>
-    <message>
-        <source>Trust</source>
-        <translation>Bizalom</translation>
-    </message>
-    <message>
-        <source> is authenticated (one way) by </source>
-        <translation>hitelesített (egyirányúan) általa:</translation>
-    </message>
-    <message>
-        <source>Half</source>
-        <translation>Félig</translation>
-    </message>
-    <message>
-        <source> authenticated himself</source>
-        <translation>hitelesítette önmagát</translation>
-    </message>
-    <message>
-        <source> authenticated each other</source>
-        <translation>hitelesítették egymást</translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation>Teljes</translation>
-    </message>
-    <message>
-        <source> is authenticated by </source>
-        <translation>hitelesítve általa:</translation>
-    </message>
-    <message>
-        <source> peers, including him(her)self.</source>
-        <translation>partnerek, beleértve önmagát.</translation>
-    </message>
-    <message>
-        <source> authenticated </source>
-        <translation>hitelesítve</translation>
-    </message>
-    <message>
-        <source>Showing: peers connected to </source>
-        <translation>Megjelenítés: partnerek csatlakoztak hozzá</translation>
     </message>
 </context>
 <context>
@@ -14384,6 +14244,14 @@ Kérlek, légy türelmes!</translation>
     <message>
         <source>Unknown Peer</source>
         <translation>Ismeretlen partner</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel Requests</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14515,6 +14383,53 @@ Kérlek, légy türelmes!</translation>
     <message>
         <source>Browse</source>
         <translation>Böngészés</translation>
+    </message>
+</context>
+<context>
+    <name>WebuiPage</name>
+    <message>
+        <source>Form</source>
+        <translation>Forma</translation>
+    </message>
+    <message>
+        <source>Enable Retroshare WEB Interface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Web parameters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Port :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>allow access from all IP adresses (Default: localhost only)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>apply setting and start browser</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Note: these settings do not affect retroshare-nogui. retroshare-nogui has a command line switch to active the webinterface.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>failed to start Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14695,8 +14610,12 @@ Kérlek, légy türelmes!</translation>
         <translation>Tennivaló</translation>
     </message>
     <message>
-        <source>Edit Group</source>
-        <translation>Csoport szerkesztése</translation>
+        <source>Show Wiki Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Wiki Group</source>
+        <translation>Wiki csoport szerkesztése</translation>
     </message>
 </context>
 <context>
@@ -14823,6 +14742,10 @@ Kérlek, légy türelmes!</translation>
     <message>
         <source>Create Group</source>
         <translation>Csoport létrehozása</translation>
+    </message>
+    <message>
+        <source>Update Group</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -15003,8 +14926,8 @@ Kérlek, légy türelmes!</translation>
         <translation>Avatár betöltése</translation>
     </message>
     <message>
-        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Képek (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <source>Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

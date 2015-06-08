@@ -6,8 +6,8 @@
         <translation>версия</translation>
     </message>
     <message>
-        <source>About RetroShare </source>
-        <translation>О RetroShare</translation>
+        <source>RetroShare version</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -39,10 +39,6 @@
     <message>
         <source>Have fun ;-)</source>
         <translation>Развлекайтесь ;-)</translation>
-    </message>
-    <message>
-        <source>About RetroShare </source>
-        <translation>О RetroShare</translation>
     </message>
 </context>
 <context>
@@ -97,7 +93,7 @@
     </message>
     <message>
         <source>Cancels the search.</source>
-        <translation>Отменить поиск.</translation>
+        <translation>Отменяет поиск.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -160,7 +156,7 @@
     </message>
     <message>
         <source>Travel</source>
-        <translation>Путешествие</translation>
+        <translation>Путешествия</translation>
     </message>
     <message>
         <source>Work</source>
@@ -573,6 +569,33 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>AvatarDialog</name>
+    <message>
+        <source>Change Avatar</source>
+        <translation>Изменить аватар</translation>
+    </message>
+    <message>
+        <source>Your Avatar Picture</source>
+        <translation>Ваш аватар</translation>
+    </message>
+    <message>
+        <source>Add Avatar</source>
+        <translation>Добавить аватар</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить эту позицию</translation>
+    </message>
+    <message>
+        <source>Set your Avatar picture</source>
+        <translation>Установить ваш аватар</translation>
+    </message>
+    <message>
+        <source>Load Avatar</source>
+        <translation>Загрузить аватар</translation>
+    </message>
+</context>
+<context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
@@ -696,7 +719,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
-        <translation>Исх. разрешенная (кБ/с)</translation>
+        <translation>Исх. разрешённая (кБ/с)</translation>
     </message>
     <message>
         <source>Allowed Recvd</source>
@@ -741,12 +764,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatDialog</name>
     <message>
-        <source>Your friend has more than one locations.
-Please choose one of it to chat with.</source>
-        <translation>Ваш друг указал несколько расположений.
-Чтобы начать чат, выберите одно из них.</translation>
-    </message>
-    <message>
         <source>Talking to </source>
         <translation>Поговорить с</translation>
     </message>
@@ -763,7 +780,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Mute participant</source>
-        <translation>Приглушить участников</translation>
+        <translation>Игнорировать участника</translation>
     </message>
     <message>
         <source>Invite friends to this lobby</source>
@@ -788,10 +805,6 @@ Please choose one of it to chat with.</source>
     <message>
         <source>Topic: %1</source>
         <translation>Тема: %1</translation>
-    </message>
-    <message>
-        <source>Please enter your new nick name</source>
-        <translation>Пожалуйста, укажите свой никнейм</translation>
     </message>
     <message>
         <source>Lobby chat</source>
@@ -822,19 +835,9 @@ Please choose one of it to chat with.</source>
         <translation>Вы хотите отменить подписку на эту Комнату чата?</translation>
     </message>
     <message>
-        <source>Hide Participants</source>
-        <translation>Скрыть участников</translation>
-    </message>
-    <message>
-        <source>Show Participants</source>
-        <translation>Показать участников</translation>
-    </message>
-    <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
-        <translation>ПКМ - игнорировать участника.
-&lt;br/&gt;
-&lt;br/&gt;
-Двойной клик - обратиться: вставить ник в чат</translation>
+        <translation>Правая кнопка мыши – игнорировать участника.
+Двойной щелчок – обратиться к участнику, вставив ник в чат</translation>
     </message>
     <message>
         <source>This participant is not active since:</source>
@@ -843,6 +846,38 @@ Please choose one of it to chat with.</source>
     <message>
         <source> seconds</source>
         <translation>секунды</translation>
+    </message>
+    <message>
+        <source>Start private chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature mismatch</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot start distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant chat cannot be initiated:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -857,6 +892,30 @@ Please choose one of it to chat with.</source>
     <message>
         <source>Chat Lobbies</source>
         <translation>Чаты</translation>
+    </message>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation>У вас %1 новых сообщений</translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation>У вас %1 новых сообщений</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation>%1 новых сообщений</translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation>%1 новое сообщение</translation>
+    </message>
+    <message>
+        <source>Unknown Lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation>Удалить всё</translation>
     </message>
 </context>
 <context>
@@ -890,14 +949,6 @@ Please choose one of it to chat with.</source>
         <translation>Создать Комнату</translation>
     </message>
     <message>
-        <source>Unsubscribe</source>
-        <translation>Отменить подписку</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Подписаться</translation>
-    </message>
-    <message>
         <source>[No topic provided]</source>
         <translation>[без темы]</translation>
     </message>
@@ -916,10 +967,6 @@ Please choose one of it to chat with.</source>
     <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
         <translation>Вы не подписаны на эту комнату. Двойной щелчок для входа и общения.</translation>
-    </message>
-    <message>
-        <source>Invitation to chat lobby</source>
-        <translation>Приглашение в Комнату чата</translation>
     </message>
     <message>
         <source>Remove Auto Subscribe</source>
@@ -1007,11 +1054,35 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           	                      invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Чаты&lt;/h1&gt;&lt;p&gt;Чаты RetroShare являются децентрализованными и функционируют почти так же как и чаты IRC. Чаты дают возможность анонимно общаться со множеством людей без необходимости обмена сертификатами.&lt;/p&gt;&lt;p&gt;Чат-комната может быть публичной (ваше окружение видит её) или приватной (ваше окружение не видит её, если только вы не пригласите их &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). После того, как вы были приглашены в приватную комнату, она появится в вашем списке чатов и вы увидите в ней ваших друзей.&lt;/p&gt; &lt;p&gt;Список слева показывает чат-комнаты в которых находятся ваши друзья. Вы можете &lt;ul&gt;&lt;li&gt;щёлкнуть правой кнопкой мыши, чтобы создать новую чат-комнату&lt;/li&gt;&lt;li&gt;дважды щёлкнуть на чат-комнате, чтобы войти, общаться или пригласить в неё своих друзей&lt;/li&gt;&lt;/ul&gt;Примечание: Чтобы комнаты чата работали правильно, время вашего компьютера должно быть синхронизировано. Поэтому проверьте ваши системные часы!&lt;/p&gt;</translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Чаты&lt;/h1&gt;&lt;p&gt;Чаты RetroShare являются децентрализованными и функционируют почти так же, как и чаты IRC. Чаты дают возможность анонимно общаться со множеством людей без необходимости предварительного обмена сертификатами.&lt;/p&gt;&lt;p&gt;Чат-комната может быть публичной (ваше окружение видит её) или приватной (ваше окружение не видит её, если только вы не пригласите их &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). После того, как вы были приглашены в приватную комнату, она появится в вашем списке чатов и вы увидите в ней ваших друзей.&lt;/p&gt; &lt;p&gt;Список слева показывает чат-комнаты в которых находятся ваши друзья. Вы можете &lt;ul&gt;&lt;li&gt;щёлкнуть правой кнопкой мыши, чтобы создать новую чат-комнату&lt;/li&gt;&lt;li&gt;дважды щёлкнуть на чат-комнате, чтобы войти, общаться или пригласить в неё других своих друзей&lt;/li&gt;&lt;/ul&gt;Примечание: Чтобы комнаты чата работали правильно, время вашего компьютера должно быть синхронизировано. Поэтому проверьте ваши системные часы!&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Chat Lobbies</source>
         <translation>Чаты</translation>
+    </message>
+    <message>
+        <source>Leave this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter this lobby as...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You will need to create an identity in order to join chat lobbies.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose an identity for this lobby:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create an identity and enter this lobby</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1098,10 +1169,6 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>Blink tab icon</source>
         <translation>Мерцание иконки вкладки</translation>
-    </message>
-    <message>
-        <source>Default nickname for chat lobbies:</source>
-        <translation>Имя по умолчанию для чатов:</translation>
     </message>
     <message>
         <source>Private Chat</source>
@@ -1278,6 +1345,14 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>Threshold for automatic search</source>
         <translation>Порог автоматического поиска</translation>
+    </message>
+    <message>
+        <source>Default identity for chat lobbies:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Bar by default</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1641,44 +1716,8 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <source>Friend Details</source>
-        <translation>Подробности о друге</translation>
-    </message>
-    <message>
         <source>Details</source>
         <translation>Подробности</translation>
-    </message>
-    <message>
-        <source>Peer Info</source>
-        <translation>Peer информация</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Имя</translation>
-    </message>
-    <message>
-        <source>RetroShare ID</source>
-        <translation>RetroShare ID</translation>
-    </message>
-    <message>
-        <source>Other info</source>
-        <translation>Другая информация</translation>
-    </message>
-    <message>
-        <source>Loc</source>
-        <translation>Лок.</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Статус</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Посл. контакт</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>Версия</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -1705,112 +1744,8 @@ Double click lobbies to enter and chat.</source>
         <translation>Список адресов</translation>
     </message>
     <message>
-        <source>Trust </source>
-        <translation>Доверие</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation>Ваше доверие к этому участнику:</translation>
-    </message>
-    <message>
-        <source>None </source>
-        <translation>Нет</translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation>Частичное</translation>
-    </message>
-    <message>
-        <source>Full </source>
-        <translation>Полное</translation>
-    </message>
-    <message>
-        <source>PGP Key</source>
-        <translation>Ключ PGP</translation>
-    </message>
-    <message>
-        <source>Peer has signed my PGP key</source>
-        <translation>Участник подписал мой PGP-ключ</translation>
-    </message>
-    <message>
-        <source>Show Help for Trust Settings and Signing</source>
-        <translation>Помощь по Доверию и Подписанию</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by :</source>
-        <translation>Peer ключевые подписан :</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Подписание ключа друга – это способ, с помощью которого вы выражаете другим пользователям сети доверие этому человеку. Кроме того, только подписанные вами участники будут получать информацию о вашем доверенном окружении.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Подписание чужого ключа не может быть отменено, поэтому отнеситесь к процедуре со всей серьёзностью.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Sign PGP key</source>
-        <translation>Подписать PGP ключ</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Отказать в дружбе</translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation>Подружиться</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Сертификат</translation>
-    </message>
-    <message>
         <source>Include signatures</source>
         <translation>Включая подписи</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Использовать старый формат ключа</translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation>Сервисы</translation>
-    </message>
-    <message>
-        <source>User service permissions</source>
-        <translation>Права доступа к сервисам пользователя</translation>
-    </message>
-    <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>В этой вкладке производится тонкая настройка сервисов, используемых совместно с отдельно взятым участником сети.
-
-Некоторые сервисы (обнаружение, анонимное туннелирование) могут быть отключены глобально и настройки для отдельных пользователей не будут иметь эффекта.</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Анонимные туннели</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Обнаружение</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Форумы и каналы</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Чат</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -1819,68 +1754,6 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Ошибка: не могу получить совокупность деталей.</translation>
-    </message>
-    <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation>Предоставленный алгоритм ключа не поддерживается RetroShare 
-(на данный момент поддерживаются только RSA ключей)</translation>
-    </message>
-    <message>
-        <source>My key is signed by : </source>
-        <translation>Мой ключ подписан :</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by : </source>
-        <translation>Ключ пира подписан :</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Ваше доверие к этой конечной совокупности, вероятно, это ключевой Вы владеете.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation>Ваше доверие к этой совокупности является полным.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation>Ваше доверие к этой совокупности является маргинальной.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation>Ваше доверие к этой совокупности нет.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation>Ваше доверие в эту совокупность не установлена.</translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>Пир аутентифицировал меня как друга и не подписал мой ​​ключ PGP</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>Пир не аутентифицировал меня как друга и не подписал мой ​​ключ PGP</translation>
-    </message>
-    <message>
-        <source>Signature Failure</source>
-        <translation>Ошибка в подписи</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Может быть, неправильный пароль</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Отключение режима прокладывания анонимных туннелей приведёт к подавлению всех запросов, приходящих от данного пользователя на передачу/приём анонимного трафика, а также поисковых запросов. Этот пользователь не сможет осуществлять анонимную трансляцию данных через ваш узел.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Для установки глобального запрета на туннелирование зайдите в раздел «Сервер» панели управления RetroShare.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Отключает отправку публичных ключей ваших друзей этому узлу. Также игнорирует эти данные, получаемые от узла.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Для установки глобального запрета на туннелирование зайдите в раздел «Сервер» панели управления RetroShare.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Отключение этого означает, что форумы и каналы сообщений не будут передаваться от вас к доверенному узлу и данные, поступающие от этого доверенного узла, также будут игнорироваться.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
@@ -1903,12 +1776,104 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation>адреса участника</translation>
     </message>
     <message>
-        <source>Location ID</source>
-        <translation>Идентификатор местоположения</translation>
+        <source>Options</source>
+        <translation>Параметры</translation>
     </message>
     <message>
-        <source>PGP fingerprint</source>
-        <translation>PGP-отпечаток</translation>
+        <source>Retroshare node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Location info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Contact :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare version :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files from this node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hidden Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>нет</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate contains:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> with </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;/li&gt; </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;onion address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;IP address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require white list clearance</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2104,22 +2069,6 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation>Добавить как друга, для соединения с</translation>
     </message>
     <message>
-        <source>Service permissions</source>
-        <translation>Разрешения</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Анонимные туннели</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Обнаружение</translation>
-    </message>
-    <message>
-        <source>Forums/channels</source>
-        <translation>Форумы и каналы</translation>
-    </message>
-    <message>
         <source>To accept the Friend Request, click the Finish button.</source>
         <translation>Чтобы принять Предложение Дружбы, нажмите кнопку Готово.</translation>
     </message>
@@ -2154,10 +2103,6 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
         <translation>Размер чтения больше, чем блок памяти.</translation>
-    </message>
-    <message>
-        <source>Invalid location id.</source>
-        <translation>Недопустимый идентификатор расположения.</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
@@ -2344,10 +2289,6 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation>Используйте в качестве прямого источника, если доступно</translation>
     </message>
     <message>
-        <source>Direct source</source>
-        <translation>Прямой источник</translation>
-    </message>
-    <message>
         <source>Recommend many friends to each others</source>
         <translation>Рекомендовать нескольких друзей друг другу</translation>
     </message>
@@ -2401,6 +2342,42 @@ even if you don&apos;t make friends.</source>
         <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
         <translation>Сертификат имеет неправильный номер версии. Помните, что  сети v0.6 и v0.5 несовместимы.</translation>
     </message>
+    <message>
+        <source>Invalid node id.</source>
+        <translation>Недопустимый идентификатор узла.</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can be used as direct source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist clearance to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No IP in this certificate!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Added with certificate from %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste Cert of your friend from Clipboard</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ConnectProgressDialog</name>
@@ -2450,7 +2427,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>UDP Setup</source>
-        <translation>Настройка UDP</translation>
+        <translation>Установление UDP</translation>
     </message>
     <message>
         <source>UDP Result</source>
@@ -2478,7 +2455,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Behind NAT &amp; No DHT</source>
-        <translation>За маршрутизатором NAT &amp; Нет DHT</translation>
+        <translation>Плохая сеть: непрозрачный NAT, не работает DHT</translation>
     </message>
     <message>
         <source>NET Restart</source>
@@ -2490,7 +2467,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>No DHT</source>
-        <translation>Нет DHT</translation>
+        <translation>DHT не работает</translation>
     </message>
     <message>
         <source>NET STATE GOOD!</source>
@@ -2502,11 +2479,11 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation>DHT отключено</translation>
+        <translation>DHT отключена</translation>
     </message>
     <message>
         <source>DHT Okay</source>
-        <translation>DHT Okay</translation>
+        <translation>DHT впорядке</translation>
     </message>
     <message>
         <source>Finding RS Peers</source>
@@ -2514,11 +2491,11 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Lookup requires DHT</source>
-        <translation>Поиск требуемых DHT</translation>
+        <translation>Поиск узла требует DHT</translation>
     </message>
     <message>
         <source>Searching DHT</source>
-        <translation>Поиск DHT</translation>
+        <translation>Поиск узла в DHT</translation>
     </message>
     <message>
         <source>Lookup Timeout</source>
@@ -2526,7 +2503,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Peer DHT NOT ACTIVE</source>
-        <translation>Пир DHT НЕ АКТИВЕН</translation>
+        <translation>DHT узла не активна</translation>
     </message>
     <message>
         <source>Lookup Failure</source>
@@ -2586,23 +2563,23 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>DHT Lookup Timeout</source>
-        <translation>Окончание Времени Поиска DHT</translation>
+        <translation>Время поиска узла в DHT истекло</translation>
     </message>
     <message>
         <source>DHT Lookup has taken too long</source>
-        <translation>Поиск DHT занял слишком много времени</translation>
+        <translation>Поиск в DHT занял слишком много времени</translation>
     </message>
     <message>
         <source>UDP Connection Timeout</source>
-        <translation>Окончание Времени Соединения UDP</translation>
+        <translation>Время соединения по протоколу UDP истекло</translation>
     </message>
     <message>
         <source>UDP Connection has taken too long</source>
-        <translation>Cоединение UDP заняло слишком много времени</translation>
+        <translation>Попытка UDP-соединения заняла слишком много времени</translation>
     </message>
     <message>
         <source>UDP Connection Failed</source>
-        <translation>Ошибка Соединения UDP</translation>
+        <translation>Попытка UDP-соединения провалилась</translation>
     </message>
     <message>
         <source>We are continually working to improve connectivity.</source>
@@ -2610,7 +2587,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>In this case the UDP connection attempt has failed.</source>
-        <translation>В этом случае попытка соединения UDP не удалась.</translation>
+        <translation>Данная попытка соединения по UDP не удалась.</translation>
     </message>
     <message>
         <source>Improve connectivity by opening a Port in your Firewall.</source>
@@ -2630,7 +2607,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Your DHT has not started properly</source>
-        <translation>Ваш DHT не запущен правильно</translation>
+        <translation>Ваша DHT не функционирует должным образом</translation>
     </message>
     <message>
         <source>Common causes of this problem are:</source>
@@ -2642,15 +2619,15 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
-        <translation>- У вас отсутствует или истек срок  загрузочного файла DHT (bdboot.txt)</translation>
+        <translation>– У вас отсутствует или устарел файл начальной загрузки DHT (bdboot.txt)</translation>
     </message>
     <message>
         <source>DHT is Disabled</source>
-        <translation>DHT Отключен</translation>
+        <translation>DHT отключена</translation>
     </message>
     <message>
         <source>The DHT is OFF, so Retroshare cannot find your Friends.</source>
-        <translation>DHT ВЫКЛЮЧЕН, поэтому RetroShare не может найти ваших Друзей.</translation>
+        <translation>DHT отключена, поэтому RetroShare не сможет найти необходимую информацию о ваших доверенных узлах.</translation>
     </message>
     <message>
         <source>Retroshare has tried All Known Addresses, with no success</source>
@@ -2658,11 +2635,11 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
-        <translation>DHT необходим, если ваши друзья используют Динамические IP Адреса.</translation>
+        <translation>DHT необходима, если ваши друзья используют динамические IP-адреса.</translation>
     </message>
     <message>
         <source>Go to Settings-&gt;Server and change config to &quot;Public: DHT and Discovery&quot;</source>
-        <translation>Перейдите в Настройки-&gt;Сервер и измените конфигурацию для &quot;Общественный: DHT и Discovery&quot;</translation>
+        <translation>Перейдите в Параметры –&gt; Сервер и измените конфигурацию режима обнаружения на «Публичный режим: DHT и обнаружение»</translation>
     </message>
     <message>
         <source>Peer Denied Connection</source>
@@ -2686,15 +2663,11 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>We successfully reached your Friend via UDP.</source>
-        <translation>Мы успешно достигли вашего Друга через UDP.</translation>
+        <translation>Соединение с доверенным узлом по UDP завершилось успехом.</translation>
     </message>
     <message>
         <source>Please contact them to add your Full Certificate</source>
         <translation>Пожалуйста, свяжитесь с ними, чтобы добавить ваш Полный Сертификат</translation>
-    </message>
-    <message>
-        <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation>Им нужен Сертификат + Расположение для соединения по UDP, чтобы добиться успеха</translation>
     </message>
     <message>
         <source>We Cannot find your Friend.</source>
@@ -2702,15 +2675,15 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>They are either offline or their DHT is Off</source>
-        <translation>Они либо вне сети или их DHT Выключен</translation>
+        <translation>Они либо не в сети или их DHT отключена</translation>
     </message>
     <message>
         <source>Peer DHT is Disabled</source>
-        <translation>DHT Пира Отключен</translation>
+        <translation>DHT участника отключена</translation>
     </message>
     <message>
         <source>Your Friend has configured Retroshare with DHT Disabled.</source>
-        <translation>Ваш друг настроил RetroShare с Отключенным DHT.</translation>
+        <translation>Доверенный узел отключил DHT при настройке своего клиент-сервера.</translation>
     </message>
     <message>
         <source>You have previously connected to this Friend</source>
@@ -2718,11 +2691,11 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Retroshare has determined that they have DHT switched off</source>
-        <translation>RetroShare определил, что у них выключен DHT </translation>
+        <translation>RetroShare определила, что их таблица DHT неактивна</translation>
     </message>
     <message>
         <source>Without the DHT it is hard for Retroshare to locate your friend</source>
-        <translation>Без DHT для RetroShare трудно найти вашего друга</translation>
+        <translation>Без DHT платформе RetroShare сложно определить сетевые параметры вашего доверенного узла</translation>
     </message>
     <message>
         <source>Try importing a fresh Certificate to get up-to-date connection information</source>
@@ -2770,7 +2743,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
-        <translation>НЕПРОВЕРЕННАЯ ПЕРЕСЫЛКА! &amp; НЕТ DHT</translation>
+        <translation>Неподдающееся проверке перенаправление! DHT не работает</translation>
     </message>
     <message>
         <source>Searching</source>
@@ -2778,15 +2751,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UDP Connect Timeout</source>
-        <translation>Окончание Времени Соединения UDP</translation>
+        <translation>Время установления по UDP истекло</translation>
     </message>
     <message>
         <source>Only Advanced Retroshare users should switch off the DHT.</source>
-        <translation>Тjлько продвинутые пользователи RetroShare могут выключить DHT.</translation>
+        <translation>Отключать DHT рекомендуется только опытным пользователям RetroShare.</translation>
     </message>
     <message>
         <source>Retroshare cannot connect without this information</source>
         <translation>RetroShare не может подключиться без этой информации</translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Node for UDP connections to succeed</source>
+        <translation>Для успешного UDP-соединения удалённому узлу требуется ваш сертификат.</translation>
     </message>
 </context>
 <context>
@@ -3018,10 +2995,6 @@ p, li { white-space: pre-wrap; }
         <translation>Вставить ссылку RetroShare</translation>
     </message>
     <message>
-        <source>You can only post files that you do have</source>
-        <translation>Вы можете размещать только те файлы которые у вас есть</translation>
-    </message>
-    <message>
         <source>Drop file error.</source>
         <translation>Ошибка прикрепления файла.</translation>
     </message>
@@ -3062,8 +3035,12 @@ p, li { white-space: pre-wrap; }
         <translation>Вы действительно хотите создать %1 сообщений?</translation>
     </message>
     <message>
-        <source>Channel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>Политика безопасности канала не позволяет размещать файлы, которых у вас нет. Если у вас есть эти файлы, вам необходимо сначала их расшарить или вкладывать их в явном виде:</translation>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation>Вы хотите добавить файлы которые не ещё не общедоступны. Продолжить в любом случае?</translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3121,10 +3098,6 @@ p, li { white-space: pre-wrap; }
         <translation>Укажите тему форума и сообщение</translation>
     </message>
     <message>
-        <source>Please choose Signing Id</source>
-        <translation>Пожалуйства, выберите ID подписанта</translation>
-    </message>
-    <message>
         <source>Please choose Signing Id, it is required</source>
         <translation>Пожалуйства, выберите ID подписанта, требуется</translation>
     </message>
@@ -3154,6 +3127,14 @@ Do you want to reject this message?</source>
         <translation>Сообщение не отправлено в форум.
 Отменить отправку?</translation>
     </message>
+    <message>
+        <source>Post as</source>
+        <translation>Отправить как</translation>
+    </message>
+    <message>
+        <source>Congrats, you found a bug! </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
@@ -3172,10 +3153,6 @@ Do you want to reject this message?</source>
     <message>
         <source>Lobby topic:</source>
         <translation>Тема:</translation>
-    </message>
-    <message>
-        <source>Your nick name:</source>
-        <translation>Ваш никнейм:</translation>
     </message>
     <message>
         <source>Security policy:</source>
@@ -3198,16 +3175,12 @@ Do you want to reject this message?</source>
         <translation>Пригласить друзей</translation>
     </message>
     <message>
-        <source>Put a sensible lobby name here</source>
-        <translation>Введите имя Команты</translation>
-    </message>
-    <message>
-        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>Ваш никнейм в этой Комнате (изменить - Опции -&gt; Чат)</translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation>Контакты:</translation>
+    </message>
+    <message>
+        <source>Identity to use:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3309,12 +3282,16 @@ Do you want to reject this message?</source>
         <translation>Сохранить сертификат в файл</translation>
     </message>
     <message>
-        <source>Create new location...</source>
-        <translation>Создать новое местоположение...</translation>
-    </message>
-    <message>
         <source>Node</source>
         <translation>Узел сети</translation>
+    </message>
+    <message>
+        <source>Create new node...</source>
+        <translation>Создание нового узла...</translation>
+    </message>
+    <message>
+        <source>show statistics window</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3332,11 +3309,11 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>DHT Off</source>
-        <translation>Выключить DHT</translation>
+        <translation>DHT отключена</translation>
     </message>
     <message>
         <source>DHT Searching for RetroShare Peers</source>
-        <translation>Поиск пиров RetroShare с помощью DHT</translation>
+        <translation>Поиск участников RetroShare с помощью DHT</translation>
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
@@ -3344,7 +3321,7 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>DHT Good</source>
-        <translation>DHT работает</translation>
+        <translation>DHT впорядке</translation>
     </message>
     <message>
         <source>DHT Error</source>
@@ -3461,7 +3438,7 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>DHT Status</source>
-        <translation>Статус DHT</translation>
+        <translation>Состояние DHT</translation>
     </message>
     <message>
         <source>ConnectLogic</source>
@@ -3625,7 +3602,7 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>NET BAD: Behind NAT &amp; No DHT</source>
-        <translation>ПЛОХАЯ СЕТЬ: За NAT и Нет DHT</translation>
+        <translation>Плохая сеть: непрозрачный NAT и нет DHT</translation>
     </message>
     <message>
         <source>NET WARNING: NET Restart</source>
@@ -3637,7 +3614,7 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>NET WARNING: No DHT</source>
-        <translation>ПРЕДУПРЕЖДЕНИЕ СЕТИ: Нет DHT</translation>
+        <translation>Сетевое предупреждение: не работает DHT</translation>
     </message>
     <message>
         <source>NET STATE GOOD!</source>
@@ -3649,7 +3626,7 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>CAUTION: UNVERIFIABLE FORWARD &amp; NO DHT</source>
-        <translation>ПРЕДУПРЕЖДЕНИЕ: НЕПРОВЕРЕННАЯ ПЕРЕСЫЛКА И НЕТ DHT</translation>
+        <translation>Предупреждение: неподдающееся проверке перенаправление и не работает DHT</translation>
     </message>
     <message>
         <source>Not Active (Maybe Connected!)</source>
@@ -3697,7 +3674,7 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>Udp Started</source>
-        <translation>UDP стартовал</translation>
+        <translation>UDP-соединение установлено</translation>
     </message>
     <message>
         <source>Connected</source>
@@ -3797,7 +3774,7 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>DHT Peers:</source>
-        <translation>Участники в DHT:</translation>
+        <translation>Узлов в DHT:</translation>
     </message>
     <message>
         <source>Disconnected:</source>
@@ -4203,10 +4180,6 @@ you plug it in.</source>
 <context>
     <name>FriendList</name>
     <message>
-        <source>Friends</source>
-        <translation>Друзья</translation>
-    </message>
-    <message>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
@@ -4283,14 +4256,6 @@ you plug it in.</source>
         <translation>Друг</translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation>Местоположение</translation>
-    </message>
-    <message>
-        <source>Message Group</source>
-        <translation>Группа сообщений</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Редактировать группу</translation>
     </message>
@@ -4303,28 +4268,12 @@ you plug it in.</source>
         <translation>Чат</translation>
     </message>
     <message>
-        <source>Message Friend</source>
-        <translation>Написать другу</translation>
-    </message>
-    <message>
-        <source>Friend Details</source>
-        <translation>Подробности о друге</translation>
-    </message>
-    <message>
         <source>Recommend this Friend to...</source>
         <translation>Рекомендовать друга...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
         <translation>Скопировать ссылку сертификата</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Отказать другу</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation>Удалить местоположение друга</translation>
     </message>
     <message>
         <source>Add to group</source>
@@ -4398,6 +4347,38 @@ you plug it in.</source>
         <source>Sort by</source>
         <translation>Сортировать по</translation>
     </message>
+    <message>
+        <source>Node</source>
+        <translation>Узел сети</translation>
+    </message>
+    <message>
+        <source>Remove Friend Node</source>
+        <translation>Удалить доверенный узел</translation>
+    </message>
+    <message>
+        <source>Do you want to remove this node?</source>
+        <translation>Вы хотите удалить этот узел?</translation>
+    </message>
+    <message>
+        <source>Friend nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to whole group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Подробности</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
@@ -4446,38 +4427,6 @@ you plug it in.</source>
     <message>
         <source>Broadcast</source>
         <translation>Широковещательный чат</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Полужирный</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Подчеркнутый</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Курсив</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Шрифт</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Цвет текста</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Присоединить файл</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Отправить</translation>
-    </message>
-    <message>
-        <source>Messages entered here are sent to all connected friends</source>
-        <translation>Сообщение, введённые здесь, отправятся всем подключённым в настоящее время участникам</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
@@ -4540,48 +4489,12 @@ you plug it in.</source>
         <translation>Сбросить настройки шрифта</translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Вставить ссылку RetroShare</translation>
-    </message>
-    <message>
-        <source>is typing...</source>
-        <translation>печатает...</translation>
-    </message>
-    <message>
-        <source>New group chat</source>
-        <translation>Новый групповой чат</translation>
-    </message>
-    <message>
-        <source>Do you really want to physically delete the history?</source>
-        <translation>Вы действительно хотите удалить историю сообщений с диска?</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Добавить файл</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Сохранить как...</translation>
-    </message>
-    <message>
-        <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Текстовый файл (*.txt );;Все файлы (*)</translation>
-    </message>
-    <message>
         <source>Keyring</source>
         <translation>Массив ключей</translation>
     </message>
     <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation>Широковещательный чат RetroShare: сообщения будут рассылаться всем подключённым узлам.</translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation>Прикрепить изображения</translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
-        <translation>Загрузить файл изображение</translation>
     </message>
     <message>
         <source>Network</source>
@@ -4607,18 +4520,6 @@ you plug it in.</source>
         <translation>Создать новый профиль</translation>
     </message>
     <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>Можно установить RetroShare в разных местоположениях, используя одну и ту же личность. Для этого экспортируйте нужную личность и импортируйте на новом компьютере, затем создайте новое расположение с ней.</translation>
-    </message>
-    <message>
-        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Похоже, что у вас нет никакого профиля (PGP ключи). Пожалуйста, заполните форму ниже, чтобы создать или импортировать существующий профиль.</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>Ваш профиль связан с ключом PGP.  В настоящее время RetroShare игнорирует DSA ключи.</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
@@ -4637,52 +4538,8 @@ anonymous, you can use a fake email.</source>
         <translation>Осторожно: этот почтовый адрес будет виден вашим друзьям и их друзьям. Эта информация необходима для PGP, но для анонимности вы можете указать поддельный адрес</translation>
     </message>
     <message>
-        <source>This Password is for PGP</source>
-        <translation>Этот пароль используется для PGP</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Пароль</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Укажите надежный пароль. Этот пароль защищает ваш PGP ключ.</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Местоположение</translation>
-    </message>
-    <message>
-        <source>Create new identity</source>
-        <translation>Создать новую личность</translation>
-    </message>
-    <message>
-        <source>Use identity</source>
-        <translation>Использовать удостоверение</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key</source>
-        <translation>Ваш профиль связан с ключом PGP </translation>
-    </message>
-    <message>
-        <source>Create a new identity</source>
-        <translation>Создать новую личность</translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation>Импортировать новую личность</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Экспортируйте выбранную личность</translation>
-    </message>
-    <message>
-        <source>Create a new Identity</source>
-        <translation>Создать новую личность</translation>
-    </message>
-    <message>
-        <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>RetroShare использует PGP ключи для управления личностями</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -4697,116 +4554,8 @@ anonymous, you can use a fake email.</source>
         <translation>[Требуютя] Видны вашим друзьям и друзьям друзей.</translation>
     </message>
     <message>
-        <source>[Required] This password protects your PGP key.</source>
-        <translation>[Обязательно] Данный пароль защищает ваш ключ PGP.</translation>
-    </message>
-    <message>
-        <source>Create new Location</source>
-        <translation>Создать новое местоположение</translation>
-    </message>
-    <message>
-        <source>Generate new Location</source>
-        <translation>Сгенерировать новое местоположение</translation>
-    </message>
-    <message>
-        <source>Create a new Location</source>
-        <translation>Создать новое местоположение</translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation>Создать новую личность</translation>
-    </message>
-    <message>
-        <source>Generate new Identity</source>
-        <translation>Создать новую личность</translation>
-    </message>
-    <message>
-        <source>You can create a new identity with this form.</source>
-        <translation>С помощью этой формы можно создать новую личность.</translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>Вы можете использовать имеющуюся личность (т.е. пару ключей PGP), или  создать новую.</translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation>Экспорт Личности</translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
-        <translation>Файлы Личности RetroShare (*.asc)</translation>
-    </message>
-    <message>
-        <source>Identity saved</source>
-        <translation>Личность сохранена</translation>
-    </message>
-    <message>
-        <source>Your identity was successfully saved
-It is encrypted
-
-You can now copy it to another computer
-and use the import button to load it</source>
-        <translation>Ваша личность успешно сохранена
-Она зашифрована
-
-Вы можете теперь скопировать её на другой компьютер
-и нажать кнопку импорт для загрузки</translation>
-    </message>
-    <message>
-        <source>Identity not saved</source>
-        <translation>Личность не сохранена</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>Ваша личность не сохранена. Произошла ошибка.</translation>
-    </message>
-    <message>
-        <source>Identity not loaded</source>
-        <translation>Личность не загружена</translation>
-    </message>
-    <message>
-        <source>Your identity was not loaded properly:</source>
-        <translation>Ваша личность неправильно загружена:</translation>
-    </message>
-    <message>
-        <source>New identity imported</source>
-        <translation>Новая личность импортирована</translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfully:</source>
-        <translation>Ваша личность было импортирована успешно:</translation>
-    </message>
-    <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Теперь вы можете использовать это для создания нового расположения</translation>
-    </message>
-    <message>
-        <source>Generate PGP key Failure</source>
-        <translation>Ошибка генерации PGP-ключа</translation>
-    </message>
-    <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation>Поле для местоположения должно быть длиной минимум 3 символа</translation>
-    </message>
-    <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Все обязательный поля должны быть длиной минимум 3 символа</translation>
-    </message>
-    <message>
-        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your PGP password when asked, to sign your new key.</source>
-        <translation>Создавая новый PGP ключ, пожалуйста, будьте терпеливы: этот процесс требует создания больших простых чисел и на медленных компьютерах может занять несколько минут. 
-
-Введите ваш пароль PGP при запросе, чтобы подписать ваш новый ключ.</translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation>Ошибка генерации идентификатора</translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>Не удалось создать новый сертификат, может быть неправильный пароль PGP!</translation>
     </message>
     <message>
         <source>Password (check)</source>
@@ -4821,39 +4570,246 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation>[Обязательно] Введите пароль еще раз</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. 
-This field will be used to differentiate different installations with
-the same identity (PGP key).</source>
-        <translation>Укажите понятное местоположение, например: дом, ноут, и т.п.
-Это поле будет различать несколько разных инсталляций с однинаковой личностью (PGP ключем)</translation>
-    </message>
-    <message>
         <source>Passwords do not match</source>
         <translation>Пароли не совпадают</translation>
-    </message>
-    <message>
-        <source>Create a Hidden Location.</source>
-        <translation>Создание Скрытого Местоположения.</translation>
-    </message>
-    <message>
-        <source>Tor Address</source>
-        <translation>Адрес Tor</translation>
     </message>
     <message>
         <source>Port</source>
         <translation>Порт</translation>
     </message>
     <message>
-        <source>This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion and your selected port,  you must first launch TOR and create a new hidden service to generate this address.</source>
-        <translation>Это адрес сети TOR вида: xa76giaf6ifda7ri63i263.onion и ваш выбранный порт, вы должны сначала запустить TOR и создать новые скрытые службы, чтобы создать этот адрес.</translation>
+        <source>This password is for PGP</source>
+        <translation>Данный пароль предназначен для PGP</translation>
     </message>
     <message>
-        <source>Invalid Hidden Location</source>
-        <translation>Недопустимое Скрытое Местоположение.</translation>
+        <source>Node</source>
+        <translation>Узел сети</translation>
     </message>
     <message>
-        <source>Please put in a valid address of the form: 31769173498.onion:7800</source>
-        <translation>Пожалуйста, введите правильный адрес вида: 31769173498.onion:7800</translation>
+        <source>TOR address</source>
+        <translation>Адрес сети Tor</translation>
+    </message>
+    <message>
+        <source>Create new node</source>
+        <translation>Создание нового узла</translation>
+    </message>
+    <message>
+        <source>Generate new node</source>
+        <translation>Генерация нового узла</translation>
+    </message>
+    <message>
+        <source>Create a new node</source>
+        <translation>Создать новый узел</translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation>Теперь вы можете создать новый узел.</translation>
+    </message>
+    <message>
+        <source>Invalid hidden node</source>
+        <translation>Недопустимый скрытый узел</translation>
+    </message>
+    <message>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
+        <translation>Пожалуйста, введите допустимый адрес наподобие: de77jgyfphhblf45.onion:7800</translation>
+    </message>
+    <message>
+        <source>Node field is required with a minimum of 3 characters</source>
+        <translation>Поле для местоположения должно быть длиной минимум 3 символа</translation>
+    </message>
+    <message>
+        <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
+        <translation>Не удалось создать ваш новый сертификат. Может быть, введён неправильный пароль PGP!</translation>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.
+Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node exists for this profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Advanced options</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key length</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Currently disabled. Please move your mouse around until you reach at least 20%</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to create your node and/or profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter a meaningful node description. e.g. : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same profile (PGP key pair).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.
+Alternatively you can import a (previously exported) profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node is associated with the profile named</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create a node for it by providing a node name.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare profile files (*.asc)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not saved. An error occurred.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not loaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not loaded properly:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New profile imported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was imported successfully:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key pair generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing PGP certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5015,11 +4971,21 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>Когда вы с друзьями одновременно в сети, RetroShare автоматически вас соединит.
-&lt;br&gt;&lt;br&gt;
-Клиент должен подключиться к сети прежде чем сможет соединиться с друзьями. Это может занять 5-30  минут в первый запуск. Значок DHT внизу клиента станет зеленым, когда это произойдет.
-&lt;br&gt;&lt;br&gt;
-Через пару минут значок NAT должен стать зеленым или желтым в зависимости от вашей сетевой доступности. Если он остается красным, значит вас блокирует фаервол.</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Будьте в сети одновременно с вашим доверенным узлом и RetroShare соединит вас в автоматическом режиме!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Вашему клиенту необходимо найти сеть RetroShare для того, чтобы иметь возможность устанавливать соединения с другими участниками.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;При первом запуске RetroShare на это уходит от 5 до 30 минут времени.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Когда клиент способен устанавливать соединения, индикатор DHT в строке состояния становится зелёного цвета.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Через пару минут индикатор NAT, также находящийся в строке состояния, переходит в жёлтое или зелёное состояние.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Если же индикатор NAT остаётся красным, это означает, что ваш сетевой маршрутизатор непрозрачен и RetroShare будет труднее устанавливать соединения. В некоторых случаях установить соединения вообще не удастся.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Для получения дальнейшей информации посмотрите Справку RetroShare или обратитесь к более опытным пользователям.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
@@ -5178,22 +5144,6 @@ p, li { white-space: pre-wrap; }
         <translation>Отложенные пакеты</translation>
     </message>
     <message>
-        <source> by </source>
-        <translation> по </translation>
-    </message>
-    <message>
-        <source> size=</source>
-        <translation> размер =</translation>
-    </message>
-    <message>
-        <source> Status </source>
-        <translation> Статус </translation>
-    </message>
-    <message>
-        <source>To: </source>
-        <translation>Кому: </translation>
-    </message>
-    <message>
         <source>Managed keys</source>
         <translation>Управляемые ключи</translation>
     </message>
@@ -5206,8 +5156,36 @@ p, li { white-space: pre-wrap; }
         <translation>Матрица маршрутизации (</translation>
     </message>
     <message>
-        <source>%1 secs ago</source>
-        <translation>%1 сек назад</translation>
+        <source>Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>Назначение</translation>
+    </message>
+    <message>
+        <source>Data status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Received</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Отправить</translation>
     </message>
 </context>
 <context>
@@ -5282,24 +5260,8 @@ p, li { white-space: pre-wrap; }
         <translation>Папка НЕ доступна через анонимный туннель от любого друга</translation>
     </message>
     <message>
-        <source>All your friends can browse this directory</source>
-        <translation>Все ваши друзья могут просматривать эту папку</translation>
-    </message>
-    <message>
-        <source>Only friends in groups %1 can browse this directory</source>
-        <translation>Папка доступна к просмотру только друзьям из группы %1</translation>
-    </message>
-    <message>
         <source>No one can browse this directory</source>
         <translation>Никто не может просматривать эту папку</translation>
-    </message>
-    <message>
-        <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Эта папка доступна по анонимным туннелям через ваших друзей</translation>
-    </message>
-    <message>
-        <source>Only friends in groups </source>
-        <translation>Только друзья в группах</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
@@ -5308,6 +5270,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>No one can anonymously access this directory.</source>
         <translation>Никто не может анонимно получить доступ к этому каталогу.</translation>
+    </message>
+    <message>
+        <source>All friend nodes can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups %1 can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All friend nodes can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5332,32 +5310,32 @@ p, li { white-space: pre-wrap; }
         <translation>Контакты:</translation>
     </message>
     <message>
-        <source>Share Channel</source>
-        <translation>Сделать канал общим</translation>
-    </message>
-    <message>
-        <source>You can let your friends know about your Channel by sharing it with them. Select the Friends with which you want to Share your Channel.</source>
-        <translation>Вы имеете возможность поделиться с доверенным окружением информацией о созданном Вами канале. Выберите узлы, которым Вы хотели бы дать права на канал.</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Расшарить форум</translation>
-    </message>
-    <message>
-        <source>You can let your friends know about your Forum by sharing it with them. Select the Friends with which you want to Share your Forum.</source>
-        <translation>Вы имеете возможность поделиться с доверенным окружением информацией о созданном Вами форуме. Выберите узлы, которым Вы хотели бы дать права на форум.</translation>
-    </message>
-    <message>
-        <source>Share Posted</source>
-        <translation>Делегировать права</translation>
-    </message>
-    <message>
-        <source>You can let your friends know about your Posted by sharing it with them. Select the Friends with which you want to Share your Posted.</source>
-        <translation>Вы имеете возможность поделиться с доверенным окружением информацией о созданном Вами канале новостей. Выберите узлы, которым Вы хотели бы дать права на канал.</translation>
-    </message>
-    <message>
         <source>Please select at least one peer</source>
         <translation>Пожалуйста, укажите хотя бы одного участника сети</translation>
+    </message>
+    <message>
+        <source>Share channel admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share forum admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share topic admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5391,12 +5369,16 @@ p, li { white-space: pre-wrap; }
         <translation>Сортировать по последнему сообщению</translation>
     </message>
     <message>
-        <source>Private Key Available</source>
-        <translation>Доступен приватный ключ</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Показать</translation>
+    </message>
+    <message>
+        <source>You have admin rights</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe to download and read messages</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5513,8 +5495,8 @@ p, li { white-space: pre-wrap; }
         <translation>Отменить автоматическое скачивание</translation>
     </message>
     <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Каналы&lt;/h1&gt; &lt;p&gt;Каналы дают возможность публикации контента (например, кино или музыки), который подлежит раздаче пользователям сети.&lt;/p&gt; &lt;p&gt;В списке каналов содержатся каналы, на которые подписано Ваше доверенное окружение, равно как и Ваш узел автоматически отсылает окружению информацию о подписанных Вами каналах. Такой механизм позволяет распространять по сети информацию о хороших каналах и блокировать неудачные.&lt;/p&gt; &lt;p&gt;Оставлять сообщения в канале может только его создатель. Остальные участники могут лишь читать его содержимое и только в том случае, если канал не является приватным. Тем не менее Вы можете ⇥ права на чтение или модификацию канала пользователям из доверенного окружения.&lt;/p&gt;⇥ &lt;p&gt;Каналы могут быть анонимными или псевдонимными, когда к ним прикреплён идентификатор пользователя. ⇥ Включите режим «Разрешить комментарии», если Вы хотите дать пользователям возможность комментировать сообщения.&lt;/p&gt; </translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5610,12 +5592,12 @@ p, li { white-space: pre-wrap; }
         <translation>Выбрать админа канала</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Создать канал</translation>
-    </message>
-    <message>
         <source>Update Channel</source>
         <translation>Обновить Канал</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Создать</translation>
     </message>
 </context>
 <context>
@@ -5810,6 +5792,18 @@ p, li { white-space: pre-wrap; }
         <source>Files</source>
         <translation>Файлы</translation>
     </message>
+    <message>
+        <source>Subscribers</source>
+        <translation>Подписчики</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Описание:</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes):</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsChannelUserNotify</name>
@@ -5898,26 +5892,6 @@ p, li { white-space: pre-wrap; }
         <source>Vote Down</source>
         <translation>Голосовать против</translation>
     </message>
-    <message>
-        <source>Reputation</source>
-        <translation>Репутация</translation>
-    </message>
-    <message>
-        <source>Show Reputation</source>
-        <translation>Показать Репутацию</translation>
-    </message>
-    <message>
-        <source>Interesting User</source>
-        <translation>Интересный Пользователь</translation>
-    </message>
-    <message>
-        <source>Mark Spammy</source>
-        <translation>Отметить Спам</translation>
-    </message>
-    <message>
-        <source>Ban User</source>
-        <translation>Забанить Пользователя</translation>
-    </message>
 </context>
 <context>
     <name>GxsCreateCommentDialog</name>
@@ -5967,10 +5941,6 @@ before you can comment</source>
         <translation>Редактировать Форум</translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation>Создать форум</translation>
-    </message>
-    <message>
         <source>Update Forum</source>
         <translation>Обновление Форума</translation>
     </message>
@@ -5981,6 +5951,10 @@ before you can comment</source>
     <message>
         <source>Select Forum Admins</source>
         <translation>Выберите Администраторов Форума</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Создать</translation>
     </message>
 </context>
 <context>
@@ -6092,10 +6066,6 @@ before you can comment</source>
         <translation>Автор</translation>
     </message>
     <message>
-        <source>Signed</source>
-        <translation>Подписано</translation>
-    </message>
-    <message>
         <source>Loading</source>
         <translation>Загрузка</translation>
     </message>
@@ -6152,10 +6122,6 @@ before you can comment</source>
         <translation>Новая тема</translation>
     </message>
     <message>
-        <source>Reply to Author</source>
-        <translation>Ответить автору</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Раскрыть всё</translation>
     </message>
@@ -6204,10 +6170,6 @@ before you can comment</source>
         <translation>[ ... Пропущенное сообщение ... ]</translation>
     </message>
     <message>
-        <source>By</source>
-        <translation>По</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -6222,18 +6184,6 @@ before you can comment</source>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Вы не можете ответить Анонимному Автору</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Описание форума</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Форум:</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Тема:</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -6254,6 +6204,34 @@ before you can comment</source>
     <message>
         <source>On %1, %2 wrote:</source>
         <translation>На %1 %2 написал</translation>
+    </message>
+    <message>
+        <source>Forum name</source>
+        <translation>Название форума</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation>Подписчики</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes)</source>
+        <translation>Сообщений (соседние узлы)</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Описание</translation>
+    </message>
+    <message>
+        <source>By </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;Subscribing to the forum will gather                                            available posts from your subscribed friends, and make the                                            forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply with private message</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6290,8 +6268,8 @@ before you can comment</source>
         <translation>Другие форумы</translation>
     </message>
     <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;            			&lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) 			or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former            			class is more resistant to spamming because posts are                                       			cryptographically signed using a Retroshare pseudo-identity.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Форумы&lt;/h1&gt; ⇥⇥⇥&lt;p&gt;Форумы в RetroShare выглядят схоже и преследуют те же цели, что и интернет-форумы. Ключевым отличием является их децентрализованность.&lt;/p&gt; ⇥⇥⇥&lt;p&gt;В списке доступных форумов значатся форумы, на которые подписано Ваше доверенное окружение. В свою очередь, Вы отдаёте окружению информацию о том,⇥⇥⇥на какие форумы подписаны Вы. Такой механизм распространения продвигает по сети хорошие форумы и блокирует неудачные.&lt;/p&gt; ⇥⇥⇥&lt;p&gt;Форумы могут быть либо подписанными, (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) ⇥⇥⇥либо анонимными (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Первые ⇥⇥⇥более устойчивы к спаму, так как сообщения в них ⇥⇥⇥имеют криптографическую подпись той или иной личности.&lt;/p&gt;</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6416,10 +6394,6 @@ before you can comment</source>
         <translation>Загрузить Логотип Группы</translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation>Создать форум</translation>
-    </message>
-    <message>
         <source>Submit Group Changes</source>
         <translation>Отправить Изменения Группы</translation>
     </message>
@@ -6434,6 +6408,50 @@ before you can comment</source>
     <message>
         <source>Owner:</source>
         <translation>Владелец:</translation>
+    </message>
+    <message>
+        <source>Set a descriptive description here</source>
+        <translation>Укажите здесь осмысленное описание</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation>Сведения</translation>
+    </message>
+    <message>
+        <source>Comments allowed</source>
+        <translation>Комментарии разрешены</translation>
+    </message>
+    <message>
+        <source>Comments not allowed</source>
+        <translation>Комментарии не разрешены</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Последнее сообщение</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation>Популярность</translation>
+    </message>
+    <message>
+        <source>Posts</source>
+        <translation>Сообщения</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Тип</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Автор</translation>
+    </message>
+    <message>
+        <source>GxsIdLabel</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6475,10 +6493,6 @@ before you can comment</source>
         <translation>Редактировать Подробности</translation>
     </message>
     <message>
-        <source>Share</source>
-        <translation>Предоставить общий доступ</translation>
-    </message>
-    <message>
         <source>Copy RetroShare Link</source>
         <translation>Скопировать ссылку RetroShare</translation>
     </message>
@@ -6493,6 +6507,10 @@ before you can comment</source>
     <message>
         <source>AUTHD</source>
         <translation>Требуется подпись</translation>
+    </message>
+    <message>
+        <source>Share admin permissions</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6521,20 +6539,8 @@ before you can comment</source>
         <translation>Без подписи</translation>
     </message>
     <message>
-        <source>Identity name</source>
-        <translation>Псевдоним</translation>
-    </message>
-    <message>
-        <source>Identity Id</source>
-        <translation>ID личности</translation>
-    </message>
-    <message>
         <source>Authentication</source>
         <translation>Аутентификация</translation>
-    </message>
-    <message>
-        <source>signed by</source>
-        <translation>подписано</translation>
     </message>
     <message>
         <source>unknown Key</source>
@@ -6543,6 +6549,22 @@ before you can comment</source>
     <message>
         <source>anonymous</source>
         <translation>анонимный</translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;name</source>
+        <translation>Имя&amp;nbsp;личности</translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;Id</source>
+        <translation>ID&amp;nbsp;личности</translation>
+    </message>
+    <message>
+        <source>Signed&amp;nbsp;by</source>
+        <translation>Подписано</translation>
+    </message>
+    <message>
+        <source>[Unknown]</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6831,11 +6853,127 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>IdDialog</name>
+    <name>IdDetailsDialog</name>
     <message>
-        <source>Identities</source>
-        <translation>Личности</translation>
+        <source>Person Details</source>
+        <translation>Сведения о личности</translation>
     </message>
+    <message>
+        <source>Identity Info</source>
+        <translation>Информация о личности</translation>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation>ID владельца узла</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Тип:</translation>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation>Имя владельца узла</translation>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation>Псевдоним</translation>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation>ID личности</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>Ваш аватар</translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Репутация</translation>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation>Общая</translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation>Неявные</translation>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation>Мнение</translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation>Пиры</translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation>Редактировать репутацию</translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation>Мнение о настройке</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Подтвердить (+100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Положительный (+10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Отрицательный (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Бан (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Пользовательские</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Изменить</translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Неизвестное имя</translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation>Анонимный идентификатор</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation>Личность закреплена за Вами и привязана к Вашему узлу RetroShare</translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation>Анонимная личность, закреплённая за Вами</translation>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation>Владелец из круга доверенных</translation>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation>Владелец из ближнего окружения; 2 скачка</translation>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation>Закреплён за неизвестным узлом RetroShare</translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation>Анонимная личность</translation>
+    </message>
+</context>
+<context>
+    <name>IdDialog</name>
     <message>
         <source>New ID</source>
         <translation>Новый идентификатор</translation>
@@ -6977,14 +7115,6 @@ p, li { white-space: pre-wrap; }
         <translation>Владеете Вы</translation>
     </message>
     <message>
-        <source>Owned by neighbor nodes</source>
-        <translation>Владелец из доверенных</translation>
-    </message>
-    <message>
-        <source>Owned by distant nodes</source>
-        <translation>Владелец удалённый узел</translation>
-    </message>
-    <message>
         <source>Anonymous</source>
         <translation>Аноним</translation>
     </message>
@@ -7013,40 +7143,109 @@ p, li { white-space: pre-wrap; }
         <translation>Анонимная личность, закреплённая за Вами</translation>
     </message>
     <message>
-        <source>Owned by a friend Retroshare node</source>
-        <translation>Владелец из круга доверенных</translation>
-    </message>
-    <message>
-        <source>Owned by 2-hops Retroshare node</source>
-        <translation>Владелец из ближнего окружения; 2 скачка</translation>
-    </message>
-    <message>
-        <source>Owned by unknown Retroshare node</source>
-        <translation>Закреплён за неизвестным узлом RetroShare</translation>
-    </message>
-    <message>
         <source>Anonymous identity</source>
         <translation>Анонимная личность</translation>
-    </message>
-    <message>
-        <source>Do you really want to delete this Identity?</source>
-        <translation>Вы действительно хотите удалить эту личность?</translation>
-    </message>
-    <message>
-        <source>Chat with this peer as...</source>
-        <translation>Общаться с этим участником от имени...</translation>
     </message>
     <message>
         <source>Distant chat cannot work</source>
         <translation>Удалённый чат не может работать</translation>
     </message>
     <message>
-        <source>Distant chat refused with this peer.</source>
-        <translation>В удалённом чате с этим пользователем отказано.</translation>
-    </message>
-    <message>
         <source>Error code</source>
         <translation>Код ошибки</translation>
+    </message>
+    <message>
+        <source>People</source>
+        <translation>Участники</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>Ваш аватар</translation>
+    </message>
+    <message>
+        <source>Linked to your node</source>
+        <translation>Привязан к вашему узлу</translation>
+    </message>
+    <message>
+        <source>Linked to neighbor nodes</source>
+        <translation>Привязан к вашему доверенному</translation>
+    </message>
+    <message>
+        <source>Linked to distant nodes</source>
+        <translation>Привязан к удалённому узлу</translation>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Показать</translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation>Столбец</translation>
+    </message>
+    <message>
+        <source>Linked to a friend Retroshare node</source>
+        <translation>Привязан к вашему доверенному узлу</translation>
+    </message>
+    <message>
+        <source>Linked to a known Retroshare node</source>
+        <translation>Привязан к известному узлу</translation>
+    </message>
+    <message>
+        <source>Linked to unknown Retroshare node</source>
+        <translation>Привязан к неизвестному узлу</translation>
+    </message>
+    <message>
+        <source>Chat with this person</source>
+        <translation>Начать чат</translation>
+    </message>
+    <message>
+        <source>Chat with this person as...</source>
+        <translation>Инициировать чат с этим человеком от имени...</translation>
+    </message>
+    <message>
+        <source>Send message to this person</source>
+        <translation>Послать сообщение этому человеку</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Столбцы</translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this person.</source>
+        <translation>В удалённом чате с этим человеком отказано</translation>
+    </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Послать сообщение</translation>
+    </message>
+    <message>
+        <source>Last used:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node Id  : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+50 Known PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+10 UnKnown PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+5 Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to delete this identity?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7070,10 +7269,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PGP Id</source>
         <translation>PGP Id</translation>
-    </message>
-    <message>
-        <source>PGP Associated ID</source>
-        <translation>Связанный Идентификатор PGP </translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -7130,6 +7325,23 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add</source>
         <translation>Добавить</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>Ваш аватар</translation>
+    </message>
+    <message>
+        <source>Set Avatar</source>
+        <translation>Установить аватар</translation>
+    </message>
+    <message>
+        <source>Linked to your profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7427,6 +7639,10 @@ RetroShare безопасно приостановит доступ диска �
         <source>Statistics</source>
         <translation>Статистика функционирования</translation>
     </message>
+    <message>
+        <source>Show web interface</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessageComposer</name>
@@ -7621,10 +7837,6 @@ RetroShare безопасно приостановит доступ диска �
     <message>
         <source>This friend is suggested by</source>
         <translation>Этого друга вам порекомендовал</translation>
-    </message>
-    <message>
-        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Спасибо, &lt;br&gt; Команде RetroShare</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
@@ -7847,28 +8059,52 @@ Do you want to save message ?</source>
         <translation>Добавить файл</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Криптографическая подпись сообщения для удаленных пиров. Это предотвращает промежуточных пиров от подмены вашей личности.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Show:</source>
+        <translation>Показать:</translation>
     </message>
     <message>
-        <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation>Удаленный пир (имя: %2, ключ PGP: %1)</translation>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Показывать только друзей</translation>
+        <source>From:</source>
+        <translation>Из:</translation>
     </message>
     <message>
-        <source>Respond to:</source>
-        <translation>Реагировать на:</translation>
+        <source>All</source>
+        <translation>Все</translation>
     </message>
     <message>
-        <source>Cannot send distant messages</source>
-        <translation>Отправлять удалённые сообщения невозможно</translation>
+        <source>Friend Nodes</source>
+        <translation>Узлы доверенного участника</translation>
     </message>
     <message>
-        <source>In order to send distant messages, you need an identity to sign with. Please go to the Identities tab and create one first.</source>
-        <translation>Удалённые сообщения должны быть подписаны. Пожалуйста, откройте вкладку «Личности» и создайте хотя бы одну.</translation>
+        <source>Person Details</source>
+        <translation>Сведения о личности</translation>
+    </message>
+    <message>
+        <source>Distant peer identities</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant identity:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Missing]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name &amp; id:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8045,34 +8281,6 @@ Do you want to save message ?</source>
     <message>
         <source>Load images always for this message</source>
         <translation>Загружать изображения всегда для этого сообщения</translation>
-    </message>
-    <message>
-        <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation>Это сообщение зашифровано. Нажмите правую кнопку для его расшифровки.</translation>
-    </message>
-    <message>
-        <source>Decrypt</source>
-        <translation>Расшифровать</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Шифрованное сообщение</translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation>Расшифровка не удалась!</translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Это сообщение не зашифровано. Не удается расшифровать!</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Это сообщение не может быть расшифровано.</translation>
-    </message>
-    <message>
-        <source>Unknown (needs decryption)</source>
-        <translation>Неизвестный (требуется расшифровка)</translation>
     </message>
     <message>
         <source>Hide the attachment pane</source>
@@ -8473,24 +8681,12 @@ Do you want to save message ?</source>
         <translation>Всего:</translation>
     </message>
     <message>
-        <source>Decrypt Message</source>
-        <translation>Расшифровать Сообщение</translation>
-    </message>
-    <message>
-        <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Зашифрованное сообщение. Щелкните правой кнопкой мыши для его расшифровки.</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Почта</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
         <translation>Щелкните, чтобы отсортировать по подписи</translation>
-    </message>
-    <message>
-        <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Это сообщение шифруется. Щелкните правой кнопкой мыши, чтобы расшифровать его.</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
@@ -8501,12 +8697,12 @@ Do you want to save message ?</source>
         <translation>Это сообщение было подписано, но подпись не была проверена  </translation>
     </message>
     <message>
-        <source>This message has been successfully decrypted, and is unsigned.</source>
-        <translation>Это сообщение было успешно расшифровывано и неподписанно.</translation>
+        <source>This message comes from a distant person.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friends nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Почта&lt;/h1&gt; &lt;p&gt;RetroShare имеет собственный почтовый сервис. Вы имеете возможность отсылать/получать письма в пределах доверенного окружения.&lt;/p&gt; &lt;p&gt;Благодаря глобальной системе маршрутизации данных, возможна рассылка писем другим участникам сети. Эти сообщения ⇥всегда подвергаются шифрованию и передаются адресату через промежуточные узлы сети. &lt;/p&gt;⇥&lt;p&gt;Для надёжной идентификации отправителя рекомендуется криптографически подписывать сообщения, используя ⇥the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; кнопку ⇥в редакторе сообщений. Сообщения удалённым пользователям остаются в папке «Исходящие» до тех пор, пока не будет получено подтверждение в получении.&lt;/p&gt; &lt;p&gt;Почтовый сервис RetroShare может быть использован для передачи ссылок на файлы или рекомендаций по включению в круг доверенных, что укрепит Вашу сеть, а также для откликов на объявления в каналах.&lt;/p&gt;</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8581,10 +8777,6 @@ Do you want to save message ?</source>
         <source>Hide</source>
         <translation>Спрятать</translation>
     </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Шифрованное сообщение</translation>
-    </message>
 </context>
 <context>
     <name>NATStatus</name>
@@ -8606,7 +8798,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>DHT Disabled and Firewalled</source>
-        <translation>DHT отключена и блокируется сетевым экраном</translation>
+        <translation>DHT отключена и блокируется межсетевым экраном</translation>
     </message>
     <message>
         <source>Network Restarting</source>
@@ -8618,7 +8810,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation>DHT отключено</translation>
+        <translation>DHT отключена</translation>
     </message>
     <message>
         <source>RetroShare Server</source>
@@ -8728,24 +8920,12 @@ Do you want to save message ?</source>
         <translation>Создать новый профиль</translation>
     </message>
     <message>
-        <source>Search Name</source>
-        <translation>Поиск имени</translation>
-    </message>
-    <message>
         <source>Peer ID</source>
         <translation>ID пира</translation>
     </message>
     <message>
-        <source>Search Peer ID</source>
-        <translation>Поиск Идентификатора Пира</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Отказать в дружбе</translation>
-    </message>
-    <message>
-        <source>Make friend</source>
-        <translation>Сделать другом</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -8864,32 +9044,56 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation>Несоответствие данных в хранилище ключей. Наиболее вероятно, это ошибка. Пожалуйста, свяжитесь с разработчиками.</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Показывать только друзей</translation>
+        <source>Export/create a new node</source>
+        <translation>Экспортировать/создать новый узел</translation>
     </message>
     <message>
-        <source> If I accept connection from peer</source>
-        <translation> Если я принимаю соединение от пира</translation>
+        <source>Trusted keys only</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Name of peer</source>
-        <translation>Имя пира</translation>
+        <source>Trust level</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Did peer sign mine PGP key</source>
-        <translation>Пир подписал мой PGP ключ?</translation>
+        <source> Do you accept connections signed by this key?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Peer&apos;s Certificat ID</source>
-        <translation>Идентификатор Сертификата Пира</translation>
+        <source>Name of the key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Since when I use this Certificat</source>
-        <translation>С момента когда я использую этот Сертификат</translation>
+        <source>Certificat ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Export/create a new location</source>
-        <translation>Экспортировать/создать новое местоположение</translation>
+        <source>Make friend...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did peer authenticate you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This column indicates trust level and whether you signed their PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did that peer sign your PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Since when I use this certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search peer ID</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8967,6 +9171,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>News feed</source>
         <translation>Новостная лента</translation>
     </message>
+    <message>
+        <source>Newest on top</source>
+        <translation>Новые наверху</translation>
+    </message>
+    <message>
+        <source>Oldest on top</source>
+        <translation>Старые наверху</translation>
+    </message>
 </context>
 <context>
     <name>NotifyPage</name>
@@ -8997,10 +9209,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <source>Security</source>
         <translation>Безопасность</translation>
-    </message>
-    <message>
-        <source>Add feeds at end</source>
-        <translation>Добавлять сообщения в конец</translation>
     </message>
     <message>
         <source>Test</source>
@@ -9108,11 +9316,35 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Posted</source>
-        <translation>Опубликовано</translation>
+        <translation>Публикации</translation>
     </message>
     <message>
         <source>Disable All Toaster temporarily</source>
         <translation>Временно отключить все всплывающие уведомления</translation>
+    </message>
+    <message>
+        <source>Feed</source>
+        <translation>Канал</translation>
+    </message>
+    <message>
+        <source>Systray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Чаты</translation>
+    </message>
+    <message>
+        <source>Count all unread messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of any of the following texts (separate by newlines):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of my current identity</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9227,6 +9459,171 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
 </context>
 <context>
+    <name>PGPKeyDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Key info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fingerprint :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Trust level:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unset</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Неизвестно</translation>
+    </message>
+    <message>
+        <source>No trust</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation>Предельный</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Полностью</translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation>Окончательный</translation>
+    </message>
+    <message>
+        <source>Key signatures :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Подписание ключа друга – это способ, с помощью которого вы выражаете другим пользователям сети доверие этому человеку. Кроме того, только подписанные вами участники будут получать информацию о вашем доверенном окружении.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Подписание чужого ключа не может быть отменено, поэтому отнеситесь к процедуре со всей серьёзностью.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign this PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation>Подписать PGP ключ</translation>
+    </message>
+    <message>
+        <source>Deny connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ASCII format</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Вставить подписи</translation>
+    </message>
+    <message>
+        <source>PGP Key details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation>Ошибка: не могу получить совокупность деталей.</translation>
+    </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation>Предоставленный алгоритм ключа не поддерживается RetroShare 
+(на данный момент поддерживаются только RSA ключей)</translation>
+    </message>
+    <message>
+        <source>This is your own PGP key, and it is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation>Ваше доверие к этой совокупности является полным.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation>Ваше доверие к этой совокупности является маргинальной.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation>Ваше доверие к этой совокупности нет.</translation>
+    </message>
+    <message>
+        <source>This key has signed your own PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This PGP key (ID=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have chosen to accept connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are currently not allowing connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation>Ошибка в подписи</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation>Может быть, неправильный пароль</translation>
+    </message>
+    <message>
+        <source>You haven&apos;t set a trust level for this key.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
@@ -9335,7 +9732,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PeopleDialog</name>
     <message>
         <source>People</source>
-        <translation>Люди</translation>
+        <translation>Участники</translation>
     </message>
     <message>
         <source>External</source>
@@ -9800,10 +10197,6 @@ malicious behavior of crafted plugins.</source>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <source>Distant chat terminated</source>
-        <translation>Удаленный чат завершен</translation>
-    </message>
-    <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation>Личность, с которой вы разговариваете, удалила безопасный тоннель чата. Теперь вы можете удалить окно чата.</translation>
     </message>
@@ -9814,6 +10207,18 @@ malicious behavior of crafted plugins.</source>
     <message>
         <source>Kill the tunnel?</source>
         <translation>Удалить тоннель?</translation>
+    </message>
+    <message>
+        <source>Hash Error. No tunnel.</source>
+        <translation>Ошибка хэша. Туннель не создан</translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because there is no tunnel.</source>
+        <translation>Отправить сообщение невозможно, так как не проложен туннель.</translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
+        <translation>Отправить сообщение невозможно, так как контрагент удалил защищённый туннель.</translation>
     </message>
 </context>
 <context>
@@ -9871,11 +10276,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Posted</source>
-        <translation>Опубликовано</translation>
-    </message>
-    <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt; 	 &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Новости&lt;/h1&gt; &lt;p&gt;Сервис «Новости» даёт Вам возможность поделиться с окружением полезными ссылками, информация о которых будет распространяться по сети как форумы ⇥ каналы&lt;/p&gt; ⇥ &lt;p&gt;Ссылки могут комментироваться подписчиками. Система продвижения сообщений даёт возможность ⇥ информировать о важных ссылках.&lt;/p&gt; ⇥ &lt;p&gt;Ограничения на тип и характер публикуемых ссылок отсутствует; будьте осторожны при переходах по ним.&lt;/p&gt;</translation>
+        <translation>Публикации</translation>
     </message>
     <message>
         <source>Create Topic</source>
@@ -9896,6 +10297,10 @@ malicious behavior of crafted plugins.</source>
     <message>
         <source>Other Topics</source>
         <translation>Другие темы</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9921,19 +10326,19 @@ malicious behavior of crafted plugins.</source>
         <translation>Изменить тему</translation>
     </message>
     <message>
-        <source>Create Topic</source>
-        <translation>Создать тему</translation>
-    </message>
-    <message>
         <source>Update Topic</source>
         <translation>Обновить тему</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Создать</translation>
     </message>
 </context>
 <context>
     <name>PostedGroupItem</name>
     <message>
         <source>Subscribe to Posted</source>
-        <translation>Подписаться на Новости</translation>
+        <translation>Подписаться на Публикации</translation>
     </message>
     <message>
         <source>Expand</source>
@@ -9945,7 +10350,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Posted Description</source>
-        <translation>Описание канала новостей</translation>
+        <translation>Описание канала публикаций</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -9953,7 +10358,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>New Posted</source>
-        <translation>Свежая новость</translation>
+        <translation>Свежая публикация</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -9965,10 +10370,6 @@ malicious behavior of crafted plugins.</source>
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>От</translation>
     </message>
     <message>
         <source>Site</source>
@@ -9995,10 +10396,6 @@ malicious behavior of crafted plugins.</source>
         <translation>\/</translation>
     </message>
     <message>
-        <source>Submitted</source>
-        <translation>Представленный</translation>
-    </message>
-    <message>
         <source>Set as read and remove item</source>
         <translation>Установить как чтение и удаление элемента</translation>
     </message>
@@ -10017,6 +10414,10 @@ malicious behavior of crafted plugins.</source>
     <message>
         <source>Loading</source>
         <translation>Загрузка</translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation>По</translation>
     </message>
 </context>
 <context>
@@ -10062,20 +10463,8 @@ malicious behavior of crafted plugins.</source>
         <translation>Отправить новое сообщение</translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
-        <translation>Показаны 1-100</translation>
-    </message>
-    <message>
-        <source>Prev</source>
-        <translation>Предыдущий</translation>
-    </message>
-    <message>
         <source>Next</source>
         <translation>Следующий</translation>
-    </message>
-    <message>
-        <source>Showing</source>
-        <translation>Показаны</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -10084,6 +10473,14 @@ malicious behavior of crafted plugins.</source>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
         <translation>Пожалуйста, создайте или выберите ID подписанта до голосования</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>Предыдущий</translation>
+    </message>
+    <message>
+        <source>1-10</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10094,7 +10491,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Posted</source>
-        <translation>Новости</translation>
+        <translation>Публикации</translation>
     </message>
     <message>
         <source>Open each topic in a new tab</source>
@@ -10105,7 +10502,7 @@ malicious behavior of crafted plugins.</source>
     <name>PostedUserNotify</name>
     <message>
         <source>Posted</source>
-        <translation>Опубликовано</translation>
+        <translation>Публикации</translation>
     </message>
 </context>
 <context>
@@ -10210,10 +10607,6 @@ and use the import button to load it</source>
         <translation>Ваша личность было импортирована успешно:</translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Теперь вы можете использовать это для создания нового расположения</translation>
-    </message>
-    <message>
         <source>Select Trusted Friend</source>
         <translation>Выбрать доверенного друга</translation>
     </message>
@@ -10248,6 +10641,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Export selected key</source>
         <translation>Экспортировать выбранный ключ</translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation>Теперь вы можете создать новый узел.</translation>
     </message>
 </context>
 <context>
@@ -10426,14 +10823,6 @@ and open the Make Friend Wizard.
         <translation>Добавить файлы</translation>
     </message>
     <message>
-        <source>Add friend</source>
-        <translation>Добавить друга</translation>
-    </message>
-    <message>
-        <source>Add friends</source>
-        <translation>Добавить друзей</translation>
-    </message>
-    <message>
         <source>Do you want to process the link ?</source>
         <translation>Вы хотите обработать ссылку?</translation>
     </message>
@@ -10597,14 +10986,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation>Указанное ниже не добавлено в ваш список закачек, так как эти файлы у вас уже имеются: </translation>
     </message>
     <message>
-        <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Ваше отображение места привязано к DSA ключам:</translation>
-    </message>
-    <message>
-        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>DSA ключи не поддерживаются в этой версии RetroShare. Все эти места будет непригодными для использования. Мы очень извиняемся за это.</translation>
-    </message>
-    <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>Эта версия RetroShare использует OpenPGP-SDK. В качестве побочного эффекта, она не использует системное публичное PGP хранилище, но имеет свое собственное хранилище, которое используется всеми экземплярами RetroShare. &lt;br&gt;&lt;br&gt;Похоже что Вы, не имеете такое хранилище, хотя ключи PGP упоминаются учетными записями RetroShare, вероятно, потому, что вы только что обновились до этой новой версии программного обеспечения.</translation>
     </message>
@@ -10660,10 +11041,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation>Запуск ссылкой RetroShare поддерживается только на ОС Windows.</translation>
     </message>
     <message>
-        <source>Hash error</source>
-        <translation>Ошибки хеша</translation>
-    </message>
-    <message>
         <source>Distant peer has closed the chat</source>
         <translation>Удаленный пир закрыл чат</translation>
     </message>
@@ -10711,7 +11088,7 @@ Reported error is:
     </message>
     <message>
         <source>RetroShare Certificate (%1, @%2)</source>
-        <translation>Сертификат RetroShare (%1, @%2)</translation>
+        <translation>RetroShare Certificate (%1, @%2)</translation>
     </message>
     <message>
         <source>secs</source>
@@ -10736,6 +11113,70 @@ Reported error is:
     <message>
         <source>Data forward</source>
         <translation>Транзитный трафик</translation>
+    </message>
+    <message>
+        <source>You appear to have nodes associated to DSA keys:</source>
+        <translation>Похоже, у вас имеются узлы, привязанные к DSA-ключам:</translation>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
+        <translation>К сожалению, на данный момент DSA-ключи не поддерживаются криптоплатформой RetroShare. Все эти узлы не будут задействованы.</translation>
+    </message>
+    <message>
+        <source>Auto Subscribe: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Join chat lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move IP %1 to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 seconds ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minute ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minutes ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hour ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hours ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 day ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation>%1 дней назад</translation>
     </message>
 </context>
 <context>
@@ -10978,6 +11419,49 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RSPermissionMatrixWidget</name>
+    <message>
+        <source>Service name: </source>
+        <translation>Имя сервиса:</translation>
+    </message>
+    <message>
+        <source>Allowed by default</source>
+        <translation>Разрешено по умолчанию</translation>
+    </message>
+    <message>
+        <source>Denied by default</source>
+        <translation>Запрещено по умолчанию</translation>
+    </message>
+    <message>
+        <source>Peer name: </source>
+        <translation>Имя участника:</translation>
+    </message>
+    <message>
+        <source>Peer Id: </source>
+        <translation>Id участника</translation>
+    </message>
+    <message>
+        <source>Enabled for this peer</source>
+        <translation>Включено для этого участника</translation>
+    </message>
+    <message>
+        <source>Disabled for this peer</source>
+        <translation>Отключено для этого участника</translation>
+    </message>
+    <message>
+        <source>Enabled by remote peer</source>
+        <translation>Разрешено удалённым узлом</translation>
+    </message>
+    <message>
+        <source>Disabled by remote peer</source>
+        <translation>Запрещено удалённым узлом</translation>
+    </message>
+    <message>
+        <source>Switched Off</source>
+        <translation>Отключено</translation>
+    </message>
+</context>
+<context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -11090,6 +11574,56 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>NEW</source>
         <translation>НОВЫЙ</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListDefs</name>
+    <message>
+        <source>IP address not checked</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is blacklisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is not whitelisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address accepted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Неизвестно</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListToolButton</name>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Entire range</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11312,6 +11846,13 @@ Reducing image to %1x%2 pixels?</source>
     </message>
 </context>
 <context>
+    <name>RsNetUtil</name>
+    <message>
+        <source>Invalid format</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>Rshare</name>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
@@ -11368,6 +11909,10 @@ Reducing image to %1x%2 pixels?</source>
     <message>
         <source>Could not create data directory: %1</source>
         <translation>Не удалось создать каталог данных: %1</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11621,6 +12166,65 @@ Reducing image to %1x%2 pixels?</source>
     </message>
 </context>
 <context>
+    <name>SecurityIpItem</name>
+    <message>
+        <source>Peer details</source>
+        <translation>Сведения об участнике</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Раскрыть</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Удалить объект</translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation>ID пира:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Расположение:</translation>
+    </message>
+    <message>
+        <source>Peer Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation>Неизвестный пир</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Скрыть</translation>
+    </message>
+    <message>
+        <source>but reported:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong external ip address reported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address %1 was added to the whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the external IP your Retroshare node thinks it is using.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>SecurityItem</name>
     <message>
         <source>wants to be friend with you on RetroShare</source>
@@ -11735,12 +12339,8 @@ Reducing image to %1x%2 pixels?</source>
         <translation>Сертификат вызвал внутреннюю ошибку.</translation>
     </message>
     <message>
-        <source>Peer/location not in friendlist (PGP id=</source>
-        <translation>Пир/расположение не в списке друзей (PGP id =</translation>
-    </message>
-    <message>
-        <source>Send Message</source>
-        <translation>Послать сообщение</translation>
+        <source>Peer/node not in friendlist (PGP id=</source>
+        <translation>Участник/узел не в списке доверенных (PGP Id=</translation>
     </message>
 </context>
 <context>
@@ -11760,18 +12360,6 @@ Reducing image to %1x%2 pixels?</source>
     <message>
         <source>Manually Forwarded Port</source>
         <translation>Ручное назначение порта</translation>
-    </message>
-    <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and PGP 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>DHT позволяет находить друзей через сеть BitTorrent DHT и значительно упрощает возможность соединения. Сервис обнаружения посылает информацию о местоположении и идентификаторы ваших друзей всем подключенным пирам, чтобы помочь в поиске друзей. Найденые контакты не становятся автоматически друзьями, обе стороны должны добавить друг друга вручную чтобы иметь возможность соединиться.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
@@ -11837,71 +12425,8 @@ behind a firewall or a VPN.</source>
         <translation>Разрешить RetroShare спрашивать мой IP-адрес у этих сайтов:</translation>
     </message>
     <message>
-        <source>Bandwidth</source>
-        <translation>Ширина канала</translation>
-    </message>
-    <message>
-        <source>Max Transfer Rates</source>
-        <translation> Максимальная Скорость Передачи.</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>кБ/с</translation>
-    </message>
-    <message>
-        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Если вы снимите этот флажок, RetroShare не будет использовать туннель для связи между коллегами, которые находятся за брандмауэром и к которым нельзя подключиться напрямую. Это зависит от маршрутизации F2F (маршрутизатор черепаха).</translation>
-    </message>
-    <message>
-        <source>Allow Tunnel Connection</source>
-        <translation>Разрешить туннелирование</translation>
-    </message>
-    <message>
-        <source>Turtle router</source>
-        <translation>Маршрутизатор Turtle</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Снятие галочки отключает всю анонимную активность маршрутизации, кроме очистки кэша. Входящие туннельные запросы отбрасываются, и никакие туннельные запросы не посылаются никому.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Enabled</source>
-        <translation>Включено</translation>
-    </message>
-    <message>
-        <source>Max. tunnel req. forwarded per second:</source>
-        <translation>Макс. туннельных запросов переданных в секунду:</translation>
-    </message>
-    <message>
-        <source>This value controls how many tunnel request your peer can forward per second. 
-
-If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statistically longer tunnels to pass. Be very careful though, since this generates 
-many small packets that can significantly slow down your own file transfer. 
-
-The default value is 20.</source>
-        <translation>Это значение определяет как много туннелей в секунду можно создавать. 
-
-Если у вас быстрое подключение к сети, вы можете повысить это значение до 30-40,
-Учтите, что это создает много мелких пакетов, и может сильно замедлить передачу файлов
-
-Значение по умолчанию - 20.</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Сервер</translation>
-    </message>
-    <message>
-        <source>Download (KB/s) </source>
-        <translation>Загрузка (КБ/с)</translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation>Отдача (КБ/с)</translation>
-    </message>
-    <message>
-        <source>Hidden Node</source>
-        <translation>Скрытый Узел</translation>
     </message>
     <message>
         <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
@@ -11924,10 +12449,6 @@ The default value is 20.</source>
         <translation>Тор Socks прокси</translation>
     </message>
     <message>
-        <source>Outgoing Okay</source>
-        <translation>Исходящие ОК</translation>
-    </message>
-    <message>
         <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
 
 You can connect to Hidden Nodes, even if you 
@@ -11939,10 +12460,6 @@ are running a standard Node, so why not setup TOR? </source>
     <message>
         <source>Incoming TOR Connections</source>
         <translation>Входящие Соединения TOR</translation>
-    </message>
-    <message>
-        <source>Incoming Okay</source>
-        <translation>Входящие ОК</translation>
     </message>
     <message>
         <source>Onion Address</source>
@@ -11989,20 +12506,202 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation>Скрытые - см Конфигурацию TOR</translation>
     </message>
     <message>
-        <source>TOR proxy is working correctly</source>
-        <translation>Tor работает должным образом</translation>
-    </message>
-    <message>
-        <source>TOR status unknown</source>
-        <translation>Состояние сети Tor неизвестно</translation>
-    </message>
-    <message>
         <source>Proxy seems to work.</source>
         <translation>Прокси функционирует.</translation>
     </message>
     <message>
         <source>TOR proxy is not enabled</source>
         <translation>Tor-прокси не включён</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Hidden mode]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Очистить</translation>
+    </message>
+    <message>
+        <source>Download limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Upload limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR outgoing Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>Тест</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR incoming  ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are reachable through TOR.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled or broken.
+Are you running a TOR hidden service?
+Check your ports!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Сеть</translation>
+    </message>
+    <message>
+        <source>IP Filters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Статус</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Комментарий</translation>
+    </message>
+    <message>
+        <source>  IPs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Manual input</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP Range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reported by DHT for IP masquerading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Range made from %1 collected addresses</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить эту позицию</translation>
+    </message>
+    <message>
+        <source>Added by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>activate IP filtering</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every  IP reported by your friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends&apos; IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every masquerading IP reported by your DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12012,24 +12711,20 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation>Разрешения</translation>
     </message>
     <message>
-        <source>Anonymous routing</source>
-        <translation>Анонимные туннели</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Обнаружение</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Форумы и каналы</translation>
-    </message>
-    <message>
         <source>Service Permissions</source>
         <translation>Разрешения</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
         <translation>Прямой источник</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12043,72 +12738,18 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation>Сброс</translation>
     </message>
     <message>
-        <source>Chat</source>
-        <translation>Чат</translation>
-    </message>
-    <message>
-        <source>Row2</source>
-        <translation>Стр2</translation>
-    </message>
-    <message>
-        <source>Shares</source>
-        <translation>Общие</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation>Каналы</translation>
-    </message>
-    <message>
-        <source>Default</source>
-        <translation>По умолчанию</translation>
-    </message>
-    <message>
-        <source>Joe</source>
-        <translation>Joe</translation>
-    </message>
-    <message>
-        <source>Sally</source>
-        <translation>Sally</translation>
-    </message>
-    <message>
-        <source>Anne</source>
-        <translation>Anne</translation>
-    </message>
-    <message>
-        <source>Jacki</source>
-        <translation>Jacki</translation>
-    </message>
-    <message>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;		   &lt;p&gt;Permissions allow you to control which services are available to which friends &lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Разрешения&lt;/h1&gt;		   &lt;p&gt;Права доступа позволяют вам контролировать, какие службы доступны для друзей &lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>Нет</translation>
-    </message>
-    <message>
-        <source>Other Service</source>
-        <translation>Другие Службы</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation>Да</translation>
-    </message>
-    <message>
-        <source>Incompatible</source>
-        <translation>Несовместимые</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>Недоступен</translation>
-    </message>
-    <message>
         <source>Permissions</source>
         <translation>Разрешения</translation>
     </message>
     <message>
-        <source>Permission changes are not saved permanently. (TODO)</source>
-        <translation>Изменения прав доступа не сохраняются постоянно. (TODO)</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt; &lt;p&gt;Настройки прав допуска позволяют указать, какой набор сервисов будет доступен тому или иному доверенному узлу.&lt;/p&gt; &lt;p&gt;Каждый элемент управления содержит две лампочки, показывая тем самым, разрешил ли удалённый узел вам и разрешили ли вы удалённому узлу пользоваться данным сервисом. Сервис взаимно активирован, если обе лампочки горят (выглядит так: &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) для данного кокретного сервиса/узла.&lt;/p&gt; &lt;p&gt; Глобальный выключатель &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt; позволяет включить/отключить тот или иной сервис для всех доверенных участников одновременно.&lt;/p&gt; &lt;p&gt;Будьте осторожны! Некоторые сервисы взаимосвязаны и взаимозависимы. Например, отключение сервиса маршрутизации Turtle приведёт к прекращению анонимного файлообмена, функционирования удалённых чатов, а также заблокирует отправку сообщений удалённым участникам.&lt;/p&gt;
+
+</translation>
+    </message>
+    <message>
+        <source>hide offline</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12369,6 +13010,41 @@ Select the Friends with which you want to Share your Channel.</source>
     </message>
 </context>
 <context>
+    <name>SoundManager</name>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Go Online</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatmessage</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Msg</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message arrived</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download complete</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>SoundPage</name>
     <message>
         <source>Event:</source>
@@ -12391,38 +13067,6 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation>Имя файла</translation>
     </message>
     <message>
-        <source>Friend</source>
-        <translation>Друг</translation>
-    </message>
-    <message>
-        <source>go Online</source>
-        <translation>Выйти в Сеть</translation>
-    </message>
-    <message>
-        <source>Chatmessage</source>
-        <translation>Сообщение в чате</translation>
-    </message>
-    <message>
-        <source>New Msg</source>
-        <translation>Новое сообщение</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Сообщение</translation>
-    </message>
-    <message>
-        <source>Message arrived</source>
-        <translation>Получено сообщение</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Скачать</translation>
-    </message>
-    <message>
-        <source>Download complete</source>
-        <translation>Загрузка завершена</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Открыть файл</translation>
     </message>
@@ -12430,16 +13074,20 @@ Select the Friends with which you want to Share your Channel.</source>
         <source>Sound</source>
         <translation>Звук</translation>
     </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
-        <source>Sound on</source>
-        <translation>Звук включён</translation>
+        <source>Sound is off, click to turn it on</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sound off</source>
-        <translation>Звук выключен</translation>
+        <source>Sound is on, click to turn it off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12486,14 +13134,6 @@ The current identities/locations will not be affected.</source>
         <translation>Открыть диалоговое окно для содания нового профиля или добавления местоположений к существующему профилю. Текущие личности / местоположения затронуты не будут.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Управление профилями и местоположениями...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation>Ошибка Загрузки Личности</translation>
     </message>
@@ -12506,40 +13146,52 @@ p, li { white-space: pre-wrap; }
         <translation>Предупреждение</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Управление профилями и узлами...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Пароль для вашего сертификата SSL (вашего местоположения) будет храниться шифрованным в Gnome Keyring . 
+        <translation>Пароль к вашему SSL-сертификату (вашему местоположению) будет сохранён в шифрованной форме в хранилище ключей среды Gnome.
 
- Ваш пароль PGP не будет сохраняться.
+Ваш PGP-пароль сохраняться не будет.
 
-Этот выбор может быть изменен в настройках.</translation>
+Этот подход может быть изменён в настройках клиента.</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Пароль для вашего сертификата SSL (вашего местоположения) будет храниться шифрованным в Кeychain.
+        <translation>Пароль к вашему SSL-сертификату (вашему местоположению) будет сохранён в шифрованной форме в хранилище ключей.
 
- Ваш пароль PGP не будет сохраняться.
+Ваш PGP-пароль сохраняться не будет.
 
-Этот выбор может быть изменен в настройках.</translation>
+Этот подход может быть изменён в настройках клиента.</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>Пароль для вашего сертификата SSL (вашего местоположения) будет храниться в зашифрованном виде в файле keys/help.dta. Это не безопасно. 
+        <translation>Пароль к вашему SSL-сертификату (вашему местоположению) будет сохранён в шифрованной форме в файле keys/help.dta. Это небезопасно.
 
-Ваш пароль PGP не будет сохраняться.
+Ваш PGP-пароль сохраняться не будет.
 
-Этот выбор может быть изменен в настройках.</translation>
+Этот подход может быть изменён в настройках клиента.</translation>
     </message>
 </context>
 <context>
@@ -12681,7 +13333,7 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation>Соединено: UDP</translation>
+        <translation>соединено: UDP</translation>
     </message>
     <message>
         <source>Connected: Unknown</source>
@@ -12694,6 +13346,30 @@ This choice can be reverted in settings.</source>
     <message>
         <source>Connected: TOR</source>
         <translation>соединение: Tor</translation>
+    </message>
+    <message>
+        <source>inbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>outbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TCP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unkown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12939,17 +13615,6 @@ p, li { white-space: pre-wrap; }
         <translation>Резерв свободного места на диске:</translation>
     </message>
     <message>
-        <source>You can use this to force RetroShare to download your files rather 
-than cache files for as many slots as requested. Setting that number 
-to be equal to the queue size above will always prioritize your files
-over cache. 
-
-It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Количество слотов для ваших файлов. Если поставить это значение равным общему лимиту слотов выше, приоритет передачи ваших файлов всегда будет выше чем у файлов кеша.
-
-Рекомендуется оставлять хотя бы несколько слотов для передачи кеша.</translation>
-    </message>
-    <message>
         <source>Streaming</source>
         <translation>Последовательно</translation>
     </message>
@@ -12978,8 +13643,28 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; способна передавать данные и поисковые запросы между участниками сети, не обязательно являющимися друзьями. Однако этот трафик передаётся только через подключённых друзей и является анонимным.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;В диалоговом окне раздач для каждой папки по отдельности вы можете установить свои флаги с целью обеспечения:&lt;/span&gt;&lt;/p&gt; &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;обзора папок друзьями&lt;/span&gt;: файлы в папках видимы только вашими друзьями.&lt;/li&gt; &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;анонимного доступа&lt;/span&gt;: файлы доступны анонимно через F2F-туннели.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Transfer</source>
-        <translation>Передача</translation>
+        <source>Max. tunnel req. forwarded per second:</source>
+        <translation>Макс. туннельных запросов переданных в секунду:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value controls how many tunnel request your peer can forward per second. &lt;/p&gt;&lt;p&gt;If you have a large internet bandwidth, you may raise this up to 30-40, to allow statistically longer tunnels to pass. Be very careful though, since this generates  many small packets that can significantly slow down your own file transfer. &lt;/p&gt;&lt;p&gt;The default value is 20. If you&apos;re not sure, keep it that way.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File transfer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;br/&gt;than cache files for as many slots as requested. Setting that number &lt;br/&gt;to be equal to the queue size above will always prioritize your files&lt;br/&gt;over cache. &lt;br/&gt;&lt;br/&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13095,10 +13780,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>My files</source>
         <translation>Мои файлы</translation>
-    </message>
-    <message>
-        <source>Show cache transfers</source>
-        <translation>Отображать передачи кеша</translation>
     </message>
     <message>
         <source>Download from collection file...</source>
@@ -13474,6 +14155,10 @@ Try to be patient!</source>
         <source>Anonymous tunnel 0x</source>
         <translation>Анонимный туннель 0x</translation>
     </message>
+    <message>
+        <source>Show file list transfers</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -13732,6 +14417,53 @@ Try to be patient!</source>
     <message>
         <source>Browse</source>
         <translation>Выбор файла</translation>
+    </message>
+</context>
+<context>
+    <name>WebuiPage</name>
+    <message>
+        <source>Form</source>
+        <translation>Форма</translation>
+    </message>
+    <message>
+        <source>Enable Retroshare WEB Interface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Web parameters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Port :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>allow access from all IP adresses (Default: localhost only)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>apply setting and start browser</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Note: these settings do not affect retroshare-nogui. retroshare-nogui has a command line switch to active the webinterface.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>failed to start Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14228,8 +14960,8 @@ Try to be patient!</source>
         <translation>Загрузить картинку для аватара</translation>
     </message>
     <message>
-        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Изображения (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <source>Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

@@ -34,12 +34,12 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="73"/>
         <source>If you press the PTT key twice in this time it will get locked.</source>
-        <translation>Wenn du die PTT-Taste (Sprech-Taste) zweimal innerhalb dieser Zeit drückst wird die Sprachübertragung dauerhaft aktiviert.</translation>
+        <translation>Wenn du die Sprechtaste (Push-to-Talk) zweimal innerhalb dieser Zeit anklickst, wird die Sprachübertragung dauerhaft aktiviert.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="76"/>
         <source>&lt;b&gt;DoublePush Time&lt;/b&gt;&lt;br /&gt;If you press the push-to-talk key twice during the configured interval of time it will be locked. RetroShare will keep transmitting until you hit the key once more to unlock PTT again.</source>
-        <translation>&lt;b&gt;Doppeldrück-Zeit&lt;/b&gt;&lt;br /&gt;Wenn du die PTT-Taste zweimal innerhalb der Doppeldrück-Zeit drückst wird die Sprachübertragung dauerhaft aktiviert. Diese wird beendet wenn du die Taste ein weiteres mal drückst.</translation>
+        <translation>&lt;b&gt;Doppeldrück-Zeit&lt;/b&gt;&lt;br /&gt;Wenn du die Sprechtaste (Push-to-Talk) zweimal innerhalb des eingestellten Zeitintervalls anklickst, wird die Sprachübertragung dauerhaft aktiviert. RetroShare überträgt solange Daten, bis du die Sprechtaste ein weiteres Mal anklickst.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="119"/>
@@ -70,7 +70,7 @@
         <location filename="../gui/AudioInputConfig.ui" line="158"/>
         <location filename="../gui/AudioInputConfig.ui" line="190"/>
         <source>&lt;b&gt;This sets the trigger values for voice detection.&lt;/b&gt;&lt;br /&gt;Use this together with the Audio Statistics window to manually tune the trigger values for detecting speech. Input values below &quot;Silence Below&quot; always count as silence. Values above &quot;Speech Above&quot; always count as voice. Values in between will count as voice if you&apos;re already talking, but will not trigger a new detection.</source>
-        <translation>&lt;b&gt;Dies setzt die Auslösewerte für die Spracherkennung.&lt;/b&gt;&lt;br /&gt;Zusammen mit dem Audiostatistik Fenster können die Auslösewerte für die Spracherkennung manuell eingestellt werden. Eingabewerte unter &quot;Stille bis&quot; zählen immer als Stille, Werte über &quot;Sprache über&quot; immer als Sprache. Werte dazwischen zählen als Sprache wenn schon gesprochen wird, lösen aber keine Erkennung (und damit Übertragung) aus.</translation>
+        <translation>&lt;b&gt;Dies legt die Auslösewerte für die Spracherkennung fest.&lt;/b&gt;&lt;br /&gt;Zusammen mit dem Audiostatistikfenster können die Auslösewerte für die Spracherkennung manuell eingestellt werden. Eingabewerte unter &quot;Stille bis&quot; zählen immer als Stille, Werte über &quot;Sprache über&quot; immer als Sprache. Werte dazwischen zählen als Sprache wenn schon gesprochen wird, lösen aber keine Erkennung (und damit Übertragung) aus.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="180"/>
@@ -143,7 +143,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="116"/>
         <source>Voice Activity</source>
-        <translation>Stimm-Aktivität</translation>
+        <translation>Stimmaktivität</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="117"/>
@@ -166,7 +166,7 @@
         <translation>-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="76"/>
+        <location filename="../gui/AudioInputConfig.h" line="75"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -176,44 +176,44 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="14"/>
         <source>Audio Statistics</source>
-        <translation>Audio-Statistiken</translation>
+        <translation>Audiostatistiken</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="22"/>
         <source>Input Levels</source>
-        <translation>Eingabelevel</translation>
+        <translation>Eingangslevel</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="28"/>
         <source>Peak microphone level</source>
-        <translation>Mikrofon-Ausschlagslevel</translation>
+        <translation>Mikrofonspitzenpegel</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="35"/>
         <location filename="../gui/AudioStats.ui" line="55"/>
         <location filename="../gui/AudioStats.ui" line="75"/>
         <source>Peak power in last frame</source>
-        <translation>Maximaler Energieausschlag im letzten Frame</translation>
+        <translation>Spitzenpegel im letzten Frame</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="38"/>
         <source>This shows the peak power in the last frame (20 ms), and is the same measurement as you would usually find displayed as &quot;input power&quot;. Please disregard this and look at &lt;b&gt;Microphone power&lt;/b&gt; instead, which is much more steady and disregards outliers.</source>
-        <translation>Dies zeigt den maximalen Energieausschlag im letzten Frame (20 ms) an und ist der selbe Wert, den man üblicherweise als &quot;Eingangsenergie&quot; angezeigt bekommt. Bitte ignoriere diesen Wert und verwende &lt;b&gt;Mikrofonenergie&lt;/b&gt;. Dieser Wert ist stabiler und ignoriert extreme Ausschläge.</translation>
+        <translation>Dies zeigt den Spitzenpegel im letzten Frame (20 ms) an und ist derselbe Wert, den man üblicherweise als &quot;Eingangspegel&quot; angezeigt bekommt. Bitte ignoriere diesen Wert und verwende &lt;b&gt;Mikrofonpegel&lt;/b&gt;. Dieser Wert ist stabiler und ignoriert extreme Ausschläge.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="48"/>
         <source>Peak speaker level</source>
-        <translation>Lautsprecherausschlagslevel</translation>
+        <translation>Lautsprecherspitzenpegel</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="58"/>
         <source>This shows the peak power of the speakers in the last frame (20 ms). Unless you are using a multi-channel sampling method (such as ASIO) with speaker channels configured, this will be 0. If you have such a setup configured, and this still shows 0 while you&apos;re playing audio from other programs, your setup is not working.</source>
-        <translation>Dies zeigt die Spitzenleistung der Lautsprecher im letzten Frame (20 ms). Sofern du nicht eine Multi-Channel-Sampling-Methode (wie ASIO) mit konfigurierten Lautsprecherkanälen benutzt, wird dies 0 sein. Wenn du eine solche Installation konfiguriert hast und dies immer noch 0 zeigt, während du mit anderen Programmen Audio abspielst, funktioniert dein Setup nicht.</translation>
+        <translation>Dies zeigt den Spitzenpegel der Lautsprecher im letzten Frame (20 ms). Sofern du nicht eine Multi-Channel-Sampling-Methode (wie ASIO) mit konfigurierten Lautsprecherkanälen benutzt, wird dies 0 sein. Wenn du eine solche Installation konfiguriert hast und dies immer noch 0 zeigt, während du mit anderen Programmen Audio abspielst, funktioniert dein Setup nicht.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="68"/>
         <source>Peak clean level</source>
-        <translation>bereinigter Spitzenpegel</translation>
+        <translation>Bereinigter Spitzenpegel</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="78"/>
@@ -228,7 +228,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="97"/>
         <source>Microphone power</source>
-        <translation>Mikrofonenergie</translation>
+        <translation>Mikrofonpegel</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="104"/>
@@ -258,7 +258,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="137"/>
         <source>Speech Probability</source>
-        <translation>Wahrscheinlichkeit von Sprache</translation>
+        <translation>Sprachwahrscheinlichkeit</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="144"/>
@@ -278,17 +278,17 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="168"/>
         <source>Current audio bitrate</source>
-        <translation>Gegenwärtige Audiobitrate</translation>
+        <translation>Aktuelle Audiobitrate</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="181"/>
         <source>Bitrate of last frame</source>
-        <translation>Bitrate des letzten Frame</translation>
+        <translation>Bitrate des letzten Frames</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="184"/>
         <source>This is the audio bitrate of the last compressed frame (20 ms), and as such will jump up and down as the VBR adjusts the quality. The peak bitrate can be adjusted in the Settings dialog.</source>
-        <translation>Dies ist die Audio-Bitrate des letzten komprimierten Frames (20 ms), und als solche wird sie auf und ab springen, während die VBR die Qualität anpasst. Der Spitzenwert kann im Einstellungsdialog angepasst werden.</translation>
+        <translation>Dies ist die Audiobitrate des letzten komprimierten Frames (20 ms), und als solche wird sie auf und ab springen, während die VBR die Qualität anpasst. Der Spitzenwert kann im Einstellungsdialog angepasst werden.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="194"/>
@@ -298,7 +298,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="207"/>
         <source>Time between last two Push-To-Talk presses</source>
-        <translation>Zeit zwischen dem letzten zwei Drücken der Sendeumschaltung</translation>
+        <translation>Zeit zwischen den letzten beiden Push-to-Talk-Klicks</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="217"/>
@@ -308,17 +308,17 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="224"/>
         <source>Current speech detection chance</source>
-        <translation>Gegenwärtige Chance der Spracherkennung</translation>
+        <translation>Aktuelle Spracherkennungschance</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="227"/>
         <source>&lt;b&gt;This shows the current speech detection settings.&lt;/b&gt;&lt;br /&gt;You can change the settings from the Settings dialog or from the Audio Wizard.</source>
-        <translation>&lt;b&gt;Dies zeigt die aktuellen Spracherkennungseinstellungen.&lt;/b&gt;&lt;br /&gt;Du kannst die Einstellungen im Einstellungsdialog oder im Audio-Assistenten ändern.</translation>
+        <translation>&lt;b&gt;Dies zeigt die aktuellen Spracherkennungseinstellungen.&lt;/b&gt;&lt;br /&gt;Du kannst die Einstellungen im Einstellungsdialog oder im Audioassistenten ändern.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="256"/>
         <source>Signal and noise power spectrum</source>
-        <translation>Signal zu Rauschen Leistungsspektrum</translation>
+        <translation>Signal-zu-Rausch-Leistungsspektrum</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="262"/>
@@ -333,7 +333,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="281"/>
         <source>Echo Analysis</source>
-        <translation>Echo-Analyse</translation>
+        <translation>Echoanalyse</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="293"/>
@@ -351,7 +351,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="14"/>
         <source>Audio Tuning Wizard</source>
-        <translation>Audio Einstellungs-Assistent</translation>
+        <translation>Audioeinstellungsassistent</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="18"/>
@@ -361,7 +361,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="21"/>
         <source>Welcome to the RetroShare Audio Wizard</source>
-        <translation>Willkommen zum RetroShare Audio-Assistenten</translation>
+        <translation>Willkommen zum RetroShare-Audioassistenten</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="32"/>
@@ -371,7 +371,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="56"/>
         <source>Volume tuning</source>
-        <translation>Lautstärken-Einstellung</translation>
+        <translation>Lautstärkeeinstellung</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="59"/>
@@ -414,7 +414,7 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
     <message>
         <location filename="../gui/AudioWizard.ui" line="166"/>
         <source>Letting RetroShare figure out when you&apos;re talking and when you&apos;re silent.</source>
-        <translation>Lasse RetroShare herausfinden wann du sprichst und wann nicht.</translation>
+        <translation>RetroShare herausfinden lassen, wann du sprichst und wann nicht.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="172"/>
@@ -460,158 +460,159 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="121"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP Plug-in&lt;/h3&gt;&lt;br/&gt; * Beitragende: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <location filename="../VOIPPlugin.cpp" line="122"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt;Das VOIP Plug-in ermöglicht VOIP Telefonie im privaten Chat Fenster von RetroShare. Um es zu benutzen gehe folgendermaßen vor:&lt;ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="101"/>
+        <location filename="../VOIPPlugin.cpp" line="123"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
-        <translation>&lt;li&gt;Mikrofon Lautstärke in den Optionen einstellen&lt;/li&gt;</translation>
+        <translation>&lt;li&gt;Mikrofonlautstärke in den Optionen einstellen&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="102"/>
+        <location filename="../VOIPPlugin.cpp" line="124"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
-        <translation>&lt;li&gt;VU-Meter anschauen um Mikrofon überprüfen&lt;/li&gt;</translation>
+        <translation>&lt;li&gt;VU-Meter anschauen, um Mikrofon überprüfen&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="103"/>
+        <location filename="../VOIPPlugin.cpp" line="125"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt;Ton Ein-/Ausgabe im privaten Chat Fenster aktivieren, indem du auf die zwei VOIP Icons klickst&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="104"/>
+        <location filename="../VOIPPlugin.cpp" line="126"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Dein Freund braucht natürlich auch das Plug-in um mit dir zu telefonieren.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="105"/>
+        <location filename="../VOIPPlugin.cpp" line="127"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;Dies ist eine experimentelles Funktion. Zögere nicht Anmerkungen und Vorschläge an das RS Dev Team zu schicken.</translation>
-    </message>
-    <message>
-        <location filename="../VOIPPlugin.cpp" line="130"/>
-        <source>RTT Statistics</source>
-        <translation>RTT Statistiken</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="145"/>
-        <location filename="../gui/VoipStatistics.cpp" line="147"/>
-        <location filename="../gui/VoipStatistics.cpp" line="149"/>
-        <source>secs</source>
-        <translation>s</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="151"/>
-        <source>Old</source>
-        <translation>Alt</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="152"/>
-        <source>Now</source>
-        <translation>Jetzt</translation>
-    </message>
-    <message>
-        <location filename="../gui/VoipStatistics.cpp" line="361"/>
-        <source>Round Trip Time:</source>
-        <translation>Paketumlaufzeit</translation>
     </message>
 </context>
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="164"/>
+        <location filename="../VOIPPlugin.cpp" line="176"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
-        <translation>Dieses Plug-in bietet Sprach-Kommunikation zwischen Freunden in RetroShare.</translation>
+        <translation>Dieses Plug-in bietet Sprachkommunikation zwischen Freunden in RetroShare.</translation>
     </message>
 </context>
 <context>
     <name>VOIPChatWidgetHolder</name>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="42"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="63"/>
         <source>Mute</source>
         <translation>Stumm</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="55"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="76"/>
         <source>Start Call</source>
         <translation>Anruf beginnen</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="72"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="104"/>
         <source>Start Video Call</source>
         <translation>Videoanruf beginnen</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="86"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="90"/>
         <source>Hangup Call</source>
         <translation>Anruf beenden</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="143"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="169"/>
         <source>Mute yourself</source>
-        <translation>Dich selbst stumm schalten</translation>
+        <translation>Dich selbst stummschalten</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="145"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="171"/>
         <source>Unmute yourself</source>
         <translation>Deine Stummschaltung aufheben</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="265"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="283"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="296"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="388"/>
         <source>VoIP Status</source>
         <translation>VoIP-Status</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="164"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="190"/>
         <source>Outgoing Call stopped.</source>
         <translation>Ausgehender Anruf beendet.</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="177"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="209"/>
         <source>Hold Call</source>
         <translation>Anruf halten</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="195"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="227"/>
         <source>Outgoing Call is started...</source>
         <translation>Ausgehender Anruf hat begonnen...</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="203"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="242"/>
         <source>Resume Call</source>
         <translation>Anruf fortsetzen</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="216"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="262"/>
         <source>Shut camera off</source>
         <translation>Kamera ausschalten</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="219"/>
-        <source>you&apos;re now sending video...</source>
-        <translation>du sendest nun Video...</translation>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="266"/>
+        <source>You&apos;re now sending video...</source>
+        <translation>Sie senden jetzt das Video...</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="224"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="278"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="299"/>
         <source>Activate camera</source>
         <translation>Kamera aktivieren</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="229"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="284"/>
         <source>Video call stopped</source>
         <translation>Videoanruf beendet</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="263"/>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="297"/>
+        <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
+        <translation>%1 lädt dich ein, eine Videokonversation zu starten. Möchtest du die Einladung annehmen oder ablehnen?</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="298"/>
+        <source>Accept Video Call</source>
+        <translation>Videoanruf annehmen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="389"/>
+        <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
+        <translation>%1 lädt dich ein, eine Audiokonversation zu starten. Möchtest du die Einladung annehmen oder ablehnen?</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="390"/>
+        <source>Accept Call</source>
+        <translation>Anruf annehmen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="391"/>
+        <source>Activate audio</source>
+        <translation>Audio aktivieren</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPChatWidgetHolder.cpp" line="412"/>
         <source>Answer</source>
         <translation>Antworten</translation>
     </message>
@@ -619,17 +620,131 @@ Sprich so laut, als wärst du verärgert oder aufgeregt. Verringere die Lautstä
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="169"/>
+        <location filename="../VOIPPlugin.cpp" line="181"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
 </context>
 <context>
-    <name>VoipStatistics</name>
+    <name>VOIPToasterItem</name>
     <message>
-        <location filename="../gui/VoipStatistics.ui" line="14"/>
-        <source>VoipTest Statistics</source>
-        <translation>Voip Test Statistiken</translation>
+        <location filename="../gui/VOIPToasterItem.cpp" line="43"/>
+        <source>Answer</source>
+        <translation>Antworten</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterItem.cpp" line="47"/>
+        <source>Answer with video</source>
+        <translation>Mit Video antworten</translation>
+    </message>
+</context>
+<context>
+    <name>VOIPToasterNotify</name>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="56"/>
+        <source>VOIP</source>
+        <translation>VOIP</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="59"/>
+        <source>Accept</source>
+        <translation>Annehmen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="60"/>
+        <source>Bandwidth Information</source>
+        <translation>Bandbreiteninformation</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="61"/>
+        <source>Audio or Video Data</source>
+        <translation>Audio- oder Videodaten</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="62"/>
+        <source>HangUp</source>
+        <translation>Auflegen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="63"/>
+        <source>Invitation</source>
+        <translation>Einladung</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="65"/>
+        <source>Audio Call</source>
+        <translation>Audioanruf</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="66"/>
+        <source>Video Call</source>
+        <translation>Videoanruf</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="176"/>
+        <source>Test VOIP Accept</source>
+        <translation>VOIP-Annahme testen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="177"/>
+        <source>Test VOIP BandwidthInfo</source>
+        <translation>VOIP-Bandbreiteninformation testen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="178"/>
+        <source>Test VOIP Data</source>
+        <translation>VOIP-Daten testen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="179"/>
+        <source>Test VOIP HangUp</source>
+        <translation>VOIP-Auflegen testen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="180"/>
+        <source>Test VOIP Invitation</source>
+        <translation>VOIP-Einladung testen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="182"/>
+        <source>Test VOIP Audio Call</source>
+        <translation>VOIP-Audioanruf testen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="183"/>
+        <source>Test VOIP Video Call</source>
+        <translation>VOIP-Videoanruf testen</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="204"/>
+        <source>Accept received from this peer.</source>
+        <translation>Nachbar hat Einladung angenommen.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="228"/>
+        <source>Bandwidth Info received from this peer:%1</source>
+        <translation>Bandbreiteninfos von diesem Nachbarn erhalten:%1</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="252"/>
+        <source>Audio or Video Data received from this peer.</source>
+        <translation>Audio- oder Videodaten von diesem Nachbarn erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="276"/>
+        <source>HangUp received from this peer.</source>
+        <translation>Nachbar hat aufgelegt.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="300"/>
+        <source>Invitation received from this peer.</source>
+        <translation>Einladung von diesem Nachbarn erhalten.</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="325"/>
+        <location filename="../gui/VOIPToasterNotify.cpp" line="349"/>
+        <source>calling</source>
+        <translation>Anruf läuft</translation>
     </message>
 </context>
 </TS>

@@ -5,6 +5,10 @@
         <source>version</source>
         <translation>versió</translation>
     </message>
+    <message>
+        <source>RetroShare version</source>
+        <translation>RetroShare versió</translation>
+    </message>
 </context>
 <context>
     <name>AboutDialog</name>
@@ -19,10 +23,6 @@
     <message>
         <source>close</source>
         <translation>tancar</translation>
-    </message>
-    <message>
-        <source>About RetroShare %1</source>
-        <translation>Sobre RetroShare %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
@@ -430,6 +430,90 @@ p, li { white-space: pre-wrap; }
         <source>Appearance</source>
         <translation>Aparença</translation>
     </message>
+    <message>
+        <source>Tool Bar</source>
+        <translation>Barra d&apos;eines</translation>
+    </message>
+    <message>
+        <source>On Tool Bar</source>
+        <translation>A la barra d&apos;eines</translation>
+    </message>
+    <message>
+        <source>On List Item</source>
+        <translation>A la llista d&apos;elements</translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for menu?</source>
+        <translation>On vols tindre els botons pel menú?</translation>
+    </message>
+    <message>
+        <source>Where do you want to have the buttons for the page?</source>
+        <translation>On vols tindre els botons per la pàgina?</translation>
+    </message>
+    <message>
+        <source>Icon Only</source>
+        <translation>Només icones</translation>
+    </message>
+    <message>
+        <source>Text Only</source>
+        <translation>Només text</translation>
+    </message>
+    <message>
+        <source>Text Beside Icon</source>
+        <translation>Text al costat de l&apos;icona</translation>
+    </message>
+    <message>
+        <source>Text Under Icon</source>
+        <translation>Text sota l&apos;icona</translation>
+    </message>
+    <message>
+        <source>Choose the style of Tool Buttons.</source>
+        <translation>Escull l&apos;estil dels botons de les eines.</translation>
+    </message>
+    <message>
+        <source>Choose the style of List Items.</source>
+        <translation>Escull l&apos;estil de les llistes d&apos;elements.</translation>
+    </message>
+    <message>
+        <source>Icon Size = 8x8</source>
+        <translation>Mida icona = 8x8</translation>
+    </message>
+    <message>
+        <source>Icon Size = 16x16</source>
+        <translation>Mida icona = 16x16</translation>
+    </message>
+    <message>
+        <source>Icon Size = 24x24</source>
+        <translation>Mida icona = 24x24</translation>
+    </message>
+    <message>
+        <source>Status Bar</source>
+        <translation>Barra d&apos;estat</translation>
+    </message>
+    <message>
+        <source>Remove surplus text in status bar.</source>
+        <translation>Treure text extra de la barra d&apos;estat.</translation>
+    </message>
+    <message>
+        <source>Compact Mode</source>
+        <translation>Mode compacte</translation>
+    </message>
+    <message>
+        <source>Hide Sound Status</source>
+        <translation>Amaga l&apos;estat del so</translation>
+    </message>
+    <message>
+        <source>Hide Toaster Disable</source>
+        <translation>Amagar notificacions deshabilitades</translation>
+    </message>
+    <message>
+        <source>Show SysTray on Status Bar</source>
+        <translation>Mostra l&apos;àrea de notificació a la barra d&apos;estat</translation>
+    </message>
+    <message>
+        <source>Icon Size = 32x32</source>
+        <translation>Mida icona = 32x32</translation>
+    </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
@@ -450,14 +534,6 @@ Però recorda: Totes les dades generades aquí *SERAN* perdudes quan actualitzem
     <message>
         <source>Circles</source>
         <translation>Cercles</translation>
-    </message>
-    <message>
-        <source>Posted Links</source>
-        <translation>Enllaços publicats</translation>
-    </message>
-    <message>
-        <source>Wiki Pages</source>
-        <translation>Pàgines wiki</translation>
     </message>
     <message>
         <source>GxsForums</source>
@@ -492,10 +568,44 @@ Però recorda: Totes les dades generades aquí *SERAN* perdudes quan actualitzem
     </message>
 </context>
 <context>
+    <name>AvatarDialog</name>
+    <message>
+        <source>Change Avatar</source>
+        <translation>Canvia l&apos;avatar</translation>
+    </message>
+    <message>
+        <source>Your Avatar Picture</source>
+        <translation>La fotografia del teu avatar</translation>
+    </message>
+    <message>
+        <source>Add Avatar</source>
+        <translation>Afegir avatar</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Treure</translation>
+    </message>
+    <message>
+        <source>Set your Avatar picture</source>
+        <translation>Tria la fotografia del teu avatar</translation>
+    </message>
+    <message>
+        <source>Load Avatar</source>
+        <translation>Carrega avatar</translation>
+    </message>
+</context>
+<context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
         <translation>Feu clic per canviar l&apos;avatar</translation>
+    </message>
+</context>
+<context>
+    <name>BWGraphSource</name>
+    <message>
+        <source>KB/s</source>
+        <translation>KB/s</translation>
     </message>
 </context>
 <context>
@@ -565,306 +675,7 @@ Però recorda: Totes les dades generades aquí *SERAN* perdudes quan actualitzem
     </message>
 </context>
 <context>
-    <name>BlogDetails</name>
-    <message>
-        <source>Blog Details</source>
-        <translation>Detalls del bloc</translation>
-    </message>
-    <message>
-        <source>Blog Info</source>
-        <translation>Informació del bloc</translation>
-    </message>
-    <message>
-        <source>Blog Name</source>
-        <translation>Nom de bloc</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Popularitat</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Darrer missatge</translation>
-    </message>
-    <message>
-        <source>Blog ID</source>
-        <translation>ID de Bloc</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Descripció del blog</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·la</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>CORRECTE</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Tancar</translation>
-    </message>
-</context>
-<context>
-    <name>BlogMsgItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Assumpte</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Reproduir Medi</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-</context>
-<context>
-    <name>BlogNewItem</name>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Subscriure&apos;s al Bloc</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Blog Description</source>
-        <translation>Descripció del bloc</translation>
-    </message>
-    <message>
-        <source>Unknown Blog</source>
-        <translation>Bloc desconegut</translation>
-    </message>
-    <message>
-        <source>New Blog</source>
-        <translation>Nou bloc</translation>
-    </message>
-    <message>
-        <source>Updated Blog</source>
-        <translation>Actualitza bloc</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsDialog</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulari</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blocs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Afegir</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Publica al bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Nom del bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Donar-se de baixa del bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Donar de baixa</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscriure&apos;s a bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Subscriure&apos;s</translation>
-    </message>
-    <message>
-        <source>Create New Blog</source>
-        <translation>Crear nou bloc</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>ID</source>
-        <translation>ID</translation>
-    </message>
-    <message>
-        <source>My Blogs</source>
-        <translation>El meu bloc</translation>
-    </message>
-    <message>
-        <source>Subscribed Blogs</source>
-        <translation>Blocs subscrits</translation>
-    </message>
-    <message>
-        <source>Popular Blogs</source>
-        <translation>Blocs populars</translation>
-    </message>
-    <message>
-        <source>Other Blogs</source>
-        <translation>Altres Blocs</translation>
-    </message>
-    <message>
-        <source>Post to Blog</source>
-        <translation>Publica al Bloc</translation>
-    </message>
-    <message>
-        <source>Subscribe to Blog</source>
-        <translation>Subscriure&apos;s al bloc</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Blog</source>
-        <translation>Donar de baixa de bloc</translation>
-    </message>
-    <message>
-        <source>Show Blog Details</source>
-        <translation>Mostrar detalls de bloc</translation>
-    </message>
-    <message>
-        <source>Create a new Blog</source>
-        <translation>Crear un nou bloc</translation>
-    </message>
-    <message>
-        <source>Popularity: %1
-Fetches: %2
-Available: %3</source>
-        <translation>Popularitat: %1
-Orígens: %2
-Disponibilitat: %3</translation>
-    </message>
-</context>
-<context>
-    <name>BlogsMsgItem</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulari</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Tema del bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DataHora&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Donar de baixa del canal</translation>
-    </message>
-    <message>
-        <source>Comments here</source>
-        <translation>Comentaris aquí</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Comentari</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-</context>
-<context>
     <name>BwCtrlWindow</name>
-    <message>
-        <source>Bandwidth Control Window</source>
-        <translation>Finestra de control de l&apos;ample de banda</translation>
-    </message>
-    <message>
-        <source>Bandwidth Measurements</source>
-        <translation>Mesures d&apos;ample de banda</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Nom</translation>
@@ -913,369 +724,44 @@ p, li { white-space: pre-wrap; }
         <source>Allowed Recvd</source>
         <translation>Recepció permesa</translation>
     </message>
-</context>
-<context>
-    <name>CalDialog</name>
+    <message>
+        <source>TOTALS</source>
+        <translation>TOTALS</translation>
+    </message>
+    <message>
+        <source>Totals</source>
+        <translation>Totals</translation>
+    </message>
     <message>
         <source>Form</source>
         <translation>Formulari</translation>
     </message>
-    <message>
-        <source>Local Calendars</source>
-        <translation>Calendaris locals</translation>
-    </message>
-    <message>
-        <source>Shared Calendar List</source>
-        <translation>Compartir llista de calendari</translation>
-    </message>
-    <message>
-        <source>Share Details</source>
-        <translation>Compartir els detalls</translation>
-    </message>
-    <message>
-        <source>Name:</source>
-        <translation>Nom:</translation>
-    </message>
-    <message>
-        <source>Location:</source>
-        <translation>Ubicació:</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation>Estat:</translation>
-    </message>
-    <message>
-        <source>Private</source>
-        <translation>Privat</translation>
-    </message>
-    <message>
-        <source>Public</source>
-        <translation>Públic</translation>
-    </message>
-    <message>
-        <source>Allow List:</source>
-        <translation>Llista de permesos:</translation>
-    </message>
-    <message>
-        <source>&lt;Disabled&gt;</source>
-        <translation>&lt;Disabled&gt;</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Afegir</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Treure</translation>
-    </message>
-    <message>
-        <source>Peer Calendars</source>
-        <translation>Calendaris dels contactes</translation>
-    </message>
 </context>
 <context>
-    <name>ChanMsgItem</name>
-    <message>
-        <source>Toggle Message Read Status</source>
-        <translation>Canvia l&apos;estat dels missatges llegits</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Nou</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Descarregar</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation>Reproduir</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copia l&apos;enllaç RetroShare</translation>
-    </message>
-    <message>
-        <source>Unsubscribe From Channel</source>
-        <translation>Donar de baixa del canal</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Marcar com llegit i eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Channel Feed</source>
-        <translation>Font del canal</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Arxius</translation>
-    </message>
-    <message>
-        <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation>Avís! Tens menys de %1 hores i %2 minuts abans que aquest arxiu sigui esborrat. Considera desar-lo.</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Obrir</translation>
-    </message>
-    <message>
-        <source>Open File</source>
-        <translation>Obrir arxiu</translation>
-    </message>
-    <message>
-        <source>Play Media</source>
-        <translation>Reproduir Medi</translation>
-    </message>
-</context>
-<context>
-    <name>ChanNewItem</name>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Subscriu-te al canal</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Descripció del canal</translation>
-    </message>
-    <message>
-        <source>Unknown Channel</source>
-        <translation>Canal desconegut</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Nou canal</translation>
-    </message>
-    <message>
-        <source>Updated Channel</source>
-        <translation>Canal actualitzat</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Detalls del canal</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Informació del canal</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Nom del canal</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Popularitat</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Darrer missatge</translation>
-    </message>
-    <message>
-        <source>Channel ID</source>
-        <translation>ID del canal</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Descripció del canal</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Tipus</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Restringit - Tothom pot llegir, publicació limitada (clau de publicació privada)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (clau de publicació privada necessària per visualitzar els missatges)</translation>
-    </message>
-    <message>
-        <source>Destination directory</source>
-        <translation>Directori de destí</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelDialog</name>
-    <message>
-        <source>GxsChannels</source>
-        <translation>CanalsGxs</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelFeed</name>
+    <name>ChannelPage</name>
     <message>
         <source>Channels</source>
         <translation>Canals</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Crear canal</translation>
+        <source>Tabs</source>
+        <translation>Pestanyes</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Carregant</translation>
+        <source>General</source>
+        <translation>General</translation>
     </message>
     <message>
-        <source>Post to Channel</source>
-        <translation>Publica al canal</translation>
+        <source>Load posts in background (Thread)</source>
+        <translation>Carrega les entrades en segon pla (Utilitza fils)</translation>
     </message>
     <message>
-        <source>Set all as read</source>
-        <translation>Posar tot com a llegit</translation>
-    </message>
-    <message>
-        <source>Enable Auto-Download</source>
-        <translation>Activar auto-descàrrega</translation>
-    </message>
-    <message>
-        <source>My Channels</source>
-        <translation>Els meus canals</translation>
-    </message>
-    <message>
-        <source>Subscribed Channels</source>
-        <translation>Canals subscrits</translation>
-    </message>
-    <message>
-        <source>Popular Channels</source>
-        <translation>Canals populars</translation>
-    </message>
-    <message>
-        <source>Other Channels</source>
-        <translation>Altres canals</translation>
-    </message>
-    <message>
-        <source>Subscribe to Channel</source>
-        <translation>Subscriu-te al canal</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Donar-te de baixa del canal</translation>
-    </message>
-    <message>
-        <source>Disable Auto-Download</source>
-        <translation>Desactivar auto-descàrrega</translation>
-    </message>
-    <message>
-        <source>Show Channel Details</source>
-        <translation>Mostra detalls del canal</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Restaurar els drets de publicació del canal</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Edita detalls del canal</translation>
-    </message>
-    <message>
-        <source>Share Channel</source>
-        <translation>Compartir canal</translation>
-    </message>
-    <message>
-        <source>Set destination directory</source>
-        <translation>Establir directori de destí</translation>
-    </message>
-    <message>
-        <source>Other...</source>
-        <translation>Altre...</translation>
-    </message>
-    <message>
-        <source>[Default]</source>
-        <translation>[Per defecte]</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copia l&apos;enllaç RetroShare</translation>
-    </message>
-    <message>
-        <source>Select channel destination directory</source>
-        <translation>Selecciona el directori destí del canal</translation>
-    </message>
-    <message>
-        <source>Publish rights restored.</source>
-        <translation>Drets de publicació restablerts.</translation>
-    </message>
-    <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>Els drets de publicació han sigut restablerts per aquest canal.</translation>
-    </message>
-    <message>
-        <source>Publish not restored.</source>
-        <translation>Publicació no restablerta.</translation>
-    </message>
-    <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Els drets de publicació per aquest canal no poden ser restablerts.&lt;br/&gt;No ets el creador del canal.</translation>
-    </message>
-    <message>
-        <source>No Channel Selected</source>
-        <translation>No hi ha canal seleccionat</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Canals&lt;/h1&gt;
-&lt;p&gt;Els canals et permeten publicar continguts (per ex. pel·lícules, música) que es distribuiran a la xarxa   entre la gent que s&apos;hagi subscrit al canal. Si has activat l&apos;auto-descarrega en un canal els adjunts a cada entrada començaran a descarregar-se automàticament quan es rebi l&apos;entrada.&lt;/p&gt; &lt;p&gt;Veuràs canals als que s&apos;han subscrit els teus amics i reenvies els canals subscrits als teus amics. Això promociona els canals bons a la xarxa. Quan et connectes per primer cop a un amic, és probable que rebis molts arxius cau i apareguin nous canals.&lt;/p&gt; &lt;p&gt;Només el creador del canal pot publicar en aquests canals. Els altres contactes a la xarxa només poden llegir-lo si és que el canal no és privat. No obstant, pots compartir els teus permisos de publicació o lectura amb els teus amics.&lt;/p&gt;   </translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Subscriure&apos;s</translation>
-    </message>
-    <message>
-        <source>Post</source>
-        <translation>Publicar</translation>
-    </message>
-    <message>
-        <source>Subscribed</source>
-        <translation>Subscrit</translation>
-    </message>
-</context>
-<context>
-    <name>ChannelUserNotify</name>
-    <message>
-        <source>Channel Post</source>
-        <translation>Entrada al canal</translation>
+        <source>Open each channel in a new tab</source>
+        <translation>Obrir cada canal en una nova pestanya</translation>
     </message>
 </context>
 <context>
     <name>ChatDialog</name>
-    <message>
-        <source>Your friend has more than one locations.
-Please choose one of it to chat with.</source>
-        <translation>El seu amic té més d&apos;una ubicació.
-Si us plau, escull-ne una.</translation>
-    </message>
     <message>
         <source>Talking to </source>
         <translation>Parlant amb </translation>
@@ -1320,10 +806,6 @@ Si us plau, escull-ne una.</translation>
         <translation>Tema: %1</translation>
     </message>
     <message>
-        <source>Please enter your new nick name</source>
-        <translation>Si us plau, introdueix el teu nou sobrenom</translation>
-    </message>
-    <message>
         <source>Lobby chat</source>
         <translation>Sala de xat</translation>
     </message>
@@ -1352,14 +834,6 @@ Si us plau, escull-ne una.</translation>
         <translation>Voleu cancel·lar la subscripció a aquesta sala de xat?</translation>
     </message>
     <message>
-        <source>Hide Participants</source>
-        <translation>Amaga els participants</translation>
-    </message>
-    <message>
-        <source>Show Participants</source>
-        <translation>Mostra els participants</translation>
-    </message>
-    <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
         <translation>Clic amb el botó dret per silenciar participants&lt;br/&gt;feu doble clic per adreçar-t&apos;hi directament&lt;br/&gt;</translation>
     </message>
@@ -1371,12 +845,75 @@ Si us plau, escull-ne una.</translation>
         <source> seconds</source>
         <translation> segons</translation>
     </message>
+    <message>
+        <source>Start private chat</source>
+        <translation>Inicia xat privat</translation>
+    </message>
+    <message>
+        <source>Decryption failed.</source>
+        <translation>Ha fallat la desencriptació.</translation>
+    </message>
+    <message>
+        <source>Signature mismatch</source>
+        <translation>La signatura no concorda</translation>
+    </message>
+    <message>
+        <source>Unknown key</source>
+        <translation>Clau desconeguda</translation>
+    </message>
+    <message>
+        <source>Unknown hash</source>
+        <translation>Hash desconegut</translation>
+    </message>
+    <message>
+        <source>Unknown error.</source>
+        <translation>Error desconegut.</translation>
+    </message>
+    <message>
+        <source>Cannot start distant chat</source>
+        <translation>No es pot començar xat distant</translation>
+    </message>
+    <message>
+        <source>Distant chat cannot be initiated:</source>
+        <translation>No es pot iniciar el xat distant:</translation>
+    </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
         <translation>Mostra el xat de sala</translation>
+    </message>
+</context>
+<context>
+    <name>ChatLobbyUserNotify</name>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Sales de xat</translation>
+    </message>
+    <message>
+        <source>You have %1 new messages</source>
+        <translation>Tens %1 nous missatges</translation>
+    </message>
+    <message>
+        <source>You have %1 new message</source>
+        <translation>Tens %1 nou missatge</translation>
+    </message>
+    <message>
+        <source>%1 new messages</source>
+        <translation>%1 missatges nous</translation>
+    </message>
+    <message>
+        <source>%1 new message</source>
+        <translation>%1 missatges nous</translation>
+    </message>
+    <message>
+        <source>Unknown Lobby</source>
+        <translation>Sala desconeguda</translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation>Suprimeix-ho tot</translation>
     </message>
 </context>
 <context>
@@ -1410,14 +947,6 @@ Si us plau, escull-ne una.</translation>
         <translation>Crear sala de xat</translation>
     </message>
     <message>
-        <source>Unsubscribe</source>
-        <translation>Donar de baixa</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Subscriure&apos;s</translation>
-    </message>
-    <message>
         <source>[No topic provided]</source>
         <translation>[No s&apos;ha proporcionat cap assumpte]</translation>
     </message>
@@ -1438,10 +967,6 @@ Si us plau, escull-ne una.</translation>
         <translation>No estàs subscrit a aquesta sala; Fes doble clic per entrar-hi i xatejar.</translation>
     </message>
     <message>
-        <source>Invitation to chat lobby</source>
-        <translation>Invitació a la sala de xat</translation>
-    </message>
-    <message>
         <source>Remove Auto Subscribe</source>
         <translation>Eliminar auto-subscripció</translation>
     </message>
@@ -1460,10 +985,6 @@ Si us plau, escull-ne una.</translation>
     <message>
         <source>Search Name</source>
         <translation>Cercar nom</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Sales de xat&lt;/h1&gt;   &lt;p&gt;Les sales de xat són sales distribuïdes que funcionen molt semblant a les de IRC.   Et permeten parlar anònimament amb moltíssima gent sense haver-los de fer amics.&lt;/p&gt;   &lt;p&gt;Una sala de xat pot ser pública (els teus amics la veuen ) o privades (els teus amics no poden veure-la si no   els invites amb &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Un cop has sigut invitat a una sala privada podràs veure quan els teus amics   la estan usant.&lt;/p&gt;   &lt;p&gt;La llista de l&apos;esquerra mostra   sales de xat en que participen els teus amics. Pots o bé   &lt;ul&gt; &lt;li&gt;fer clic dret per crear una sala de xat nova&lt;/li&gt;   &lt;li&gt;fer doble clic per entrar a una sala, xatejar, i que els teus amics ho vegin&lt;/li&gt;   &lt;/ul&gt;   Nota: Per a que les sales de xat funcionin correctament el teu ordinador a d&apos;anar a l&apos;hora. Comprova-ho!   &lt;/p&gt;  </translation>
     </message>
     <message>
         <source>Subscribed</source>
@@ -1528,6 +1049,38 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
     <message>
         <source>Public Subscribed Lobbies</source>
         <translation>Sales públiques subscrites</translation>
+    </message>
+    <message>
+        <source>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           	                      invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Sales de xat&lt;/h1&gt; &lt;p&gt;Les sales de xat són sales distribuïdes que funcionen molt semblant a les de IRC. Et permeten parlar anònimament amb moltíssima gent sense haver-los de fer amics.&lt;/p&gt; &lt;p&gt;Una sala de xat pot ser pública (els teus amics la veuen ) o privades (els teus amics no poden veure-la si no els invites amb &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Un cop has sigut invitat a una sala privada podràs veure quan els teus amics la estan usant.&lt;/p&gt; &lt;p&gt;La llista de l&apos;esquerra mostra sales de xat en que participen els teus amics. Pots o bé &lt;ul&gt; &lt;li&gt;Fer clic dret per crear una sala de xat nova&lt;/li&gt; &lt;li&gt;Fer doble clic per entrar a una sala, xatejar, i que els teus amics ho vegin&lt;/li&gt; &lt;/ul&gt; Nota: Per a que les sales de xat funcionin correctament el teu ordinador a d&apos;anar a l&apos;hora. Comprova-ho! &lt;/p&gt; </translation>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Sales de xat</translation>
+    </message>
+    <message>
+        <source>Leave this lobby</source>
+        <translation>Abandonar aquesta sala</translation>
+    </message>
+    <message>
+        <source>Enter this lobby</source>
+        <translation>Entrar en aquesta sala</translation>
+    </message>
+    <message>
+        <source>Enter this lobby as...</source>
+        <translation>Entrar en aquesta sala com...</translation>
+    </message>
+    <message>
+        <source>You will need to create an identity in order to join chat lobbies.</source>
+        <translation>Necessites crear una identitat abans de poder entrar en sales de xat.</translation>
+    </message>
+    <message>
+        <source>Choose an identity for this lobby:</source>
+        <translation>Escull una identitat per aquesta sala:</translation>
+    </message>
+    <message>
+        <source>Create an identity and enter this lobby</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1614,10 +1167,6 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
     <message>
         <source>Blink tab icon</source>
         <translation>Icona de pestanya parpellejant</translation>
-    </message>
-    <message>
-        <source>Default nickname for chat lobbies:</source>
-        <translation>Sobrenom per defecte a les sales de xat:</translation>
     </message>
     <message>
         <source>Private Chat</source>
@@ -1720,56 +1269,8 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
         <translation>Xat</translation>
     </message>
     <message>
-        <source>Distant chat</source>
-        <translation>Xat distant</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;El RetroShare et permet xatejar anònimament amb gent propera a més a més dels teus amics a la xarxa, tot això utilitzant túnels encriptats. A la llista d&apos;invitacions personals apareixen enllaços de xat perquè la gent pugui contactar-te. A la llista de &quot;Contactes col·leccionats&quot; hi queden els enllaços de xat de la gent que t&apos;ha contactat a tu.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your personal invites</source>
-        <translation>Les teves invitacions personals</translation>
-    </message>
-    <message>
-        <source>Collected contacts</source>
-        <translation>Contactes col·leccionats</translation>
-    </message>
-    <message>
-        <source>Open secured chat tunnel</source>
-        <translation>Obrir túnel de xat segur</translation>
-    </message>
-    <message>
-        <source>Delete this invite</source>
-        <translation>Esborrar aquesta invitació</translation>
-    </message>
-    <message>
-        <source>Can&apos;t open distant chat</source>
-        <translation>No es pot obrir xat distant</translation>
-    </message>
-    <message>
-        <source>Cannot open distant chat. Error code=</source>
-        <translation>No es pot obrir xat distant. Codi d&apos;error=</translation>
-    </message>
-    <message>
-        <source>Cannot remove distant chat invite.</source>
-        <translation>No es pot esborrar invitació a xat distant.</translation>
-    </message>
-    <message>
-        <source>Create a chat invitation</source>
-        <translation>Crear una invitació de xat</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Copiar enllaç al porta-retalls</translation>
-    </message>
-    <message>
         <source>Private chat invite from </source>
         <translation>Invitació a xat privat de</translation>
-    </message>
-    <message>
-        <source>Private chat invite to </source>
-        <translation>Invitar a un xat privat a</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -1800,16 +1301,56 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
         <translation>Nom:</translation>
     </message>
     <message>
-        <source>Signed with key not in keyring</source>
-        <translation>Signat amb una clau que no és al clauer</translation>
+        <source>Search by default</source>
+        <translation>Cerca per defecte</translation>
     </message>
     <message>
-        <source>Not signed.</source>
-        <translation>Sense signar.</translation>
+        <source>Case sensitive</source>
+        <translation>Diferenciar majúscules/minúscules</translation>
     </message>
     <message>
-        <source>Authenticated signature</source>
-        <translation>Signatura autentificada</translation>
+        <source>Whole Words</source>
+        <translation>Paraules senceres</translation>
+    </message>
+    <message>
+        <source>Move to cursor</source>
+        <translation>Moure fins al cursor</translation>
+    </message>
+    <message>
+        <source>Color All Text Found</source>
+        <translation>Colorejar tot el text trobat</translation>
+    </message>
+    <message>
+        <source>Color of found text</source>
+        <translation>Color del text trobat</translation>
+    </message>
+    <message>
+        <source>Choose color of found text</source>
+        <translation>Escull el color del text trobat</translation>
+    </message>
+    <message>
+        <source>PGP id : </source>
+        <translation>Id PGP:</translation>
+    </message>
+    <message>
+        <source>Valid until : </source>
+        <translation>Vàlid fins:</translation>
+    </message>
+    <message>
+        <source>Maximum count for coloring matching text</source>
+        <translation>Màxim nombre de text colorejat coincident</translation>
+    </message>
+    <message>
+        <source>Threshold for automatic search</source>
+        <translation>Límit per fer una cerca automàtica</translation>
+    </message>
+    <message>
+        <source>Default identity for chat lobbies:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Bar by default</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1876,20 +1417,8 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
         <translation>Cursiva</translation>
     </message>
     <message>
-        <source>Font</source>
-        <translation>Tipus de lletra</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Color del text</translation>
-    </message>
-    <message>
         <source>Attach a Picture</source>
         <translation>Adjunta una imatge</translation>
-    </message>
-    <message>
-        <source>Add a File for your Friend</source>
-        <translation>Afegeix un fitxer per al teu amic</translation>
     </message>
     <message>
         <source>Strike</source>
@@ -1937,7 +1466,7 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Realment vols eliminar físicament l&apos;historial?</translation>
+        <translation>Segur que vols eliminar físicament l&apos;historial?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
@@ -1974,6 +1503,109 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
     <message>
         <source>is Busy and may not reply</source>
         <translation>està ocupat i pot no respondre</translation>
+    </message>
+    <message>
+        <source>Find Case Sensitively</source>
+        <translation>Cercar diferenciant majúscules i minúscules</translation>
+    </message>
+    <message>
+        <source>Find Whole Words</source>
+        <translation>Trobar paraules senceres</translation>
+    </message>
+    <message>
+        <source>Move To Cursor</source>
+        <translation>Moure fins al cursor</translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after X items found (need more CPU)</source>
+        <translation>No deixis de colorejar fins trobar X elements (Necessita més UCP)</translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after </source>
+        <translation>No t&apos;aturis a colorejar després de</translation>
+    </message>
+    <message>
+        <source> items found (need more CPU)</source>
+        <translation>elements trobats (necessita més UCP)</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Trobar anterior &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find Next &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Trobar següent &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+G&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Trobar &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Warning: </source>
+        <translation>Avís:</translation>
+    </message>
+    <message>
+        <source>(Status)</source>
+        <translation>(Estat)</translation>
+    </message>
+    <message>
+        <source>Set text font &amp; color</source>
+        <translation>Estableix tipus de lletra i color</translation>
+    </message>
+    <message>
+        <source>Attach a File</source>
+        <translation>Adjunta un arxiu</translation>
+    </message>
+    <message>
+        <source>WARNING: Could take a long time on big history.</source>
+        <translation>ATENCIÓ: Pot trigar molta estona en un registre històric gros.</translation>
+    </message>
+    <message>
+        <source>Choose color</source>
+        <translation>Escull el color</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Marca el text seleccionat&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>%1This message consists of %2 characters.</source>
+        <translation>%1Aquest missatge té %2 caràcters.</translation>
+    </message>
+    <message>
+        <source> items found.</source>
+        <translation>Elements trobats.</translation>
+    </message>
+    <message>
+        <source>No items found.</source>
+        <translation>No s&apos;ha trobat cap element.</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Return to marked text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
+        <translation>&lt;b&gt;Torna al text marcat&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Display Search Box</source>
+        <translation>Mostra la casella de cerca</translation>
+    </message>
+    <message>
+        <source>Search Box</source>
+        <translation>Casella de cerca</translation>
+    </message>
+    <message>
+        <source>Type a message here</source>
+        <translation>Escriu un missatge aquí</translation>
+    </message>
+</context>
+<context>
+    <name>CircleWidget</name>
+    <message>
+        <source>TextLabel</source>
+        <translation>EtiquetaText</translation>
+    </message>
+    <message>
+        <source>Empty Circle</source>
+        <translation>Cercle buit</translation>
     </message>
 </context>
 <context>
@@ -2082,44 +1714,8 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <source>Friend Details</source>
-        <translation>Detalls de l&apos;amic</translation>
-    </message>
-    <message>
         <source>Details</source>
         <translation>Detalls</translation>
-    </message>
-    <message>
-        <source>Peer Info</source>
-        <translation>Informació del contacte</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>RetroShare ID</source>
-        <translation>ID RetroShare</translation>
-    </message>
-    <message>
-        <source>Other info</source>
-        <translation>Altra informació</translation>
-    </message>
-    <message>
-        <source>Loc</source>
-        <translation>Loc</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Estat</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Últim missatge</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>Versió</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -2146,112 +1742,8 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
         <translation>Llista d&apos;adreces</translation>
     </message>
     <message>
-        <source>Trust </source>
-        <translation>Confiança </translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is:</source>
-        <translation>La confiança amb el contacte és:</translation>
-    </message>
-    <message>
-        <source>None </source>
-        <translation>Cap </translation>
-    </message>
-    <message>
-        <source>Marginal </source>
-        <translation>Marginal </translation>
-    </message>
-    <message>
-        <source>Full </source>
-        <translation>Completa </translation>
-    </message>
-    <message>
-        <source>PGP Key</source>
-        <translation>Clau PGP</translation>
-    </message>
-    <message>
-        <source>Peer has signed my PGP key</source>
-        <translation>El contacte ha signat la meva clau PGP</translation>
-    </message>
-    <message>
-        <source>Show Help for Trust Settings and Signing</source>
-        <translation>Mostrar l&apos;ajuda per a la configuració de confiança i signatures</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by :</source>
-        <translation>Clau del contacte signada per:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signar la clau d&apos;un amic és una forma de demostrar la confiança amb aquest amic, als teus altres amics. A més a més, només els contactes amb claus signades rebran informació sobre els teus altres amics de confiança.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;No es pot desfer una signatura, fes-ho només si n&apos;estàs segur.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Sign PGP key</source>
-        <translation>Signa clau PGP</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Negar l&apos;amic</translation>
-    </message>
-    <message>
-        <source>Make Friend</source>
-        <translation>Fer amic</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <translation>Certificat</translation>
-    </message>
-    <message>
         <source>Include signatures</source>
         <translation>Inclou les signatures</translation>
-    </message>
-    <message>
-        <source>Use old key format</source>
-        <translation>Utilitza el format antic de clau</translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation>Serveis</translation>
-    </message>
-    <message>
-        <source>User service permissions</source>
-        <translation>Permisos del servei de l&apos;usuari</translation>
-    </message>
-    <message>
-        <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
-
-Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>Aquesta pestanya et permet afinar quins serveis de cada un dels teus contactes té permès utilitzar amb tu.
-
-Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment, això té preferència sobre el que s&apos;especifiqui per cada usuari.</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Encaminament anònim</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Descobriment</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Fòrums/Canals</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Xat</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2260,68 +1752,6 @@ Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment,
     <message>
         <source>Error : cannot get peer details.</source>
         <translation>Error: no es poden obtenir detalls del contacte.</translation>
-    </message>
-    <message>
-        <source>The supplied key algorithm is not supported by RetroShare
-(Only RSA keys are supported at the moment)</source>
-        <translation>L&apos;algorisme de la clau proporcionada no és suportada pel RetroShare
-(Només suporta claus RSA per ara)</translation>
-    </message>
-    <message>
-        <source>My key is signed by : </source>
-        <translation>La meva clau està signada per:</translation>
-    </message>
-    <message>
-        <source>Peer key is signed by : </source>
-        <translation>Clau del contacte signada per:</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>La confiança en aquest contacte és completa, probablement siguis propietari d&apos;aquesta clau.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is full.</source>
-        <translation>La confiança en aquest contacte és plena.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is marginal.</source>
-        <translation>La confiança en aquest contacte és marginal.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is none.</source>
-        <translation>La confiança en aquest contacte és nula.</translation>
-    </message>
-    <message>
-        <source>Your trust in this peer is not set.</source>
-        <translation>La confiança en aquest contacte no està definida.</translation>
-    </message>
-    <message>
-        <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>El contacte m&apos;ha autenticat com a amic i signat la clau PGP</translation>
-    </message>
-    <message>
-        <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>El contacte no m&apos;ha autenticat com amic ni signat la clau PGP</translation>
-    </message>
-    <message>
-        <source>Signature Failure</source>
-        <translation>Fracàs en la signatura</translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation>Potser la contrasenya sigui incorrecta</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Desactivar l&apos;encaminament anònim evitarà tot l&apos;enviament i recepció de peticions de túnels i cerques anònimes per aquest usuari. Aquest usuari no podrà fer transferències anònimes a través teu.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Si el que volies era l&apos;opció global mira al panell de configuració.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Desactivar això vol dir que les publicacions a fòrums i canals no passaran de tu a aquest amic, i els elements procedents de l&apos;amic seran descartats.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
@@ -2344,12 +1774,104 @@ Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment,
         <translation>Adreces del contacte</translation>
     </message>
     <message>
-        <source>Location ID</source>
-        <translation>Id d&apos;ubicació</translation>
+        <source>Options</source>
+        <translation>Opcions</translation>
     </message>
     <message>
-        <source>PGP fingerprint</source>
-        <translation>Fingerprint PGP</translation>
+        <source>Retroshare node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Location info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Contact :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare version :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node ID :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-download recommended files from this node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend node details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hidden Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>cap</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate contains:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> with </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;/li&gt; </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;onion address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>an &lt;b&gt;IP address&lt;/b&gt; and &lt;b&gt;port&lt;/b&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;You can use this certificate to make new friends. Send it by email, or give it hand to hand.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption string is given by &lt;span style=&quot; font-weight:600;&quot;&gt;SSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require white list clearance</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2545,22 +2067,6 @@ Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment,
         <translation>Afegir com amic amb qui connectar</translation>
     </message>
     <message>
-        <source>Service permissions</source>
-        <translation>Permisos del servei</translation>
-    </message>
-    <message>
-        <source>Anonymous routing</source>
-        <translation>Encaminament anònim</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Descobriment</translation>
-    </message>
-    <message>
-        <source>Forums/channels</source>
-        <translation>Fòrums/Canals</translation>
-    </message>
-    <message>
         <source>To accept the Friend Request, click the Finish button.</source>
         <translation>Per acceptar la petició de l&apos;amic, clica al botó acabar.</translation>
     </message>
@@ -2595,10 +2101,6 @@ Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment,
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
         <translation>Mida de lectura anormal és major que el bloc de memòria.</translation>
-    </message>
-    <message>
-        <source>Invalid location id.</source>
-        <translation>Id d&apos;ubicació invàlid.</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
@@ -2785,10 +2287,6 @@ Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment,
         <translation>Utilitza com a font directa quan estigui disponible</translation>
     </message>
     <message>
-        <source>Direct source</source>
-        <translation>Font directa</translation>
-    </message>
-    <message>
         <source>Recommend many friends to each others</source>
         <translation>Recomanar molts amics els uns als altres</translation>
     </message>
@@ -2837,6 +2335,46 @@ even if you don&apos;t make friends.</source>
 Això pot ser útil per enviar
 missatges distants a aquest contacte
 encara que no sigueu amics.</translation>
+    </message>
+    <message>
+        <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
+        <translation>El certificat té un nombre de versió erroni. Recorda que les xarxes v0.6 i v0.5 són incompatibles.</translation>
+    </message>
+    <message>
+        <source>Invalid node id.</source>
+        <translation>Id. de node invàlid.</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can be used as direct source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist clearance to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No IP in this certificate!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Added with certificate from %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Paste Cert of your friend from Clipboard</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3130,10 +2668,6 @@ encara que no sigueu amics.</translation>
         <translation>Si us plau, contacta amb ells perquè afegeixin el teu certificat complet</translation>
     </message>
     <message>
-        <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation>Necessiten un certificat + ubicació perquè les connexions per UDP tinguin èxit</translation>
-    </message>
-    <message>
         <source>We Cannot find your Friend.</source>
         <translation>No podem trobar el teu amic.</translation>
     </message>
@@ -3225,539 +2759,9 @@ p, li { white-space: pre-wrap; }
         <source>Retroshare cannot connect without this information</source>
         <translation>El RetroShare no es pot connectar sense aquest informació</translation>
     </message>
-</context>
-<context>
-    <name>CreateBlog</name>
     <message>
-        <source>Create new Blog</source>
-        <translation>Crear bloc nou</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Bloc nou&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Tipus:</translation>
-    </message>
-    <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Públic - Tothom pot llegir i publicar (Clau de publicació compartida)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Restringit - Tothom pot llegir, publicació limitada (Clau de publicació privada)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (Clau de publicació privada necessària per visualitzar els missatges)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Missatges permesos</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Missatges autenticats</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Missatges anònims</translation>
-    </message>
-    <message>
-        <source>Blog Logo</source>
-        <translation>Logotip de bloc</translation>
-    </message>
-    <message>
-        <source>Add Blog Logo</source>
-        <translation>Afegir logotip del bloc</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·la</translation>
-    </message>
-    <message>
-        <source>Create</source>
-        <translation>Crear</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Si us plau, afegeix un nom</translation>
-    </message>
-    <message>
-        <source>Load File</source>
-        <translation>Carrega un arxiu</translation>
-    </message>
-    <message>
-        <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation>Imatges (*.png *.xpm *. jpg)</translation>
-    </message>
-</context>
-<context>
-    <name>CreateBlogMsg</name>
-    <message>
-        <source>New Blog Post</source>
-        <translation>Nova entrada al bloc</translation>
-    </message>
-    <message>
-        <source>Blog Post</source>
-        <translation>Entrada al bloc</translation>
-    </message>
-    <message>
-        <source>Blog Post to:</source>
-        <translation>Entrada de bloc a:</translation>
-    </message>
-    <message>
-        <source>Visual Editor</source>
-        <translation>Editor visual</translation>
-    </message>
-    <message>
-        <source>Blog Message</source>
-        <translation>Missatge del bloc</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Assumpte:</translation>
-    </message>
-    <message>
-        <source>Html Editor</source>
-        <translation>Editor d&apos;HTML</translation>
-    </message>
-    <message>
-        <source>toolBar</source>
-        <translation>barra d&apos;eines</translation>
-    </message>
-    <message>
-        <source>toolBar_2</source>
-        <translation>Barra d&apos;eines_2</translation>
-    </message>
-    <message>
-        <source>blockquote</source>
-        <translation>citació</translation>
-    </message>
-    <message>
-        <source>Increase font Size</source>
-        <translation>Augmenta la mida del tipus de lletra</translation>
-    </message>
-    <message>
-        <source>Decrease font size</source>
-        <translation>Disminueix la mida del tipus de lletra</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Negreta</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Subratllat</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Cursiva</translation>
-    </message>
-    <message>
-        <source>Publish</source>
-        <translation>Publicar</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>Nou</translation>
-    </message>
-    <message>
-        <source>Code</source>
-        <translation>Codi</translation>
-    </message>
-    <message>
-        <source>splitPost</source>
-        <translation>entradaPartida</translation>
-    </message>
-    <message>
-        <source>Ordered List</source>
-        <translation>Llista ordenada</translation>
-    </message>
-    <message>
-        <source>Unordered List</source>
-        <translation>Llista desordenada</translation>
-    </message>
-    <message>
-        <source>Clipboard</source>
-        <translation>Porta-retalls</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>Desfer</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Si us plau, afegeix un assumpte</translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation>&amp;Arxiu</translation>
-    </message>
-    <message>
-        <source>&amp;New</source>
-        <translation>&amp;Nou</translation>
-    </message>
-    <message>
-        <source>&amp;Open...</source>
-        <translation>&amp;Obrir...</translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <translation>&amp;Desar</translation>
-    </message>
-    <message>
-        <source>Save &amp;As...</source>
-        <translation>Desa &amp;com...</translation>
-    </message>
-    <message>
-        <source>&amp;Print...</source>
-        <translation>&amp;Impressió...</translation>
-    </message>
-    <message>
-        <source>Print Preview...</source>
-        <translation>Prèvia d&apos;impressió...</translation>
-    </message>
-    <message>
-        <source>&amp;Export PDF...</source>
-        <translation>&amp;Exportació a PDF...</translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation>&amp;Sortir</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Editar</translation>
-    </message>
-    <message>
-        <source>&amp;Undo</source>
-        <translation>&amp;Desfer</translation>
-    </message>
-    <message>
-        <source>&amp;Redo</source>
-        <translation>&amp;Refer</translation>
-    </message>
-    <message>
-        <source>Cu&amp;t</source>
-        <translation>&amp;Tallar</translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;Copiar</translation>
-    </message>
-    <message>
-        <source>&amp;Paste</source>
-        <translation>&amp;Enganxar</translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation>&amp;Visualitza</translation>
-    </message>
-    <message>
-        <source>&amp;Insert</source>
-        <translation>&amp;Inserir</translation>
-    </message>
-    <message>
-        <source>&amp;Image</source>
-        <translation>&amp;Imatge</translation>
-    </message>
-    <message>
-        <source>F&amp;ormat</source>
-        <translation>F&amp;ormat</translation>
-    </message>
-    <message>
-        <source>&amp;Bold</source>
-        <translation>&amp;Negreta</translation>
-    </message>
-    <message>
-        <source>&amp;Italic</source>
-        <translation>&amp;Cursiva</translation>
-    </message>
-    <message>
-        <source>&amp;Underline</source>
-        <translation>&amp;Subratllat</translation>
-    </message>
-    <message>
-        <source>&amp;Left</source>
-        <translation>&amp;Esquerra</translation>
-    </message>
-    <message>
-        <source>C&amp;enter</source>
-        <translation>C&amp;entre</translation>
-    </message>
-    <message>
-        <source>&amp;Right</source>
-        <translation>&amp;Dreta</translation>
-    </message>
-    <message>
-        <source>&amp;Justify</source>
-        <translation>&amp;Justificat</translation>
-    </message>
-    <message>
-        <source>&amp;Text Color...</source>
-        <translation>&amp;Color del text...</translation>
-    </message>
-    <message>
-        <source>Application</source>
-        <translation>Aplicació</translation>
-    </message>
-    <message>
-        <source>The document has been modified.
-Do you want to save your changes?</source>
-        <translation>El document s&apos;ha modificat.
-Vols guardar-ne els canvis?</translation>
-    </message>
-    <message>
-        <source>Open File...</source>
-        <translation>Obrir arxiu...</translation>
-    </message>
-    <message>
-        <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>Arxius-HTML (*.htm *.html);;Tots els arxius (*)</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Desa com...</translation>
-    </message>
-    <message>
-        <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>Arxius ODF (*.odt);;Arxius-HTML (*.htm *.html);;Tots els arxius (*)</translation>
-    </message>
-    <message>
-        <source>Print Document</source>
-        <translation>Imprimir document</translation>
-    </message>
-    <message>
-        <source>Export PDF</source>
-        <translation>Exportar a PDF</translation>
-    </message>
-    <message>
-        <source>Choose Image</source>
-        <translation>Triar imatge</translation>
-    </message>
-    <message>
-        <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Arxius d&apos;imatge (*.png *.jpeg *.jpg *.gif) suportades</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannel</name>
-    <message>
-        <source>Create a new Channel</source>
-        <translation>Crear un canal nou</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>comprovar els contactes amb qui t&apos;agradaria compartir les claus de publicació</translation>
-    </message>
-    <message>
-        <source>Share Key With</source>
-        <translation>Compartir clau amb</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation>Tipus:</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Restringit - Tothom pot llegir, publicació limitada (clau de publicació privada)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (clau de publicació privada necessària per visualitzar els missatges)</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Missatges permesos</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Missatges anònims</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Missatges autenticats</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Compartició de claus</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Els destinataris de les claus poden publicar en canals restringits, i poden veure i publicar en canals privats</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Compartir clau privada de publicació</translation>
-    </message>
-    <message>
-        <source>Channel Logo</source>
-        <translation>Logotip del canal</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Afegir logotip del canal</translation>
-    </message>
-    <message>
-        <source>New Channel</source>
-        <translation>Nou canal</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Contactes:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Si us plau, afegeix un nom</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Carrega logotip del canal</translation>
-    </message>
-</context>
-<context>
-    <name>CreateChannelMsg</name>
-    <message>
-        <source>New Channel Post</source>
-        <translation>Nova entrada al canal</translation>
-    </message>
-    <message>
-        <source>Channel Post</source>
-        <translation>Entrada al canal</translation>
-    </message>
-    <message>
-        <source>Channel Post to:</source>
-        <translation>Entrada al canal a:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Adjunts:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Fes arrossegar i deixar / Botó d&apos;afegir arxius per calcular el número de hash d&apos;arxius nous.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copiar/Enganxar enllaços RetroShare dels teus compartits&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Add File to Attach</source>
-        <translation>Afegir arxiu per adjuntar</translation>
-    </message>
-    <message>
-        <source>Add Channel Thumbnail</source>
-        <translation>Afegir miniatura del canal</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Missatge</translation>
-    </message>
-    <message>
-        <source>Subject :</source>
-        <translation>Assumpte:</translation>
-    </message>
-    <message>
-        <source>Attachments</source>
-        <translation>Adjunts</translation>
-    </message>
-    <message>
-        <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation>Permet als canals prendre un fotograma com a miniatura dels vídeos adjuntats o no</translation>
-    </message>
-    <message>
-        <source>Auto Thumbnail</source>
-        <translation>Miniatura automàtica</translation>
-    </message>
-    <message>
-        <source>Drag and Drop Files from Search Results</source>
-        <translation>Arrossegar i deixar arxius dels resultats de la cerca</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Links</source>
-        <translation>Enganxar enllaços RetroShare</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Enganxa enllaç RetroShare</translation>
-    </message>
-    <message>
-        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation>Estàs a punt d&apos;afegir arxius que ara mateix no comparteixes. Segur que ho vols fer?</translation>
-    </message>
-    <message>
-        <source>About to post un-owned files to a channel.</source>
-        <translation>Apunt de publicar arxius no propis a un canal.</translation>
-    </message>
-    <message>
-        <source>Drop file error.</source>
-        <translation>Error al deixar l&apos;arxiu.</translation>
-    </message>
-    <message>
-        <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>No es poden deixar anar directoris, només arxius.</translation>
-    </message>
-    <message>
-        <source>File not found or file name not accepted.</source>
-        <translation>Arxiu no trobat o nom d&apos;arxiu no acceptat.</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Afegir arxiu extra</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>File already Added and Hashed</source>
-        <translation>Arxiu ja afegit i hash calculat</translation>
-    </message>
-    <message>
-        <source>Please add a Subject</source>
-        <translation>Si us plau, afegeix un assumpte</translation>
-    </message>
-    <message>
-        <source>Load thumbnail picture</source>
-        <translation>Carrega miniatura</translation>
+        <source>They need a Certificate + Node for UDP connections to succeed</source>
+        <translation>Es necessita un certificat i node perquè funcioni la connexió per UDP</translation>
     </message>
 </context>
 <context>
@@ -3801,14 +2805,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Known Identities</source>
         <translation>Identitats conegudes</translation>
-    </message>
-    <message>
-        <source>All PGP IDs</source>
-        <translation>Totes les Ids PGP</translation>
-    </message>
-    <message>
-        <source>Known PGP IDs</source>
-        <translation>Ids PGP conegudes</translation>
     </message>
     <message>
         <source>Filter</source>
@@ -3874,143 +2870,33 @@ p, li { white-space: pre-wrap; }
         <source>Search</source>
         <translation>Cercar</translation>
     </message>
-</context>
-<context>
-    <name>CreateForum</name>
     <message>
-        <source>Create new Forum</source>
-        <translation>Crear fòrum nou</translation>
+        <source>All</source>
+        <translation>Tot</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation>Nom</translation>
+        <source>Signed</source>
+        <translation>Signat</translation>
     </message>
     <message>
-        <source>check peers you would like to share private publish key with</source>
-        <translation>comprovar els contactes amb qui t&apos;agradaria compartir les claus de publicació</translation>
+        <source>Signed by known nodes</source>
+        <translation>Signat per nodes coneguts</translation>
     </message>
     <message>
-        <source>Share Key With</source>
-        <translation>Compartir clau amb</translation>
+        <source>Edit Circle</source>
+        <translation>Editar cercle</translation>
     </message>
     <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
+        <source>PGP Identity</source>
+        <translation>Identitat PGP</translation>
     </message>
     <message>
-        <source>Type:</source>
-        <translation>Tipus:</translation>
+        <source>Anon Id</source>
+        <translation>Id anonima</translation>
     </message>
     <message>
-        <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Públic - Tothom pot llegir i publicar (Clau de publicació compartida)</translation>
-    </message>
-    <message>
-        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Restringit - Tothom pot llegir, publicació limitada (clau de publicació privada)</translation>
-    </message>
-    <message>
-        <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Privat - (clau de publicació privada necessària per visualitzar els missatges)</translation>
-    </message>
-    <message>
-        <source>Key Sharing</source>
-        <translation>Compartició de claus</translation>
-    </message>
-    <message>
-        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Els destinataris de les claus poden publicar en canals restringits, i poden veure i publicar en canals privats</translation>
-    </message>
-    <message>
-        <source>Share Private Publish Key</source>
-        <translation>Compartir clau privada de publicació</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Missatges permesos</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Missatges autenticats</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Missatges anònims</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nou fòrum</translation>
-    </message>
-    <message>
-        <source>Contacts:</source>
-        <translation>Contactes:</translation>
-    </message>
-    <message>
-        <source>Please add a Name</source>
-        <translation>Si us plau, afegeix un nom</translation>
-    </message>
-</context>
-<context>
-    <name>CreateForumMsg</name>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Publica missatge al fòrum</translation>
-    </message>
-    <message>
-        <source>Forum</source>
-        <translation>Fòrum</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Assumpte</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Adjuntar arxiu</translation>
-    </message>
-    <message>
-        <source>Sign Message</source>
-        <translation>Signar missatge</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Entrada al fòrum</translation>
-    </message>
-    <message>
-        <source>Attach files via drag and drop</source>
-        <translation>Adjuntar arxius arrossegant i deixant anar</translation>
-    </message>
-    <message>
-        <source>You can attach files via drag and drop here in this window</source>
-        <translation>Podeu adjuntar arxius arrossegant i deixant anar en aquesta finestra</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Començar nova conversa</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>En resposta a</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Si us plau, escull un assumpte pel fòrum i un missatge pel fòrum</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Afegir arxiu extra</translation>
-    </message>
-    <message>
-        <source>Attach a Picture</source>
-        <translation>Adjunta una imatge</translation>
-    </message>
-    <message>
-        <source>Load Picture File</source>
-        <translation>Carrega arxiu d&apos;imatge</translation>
+        <source>PGP Linked Id</source>
+        <translation>Id enllaç PGP</translation>
     </message>
 </context>
 <context>
@@ -4099,24 +2985,12 @@ p, li { white-space: pre-wrap; }
         <translation>Arrossegar i deixar arxius dels resultats de la cerca</translation>
     </message>
     <message>
-        <source>New GxsChannel Post</source>
-        <translation>Nova entrada al CanalGxs</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Links</source>
         <translation>Enganxar enllaços RetroShare</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
         <translation>Enganxa l&apos;enllaç RetroShare</translation>
-    </message>
-    <message>
-        <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>La política de seguretat dels canalsGxs impedeix que puguis publicar arxius que no tens. Si els tens, els has de compartir abans o adjuntar-los explicitament:</translation>
-    </message>
-    <message>
-        <source>You can only post files that you do have</source>
-        <translation>Només pots publicar arxius que tinguis</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -4153,6 +3027,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Generate mass data</source>
         <translation>Generar dades en massa</translation>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation>Segur que vols generar %1 missatges?</translation>
+    </message>
+    <message>
+        <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
+        <translation>Estàs a punt d&apos;afegir arxius que ara mateix no comparteixes. Segur que ho vols fer?</translation>
+    </message>
+    <message>
+        <source>About to post un-owned files to a channel.</source>
+        <translation>Apunt de publicar arxius no propis a un canal.</translation>
     </message>
 </context>
 <context>
@@ -4210,10 +3096,6 @@ p, li { white-space: pre-wrap; }
         <translation>Si us plau, escull un assumpte pel fòrum i un missatge pel fòrum</translation>
     </message>
     <message>
-        <source>Please choose Signing Id</source>
-        <translation>Si us plau, escull l&apos;Id signant</translation>
-    </message>
-    <message>
         <source>Please choose Signing Id, it is required</source>
         <translation>Si us plau, escull l&apos;Id signant, és un requisit</translation>
     </message>
@@ -4224,6 +3106,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Generate mass data</source>
         <translation>Generar dades en massa</translation>
+    </message>
+    <message>
+        <source>Do you really want to generate %1 messages ?</source>
+        <translation>Segur que vols generar %1 missatges?</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Enviar</translation>
+    </message>
+    <message>
+        <source>Forum Message</source>
+        <translation>Missatge del fòrum</translation>
+    </message>
+    <message>
+        <source>Forum Message has not been Sent.
+Do you want to reject this message?</source>
+        <translation>El missatge pel fòrum no s&apos;ha enviat.
+Vols descartar aquest missatge?</translation>
+    </message>
+    <message>
+        <source>Post as</source>
+        <translation>Publica com</translation>
+    </message>
+    <message>
+        <source>Congrats, you found a bug! </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4243,10 +3151,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Lobby topic:</source>
         <translation>Assumpte de la sala:</translation>
-    </message>
-    <message>
-        <source>Your nick name:</source>
-        <translation>El teu sobrenom:</translation>
     </message>
     <message>
         <source>Security policy:</source>
@@ -4269,111 +3173,16 @@ p, li { white-space: pre-wrap; }
         <translation>Amics convidats</translation>
     </message>
     <message>
-        <source>Put a sensible lobby name here</source>
-        <translation>Escriu un nom adient per la sala</translation>
-    </message>
-    <message>
-        <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>El teu sobrenom per la sala (Canvia el per defecte a opcions-&gt;xat)</translation>
-    </message>
-    <message>
         <source>Contacts:</source>
         <translation>Contactes:</translation>
     </message>
-</context>
-<context>
-    <name>CreateMsgLinkDialog</name>
     <message>
-        <source>Invite type:</source>
-        <translation>Tipus d&apos;invitació:</translation>
-    </message>
-    <message>
-        <source>Private chat</source>
-        <translation>Xat privat</translation>
-    </message>
-    <message>
-        <source>Validity time :</source>
-        <translation>Temps de validesa:</translation>
-    </message>
-    <message>
-        <source>hour</source>
-        <translation>hora</translation>
-    </message>
-    <message>
-        <source>day</source>
-        <translation>dia</translation>
-    </message>
-    <message>
-        <source>week</source>
-        <translation>setmana</translation>
-    </message>
-    <message>
-        <source>month</source>
-        <translation>mes</translation>
-    </message>
-    <message>
-        <source>year</source>
-        <translation>any</translation>
-    </message>
-    <message>
-        <source>Create!</source>
-        <translation>Crear!</translation>
-    </message>
-    <message>
-        <source>Private chat invite creation failed</source>
-        <translation>La creació d&apos;invitació a xat privat ha fallat</translation>
-    </message>
-    <message>
-        <source>The creation of the chat invite failed</source>
-        <translation>La creació d&apos;invitació al xat ha fallat</translation>
-    </message>
-    <message>
-        <source>Private chat invite created</source>
-        <translation>Invitació a xat privat creada</translation>
-    </message>
-    <message>
-        <source>Create distant chat invite</source>
-        <translation>Crear una invitació a xat distant</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Per crear una invitació a xat privat per una persona no-amiga, selecciona la seva clau a sota i dona un temps de validesa a la teva invitació i prem &quot;Crear&quot;. La invitació contindrà la informació necessària per obrir un túnel per xatejar amb tu. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;La invitació és encriptada, no desvela la teva identitat. Només el contacte seleccionat pot desencriptar l&apos;enllaç i utilitzar-lo per contactar-te.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation>S&apos;ha creat la teva nova invitació a xat. Pots copiar-la i enganxa-la, és un enllaç de RetroShare.</translation>
-    </message>
-    <message>
-        <source>Messaging invite creation failed</source>
-        <translation>Ha fallat la creació d&apos;invitació a missatgeria</translation>
-    </message>
-    <message>
-        <source>The creation of the messaging invite failed</source>
-        <translation>Ha fallat la creació d&apos;invitació a missatgeria</translation>
-    </message>
-    <message>
-        <source>Messaging invite created</source>
-        <translation>Invitació a missatgeria creada</translation>
-    </message>
-    <message>
-        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation>La teva nova invitació a missatgeria instantània s&apos;ha copiat al porta-retalls. Ara podràs enganxar-la com un enllaç de RetroShare.</translation>
-    </message>
-    <message>
-        <source>Create distant chat</source>
-        <translation>Crear xat distant</translation>
+        <source>Identity to use:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
-    <message>
-        <source>Profile</source>
-        <translation>Perfil</translation>
-    </message>
-    <message>
-        <source>Profile Manager</source>
-        <translation>Directori de perfils</translation>
-    </message>
     <message>
         <source>Public Information</source>
         <translation>Informació pública</translation>
@@ -4389,10 +3198,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Location ID:</source>
         <translation>Id d&apos;ubicació:</translation>
-    </message>
-    <message>
-        <source>Number of Friends:</source>
-        <translation>Nombre d&apos;amics:</translation>
     </message>
     <message>
         <source>Software Version:</source>
@@ -4415,20 +3220,8 @@ p, li { white-space: pre-wrap; }
         <translation>Inclou les signatures</translation>
     </message>
     <message>
-        <source>Use old key format</source>
-        <translation>Utilitza el format antic de clau</translation>
-    </message>
-    <message>
-        <source>Copy link to clipboard</source>
-        <translation>Copiar enllaç al porta-retalls</translation>
-    </message>
-    <message>
         <source>Save Key into a file</source>
         <translation>Desa la clau a un arxiu</translation>
-    </message>
-    <message>
-        <source>Save Key</source>
-        <translation>Desar clau</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -4459,16 +3252,51 @@ p, li { white-space: pre-wrap; }
         <translation>Certificat RetroShare (*.rsc );;Tots els arxius (*)</translation>
     </message>
     <message>
-        <source>Identity ID</source>
-        <translation>Id d&apos;identitat</translation>
-    </message>
-    <message>
         <source>TextLabel</source>
         <translation>EtiquetaText</translation>
     </message>
     <message>
         <source>PGP fingerprint:</source>
         <translation>fingerprint PGP:</translation>
+    </message>
+    <message>
+        <source>Node information</source>
+        <translation>Informació de node</translation>
+    </message>
+    <message>
+        <source>PGP Id :</source>
+        <translation>Id PGP:</translation>
+    </message>
+    <message>
+        <source>Friend nodes:</source>
+        <translation>Nodes de l&apos;amic:</translation>
+    </message>
+    <message>
+        <source>Copy certificate to clipboard</source>
+        <translation>Copia el certificat al porta-retallls</translation>
+    </message>
+    <message>
+        <source>Save certificate to file</source>
+        <translation>Guarda el certificat en un arxiu</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Node</translation>
+    </message>
+    <message>
+        <source>Create new node...</source>
+        <translation>Crear node nou...</translation>
+    </message>
+    <message>
+        <source>show statistics window</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>DHTGraphSource</name>
+    <message>
+        <source>users</source>
+        <translation>usuaris</translation>
     </message>
 </context>
 <context>
@@ -4575,14 +3403,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DhtWindow</name>
     <message>
-        <source>DHT Details</source>
-        <translation>Detalls DHT</translation>
-    </message>
-    <message>
-        <source>Peer Details</source>
-        <translation>Detalls del contacte</translation>
-    </message>
-    <message>
         <source>Net Status</source>
         <translation>Estat de la xarxa</translation>
     </message>
@@ -4605,14 +3425,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Peer Address</source>
         <translation>Adreça del contacte</translation>
-    </message>
-    <message>
-        <source>Extra Label</source>
-        <translation>Etiqueta extra</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation>EtiquetaTexte</translation>
     </message>
     <message>
         <source>Name</source>
@@ -4879,38 +3691,6 @@ p, li { white-space: pre-wrap; }
         <translation>Desconegut</translation>
     </message>
     <message>
-        <source>#Peers: </source>
-        <translation>#Contactes:</translation>
-    </message>
-    <message>
-        <source> DHT: (#off:</source>
-        <translation>DHT: (#apagat:</translation>
-    </message>
-    <message>
-        <source>,unreach:</source>
-        <translation>,no abastable:</translation>
-    </message>
-    <message>
-        <source>,online:</source>
-        <translation>,en línia:</translation>
-    </message>
-    <message>
-        <source>) Connections: (#dis:</source>
-        <translation>) Connexions: (#des:</translation>
-    </message>
-    <message>
-        <source>,#dir:</source>
-        <translation>,#dir:</translation>
-    </message>
-    <message>
-        <source>,#proxy:</source>
-        <translation>,#intermediari:</translation>
-    </message>
-    <message>
-        <source>,#relay:</source>
-        <translation>,#repetidor:</translation>
-    </message>
-    <message>
         <source>RELAY END</source>
         <translation>FINAL REPETIDOR</translation>
     </message>
@@ -4949,6 +3729,70 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>never</source>
         <translation>mai</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Net Status:</source>
+        <translation>Estat de la xarxa:</translation>
+    </message>
+    <message>
+        <source>Network Mode:</source>
+        <translation>Mode de xarxa:</translation>
+    </message>
+    <message>
+        <source>Nat Type:</source>
+        <translation>Tipus de NAT:</translation>
+    </message>
+    <message>
+        <source>Nat Hole:</source>
+        <translation>Forat del NAT:</translation>
+    </message>
+    <message>
+        <source>Connect Mode:</source>
+        <translation>Mode de connexió:</translation>
+    </message>
+    <message>
+        <source>Peer Address:</source>
+        <translation>Adreça del contacte:</translation>
+    </message>
+    <message>
+        <source>Unreach:</source>
+        <translation>No abastable:</translation>
+    </message>
+    <message>
+        <source>Online:</source>
+        <translation>En línia:</translation>
+    </message>
+    <message>
+        <source>Offline:</source>
+        <translation>Fora de línia:</translation>
+    </message>
+    <message>
+        <source>DHT Peers:</source>
+        <translation>Contactes DHT:</translation>
+    </message>
+    <message>
+        <source>Disconnected:</source>
+        <translation>Desconnectat:</translation>
+    </message>
+    <message>
+        <source>Direct:</source>
+        <translation>Directe:</translation>
+    </message>
+    <message>
+        <source>Proxy:</source>
+        <translation>Servidor intermediari:</translation>
+    </message>
+    <message>
+        <source>Relay:</source>
+        <translation>Repetidor:</translation>
+    </message>
+    <message>
+        <source>DHT Graph</source>
+        <translation>Gràfic DHT</translation>
     </message>
 </context>
 <context>
@@ -5049,129 +3893,6 @@ seus arxius quan el tornis a endollar.</translation>
     <message>
         <source>Start file</source>
         <translation>Arxiu d&apos;inici</translation>
-    </message>
-</context>
-<context>
-    <name>EditChanDetails</name>
-    <message>
-        <source>Channel Details</source>
-        <translation>Detalls del canal</translation>
-    </message>
-    <message>
-        <source>Edit Channel Details</source>
-        <translation>Edita detalls del canal</translation>
-    </message>
-    <message>
-        <source>Channel Info</source>
-        <translation>Informació del canal</translation>
-    </message>
-    <message>
-        <source>Channel Name</source>
-        <translation>Nom del canal</translation>
-    </message>
-    <message>
-        <source>Channel Description</source>
-        <translation>Descripció del canal</translation>
-    </message>
-    <message>
-        <source>Add Channel Logo</source>
-        <translation>Afegir logotip del canal</translation>
-    </message>
-    <message>
-        <source>Load channel logo</source>
-        <translation>Carrega logotip del canal</translation>
-    </message>
-</context>
-<context>
-    <name>EditForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Detalls del fòrum</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Edita detalls del fòrum</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Informació del fòrum</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Nom del fòrum</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Descripció del fòrum</translation>
-    </message>
-</context>
-<context>
-    <name>ExampleDialog</name>
-    <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Amics&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Estat</translation>
-    </message>
-    <message>
-        <source>Person</source>
-        <translation>Persona</translation>
-    </message>
-    <message>
-        <source>Auto Connect</source>
-        <translation>Auto connectar-se</translation>
-    </message>
-    <message>
-        <source>Trust Level</source>
-        <translation>Nivell de confiança</translation>
-    </message>
-    <message>
-        <source>Peer Address</source>
-        <translation>Adreça del contacte</translation>
-    </message>
-    <message>
-        <source>Last Contact</source>
-        <translation>Últim missatge</translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation>Organització</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Localització</translation>
-    </message>
-    <message>
-        <source>Country</source>
-        <translation>País</translation>
-    </message>
-    <message>
-        <source>Person Id</source>
-        <translation>Id de la persona</translation>
-    </message>
-    <message>
-        <source>Auth Code</source>
-        <translation>Codi d&apos;autenticació</translation>
-    </message>
-    <message>
-        <source>Vote Up</source>
-        <translation>Votar positiu</translation>
-    </message>
-    <message>
-        <source>Vote Down</source>
-        <translation>Votar negatiu</translation>
     </message>
 </context>
 <context>
@@ -5425,147 +4146,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>ForumDetails</name>
-    <message>
-        <source>Forum Details</source>
-        <translation>Detalls del fòrum</translation>
-    </message>
-    <message>
-        <source>Forum Info</source>
-        <translation>Informació del fòrum</translation>
-    </message>
-    <message>
-        <source>Forum Name</source>
-        <translation>Nom del fòrum</translation>
-    </message>
-    <message>
-        <source>Popularity</source>
-        <translation>Popularitat</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Darrer missatge</translation>
-    </message>
-    <message>
-        <source>Forum ID</source>
-        <translation>ID del fòrum</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Descripció del fòrum</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Seguretat</translation>
-    </message>
-    <message>
-        <source>Allowed Messages</source>
-        <translation>Missatges permesos</translation>
-    </message>
-    <message>
-        <source>Authenticated Messages</source>
-        <translation>Missatges autenticats</translation>
-    </message>
-    <message>
-        <source>Anonymous Messages</source>
-        <translation>Missatges anònims</translation>
-    </message>
-</context>
-<context>
-    <name>ForumMsgItem</name>
-    <message>
-        <source>Subject: </source>
-        <translation>Assumpte:</translation>
-    </message>
-    <message>
-        <source>Unsubscribe To Forum</source>
-        <translation>Donar de baixa del fòrum</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Resposta</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Set as read and remove item</source>
-        <translation>Marcar com llegit i eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Enviar</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Signat</translation>
-    </message>
-    <message>
-        <source>Forum Post</source>
-        <translation>Entrada al fòrum</translation>
-    </message>
-    <message>
-        <source>Unknown Forum Post</source>
-        <translation>Entrada al fòrum desconeguda</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Anònim</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>En resposta a</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-    <message>
-        <source>Please give a Text Message</source>
-        <translation>Si us plau, escriu un missatge de text</translation>
-    </message>
-</context>
-<context>
-    <name>ForumNewItem</name>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Subscriure&apos;s al fòrum</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Remove Item</source>
-        <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Descripció del fòrum</translation>
-    </message>
-    <message>
-        <source>Unknown Forum</source>
-        <translation>Fòrum desconegut</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nou fòrum</translation>
-    </message>
-    <message>
-        <source>Updated Forum</source>
-        <translation>Fòrum actualitzat</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-</context>
-<context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
@@ -5580,14 +4160,6 @@ p, li { white-space: pre-wrap; }
         <translation>Expandeix missatges nous</translation>
     </message>
     <message>
-        <source>New forum</source>
-        <translation>Nou fòrum</translation>
-    </message>
-    <message>
-        <source>Open all forums in new tab</source>
-        <translation>Obrir tots els nous fòrum en una pestanya nova</translation>
-    </message>
-    <message>
         <source>Forum</source>
         <translation>Fòrum</translation>
     </message>
@@ -5595,294 +4167,17 @@ p, li { white-space: pre-wrap; }
         <source>Load embedded images</source>
         <translation>Carrega imatges incrustades</translation>
     </message>
-</context>
-<context>
-    <name>ForumUserNotify</name>
     <message>
-        <source>Forum Post</source>
-        <translation>Entrada al fòrum</translation>
+        <source>Tabs</source>
+        <translation>Pestanyes</translation>
     </message>
-</context>
-<context>
-    <name>ForumsDialog</name>
     <message>
-        <source>Forums</source>
-        <translation>Fòrums</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Crear fòrum</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Fòrum:</translation>
-    </message>
-    <message>
-        <source>Last Post</source>
-        <translation>Darrer missatge</translation>
-    </message>
-    <message>
-        <source>Threaded View</source>
-        <translation>Vista per conversa</translation>
-    </message>
-    <message>
-        <source>Flat View</source>
-        <translation>Vista plana</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Títol</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autor</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Signat</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Conversa:</translation>
-    </message>
-    <message>
-        <source>Previous Thread</source>
-        <translation>Conversa previa:</translation>
-    </message>
-    <message>
-        <source>Next Thread</source>
-        <translation>Conversa següent:</translation>
-    </message>
-    <message>
-        <source>Download all files</source>
-        <translation>Descarregar tots els arxius</translation>
-    </message>
-    <message>
-        <source>Next unread</source>
-        <translation>Següent no llegit</translation>
-    </message>
-    <message>
-        <source>Start new Thread for Selected Forum</source>
-        <translation>Comença nova conversa al fòrum seleccionat</translation>
-    </message>
-    <message>
-        <source>Reply Message</source>
-        <translation>Respondre missatge</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Carregant</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Impressió</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>PreviaImpressió</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Els meus fòrums</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Fòrums subscrits</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Fòrums populars</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Altres fòrums</translation>
-    </message>
-    <message>
-        <source>Search Title</source>
-        <translation>Cerca títol</translation>
-    </message>
-    <message>
-        <source>Search Date</source>
-        <translation>Cerca data</translation>
-    </message>
-    <message>
-        <source>Search Author</source>
-        <translation>Cerca autor</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <translation>Contingut</translation>
-    </message>
-    <message>
-        <source>Search Content</source>
-        <translation>Cerca contingut</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Subscriure&apos;s al fòrum</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Donar de baixa fòrum</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nou fòrum</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Mostra detalls del fòrum</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Edita detalls del fòrum</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Comparteix fòrum</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Restaura drets de publicació pel fòrum</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copia l&apos;enllaç RetroShare</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Marca tot com a llegit</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Marca tot com no llegit</translation>
-    </message>
-    <message>
-        <source>Reply</source>
-        <translation>Resposta</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Començar nova conversa</translation>
-    </message>
-    <message>
-        <source>Reply to Author</source>
-        <translation>Respondre a l&apos;autor</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation>Expandeix tot</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation>Contreure tot</translation>
-    </message>
-    <message>
-        <source>Mark as read</source>
-        <translation>Marca com llegit</translation>
-    </message>
-    <message>
-        <source>with children</source>
-        <translation>amb fills</translation>
-    </message>
-    <message>
-        <source>Mark as unread</source>
-        <translation>Marca com no llegit</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>AUTHD</translation>
-    </message>
-    <message>
-        <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Missatge perdut ... ]</translation>
-    </message>
-    <message>
-        <source>Placeholder for missing Message</source>
-        <translation>Contenidor per missatge perdut</translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>No Forum Selected!</source>
-        <translation>Cap fòrum seleccionat!</translation>
-    </message>
-    <message>
-        <source>Original Message</source>
-        <translation>Missatge original</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Des de</translation>
-    </message>
-    <message>
-        <source>Sent</source>
-        <translation>Enviat</translation>
-    </message>
-    <message>
-        <source>Subject</source>
-        <translation>Assumpte</translation>
-    </message>
-    <message>
-        <source>On %1, %2 wrote:</source>
-        <translation>A % 1, %2 va escriure:</translation>
-    </message>
-    <message>
-        <source>You can&apos;t reply an Anonymous Author</source>
-        <translation>No pots respondre a un autor anònim</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Descripció del fòrum</translation>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Fòrums&lt;/h1&gt; &lt;p&gt;Els fòrum de RetroShare semblen com fòrums d&apos;Internet normals, però funcionen de forma descentralitzada: Veus fòrums als que els teus amics estan subscrits i tu reenvies fòrums als que estàs subscrits als teus amics. Això promociona automàticament els fòrums interessant a la xarxa.&lt;/p&gt; &lt;p&gt;Els fòrums són o bé autenticats (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) que implica que les teves publicacions han de ser signades criptogràficament o anònimes (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). La forma autenticada és més resistent a la pràctica de l&apos;&quot;spamming&quot;.&lt;/p&gt; &lt;p&gt;Les publicacions als fòrums es propaguen d&apos;amic a amic utilitzant fitxer cau d&apos;intercanvi petits. Quan et connectes per primera vegada a un amic és probable que rebis molts d&apos;aquests arxius i apareguin nous fòrums&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>Load images always for this message</source>
-        <translation>Carregar sempre les imatges per aquest missatge</translation>
-    </message>
-</context>
-<context>
-    <name>ForumsFillThread</name>
-    <message>
-        <source>Unknown</source>
-        <translation>Desconegut</translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
-        <translation>Anònim</translation>
-    </message>
-    <message>
-        <source>signed</source>
-        <translation>signat</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>cap</translation>
+        <source>Open each forum in a new tab</source>
+        <translation>Obrir cada fòrum en una nova pestanya</translation>
     </message>
 </context>
 <context>
     <name>FriendList</name>
-    <message>
-        <source>Friends</source>
-        <translation>Amics</translation>
-    </message>
     <message>
         <source>Status</source>
         <translation>Estat</translation>
@@ -5960,14 +4255,6 @@ p, li { white-space: pre-wrap; }
         <translation>Amic</translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation>Localització</translation>
-    </message>
-    <message>
-        <source>Message Group</source>
-        <translation>Missatge de grup</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Editar grup</translation>
     </message>
@@ -5980,28 +4267,12 @@ p, li { white-space: pre-wrap; }
         <translation>Xat</translation>
     </message>
     <message>
-        <source>Message Friend</source>
-        <translation>Missatge per amic</translation>
-    </message>
-    <message>
-        <source>Friend Details</source>
-        <translation>Detalls de l&apos;amic</translation>
-    </message>
-    <message>
         <source>Recommend this Friend to...</source>
         <translation>Recomanar aquest amic a...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
         <translation>Copia enllaç del certificat</translation>
-    </message>
-    <message>
-        <source>Deny Friend</source>
-        <translation>Negar l&apos;amic</translation>
-    </message>
-    <message>
-        <source>Remove Friend Location</source>
-        <translation>Treure ubicació de l&apos;amic</translation>
     </message>
     <message>
         <source>Add to group</source>
@@ -6071,6 +4342,42 @@ p, li { white-space: pre-wrap; }
         <source>Paste certificate link</source>
         <translation>Enganxa enllaç certificat</translation>
     </message>
+    <message>
+        <source>Sort by</source>
+        <translation>Ordenat per</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Node</translation>
+    </message>
+    <message>
+        <source>Remove Friend Node</source>
+        <translation>Treure node de l&apos;amic</translation>
+    </message>
+    <message>
+        <source>Do you want to remove this node?</source>
+        <translation>Voleu suprimir aquest node?</translation>
+    </message>
+    <message>
+        <source>Friend nodes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message to whole group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Detalls</translation>
+    </message>
+    <message>
+        <source>Deny</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send message</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
@@ -6113,48 +4420,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FriendsDialog</name>
     <message>
-        <source>Friends</source>
-        <translation>Amics</translation>
-    </message>
-    <message>
         <source>Edit status message</source>
         <translation>Editar missatge d&apos;estat</translation>
     </message>
     <message>
         <source>Broadcast</source>
         <translation>Difusió</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Negreta</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Subratllat</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Cursiva</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Tipus de lletra</translation>
-    </message>
-    <message>
-        <source>Text Color</source>
-        <translation>Color del text</translation>
-    </message>
-    <message>
-        <source>Attach File</source>
-        <translation>Adjuntar arxiu</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Enviar</translation>
-    </message>
-    <message>
-        <source>Messages entered here are sent to all connected friends</source>
-        <translation>Els missatges inserits aquí s&apos;envien a tots els amics connectats</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
@@ -6217,38 +4488,6 @@ p, li { white-space: pre-wrap; }
         <translation>Restablir tipografia per defecte</translation>
     </message>
     <message>
-        <source>Local network</source>
-        <translation>Xarxa local</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Enganxa l&apos;enllaç RetroShare</translation>
-    </message>
-    <message>
-        <source>is typing...</source>
-        <translation>està escrivint...</translation>
-    </message>
-    <message>
-        <source>New group chat</source>
-        <translation>Nou xat en grup</translation>
-    </message>
-    <message>
-        <source>Do you really want to physically delete the history?</source>
-        <translation>Realment vols eliminar físicament l&apos;historial?</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Afegir arxiu extra</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Desa com...</translation>
-    </message>
-    <message>
-        <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Arxiu de text (*.txt );;Tots els arxius (*)</translation>
-    </message>
-    <message>
         <source>Keyring</source>
         <translation>Clauer</translation>
     </message>
@@ -6257,149 +4496,20 @@ p, li { white-space: pre-wrap; }
         <translation>Xat de difusió del RetroShare: Els missatges són enviats a tots els amics connectats.</translation>
     </message>
     <message>
-        <source>Attach a Picture</source>
-        <translation>Adjunta una imatge</translation>
+        <source>Network</source>
+        <translation>Xarxa</translation>
     </message>
     <message>
-        <source>Load Picture File</source>
-        <translation>Carrega arxiu d&apos;imatge</translation>
+        <source>Network graph</source>
+        <translation>Gràfic de xarxa</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Amics&lt;/h1&gt; &lt;p&gt;La pestanya Amics mostra... els teus amics: La llista de les persones amb qui has acceptat connectar-te. &lt;/p&gt; &lt;p&gt;Pots agrupar els amics en grups per millorar el control de l&apos;accés a les dades, per permetre només a alguns amics veure alguns arxius.&lt;/p&gt; &lt;p&gt;A la dreta, trobaràs 3 útils pestanyes: &lt;ul&gt;&lt;li&gt;&quot;Difusió&quot; envia missatges a tots els amics connectats a la vegada&lt;/li&gt; &lt;li&gt;&quot;Xarxa local&quot; mostra la xarxa propera, incloent amics i amics d&apos;amics&lt;/li&gt; &lt;li&gt;&quot;Clauer&quot; conté les claus que tens, principalment les reenviades dels teus amics cap a tu&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
-    </message>
-</context>
-<context>
-    <name>GamesDialog</name>
-    <message>
-        <source>Form</source>
-        <translation>Formulari</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Xarxa&lt;/h1&gt; ⇥⇥ &lt;p&gt;La pestanya Xarxa mostra els nodes RertoShare dels teus amics: Els nodes de RetroShare veïns amb que estàs.connectat.⇥⇥ &lt;/p&gt; ⇥⇥ &lt;p&gt;Pots agrupar els nodes en grups per millorar el control de l&apos;accés a les dades, per permetre⇥⇥ només a alguns nodes veure alguns arxius.&lt;/p&gt; ⇥⇥ &lt;p&gt;A la dreta, trobaràs 3 útils pestanyes: ⇥⇥ &lt;ul&gt;⇥ ⇥⇥ ⇥⇥&lt;li&gt;Difusió envia missatges a tots els nodes connectats a la vegada&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;El gràfic de xarxa propera mostra la xarxa al teu voltant, basant-se en la informació de descobriment&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Anell de claus conté les claus que tens, principalment les reenviades pels nodes dels teus amics cap a tu&lt;/li&gt; ⇥⇥ &lt;/ul&gt; &lt;/p&gt; ⇥⇥</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Executar jocs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Game:</source>
-        <translation>Joc:</translation>
-    </message>
-    <message>
-        <source>GameType: 0. Want to Add your Game here?</source>
-        <translation>Tipus de joc: 0. Vols afegir el joc aquí?</translation>
-    </message>
-    <message>
-        <source>GameType: 1. Get In Touch with the developers</source>
-        <translation>Tipus de joc: 1. Contacta amb els desenvolupadors</translation>
-    </message>
-    <message>
-        <source>GameType: 2.</source>
-        <translation>Tipus de joc: 2.</translation>
-    </message>
-    <message>
-        <source>Title / Comment</source>
-        <translation>Títol / Comentari</translation>
-    </message>
-    <message>
-        <source>Create New Game</source>
-        <translation>Crear joc nou</translation>
-    </message>
-    <message>
-        <source>Invite All Friends</source>
-        <translation>Convidar tots els amics</translation>
-    </message>
-    <message>
-        <source>Game Type</source>
-        <translation>Tipus de joc</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Servidor</translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation>Estat</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation>Comentari</translation>
-    </message>
-    <message>
-        <source>GameID</source>
-        <translation>IdJoc</translation>
-    </message>
-    <message>
-        <source>Player</source>
-        <translation>Jugador</translation>
-    </message>
-    <message>
-        <source>Invite</source>
-        <translation>Convidar</translation>
-    </message>
-    <message>
-        <source>Interested</source>
-        <translation>Interessat</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Acceptat</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Esborrar</translation>
-    </message>
-    <message>
-        <source>Move Player</source>
-        <translation>Moure el jugador</translation>
-    </message>
-    <message>
-        <source>Play Game</source>
-        <translation>Jugar joc</translation>
-    </message>
-    <message>
-        <source>Cancel Game</source>
-        <translation>Cancel·lar joc</translation>
-    </message>
-    <message>
-        <source>Add to Invite List</source>
-        <translation>Afegir a la llista de convidats</translation>
-    </message>
-    <message>
-        <source>Remove from Invite List</source>
-        <translation>Treure de la llista de convidats</translation>
-    </message>
-    <message>
-        <source>Interested in Playing</source>
-        <translation>Interessat en jugar</translation>
-    </message>
-    <message>
-        <source>Not Interested in Game</source>
-        <translation>No interessat en el joc</translation>
-    </message>
-    <message>
-        <source>Not Interested</source>
-        <translation>No interessat</translation>
-    </message>
-    <message>
-        <source>Confirm Peer in Game</source>
-        <translation>Confirmar contacte pel joc</translation>
-    </message>
-    <message>
-        <source>Remove Peer from Game</source>
-        <translation>Eliminar contacte del joc</translation>
-    </message>
-    <message>
-        <source>Interested in Game</source>
-        <translation>Interessat en el joc</translation>
-    </message>
-    <message>
-        <source>Quit Game</source>
-        <translation>Sortir del joc</translation>
+        <source>Set your status message here.</source>
+        <translation>Estableix aquí el teu missatge d&apos;estat.</translation>
     </message>
 </context>
 <context>
@@ -6407,18 +4517,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Create new Profile</source>
         <translation>Crear perfil nou</translation>
-    </message>
-    <message>
-        <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>Pots instal·lar RetroShare en diferents ubicacions amb la mateixa identitat. Per fer-ho només has d&apos;exportar la identitat que vulguis, importar-la al nou ordinador i després crear la nova ubicació.</translation>
-    </message>
-    <message>
-        <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Sembla que no tens cap perfil (Clau PGP). Si us plau, omple el formulari inferior per crear-ne un, o importa&apos;n un existent.</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>El teu perfil està associat a una clau PGP. RetroShare ara mateix ignora les claus DSA.</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6441,52 +4539,8 @@ i amics d&apos;amics. Aquesta informació és necessaria pel PGP, però no
 per continuar sent anònim, pots utilitzar un correu electrònic fals.</translation>
     </message>
     <message>
-        <source>This Password is for PGP</source>
-        <translation>Aquesta contrasenya és pel PGP</translation>
-    </message>
-    <message>
         <source>Password</source>
         <translation>Contrasenya</translation>
-    </message>
-    <message>
-        <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Utilitza una contrasenya forta aquí. Aquesta contrasenya protegeix la teva clau PGP.</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation>Localització</translation>
-    </message>
-    <message>
-        <source>Create new identity</source>
-        <translation>Crear nova identitat</translation>
-    </message>
-    <message>
-        <source>Use identity</source>
-        <translation>Utilitzar identitat</translation>
-    </message>
-    <message>
-        <source>Your profile is associated with a PGP key</source>
-        <translation>El teu perfil està associat a una clau PGP</translation>
-    </message>
-    <message>
-        <source>Create a new identity</source>
-        <translation>Crear una nova identitat</translation>
-    </message>
-    <message>
-        <source>Import new identity</source>
-        <translation>Importar una nova identitat</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Exportar identitat seleccionada</translation>
-    </message>
-    <message>
-        <source>Create a new Identity</source>
-        <translation>Crear una nova identitat</translation>
-    </message>
-    <message>
-        <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>El RetroShare utilitza claus PGP per controlar les identitats.</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -6501,114 +4555,8 @@ per continuar sent anònim, pots utilitzar un correu electrònic fals.</translat
         <translation>[Requerit] Visible als teus amics i als amics d&apos;amics.</translation>
     </message>
     <message>
-        <source>[Required] This password protects your PGP key.</source>
-        <translation>[Requerit] Aquesta contrasenya protegeix la teva clau PGP.</translation>
-    </message>
-    <message>
-        <source>Create new Location</source>
-        <translation>Crear nova ubicació</translation>
-    </message>
-    <message>
-        <source>Generate new Location</source>
-        <translation>Generar nova ubicació</translation>
-    </message>
-    <message>
-        <source>Create a new Location</source>
-        <translation>Crear una nova ubicació</translation>
-    </message>
-    <message>
-        <source>Create new Identity</source>
-        <translation>Crear nova identitat</translation>
-    </message>
-    <message>
-        <source>Generate new Identity</source>
-        <translation>Generar una nova identitat</translation>
-    </message>
-    <message>
-        <source>You can create a new identity with this form.</source>
-        <translation>Pots crear una nova identitat amb aquest formulari.</translation>
-    </message>
-    <message>
-        <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>Pots utilitzar una identitat existent (ex. un parell de clau PGP) de la llista inferior o crear-ne un de nou amb aquest formulari.</translation>
-    </message>
-    <message>
-        <source>Export Identity</source>
-        <translation>Exportar identitat</translation>
-    </message>
-    <message>
-        <source>RetroShare Identity files (*.asc)</source>
-        <translation>Arxius d&apos;identitat del RetroShare (*.asc)</translation>
-    </message>
-    <message>
-        <source>Identity saved</source>
-        <translation>Identitat desada</translation>
-    </message>
-    <message>
-        <source>Your identity was successfully saved
-It is encrypted
-
-You can now copy it to another computer
-and use the import button to load it</source>
-        <translation>La teva identitat s&apos;ha desat amb èxit
-Està encriptada
-Ara ho podràs copiar a un altre ordenador
-i utilitzar el botó d&apos;importació per carregar-lo</translation>
-    </message>
-    <message>
-        <source>Identity not saved</source>
-        <translation>Identitat no desada</translation>
-    </message>
-    <message>
-        <source>Your identity was not saved. An error occurred.</source>
-        <translation>La teva identitat no s&apos;ha desat. Hi ha hagut un error.</translation>
-    </message>
-    <message>
-        <source>Identity not loaded</source>
-        <translation>Identitat no carregada</translation>
-    </message>
-    <message>
-        <source>Your identity was not loaded properly:</source>
-        <translation>La teva identitat no s&apos;ha carregat correctament:</translation>
-    </message>
-    <message>
-        <source>New identity imported</source>
-        <translation>Nova identitat importada</translation>
-    </message>
-    <message>
-        <source>Your identity was imported successfully:</source>
-        <translation>La teva identitat s&apos;ha importat amb èxit:</translation>
-    </message>
-    <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Ara pots utilitzar-la per crear una nova ubicació.</translation>
-    </message>
-    <message>
-        <source>Generate PGP key Failure</source>
-        <translation>Fracàs al generar clau PGP</translation>
-    </message>
-    <message>
-        <source>Location field is required with a minimum of 3 characters</source>
-        <translation>El camp ubicació és necessari amb un mínim de 3 caràcters</translation>
-    </message>
-    <message>
         <source>All fields are required with a minimum of 3 characters</source>
         <translation>Tots els camps són obligatoris amb un mínim de 3 caràcters</translation>
-    </message>
-    <message>
-        <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
-
-Fill in your PGP password when asked, to sign your new key.</source>
-        <translation>Generant nova clau PGP, si us plau, tingues paciència: aquest procés necessita generar un nombre primer gran i pot trigar uns minuts en un ordinador lent. 
-Introdueix la teva contrasenya PGP quan t&apos;ho pregunti per signar la nova clau.</translation>
-    </message>
-    <message>
-        <source>Generate ID Failure</source>
-        <translation>Fracàs al generar ID</translation>
-    </message>
-    <message>
-        <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>Ha fallat la generació del teu nou certificat, potser la contrasenya PGP sigui incorrecta!</translation>
     </message>
     <message>
         <source>Password (check)</source>
@@ -6623,16 +4571,246 @@ Introdueix la teva contrasenya PGP quan t&apos;ho pregunti per signar la nova cl
         <translation>[Requerit] Escriu la mateixa contrasenya altre cop aquí.</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. 
-This field will be used to differentiate different installations with
-the same identity (PGP key).</source>
-        <translation>Introdueix una ubicació amb sentit. Ex: casa, portàtil, etc. 
-Aquest camp serà utilitzat per diferenciar instal·lacions amb
-la mateixa identitat (Clau PGP).</translation>
-    </message>
-    <message>
         <source>Passwords do not match</source>
         <translation>Les contrasenyes no coincideixen</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>Port</translation>
+    </message>
+    <message>
+        <source>This password is for PGP</source>
+        <translation>Aquesta contrasenya és pel PGP</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>Node</translation>
+    </message>
+    <message>
+        <source>TOR address</source>
+        <translation>Adreça TOR</translation>
+    </message>
+    <message>
+        <source>Create new node</source>
+        <translation>Crear node nou</translation>
+    </message>
+    <message>
+        <source>Generate new node</source>
+        <translation>Generar node nou</translation>
+    </message>
+    <message>
+        <source>Create a new node</source>
+        <translation>Crear un node nou</translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation>Ara pots utilitzar-la per crear un node nou.</translation>
+    </message>
+    <message>
+        <source>Invalid hidden node</source>
+        <translation>Node ocult invàlid</translation>
+    </message>
+    <message>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
+        <translation>Si us plau, introdueix una adreça del tipus: 31769173498.onion:7800</translation>
+    </message>
+    <message>
+        <source>Node field is required with a minimum of 3 characters</source>
+        <translation>El camp node és necessari amb un mínim de 3 caràcters</translation>
+    </message>
+    <message>
+        <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
+        <translation>Ha fallat la generació del teu nou certificat, potser la contrasenya PGP sigui incorrecta!</translation>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.
+Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>It looks like no profile (PGP keys) exists. Please fill in the form below to create one, or import an existing profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node exists for this profile.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export selected profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Advanced options</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a hidden node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a strong password here. This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your connection port.&lt;/p&gt;&lt;p&gt;Any value between 1024 and 65535 &lt;/p&gt;&lt;p&gt;should be ok. You can change it later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key length</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Currently disabled. Please move your mouse around until you reach at least 20%</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to create your node and/or profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] This password protects your private PGP key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter a meaningful node description. e.g. : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same profile (PGP key pair).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a new profile and node</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.
+Alternatively you can import a (previously exported) profile. Just uncheck &quot;Create a new profile&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No node is associated with the profile named</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create a node for it by providing a node name.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare profile files (*.asc)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was successfully saved
+It is encrypted
+
+You can now copy it to another computer
+and use the import button to load it</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not saved</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not saved. An error occurred.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile not loaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was not loaded properly:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New profile imported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your profile was imported successfully:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key pair generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Profile generation failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing PGP certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
+
+Fill in your PGP password when asked, to sign your new key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can create a new profile with this form.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6950,30 +5128,65 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>GraphFrame</name>
+    <name>GlobalRouterStatistics</name>
     <message>
-        <source>Recv: </source>
-        <translation>Rebut: </translation>
+        <source>Router Statistics</source>
+        <translation>Estadístiques d&apos;encaminador</translation>
     </message>
     <message>
-        <source>%1 KB/s</source>
-        <translation>%1 kB/s</translation>
+        <source>Unknown Peer</source>
+        <translation>Contacte desconegut</translation>
+    </message>
+</context>
+<context>
+    <name>GlobalRouterStatisticsWidget</name>
+    <message>
+        <source>Pending packets</source>
+        <translation>Paquets pendents</translation>
     </message>
     <message>
-        <source>Sent: </source>
-        <translation>Enviat: </translation>
+        <source>Managed keys</source>
+        <translation>Claus administrades</translation>
     </message>
     <message>
-        <source>%1 KB</source>
-        <translation>%1 kB</translation>
+        <source> : Service ID = </source>
+        <translation>: Id Servei =</translation>
     </message>
     <message>
-        <source>%1 MB</source>
-        <translation>%1 MB</translation>
+        <source>Routing matrix  (</source>
+        <translation>Matriu d&apos;encaminament (</translation>
     </message>
     <message>
-        <source>%1 GB</source>
-        <translation>%1 GB</translation>
+        <source>Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>Destinació</translation>
+    </message>
+    <message>
+        <source>Data status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Data hash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Received</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Enviar</translation>
     </message>
 </context>
 <context>
@@ -7048,24 +5261,8 @@ p, li { white-space: pre-wrap; }
         <translation>El directori NO és accessible utilitzant túnels anònims de cap amic</translation>
     </message>
     <message>
-        <source>All your friends can browse this directory</source>
-        <translation>Tots els teus amics poden navegar per aquest directori</translation>
-    </message>
-    <message>
-        <source>Only friends in groups %1 can browse this directory</source>
-        <translation>Només els amics en els grups %1 poden navegar per aquest directori</translation>
-    </message>
-    <message>
         <source>No one can browse this directory</source>
         <translation>Ningú pot navegar per aquest directori</translation>
-    </message>
-    <message>
-        <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Tots els teus amics poden fer túnels anònims a aquest directori</translation>
-    </message>
-    <message>
-        <source>Only friends in groups </source>
-        <translation>Només els amics a grups</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
@@ -7074,6 +5271,72 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>No one can anonymously access this directory.</source>
         <translation>Ningú pot accedir anònimament a aquest directori.</translation>
+    </message>
+    <message>
+        <source>All friend nodes can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups %1 can browse this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>All friend nodes can relay anonymous tunnels to this directory</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only friend nodes in groups </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GroupFrameSettingsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulari</translation>
+    </message>
+    <message>
+        <source>Hide tabbar with one open tab</source>
+        <translation>Ocultar el selector de pestanyes quan només hi hagi una pestanya</translation>
+    </message>
+</context>
+<context>
+    <name>GroupShareKey</name>
+    <message>
+        <source>Share</source>
+        <translation>Compartir</translation>
+    </message>
+    <message>
+        <source>Contacts:</source>
+        <translation>Contactes:</translation>
+    </message>
+    <message>
+        <source>Please select at least one peer</source>
+        <translation>Si us plau, escull com a mínim un contacte</translation>
+    </message>
+    <message>
+        <source>Share channel admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share forum admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Share topic admin permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can allow your friends to publish in your channel and to modify the description. Or you can send the admin permissions to another Retroshare instance. Select the friends which you want to be allowed to publish in this channel. Note: it is not possible to revoke channel admin permissions.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7107,12 +5370,16 @@ p, li { white-space: pre-wrap; }
         <translation>Ordena per darrer missatge</translation>
     </message>
     <message>
-        <source>Private Key Available</source>
-        <translation>Clau privada disponible</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Mostra</translation>
+    </message>
+    <message>
+        <source>You have admin rights</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe to download and read messages</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7205,18 +5472,6 @@ p, li { white-space: pre-wrap; }
         <translation>Crear canal</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Carregant</translation>
-    </message>
-    <message>
-        <source>Post to Channel</source>
-        <translation>Publica al canal</translation>
-    </message>
-    <message>
-        <source>Set all as read</source>
-        <translation>Posar tot com a llegit</translation>
-    </message>
-    <message>
         <source>Enable Auto-Download</source>
         <translation>Activa l&apos;auto-descàrrega</translation>
     </message>
@@ -7241,56 +5496,78 @@ p, li { white-space: pre-wrap; }
         <translation>Desactivar auto-descàrrega</translation>
     </message>
     <message>
-        <source>Unsubscribe to Channel</source>
-        <translation>Donar-te de baixa del canal</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesStatusWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulari</translation>
     </message>
     <message>
-        <source>Subscribe to Channel</source>
-        <translation>Subscriu-te al canal</translation>
+        <source>Download</source>
+        <translation>Descarregar</translation>
     </message>
     <message>
-        <source>Edit Channel Details</source>
-        <translation>Edita detalls del canal</translation>
+        <source>TextLabel</source>
+        <translation>EtiquetaText</translation>
     </message>
     <message>
-        <source>Show Channel Details</source>
-        <translation>Mostra detalls del canal</translation>
+        <source>Open folder</source>
+        <translation>Obrir directori</translation>
     </message>
     <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation>Restaurar els drets de publicació del canal</translation>
+        <source>Error</source>
+        <translation>Error</translation>
     </message>
     <message>
-        <source>Share Channel</source>
-        <translation>Compartir canal</translation>
+        <source>Paused</source>
+        <translation>Pausat</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copia l&apos;enllaç RetroShare</translation>
+        <source>Waiting</source>
+        <translation>Esperant</translation>
     </message>
     <message>
-        <source>Publish rights restored.</source>
-        <translation>Drets de publicació restablerts.</translation>
+        <source>Checking</source>
+        <translation>Comprovant</translation>
     </message>
     <message>
-        <source>Publish rights have been restored for this channel.</source>
-        <translation>Els drets de publicació han sigut restablerts per aquest canal.</translation>
+        <source>Are you sure that you want to cancel and delete the file?</source>
+        <translation>Segur que vols cancel·lar i esborrar aquest arxiu?</translation>
     </message>
     <message>
-        <source>Publish not restored.</source>
-        <translation>Publicació no restablerta.</translation>
+        <source>Can&apos;t open folder</source>
+        <translation>No es pot obrir el directori</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelFilesWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulari</translation>
     </message>
     <message>
-        <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Els drets de publicació per aquest canal no poden ser restablerts.&lt;br/&gt;No ets el creador del canal.</translation>
+        <source>Filename</source>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
-        <source>No Channel Selected</source>
-        <translation>No hi ha canal seleccionat</translation>
+        <source>Size</source>
+        <translation>Mida</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Pendent</translation>
+        <source>Title</source>
+        <translation>Títol</translation>
+    </message>
+    <message>
+        <source>Published</source>
+        <translation>Publicat</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Estat</translation>
     </message>
 </context>
 <context>
@@ -7316,8 +5593,47 @@ p, li { white-space: pre-wrap; }
         <translation>Seleccionar administradors del canal</translation>
     </message>
     <message>
-        <source>Create Channel</source>
-        <translation>Crear canal</translation>
+        <source>Update Channel</source>
+        <translation>Actualitzar canal</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Crear</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelGroupItem</name>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
+    </message>
+    <message>
+        <source>Subscribe to Channel</source>
+        <translation>Subscriu-te al canal</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Ampliar</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>Channel Description</source>
+        <translation>Descripció del canal</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>New Channel</source>
+        <translation>Nou canal</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
@@ -7360,7 +5676,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation>Origen del canal</translation>
+        <translation>Font del canal</translation>
     </message>
     <message>
         <source>Files</source>
@@ -7373,6 +5689,128 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Hide</source>
         <translation>Amagar</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Nou</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Comentari</translation>
+    </message>
+    <message>
+        <source>I like this</source>
+        <translation>M&apos;agrada</translation>
+    </message>
+    <message>
+        <source>I dislike this</source>
+        <translation>No m&apos;agrada</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Obrir</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Obrir arxiu</translation>
+    </message>
+    <message>
+        <source>Play Media</source>
+        <translation>Reproduir Medi</translation>
+    </message>
+</context>
+<context>
+    <name>GxsChannelPostsWidget</name>
+    <message>
+        <source>Post to Channel</source>
+        <translation>Publica al canal</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>Search channels</source>
+        <translation>Cercar canals</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Títol</translation>
+    </message>
+    <message>
+        <source>Search Title</source>
+        <translation>Cerca títol</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Missatge</translation>
+    </message>
+    <message>
+        <source>Search Message</source>
+        <translation>Cercar missatge</translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation>Nom d&apos;arxiu</translation>
+    </message>
+    <message>
+        <source>Search Filename</source>
+        <translation>Cercar arxiu</translation>
+    </message>
+    <message>
+        <source>No Channel Selected</source>
+        <translation>No hi ha canal seleccionat</translation>
+    </message>
+    <message>
+        <source>Disable Auto-Download</source>
+        <translation>Desactivar auto-descàrrega</translation>
+    </message>
+    <message>
+        <source>Enable Auto-Download</source>
+        <translation>Activar auto-descàrrega</translation>
+    </message>
+    <message>
+        <source>Show feeds</source>
+        <translation>Mostra fonts</translation>
+    </message>
+    <message>
+        <source>Show files</source>
+        <translation>Mostra arxius</translation>
+    </message>
+    <message>
+        <source>Feeds</source>
+        <translation>Fonts</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>Arxius</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation>Subscriptors</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>Descripció:</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes):</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsChannelUserNotify</name>
+    <message>
+        <source>Channel Post</source>
+        <translation>Entrada al canal</translation>
     </message>
 </context>
 <context>
@@ -7455,26 +5893,6 @@ p, li { white-space: pre-wrap; }
         <source>Vote Down</source>
         <translation>Votar negatiu</translation>
     </message>
-    <message>
-        <source>Reputation</source>
-        <translation>Reputació</translation>
-    </message>
-    <message>
-        <source>Show Reputation</source>
-        <translation>Mostrar reputació</translation>
-    </message>
-    <message>
-        <source>Interesting User</source>
-        <translation>Usuari interessant</translation>
-    </message>
-    <message>
-        <source>Mark Spammy</source>
-        <translation>Marcar com &apos;spamer&apos;</translation>
-    </message>
-    <message>
-        <source>Ban User</source>
-        <translation>Fer fora l&apos;usuari</translation>
-    </message>
 </context>
 <context>
     <name>GxsCreateCommentDialog</name>
@@ -7524,8 +5942,90 @@ abans de poder comentar</translation>
         <translation>Editar fòrum</translation>
     </message>
     <message>
-        <source>Create Forum</source>
-        <translation>Crear fòrum</translation>
+        <source>Update Forum</source>
+        <translation>Actualitzar fòrum</translation>
+    </message>
+    <message>
+        <source>Add Forum Admins</source>
+        <translation>Afegir administradors de fòrum</translation>
+    </message>
+    <message>
+        <source>Select Forum Admins</source>
+        <translation>Seleccionar administradors de fòrum</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Crear</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumGroupItem</name>
+    <message>
+        <source>Subscribe to Forum</source>
+        <translation>Subscriure&apos;s al fòrum</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Ampliar</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Descripció del fòrum</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>New Forum</source>
+        <translation>Nou fòrum</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Amagar</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumMsgItem</name>
+    <message>
+        <source>Subject: </source>
+        <translation>Assumpte:</translation>
+    </message>
+    <message>
+        <source>Unsubscribe To Forum</source>
+        <translation>Donar de baixa del fòrum</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Ampliar</translation>
+    </message>
+    <message>
+        <source>Set as read and remove item</source>
+        <translation>Marcar com llegit i eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>In Reply to: </source>
+        <translation>En resposta a:</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>Forum Feed</source>
+        <translation>Font del fòrum</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
@@ -7565,10 +6065,6 @@ abans de poder comentar</translation>
     <message>
         <source>Author</source>
         <translation>Autor</translation>
-    </message>
-    <message>
-        <source>Signed</source>
-        <translation>Signat</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -7627,10 +6123,6 @@ abans de poder comentar</translation>
         <translation>Començar nova conversa</translation>
     </message>
     <message>
-        <source>Reply to Author</source>
-        <translation>Respondre a l&apos;autor</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Expandeix tot</translation>
     </message>
@@ -7679,10 +6171,6 @@ abans de poder comentar</translation>
         <translation>[ ... Missatge perdut ... ]</translation>
     </message>
     <message>
-        <source>By</source>
-        <translation>Per</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -7697,101 +6185,6 @@ abans de poder comentar</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>No pots respondre a un autor anònim</translation>
-    </message>
-    <message>
-        <source>Forum Description</source>
-        <translation>Descripció del fòrum</translation>
-    </message>
-    <message>
-        <source>Forum:</source>
-        <translation>Fòrum:</translation>
-    </message>
-    <message>
-        <source>Thread:</source>
-        <translation>Conversa:</translation>
-    </message>
-</context>
-<context>
-    <name>GxsForumsDialog</name>
-    <message>
-        <source>Forums</source>
-        <translation>Fòrums</translation>
-    </message>
-    <message>
-        <source>Create Forum</source>
-        <translation>Crear fòrum</translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation>Impressió</translation>
-    </message>
-    <message>
-        <source>PrintPreview</source>
-        <translation>PreviaImpressió</translation>
-    </message>
-    <message>
-        <source>My Forums</source>
-        <translation>Els meus fòrums</translation>
-    </message>
-    <message>
-        <source>Subscribed Forums</source>
-        <translation>Fòrums subscrits</translation>
-    </message>
-    <message>
-        <source>Popular Forums</source>
-        <translation>Fòrums populars</translation>
-    </message>
-    <message>
-        <source>Other Forums</source>
-        <translation>Altres fòrums</translation>
-    </message>
-    <message>
-        <source>Subscribe to Forum</source>
-        <translation>Subscriure&apos;s al fòrum</translation>
-    </message>
-    <message>
-        <source>Unsubscribe to Forum</source>
-        <translation>Donar de baixa fòrum</translation>
-    </message>
-    <message>
-        <source>Open in new tab</source>
-        <translation>Obrir en una pestanya nova</translation>
-    </message>
-    <message>
-        <source>New Forum</source>
-        <translation>Nou fòrum</translation>
-    </message>
-    <message>
-        <source>Show Forum Details</source>
-        <translation>Mostra detalls del fòrum</translation>
-    </message>
-    <message>
-        <source>Edit Forum Details</source>
-        <translation>Edita detalls del fòrum</translation>
-    </message>
-    <message>
-        <source>Share Forum</source>
-        <translation>Comparteix fòrum</translation>
-    </message>
-    <message>
-        <source>Restore Publish Rights for Forum</source>
-        <translation>Restaura drets de publicació pel fòrum</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copia l&apos;enllaç RetroShare</translation>
-    </message>
-    <message>
-        <source>Mark all as read</source>
-        <translation>Marca tot com a llegit</translation>
-    </message>
-    <message>
-        <source>Mark all as unread</source>
-        <translation>Marca tot com no llegit</translation>
-    </message>
-    <message>
-        <source>AUTHD</source>
-        <translation>AUTHD</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -7811,11 +6204,73 @@ abans de poder comentar</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation>A % 1, %2 va escriure:</translation>
+        <translation>A %1, %2 va escriure:</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Pendent</translation>
+        <source>Forum name</source>
+        <translation>Nom del fòrum</translation>
+    </message>
+    <message>
+        <source>Subscribers</source>
+        <translation>Subscriptors</translation>
+    </message>
+    <message>
+        <source>Posts (at neighbor nodes)</source>
+        <translation>Publica (A nodes veïns)</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Descripció</translation>
+    </message>
+    <message>
+        <source>By </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;Subscribing to the forum will gather                                            available posts from your subscribed friends, and make the                                            forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reply with private message</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsForumUserNotify</name>
+    <message>
+        <source>Forum Post</source>
+        <translation>Entrada al fòrum</translation>
+    </message>
+</context>
+<context>
+    <name>GxsForumsDialog</name>
+    <message>
+        <source>Forums</source>
+        <translation>Fòrums</translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation>Crear fòrum</translation>
+    </message>
+    <message>
+        <source>My Forums</source>
+        <translation>Els meus fòrums</translation>
+    </message>
+    <message>
+        <source>Subscribed Forums</source>
+        <translation>Fòrums subscrits</translation>
+    </message>
+    <message>
+        <source>Popular Forums</source>
+        <translation>Fòrums populars</translation>
+    </message>
+    <message>
+        <source>Other Forums</source>
+        <translation>Altres fòrums</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7835,10 +6290,6 @@ abans de poder comentar</translation>
 </context>
 <context>
     <name>GxsGroupDialog</name>
-    <message>
-        <source>Create New</source>
-        <translation>Crear nou</translation>
-    </message>
     <message>
         <source>Name</source>
         <translation>Nom</translation>
@@ -7944,12 +6395,138 @@ abans de poder comentar</translation>
         <translation>Carrega logotip del grup</translation>
     </message>
     <message>
-        <source>Invalid Circle Selection - Personal disabled for now</source>
-        <translation>Selecció de cercle invàlida - El personal està deshabilitat per ara</translation>
+        <source>Submit Group Changes</source>
+        <translation>Publicar canvis al grup</translation>
+    </message>
+    <message>
+        <source>Failed to Prepare Group MetaData - please Review</source>
+        <translation>Fallo al preparar les metadades del Grup - Revisa-les</translation>
+    </message>
+    <message>
+        <source>Will be used to send feedback</source>
+        <translation>S&apos;utilitzarà per enviar resposta</translation>
+    </message>
+    <message>
+        <source>Owner:</source>
+        <translation>Propietari:</translation>
+    </message>
+    <message>
+        <source>Set a descriptive description here</source>
+        <translation>Estableix una descripció</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation>Informació</translation>
+    </message>
+    <message>
+        <source>Comments allowed</source>
+        <translation>Permetre comentaris</translation>
+    </message>
+    <message>
+        <source>Comments not allowed</source>
+        <translation>No permetre comentaris</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Last Post</source>
+        <translation>Darrer missatge</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation>Popularitat</translation>
+    </message>
+    <message>
+        <source>Posts</source>
+        <translation>Publicacions</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Tipus</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation>Autor</translation>
+    </message>
+    <message>
+        <source>GxsIdLabel</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsGroupFrameDialog</name>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Pendent</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Impressió</translation>
+    </message>
+    <message>
+        <source>PrintPreview</source>
+        <translation>PreviaImpressió</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Donar de baixa</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Subscriure&apos;s</translation>
+    </message>
+    <message>
+        <source>Open in new tab</source>
+        <translation>Obrir en una pestanya nova</translation>
+    </message>
+    <message>
+        <source>Show Details</source>
+        <translation>Mostra detalls</translation>
+    </message>
+    <message>
+        <source>Edit Details</source>
+        <translation>Editar detalls</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
+    </message>
+    <message>
+        <source>Mark all as read</source>
+        <translation>Marca tot com a llegit</translation>
+    </message>
+    <message>
+        <source>Mark all as unread</source>
+        <translation>Marca tot com no llegit</translation>
+    </message>
+    <message>
+        <source>AUTHD</source>
+        <translation>AUTHD</translation>
+    </message>
+    <message>
+        <source>Share admin permissions</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GxsIdChooser</name>
+    <message>
+        <source>No Signature</source>
+        <translation>Sense signatura</translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Crear nova identitat</translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdDetails</name>
     <message>
         <source>Loading</source>
         <translation>Carregant</translation>
@@ -7961,6 +6538,45 @@ abans de poder comentar</translation>
     <message>
         <source>No Signature</source>
         <translation>Sense signatura</translation>
+    </message>
+    <message>
+        <source>Authentication</source>
+        <translation>Autenticació</translation>
+    </message>
+    <message>
+        <source>unknown Key</source>
+        <translation>clau desconeguda</translation>
+    </message>
+    <message>
+        <source>anonymous</source>
+        <translation>anònim</translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;name</source>
+        <translation>Identitat&amp;nbsp;nom</translation>
+    </message>
+    <message>
+        <source>Identity&amp;nbsp;Id</source>
+        <translation>Identitat&amp;nbsp;Id</translation>
+    </message>
+    <message>
+        <source>Signed&amp;nbsp;by</source>
+        <translation>Signat&amp;nbsp;per</translation>
+    </message>
+    <message>
+        <source>[Unknown]</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsMessageFramePostWidget</name>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>No name</source>
+        <translation>Sense nom</translation>
     </message>
 </context>
 <context>
@@ -8205,9 +6821,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Plana web traductors RetroShare:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Suec: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Alemany: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polac: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Català: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Josep Creus&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;creus.informatic@gmail.com&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polac: &lt;/span&gt;Maciej Mrug&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Suec: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -8238,142 +6856,154 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>IdDialog</name>
+    <name>IdDetailsDialog</name>
     <message>
-        <source>Identities</source>
-        <translation>Identitats</translation>
+        <source>Person Details</source>
+        <translation>Detalls de la persona</translation>
     </message>
     <message>
-        <source>New ID</source>
-        <translation>Nova Id</translation>
+        <source>Identity Info</source>
+        <translation>Informació d&apos;identitat</translation>
     </message>
     <message>
-        <source>Yourself</source>
-        <translation>Tu mateix</translation>
+        <source>Owner node ID :</source>
+        <translation>Id del node propietari:</translation>
     </message>
     <message>
-        <source>Friends / Friends of Friends</source>
-        <translation>Amics / Amics d&apos;amics</translation>
+        <source>Type:</source>
+        <translation>Tipus:</translation>
     </message>
     <message>
-        <source>Others</source>
-        <translation>Altres</translation>
+        <source>Owner node name :</source>
+        <translation>Nom del node propietari:</translation>
     </message>
     <message>
-        <source>Pseudonyms</source>
-        <translation>Pseudònims</translation>
+        <source>Identity name :</source>
+        <translation>Nom de la identitat:</translation>
     </message>
     <message>
-        <source>All</source>
-        <translation>Tot</translation>
+        <source>Identity ID :</source>
+        <translation>Id d&apos;identitat:</translation>
     </message>
     <message>
-        <source>Nickname</source>
-        <translation>Sobrenom</translation>
-    </message>
-    <message>
-        <source>KeyId</source>
-        <translation>IdClau</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Tipus</translation>
-    </message>
-    <message>
-        <source>Delete ID</source>
-        <translation>Esborra Id</translation>
-    </message>
-    <message>
-        <source>Edit Reputation</source>
-        <translation>Editar reputació</translation>
-    </message>
-    <message>
-        <source>Edit ID</source>
-        <translation>Editar Id</translation>
-    </message>
-    <message>
-        <source>Identity Type</source>
-        <translation>Tipus d&apos;identitat</translation>
-    </message>
-    <message>
-        <source>Friend</source>
-        <translation>Amic</translation>
-    </message>
-    <message>
-        <source>Friend of Friend</source>
-        <translation>Amic d&apos;amic</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Altre</translation>
-    </message>
-    <message>
-        <source>Pseudonym</source>
-        <translation>Pseudònim</translation>
-    </message>
-    <message>
-        <source>Key ID</source>
-        <translation>Id de clau</translation>
-    </message>
-    <message>
-        <source>PGP Name</source>
-        <translation>Nom PGP</translation>
-    </message>
-    <message>
-        <source>PGP Id</source>
-        <translation>Id PGP</translation>
-    </message>
-    <message>
-        <source>PGP Hash</source>
-        <translation>Hash PGP</translation>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>El teu avatar</translation>
     </message>
     <message>
         <source>Reputation</source>
         <translation>Reputació</translation>
     </message>
     <message>
-        <source>Your Rating</source>
-        <translation>La teva qualificació</translation>
+        <source>Overall</source>
+        <translation>Global</translation>
     </message>
     <message>
-        <source>Overall Rating</source>
-        <translation>Qualificació global</translation>
+        <source>Implicit</source>
+        <translation>Implicit</translation>
     </message>
     <message>
-        <source>Implicit Score</source>
-        <translation>Puntuació implicita</translation>
+        <source>Opinion</source>
+        <translation>Opinió</translation>
     </message>
     <message>
-        <source>Rating</source>
-        <translation>Qualificació</translation>
+        <source>Peers</source>
+        <translation>Contactes</translation>
     </message>
     <message>
-        <source>Comment</source>
-        <translation>Comentari</translation>
+        <source>Edit Reputation</source>
+        <translation>Editar reputació</translation>
     </message>
     <message>
-        <source>Local Reputation</source>
-        <translation>Reputació local</translation>
+        <source>Tweak Opinion</source>
+        <translation>Retocar opinió</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Acceptar(+100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Positiu (+10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Negatiu (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Fer fora (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Personalitzat</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Modificar</translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Nom real desconegut</translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation>Id anònim</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation>Identitat propietat teva, enllaçat amb el teu node de RetroShare</translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation>Identitat anònima propietat teva</translation>
+    </message>
+    <message>
+        <source>Owned by a friend Retroshare node</source>
+        <translation>Propietat d&apos;un node de RetroShare d&apos;un amic</translation>
+    </message>
+    <message>
+        <source>Owned by 2-hops Retroshare node</source>
+        <translation>Propietat d&apos;un node de RetroShare a 2 salts</translation>
+    </message>
+    <message>
+        <source>Owned by unknown Retroshare node</source>
+        <translation>Propietat d&apos;un node de RetroShare desconegut</translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation>Identitat anònima</translation>
+    </message>
+</context>
+<context>
+    <name>IdDialog</name>
+    <message>
+        <source>New ID</source>
+        <translation>Nova Id</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Tot</translation>
+    </message>
+    <message>
+        <source>Edit Reputation</source>
+        <translation>Editar reputació</translation>
+    </message>
+    <message>
+        <source>Key ID</source>
+        <translation>Id de clau</translation>
+    </message>
+    <message>
+        <source>Reputation</source>
+        <translation>Reputació</translation>
     </message>
     <message>
         <source>Todo</source>
         <translation>Pendent</translation>
     </message>
     <message>
-        <source>Show:</source>
-        <translation>Mostra:</translation>
-    </message>
-    <message>
         <source>Search</source>
         <translation>Cerca</translation>
-    </message>
-    <message>
-        <source>PGP Linked Id</source>
-        <translation>Id enllaç PGP</translation>
-    </message>
-    <message>
-        <source>Anon Id</source>
-        <translation>Id anonima</translation>
     </message>
     <message>
         <source>Unknown real name</source>
@@ -8390,6 +7020,235 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Delete Identity</source>
         <translation>Esborrar identitat</translation>
+    </message>
+    <message>
+        <source>Edit Identity</source>
+        <translation>Editar identitat</translation>
+    </message>
+    <message>
+        <source>Identity Info</source>
+        <translation>Informació d&apos;identitat</translation>
+    </message>
+    <message>
+        <source>Overall</source>
+        <translation>Global</translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation>Implicit</translation>
+    </message>
+    <message>
+        <source>Opinion</source>
+        <translation>Opinió</translation>
+    </message>
+    <message>
+        <source>Peers</source>
+        <translation>Contactes</translation>
+    </message>
+    <message>
+        <source>Tweak Opinion</source>
+        <translation>Retocar opinió</translation>
+    </message>
+    <message>
+        <source>Accept (+100)</source>
+        <translation>Acceptar(+100)</translation>
+    </message>
+    <message>
+        <source>Positive (+10)</source>
+        <translation>Positiu (+10)</translation>
+    </message>
+    <message>
+        <source>Negative (-10)</source>
+        <translation>Negatiu (-10)</translation>
+    </message>
+    <message>
+        <source>Ban (-100)</source>
+        <translation>Fer fora (-100)</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Personalitzat</translation>
+    </message>
+    <message>
+        <source>Modify</source>
+        <translation>Modificar</translation>
+    </message>
+    <message>
+        <source>Chat with this peer</source>
+        <translation>Xatejar amb aquest contacte</translation>
+    </message>
+    <message>
+        <source>Launches a distant chat with this peer</source>
+        <translation>Començar un xat distant amb aquest contacte</translation>
+    </message>
+    <message>
+        <source>Really delete? </source>
+        <translation>Segur que vols esborrar?</translation>
+    </message>
+    <message>
+        <source>Identity name</source>
+        <translation>Nom de la identitat</translation>
+    </message>
+    <message>
+        <source>Owned by node...</source>
+        <translation>Propietat del node...</translation>
+    </message>
+    <message>
+        <source>Owner node ID :</source>
+        <translation>Id del node propietari:</translation>
+    </message>
+    <message>
+        <source>Identity name :</source>
+        <translation>Nom de la identitat:</translation>
+    </message>
+    <message>
+        <source>Identity ID :</source>
+        <translation>Id d&apos;identitat:</translation>
+    </message>
+    <message>
+        <source>Owner node name :</source>
+        <translation>Nom del node propietari:</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Tipus:</translation>
+    </message>
+    <message>
+        <source>Owned by you</source>
+        <translation>Propietat teva</translation>
+    </message>
+    <message>
+        <source>Anonymous</source>
+        <translation>Anònim</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identitats&lt;/h1&gt; ⇥⇥⇥&lt;p&gt;En aquesta pestanya pots crear/editar identitats pseudo-anònimes. ⇥⇥⇥&lt;/p&gt; ⇥⇥⇥&lt;p&gt;Les identitats s&apos;utilitzen per identificar de forma segura les teves dades: signar les publicacions de canals i fòrums,⇥⇥⇥⇥i rebre resposta utilitzant el sistema intern de correu de RetroShare, publicar comentaris⇥⇥⇥⇥de les entrades dels canals, etc.&lt;/p&gt; ⇥⇥⇥&lt;p&gt; ⇥⇥⇥Les identitats poden anar signades pel certificat del teu node. ⇥⇥⇥Les identitats signades generen més confiança però exposen fàcilment l&apos;adreça IP del teu node. ⇥⇥⇥&lt;/p&gt; ⇥⇥⇥&lt;p&gt; ⇥⇥⇥Les identitats anònimes et permeten interactuar amb altres usuaris anònimament. No es poden ⇥⇥⇥suplantar, però ningú pot provar qui és el propietari d&apos;una identitat anònima concreta.</translation>
+    </message>
+    <message>
+        <source>This identity is owned by you</source>
+        <translation>Aquesta identitat és propietat teva</translation>
+    </message>
+    <message>
+        <source>Unknown PGP key</source>
+        <translation>Clau PGP desconeguda</translation>
+    </message>
+    <message>
+        <source>Unknown key ID</source>
+        <translation>Id clau desconeguda</translation>
+    </message>
+    <message>
+        <source>Identity owned by you, linked to your Retroshare node</source>
+        <translation>Identitat propietat teva, enllaçat amb el teu node de RetroShare</translation>
+    </message>
+    <message>
+        <source>Anonymous identity, owned by you</source>
+        <translation>Identitat anònima propietat teva</translation>
+    </message>
+    <message>
+        <source>Anonymous identity</source>
+        <translation>Identitat anònima</translation>
+    </message>
+    <message>
+        <source>Distant chat cannot work</source>
+        <translation>El xat distant no pot funcionar</translation>
+    </message>
+    <message>
+        <source>Error code</source>
+        <translation>Codi de l&apos;error</translation>
+    </message>
+    <message>
+        <source>People</source>
+        <translation>Gent</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>El teu avatar</translation>
+    </message>
+    <message>
+        <source>Linked to your node</source>
+        <translation>Associat al teu node</translation>
+    </message>
+    <message>
+        <source>Linked to neighbor nodes</source>
+        <translation>Associat a nodes veïns</translation>
+    </message>
+    <message>
+        <source>Linked to distant nodes</source>
+        <translation>Associat a nodes distants</translation>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Mostra</translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation>Columna</translation>
+    </message>
+    <message>
+        <source>Linked to a friend Retroshare node</source>
+        <translation>Associat a un node de RetroShare d&apos;un amic</translation>
+    </message>
+    <message>
+        <source>Linked to a known Retroshare node</source>
+        <translation>Associat a un node de RetroShare conegut</translation>
+    </message>
+    <message>
+        <source>Linked to unknown Retroshare node</source>
+        <translation>Associat a un node de RetroShare desconegut</translation>
+    </message>
+    <message>
+        <source>Chat with this person</source>
+        <translation>Xat amb aquesta persona</translation>
+    </message>
+    <message>
+        <source>Chat with this person as...</source>
+        <translation>Xat amb aquesta persona com...</translation>
+    </message>
+    <message>
+        <source>Send message to this person</source>
+        <translation>Enviar un missatge a aquesta persona</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Columnes</translation>
+    </message>
+    <message>
+        <source>Distant chat refused with this person.</source>
+        <translation>Xat distant rebutjat amb aquesta persona.</translation>
+    </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Enviar missatge</translation>
+    </message>
+    <message>
+        <source>Last used:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node Id  : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+50 Known PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+10 UnKnown PGP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>+5 Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to delete this identity?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8413,10 +7272,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>PGP Id</source>
         <translation>Id PGP</translation>
-    </message>
-    <message>
-        <source>PGP Associated ID</source>
-        <translation>Id associat al PGP</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -8458,6 +7313,74 @@ p, li { white-space: pre-wrap; }
         <source>Create New Identity</source>
         <translation>Crear nova identitat</translation>
     </message>
+    <message>
+        <source>Type</source>
+        <translation>Tipus</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>EtiquetaText</translation>
+    </message>
+    <message>
+        <source>RM</source>
+        <translation>RM</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Afegir</translation>
+    </message>
+    <message>
+        <source>Your Avatar</source>
+        <extracomment>Click here to change your avatar</extracomment>
+        <translation>El teu avatar</translation>
+    </message>
+    <message>
+        <source>Set Avatar</source>
+        <translation>Escull avatar</translation>
+    </message>
+    <message>
+        <source>Linked to your profile</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>IdentityWidget</name>
+    <message>
+        <source>Name</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <source>KeyId</source>
+        <translation>IdClau</translation>
+    </message>
+    <message>
+        <source>GXSId</source>
+        <translation>idGXS</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Afegir</translation>
+    </message>
+    <message>
+        <source>GXS name: </source>
+        <translation>Nom GXS:</translation>
+    </message>
+    <message>
+        <source>PGP name: </source>
+        <translation>Nom PGP:</translation>
+    </message>
+    <message>
+        <source>GXS id: </source>
+        <translation>id GXS:</translation>
+    </message>
+    <message>
+        <source>PGP id: </source>
+        <translation>Id PGP:</translation>
+    </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
@@ -8493,10 +7416,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LocalSharedFilesDialog</name>
     <message>
-        <source>Create collection file</source>
-        <translation>Crear arxiu de col·lecció</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Obrir arxiu</translation>
     </message>
@@ -8527,6 +7446,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Set command for opening this file</source>
         <translation>Especifica una comanda per obrir aquest arxiu</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Col·lecció</translation>
     </message>
 </context>
 <context>
@@ -8572,46 +7495,6 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare %1 és una plataforma de comunicació segura descentralitzada</translation>
     </message>
     <message>
-        <source>News feed</source>
-        <translation>Noticies noves</translation>
-    </message>
-    <message>
-        <source>Friends</source>
-        <translation>Amics</translation>
-    </message>
-    <message>
-        <source>File sharing</source>
-        <translation>Compartició d&apos;arxius</translation>
-    </message>
-    <message>
-        <source>Chat Lobbies</source>
-        <translation>Sales de xat</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation>Missatges</translation>
-    </message>
-    <message>
-        <source>Channels</source>
-        <translation>Canals</translation>
-    </message>
-    <message>
-        <source>Blogs</source>
-        <translation>Blocs</translation>
-    </message>
-    <message>
-        <source>Forums</source>
-        <translation>Fòrums</translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation>Complements</translation>
-    </message>
-    <message>
-        <source>Getting Started</source>
-        <translation>Començant</translation>
-    </message>
-    <message>
         <source>Unfinished</source>
         <translation>Inacabat</translation>
     </message>
@@ -8650,24 +7533,12 @@ Si us plau, allibera una mica d&apos;espai i clica Ok.</translation>
         <translation>Notificar</translation>
     </message>
     <message>
-        <source>Open Messenger</source>
-        <translation>Obrir Missatgeria</translation>
-    </message>
-    <message>
         <source>Open Messages</source>
         <translation>Obrir Missatges</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
         <translation>Gràfic d&apos;ample de banda</translation>
-    </message>
-    <message>
-        <source>DHT Details</source>
-        <translation>Detalls DHT</translation>
-    </message>
-    <message>
-        <source>Bandwidth Details</source>
-        <translation>Detalls de l&apos;ample de banda</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -8719,7 +7590,7 @@ Si us plau, allibera una mica d&apos;espai i clica Ok.</translation>
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation>Realment vols sortir del RetroShare?</translation>
+        <translation>Segur que vols sortir del RetroShare?</translation>
     </message>
     <message>
         <source>Really quit ? </source>
@@ -8760,6 +7631,18 @@ Si us plau, allibera una mica d&apos;espai i clica Ok.</translation>
     <message>
         <source>Service permissions matrix</source>
         <translation>Taula de permisos dels serveis</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Afegir</translation>
+    </message>
+    <message>
+        <source>Statistics</source>
+        <translation>Estadístiques</translation>
+    </message>
+    <message>
+        <source>Show web interface</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8957,10 +7840,6 @@ Si us plau, allibera una mica d&apos;espai i clica Ok.</translation>
         <translation>Aquest amic és suggerit per</translation>
     </message>
     <message>
-        <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Gràcies, &lt;br&gt;l&apos;equip RetroShare</translation>
-    </message>
-    <message>
         <source>wants to be friends with you on RetroShare</source>
         <translation>vol ser amic teu al RetroShare</translation>
     </message>
@@ -9057,10 +7936,6 @@ Vols desar el missatge a la bústia d&apos;esborranys?</translation>
     <message>
         <source>Unknown</source>
         <translation>Desconegut</translation>
-    </message>
-    <message>
-        <source>Unknown friend</source>
-        <translation>Amic desconegut</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -9185,24 +8060,52 @@ Voleu desar el missatge?</translation>
         <translation>Afegir arxiu extra</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Signar missatges criptogràficament per contactes distants. Això evita que els contactes intermediaris puguin veure la teva identitat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Show:</source>
+        <translation>Mostra:</translation>
     </message>
     <message>
-        <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation>Contacte distant (nom: %2, clau PGP: %1)</translation>
+        <source>Close</source>
+        <translation>Tancar</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Mostrar només gent de confiança</translation>
+        <source>From:</source>
+        <translation>De:</translation>
     </message>
     <message>
-        <source>PGP key unknown</source>
-        <translation>Clau PGP desconeguda</translation>
+        <source>All</source>
+        <translation>Tot</translation>
     </message>
     <message>
-        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
-        <translation>No tens la clau PGP del remitent del missatge. No podràs respondre!</translation>
+        <source>Friend Nodes</source>
+        <translation>Nodes de l&apos;amic</translation>
+    </message>
+    <message>
+        <source>Person Details</source>
+        <translation>Detalls de la persona</translation>
+    </message>
+    <message>
+        <source>Distant peer identities</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thanks, &lt;br&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant identity:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Missing]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please create an identity to sign distant messages, or remove the distant peers from the destination list.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Node name &amp; id:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9365,22 +8268,6 @@ Voleu desar el missatge?</translation>
         <translation>Descarregar tot</translation>
     </message>
     <message>
-        <source>Hide</source>
-        <translation>Amagar</translation>
-    </message>
-    <message>
-        <source>Expand</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Arxiu</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation>Arxius</translation>
-    </message>
-    <message>
         <source>Print Document</source>
         <translation>Imprimir document</translation>
     </message>
@@ -9397,32 +8284,12 @@ Voleu desar el missatge?</translation>
         <translation>Carregar sempre les imatges per aquest missatge</translation>
     </message>
     <message>
-        <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation>Aquest missatge està encriptat. Fes botó dret per desencriptar-lo.</translation>
+        <source>Hide the attachment pane</source>
+        <translation>Oculta el panell d&apos;adjunció</translation>
     </message>
     <message>
-        <source>Decrypt</source>
-        <translation>Desencriptar</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Missatge encriptat</translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation>Ha fallat la desencriptació!</translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Aquest missatge no està encriptat. No es pot desencriptar!</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Aquest missatge no es pot desencriptar.</translation>
-    </message>
-    <message>
-        <source>Unknown (needs decryption)</source>
-        <translation>Desconegut (Necessita desencriptar)</translation>
+        <source>Show the attachment pane</source>
+        <translation>Mostra el panell d&apos;adjunció</translation>
     </message>
 </context>
 <context>
@@ -9815,24 +8682,12 @@ Voleu desar el missatge?</translation>
         <translation>Total:</translation>
     </message>
     <message>
-        <source>Decrypt Message</source>
-        <translation>Desencriptar missatge</translation>
-    </message>
-    <message>
-        <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Missatge encriptat. Clic amb el botó dret per desencriptar-lo.</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Missatges</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
         <translation>Clica per ordenar per signatura</translation>
-    </message>
-    <message>
-        <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Aquest missatge està encriptat. Clic amb el botó dret per desencriptar-lo.</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
@@ -9843,13 +8698,12 @@ Voleu desar el missatge?</translation>
         <translation>Aquest missatge està signat però la signatura no és vàlida</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Missatges&lt;/h1&gt;
-&lt;p&gt;Els missatges són com el &lt;b&gt;correu electrònic&lt;/b&gt;: envies/reps dels teus amics quan els dos esteu connectats.&lt;/p&gt; &lt;p&gt;També és possible enviar missatges a no amics mitjançant túnels. Aquests missatges sempre seran encriptats. Es recomana signar criptogràficament els missatges distants, com a proba de la teva identitat, utilitzant el botó &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; a la finestra de composició del missatge. Els missatges distants no tenen garantia d&apos;entrega, ja que implica que el contacte remot accepti el missatge (Tu també ho hauries d&apos;activar a la configuració de missatges).&lt;/p&gt; &lt;p&gt;Utilitzant missatges pots també compartir dades d&apos;altre tipus: pots recomanar arxius proporcionant els enllaços, o recomanar nous amics a altres amics per enfortir la teva xarxa.&lt;/p&gt;</translation>
+        <source>This message comes from a distant person.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>This message has been successfully decrypted, and is unsigned.</source>
-        <translation>Aquest missatge s&apos;ha desencriptat amb èxit i no està signat.</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9923,10 +8777,6 @@ Voleu desar el missatge?</translation>
     <message>
         <source>Hide</source>
         <translation>Amagar</translation>
-    </message>
-    <message>
-        <source>Encrypted message</source>
-        <translation>Missatge encriptat</translation>
     </message>
 </context>
 <context>
@@ -10071,36 +8921,16 @@ Voleu desar el missatge?</translation>
         <translation>Crear un nou perfil</translation>
     </message>
     <message>
-        <source>Search Name</source>
-        <translation>Cerca nom</translation>
-    </message>
-    <message>
         <source>Peer ID</source>
         <translation>ID del contacte</translation>
-    </message>
-    <message>
-        <source>Search Peer ID</source>
-        <translation>Cerca Id contacte</translation>
     </message>
     <message>
         <source>Deny friend</source>
         <translation>Negar l&apos;amic</translation>
     </message>
     <message>
-        <source>Make friend</source>
-        <translation>Fer amic</translation>
-    </message>
-    <message>
-        <source>Export my certificate...</source>
-        <translation>Exportar el meu certificat...</translation>
-    </message>
-    <message>
         <source>Peer details...</source>
         <translation>Detalls del contacte...</translation>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
@@ -10213,32 +9043,56 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
         <translation>Inconsistència de dades al clauer. Això és probablement un &quot;bug&quot;. Si us plau, contacta amb els desenvolupadors.</translation>
     </message>
     <message>
-        <source>Only show people you trusted</source>
-        <translation>Mostrar només gent de confiança</translation>
+        <source>Export/create a new node</source>
+        <translation>Exporta/Crea un node nou</translation>
     </message>
     <message>
-        <source>Send Message</source>
-        <translation>Enviar missatge</translation>
+        <source>Trusted keys only</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source> If I accept connection from peer</source>
-        <translation>Si accepto la connexió del contacte</translation>
+        <source>Trust level</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Name of peer</source>
-        <translation>Nom del contacte</translation>
+        <source> Do you accept connections signed by this key?</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Did peer sign mine PGP key</source>
-        <translation>El contacte ha signat la meva clau PGP</translation>
+        <source>Name of the key</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Peer&apos;s Certificat ID</source>
-        <translation>ID del certificat del contacte</translation>
+        <source>Certificat ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Since when I use this Certificat</source>
-        <translation>Des de quan utilitzo aquest certificat</translation>
+        <source>Make friend...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did peer authenticate you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This column indicates trust level and whether you signed their PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did that peer sign your PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Since when I use this certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search peer ID</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10294,7 +9148,7 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
     <name>NewsFeed</name>
     <message>
         <source>News Feed</source>
-        <translation>Noticies noves</translation>
+        <translation>Novetats</translation>
     </message>
     <message>
         <source>Options</source>
@@ -10310,18 +9164,26 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Noticies noves&lt;/h1&gt; &lt;p&gt;La font de noticies mostra els últims esdeveniments a la xarxa ordenats per hora de recepció. Això et proporciona un resum de l&apos;activitat dels teus amics. Pots triar quins esdeveniments es mostren a &lt;b&gt;Opcions&lt;/b&gt;. &lt;/p&gt; &lt;p&gt;Els esdeveniments mostrats són: &lt;ul&gt; &lt;li&gt;Intents de connexió (útil per fer amics amb gent nova i controlar qui està intentant connectar-te)&lt;/li&gt; &lt;li&gt;Publicacions a canals i fòrums&lt;/li&gt; &lt;li&gt;Nous canals i fòrums als que et pots subscriure&lt;/li&gt; &lt;li&gt;Missatges privats dels teus amics&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Novetats&lt;/h1&gt; &lt;p&gt;La font de noticies mostra els últims esdeveniments a la xarxa ordenats per hora de recepció. Això et proporciona un resum de l&apos;activitat dels teus amics. Pots triar quins esdeveniments es mostren a &lt;b&gt;Opcions&lt;/b&gt;. &lt;/p&gt; &lt;p&gt;Els esdeveniments mostrats són: &lt;ul&gt; &lt;li&gt;Intents de connexió (útil per fer amics amb gent nova i controlar qui està intentant connectar-te)&lt;/li&gt; &lt;li&gt;Publicacions a canals i fòrums&lt;/li&gt; &lt;li&gt;Nous canals i fòrums als que et pots subscriure&lt;/li&gt; &lt;li&gt;Missatges privats dels teus amics&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>News feed</source>
+        <translation>Novetats</translation>
+    </message>
+    <message>
+        <source>Newest on top</source>
+        <translation>El més nou a dalt</translation>
+    </message>
+    <message>
+        <source>Oldest on top</source>
+        <translation>El més vell a dalt</translation>
     </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation>Noticies noves</translation>
-    </message>
-    <message>
-        <source>Peers</source>
-        <translation>Contactes</translation>
+        <translation>Novetats</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -10346,10 +9208,6 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
     <message>
         <source>Security</source>
         <translation>Seguretat</translation>
-    </message>
-    <message>
-        <source>Add feeds at end</source>
-        <translation>Afegeix fonts al final</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10452,6 +9310,42 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
         <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notificacions&lt;/h1&gt;
 &lt;p&gt;El RetroShare t&apos;avisarà de que passa a la teva xarxa. En funció del teu ús, pots voler activar o desactivar alguna de les notificacions. Aquesta plana està dissenyada per això.&lt;/p&gt;</translation>
     </message>
+    <message>
+        <source>Disable All Toasters</source>
+        <translation>Deshabilitar totes les notificacions</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Enviat</translation>
+    </message>
+    <message>
+        <source>Disable All Toaster temporarily</source>
+        <translation>Deshabilitar notificacions temporalment</translation>
+    </message>
+    <message>
+        <source>Feed</source>
+        <translation>Font</translation>
+    </message>
+    <message>
+        <source>Systray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat Lobbies</source>
+        <translation>Sales de xat</translation>
+    </message>
+    <message>
+        <source>Count all unread messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of any of the following texts (separate by newlines):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Count occurences of my current identity</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10507,6 +9401,10 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
         <source>Encrypted message</source>
         <translation>Missatge encriptat</translation>
     </message>
+    <message>
+        <source>Please enter your PGP password for key</source>
+        <translation>Si us plau, introdueix la contrasenya PGP per la clau</translation>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
@@ -10523,7 +9421,7 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
     </message>
     <message>
         <source>No Anon D/L</source>
-        <translation>No descarrega anònima</translation>
+        <translation>Cap descarrega anònima</translation>
     </message>
     <message>
         <source>Gaming Mode</source>
@@ -10545,6 +9443,186 @@ Tràfic baix: 10 %s del tràfic estàndard i PENDENT: posar en pausa totes les t
     </message>
 </context>
 <context>
+    <name>OutQueueStatisticsWidget</name>
+    <message>
+        <source>Outqueue statistics</source>
+        <translation>Estadístiques de la cua de sortida</translation>
+    </message>
+    <message>
+        <source>By priority: </source>
+        <translation>Per prioritat:</translation>
+    </message>
+    <message>
+        <source>By service : </source>
+        <translation>Per servei:</translation>
+    </message>
+</context>
+<context>
+    <name>PGPKeyDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Key info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP name :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fingerprint :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Trust level:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unset</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Desconegut</translation>
+    </message>
+    <message>
+        <source>No trust</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Marginal</source>
+        <translation>Marginal</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Completa</translation>
+    </message>
+    <message>
+        <source>Ultimate</source>
+        <translation>Definitiu</translation>
+    </message>
+    <message>
+        <source>Key signatures :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signar la clau d&apos;un amic és una forma de demostrar la confiança amb aquest amic, als teus altres amics. A més a més, només els contactes amb claus signades rebran informació sobre els teus altres amics de confiança.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;No es pot desfer una signatura, fes-ho només si n&apos;estàs segur.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Sign this PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sign PGP key</source>
+        <translation>Signa clau PGP</translation>
+    </message>
+    <message>
+        <source>Deny connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>ASCII format</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Include signatures</source>
+        <translation>Inclou les signatures</translation>
+    </message>
+    <message>
+        <source>PGP Key details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <source>Error : cannot get peer details.</source>
+        <translation>Error: no es poden obtenir detalls del contacte.</translation>
+    </message>
+    <message>
+        <source>The supplied key algorithm is not supported by RetroShare
+(Only RSA keys are supported at the moment)</source>
+        <translation>L&apos;algorisme de la clau proporcionada no és suportada pel RetroShare
+(Només suporta claus RSA per ara)</translation>
+    </message>
+    <message>
+        <source>This is your own PGP key, and it is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is signed by : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is ultimate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your trust in this peer is full.</source>
+        <translation>La confiança en aquest contacte és plena.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is marginal.</source>
+        <translation>La confiança en aquest contacte és marginal.</translation>
+    </message>
+    <message>
+        <source>Your trust in this peer is none.</source>
+        <translation>La confiança en aquest contacte és nula.</translation>
+    </message>
+    <message>
+        <source>This key has signed your own PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This PGP key (ID=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have chosen to accept connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are currently not allowing connections from Retroshare nodes signed by this key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature Failure</source>
+        <translation>Fracàs en la signatura</translation>
+    </message>
+    <message>
+        <source>Maybe password is wrong</source>
+        <translation>Potser la contrasenya sigui incorrecta</translation>
+    </message>
+    <message>
+        <source>You haven&apos;t set a trust level for this key.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
@@ -10553,10 +9631,6 @@ Tràfic baix: 10 %s del tràfic estàndard i PENDENT: posar en pausa totes les t
 </context>
 <context>
     <name>PeerItem</name>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Escriure un missatge ràpid</translation>
-    </message>
     <message>
         <source>Chat</source>
         <translation>Xat</translation>
@@ -10572,14 +9646,6 @@ Tràfic baix: 10 %s del tràfic estàndard i PENDENT: posar en pausa totes les t
     <message>
         <source>Remove Item</source>
         <translation>Eliminar l&apos;element</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·la</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Enviar</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -10642,8 +9708,8 @@ Tràfic baix: 10 %s del tràfic estàndard i PENDENT: posar en pausa totes les t
         <translation>Amagar</translation>
     </message>
     <message>
-        <source>Quick Message</source>
-        <translation>Missatge ràpid</translation>
+        <source>Send Message</source>
+        <translation>Enviar missatge</translation>
     </message>
 </context>
 <context>
@@ -10659,6 +9725,25 @@ Tràfic baix: 10 %s del tràfic estàndard i PENDENT: posar en pausa totes les t
     <message>
         <source>Friends</source>
         <translation>Amics</translation>
+    </message>
+</context>
+<context>
+    <name>PeopleDialog</name>
+    <message>
+        <source>People</source>
+        <translation>Gent</translation>
+    </message>
+    <message>
+        <source>External</source>
+        <translation>Externa</translation>
+    </message>
+    <message>
+        <source>Drag your circles or people to each other.</source>
+        <translation>Arrossega els cercles o persones els uns amb els altres.</translation>
+    </message>
+    <message>
+        <source>Internal</source>
+        <translation>Interna</translation>
     </message>
 </context>
 <context>
@@ -10933,6 +10018,37 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PluginManager</name>
+    <message>
+        <source>base folder %1 doesn&apos;t exist, default load failed</source>
+        <translation>la carpeta arrel %1 no existeix, la carrega per defecte ha fallat</translation>
+    </message>
+    <message>
+        <source>Error: instance &apos;%1&apos;can&apos;t create a widget</source>
+        <translation>Error: instancia &apos;%1&apos; no pot crear un control</translation>
+    </message>
+    <message>
+        <source>Error: no plugin with name &apos;%1&apos; found</source>
+        <translation>Error: no s&apos;ha trobat cap complement &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <source>Error(uninstall): no plugin with name &apos;%1&apos; found</source>
+        <translation>Error(desinstal·lació): cap complement amb el nom &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <source>Error(installation): plugin file %1 doesn&apos;t exist</source>
+        <translation>Error(Instal·lació): l&apos;arxiu %1 del complement no existeix</translation>
+    </message>
+    <message>
+        <source>Error: failed to remove file %1(uninstalling plugin &apos;%2&apos;)</source>
+        <translation>Error: No s&apos;ha pogut treure l&apos;arxiu %1(desinstal·lant complement &apos;%2&apos;)</translation>
+    </message>
+    <message>
+        <source>Error: can&apos;t copy %1 to %2</source>
+        <translation>Error: no s&apos;ha pogut copiar %1 a %2</translation>
+    </message>
+</context>
+<context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
@@ -10945,6 +10061,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Plugins (*.so *.dll)</source>
         <translation>Complements (*.so *.dll)</translation>
+    </message>
+    <message>
+        <source>Widget for plugin %1 not found on plugins frame</source>
+        <translation>El control pel complement %1 no s&apos;ha trobat en el marc dels complements</translation>
     </message>
 </context>
 <context>
@@ -11077,10 +10197,6 @@ modificats.</translation>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <source>Distant chat terminated</source>
-        <translation>Xat distant finalitzat</translation>
-    </message>
-    <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation>La persona amb qui estaves parlant ha esborrat el túnel segur de xat. Ja pots tancar la finestra de xat.</translation>
     </message>
@@ -11092,33 +10208,21 @@ modificats.</translation>
         <source>Kill the tunnel?</source>
         <translation>Matar el túnel?</translation>
     </message>
+    <message>
+        <source>Hash Error. No tunnel.</source>
+        <translation>Error de hash. Sense túnel.</translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because there is no tunnel.</source>
+        <translation>No es pot enviar el missatge perquè no hi ha túnel.</translation>
+    </message>
+    <message>
+        <source>Can&apos;t send message, because the chat partner deleted the secure tunnel.</source>
+        <translation>No es pot enviar el missatge perquè el company de xat ha esborrat el túnel segur.</translation>
+    </message>
 </context>
 <context>
     <name>PostedCreatePostDialog</name>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Títol&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Enllaç&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
     <message>
         <source>Signed by: </source>
         <translation>Signat per:</translation>
@@ -11155,12 +10259,48 @@ p, li { white-space: pre-wrap; }
         <source>Please add a Title</source>
         <translation>Si us plau, afegeix un títol</translation>
     </message>
+    <message>
+        <source>Title</source>
+        <translation>Títol</translation>
+    </message>
+    <message>
+        <source>Link</source>
+        <translation>Enllaç</translation>
+    </message>
 </context>
 <context>
     <name>PostedDialog</name>
     <message>
         <source>Posted Links</source>
         <translation>Enllaços publicats</translation>
+    </message>
+    <message>
+        <source>Posted</source>
+        <translation>Enviat</translation>
+    </message>
+    <message>
+        <source>Create Topic</source>
+        <translation>Crear tema</translation>
+    </message>
+    <message>
+        <source>My Topics</source>
+        <translation>Els meus temes</translation>
+    </message>
+    <message>
+        <source>Subscribed Topics</source>
+        <translation>Temes subscrits</translation>
+    </message>
+    <message>
+        <source>Popular Topics</source>
+        <translation>Temes populars</translation>
+    </message>
+    <message>
+        <source>Other Topics</source>
+        <translation>Altres temes</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11186,8 +10326,43 @@ p, li { white-space: pre-wrap; }
         <translation>Editar tema</translation>
     </message>
     <message>
-        <source>Create Topic</source>
-        <translation>Crear tema</translation>
+        <source>Update Topic</source>
+        <translation>Actualitzar tema</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Crear</translation>
+    </message>
+</context>
+<context>
+    <name>PostedGroupItem</name>
+    <message>
+        <source>Subscribe to Posted</source>
+        <translation>Subscriure&apos;s als publicats</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Ampliar</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>Posted Description</source>
+        <translation>Descripció dels publicats</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>New Posted</source>
+        <translation>Publicats nous</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
@@ -11195,15 +10370,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
-        <translation>Això és un títol molt molt molt molt llaaaaaaaaaaaaaaaaaaaaaarrrrrrrrrrrrrrrrrrg, no creus?
-Si que ho és i hauria de partir-se tot sol, espero</translation>
-    </message>
-    <message>
-        <source>From</source>
-        <translation>Des de</translation>
     </message>
     <message>
         <source>Site</source>
@@ -11230,12 +10396,32 @@ Si que ho és i hauria de partir-se tot sol, espero</translation>
         <translation>\/</translation>
     </message>
     <message>
-        <source>Submitted</source>
-        <translation>Publicat</translation>
+        <source>Set as read and remove item</source>
+        <translation>Marcar com llegit i eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>Nou</translation>
+    </message>
+    <message>
+        <source>Toggle Message Read Status</source>
+        <translation>Canvia l&apos;estat dels missatges llegits</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation>Carregant</translation>
+    </message>
+    <message>
+        <source>By</source>
+        <translation>Per</translation>
     </message>
 </context>
 <context>
-    <name>PostedListDialog</name>
+    <name>PostedListWidget</name>
     <message>
         <source>Form</source>
         <translation>Formulari</translation>
@@ -11273,44 +10459,12 @@ Si que ho és i hauria de partir-se tot sol, espero</translation>
         <translation>Aquest any</translation>
     </message>
     <message>
-        <source>Showing 1-100</source>
-        <translation>Mostra 1-100</translation>
-    </message>
-    <message>
-        <source>Prev</source>
-        <translation>Previ</translation>
+        <source>Submit a new Post</source>
+        <translation>Publica una entrada nova</translation>
     </message>
     <message>
         <source>Next</source>
         <translation>Següent</translation>
-    </message>
-    <message>
-        <source>My Topics</source>
-        <translation>Els meus temes</translation>
-    </message>
-    <message>
-        <source>Subscribed Topics</source>
-        <translation>Temes subscrits</translation>
-    </message>
-    <message>
-        <source>Popular Topics</source>
-        <translation>Temes populars</translation>
-    </message>
-    <message>
-        <source>Other Topics</source>
-        <translation>Altres temes</translation>
-    </message>
-    <message>
-        <source>Subscribe</source>
-        <translation>Subscriure&apos;s</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Donar de baixa</translation>
-    </message>
-    <message>
-        <source>Showing</source>
-        <translation>Mostrant</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11321,16 +10475,34 @@ Si que ho és i hauria de partir-se tot sol, espero</translation>
         <translation>Si us plau, crea o escull una Id signant abans de votar</translation>
     </message>
     <message>
-        <source>Create New Topic</source>
-        <translation>Crear nou tema</translation>
+        <source>Previous</source>
+        <translation>Previ</translation>
     </message>
     <message>
-        <source>Submit a new Post</source>
-        <translation>Publica una entrada nova</translation>
+        <source>1-10</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>PostedPage</name>
+    <message>
+        <source>Tabs</source>
+        <translation>Pestanyes</translation>
     </message>
     <message>
-        <source>Todo</source>
-        <translation>Pendent</translation>
+        <source>Posted</source>
+        <translation>Enviat</translation>
+    </message>
+    <message>
+        <source>Open each topic in a new tab</source>
+        <translation>Obrir cada tema en una nova pestanya</translation>
+    </message>
+</context>
+<context>
+    <name>PostedUserNotify</name>
+    <message>
+        <source>Posted</source>
+        <translation>Enviat</translation>
     </message>
 </context>
 <context>
@@ -11371,10 +10543,6 @@ Si que ho és i hauria de partir-se tot sol, espero</translation>
         <translation>Directori de perfils</translation>
     </message>
     <message>
-        <source>Identities</source>
-        <translation>Identitats</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
@@ -11385,10 +10553,6 @@ Si que ho és i hauria de partir-se tot sol, espero</translation>
     <message>
         <source>GID</source>
         <translation>GID</translation>
-    </message>
-    <message>
-        <source>Export selected identity</source>
-        <translation>Exportar identitat seleccionada</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -11442,10 +10606,6 @@ i utilitzar el botó d&apos;importació per carregar-lo</translation>
         <translation>La teva identitat s&apos;ha importat amb èxit:</translation>
     </message>
     <message>
-        <source>You can use it now to create a new location.</source>
-        <translation>Ara pots utilitzar-la per crear una nova ubicació.</translation>
-    </message>
-    <message>
         <source>Select Trusted Friend</source>
         <translation>Selecciona un amic de confiança</translation>
     </message>
@@ -11457,21 +10617,33 @@ i utilitzar el botó d&apos;importació per carregar-lo</translation>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select a Retroshare node key from the list below to be used on another computer, and press &amp;quot;Export selected key.&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To create a new location on a different computer,  select the identity manager in the login window. From there you can import the key file and create a new location for that key. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Creating a new node with the same key allows your  your friend nodes to accept you automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Selecciona una identitat de la llista inferior per ser usada en un altre ordinador i després prem &quot;Exportar identitat seleccionada&quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Per utilitzar-la en un ordinador diferent selecciona el controlador d&apos;identitats a la finestra de validació. Des d&apos;allà pots importar-la i crear una nova ubicació per l&apos;identitat. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Quan el que facis sigui mantenir la mateix identitat per una nova ubicació els teus amics t&apos;acceptaran automàticament.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Selecciona una clau de node de RetroShare de la llista inferior per ser utilitzada en un altre ordinador, i prem &amp;quot;Exportar clau seleccionada.&amp;quot;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Per crear una nova ubicació en un altre ordinador, selecciona el gestor de identitats en el diàleg d&apos;entrada. Des d&apos;allà podràs importar l&apos;arxiu de clau i crear una nova ubicació per aquella clau.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Crear un node nou amb la mateixa clau fa que els nodes dels teus amics acceptin el nou node automàticament.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Full keys available in your keyring:</source>
+        <translation>Claus completes disponibles al teu clauer:</translation>
+    </message>
+    <message>
+        <source>Export selected key</source>
+        <translation>Exportar claus seleccionades</translation>
+    </message>
+    <message>
+        <source>You can use it now to create a new node.</source>
+        <translation>Ara pots utilitzar-la per crear un node nou.</translation>
     </message>
 </context>
 <context>
@@ -11650,14 +10822,6 @@ clauer PGP i obrir l&apos;assistent de fer amic.
         <translation>Afegir arxius</translation>
     </message>
     <message>
-        <source>Add friend</source>
-        <translation>Afegir amic</translation>
-    </message>
-    <message>
-        <source>Add friends</source>
-        <translation>Afegir amics</translation>
-    </message>
-    <message>
         <source>Do you want to process the link ?</source>
         <translation>Vols processar l&apos;enllaç?</translation>
     </message>
@@ -11818,15 +10982,7 @@ Els caràcters &lt;b&gt;&quot;,|,/,\,&amp;lt;&amp;gt;,*,?&lt;/b&gt; es substitui
     <message>
         <source>The following has not been added to your download list, because you already have it:
     </source>
-        <translation>El següent no s&apos;ha afegit a la llista de descarregues perquè ja hi era:⏎</translation>
-    </message>
-    <message>
-        <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Sembla que tens ubicacions associades a les claus DSA:</translation>
-    </message>
-    <message>
-        <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>Les claus DSA encara no són suportades en aquesta versió de RetroShare. Totes aquestes ubicacions no es podran utilitzar. Ho sentim molt.</translation>
+        <translation>El següent no s&apos;ha afegit a la llista de descarregues perquè ja hi era:</translation>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
@@ -11883,60 +11039,12 @@ Arxiu de bloqueig:\n</translation>
         <translation>Engegar el RetroShare amb un enllaç només és suportat per Windows.</translation>
     </message>
     <message>
-        <source>Select who can contact you:</source>
-        <translation>Selecció qui pot contactar amb tu:</translation>
-    </message>
-    <message>
-        <source>Chat link is expired</source>
-        <translation>Enllaç de xat caducat</translation>
-    </message>
-    <message>
-        <source>This chat link is expired. The destination peer will not answer.</source>
-        <translation>Aquest enllaç de xat ha caducat. El contacte de destí no respondrà.</translation>
-    </message>
-    <message>
-        <source>Chat link cannot be decrypted</source>
-        <translation>L&apos;enllaç de xat no es pot desencriptar</translation>
-    </message>
-    <message>
-        <source>The link could not be decrypted.</source>
-        <translation>L&apos;enllaç no es pot desencriptar.</translation>
-    </message>
-    <message>
-        <source>The link signature cannot be checked.</source>
-        <translation>La signatura de l&apos;enllaç no s&apos;ha pogut comprovar</translation>
-    </message>
-    <message>
-        <source>The link is signed by an unknown key.</source>
-        <translation>L&apos;enllaç és signat per una clau desconeguda.</translation>
-    </message>
-    <message>
-        <source>Hash error</source>
-        <translation>Error de número de hash</translation>
-    </message>
-    <message>
         <source>Distant peer has closed the chat</source>
         <translation>El contacte distant ha tancat el xat</translation>
     </message>
     <message>
         <source>Tunnel is pending...</source>
         <translation>Túnel pendent...</translation>
-    </message>
-    <message>
-        <source>Messaging link is expired</source>
-        <translation>L&apos;enllaç de missatgeria ha caducat</translation>
-    </message>
-    <message>
-        <source>This Messaging link is expired. The destination peer will not receive it.</source>
-        <translation>L&apos;enllaç de missatgeria ha caducat. El contacte de destí no el rebrà.</translation>
-    </message>
-    <message>
-        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
-        <translation>Aquest enllaç de xat està encriptat amb una clau que no és nostra. No la pots utilitzar. Id clau =</translation>
-    </message>
-    <message>
-        <source>Chat connection is not possible</source>
-        <translation>Connexió de xat impossible</translation>
     </message>
     <message>
         <source>Secured tunnel established. Waiting for ACK...</source>
@@ -11957,18 +11065,116 @@ L&apos;error reportat és:
 %2</translation>
     </message>
     <message>
-        <source>Signature check failed!
-Make sure you know who you&apos;re talking to.</source>
-        <translation>Comprovació de signatura fallada!
-Assegura&apos;t de saber amb qui estàs parlant.</translation>
-    </message>
-    <message>
-        <source>Chat connection is unauthenticated</source>
-        <translation>Connexió de xat no autentificada</translation>
-    </message>
-    <message>
         <source>Id: </source>
         <translation>Id:</translation>
+    </message>
+    <message>
+        <source>Click to send a private message to %1 (%2).</source>
+        <translation>Clica per enviar un missatge privat a %1 (%2).</translation>
+    </message>
+    <message>
+        <source>%1 (%2, Extra - Source included)</source>
+        <translation>%1 (%2, Extra - Font inclosa)</translation>
+    </message>
+    <message>
+        <source>This cert is malformed. Error code: </source>
+        <translation>Aquest certificat està deformat. Codi d&apos;error:</translation>
+    </message>
+    <message>
+        <source>Click this link to send a private message to %1 (%2)</source>
+        <translation>Clica aquest enllaç per enviar un missatge provat a %1 (%2)</translation>
+    </message>
+    <message>
+        <source>RetroShare Certificate (%1, @%2)</source>
+        <translation>Certificat RetroShare (%1, @%2)</translation>
+    </message>
+    <message>
+        <source>secs</source>
+        <translation>seg</translation>
+    </message>
+    <message>
+        <source>TR up</source>
+        <translation>TR pujats</translation>
+    </message>
+    <message>
+        <source>TR dn</source>
+        <translation>TR baixats</translation>
+    </message>
+    <message>
+        <source>Data up</source>
+        <translation>Dades pujades</translation>
+    </message>
+    <message>
+        <source>Data dn</source>
+        <translation>Dades baixades</translation>
+    </message>
+    <message>
+        <source>Data forward</source>
+        <translation>Dades reenviades</translation>
+    </message>
+    <message>
+        <source>You appear to have nodes associated to DSA keys:</source>
+        <translation>Sembla que tens nodes associats a claus DSA:</translation>
+    </message>
+    <message>
+        <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
+        <translation>Les claus DSA encara no són suportades en aquesta versió de RetroShare. Tots aquests nodes no es podran utilitzar. Ho sentim molt.</translation>
+    </message>
+    <message>
+        <source>Auto Subscribe: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Join chat lobby</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move IP %1 to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>whitelist entire range %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 seconds ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minute ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 minutes ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hour ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 hours ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 day ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <translation>fa %1 dies</translation>
     </message>
 </context>
 <context>
@@ -12027,7 +11233,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose your download speed limit: </source>
-        <translation>Quin és el teu limit de descarrega:</translation>
+        <translation>Quin és el teu límit de baixada:</translation>
     </message>
     <message>
         <source> KB/s</source>
@@ -12189,6 +11395,47 @@ p, li { white-space: pre-wrap; }
         <source>Warning!</source>
         <translation>Avís!</translation>
     </message>
+    <message>
+        <source>Browsable</source>
+        <translation>Navegable</translation>
+    </message>
+    <message>
+        <source>Universal</source>
+        <translation>Universal</translation>
+    </message>
+    <message>
+        <source>If checked, the share is anonymously shared to anybody.</source>
+        <translation>Si es marca, el recurs es comparteix anònimament amb tothom.</translation>
+    </message>
+    <message>
+        <source>If checked, the share is browsable by your friends.</source>
+        <translation>Si es marca, el recurs és navegable pels teus amics.</translation>
+    </message>
+    <message>
+        <source>Please decide whether this directory is
+* Network Wide: 	anonymously shared over the network (including your friends)
+* Browsable: 	browsable by your friends
+* Universal: 		both</source>
+        <translation>Decideix si aquest directori és
+* Tota la xarxa: compartit anònimament per tota la xarxa (incloent els teus amics)
+* Navegable: Navegable pels teus amics
+* Universal: Ambdós anteriors</translation>
+    </message>
+</context>
+<context>
+    <name>RSGraphWidget</name>
+    <message>
+        <source>%1 KB</source>
+        <translation>%1 kB</translation>
+    </message>
+    <message>
+        <source>%1 MB</source>
+        <translation>%1 MB</translation>
+    </message>
+    <message>
+        <source>%1 GB</source>
+        <translation>%1 GB</translation>
+    </message>
 </context>
 <context>
     <name>RSImageBlockWidget</name>
@@ -12206,6 +11453,49 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RSPermissionMatrixWidget</name>
+    <message>
+        <source>Service name: </source>
+        <translation>Nom del servei:</translation>
+    </message>
+    <message>
+        <source>Allowed by default</source>
+        <translation>Permès per defecte</translation>
+    </message>
+    <message>
+        <source>Denied by default</source>
+        <translation>Negat per defecte</translation>
+    </message>
+    <message>
+        <source>Peer name: </source>
+        <translation>Nom del contacte:</translation>
+    </message>
+    <message>
+        <source>Peer Id: </source>
+        <translation>Id del contacte:</translation>
+    </message>
+    <message>
+        <source>Enabled for this peer</source>
+        <translation>Activat per a aquest contacte</translation>
+    </message>
+    <message>
+        <source>Disabled for this peer</source>
+        <translation>Desactivat per a aquest contacte</translation>
+    </message>
+    <message>
+        <source>Enabled by remote peer</source>
+        <translation>Activat pel contacte remot</translation>
+    </message>
+    <message>
+        <source>Disabled by remote peer</source>
+        <translation>Desactivat pel contacte remot</translation>
+    </message>
+    <message>
+        <source>Switched Off</source>
+        <translation>Apagat</translation>
+    </message>
+</context>
+<context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -12216,11 +11506,11 @@ p, li { white-space: pre-wrap; }
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation>&lt;strong&gt;Descarrega:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Pujada:&lt;/strong&gt; 0.00 (kB/s) </translation>
+        <translation>&lt;strong&gt;Baixada:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Pujada:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <source>Down</source>
-        <translation>Descarrega</translation>
+        <translation>Baixada</translation>
     </message>
     <message>
         <source>Up</source>
@@ -12308,12 +11598,66 @@ p, li { white-space: pre-wrap; }
         <source>Recommend in a message to</source>
         <translation>Recomanar en un missatge a</translation>
     </message>
+    <message>
+        <source>Collection</source>
+        <translation>Col·lecció</translation>
+    </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
     <message>
         <source>NEW</source>
         <translation>NOU</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListDefs</name>
+    <message>
+        <source>IP address not checked</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is blacklisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address is not whitelisted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address accepted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Desconegut</translation>
+    </message>
+</context>
+<context>
+    <name>RsBanListToolButton</name>
+    <message>
+        <source>Add IP to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add IP to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove IP from blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Entire range</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12329,18 +11673,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Total size :</source>
         <translation>Mida total:</translation>
-    </message>
-    <message>
-        <source>Selected files:</source>
-        <translation>Arxius seleccionats:</translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation>Selecciona-ho tot</translation>
-    </message>
-    <message>
-        <source>Deselect all</source>
-        <translation>De-selecciona-ho tot</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12374,6 +11706,114 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 Els caràcters &lt;b&gt;&quot;,|,/,\,&amp;lt;&amp;gt;,*,?&lt;/b&gt; es substituiran per &apos;_&apos;.
 Els arxius afectats es llisten en vermell.</translation>
     </message>
+    <message>
+        <source>Selected files :</source>
+        <translation>Arxius seleccionats :</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Afegir els elements seleccionats a la col·lecció un a un.&lt;/p&gt;&lt;p&gt;Escull el directori pare per afegir-lo també.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Entra&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection.&lt;/p&gt;&lt;p&gt;If a directory is selected, all of his children will be added.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Afegir elements seleccionats a la col·lecció.&lt;/p&gt;&lt;p&gt;Si s&apos;escull un directori tots el seu contingut s&apos;afegirà.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline; vertical-align:sub;&quot;&gt;&amp;lt;Shift + Entra&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make a new directory in the collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Crear un nou directori a la col·lecció.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>+</source>
+        <translation>+</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Desa</translation>
+    </message>
+    <message>
+        <source>Collection Editor</source>
+        <translation>Editor de col·lecció</translation>
+    </message>
+    <message>
+        <source>File Count</source>
+        <translation>Comptador d&apos;arxius</translation>
+    </message>
+    <message>
+        <source>This is the root directory.</source>
+        <translation>Aquest és el directori principal.</translation>
+    </message>
+    <message>
+        <source>Real Size: Waiting child...</source>
+        <translation>Mida real: Esperant pels fills...</translation>
+    </message>
+    <message>
+        <source>Real File Count: Waiting child...</source>
+        <translation>Comptador d&apos;arxius real: Esperant pels fills...</translation>
+    </message>
+    <message>
+        <source>This is a directory. Double-click to expand it.</source>
+        <translation>Això és un directori. Doble clic per desplegar-lo.</translation>
+    </message>
+    <message>
+        <source>Real Size=%1</source>
+        <translation>Mida real=%1</translation>
+    </message>
+    <message>
+        <source>Real File Count=%1</source>
+        <translation>Comptador d&apos;arxius real=%1</translation>
+    </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation>Guardar arxiu de col·lecció.</translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation>Que vols fer?</translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation>Sobreescriure</translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation>Afegir</translation>
+    </message>
+    <message>
+        <source>Warning, selection contains more than %1 items.</source>
+        <translation>Avís, la selecció conté més de %1 elements.</translation>
+    </message>
+    <message>
+        <source>Do you want to remove them and all their children, too? &lt;br&gt;</source>
+        <translation>Vols treure&apos;ls incloent els seus fills, també? &lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>New Directory</source>
+        <translation>Nou directori</translation>
+    </message>
+    <message>
+        <source>Enter the new directory&apos;s name</source>
+        <translation>Introdueix el nom del nou directori</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file where collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Canviar l&apos;arxiu on es guardarà la col·lecció.&lt;/p&gt;&lt;p&gt;Si esculls un arxiu existent, podràs ajuntar-los.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation>L&apos;arxiu ja existeix.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Esborrar element seleccionat de la col·lecció.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&lt;Supr&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
@@ -12405,6 +11845,30 @@ If you believe it is correct, remove the corresponding line from the file and re
 
 Si creus que és correcta, treu la línia corresponent de l&apos;arxiu i torna&apos;l a obrir amb el RetroShare.</translation>
     </message>
+    <message>
+        <source>Save Collection File.</source>
+        <translation>Guardar arxiu de col·lecció.</translation>
+    </message>
+    <message>
+        <source>What do you want to do?</source>
+        <translation>Que vols fer?</translation>
+    </message>
+    <message>
+        <source>Overwrite</source>
+        <translation>Sobreescriure</translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation>Afegir</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancel·la</translation>
+    </message>
+    <message>
+        <source>File already exists.</source>
+        <translation>L&apos;arxiu ja existeix.</translation>
+    </message>
 </context>
 <context>
     <name>RsHtml</name>
@@ -12413,6 +11877,13 @@ Si creus que és correcta, treu la línia corresponent de l&apos;arxiu i torna&a
 Reducing image to %1x%2 pixels?</source>
         <translation>La imatge és massa gran per la transmissió.
 Reduir la imatge a %1x%2 pixels?</translation>
+    </message>
+</context>
+<context>
+    <name>RsNetUtil</name>
+    <message>
+        <source>Invalid format</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12468,6 +11939,21 @@ Reduir la imatge a %1x%2 pixels?</translation>
     <message>
         <source>built-in</source>
         <translation>inclòs</translation>
+    </message>
+    <message>
+        <source>Could not create data directory: %1</source>
+        <translation>No s&apos;ha pogut crear el directori de dades: %1</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RttStatistics</name>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>Estadístiques RTT</translation>
     </message>
 </context>
 <context>
@@ -12693,6 +12179,85 @@ Reduir la imatge a %1x%2 pixels?</translation>
         <source>Open Folder</source>
         <translation>Obrir directori</translation>
     </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Crear col·lecció...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Modificar col·lecció...</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Veure col·lecció...</translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Descarregar d&apos;arxiu de col·lecció...</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Col·lecció</translation>
+    </message>
+</context>
+<context>
+    <name>SecurityIpItem</name>
+    <message>
+        <source>Peer details</source>
+        <translation>Detalls del contacte</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>Ampliar</translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eliminar l&apos;element</translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer ID:</source>
+        <translation>ID del contacte:</translation>
+    </message>
+    <message>
+        <source>Location:</source>
+        <translation>Ubicació:</translation>
+    </message>
+    <message>
+        <source>Peer Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown Peer</source>
+        <translation>Contacte desconegut</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Amagar</translation>
+    </message>
+    <message>
+        <source>but reported:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong external ip address reported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP address %1 was added to the whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the external IP your Retroshare node thinks it is using.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -12711,10 +12276,6 @@ Reduir la imatge a %1x%2 pixels?</translation>
     <message>
         <source>Deny friend</source>
         <translation>Negar l&apos;amic</translation>
-    </message>
-    <message>
-        <source>Write a quick Message</source>
-        <translation>Escriure un missatge ràpid</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -12812,6 +12373,10 @@ Reduir la imatge a %1x%2 pixels?</translation>
         <source>Certificate caused an internal error.</source>
         <translation>El certificat a provocat un error intern.</translation>
     </message>
+    <message>
+        <source>Peer/node not in friendlist (PGP id=</source>
+        <translation>El contacte/node no és a la llista d&apos;amics (Id PGP=</translation>
+    </message>
 </context>
 <context>
     <name>ServerPage</name>
@@ -12830,25 +12395,6 @@ Reduir la imatge a %1x%2 pixels?</translation>
     <message>
         <source>Manually Forwarded Port</source>
         <translation>Port reenviat manualment</translation>
-    </message>
-    <message>
-        <source>The DHT allows you to answer connection 
-requests from your friends using BitTorrent's DHT. 
-It greatly improves the connectivity. 
-
-The Discovery service sends locations and PGP 
-identities of your trusted contacts to connected 
-peers, to help them choose new friends. 
-The friendship is never automatic however, and both 
-peers still need to trust each other to allow connection. </source>
-        <translation>El DHT et permet respondre les peticions 
-de connexió dels teus amics utilitzant el protocol
- DHT de BitTorrent. Millora molt la connectivitat.
-El servei de descobriment envia la ubicació i identitat
-PGP dels teus contactes de confiança als contactes
-connectats, per ajudar a que escullin nous amics.
-L&apos;amistat no és mai automàtica, i tots dos contactes
- han de confiar l&apos;un amb l&apos;altre per permetre la connexió.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
@@ -12881,10 +12427,6 @@ L&apos;amistat no és mai automàtica, i tots dos contactes
     <message>
         <source>Port:</source>
         <translation>Port:</translation>
-    </message>
-    <message>
-        <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation>El rang de ports acceptables va de 1024 a 65535. Els ports per sota 1024 estan reservats pel teu sistema.</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -12921,71 +12463,284 @@ d&apos;un tallafocs o una VPN.</translation>
         <translation>Permet que el RetroShare pregunti la meva IP a aquests llocs web:</translation>
     </message>
     <message>
-        <source>Bandwidth</source>
-        <translation>Ample de banda</translation>
-    </message>
-    <message>
-        <source>Max Transfer Rates</source>
-        <translation>Tassa de transferència màxima</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>kB/s</translation>
     </message>
     <message>
-        <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Si desactives això el RetroShare no utilitzarà túnels de connexió entre contactes que estiguin darrera tallafocs i no es puguin connectar directament. Això és independent de l&apos;encaminament F2F (Encaminador Turtle).</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
+        <translation>El rang de ports acceptats va de 10 fins 65535. Normalment els ports per sota 1024 estan reservats pel teu sistema.</translation>
     </message>
     <message>
-        <source>Allow Tunnel Connection</source>
-        <translation>Permet connexions túnel</translation>
+        <source>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</source>
+        <translation>El rang de ports acceptables va de 1024 a 65535. Els ports per sota 1024 estan reservats pel teu sistema.</translation>
     </message>
     <message>
-        <source>Turtle router</source>
-        <translation>Encaminador Turtle</translation>
+        <source>TOR Configuration</source>
+        <translation>Configuració TOR</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Desmarcant això deshabilites tota l&apos;activitat d&apos;encaminament anònim, excepte la neteja de la cau. Les peticions entrants de túnels s&apos;ignoren i no s&apos;envien peticions de túnel a ningú.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Outgoing TOR Connections</source>
+        <translation>Connexions TOR sortints</translation>
     </message>
     <message>
-        <source>Enabled</source>
-        <translation>Activat</translation>
+        <source>TOR Socks Proxy</source>
+        <translation>Repetidor socks TOR</translation>
     </message>
     <message>
-        <source>Show routing info</source>
-        <translation>Mostrar informació d&apos;encaminament</translation>
-    </message>
-    <message>
-        <source>Max. tunnel req. forwarded per second:</source>
-        <translation>Màxim de peticions de túnels reenviades per segon:</translation>
-    </message>
-    <message>
-        <source>This value controls how many tunnel request your peer can forward per second. 
+        <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
 
-If you have a large internet bandwidth, you may raise this up to 30-40, to allow
-statistically longer tunnels to pass. Be very careful though, since this generates 
-many small packets that can significantly slow down your own file transfer. 
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup TOR? </source>
+        <translation>Repetidor socks TOR per defecte: 127.0.01:9050. Posat a la configuració de torrc i actualitzat aquí.
 
-The default value is 20.</source>
-        <translation>Aquest valor controla quantes peticions de túnel el teu contacte pot reenviar per segon.
-Si tens molt ample de banda pots augmentar-lo fins a 30-40, per permetre que túnels 
-estadísticament més llargs puguin passar. Ves amb compte, això generar molts paquets
-petits que poden alentir significativament les teves pròpies transferències.
+Pots connectar-te a nodes ocults, encara que
+estiguis utilitzant un node estàndard, així que perquè no utilitzar TOR?</translation>
+    </message>
+    <message>
+        <source>Incoming TOR Connections</source>
+        <translation>Connexions TOR entrants</translation>
+    </message>
+    <message>
+        <source>Onion Address</source>
+        <translation>Adreça Onion</translation>
+    </message>
+    <message>
+        <source>Expected torrc Port Configuration:</source>
+        <translation>Configuració de port torrc esperada:</translation>
+    </message>
+    <message>
+        <source>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
+HiddenServicePort 9191 127.0.0.1:9191</source>
+        <translation>DirectoriServeiOcult &lt;/your/path/to/hidden/directory/service&gt;
+PortServeiOcult 9191 127.0.0.1:9191</translation>
+    </message>
+    <message>
+        <source>To Receive Connections, you must first setup a TOR Hidden Service. 
+See TOR documentation for HOWTO details.
 
-El valor per defecte és 20.</translation>
+Once this is done, paste the Onion Address in the box above.
+This is your external address on the TOR network.
+Finally make sure that the Ports match the TOR configuration.
+
+If you have issues connecting over TOR check the TOR logs too.</source>
+        <translation>Per rebre connexions, primer has de configurar un servei ocult de TOR.
+Mira a la documentació del TOR per detalls.
+
+Un cop ho tinguis, enganxa l&apos;adreça Onion a la casella superior.
+Aquesta serà la teva adreça externa a la xarxa TOR.
+Finalment, assegurat que els ports coincideixen amb la configuració del TOR.
+
+Si tens problemes connectant sobre TOR comprova els registres del TOR també.</translation>
     </message>
     <message>
-        <source>Server</source>
-        <translation>Servidor</translation>
+        <source>Discovery On (recommended)</source>
+        <translation>Descobriment activat (Recomanat)</translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>Descarrega (kB/s)</translation>
+        <source>Discovery Off</source>
+        <translation>Descobriment desactivat</translation>
     </message>
     <message>
-        <source>Upload (KB/s) </source>
-        <translation>Pujada (kB/s)</translation>
+        <source>Hidden - See TOR Config</source>
+        <translation>Ocult - Mira la configuració del TOR</translation>
+    </message>
+    <message>
+        <source>Proxy seems to work.</source>
+        <translation>El repetidor sembla que funciona</translation>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled</source>
+        <translation>El repetidor TOR no està activat</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Hidden mode]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Neteja</translation>
+    </message>
+    <message>
+        <source>Download limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Upload limit (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR outgoing Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>Test</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR incoming  ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are reachable through TOR.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR proxy is not enabled or broken.
+Are you running a TOR hidden service?
+Check your ports!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Xarxa</translation>
+    </message>
+    <message>
+        <source>IP Filters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Estat</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Comentari</translation>
+    </message>
+    <message>
+        <source>  IPs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Manual input</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter an IP range.  Accepted formats:&lt;/p&gt;&lt;p&gt;193.190.209.15&lt;/p&gt;&lt;p&gt;193.190.209.15/24&lt;/p&gt;&lt;p&gt;193.190.209.15/16&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter any comment you&apos;d like&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to blacklist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add to whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>IP Range</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reported by DHT for IP masquerading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Range made from %1 collected addresses</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Treure</translation>
+    </message>
+    <message>
+        <source>Added by you</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>activate IP filtering</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every  IP reported by your friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Another drastic option. If you use it, be prepared to add your friends&apos; IPs into the whitelist when needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Ban every masquerading IP reported by your DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If used alone, this option protects you quite well from large scale IP masquerading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12995,24 +12750,43 @@ El valor per defecte és 20.</translation>
         <translation>Permisos del servei</translation>
     </message>
     <message>
-        <source>Anonymous routing</source>
-        <translation>Encaminament anònim</translation>
-    </message>
-    <message>
-        <source>Discovery</source>
-        <translation>Descobriment</translation>
-    </message>
-    <message>
-        <source>Forums/Channels</source>
-        <translation>Fòrums/Canals</translation>
-    </message>
-    <message>
         <source>Service Permissions</source>
         <translation>Permisos del servei</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
         <translation>Utilitza com a font directa quan estigui disponible</translation>
+    </message>
+    <message>
+        <source>Auto-download recommended files</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Require whitelist</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>ServicePermissionsPage</name>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>PermisosServei</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Restablir</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>Permisos</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permisos&lt;/h1&gt; &lt;p&gt;Permisos et permet controlar quins serveis estan disponibles a quins amics&lt;/p&gt; &lt;p&gt;Cada interruptor mostra dos llums, indicant si el teu amic o tu teniu activat aquest servei. Ambdós han d&apos;estar activats (mostrant &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) per a que es transmeti informació per una combinació de servei/amic específica.&lt;/p&gt; &lt;p&gt;Per cada servei hi ha un interruptor global &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt; que et permet activar-lo o desactivar-lo per tothom a la vegada.&lt;/p&gt; &lt;p&gt;Ves amb compte: Alguns serveis depenen l&apos;un de l&apos;altre. Per exemple, si apagues l&apos;encaminador turtle també s&apos;aturaran totes les transferències anònimes, xats distants i missatgeria distant.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>hide offline</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13064,10 +12838,6 @@ El valor per defecte és 20.</translation>
 <context>
     <name>ShareKey</name>
     <message>
-        <source>Share Channel</source>
-        <translation>Compartir canal</translation>
-    </message>
-    <message>
         <source>check peers you would like to share private publish key with</source>
         <translation>comprovar els contactes amb qui t&apos;agradaria compartir les claus de publicació</translation>
     </message>
@@ -13076,16 +12846,15 @@ El valor per defecte és 20.</translation>
         <translation>Compartit amb els amics</translation>
     </message>
     <message>
-        <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation>Seleccionar els amics amb qui vols compartir el teu canal.</translation>
+        <source>Share</source>
+        <translation>Compartir</translation>
     </message>
     <message>
-        <source>Contacts:</source>
-        <translation>Contactes:</translation>
-    </message>
-    <message>
-        <source>Please select at least one peer</source>
-        <translation>Si us plau, escull com a mínim un contacte</translation>
+        <source>You can let your friends know about your Channel by sharing it with them. 
+Select the Friends with which you want to Share your Channel.</source>
+        <translation>Pots fer que els teus amics sàpiguen del teu canal compartint-lo amb ells.
+
+Escull els amics amb qui vols compartir el teu canal.</translation>
     </message>
 </context>
 <context>
@@ -13257,6 +13026,61 @@ El valor per defecte és 20.</translation>
         <source>Recommendation(s)</source>
         <translation>Consell(s)</translation>
     </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Afegir recurs compartit</translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Crear col·lecció...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Modificar col·lecció...</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Veure col·lecció...</translation>
+    </message>
+    <message>
+        <source>Download from collection file...</source>
+        <translation>Descarregar d&apos;arxiu de col·lecció...</translation>
+    </message>
+</context>
+<context>
+    <name>SoundManager</name>
+    <message>
+        <source>Friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Go Online</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatmessage</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>New Msg</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Message arrived</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download complete</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundPage</name>
@@ -13281,38 +13105,6 @@ El valor per defecte és 20.</translation>
         <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
-        <source>Friend</source>
-        <translation>Amic</translation>
-    </message>
-    <message>
-        <source>go Online</source>
-        <translation>posar-se en línia</translation>
-    </message>
-    <message>
-        <source>Chatmessage</source>
-        <translation>missatge de xat</translation>
-    </message>
-    <message>
-        <source>New Msg</source>
-        <translation>Mstg nou</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Missatge</translation>
-    </message>
-    <message>
-        <source>Message arrived</source>
-        <translation>El missatge ha arribat</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>Descarregar</translation>
-    </message>
-    <message>
-        <source>Download complete</source>
-        <translation>Descarrega completa</translation>
-    </message>
-    <message>
         <source>Open File</source>
         <translation>Obrir arxiu</translation>
     </message>
@@ -13320,16 +13112,20 @@ El valor per defecte és 20.</translation>
         <source>Sound</source>
         <translation>So</translation>
     </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
-        <source>Sound on</source>
-        <translation>So activat</translation>
+        <source>Sound is off, click to turn it on</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sound off</source>
-        <translation>So desactivat</translation>
+        <source>Sound is on, click to turn it off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13378,18 +13174,6 @@ afegir una nova ubicació a un perfil ja existent.
 La identitat i ubicació actuals no es veuran afectades.</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Controlar perfils i ubicacions...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Load Person Failure</source>
         <translation>Carrega de persona fallada</translation>
     </message>
@@ -13402,34 +13186,119 @@ p, li { white-space: pre-wrap; }
         <translation>Avís</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Controlar perfils i nodes...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>La contrasenya del teu certificat SSL (per la teva ubicació) es desarà encriptat al clauer de Gnome. 
+        <translation>La contrasenya del teu certificat SSL (pel teu node) es desarà encriptada a l&apos;anell de claus de Gnome.
+
 No és desarà la teva contrasenya de PGP.
+
 Això es pot canviar a les opcions de configuració.</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your Keychain. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>La contrasenya del teu certificat SSL (per la teva ubicació) es desarà encriptada al teu clauer.
+        <translation>La contrasenya del teu certificat SSL (pel teu node) es desarà encriptada al teu anell de claus.
+
 No és desarà la teva contrasenya de PGP.
+
 Això es pot canviar a les opcions de configuració.</translation>
     </message>
     <message>
-        <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The password to your SSL certificate (your node) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>La contrasenya del teu certificat SSL (per la teva ubicació) es desarà encriptada a l&apos;arxiu keys/help.dta. Això no es considera segur.
+        <translation>La contrasenya del teu certificat SSL (pel teu node) es desarà encriptada a l&apos;arxiu keys/help.dta. Això no es considera segur.
+
 No és desarà la teva contrasenya de PGP.
+
 Això es pot canviar a les opcions de configuració.</translation>
+    </message>
+</context>
+<context>
+    <name>StatisticsWindow</name>
+    <message>
+        <source>Add Friend</source>
+        <translation>Afegeix amic</translation>
+    </message>
+    <message>
+        <source>Add a Friend Wizard</source>
+        <translation>Auxiliar per afegir un amic</translation>
+    </message>
+    <message>
+        <source>Add Share</source>
+        <translation>Afegir recurs compartit</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Opcions</translation>
+    </message>
+    <message>
+        <source>Messenger</source>
+        <translation>Missatgeria</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Sobre</translation>
+    </message>
+    <message>
+        <source>SMPlayer</source>
+        <translation>SMPlayer</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Sortir</translation>
+    </message>
+    <message>
+        <source>Quick Start Wizard</source>
+        <translation>Auxiliar d&apos;inici ràpid</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>PermisosServei</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Taula de permisos dels serveis</translation>
+    </message>
+    <message>
+        <source>DHT</source>
+        <translation>DHT</translation>
+    </message>
+    <message>
+        <source>Bandwidth</source>
+        <translation>Ample de banda</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation>Encaminador Turtle</translation>
+    </message>
+    <message>
+        <source>Global Router</source>
+        <translation>Encaminador Global</translation>
+    </message>
+    <message>
+        <source>RTT Statistics</source>
+        <translation>Estadístiques RTT</translation>
     </message>
 </context>
 <context>
@@ -13491,10 +13360,6 @@ Això es pot canviar a les opcions de configuració.</translation>
         <translation>Veí</translation>
     </message>
     <message>
-        <source>Trying tunnel connection</source>
-        <translation>Intentat connexió túnel</translation>
-    </message>
-    <message>
         <source>Trying TCP</source>
         <translation>Intentant TCP</translation>
     </message>
@@ -13511,16 +13376,40 @@ Això es pot canviar a les opcions de configuració.</translation>
         <translation>Connectat: UDP</translation>
     </message>
     <message>
-        <source>Connected: Tunnel</source>
-        <translation>Connectat: Túnel</translation>
-    </message>
-    <message>
         <source>Connected: Unknown</source>
         <translation>Connectat: Desconegut</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
         <translation>DHT: Contacte</translation>
+    </message>
+    <message>
+        <source>Connected: TOR</source>
+        <translation>Connectat: TOR</translation>
+    </message>
+    <message>
+        <source>inbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>outbound connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TCP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TOR</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unkown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13677,6 +13566,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>SubscribeToolButton</name>
+    <message>
+        <source>Subscribed</source>
+        <translation>Subscrit</translation>
+    </message>
+    <message>
+        <source>Unsubscribe</source>
+        <translation>Donar de baixa</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Subscriure&apos;s</translation>
+    </message>
+</context>
+<context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
@@ -13718,6 +13622,17 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ToasterDisable</name>
+    <message>
+        <source>All Toasters are disabled</source>
+        <translation>Totes les notificacions estan deshabilitades</translation>
+    </message>
+    <message>
+        <source>Toasters are enabled</source>
+        <translation>Les notificacions estan habilitades</translation>
+    </message>
+</context>
+<context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
@@ -13733,24 +13648,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation>Estratègia de descarrega per defecte:</translation>
+        <translation>Estratègia de fragmentació per defecte:</translation>
     </message>
     <message>
         <source>Safety disk space limit :</source>
         <translation>Límit de seguretat d&apos;espai lliure al disc:</translation>
-    </message>
-    <message>
-        <source>You can use this to force RetroShare to download your files rather 
-than cache files for as many slots as requested. Setting that number 
-to be equal to the queue size above will always prioritize your files
-over cache. 
-
-It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Pots forçar que el RetroShare descarregui arxius teus en lloc de 
-arxius de cau per tantes ranures com sol·licitis. Posant aquest valor
-al mateix que la mida de la cua de sobre farà que sempre tinguin 
-prioritat els arxius en descarrega per sobre del de cau. 
-No obstant, es recomana deixar algunes ranures lliures pels arxius cau.</translation>
     </message>
     <message>
         <source>Streaming</source>
@@ -13789,8 +13691,28 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Compartits anònimament&lt;/span&gt;: Els arxius es poden descarregar a través de túnels anònims.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Transfer</source>
-        <translation>Transferencia</translation>
+        <source>Max. tunnel req. forwarded per second:</source>
+        <translation>Màxim de peticions de túnels reenviades per segon:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows  some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This value controls how many tunnel request your peer can forward per second. &lt;/p&gt;&lt;p&gt;If you have a large internet bandwidth, you may raise this up to 30-40, to allow statistically longer tunnels to pass. Be very careful though, since this generates  many small packets that can significantly slow down your own file transfer. &lt;/p&gt;&lt;p&gt;The default value is 20. If you&apos;re not sure, keep it that way.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File transfer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can use this to force RetroShare to download your files rather &lt;br/&gt;than cache files for as many slots as requested. Setting that number &lt;br/&gt;to be equal to the queue size above will always prioritize your files&lt;br/&gt;over cache. &lt;br/&gt;&lt;br/&gt;It is however recommended to leave at least a few slots for cache files. For now, cache files are only used to transfer friend file lists.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13908,10 +13830,6 @@ p, li { white-space: pre-wrap; }
         <translation>Els meus arxius</translation>
     </message>
     <message>
-        <source>Show cache transfers</source>
-        <translation>Mostra les transferencies cau</translation>
-    </message>
-    <message>
         <source>Download from collection file...</source>
         <translation>Descarregar d&apos;arxiu de col·lecció...</translation>
     </message>
@@ -13961,7 +13879,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation>Descarrega</translation>
+        <translation>Baixada</translation>
     </message>
     <message>
         <source>Up</source>
@@ -14078,13 +13996,9 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation>Si el número de hash de les dades descarregades
-no es correspon amb l&apos;anunciat per la font de
-l&apos;arxiu és probable que les dades siguin 
-corruptes.
-El RetroShare demanarà a la font un mapa 
-detallat de les dades; Compararà i invalidarà 
-els fragments dolents i els tornarà a descarregar.
+        <translation>Si el número de hash de les dades descarregades no es correspon amb l&apos;anunciat per la font de l&apos;arxiu és probable que les dades siguin corruptes.
+El RetroShare demanarà a la font un mapa detallat de les dades; Compararà i invalidarà els fragments dolents i els tornarà a descarregar.
+
 Tingues paciència!</translation>
     </message>
     <message>
@@ -14125,7 +14039,7 @@ Tingues paciència!</translation>
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation>Obrir transferencia</translation>
+        <translation>Obrir transferència</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
@@ -14254,6 +14168,42 @@ Tingues paciència!</translation>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Transferència d&apos;arxiu&lt;/h1&gt;
 &lt;p&gt;Retroshare contempla dues formes de fer això: transferències directes dels teus amics, i transferències distants amb túnels anònims. A més amés, les transferències d&apos;arxius són multi-origen i permet fer-les en eixam (pots ser origen mentre descarregues)&lt;/p&gt; &lt;p&gt;Pots compartir arxius amb &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; la icona de la barra lateral esquerra. Aquests arxius es llistaran a la pestanya els meus arxius. Pots triar per cada grup d&apos;amics si poden o no veure&apos;l a la pestanya arxius d&apos;amics.&lt;/p&gt; &lt;p&gt;La pestanya cerca dona resultats pels arxius del teus amics i arxius que es poden accedir distants anònimament utilitzant el sistema de túnels multi-salt.&lt;/p&gt;</translation>
     </message>
+    <message>
+        <source>Could not delete preview file</source>
+        <translation>No s&apos;ha pogut esborrar l&apos;arxiu de previsualització</translation>
+    </message>
+    <message>
+        <source>Try it again?</source>
+        <translation>Tornar-ho a intentar?</translation>
+    </message>
+    <message>
+        <source>Create Collection...</source>
+        <translation>Crear col·lecció...</translation>
+    </message>
+    <message>
+        <source>Modify Collection...</source>
+        <translation>Modificar col·lecció...</translation>
+    </message>
+    <message>
+        <source>View Collection...</source>
+        <translation>Veure col·lecció...</translation>
+    </message>
+    <message>
+        <source>Collection</source>
+        <translation>Col·lecció</translation>
+    </message>
+    <message>
+        <source>File sharing</source>
+        <translation>Compartició d&apos;arxius</translation>
+    </message>
+    <message>
+        <source>Anonymous tunnel 0x</source>
+        <translation>Túnel anònim 0x</translation>
+    </message>
+    <message>
+        <source>Show file list transfers</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -14308,69 +14258,6 @@ Tingues paciència!</translation>
     <message>
         <source>Groups</source>
         <translation>Grups</translation>
-    </message>
-</context>
-<context>
-    <name>TrustView</name>
-    <message>
-        <source>Zoom :</source>
-        <translation>Zoom :</translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation>Actualitza</translation>
-    </message>
-    <message>
-        <source>Showing: whole network</source>
-        <translation>Mostrant: tota la xarxa</translation>
-    </message>
-    <message>
-        <source>This table normally auto-updates every 10 seconds.</source>
-        <translation>Aquesta taula normalment s&apos;auto-actualitza cada 10 segons.</translation>
-    </message>
-    <message>
-        <source>Self</source>
-        <translation>Tu mateix</translation>
-    </message>
-    <message>
-        <source>Trust</source>
-        <translation>Confiança</translation>
-    </message>
-    <message>
-        <source> is authenticated (one way) by </source>
-        <translation>està autenticat (un sentit) per</translation>
-    </message>
-    <message>
-        <source>Half</source>
-        <translation>Mig</translation>
-    </message>
-    <message>
-        <source> authenticated himself</source>
-        <translation> autenticat ell mateix</translation>
-    </message>
-    <message>
-        <source> authenticated each other</source>
-        <translation>autenticat un a l&apos;altre</translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation>Completa</translation>
-    </message>
-    <message>
-        <source> is authenticated by </source>
-        <translation>està autenticat per</translation>
-    </message>
-    <message>
-        <source> peers, including him(her)self.</source>
-        <translation>contactes, incloent ella(ella) mateix(a).</translation>
-    </message>
-    <message>
-        <source> authenticated </source>
-        <translation>autenticat</translation>
-    </message>
-    <message>
-        <source>Showing: peers connected to </source>
-        <translation>Mostrant: contactes connectats a</translation>
     </message>
 </context>
 <context>
@@ -14436,6 +14323,14 @@ Tingues paciència!</translation>
     <message>
         <source>Unknown Peer</source>
         <translation>Contacte desconegut</translation>
+    </message>
+    <message>
+        <source>Turtle Router</source>
+        <translation>Encaminador Turtle</translation>
+    </message>
+    <message>
+        <source>Tunnel Requests</source>
+        <translation>Peticions de túnel</translation>
     </message>
 </context>
 <context>
@@ -14567,6 +14462,53 @@ Tingues paciència!</translation>
     <message>
         <source>Browse</source>
         <translation>Navegar</translation>
+    </message>
+</context>
+<context>
+    <name>WebuiPage</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulari</translation>
+    </message>
+    <message>
+        <source>Enable Retroshare WEB Interface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Web parameters</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Port :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>allow access from all IP adresses (Default: localhost only)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>apply setting and start browser</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Note: these settings do not affect retroshare-nogui. retroshare-nogui has a command line switch to active the webinterface.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>failed to start Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Webinterface</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14747,8 +14689,12 @@ Tingues paciència!</translation>
         <translation>Pendent</translation>
     </message>
     <message>
-        <source>Edit Group</source>
-        <translation>Editar grup</translation>
+        <source>Show Wiki Group</source>
+        <translation>Mostrar viqui del grup</translation>
+    </message>
+    <message>
+        <source>Edit Wiki Group</source>
+        <translation>Editar grup wiki</translation>
     </message>
 </context>
 <context>
@@ -14875,6 +14821,10 @@ Tingues paciència!</translation>
     <message>
         <source>Create Group</source>
         <translation>Crear grup</translation>
+    </message>
+    <message>
+        <source>Update Group</source>
+        <translation>Actualitzar grup</translation>
     </message>
 </context>
 <context>
@@ -15055,8 +15005,8 @@ Tingues paciència!</translation>
         <translation>Carrega la imatge d&apos;avatar</translation>
     </message>
     <message>
-        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Imatges (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <source>Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
