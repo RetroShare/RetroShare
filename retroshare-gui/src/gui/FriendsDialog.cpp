@@ -173,11 +173,6 @@ QList<int> sizes;
   ") ;
 
 	 registerHelpButton(ui.helpButton, hlp_str) ;
-
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 FriendsDialog::~FriendsDialog ()

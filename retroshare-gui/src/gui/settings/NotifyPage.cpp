@@ -137,11 +137,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
       //To get ChatLobbyUserNotify Settings
       if (!mChatLobbyUserNotify) mChatLobbyUserNotify = dynamic_cast<ChatLobbyUserNotify*>(*it);
   }
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 NotifyPage::~NotifyPage()

@@ -60,10 +60,6 @@ SoundPage::SoundPage(QWidget * parent, Qt::WindowFlags flags)
 #endif
 	ui.eventTreeWidget->setTextElideMode(Qt::ElideMiddle);
 
-	/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 SoundPage::~SoundPage()

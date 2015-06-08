@@ -348,11 +348,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 //    ui.tunnelInfoWidget->setFrameStyle(QFrame::NoFrame);
 //    ui.tunnelInfoWidget->setFocusPolicy(Qt::NoFocus);
 
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
-
     /** Setup the actions for the context menu */
    toggleShowCacheTransfersAct = new QAction(tr( "Show file list transfers" ), this );
 	toggleShowCacheTransfersAct->setCheckable(true) ;

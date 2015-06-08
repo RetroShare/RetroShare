@@ -53,13 +53,6 @@ PhotoShow::PhotoShow(QWidget *parent)
 
   //connect( ui.photoTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem * , QTreeWidgetItem * ) ), this, SLOT( displayPhoto( ) ) );
   //connect( ui.addButton, SIGNAL( clicked( ) ), this, SLOT( addPhotos( ) ) );
-
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
-
 }
 
 void PhotoShow::photoCustomPopupMenu( QPoint point )

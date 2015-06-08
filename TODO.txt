@@ -283,6 +283,7 @@ H        [ ] get rid of the old cache system (remove CacheStrapper, CacheSource,
 H        [ ] enable circles for channels/posted/forums
 E        [ ] enable people dialog
 E        [ ] fix RSButtonOnText::eventFilter, and fix all places where RSButtonOnText gets deleted
+E        [ ] find all places where the deprecated(in Qt5) Q_WS_WIN and other Q_WS* macros are used, and replace with something else
 
       GXS
 H        [ ] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.

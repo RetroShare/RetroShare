@@ -77,12 +77,6 @@ HelpDialog::HelpDialog(QWidget *parent)
    }
 
    ui.label_2->setMinimumWidth(20);
-
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 

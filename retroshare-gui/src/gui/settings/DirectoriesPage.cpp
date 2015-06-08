@@ -40,11 +40,6 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WindowFlags flags)
     connect(ui.rememberHashesCB, SIGNAL(clicked(bool)), this, SLOT(clickedRememberHashes(bool)));
     connect(ui.rememberHashesCB, SIGNAL(clicked(bool)), this, SLOT(toggleRememberHashes()));
     connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
-
-	/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 void DirectoriesPage::clearHashCache()

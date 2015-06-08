@@ -104,12 +104,6 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     ui.minimumContrastLabel->hide();
     ui.minimumContrast->hide();
 #endif
-
-
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 /** Saves the changes on this page */

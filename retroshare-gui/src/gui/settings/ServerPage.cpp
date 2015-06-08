@@ -107,11 +107,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	ui.torpage_incoming->setVisible(false);
 
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
-
 #ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
 	std::cerr << std::endl;

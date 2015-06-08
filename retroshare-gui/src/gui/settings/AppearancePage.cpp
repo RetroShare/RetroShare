@@ -63,10 +63,6 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	foreach (QString name, styleSheets.keys()) {
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
 	}
-
-	/* Hide platform specific features */
-#ifdef Q_WS_WIN
-#endif
 }
 
 /** Saves the changes on this page */

@@ -54,11 +54,6 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
         QObject::connect(ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
 
     ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 void TransferPage::updateMaxTRUpRate(int b)
 {

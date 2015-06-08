@@ -173,11 +173,6 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	}
 
 	ui.dateText-> setText("");
-
-	/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 MessageWidget::~MessageWidget()

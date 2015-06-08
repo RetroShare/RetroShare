@@ -53,10 +53,6 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
   // hide profile manager as it causes bugs when generating a new profile.
   //ui.profile_Button->hide() ;
 
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
   connect(ui.createNewNode_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
     ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));

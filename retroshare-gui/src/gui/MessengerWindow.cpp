@@ -173,10 +173,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     }
 
     loadmystatusmessage();
-
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
-#endif
 }
 
 MessengerWindow::~MessengerWindow ()

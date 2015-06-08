@@ -51,12 +51,6 @@ RelayPage::RelayPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.enableCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
-
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 QString RelayPage::helpText() const

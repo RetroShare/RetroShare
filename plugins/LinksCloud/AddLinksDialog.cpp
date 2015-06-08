@@ -61,11 +61,6 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
       ui.titleLineEdit->setText(tr("New Link"));
 
   load();
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 int AddLinksDialog::IndexToScore(int index)

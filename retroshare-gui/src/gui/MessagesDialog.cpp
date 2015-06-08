@@ -290,11 +290,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // remove close button of the the first tab
     ui.tabWidget->hideCloseButton(0);
 
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
-
  QString help_str = tr(
  " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Messages</h1>                         \
  <p>Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.</p> \

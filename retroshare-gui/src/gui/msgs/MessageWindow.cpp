@@ -78,11 +78,6 @@ MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 	ui.viewtoolButton->setMenu(viewmenu);
 
 	processSettings(true);
-
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 MessageWindow::~MessageWindow()

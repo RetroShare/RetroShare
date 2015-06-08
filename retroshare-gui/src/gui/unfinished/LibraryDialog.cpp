@@ -77,11 +77,6 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 	/*QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);*/
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 

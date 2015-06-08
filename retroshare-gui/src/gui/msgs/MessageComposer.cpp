@@ -335,11 +335,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     // embedded images are not supported before QT 4.7.0
     ui.imagebtn->setVisible(false);
 #endif
-
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 MessageComposer::~MessageComposer()

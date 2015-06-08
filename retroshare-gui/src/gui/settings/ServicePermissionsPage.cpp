@@ -38,11 +38,6 @@ ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags
   ui.setupUi(this);
 
     //QObject::connect(ui.tableWidget,SIGNAL(itemChanged(QTableWidgetItem *)),  this, SLOT(tableItemChanged(QTableWidgetItem *)));
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 QString ServicePermissionsPage::helpText() const

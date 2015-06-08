@@ -67,11 +67,6 @@ GetStartedDialog::GetStartedDialog(QWidget *parent)
 	connect(ui.pushButton_Website, SIGNAL(clicked( bool )), this, SLOT(OpenWebsite()));
 	connect(ui.pushButton_EmailFeedback, SIGNAL(clicked( bool )), this, SLOT(emailFeedback()));
 	connect(ui.pushButton_EmailSupport, SIGNAL(clicked( bool )), this, SLOT(emailSupport()));
-
-/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 GetStartedDialog::~GetStartedDialog()

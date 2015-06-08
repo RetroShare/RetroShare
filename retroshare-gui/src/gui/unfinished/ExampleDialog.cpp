@@ -85,12 +85,6 @@ ExampleDialog::ExampleDialog(QWidget *parent)
 	_header->resizeSection ( 8, 100 );
 	_header->resizeSection ( 9, 100 );
 	_header->resizeSection ( 10, 100 );
-
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 void ExampleDialog::peertreeWidgetCostumPopupMenu( QPoint point )
