@@ -1920,6 +1920,10 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 						if (IS_GROUP_PUBLISHER(forumGroup.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(forumGroup.mMeta.mSubscribeFlags)) {
 							forumId = fi->forumId;
 							authorId = forumGroup.mMeta.mAuthorId;
+
+							if (authorId.isNull()) {
+								errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR;
+							}
 						} else {
 							errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN;
 						}

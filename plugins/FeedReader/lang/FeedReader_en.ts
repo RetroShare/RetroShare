@@ -659,7 +659,7 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -714,57 +714,62 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="124"/>
-        <source>Can&apos;t read html</source>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
+        <source>Forum has no author</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
-        <source>Internal XPath error</source>
+        <source>Can&apos;t read html</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
-        <source>Wrong XPath expression</source>
+        <source>Internal XPath error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
-        <source>Empty XPath result</source>
+        <source>Wrong XPath expression</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
-        <source>XSLT format error</source>
+        <source>Empty XPath result</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
-        <source>XSLT transformation error</source>
+        <source>XSLT format error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
+        <source>XSLT transformation error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
         <source>Empty XSLT result</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="146"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
         <source>Unknown error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="160"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
         <source>No transformation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="162"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
         <source>XPath</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderStringDefs.cpp" line="164"/>
+        <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
         <source>XSLT</source>
         <translation type="unfinished"></translation>
     </message>

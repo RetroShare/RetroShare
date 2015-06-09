@@ -397,7 +397,7 @@ void AddFeedDialog::loadForumGroups(const uint32_t &token)
 		const RsGxsForumGroup &group = *it;
 
 		/* show only own forums */
-		if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags)) {
+		if (IS_GROUP_PUBLISHER(group.mMeta.mSubscribeFlags) && IS_GROUP_ADMIN(group.mMeta.mSubscribeFlags) && !group.mMeta.mAuthorId.isNull()) {
 			ui->forumComboBox->addItem(QString::fromUtf8(group.mMeta.mGroupName.c_str()), QString::fromStdString(group.mMeta.mGroupId.toStdString()));
 		}
 	}

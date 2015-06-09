@@ -119,6 +119,9 @@ QString FeedReaderStringDefs::errorString(RsFeedReaderErrorState errorState, con
 	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN:
 		errorText = QApplication::translate("FeedReaderStringDefs", "You are not admin of the forum");
 		break;
+	case RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_AUTHOR:
+		errorText = QApplication::translate("FeedReaderStringDefs", "Forum has no author");
+		break;
 
 	case RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR:
 		errorText = QApplication::translate("FeedReaderStringDefs", "Can't read html");
