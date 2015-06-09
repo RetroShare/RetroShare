@@ -82,7 +82,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="forumName">
+           <widget class="ElidedLabel" name="forumName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>2</horstretch>
@@ -102,7 +102,7 @@
              </size>
             </property>
             <property name="text">
-             <string/>
+             <string notr="true">Forum name</string>
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -116,12 +116,6 @@
             </property>
             <property name="sizeType">
              <enum>QSizePolicy::MinimumExpanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
             </property>
            </spacer>
           </item>
@@ -175,18 +169,6 @@
           </item>
           <item>
            <widget class="LineEditClear" name="filterLineEdit">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>200</width>
-              <height>16777215</height>
-             </size>
-            </property>
             <property name="toolTip">
              <string>Search forums</string>
             </property>
@@ -501,6 +483,12 @@
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">gui/common/ElidedLabel.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
