@@ -51,6 +51,7 @@ private slots:
 	void playMedia();
 	void deleteMsg();
 	void replyMsg();
+	void checkMessageReadStatus();
 
 	void updateItem();
 
@@ -62,6 +63,7 @@ private:
 	std::string mMsgId;
 
 	bool mIsHome;
+	bool mCloseOnRead;
 
 	std::list<SubFileItem *> mFileItems;
 };

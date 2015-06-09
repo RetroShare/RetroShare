@@ -40,6 +40,7 @@
 #include "util/DateTime.h"
 #include "util/RsProtectedTimer.h"
 #include "util/QtVersion.h"
+#include "notifyqt.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -127,6 +128,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     inChange = false;
     lockUpdate = 0;
 
+    connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(insertMessages()));
+    connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
     connect(ui.messageTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageTreeWidgetCustomPopupMenu(QPoint)));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
     connect(ui.messageTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)) , this, SLOT(clicked(QTreeWidgetItem*,int)));

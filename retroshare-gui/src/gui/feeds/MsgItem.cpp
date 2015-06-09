@@ -48,6 +48,8 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
 
+  mCloseOnRead = true;
+
   setAttribute ( Qt::WA_DeleteOnClose, true );
 
   /* general ones */
@@ -56,6 +58,7 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
   //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
+  connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(checkMessageReadStatus()));
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
   connect( deleteButton, SIGNAL( clicked( void ) ), this, SLOT( deleteMsg ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyMsg ( void ) ) );
@@ -215,6 +218,10 @@ void MsgItem::expand(bool open)
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 		expandButton->setToolTip(tr("Hide"));
+
+		mCloseOnRead = false;
+		rsMail->MessageRead(mMsgId, false);
+		mCloseOnRead = true;
 	}
 	else
 	{
@@ -269,7 +276,7 @@ void MsgItem::deleteMsg()
 	{
 		rsMail->MessageDelete(mMsgId);
 
-		hide(); /* will be cleaned up next refresh */
+		removeItem();
 	}
 }
 
@@ -301,4 +308,24 @@ void MsgItem::playMedia()
 	std::cerr << "MsgItem::playMedia()";
 	std::cerr << std::endl;
 #endif
+}
+
+void MsgItem::checkMessageReadStatus()
+{
+	if (!mCloseOnRead) {
+		return;
+	}
+
+	MessageInfo msgInfo;
+	if (!rsMail->getMessage(mMsgId, msgInfo)) {
+		std::cerr << "MsgItem::checkMessageReadStatus() Couldn't find Msg" << std::endl;
+		return;
+	}
+
+	if (msgInfo.msgflags & RS_MSG_NEW) {
+		/* Message status is still "new" */
+		return;
+	}
+
+	removeItem();
 }
