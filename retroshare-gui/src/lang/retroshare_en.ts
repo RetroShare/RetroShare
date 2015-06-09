@@ -7208,6 +7208,14 @@ p, li { white-space: pre-wrap; }
         <source>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the Retroshare distant mail system.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The nickname is too short. Please input at least %1 characters.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The nickname is too long. Please reduce the length to %1 characters.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>IdentityWidget</name>

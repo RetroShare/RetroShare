@@ -22,6 +22,7 @@
  */
 
 #include <QBuffer>
+#include <QMessageBox>
 
 #include "IdEditDialog.h"
 #include "ui_IdEditDialog.h"
@@ -86,6 +87,9 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
 	connect(ui->toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
+
+	/* Initialize ui */
+	ui->lineEdit_Nickname->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui->pushButton_Tag->setEnabled(false);
@@ -489,12 +493,17 @@ void IdEditDialog::createId()
 	{
 		std::cerr << "IdEditDialog::createId() Nickname too short";
 		std::cerr << std::endl;
+
+		QMessageBox::warning(this, "", tr("The nickname is too short. Please input at least %1 characters.").arg(2), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
     if (groupname.size() > RSID_MAXIMUM_NICKNAME_SIZE)
     {
         std::cerr << "IdEditDialog::createId() Nickname too long (max " << RSID_MAXIMUM_NICKNAME_SIZE<< " chars)";
         std::cerr << std::endl;
+
+        QMessageBox::warning(this, "", tr("The nickname is too long. Please reduce the length to %1 characters.").arg(RSID_MAXIMUM_NICKNAME_SIZE), QMessageBox::Ok, QMessageBox::Ok);
+
         return;
     }
 	RsIdentityParameters params;
