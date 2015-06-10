@@ -106,8 +106,9 @@ void DistantChatService::flush()
             pendingDistantChatItems.push_back(cs) ;
 
             it->second.last_keep_alive_sent = now ;
-
+#ifdef DEBUG_DISTANT_CHAT
             std::cerr << "(II) DistantChatService:: Sending keep alive packet to gxs id " << it->first << std::endl;
+#endif
         }
     }
 }
@@ -372,7 +373,9 @@ void DistantChatService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
     }
     if(*((uint64_t*)item->data_bytes) != 0)
     {
+#ifdef DEBUG_DISTANT_CHAT
         std::cerr << "  Item is encrypted." << std::endl;
+#endif
 
         // if cannot decrypt, it means the key is wrong. We need to re-negociate a new key.
 
@@ -380,7 +383,9 @@ void DistantChatService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
     }
     else
     {
+#ifdef DEBUG_DISTANT_CHAT
         std::cerr << "  Item is not encrypted." << std::endl;
+#endif
 
         // Now try deserialise the decrypted data to make an RsItem out of it.
         //

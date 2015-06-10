@@ -714,14 +714,16 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 
     if(signature_key.keyData.bin_data == NULL)
     {
+#ifdef DEBUG_IDS
         std::cerr << "(EE) Cannot validate signature for unknown key " << signature.keyId << std::endl;
+#endif
         signing_error = RS_GIXS_ERROR_KEY_NOT_AVAILABLE ;
         return false;
     }
 
     if(!GxsSecurity::validateSignature((char*)data,data_size,signature_key,signature))
     {
-        std::cerr << "(EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
+        std::cerr << "(SS) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         signing_error = RS_GIXS_ERROR_SIGNATURE_MISMATCH ;
         return false;
     }

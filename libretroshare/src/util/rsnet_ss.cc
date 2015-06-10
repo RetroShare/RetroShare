@@ -172,8 +172,10 @@ bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr
 			return sockaddr_storage_ipv6_copyip(dst, src);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_copyip() invalid addr.ss_family";
-			std::cerr << std::endl;
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_copyip() invalid addr.ss_family";
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -220,8 +222,10 @@ bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port)
 			return sockaddr_storage_ipv6_setport(addr, port);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_setport() invalid addr.ss_family";
-			std::cerr << std::endl;
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_setport() invalid addr.ss_family";
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -292,8 +296,10 @@ bool operator<(const struct sockaddr_storage &a, const struct sockaddr_storage &
 			return sockaddr_storage_ipv6_lessthan(a, b);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_operator<() INVALID Family - error";
-			std::cerr << std::endl;
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_operator<() INVALID Family - error";
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -319,8 +325,10 @@ bool sockaddr_storage_same(const struct sockaddr_storage &addr, const struct soc
 			return sockaddr_storage_ipv6_same(addr, addr2);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_same() INVALID Family - error";
-			std::cerr << std::endl;
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_same() INVALID Family - error";
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -356,8 +364,10 @@ bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct s
 			return sockaddr_storage_ipv6_sameip(addr, addr2);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_sameip() INVALID Family - error";
-			std::cerr << std::endl;
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_sameip() INVALID Family - error";
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -409,8 +419,10 @@ bool sockaddr_storage_samesubnet(const struct sockaddr_storage &addr, const stru
 			return sockaddr_storage_ipv6_samesubnet(addr, addr2);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_samesubnet() INVALID Family - error";
-			std::cerr << std::endl;
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_samesubnet() INVALID Family - error";
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -529,8 +541,10 @@ bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isValidNet(addr);
 			break;
 		default:
+#ifdef SS_DEBUG
             std::cerr << "sockaddr_storage_isValidNet() INVALID Family - error: " << sockaddr_storage_iptostring(addr);
-			std::cerr << std::endl;
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -552,8 +566,10 @@ bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isLoopbackNet(addr);
 			break;
 		default:
+#ifdef SS_DEBUG
             std::cerr << "sockaddr_storage_isLoopbackNet() INVALID Family - error: " << sockaddr_storage_iptostring(addr);
             std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -576,8 +592,10 @@ bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isPrivateNet(addr);
 			break;
 		default:
+#ifdef SS_DEBUG
             std::cerr << "sockaddr_storage_isPrivateNet() INVALID Family - error: " << sockaddr_storage_iptostring(addr);
             std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
@@ -600,8 +618,10 @@ bool sockaddr_storage_isExternalNet(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_isExternalNet(addr);
 			break;
 		default:
-			std::cerr << "sockaddr_storage_isExternalNet() INVALID Family - error";
-			std::cerr << std::endl;
+#ifdef SS_DEBUG
+            std::cerr << "sockaddr_storage_isExternalNet() INVALID Family - error";
+            std::cerr << std::endl;
+#endif
 			break;
 	}
 	return false;
