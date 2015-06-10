@@ -214,17 +214,18 @@ void ServerPage::load()
 	{
 		return;
     }
-    loadFilteredIps() ;
-
     mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
 
-	if (mIsHiddenNode)
-	{
+    if (mIsHiddenNode)
+    {
+        ui.tabWidget->setTabEnabled(1,false) ;
 		loadHiddenNode();
 		return;
 	}
 
-	ui.netModeComboBox->show() ;
+        loadFilteredIps() ;
+
+    ui.netModeComboBox->show() ;
 	ui.hiddenMode_LB->hide() ;
 
 	/* set net mode */
