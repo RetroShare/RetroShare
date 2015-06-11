@@ -1275,9 +1275,9 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
     std::cerr << "  current external address is known to be " << sockaddr_storage_iptostring(own_addr) << std::endl;
 #endif
 
-    // Notify for every friend that has reported a wrong external address
+    // Notify for every friend that has reported a wrong external address, except if that address is in the IP whitelist.
 
-    if(!sockaddr_storage_sameip(own_addr,addr_filtered))
+    if((!rsBanList->isAddressAccepted(addr_filtered,RSBANLIST_CHECKING_FLAGS_WHITELIST)) && (!sockaddr_storage_sameip(own_addr,addr_filtered)))
     {
         std::cerr << "  Peer " << from << " reports a connexion address (" << sockaddr_storage_iptostring(addr_filtered) <<") that is not your current external address (" << sockaddr_storage_iptostring(own_addr) << "). This is weird." << std::endl;
 
