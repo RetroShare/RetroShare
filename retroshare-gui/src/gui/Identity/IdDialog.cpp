@@ -1008,46 +1008,47 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	QMenu contextMnu( this );
 
 
-	  std::list<RsGxsId> own_identities ;
-    rsIdentity->getOwnIds(own_identities) ;
+	std::list<RsGxsId> own_identities ;
+	rsIdentity->getOwnIds(own_identities) ;
 
-    QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
-    uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
+	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	if (item) {
+		uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
 
-    if(!(item_flags & RSID_FILTER_OWNED_BY_YOU))
-    {
-        if(own_identities.size() <= 1)
-        {
-            QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+		if(!(item_flags & RSID_FILTER_OWNED_BY_YOU))
+		{
+			if(own_identities.size() <= 1)
+			{
+				QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
+				if(own_identities.empty())
+					action->setEnabled(false) ;
+				else
+					action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+			}
+			else
+			{
+				QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
 
-            if(own_identities.empty())
-                action->setEnabled(false) ;
-            else
-                action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
-        }
-        else
-        {
-            QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+				for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+				{
+					RsIdentityDetails idd ;
+					rsIdentity->getIdDetails(*it,idd) ;
 
-            for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
-            {
-                RsIdentityDetails idd ;
-                rsIdentity->getIdDetails(*it,idd) ;
+					QPixmap pixmap ;
 
-                QPixmap pixmap ;
+					if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+						pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
 
-                if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-                    pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+					QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
+					action->setData(QString::fromStdString((*it).toStdString())) ;
+				}
+			}
 
-                QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
-                action->setData(QString::fromStdString((*it).toStdString())) ;
-            }
-        }
+			contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+		}
+	}
 
-        contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
-    }
-	
 	contextMnu.addSeparator();
 
 	contextMnu.addAction(ui->editIdentity);
