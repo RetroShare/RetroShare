@@ -163,8 +163,9 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 	int n=0;
 	if(s.length() != ID_SIZE_IN_BYTES*2)
 	{
-		if(!s.empty()) 
-			std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size." << std::endl;
+        if(!s.empty())
+            std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size. Expected ID size=" << ID_SIZE_IN_BYTES << " String=\"" << s << "\"" << std::endl;
+
 		clear();
 		return;
 	}
@@ -184,8 +185,8 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 			else if(b >= '0' && b <= '9')
 				bytes[i] += (b-'0') << 4*(1-k) ;
 			else {
-				std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string is not purely hexadecimal" << std::endl;
-				clear();
+                std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string is not purely hexadecimal: s=\"" << s << "\"" << std::endl;
+                clear();
 				return;
 			}
 		}

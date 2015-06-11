@@ -281,7 +281,9 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		_type = TYPE_CERTIFICATE;
 		_radix = urlQuery.queryItemValue(CERTIFICATE_RADIX);
 
-		std::cerr << "Got a certificate link!!" << std::endl;
+#ifdef DEBUG_RSLINK
+        std::cerr << "Got a certificate link!!" << std::endl;
+#endif
 		check() ;
 		return;
 	}

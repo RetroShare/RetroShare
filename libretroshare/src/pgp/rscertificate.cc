@@ -9,7 +9,7 @@
 #include "rscertificate.h"
 #include "util/rsstring.h"
 
-#define DEBUG_RSCERTIFICATE 
+//#define DEBUG_RSCERTIFICATE
 
 static const std::string PGP_CERTIFICATE_START     ( "-----BEGIN PGP PUBLIC KEY BLOCK-----" );
 static const std::string PGP_CERTIFICATE_END       ( "-----END PGP PUBLIC KEY BLOCK-----" );
