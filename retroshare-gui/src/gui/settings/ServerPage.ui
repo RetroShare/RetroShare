@@ -54,7 +54,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the Tor network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>[Hidden mode]</string>
@@ -755,13 +755,13 @@ behind a firewall or a VPN.</string>
      </widget>
      <widget class="QWidget" name="TorTAB">
       <attribute name="title">
-       <string>TOR Configuration</string>
+       <string>Tor Configuration</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <widget class="QGroupBox" name="torpage_outgoing">
          <property name="title">
-          <string>Outgoing TOR Connections</string>
+          <string>Outgoing Tor Connections</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
@@ -771,7 +771,7 @@ behind a firewall or a VPN.</string>
               <item>
                <widget class="QLabel" name="label_3">
                 <property name="text">
-                 <string>TOR Socks Proxy</string>
+                 <string>Tor Socks Proxy</string>
                 </property>
                </widget>
               </item>
@@ -811,7 +811,7 @@ behind a firewall or a VPN.</string>
               <item>
                <widget class="QLabel" name="label_9">
                 <property name="text">
-                 <string>TOR outgoing Okay</string>
+                 <string>Tor outgoing Okay</string>
                 </property>
                </widget>
               </item>
@@ -834,10 +834,10 @@ behind a firewall or a VPN.</string>
              <bool>true</bool>
             </property>
             <property name="plainText">
-             <string>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
+             <string>Tor Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
 
 You can connect to Hidden Nodes, even if you 
-are running a standard Node, so why not setup TOR? </string>
+are running a standard Node, so why not setup Tor? </string>
             </property>
            </widget>
           </item>
@@ -853,7 +853,7 @@ are running a standard Node, so why not setup TOR? </string>
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Incoming TOR Connections</string>
+          <string>Incoming Tor Connections</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
@@ -873,7 +873,7 @@ are running a standard Node, so why not setup TOR? </string>
               <item>
                <widget class="QPushButton" name="testIncomingTor_PB">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your Tor address using the Tor proxy. If your Tor node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>Test</string>
@@ -909,14 +909,14 @@ are running a standard Node, so why not setup TOR? </string>
             <item row="1" column="1">
              <widget class="QLineEdit" name="torpage_onionAddress">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
              <widget class="QLineEdit" name="torpage_localAddress">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the Tor hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
@@ -941,7 +941,7 @@ are running a standard Node, so why not setup TOR? </string>
               <item>
                <widget class="QLabel" name="label_16">
                 <property name="text">
-                 <string>TOR incoming  ok</string>
+                 <string>Tor incoming  ok</string>
                 </property>
                </widget>
               </item>
@@ -1010,14 +1010,14 @@ HiddenServicePort 9191 127.0.0.1:9191</string>
              <bool>true</bool>
             </property>
             <property name="plainText">
-             <string>To Receive Connections, you must first setup a TOR Hidden Service. 
-See TOR documentation for HOWTO details.
+             <string>To Receive Connections, you must first setup a Tor Hidden Service. 
+See Tor documentation for HOWTO details.
 
 Once this is done, paste the Onion Address in the box above.
-This is your external address on the TOR network.
-Finally make sure that the Ports match the TOR configuration.
+This is your external address on the Tor network.
+Finally make sure that the Ports match the Tor configuration.
 
-If you have issues connecting over TOR check the TOR logs too.</string>
+If you have issues connecting over Tor check the Tor logs too.</string>
             </property>
            </widget>
           </item>

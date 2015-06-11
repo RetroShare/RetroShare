@@ -696,7 +696,7 @@ void ServerPage::updateStatus()
 	else
         ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
-    // check for TOR
+    // check for Tor
     updateTorOutProxyIndicator();
 }
 
@@ -852,7 +852,7 @@ void ServerPage::loadHiddenNode()
 	 *  NETMODE: HiddenNode FIXED.
 	 *  Disc/DHT: Discovery / No Discovery.
 	 *  Local Address: 127.0.0.1, Port: Listening Port. (listening port changable)
-	 *  External Address ==> TOR Address: 17621376587.onion + PORT.
+	 *  External Address ==> Tor Address: 17621376587.onion + PORT.
 	 *
 	 *  Known / Previous IPs: empty / removed.
 	 *  Ask about IP: Disabled.
@@ -901,7 +901,7 @@ void ServerPage::loadHiddenNode()
 	ui.localPort -> setValue(detail.localPort);
 		/* set the server address */
 
-	ui.extAddress->setText(tr("Hidden - See TOR Config"));
+	ui.extAddress->setText(tr("Hidden - See Tor Config"));
 
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
     ui.showDiscStatusBar->hide() ;	// hidden because not functional at the moment.
@@ -1080,7 +1080,7 @@ void ServerPage::updateTorOutProxyIndicator()
     else
     {
         ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_outgoing->setToolTip(tr("TOR proxy is not enabled")) ;
+        ui.iconlabel_tor_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
     }
 }
 void ServerPage::updateLocInProxyIndicator()
@@ -1092,12 +1092,12 @@ void ServerPage::updateLocInProxyIndicator()
     {
         socket.disconnectFromHost();
         ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through TOR.")) ;
+        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through Tor.")) ;
     }
     else
     {
         ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("TOR proxy is not enabled or broken.\nAre you running a TOR hidden service?\nCheck your ports!")) ;
+        ui.iconlabel_tor_incoming->setToolTip(tr("Tor proxy is not enabled or broken.\nAre you running a Tor hidden service?\nCheck your ports!")) ;
     }
 }
 void ServerPage::updateTorInProxyIndicator()
@@ -1144,7 +1144,7 @@ void ServerPage::handleNetworkReply(QNetworkReply *reply)
     {
         std::cerr <<"Connected!" << std::endl;
         ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through TOR.")) ;
+        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through Tor.")) ;
         //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_OK)) ;
     }
     else
@@ -1153,7 +1153,7 @@ void ServerPage::handleNetworkReply(QNetworkReply *reply)
 
         //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("TOR proxy is not enabled or broken.\nAre you running a TOR hidden service?\nCheck your ports!")) ;
+        ui.iconlabel_tor_incoming->setToolTip(tr("Tor proxy is not enabled or broken.\nAre you running a Tor hidden service?\nCheck your ports!")) ;
     }
 
     reply->close();

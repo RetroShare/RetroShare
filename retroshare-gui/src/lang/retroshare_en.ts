@@ -4545,10 +4545,6 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TOR address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create new node</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4638,10 +4634,6 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PGP key length</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4655,10 +4647,6 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
     </message>
     <message>
         <source>Click to create your node and/or profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from TOR)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4768,6 +4756,18 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>You can create a new profile with this form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure Tor to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;Tor configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12234,29 +12234,6 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TOR Configuration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Outgoing TOR Connections</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TOR Socks Proxy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
-
-You can connect to Hidden Nodes, even if you 
-are running a standard Node, so why not setup TOR? </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Incoming TOR Connections</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Onion Address</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12270,17 +12247,6 @@ HiddenServicePort 9191 127.0.0.1:9191</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>To Receive Connections, you must first setup a TOR Hidden Service. 
-See TOR documentation for HOWTO details.
-
-Once this is done, paste the Onion Address in the box above.
-This is your external address on the TOR network.
-Finally make sure that the Ports match the TOR configuration.
-
-If you have issues connecting over TOR check the TOR logs too.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Discovery On (recommended)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12289,19 +12255,7 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hidden - See TOR Config</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Proxy seems to work.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TOR proxy is not enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the TOR network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12333,33 +12287,7 @@ If you have issues connecting over TOR check the TOR logs too.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TOR outgoing Okay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Test</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with TOR, the onion address is generated automatically by TOR.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the TOR hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TOR incoming  ok</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You are reachable through TOR.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TOR proxy is not enabled or broken.
-Are you running a TOR hidden service?
-Check your ports!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12459,10 +12387,6 @@ Check your ports!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your TOR address using the TOR proxy. If your TOR node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>activate IP filtering</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12488,6 +12412,82 @@ Check your ports!</source>
     </message>
     <message>
         <source>Automatically ban ranges of DHT masquerading IPs starting at</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the Tor network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Outgoing Tor Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor Socks Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor outgoing Okay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
+
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup Tor? </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incoming Tor Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your Tor address using the Tor proxy. If your Tor node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the Tor hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor incoming  ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To Receive Connections, you must first setup a Tor Hidden Service. 
+See Tor documentation for HOWTO details.
+
+Once this is done, paste the Onion Address in the box above.
+This is your external address on the Tor network.
+Finally make sure that the Ports match the Tor configuration.
+
+If you have issues connecting over Tor check the Tor logs too.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hidden - See Tor Config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor proxy is not enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You are reachable through Tor.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor proxy is not enabled or broken.
+Are you running a Tor hidden service?
+Check your ports!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13112,10 +13112,6 @@ This choice can be reverted in settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connected: TOR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>inbound connection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13132,11 +13128,15 @@ This choice can be reverted in settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TOR</source>
+        <source>unkown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>unkown</source>
+        <source>Connected: Tor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

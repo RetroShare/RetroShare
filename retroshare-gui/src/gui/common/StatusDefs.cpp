@@ -179,7 +179,7 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 		isConnected = true;
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
-		stateString = qApp->translate("StatusDefs", "Connected: TOR");
+		stateString = qApp->translate("StatusDefs", "Connected: Tor");
 		isConnected = true;
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
@@ -257,7 +257,7 @@ QString StatusDefs::connectStateIpString(RsPeerDetails &details)
 		stateString += qApp->translate("StatusDefs", "UDP");
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
-		stateString += qApp->translate("StatusDefs", "TOR");
+		stateString += qApp->translate("StatusDefs", "Tor");
 		stateString += QString(details.actAsServer ? "-in" : "-out");
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:

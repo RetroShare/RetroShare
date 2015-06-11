@@ -304,7 +304,7 @@ Alternatively you can use an existing profile. Just uncheck "Create a new profil
        <item>
         <widget class="QLabel" name="hiddenaddr_label">
          <property name="text">
-          <string>TOR address</string>
+          <string>Tor address</string>
          </property>
         </widget>
        </item>
@@ -477,7 +477,7 @@ anonymous, you can use a fake email.</string>
       <number>1</number>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure TOR to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare's Options-&amp;gt;Server-&amp;gt;TOR configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure Tor to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare's Options-&amp;gt;Server-&amp;gt;Tor configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="scaledContents">
       <bool>false</bool>
