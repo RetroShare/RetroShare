@@ -20,11 +20,13 @@ GUI
         Security <-- Make as Default Enabled
         Connect attempt <-- Make as Default Enabled
 
-  [ ] make the "Wrong IP reported" security item less dramatic. We should add text saying that this can be due to a friend 
+  [X] make the "Wrong IP reported" security item less dramatic. We should add text saying that this can be due to a friend 
   		connecting before your own RS has realized that its IP has changed.
-		These security items should be enabled by default, but 
 
-  [ ] "Wrong IP" security items shouldn't show up when the IP reported by friend is whitelisted.
+  [ ] it should be possible to completely disable IP change security items using a checkbox in options->notify->Feeds
+		These security items should be enabled by default
+
+  [X] "Wrong IP" security items shouldn't show up when the IP reported by friend is whitelisted.
 
   [X] at login, when cancel is pressed, the system keeps asking for the passwd. It shouldn't, and directly go back to the list of locations.
 
