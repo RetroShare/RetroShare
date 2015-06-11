@@ -123,7 +123,7 @@ class p3Notify: public RsNotify
 		void notifyDownloadCompleteCount      (uint32_t           /* count     */) ;
 		void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) ;
 
-		bool askForPassword                   (const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */ ) ;
+        bool askForPassword                   (const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string&, bool *cancelled /* password */ ) ;
 		bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) ;
 
 	private:

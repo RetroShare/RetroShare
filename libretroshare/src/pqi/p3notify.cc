@@ -247,10 +247,10 @@ void p3Notify::notifyDownloadComplete           (const std::string& fileHash )  
 void p3Notify::notifyDownloadCompleteCount      (uint32_t           count    )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadCompleteCount      (count) ; }
 void p3Notify::notifyHistoryChanged             (uint32_t           msgId    , int type)                                        { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHistoryChanged             (msgId,type) ; }
 
-bool p3Notify::askForPassword                   (const std::string& key_details    , bool               prev_is_bad , std::string& password) 
+bool p3Notify::askForPassword                   (const std::string& key_details    , bool               prev_is_bad , std::string& password,bool *cancelled)
 {
 	FOR_ALL_NOTIFY_CLIENTS
-		if( (*it)->askForPassword(key_details,prev_is_bad,password))
+        if( (*it)->askForPassword(key_details,prev_is_bad,password,*cancelled))
 			return true ;
 
 	return false ;

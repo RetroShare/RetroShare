@@ -650,10 +650,11 @@ bool Rshare::loadCertificate(const RsPeerId &accountId, bool autoLogin)
 										QObject::tr("An unexpected error occurred when Retroshare "
 										"tried to acquire the single instance lock\n Lock file:\n") +
 										QString::fromUtf8(lockFile.c_str()));
-				return false;
-		case 3: QMessageBox::critical(	0,
-										QObject::tr("Login Failure"),
-										QObject::tr("Maybe password is wrong") );
+                return false;
+        case 3:
+//		case 3: QMessageBox::critical(	0,
+//										QObject::tr("Login Failure"),
+//										QObject::tr("Maybe password is wrong") );
 				return false;
 		default: std::cerr << "Rshare::loadCertificate() unexpected switch value " << retVal << std::endl;
 				return false;

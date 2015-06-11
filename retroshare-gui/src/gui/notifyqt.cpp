@@ -244,7 +244,7 @@ void NotifyQt::handleSignatureEvent()
 
 
 
-bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password)
+bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password,bool& cancelled)
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
@@ -256,12 +256,20 @@ bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, 
 
 	int ret = dialog.exec();
 
+    cancelled = false ;
+
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	if (ret == QDialog::Accepted) {
+    if (ret == QDialog::Rejected) {
+        password.clear() ;
+        cancelled = true ;
+        return true ;
+    }
+
+    if (ret == QDialog::Accepted) {
 		 password = dialog.textValue().toUtf8().constData();
 		 return true;
-	}
+    }
 
 	return false;
 }

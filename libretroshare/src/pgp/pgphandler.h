@@ -16,7 +16,7 @@ extern "C" {
 #include <openpgpsdk/keyring_local.h>
 }
 
-typedef std::string (*PassphraseCallback)(void *data, const char *uid_hint, const char *passphrase_info, int prev_was_bad) ;
+typedef std::string (*PassphraseCallback)(void *data, const char *uid_hint, const char *passphrase_info, int prev_was_bad,bool *cancelled) ;
 
 class PGPCertificateInfo
 {

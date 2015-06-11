@@ -26,7 +26,7 @@ GUI
 
   [ ] "Wrong IP" security items shouldn't show up when the IP reported by friend is whitelisted.
 
-  [ ] at login, when cancel is pressed, the system keeps asking for the passwd. It shouldn't, and directly go back to the list of locations.
+  [X] at login, when cancel is pressed, the system keeps asking for the passwd. It shouldn't, and directly go back to the list of locations.
 
 0000 [ ]    merge the various help systems. there's 3 of them: (1) help buttons on most tabs that pop a flat panel with some 
             info; (2) help wizard accessible from the "!" button in friends details->Trust; (3) 'getting started tab'

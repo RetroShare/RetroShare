@@ -86,14 +86,14 @@ bool AuthGPG::encryptTextToFile(const std::string& text,const std::string& outfi
 // 	return PGPHandler::encryptTextToString(RsPgpId(pgp_id),text,outstr) ;
 // }
 
-std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad)
+std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad,bool *cancelled)
 {
 #define GPG_DEBUG2
 #ifdef GPG_DEBUG2
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
 #endif
 	std::string password;
-	RsServer::notify()->askForPassword(uid_hint, prev_was_bad, password) ;
+    RsServer::notify()->askForPassword(uid_hint, prev_was_bad, password,cancelled) ;
 
 	return password ;
 }

@@ -64,8 +64,13 @@ ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops
 																						uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
 																					uid_hint += "(" + RsPgpId(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
 
-																					passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad) ;
-																					*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
+                                                                                    bool cancelled = false ;
+                                                                                    passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad,&cancelled) ;
+
+                                                                                    if(cancelled)
+                                                                                        *(unsigned char *)cbinfo->arg = 1;
+
+                                                                                    *(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
 																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
 																					return OPS_KEEP_MEMORY;
 																				}
@@ -1307,7 +1312,8 @@ bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t 
 
 	PGPFingerprintType fp(f.fingerprint) ;
 #endif
-	std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",false) ;
+    bool cancelled =false;
+    std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",false,&cancelled) ;
 
 	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
 
@@ -1316,6 +1322,11 @@ bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t 
 		std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
 		return false ;
 	}
+    if(cancelled)
+    {
+        std::cerr << "Key entering cancelled" << std::endl;
+        return false ;
+    }
 
 	// then do the signature.
 
@@ -1387,11 +1398,17 @@ bool PGPHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpId& id_o
 		return false ;
 	}
 
-	std::string passphrase = _passphrase_callback(NULL,RsPgpId(skey->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false) ;
+    bool cancelled = false;
+    std::string passphrase = _passphrase_callback(NULL,RsPgpId(skey->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false,&cancelled) ;
 
 	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(skey,passphrase.c_str()) ;
 
-	if(!secret_key)
+    if(cancelled)
+    {
+        std::cerr << "Key cancelled by used." << std::endl;
+        return false ;
+    }
+    if(!secret_key)
 	{
 		std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
 		return false ;
