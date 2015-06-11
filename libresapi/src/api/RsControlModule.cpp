@@ -52,8 +52,9 @@ bool RsControlModule::processShouldExit()
     return mProcessShouldExit;
 }
 
-bool RsControlModule::askForPassword(const std::string &key_details, bool prev_is_bad, std::string &password)
+bool RsControlModule::askForPassword(const std::string &key_details, bool prev_is_bad, std::string &password, bool& cancelled)
 {
+	cancelled = false ;
     {
         RsStackMutex stack(mDataMtx); // ********** LOCKED **********
         mWantPassword = true;

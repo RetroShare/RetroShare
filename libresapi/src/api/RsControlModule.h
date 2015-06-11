@@ -32,7 +32,7 @@ public:
     bool processShouldExit();
 
     // from NotifyClient
-    virtual bool askForPassword(const std::string& key_details, bool prev_is_bad , std::string& password);
+    virtual bool askForPassword(const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled);
 
 protected:
     // from RsThread
