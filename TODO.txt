@@ -12,10 +12,10 @@ To be done
 
 GUI
 
-  [ ] http://www.cjoint.com/c/EFlhWgeLg4F. Strings too long in Add Friends Wizard on the conclusion page.
+  [X] http://www.cjoint.com/c/EFlhWgeLg4F. Strings too long in Add Friends Wizard on the conclusion page.
   [X] RS crashes when right clicking on the People tabs when there's nobody yet
   [ ] Network tab cannot shrink the avatar column
-  [ ] newsfeed default:
+  [X] newsfeed default:
         Options -- Notify -- Feed
         Security <-- Make as Default Enabled
         Connect attempt <-- Make as Default Enabled

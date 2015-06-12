@@ -68,10 +68,11 @@ GenCertDialog QPushButton#genButton:hover {
 /* ConnectFriendWizard */
 
 ConnectFriendWizard {
-	qproperty-bannerPixmap: url(:/images/connect/connectFriendBanner1.png);
+/* QWizard cannot be resized horizontal when banner pixmap is set
+	qproperty-bannerPixmap: url(:/images/connect/connectFriendBanner1.png);*/
 	qproperty-titleFontSize: 16;
 	qproperty-titleFontWeight: 500;
-	qproperty-titleColor: white;
+/*	qproperty-titleColor: white; */
 }
 
 /* FriendsDialog */
