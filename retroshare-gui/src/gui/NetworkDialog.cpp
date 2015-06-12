@@ -284,7 +284,7 @@ void NetworkDialog::removeUnusedKeys()
 																				  break ;
 
 		}
-		QMessageBox::warning(NULL,tr("Keyring info"),tr("Key removal has failed. Your keyring remains intact.\n\nReported error: ")+error_string ) ;
+		QMessageBox::warning(NULL,tr("Keyring info"),tr("Key removal has failed. Your keyring remains intact.\n\nReported error:")+" "+error_string ) ;
 	}
 	insertConnect() ;
 }

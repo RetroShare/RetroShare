@@ -136,13 +136,13 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	/** Setup the actions for the header context menu */
 	showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
-    showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show ")+showUserCountAct->text()+tr(" Column"));
+    showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show")+" "+showUserCountAct->text()+" "+tr("column"));
     connect(showUserCountAct,SIGNAL(triggered(bool)),this,SLOT(setShowUserCountColumn(bool))) ;
     showTopicAct= new QAction(headerItem->text(COLUMN_TOPIC),this);
-    showTopicAct->setCheckable(true); showTopicAct->setToolTip(tr("Show ")+showTopicAct->text()+tr(" Column"));
+    showTopicAct->setCheckable(true); showTopicAct->setToolTip(tr("Show")+" "+showTopicAct->text()+" "+tr("column"));
     connect(showTopicAct,SIGNAL(triggered(bool)),this,SLOT(setShowTopicColumn(bool))) ;
     showSubscribeAct= new QAction(headerItem->text(COLUMN_SUBSCRIBED),this);
-    showSubscribeAct->setCheckable(true); showSubscribeAct->setToolTip(tr("Show ")+showSubscribeAct->text()+tr(" Column"));
+    showSubscribeAct->setCheckable(true); showSubscribeAct->setToolTip(tr("Show")+" "+showSubscribeAct->text()+" "+tr("column"));
     connect(showSubscribeAct,SIGNAL(triggered(bool)),this,SLOT(setShowSubscribeColumn(bool))) ;
 
 	// Set initial size of the splitter
@@ -334,10 +334,10 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
 		item->setTextColor(column, color);
 	}
-    item->setToolTip(0,QObject::tr("Subject: ")+item->text(COLUMN_TOPIC)+"\n"
-                     +QObject::tr("Participants: ")+QString::number(count)+"\n"
-                     +QObject::tr("Auto Subscribe: ")+(autoSubscribe? QObject::tr("enabled"): QObject::tr("disabled"))+"\n"
-                     +QObject::tr("Id: ")+QString::number(id,16)) ;
+    item->setToolTip(0,QObject::tr("Subject:")+" "+item->text(COLUMN_TOPIC)+"\n"
+                     +QObject::tr("Participants:")+" "+QString::number(count)+"\n"
+                     +QObject::tr("Auto Subscribe:")+" "+(autoSubscribe? QObject::tr("enabled"): QObject::tr("disabled"))+"\n"
+                     +QObject::tr("Id:")+" "+QString::number(id,16)) ;
 }
 
 void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)

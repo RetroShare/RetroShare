@@ -168,7 +168,7 @@ QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags, const QList<QS
 	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS)
 		res += tr("All friend nodes can relay anonymous tunnels to this directory") ;
 	else if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS)
-		res += tr("Only friend nodes in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
+		res += tr("Only friend nodes in groups")+" " + groups_string +" "+ tr("can relay anonymous tunnels to this directory") ;
 	else
 		res += tr("No one can anonymously access this directory.") ;
 

@@ -309,11 +309,11 @@ void ConfCertDialog::loadInvitePage()
     infotext += tr("<p>This certificate contains:") ;
     infotext += "<UL>" ;
     infotext += "<li> a <b>PGP public key</b>";
-    infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+")" ;
+    infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
     if(ui._shouldAddSignatures_CB->isChecked())
-        infotext += tr(" with ")+QString::number(detail.gpgSigners.size()-1)+" external signatures</li> " ;
+        infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
     else
-        infotext += tr("</li> ") ;
+        infotext += "</li>" ;
 
     infotext += tr("<li>a <b>node ID</b> and <b>name</b>") +" (" + detail.id.toStdString().c_str() + ", " + QString::fromUtf8(detail.location.c_str()) +")" ;
     infotext += "</li>" ;

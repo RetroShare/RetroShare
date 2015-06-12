@@ -174,7 +174,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     {
         QString packet_string ;
         packet_string += QString::fromStdString(it->second.authentication_key.toStdString())  ;
-        packet_string += tr(" : Service ID = ")+QString::number(it->second.service_id,16) ;
+        packet_string += tr(" : Service ID =")+" "+QString::number(it->second.service_id,16) ;
         packet_string += "  \""+QString::fromUtf8(it->second.description_string.c_str()) + "\"" ;
 
         painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;

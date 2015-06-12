@@ -90,7 +90,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	cFoundColor=Settings->getChatSearchFoundColor();
 
 
-	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after ")+QString::number(uiMaxSearchLimitColor)+tr(" items found (need more CPU)"));
+	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after")+" "+QString::number(uiMaxSearchLimitColor)+" "+tr("items found (need more CPU)"));
 
 	ui->leSearch->setVisible(false);
 	ui->searchBefore->setVisible(false);
@@ -1033,7 +1033,7 @@ void ChatWidget::updateLenOfChatTextEdit()
 	}
 
 	ui->sendButton->setEnabled(!msgToLarge);
-	text = tr("%1This message consists of %2 characters.").arg(msgToLarge ? tr("Warning: ") : "").arg(msg.length());
+	text = tr("%1This message consists of %2 characters.").arg(msgToLarge ? tr("Warning:")+" " : "").arg(msg.length());
 	ui->sendButton->setToolTip(text);
 	ui->chatTextEdit->setToolTip(msgToLarge?text:"");
 }

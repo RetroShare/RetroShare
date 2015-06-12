@@ -621,10 +621,10 @@ QString RetroShareLink::title() const
 			uint32_t error_code ;
 
 			if(!rsPeers->loadDetailsFromStringCert(_radix.toStdString(),details,error_code))
-				return QObject::tr("This cert is malformed. Error code: ")+QString::number(error_code) ;
+				return QObject::tr("This cert is malformed. Error code:")+" "+QString::number(error_code) ;
 			else
 				return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") 
-						+ QString("PGP Id = ") + QString::fromStdString(details.gpg_id.toStdString()) + QString("\nSSLId = ")+QString::fromStdString(details.id.toStdString());
+						+ QString("PGP Id =")+" " + QString::fromStdString(details.gpg_id.toStdString()) + QString("\nSSLId =")+" "+QString::fromStdString(details.id.toStdString());
 	}
 
 	return "";
@@ -757,7 +757,7 @@ QString RetroShareLink::niceName() const
 		uint32_t error_code ;
 
 		if(!rsPeers->loadDetailsFromStringCert(_radix.toStdString(),details,error_code))
-			return QObject::tr("This cert is malformed. Error code: ")+QString::number(error_code) ;
+			return QObject::tr("This cert is malformed. Error code:")+" "+QString::number(error_code) ;
 		else
 			return QObject::tr("RetroShare Certificate (%1, @%2)").arg(QString::fromUtf8(details.name.c_str()), QString::fromUtf8(details.location.c_str()));	// should add SSL id there
 	}

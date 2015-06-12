@@ -216,7 +216,7 @@ RSettingsWin::saveChanges()
 
 				/* Show the user what went wrong */
 				QMessageBox::warning(this,
-				tr("Error Saving Configuration on page ")+QString::number(i), errmsg,
+				tr("Error Saving Configuration on page")+" "+QString::number(i), errmsg,
 				QMessageBox::Ok, QMessageBox::NoButton);
 
 				/* Don't process the rest of the pages */

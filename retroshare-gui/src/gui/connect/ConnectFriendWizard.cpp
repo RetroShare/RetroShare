@@ -633,7 +633,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 				}
 
 				if (certstr.empty()) {
-					setField("errorMessage", QString(tr("Certificate Load Failed:can't read from file %1 ")).arg(fn) );
+					setField("errorMessage", QString(tr("Certificate Load Failed:can't read from file %1")).arg(fn+" ") );
 					error = false;
 					break;
 				}
@@ -645,7 +645,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 					std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 #endif
 				} else {
-					setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) + ": " + getErrorString(cert_error_code));
+					setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1")).arg(fn) + " : " + getErrorString(cert_error_code));
 					error = false;
 				}
 			} else {

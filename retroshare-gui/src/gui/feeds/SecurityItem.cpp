@@ -139,7 +139,7 @@ void SecurityItem::updateItemStatic()
 			{
 			RsPeerDetails details ;
             if(rsPeers->getGPGDetails(mGpgId, details))
-                title = tr("Missing/Damaged SSL certificate for key ") + QString::fromStdString(mGpgId.toStdString()) ;
+                title = tr("Missing/Damaged SSL certificate for key")+" " + QString::fromStdString(mGpgId.toStdString()) ;
 			else
 				title = tr("Missing/Damaged certificate. Not a real Retroshare user.");
 			requestLabel->hide();

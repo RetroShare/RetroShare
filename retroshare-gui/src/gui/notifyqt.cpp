@@ -491,7 +491,7 @@ void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 	{
 		already = true ;
 
-		QString string = tr("For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). ") ;
+		QString string = tr("For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends).") ;
 
 		QMessageBox::warning(NULL,tr("Please check your system clock."),string) ;
 	}

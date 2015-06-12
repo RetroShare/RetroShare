@@ -581,7 +581,7 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
 												return ;
 	}
 	QMessageBox::critical(NULL,tr("Low disk space warning"),
-				tr("The disk space in your ")+locString +tr(" directory is running low (current limit is ")+QString::number(size_limit_mb)+tr("MB). \n\n RetroShare will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
+				tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n RetroShare will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
 }
 
 /** Creates a tray icon with a context menu and adds it to the system
@@ -1121,7 +1121,7 @@ void MainWindow::doQuit()
 	  queryWrn.clear();
 	  queryWrn.append(tr("Do you really want to exit RetroShare ?"));
 
-		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+		if ((QMessageBox::question(this, tr("Really quit ?"),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
 			qApp->quit();
 		}

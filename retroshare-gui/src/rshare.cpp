@@ -312,20 +312,20 @@ Rshare::validateArguments(QString &errmsg)
   /* Check for a language that Retroshare recognizes. */
   if (_args.contains(ARG_LANGUAGE) &&
       !LanguageSupport::isValidLanguageCode(_args.value(ARG_LANGUAGE))) {
-    errmsg = tr("Invalid language code specified: ") + _args.value(ARG_LANGUAGE);
+    errmsg = tr("Invalid language code specified:")+" " + _args.value(ARG_LANGUAGE);
     return false;
   }
   /* Check for a valid GUI style */
   if (_args.contains(ARG_GUISTYLE) &&
       !QStyleFactory::keys().contains(_args.value(ARG_GUISTYLE),
                                       Qt::CaseInsensitive)) {
-    errmsg = tr("Invalid GUI style specified: ") + _args.value(ARG_GUISTYLE);
+    errmsg = tr("Invalid GUI style specified:")+" " + _args.value(ARG_GUISTYLE);
     return false;
   }
   /* Check for a valid log level */
   if (_args.contains(ARG_LOGLEVEL) &&
       !Log::logLevels().contains(_args.value(ARG_LOGLEVEL))) {
-    errmsg = tr("Invalid log level specified: ") + _args.value(ARG_LOGLEVEL);
+    errmsg = tr("Invalid log level specified:")+" " + _args.value(ARG_LOGLEVEL);
     return false;
   }
   /* Check for a writable log file */

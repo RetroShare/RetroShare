@@ -54,7 +54,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
 	 QVBoxLayout *vbox = new QVBoxLayout() ;
 
 	 QHBoxLayout *hb2 = new QHBoxLayout() ;
-	 hb2->addWidget(new QLabel(tr("Share flags and groups: "))) ;
+	 hb2->addWidget(new QLabel(tr("Share flags and groups:")+" ")) ;
 
 	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
 	 groupflagsbox->setFlags(DIR_FLAGS_NETWORK_WIDE_OTHERS) ;	// default value

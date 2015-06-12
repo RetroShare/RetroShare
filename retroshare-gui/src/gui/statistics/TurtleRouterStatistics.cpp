@@ -313,7 +313,7 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Incoming file data")+"\t: " + speedString(info.data_dn_Bps) ) ; oy += celly ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Outgoing file data")+"\t: " + speedString(info.data_up_Bps) ) ; oy += celly ;
-	painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data    ")+"\t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data")+"    \t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
 
 	QString prob_string ;
 

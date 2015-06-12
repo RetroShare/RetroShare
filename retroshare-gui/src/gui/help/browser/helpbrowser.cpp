@@ -134,12 +134,12 @@ HelpBrowser::loadContentsFromXml(QString xmlFile)
   
   /* Load the XML contents into the DOM document */
   if (!document.setContent(&file, true, &errorString)) {
-    ui.txtBrowser->setPlainText(tr("Error Loading Help Contents: ")+errorString);
+    ui.txtBrowser->setPlainText(tr("Error Loading Help Contents:")+" "+errorString);
     return;
   }
   /* Load the DOM document contents into the tree view */
   if (!loadContents(&document, errorString)) {
-    ui.txtBrowser->setPlainText(tr("Error Loading Help Contents: ")+errorString);
+    ui.txtBrowser->setPlainText(tr("Error Loading Help Contents:")+" "+errorString);
     return;
   }
 }

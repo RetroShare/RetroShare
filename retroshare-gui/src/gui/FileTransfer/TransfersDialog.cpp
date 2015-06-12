@@ -1039,7 +1039,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 			std::string rsversion;
 			if (rsDisc->getPeerVersion(transferInfo.peerId, rsversion))
 			{
-				version = tr("version: ") + QString::fromStdString(rsversion);
+				version = tr("version:")+" " + QString::fromStdString(rsversion);
 			}
 
 			double peerDlspeed	= 0;

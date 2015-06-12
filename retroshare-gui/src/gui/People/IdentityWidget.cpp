@@ -63,16 +63,16 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 		m_myName = QString::fromUtf8(_group_info.mMeta.mGroupName.c_str());
 	ui->labelName->setText(m_myName);
 		if (_havePGPDetail) {
-			ui->labelName->setToolTip(tr("GXS name: ").append(m_myName).append("\n")
-			                          .append(tr("PGP name: ").append(_nickname)));
+			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName).append("\n")
+			                          .append(tr("PGP name:").append(" "+_nickname)));
 		} else {//if (m_myName != _nickname)
-			ui->labelName->setToolTip(tr("GXS name: ").append(m_myName));
+			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName));
 		}//else (m_myName != _nickname)
 
 
 		_gxsId = QString::fromStdString(_group_info.mMeta.mGroupId.toStdString());
 		ui->labelGXSId->setText(_gxsId);
-		ui->labelGXSId->setToolTip(tr("GXS id: ").append(_gxsId));
+		ui->labelGXSId->setToolTip(tr("GXS id:").append(" "+_gxsId));
 
 		if (!_havePGPDetail) {
 	QFont font = ui->labelName->font();
@@ -81,7 +81,7 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 
 			_keyId=QString::fromStdString(_group_info.mMeta.mGroupId.toStdString());
 			ui->labelKeyId->setText(_keyId);
-			ui->labelKeyId->setToolTip(tr("GXS id: ").append(_keyId));
+			ui->labelKeyId->setToolTip(tr("GXS id:").append(" "+_keyId));
 	ui->labelKeyId->setVisible(false);
 
 	/// (TODO) Get real ident icon
@@ -107,10 +107,10 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 		if (!_haveGXSId) m_myName = _nickname;
 		ui->labelName->setText(m_myName);
 		if (_haveGXSId) {
-			ui->labelName->setToolTip(tr("GXS name: ").append(m_myName).append("\n")
-			                          .append(tr("PGP name: ").append(_nickname)));
+			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName).append("\n")
+			                          .append(tr("PGP name:").append(" "+_nickname)));
 		} else {//if (m_myName != _nickname)
-			ui->labelName->setToolTip(tr("PGP name: ").append(_nickname));
+			ui->labelName->setToolTip(tr("PGP name:").append(" "+_nickname));
 		}//else (m_myName != _nickname)
 
 		QFont font = ui->labelName->font();
@@ -119,7 +119,7 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 
 		_keyId = QString::fromStdString(_details.gpg_id.toStdString());
 		ui->labelKeyId->setText(_keyId);
-		ui->labelKeyId->setToolTip(tr("PGP id: ").append(_keyId));
+		ui->labelKeyId->setToolTip(tr("PGP id:").append(" "+_keyId));
 
 		QPixmap avatar;
 		AvatarDefs::getAvatarFromGpgId(_details.gpg_id.toStdString(), avatar);

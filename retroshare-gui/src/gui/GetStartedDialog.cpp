@@ -253,7 +253,7 @@ QString GetStartedDialog::GetInviteText()
 	text += tr("You can get RetroShare here: %1").arg(URL_DOWNLOAD) + "\n";
 	text += "\n";
 	text += tr("RetroShare is a private Friend-2-Friend sharing network.") + "\n";
-	text += tr("It has many features, including built-in chat, messaging, ") + "\n";
+	text += tr("It has many features, including built-in chat, messaging,") + "\n";
 	text += tr("forums and channels, all of which are as secure as the file-sharing.") + "\n";
 	text += "\n";
 	text += "\n";
@@ -274,7 +274,7 @@ void GetStartedDialog::emailSubscribe()
 	// when translation is needed, replace QString by tr
 	QString text = QString("Please let me know when RetroShare has a new release, or exciting news") + "\n";
 	text += "\n";
-	text += QString("Furthermore, I'd like to say ... ") + "\n";
+	text += QString("Furthermore, I'd like to say ...") + "\n";
 	text += "\n";
 
 	sendMail(EMAIL_SUBSCRIBE, "Subscribe", text);

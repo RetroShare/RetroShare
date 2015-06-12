@@ -187,11 +187,11 @@ IdDialog::IdDialog(QWidget *parent) :
 	
 	/** Setup the actions for the header context menu */
 	hideIdAct= new QAction(headerItem->text(RSID_COL_KEYID),this);
-	hideIdAct->setCheckable(true); hideIdAct->setToolTip(tr("Show ")+hideIdAct->text()+tr(" Column"));
+	hideIdAct->setCheckable(true); hideIdAct->setToolTip(tr("Show")+" "+hideIdAct->text()+" "+tr("column"));
 	connect(hideIdAct,SIGNAL(triggered(bool)),this,SLOT(setHideIdColumn(bool))) ;
 	
 	hideTypeAct= new QAction(headerItem->text(RSID_COL_IDTYPE),this);
-	hideTypeAct->setCheckable(true); hideTypeAct->setToolTip(tr("Show ")+hideTypeAct->text()+tr(" Column"));
+	hideTypeAct->setCheckable(true); hideTypeAct->setToolTip(tr("Show")+" "+hideTypeAct->text()+" "+tr("column"));
 	connect(hideTypeAct,SIGNAL(triggered(bool)),this,SLOT(setHideIdTypeColumn(bool))) ;
 		
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
@@ -431,8 +431,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			item->setToolTip(RSID_COL_IDTYPE,QString::fromStdString(data.mPgpId.toStdString())) ;
 			
 			
-			tooltip += tr("Node name: ") + QString::fromUtf8(details.name.c_str()) + "\n";
-			tooltip += tr("Node Id  : ") + QString::fromStdString(data.mPgpId.toStdString()) ;
+			tooltip += tr("Node name:")+" " + QString::fromUtf8(details.name.c_str()) + "\n";
+			tooltip += tr("Node Id  :")+" " + QString::fromStdString(data.mPgpId.toStdString()) ;
 			item->setToolTip(RSID_COL_KEYID,tooltip) ;
 		}
 		else
@@ -864,7 +864,7 @@ void IdDialog::removeIdentity()
 		return;
 	}
 
-	if ((QMessageBox::question(this, tr("Really delete? "), tr("Do you really want to delete this identity?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::No))== QMessageBox::Yes)
+	if ((QMessageBox::question(this, tr("Really delete?"), tr("Do you really want to delete this identity?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::No))== QMessageBox::Yes)
 	{
 		std::string keyId = item->text(RSID_COL_KEYID).toStdString();
 

@@ -374,10 +374,10 @@ void DhtWindow::updateNetPeers()
 				cpmstr = tr("Direct");
 				break;
 			case RSDHT_TOU_MODE_PROXY:
-				cpmstr = tr("Proxy VIA ") + QString::fromStdString(status.mPeerConnectProxyId);
+				cpmstr = tr("Proxy VIA")+" " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			case RSDHT_TOU_MODE_RELAY:
-				cpmstr = tr("Relay VIA ") + QString::fromStdString(status.mPeerConnectProxyId);
+				cpmstr = tr("Relay VIA")+" " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			default:
 			case RSDHT_TOU_MODE_NONE:

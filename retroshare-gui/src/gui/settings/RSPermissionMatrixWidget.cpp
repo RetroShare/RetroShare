@@ -435,10 +435,10 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
       rsServiceControl->getServicePermissions(service_ids[n_col_selected],service_perms) ;
 
-      QString service_name    = tr("Service name: ")+QString::fromUtf8(service_perms.mServiceName.c_str()) ;
+      QString service_name    = tr("Service name:")+" "+QString::fromUtf8(service_perms.mServiceName.c_str()) ;
       QString service_default = service_perms.mDefaultAllowed?tr("Allowed by default"):tr("Denied by default");
-      QString peer_name = tr("Peer name: ") + names[n_row_selected] ;
-      QString peer_id = tr("Peer Id: ")+QString::fromStdString(_current_peer_id.toStdString()) ;
+      QString peer_name = tr("Peer name:")+" " + names[n_row_selected] ;
+      QString peer_id = tr("Peer Id:")+" "+QString::fromStdString(_current_peer_id.toStdString()) ;
 
       RsPeerServiceInfo pserv_info ;
       rsServiceControl->getServicesAllowed(_current_peer_id,pserv_info) ;

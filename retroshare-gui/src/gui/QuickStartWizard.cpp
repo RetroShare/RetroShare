@@ -239,7 +239,7 @@ void QuickStartWizard::on_pushButtonSharesRemove_clicked()
 
 	QString queryWrn;
 	queryWrn.clear();
-	queryWrn.append(tr("Do you really want to stop sharing this directory ? "));
+	queryWrn.append(tr("Do you really want to stop sharing this directory ?"));
 
 	if (qdir)
 	{

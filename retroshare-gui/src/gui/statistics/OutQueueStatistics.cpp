@@ -81,8 +81,8 @@ void OutQueueStatisticsWidget::updateStatistics(OutQueueStatistics& stats)
         by_service_string += QString::number(it->second) + " (" + serviceName(it->first) + ") " ;
 
     painter.drawText(ox,oy+celly,tr("Outqueue statistics")+":") ; oy += celly*2 ;
-    painter.drawText(ox+2*cellx,oy+celly,tr("By priority: ") + by_priority_string); oy += celly ;
-    painter.drawText(ox+2*cellx,oy+celly,tr("By service : ") + by_service_string); oy += celly ;
+    painter.drawText(ox+2*cellx,oy+celly,tr("By priority:")+" " + by_priority_string); oy += celly ;
+    painter.drawText(ox+2*cellx,oy+celly,tr("By service :")+" " + by_service_string); oy += celly ;
 
     oy += celly ;
 
