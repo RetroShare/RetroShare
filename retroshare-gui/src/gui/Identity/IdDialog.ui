@@ -205,7 +205,7 @@
          </column>
          <column>
           <property name="text">
-           <string>Owned by node...</string>
+           <string>Owned by</string>
           </property>
          </column>
         </widget>
