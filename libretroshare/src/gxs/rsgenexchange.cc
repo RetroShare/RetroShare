@@ -2285,6 +2285,8 @@ void RsGenExchange::publishGrps()
 			{
 				create = CREATE_FAIL_TRY_LATER;
 			}
+            else if(ret == SERVICE_CREATE_FAIL)
+                create = CREATE_FAIL;
         }
         else
         {

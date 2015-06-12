@@ -51,6 +51,11 @@ const uint32_t RS_TRUST_LVL_MARGINAL   = 3;
 const uint32_t RS_TRUST_LVL_FULL	      = 4;
 const uint32_t RS_TRUST_LVL_ULTIMATE   = 5;
 
+
+const uint32_t SELF_SIGNATURE_RESULT_PENDING = 0x00;
+const uint32_t SELF_SIGNATURE_RESULT_SUCCESS = 0x01;
+const uint32_t SELF_SIGNATURE_RESULT_FAILED  = 0x02;
+
 /* Net Mode */
 const uint32_t RS_NETMODE_UDP		= 0x0001;
 const uint32_t RS_NETMODE_UPNP		= 0x0002;
@@ -322,7 +327,7 @@ class RsPeers
 		virtual bool    getGPGValidList(std::list<RsPgpId> &gpg_ids)   = 0;
 		virtual bool    getGPGAllList(std::list<RsPgpId> &gpg_ids) 	= 0;
         virtual bool    getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
-		virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
+        virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
 
 		/* Add/Remove Friends */
         virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT)    = 0;

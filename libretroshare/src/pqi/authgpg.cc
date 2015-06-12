@@ -595,7 +595,7 @@ bool AuthGPG::decryptDataBin(const void *data, unsigned int datalen, unsigned ch
 {
 	return PGPHandler::decryptDataBin(mOwnGpgId,data,datalen,sign,signlen) ;
 }
-bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
+bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen)
 {
 	return DoOwnSignature(data, datalen, sign, signlen);
 }

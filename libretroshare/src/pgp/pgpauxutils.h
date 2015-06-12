@@ -58,7 +58,7 @@ public:
 	virtual	bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
 	virtual bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
 	virtual bool getGPGAllList(std::list<RsPgpId> &ids);
-	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result );
+    virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result );
 
 };
 

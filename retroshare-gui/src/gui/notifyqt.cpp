@@ -153,7 +153,7 @@ class SignatureEventData
 			sign = (unsigned char *)malloc(_signlen) ;
 			signlen = new unsigned int ;
 			*signlen = _signlen ;
-			signature_result = 0 ;
+            signature_result = SELF_SIGNATURE_RESULT_PENDING ;
 			data = malloc(_len) ;
 			len = _len ;
 			memcpy(data,_data,len) ;
@@ -167,16 +167,18 @@ class SignatureEventData
 		}
 
 		void performSignature()
-		{
-			if(rsPeers->gpgSignData(data,len,sign,signlen))
-				signature_result = 1 ;
-		}
+        {
+            if(rsPeers->gpgSignData(data,len,sign,signlen))
+                signature_result = SELF_SIGNATURE_RESULT_SUCCESS ;
+            else
+                signature_result = SELF_SIGNATURE_RESULT_FAILED ;
+        }
 
 		void *data ;
 		uint32_t len ;
 		unsigned char *sign ;
 		unsigned int *signlen ;
-		int signature_result ;		// 0=pending, 1=done, 2=failed.
+        int signature_result ;		// 0=pending, 1=done, 2=failed/cancelled.
 };
 
 bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result)
@@ -190,28 +192,27 @@ bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len,
 
 		Sha1CheckSum chksum = RsDirUtil::sha1sum((uint8_t*)data,len) ;
 
-		std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString()) ;
+        std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString()) ;
+        signature_result = SELF_SIGNATURE_RESULT_PENDING ;
 
 		if(it != _deferred_signature_queue.end())
-		{
-			if(it->second->signature_result != 0)	// found it. Copy the result, and remove from the queue.
-			{
-				// We should check for the exact data match, for the sake of being totally secure.
-				//
-				std::cerr << "Found into queue: returning it" << std::endl;
+        {
+            signature_result = it->second->signature_result ;
 
-				memcpy(sign,it->second->sign,*it->second->signlen) ;
-				*signlen = *(it->second->signlen) ;
-				signature_result = it->second->signature_result ;
+            if(it->second->signature_result != SELF_SIGNATURE_RESULT_PENDING)	// found it. Copy the result, and remove from the queue.
+            {
+                // We should check for the exact data match, for the sake of being totally secure.
+                //
+                std::cerr << "Found into queue: returning it" << std::endl;
 
-				delete it->second ;
-				_deferred_signature_queue.erase(it) ;
+                memcpy(sign,it->second->sign,*it->second->signlen) ;
+                *signlen = *(it->second->signlen) ;
 
-				return true ;
-			}
-			else
-				return false ;		// already registered, but not done yet.
-		}
+                delete it->second ;
+                _deferred_signature_queue.erase(it) ;
+            }
+            return true ;		// already registered, but not done yet.
+        }
 
 		// Not found. Store in the queue and emit a signal.
 		//
@@ -222,7 +223,7 @@ bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len,
 		_deferred_signature_queue[chksum.toStdString()] = edta ;
 	}
 	emit deferredSignatureHandlingRequested() ;
-	return false;
+    return true;
 }
 
 void NotifyQt::handleSignatureEvent()

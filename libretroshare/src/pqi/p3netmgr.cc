@@ -552,7 +552,6 @@ void p3NetMgrIMPL::netTick()
 		case RS_NET_LOOPBACK:
                         //don't do a shutdown because a client in a computer without local network might be usefull for debug.
                         //shutdown();
-                        std::cerr << "p3NetMgrIMPL::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
                         std::cerr << "p3NetMgrIMPL::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
 #endif
@@ -961,8 +960,10 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 
 	if (mNetMode & RS_NET_MODE_TRY_LOOPBACK)
 	{
-		std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
-		std::cerr << std::endl;
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+        std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
+        std::cerr << std::endl;
+#endif
 	    sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
 		validAddr = true;
 	}

@@ -34,6 +34,7 @@
 #include "util/rsstring.h"
 #include "util/radix64.h"
 #include "gxs/gxssecurity.h"
+#include "retroshare/rspeers.h"
 
 
 //#include "pqi/authgpg.h"
@@ -2448,188 +2449,195 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 {
 
 #ifdef DEBUG_IDS
-	std::cerr << "p3IdService::service_CreateGroup()";
-	std::cerr << std::endl;
+    std::cerr << "p3IdService::service_CreateGroup()";
+    std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-	RsGxsIdGroupItem *item = dynamic_cast<RsGxsIdGroupItem *>(grpItem);
-	if (!item)
-	{
-		std::cerr << "p3IdService::service_CreateGroup() ERROR invalid cast";
-		std::cerr << std::endl;
-		return SERVICE_CREATE_FAIL;
-	}
+    RsGxsIdGroupItem *item = dynamic_cast<RsGxsIdGroupItem *>(grpItem);
+    if (!item)
+    {
+        std::cerr << "p3IdService::service_CreateGroup() ERROR invalid cast";
+        std::cerr << std::endl;
+        return SERVICE_CREATE_FAIL;
+    }
 
 #ifdef DEBUG_IDS
-	std::cerr << "p3IdService::service_CreateGroup() Item is:";
-	std::cerr << std::endl;
-	item->print(std::cerr);
-	std::cerr << std::endl;
+    std::cerr << "p3IdService::service_CreateGroup() Item is:";
+    std::cerr << std::endl;
+    item->print(std::cerr);
+    std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
-	// find private admin key
-	std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
-	for(; mit != keySet.keys.end(); ++mit)
-	{
-		RsTlvSecurityKey& pk = mit->second;
-	
-		if(pk.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
-		{
+    /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
+    // find private admin key
+    std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
+    for(; mit != keySet.keys.end(); ++mit)
+    {
+        RsTlvSecurityKey& pk = mit->second;
+
+        if(pk.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+        {
             item->meta.mGroupId = RsGxsGroupId(pk.keyId);
-			break;
-		}
-	}
-	
-	if(mit == keySet.keys.end())
-	{
-		std::cerr << "p3IdService::service_CreateGroup() ERROR no admin key";
-		std::cerr << std::endl;
-		return SERVICE_CREATE_FAIL;
+            break;
+        }
+    }
+
+    if(mit == keySet.keys.end())
+    {
+        std::cerr << "p3IdService::service_CreateGroup() ERROR no admin key";
+        std::cerr << std::endl;
+        return SERVICE_CREATE_FAIL;
     }
     mKeysTS[RsGxsId(item->meta.mGroupId)] = time(NULL) ;
-		
-	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 
-	// SANITY CHECK.
-//    if (item->mMeta.mAuthorId != item->meta.mAuthorId)
-//	{
-//		std::cerr << "p3IdService::service_CreateGroup() AuthorId mismatch(";
-//        std::cerr << item->mMeta.mAuthorId;
-//		std::cerr << " vs ";
-//		std::cerr << item->meta.mAuthorId;
-//		std::cerr << std::endl;
-//	}
-//
-//	if (item->group.mMeta.mGroupId != item->meta.mGroupId)
-//	{
-//		std::cerr << "p3IdService::service_CreateGroup() GroupId mismatch(";
-//        std::cerr << item->mMeta.mGroupId;
-//		std::cerr << " vs ";
-//		std::cerr << item->meta.mGroupId;
-//		std::cerr << std::endl;
-//	}
-//
-//
-//	if (item->group.mMeta.mGroupFlags != item->meta.mGroupFlags)
-//	{
-//		std::cerr << "p3IdService::service_CreateGroup() GroupFlags mismatch(";
-//        std::cerr << item->mMeta.mGroupFlags;
-//		std::cerr << " vs ";
-//		std::cerr << item->meta.mGroupFlags;
-//		std::cerr << std::endl;
-//	}
-		
+    /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
+
+    // SANITY CHECK.
+    //    if (item->mMeta.mAuthorId != item->meta.mAuthorId)
+    //	{
+    //		std::cerr << "p3IdService::service_CreateGroup() AuthorId mismatch(";
+    //        std::cerr << item->mMeta.mAuthorId;
+    //		std::cerr << " vs ";
+    //		std::cerr << item->meta.mAuthorId;
+    //		std::cerr << std::endl;
+    //	}
+    //
+    //	if (item->group.mMeta.mGroupId != item->meta.mGroupId)
+    //	{
+    //		std::cerr << "p3IdService::service_CreateGroup() GroupId mismatch(";
+    //        std::cerr << item->mMeta.mGroupId;
+    //		std::cerr << " vs ";
+    //		std::cerr << item->meta.mGroupId;
+    //		std::cerr << std::endl;
+    //	}
+    //
+    //
+    //	if (item->group.mMeta.mGroupFlags != item->meta.mGroupFlags)
+    //	{
+    //		std::cerr << "p3IdService::service_CreateGroup() GroupFlags mismatch(";
+    //        std::cerr << item->mMeta.mGroupFlags;
+    //		std::cerr << " vs ";
+    //		std::cerr << item->meta.mGroupFlags;
+    //		std::cerr << std::endl;
+    //	}
+
 #ifdef DEBUG_IDS
     std::cerr << "p3IdService::service_CreateGroup() for : " << item->mMeta.mGroupId;
-	std::cerr << std::endl;
-	std::cerr << "p3IdService::service_CreateGroup() Alt GroupId : " << item->meta.mGroupId;
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+    std::cerr << "p3IdService::service_CreateGroup() Alt GroupId : " << item->meta.mGroupId;
+    std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-	ServiceCreate_Return createStatus;
+    ServiceCreate_Return createStatus;
 
     if (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		/* create the hash */
-		Sha1CheckSum hash;
+    {
+        /* create the hash */
+        Sha1CheckSum hash;
 
-		/* */
-		PGPFingerprintType ownFinger;
-		RsPgpId ownId(mPgpUtils->getPGPOwnId());
+        /* */
+        PGPFingerprintType ownFinger;
+        RsPgpId ownId(mPgpUtils->getPGPOwnId());
 
 #ifdef DEBUG_IDS
-		std::cerr << "p3IdService::service_CreateGroup() OwnPgpID: " << ownId.toStdString();
-		std::cerr << std::endl;
+        std::cerr << "p3IdService::service_CreateGroup() OwnPgpID: " << ownId.toStdString();
+        std::cerr << std::endl;
 #endif
 
 #ifdef GXSID_GEN_DUMMY_DATA
-//		if (item->group.mMeta.mAuthorId != "")
-//		{
-//			ownId = RsPgpId(item->group.mMeta.mAuthorId);
-//		}
+        //		if (item->group.mMeta.mAuthorId != "")
+        //		{
+        //			ownId = RsPgpId(item->group.mMeta.mAuthorId);
+        //		}
 #endif
 
-		if (!mPgpUtils->getKeyFingerprint(ownId,ownFinger))
-		{
-			std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
-			std::cerr << std::endl;
-			return SERVICE_CREATE_FAIL; // abandon attempt!
-		}
+        if (!mPgpUtils->getKeyFingerprint(ownId,ownFinger))
+        {
+            std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
+            std::cerr << std::endl;
+            return SERVICE_CREATE_FAIL; // abandon attempt!
+        }
 
 #ifdef DEBUG_IDS
-		std::cerr << "p3IdService::service_CreateGroup() OwnFingerprint: " << ownFinger.toStdString();
-		std::cerr << std::endl;
+        std::cerr << "p3IdService::service_CreateGroup() OwnFingerprint: " << ownFinger.toStdString();
+        std::cerr << std::endl;
 #endif
 
         RsGxsId gxsId(item->meta.mGroupId.toStdString());
-		calcPGPHash(gxsId, ownFinger, hash);
+        calcPGPHash(gxsId, ownFinger, hash);
         item->mPgpIdHash = hash;
 
 #ifdef DEBUG_IDS
 
-		std::cerr << "p3IdService::service_CreateGroup() Calculated PgpIdHash : " << item->group.mPgpIdHash;
-		std::cerr << std::endl;
+        std::cerr << "p3IdService::service_CreateGroup() Calculated PgpIdHash : " << item->group.mPgpIdHash;
+        std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-		/* do signature */
+        /* do signature */
 
 
 #define MAX_SIGN_SIZE 2048
-		uint8_t signarray[MAX_SIGN_SIZE]; 
-		unsigned int sign_size = MAX_SIGN_SIZE;
+        uint8_t signarray[MAX_SIGN_SIZE];
+        unsigned int sign_size = MAX_SIGN_SIZE;
         int result ;
 
         memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
-		if (!mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result))
-		{
-			/* error */
-			std::cerr << "p3IdService::service_CreateGroup() ERROR Signing stuff";
-			std::cerr << std::endl;
-			createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
-		}
-		else
+        mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result) ;
+
+    /* error */
+    switch(result)
+    {
+    case SELF_SIGNATURE_RESULT_PENDING : createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
+        std::cerr << "p3IdService::service_CreateGroup() signature still pending" << std::endl;
+        break ;
+    default:
+    case SELF_SIGNATURE_RESULT_FAILED:  return SERVICE_CREATE_FAIL ;
+        std::cerr << "p3IdService::service_CreateGroup() signature failed" << std::endl;
+        break ;
+
+    case SELF_SIGNATURE_RESULT_SUCCESS:
+    {
+        // Additional consistency checks.
+
+        if(sign_size == MAX_SIGN_SIZE)
         {
-            // Additional consistency checks.
-
-            if(sign_size == MAX_SIGN_SIZE)
-            {
-                std::cerr << "Inconsistent result. Signature uses full buffer. This is probably an error." << std::endl;
-                return SERVICE_CREATE_FAIL; // abandon attempt!
-            }
+            std::cerr << "Inconsistent result. Signature uses full buffer. This is probably an error." << std::endl;
+            return SERVICE_CREATE_FAIL; // abandon attempt!
+        }
 #ifdef DEBUG_IDS
-			std::cerr << "p3IdService::service_CreateGroup() Signature: ";
-			std::string strout;
+        std::cerr << "p3IdService::service_CreateGroup() Signature: ";
+        std::string strout;
 #endif
-			/* push binary into string -> really bad! */
-            item->mPgpIdSign = "";
-			for(unsigned int i = 0; i < sign_size; i++)
-			{
+        /* push binary into string -> really bad! */
+        item->mPgpIdSign = "";
+        for(unsigned int i = 0; i < sign_size; i++)
+        {
 #ifdef DEBUG_IDS
-				rs_sprintf_append(strout, "%02x", (uint32_t) signarray[i]);
+            rs_sprintf_append(strout, "%02x", (uint32_t) signarray[i]);
 #endif
-                item->mPgpIdSign += signarray[i];
-			}
-			createStatus = SERVICE_CREATE_SUCCESS;
+            item->mPgpIdSign += signarray[i];
+        }
+        createStatus = SERVICE_CREATE_SUCCESS;
 
 #ifdef DEBUG_IDS
-			std::cerr << strout;
-			std::cerr << std::endl;
+        std::cerr << strout;
+        std::cerr << std::endl;
 #endif
-		}
-		/* done! */
-	}
-	else
-	{
-		createStatus = SERVICE_CREATE_SUCCESS;
-	}
+    }
+    }
+        /* done! */
+    }
+    else
+    {
+        createStatus = SERVICE_CREATE_SUCCESS;
+    }
 
-	// Enforce no AuthorId.
-	item->meta.mAuthorId.clear() ;
+    // Enforce no AuthorId.
+    item->meta.mAuthorId.clear() ;
     //item->mMeta.mAuthorId.clear() ;
-	// copy meta data to be sure its all the same.
-	//item->group.mMeta = item->meta;
+    // copy meta data to be sure its all the same.
+    //item->group.mMeta = item->meta;
 
     // do it like p3gxscircles: save the new grp id
     // this allows the user interface
@@ -2640,11 +2648,11 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         if (std::find(mOwnIds.begin(), mOwnIds.end(), gxsId) == mOwnIds.end())
         {
             mOwnIds.push_back(gxsId);
-        mKeysTS[gxsId] = time(NULL) ;
+            mKeysTS[gxsId] = time(NULL) ;
         }
     }
 
-	return createStatus;
+    return createStatus;
 }
 
 

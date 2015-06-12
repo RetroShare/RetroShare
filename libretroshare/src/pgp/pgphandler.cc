@@ -1312,19 +1312,31 @@ bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t 
 
 	PGPFingerprintType fp(f.fingerprint) ;
 #endif
-    bool cancelled =false;
-    std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",false,&cancelled) ;
 
-	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
+    bool last_passwd_was_wrong = false ;
+ops_secret_key_t *secret_key = NULL ;
 
-	if(!secret_key)
-	{
-		std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
-		return false ;
-	}
-    if(cancelled)
+    for(int i=0;i<3;++i)
     {
-        std::cerr << "Key entering cancelled" << std::endl;
+        bool cancelled =false;
+        std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",last_passwd_was_wrong,&cancelled) ;
+
+        secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
+
+        if(cancelled)
+        {
+            std::cerr << "Key entering cancelled" << std::endl;
+            return false ;
+        }
+        if(secret_key)
+            break ;
+
+        std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
+        last_passwd_was_wrong = true ;
+    }
+    if(!secret_key)
+    {
+        std::cerr << "Could not obtain secret key. Signature cancelled." << std::endl;
         return false ;
     }
 
