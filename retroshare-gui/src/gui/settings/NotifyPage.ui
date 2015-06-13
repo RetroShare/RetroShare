@@ -14,7 +14,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabFeed">
       <attribute name="title">
@@ -88,6 +88,13 @@
              <widget class="QCheckBox" name="notify_Security">
               <property name="text">
                <string>Security</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="notify_SecurityIp">
+              <property name="text">
+               <string>Security Ip</string>
               </property>
              </widget>
             </item>
@@ -468,6 +475,38 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>notify_Peers</tabstop>
+  <tabstop>notify_Channels</tabstop>
+  <tabstop>notify_Forums</tabstop>
+  <tabstop>notify_Posted</tabstop>
+  <tabstop>notify_Blogs</tabstop>
+  <tabstop>notify_Messages</tabstop>
+  <tabstop>notify_Chat</tabstop>
+  <tabstop>notify_Security</tabstop>
+  <tabstop>notify_SecurityIp</tabstop>
+  <tabstop>message_ConnectAttempt</tabstop>
+  <tabstop>testFeedButton</tabstop>
+  <tabstop>popup_Connect</tabstop>
+  <tabstop>popup_NewMsg</tabstop>
+  <tabstop>popup_DownloadFinished</tabstop>
+  <tabstop>popup_PrivateChat</tabstop>
+  <tabstop>popup_GroupChat</tabstop>
+  <tabstop>popup_ChatLobby</tabstop>
+  <tabstop>popup_ConnectAttempt</tabstop>
+  <tabstop>testToasterButton</tabstop>
+  <tabstop>comboBoxToasterPosition</tabstop>
+  <tabstop>spinBoxToasterXMargin</tabstop>
+  <tabstop>spinBoxToasterYMargin</tabstop>
+  <tabstop>systray_GroupChat</tabstop>
+  <tabstop>systray_ChatLobby</tabstop>
+  <tabstop>chatLobbies_CountUnRead</tabstop>
+  <tabstop>chatLobbies_CheckNickName</tabstop>
+  <tabstop>chatLobbies_CountFollowingText</tabstop>
+  <tabstop>chatLobbies_TextToNotify</tabstop>
+  <tabstop>pushButtonDisableAll</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

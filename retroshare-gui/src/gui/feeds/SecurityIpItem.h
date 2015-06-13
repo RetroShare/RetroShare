@@ -44,7 +44,7 @@ public:
 
 	void updateItemStatic();
 
-	bool isSame(const RsPeerId &sslId, uint32_t type);
+	bool isSame(const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type);
 
 	/* FeedItem */
 	virtual void expand(bool open);

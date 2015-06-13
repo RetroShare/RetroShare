@@ -165,6 +165,8 @@ uint NotifyPage::getNewsFlags()
         newsFlags |= RS_FEED_TYPE_CHAT;
     if (ui.notify_Security->isChecked())
         newsFlags |= RS_FEED_TYPE_SECURITY;
+    if (ui.notify_SecurityIp->isChecked())
+        newsFlags |= RS_FEED_TYPE_SECURITY_IP;
 
     return newsFlags;
 }
@@ -287,6 +289,7 @@ void NotifyPage::load()
     ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
     ui.notify_Security->setChecked(newsflags & RS_FEED_TYPE_SECURITY);
+    ui.notify_SecurityIp->setChecked(newsflags & RS_FEED_TYPE_SECURITY_IP);
 
     ui.message_ConnectAttempt->setChecked(messageflags & RS_MESSAGE_CONNECT_ATTEMPT);
 

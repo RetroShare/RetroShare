@@ -79,9 +79,9 @@ void SecurityIpItem::setup()
 	updateItem();
 }
 
-bool SecurityIpItem::isSame(const RsPeerId &sslId, uint32_t type)
+bool SecurityIpItem::isSame(const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type)
 {
-	if (mSslId == sslId && mType == type) {
+	if (mType == type && mIpAddr == ipAddr && mIpAddrReported == ipAddrReported) {
 		return true;
 	}
 
@@ -106,7 +106,7 @@ void SecurityIpItem::updateItemStatic()
 		ui->ipAddrReported->hide();
 		ui->ipAddrReportedLabel->hide();
 		break;
-	case RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED:
+	case RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
 		ui->rsBanListButton->hide();
 		break;
 	default:
@@ -149,7 +149,7 @@ void SecurityIpItem::updateItem()
 				}
 			}
 			break;
-		case RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED:
+		case RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
 			ui->titleLabel->setText(tr("Wrong external ip address reported"));
 			ui->ipAddr->setText(QString::fromStdString(mIpAddr));
             ui->ipAddr->setToolTip(tr("<p>This is the external IP your Retroshare node thinks it is using.</p>")) ;

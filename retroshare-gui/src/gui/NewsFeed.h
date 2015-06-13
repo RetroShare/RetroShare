@@ -83,7 +83,7 @@ private slots:
 
 private:
 	void addFeedItem(FeedItem *item);
-	void addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, bool replace);
+	void addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, bool replace);
 
 	void addFeedItemPeerConnect(const RsFeedItem &fi);
 	void addFeedItemPeerDisconnect(const RsFeedItem &fi);

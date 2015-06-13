@@ -249,12 +249,12 @@ void NewsFeed::updateDisplay()
 				break;
 
 			case RS_FEED_ITEM_SEC_IP_BLACKLISTED:
-				if (flags & RS_FEED_TYPE_SECURITY)
+				if (flags & RS_FEED_TYPE_SECURITY_IP)
 					addFeedItemSecurityIpBlacklisted(fi, false);
 				break;
 
-			case RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED:
-				if (flags & RS_FEED_TYPE_SECURITY)
+			case RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
+				if (flags & RS_FEED_TYPE_SECURITY_IP)
 					addFeedItemSecurityWrongExternalIpReported(fi, false);
 				break;
 
@@ -423,6 +423,9 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			instance->addFeedItemSecurityUnknownIn(fi);
 			instance->addFeedItemSecurityUnknownOut(fi);
 
+			break;
+
+		case RS_FEED_TYPE_SECURITY_IP:
 			fi.mId1 = rsPeers->getOwnId().toStdString();
 			fi.mId2 = "0.0.0.0";
 			fi.mResult1 = RSBANLIST_CHECK_RESULT_BLACKLISTED;
@@ -433,6 +436,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			fi.mId3 = "0.0.0.2";
 			fi.mResult1 = 0;
 			instance->addFeedItemSecurityWrongExternalIpReported(fi, true);
+
 			break;
 
 		case RS_FEED_TYPE_CHANNEL:
@@ -895,7 +899,8 @@ void NewsFeed::addFeedItem(FeedItem *item)
 
 struct AddFeedItemIfUniqueData
 {
-	AddFeedItemIfUniqueData(FeedItem *feedItem, int type, const RsPeerId &sslId) : mType(type), mSslId(sslId)
+	AddFeedItemIfUniqueData(FeedItem *feedItem, int type, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported)
+	    : mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported)
 	{
 		mSecItem = dynamic_cast<SecurityItem*>(feedItem);
 		mSecurityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
@@ -903,6 +908,8 @@ struct AddFeedItemIfUniqueData
 
 	int mType;
 	const RsPeerId &mSslId;
+	const std::string& mIpAddr;
+	const std::string& mIpAddrReported;
 	SecurityItem *mSecItem;
 	SecurityIpItem *mSecurityIpItem;
 };
@@ -924,7 +931,7 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 
 	if (findData->mSecurityIpItem) {
 		SecurityIpItem *securityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
-		if (securityIpItem && securityIpItem->isSame(findData->mSslId, findData->mType)) {
+		if (securityIpItem && securityIpItem->isSame(findData->mIpAddr, findData->mIpAddrReported, findData->mType)) {
 			return true;
 		}
 		return false;
@@ -933,9 +940,9 @@ static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
 	return false;
 }
 
-void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, bool replace)
+void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, bool replace)
 {
-	AddFeedItemIfUniqueData data(item, itemType, sslId);
+	AddFeedItemIfUniqueData data(item, itemType, sslId, ipAddr, ipAddrReported);
 	FeedItem *feedItem = ui->feedWidget->findFeedItem(addFeedItemIfUniqueCallback, &data);
 
 	if (feedItem) {
@@ -1012,7 +1019,7 @@ void NewsFeed::addFeedItemSecurityConnectAttempt(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, fi.mType, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, fi.mType, RsPeerId(fi.mId2), "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityConnectAttempt()";
@@ -1026,7 +1033,7 @@ void NewsFeed::addFeedItemSecurityAuthDenied(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, RsPeerId(fi.mId2), "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityAuthDenied()";
@@ -1040,7 +1047,7 @@ void NewsFeed::addFeedItemSecurityUnknownIn(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, RsPeerId(fi.mId2), "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownIn()";
@@ -1054,7 +1061,7 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, RsPeerId(fi.mId2), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, RsPeerId(fi.mId2), "", "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";
@@ -1068,7 +1075,7 @@ void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTes
 	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mResult1, RS_FEED_ITEM_SEC_IP_BLACKLISTED, isTest);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_BLACKLISTED, RsPeerId(fi.mId1), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_BLACKLISTED, RsPeerId(fi.mId1), fi.mId2, "", false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityIpBlacklisted()";
@@ -1079,10 +1086,10 @@ void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTes
 void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, bool isTest)
 {
 	/* make new widget */
-	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mId3, RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED, isTest);
+	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mId3, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, isTest);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_WRONG_EXTERNAL_IP_REPORTED, RsPeerId(fi.mId1), false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, RsPeerId(fi.mId1), fi.mId2, fi.mId3, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityWrongExternalIpReported()";
