@@ -166,6 +166,7 @@ public:
         if (offset != rssize || !ok)
         {
             std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+            delete(item);
             return NULL ;
         }
 
