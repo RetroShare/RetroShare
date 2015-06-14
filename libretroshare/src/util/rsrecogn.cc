@@ -565,8 +565,6 @@ RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
 
 bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, const std::string &nickname, uint16_t tag_class, uint16_t tag_type, const std::string &comment, std::string &tag)
 {
-	RsGxsRecognReqItem *item = new RsGxsRecognReqItem();
-
 	EVP_PKEY *signKey = EVP_PKEY_new();
 	RSA *rsakey = d2i_RSAPrivateKey(NULL, (const unsigned char **)&key.keyData.bin_data, key.keyData.bin_len);
 
@@ -587,6 +585,8 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 #endif // DEBUG_RECOGN
                 return false;
         }
+
+	RsGxsRecognReqItem *item = new RsGxsRecognReqItem();
 
 	item->issued_at = time(NULL);
 	item->period = 365 * 24 * 3600;
