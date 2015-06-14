@@ -74,6 +74,9 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
 	mMode = BITDHT_MGR_STATE_OFF;
 	mFns = fns;
 	mModeTS = 0 ;
+	mStartTS = 0;
+	mSearchingDone = false;
+	mSearchTS = 0;
 
         mNetworkSize = 0;
         mBdNetworkSize = 0;
