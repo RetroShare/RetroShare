@@ -86,18 +86,12 @@ int RSGraphSource::n_values() const { return _points.size() ; }
 
 QString RSGraphSource::displayName(int i) const
 {
-    if(_points.empty())
-        return QString() ;
-
-    std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it = _points.begin();
-
     int n=0;
-    for(it = _points.begin();it!=_points.end() && n<i;++it,++n) ;
+    for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator  it = _points.begin();it!=_points.end() ;++it)
+        if(n++ == i)
+            return QString::fromStdString(it->first) ;
 
-    if(n != i)
-        return QString("[error]");
-
-    return QString::fromStdString(it->first) ;
+    return QString("[error]");
 }
 
 QString RSGraphSource::displayValue(float v) const
