@@ -846,20 +846,24 @@ bool LookupDNSAddr(std::string name, struct sockaddr_in &addr)
 #endif
 		return false;
 	}
-	
-	if ((res) && (res->ai_family == AF_INET)) 
+
+	if (res)
 	{
-		addr = *((struct sockaddr_in *) res->ai_addr);
-		freeaddrinfo(res); 
+		if (res->ai_family == AF_INET)
+		{
+			addr = *((struct sockaddr_in *) res->ai_addr);
+			freeaddrinfo(res);
 
 #ifdef NET_DEBUG
-		std::cerr << "LookupDNSAddr() getaddrinfo found address" << std::endl;
-		std::cerr << "addr: " << rs_inet_ntoa(addr.sin_addr) << std::endl;
-		std::cerr << "port: " << ntohs(addr.sin_port) << std::endl;
+			std::cerr << "LookupDNSAddr() getaddrinfo found address" << std::endl;
+			std::cerr << "addr: " << rs_inet_ntoa(addr.sin_addr) << std::endl;
+			std::cerr << "port: " << ntohs(addr.sin_port) << std::endl;
 #endif
-		return true;
+			return true;
+		}
+		freeaddrinfo(res);
 	}
-	
+
 #ifdef NET_DEBUG
 	std::cerr << "getaddrinfo failed - no address" << std::endl;
 #endif
