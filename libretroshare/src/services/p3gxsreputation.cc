@@ -360,11 +360,12 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
-	std::map<RsPeerId, ReputationConfig>::iterator it;
-	it = mConfig.find(peerid);
-	if (it != mConfig.end())
+    std::map<RsPeerId, ReputationConfig>::iterator it = mConfig.find(peerid);
+
+    if (it == mConfig.end())
 	{
-		mConfig[peerid] = ReputationConfig(peerid);
+        mConfig[peerid] = ReputationConfig(peerid);
+        it = mConfig.find(peerid) ;
 	}
 	it->second.mLatestUpdate = ts;
 
