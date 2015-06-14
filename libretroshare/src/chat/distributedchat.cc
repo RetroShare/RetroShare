@@ -388,6 +388,7 @@ void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatItem *msg)
     {
         std::cerr << "(EE) Chat item exceeds maximum serial size. It will be dropped." << std::endl;
         delete msg ;
+    return ;
     }
     sendChatItem(msg) ;
 }
