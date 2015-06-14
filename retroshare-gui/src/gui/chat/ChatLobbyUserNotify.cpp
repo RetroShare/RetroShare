@@ -100,9 +100,20 @@ QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
 unsigned int ChatLobbyUserNotify::getNewCount()
 {
 	int iNum=0;
-	for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end(); ++itCL) {
-		iNum+=itCL->second.size();
-		if (itCL->second.size()==0) _listMsg.erase(itCL);
+    for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
+    {
+        iNum+=itCL->second.size();
+
+        if (itCL->second.size()==0)
+        {
+            lobby_map::iterator ittmp = itCL ;
+            ++ittmp ;
+
+            _listMsg.erase(itCL);
+            itCL = ittmp ;
+        }
+        else
+            ++itCL ;
 	}
 	return iNum;
 }
