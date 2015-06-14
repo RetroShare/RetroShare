@@ -1,6 +1,44 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    GUI
+      * Added own flag and new checkbox in settings for security ip feed items.
+      * Changed NewsFeed::addUnique for SecurityIpItem to compare the ip addresses. That avoids duplicates when IP changes.
+      * Removed banner pixmap for the ConnectFriendWizard of the standard style.
+      * QWizard cannot be resized horizontal when a banner pixmap is set.
+      * fixed whitespaces in strings (patch from Henry)
+      * changed "Owned by node" into "Owned by" in IdDialog (patch from Henry)
+      * added explanation to IP change security item in a tooltip
+      * Changed string "TOR" to "Tor" everywhere.
+      * Fixed crash in context menu of the id list in IdDialog when no row is active.
+      * disable IP filter tab when using a hidden node
+      * Used ElidedLabel for the forum name to avoid the horizontal growing of the forum list.
+      * Set the status of the message to read when the user read it in the news feed.
+      * Remove the message news feed when the user reads the message in the message list.
+      * Added warning to IdEditDialog, when the lenght of the nickname is too short or too long.
+      * Used StyledElidedLabel for the nickname in Idialog to avoid the horizontal growing of the right widget.
+      * Updated languages from Transifex
+
+   Plugins
+      * FeedReader: Added check for forum author.
+      * Fixed VOIP linkage for ubuntu distributions (thx to Phenom)
+
+   IP Filters
+      * added check for whitelist before sending a Security item for IP changed.
+      * improved voting for extr address, and make sure DHTStunner does not return a banned IP
+      * removed/improved debug info
+
+   Bug fixes
+      * added missing size check in RsGxsRecognSerialiser
+      * fixed password handling in deferred signature algorithm (in case of cancel, enter wrong passphrase, etc). Fixes the bug of half-initialized 
+        identities not loading when cancel is pressed, or wrong passphrase is entered, at signature step.
+      * improved login system: do not re-ask for passphrase when user clicks cancel. Removed warning stating that "maybe passphrase is wrong".
+      * fixed another x64 serialisation bug in FeedReader (see rev8396)(thanks to Eugene Tooms)
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 14 June 2015 10:00:00 +0100
+
+retroshare06 (0.6.0.RC1-0.8401~trusty) trusty; urgency=low
+
+   GUI
       * added IP banlist system to fight large scale traffic analysis using IP masquerading
       * added security item for connection denial due to IP blacklist/whitelist
       * make conclusionPage handle all make friend events 
