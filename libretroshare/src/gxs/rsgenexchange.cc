@@ -1820,11 +1820,8 @@ void RsGenExchange::publishMsgs()
 		std::cerr << std::endl;
 #endif
 
-		RsNxsMsg* msg = new RsNxsMsg(mServType);
 		RsGxsMsgItem* msgItem = mit->second;
 		const uint32_t& token = mit->first;
-
-		msg->grpId = msgItem->meta.mGroupId;
 
 		uint32_t size = mSerialiser->size(msgItem);
 		char* mData = new char[size];
@@ -1841,6 +1838,9 @@ void RsGenExchange::publishMsgs()
 
 		if(serialOk)
 		{
+			RsNxsMsg* msg = new RsNxsMsg(mServType);
+			msg->grpId = msgItem->meta.mGroupId;
+
 			msg->msg.setBinData(mData, size);
 
 			// now create meta
