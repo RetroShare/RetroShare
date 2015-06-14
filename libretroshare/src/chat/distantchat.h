@@ -65,7 +65,10 @@ private:
     class DistantChatPeerInfo
     {
     public:
-        DistantChatPeerInfo() {}
+        DistantChatPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0)
+        {
+            *aes_key = 0;
+        }
 
         time_t last_contact ; 		// used to keep track of working connexion
     time_t last_keep_alive_sent ;	// last time we sent a keep alive packet.
@@ -81,6 +84,8 @@ private:
     class DistantChatDHInfo
     {
     public:
+        DistantChatDHInfo() : dh(0), direction(0), status(0) {}
+
         DH *dh ;
         RsGxsId gxs_id ;
         RsTurtleGenericTunnelItem::Direction direction ;
