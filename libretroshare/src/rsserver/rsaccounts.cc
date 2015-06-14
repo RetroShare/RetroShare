@@ -394,7 +394,10 @@ bool	RsAccountsDetail::loadPreferredAccount()
 			mPreferredId = RsPeerId(std::string(path));
 
 			if(mPreferredId.isNull())
+			{
+				fclose(ifd);
 				return false ;
+			}
 		}
 		fclose(ifd);
 		return true;
