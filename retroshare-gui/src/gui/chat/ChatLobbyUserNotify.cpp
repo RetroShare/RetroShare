@@ -127,22 +127,22 @@ void ChatLobbyUserNotify::iconClicked()
 
     for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
     {
-		/// Create a menu per lobby ///
-		bool bFound=false;
-		QString strLobbyName=tr("Unknown Lobby");
-		QIcon icoLobby=QIcon();
-		std::list<ChatLobbyId>::const_iterator lobbyIt;
-		for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-			ChatLobbyId clId = *lobbyIt;
-			if (clId==itCL->first) {
-				ChatLobbyInfo clInfo;
-				if (rsMsgs->getChatLobbyInfo(clId,clInfo))
-				strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
-				icoLobby=(clInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(":/images/chat_red24.png") : QIcon(":/images/chat_x24.png");
-				bFound=true;
-				break;
-			}
-		}
+        /// Create a menu per lobby ///
+        bool bFound=false;
+        QString strLobbyName=tr("Unknown Lobby");
+        QIcon icoLobby=QIcon();
+        std::list<ChatLobbyId>::const_iterator lobbyIt;
+        for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
+            ChatLobbyId clId = *lobbyIt;
+            if (clId==itCL->first) {
+                ChatLobbyInfo clInfo;
+                if (rsMsgs->getChatLobbyInfo(clId,clInfo))
+                    strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
+                icoLobby=(clInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(":/images/chat_red24.png") : QIcon(":/images/chat_x24.png");
+                bFound=true;
+                break;
+            }
+        }
 
         if (bFound)
         {
@@ -155,9 +155,9 @@ void ChatLobbyUserNotify::iconClicked()
             ++ittmp ;
             _listMsg.erase(itCL);
             itCL=ittmp ;
-			doUpdate=true;
-		}
-	}
+            doUpdate=true;
+        }
+    }
 
 	if (notifyCombined()) {
 		QSystemTrayIcon* trayIcon=getTrayIcon();
