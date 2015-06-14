@@ -795,7 +795,7 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
  */
 void RsCollectionDialog::remove()
 {
-	bool removeOnlyFile;
+    bool removeOnlyFile=false;
 	QString listDir;
 	// First, check if selection contains directories
 	for (int curs = 0; curs < ui._fileEntriesTW->selectedItems().count(); ++curs)

@@ -218,7 +218,8 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 
 int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags) 
 {
-	struct sockaddr_in addrv4;
+    struct sockaddr_in addrv4;
+    sockaddr_clear(&addrv4);
 
 	if (addr.ss_family != AF_INET)
     {
@@ -227,7 +228,6 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
             std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
             std::cerr << std::endl;
         }
-		sockaddr_clear(&addrv4);
 
 		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
 		{
