@@ -29,6 +29,7 @@
 #include "util/bdfile.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <iostream>
 #include <time.h>
@@ -88,7 +89,9 @@ void bdFilter::loadBannedIpFile()
         char addr_str[10240];
 
         struct sockaddr_in addr;
+        memset(&addr, 0, sizeof(struct sockaddr_in));
         addr.sin_family = PF_INET;
+
         unsigned short port;
 
     FILE *fd = fopen(mFilename.c_str(),"r") ;
