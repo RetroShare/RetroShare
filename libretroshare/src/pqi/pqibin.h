@@ -54,7 +54,7 @@ virtual int	netstatus() { return 1;}
 virtual int	isactive()  { return (buf != NULL);}
 virtual bool	moretoread(uint32_t /* usec */ ) 
 	{ 
-		if ((buf) && (bin_flags | BIN_FLAGS_READABLE))
+        if ((buf) && (bin_flags & BIN_FLAGS_READABLE))
 		{
 			if ((size - ftell(buf)) > 0)
 			{
@@ -67,7 +67,7 @@ virtual bool	moretoread(uint32_t /* usec */ )
 virtual int	close();
 virtual bool 	cansend(uint32_t /* usec */) 
 	{ 
-		return (bin_flags | BIN_FLAGS_WRITEABLE);   
+        return (bin_flags & BIN_FLAGS_WRITEABLE);
 	}
 virtual bool    bandwidthLimited() { return false; }
 
@@ -161,7 +161,7 @@ virtual int	netstatus() { return 1; }
 virtual int	isactive()  { return 1; }
 virtual bool	moretoread(uint32_t /* usec */) 
 	{ 
-		if ((buf) && (bin_flags | BIN_FLAGS_READABLE ))
+        if ((buf) && (bin_flags & BIN_FLAGS_READABLE ))
 		{
 			if (readloc < recvsize)
 			{
@@ -174,7 +174,7 @@ virtual bool	moretoread(uint32_t /* usec */)
 virtual int	close();
 virtual bool 	cansend(uint32_t /* usec */)    
 	{ 
-		return (bin_flags | BIN_FLAGS_WRITEABLE); 
+        return (bin_flags & BIN_FLAGS_WRITEABLE);
 	}
 virtual bool    bandwidthLimited() { return false; }
 
