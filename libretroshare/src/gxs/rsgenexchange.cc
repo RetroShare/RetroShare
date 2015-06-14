@@ -2034,7 +2034,7 @@ void RsGenExchange::processGroupUpdatePublish()
 
 
 		//gup.grpItem->meta = *meta;
-		GxsGrpPendingSign ggps(gup.grpItem, ggps.mToken);
+        GxsGrpPendingSign ggps(gup.grpItem, gup.mToken);
 
 		bool publishAndAdminPrivatePresent = checkKeys(meta->keys);
 
