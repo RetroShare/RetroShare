@@ -174,7 +174,7 @@ bool getLocalInterfaces_ipv4(struct in_addr &/*routeAddr*/, std::list<struct in_
 	for(; ifptr->if_index != 0; ++ifptr)
 	{
 		//copy in the interface name to look up address of
-		strncpy(ifreq.ifr_name, ifptr->if_name, IF_NAMESIZE);
+        strncpy(ifreq.ifr_name, ifptr->if_name, IF_NAMESIZE-1);// the -1 is here to ensure that there's enough room left to place a \0 termination byte
 
 		if(ioctl(sock, SIOCGIFADDR, &ifreq) != 0)
 		{
