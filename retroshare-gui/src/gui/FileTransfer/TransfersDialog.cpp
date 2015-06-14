@@ -2178,84 +2178,84 @@ void TransfersDialog::collOpen()
 
 void TransfersDialog::setShowDLSizeColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_SIZE) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_SIZE)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_SIZE, !show);
     }
 }
 
 void TransfersDialog::setShowDLCompleteColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_COMPLETED) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_COMPLETED)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_COMPLETED, !show);
     }
 }
 
 void TransfersDialog::setShowDLDLSpeedColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_DLSPEED) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_DLSPEED)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_DLSPEED, !show);
     }
 }
 
 void TransfersDialog::setShowDLProgressColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_PROGRESS) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_PROGRESS)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_PROGRESS, !show);
     }
 }
 
 void TransfersDialog::setShowDLSourcesColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_SOURCES) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_SOURCES)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_SOURCES, !show);
     }
 }
 
 void TransfersDialog::setShowDLStatusColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_STATUS) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_STATUS)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_STATUS, !show);
     }
 }
 
 void TransfersDialog::setShowDLPriorityColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_PRIORITY) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_PRIORITY)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_PRIORITY, !show);
     }
 }
 
 void TransfersDialog::setShowDLRemainingColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_REMAINING) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_REMAINING)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_REMAINING, !show);
     }
 }
 
 void TransfersDialog::setShowDLDownloadTimeColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_DOWNLOADTIME, !show);
     }
 }
 
 void TransfersDialog::setShowDLIDColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_ID) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_ID)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_ID, !show);
     }
 }
 
 void TransfersDialog::setShowDLLastDLColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_LASTDL) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_LASTDL)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_LASTDL, !show);
     }
 }
 
 void TransfersDialog::setShowDLPath(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_PATH) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_PATH)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_PATH, !show);
     }
 }
