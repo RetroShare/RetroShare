@@ -656,15 +656,13 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 
 bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_gxs_id,const RsPeerId& virtual_peer_id)
 {
-	RsChatDHPublicKeyItem *dhitem = new RsChatDHPublicKeyItem ;
-
     if(dh == NULL)
 	{
         std::cerr << "  (EE) DH struct is not initialised! Error." << std::endl;
-        delete dhitem ;
 		return false ;
 	}
 
+	RsChatDHPublicKeyItem *dhitem = new RsChatDHPublicKeyItem ;
     dhitem->public_key = BN_dup(dh->pub_key) ;
 
     // we should also sign the data and check the signature on the other end.
@@ -689,6 +687,7 @@ bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
             break ;
         }
         free(data) ;
+        delete(dhitem);
         return false;
     }
     free(data) ;
