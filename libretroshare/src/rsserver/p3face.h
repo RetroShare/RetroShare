@@ -134,6 +134,7 @@ class RsServer: public RsControl, public RsTickingThread
 
 	public:
 		virtual bool getPeerCryptoDetails(const RsPeerId& ssl_id,RsPeerCryptoParams& params) { return pqih->getCryptoParams(ssl_id,params); }
+		virtual void getLibraries(std::list<RsLibraryInfo> &libraries);
 
 	private: 
 

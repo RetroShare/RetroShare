@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -24,28 +24,25 @@
 
 #include <QFileDialog>
 
-
-//#include "mainpage.h"
-#include "ui_HelpDialog.h"
-
 #include <retroshare/rstypes.h>
+
+namespace Ui {
+class HelpDialog;
+}
 
 class HelpDialog : public QDialog 
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  HelpDialog(QWidget *parent = 0);
-  /** Default Destructor */
-
-private slots:
+	/** Default Constructor */
+	HelpDialog(QWidget *parent = 0);
+	/** Default Destructor */
+	virtual ~HelpDialog();
 
 private:
-  /** Qt Designer generated object */
-  Ui::HelpDialog ui;
-
+	/** Qt Designer generated object */
+	Ui::HelpDialog *ui;
 };
 
 #endif
-

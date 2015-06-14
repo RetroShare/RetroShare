@@ -191,6 +191,7 @@ class RsPlugin
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
 		virtual void getPluginVersion(int& major,int& minor, int& build, int& svn_rev) const = 0 ;
+		virtual void getLibraries(std::list<RsLibraryInfo> & /*libraries*/) {}
 
 		//
 		//========================== Plugin Interface ================================//

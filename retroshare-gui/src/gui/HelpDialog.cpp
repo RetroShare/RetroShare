@@ -19,64 +19,101 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #include "HelpDialog.h"
-#include <retroshare/rsiface.h>
-#include <retroshare/rsdisc.h>
+#include "ui_HelpDialog.h"
 
-#include <iostream>
+#include <retroshare/rsiface.h>
+#include <retroshare/rsplugin.h>
+#include <microhttpd.h>
 
 #include <QFile>
 #include <QTextStream>
 
-/* Images for context menu icons */
-#define IMAGE_DOWNLOAD       ":/images/start.png"
-
-/** Constructor */
-HelpDialog::HelpDialog(QWidget *parent)
-: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+static void addLibraries(QGridLayout *layout, const std::string &name, const std::list<RsLibraryInfo> &libraries)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
-  
-  //QFile licenseFile(QLatin1String(":/images/COPYING"));
-  QFile licenseFile(QLatin1String(":/help/licence.html"));
-   if (licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&licenseFile);
-        ui.license->setText(in.readAll());
-   }
-  QFile authorsFile(QLatin1String(":/help/authors.html"));
-   if (authorsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&authorsFile);
-        ui.authors->setText(in.readAll());
-   }
-  QFile thanksFile(QLatin1String(":/help/thanks.html"));
-   if (thanksFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&thanksFile);
-	ui.thanks->setText(in.readAll());
-   }
+	int row = layout->rowCount();
 
-  QFile versionFile(QLatin1String(":/help/version.html"));
-   if (versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-	QTextStream in(&versionFile);
-	QString version = in.readAll();
+	QLabel *label = new QLabel(QString::fromUtf8(name.c_str()));
+	label->setTextInteractionFlags(label->textInteractionFlags() | Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+	layout->addWidget(label, row++, 0, 1, 3);
 
-#ifdef ADD_LIBRETROSHARE_VERSION_INFO
-	/* get libretroshare version */
-	std::map<std::string, std::string>::iterator vit;
-	std::map<std::string, std::string> versions;
-	const RsConfig &conf = rsiface->getConfig();
-	bool retv = rsDisc->getDiscVersions(versions);
-	if (retv && versions.end() != (vit = versions.find(conf.ownId)))
-	{
-	    version += QString::fromStdString("Retroshare library version : \n") + QString::fromStdString(vit->second);
+	QFont font = label->font();
+	font.setBold(true);
+	label->setFont(font);
+
+	std::list<RsLibraryInfo>::const_iterator libraryIt;
+	for (libraryIt = libraries.begin(); libraryIt != libraries.end(); ++libraryIt) {
+		label = new QLabel(QString::fromUtf8(libraryIt->mName.c_str()));
+		label->setTextInteractionFlags(label->textInteractionFlags() | Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+		layout->addWidget(label, row, 0);
+		label->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+
+		label = new QLabel(QString::fromUtf8(libraryIt->mVersion.c_str()));
+		label->setTextInteractionFlags(label->textInteractionFlags() | Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+		layout->addWidget(label, row++, 1);
 	}
-#endif
-
-	ui.version->setText(version);
-   }
-
-   ui.label_2->setMinimumWidth(20);
 }
 
+/** Constructor */
+HelpDialog::HelpDialog(QWidget *parent) :
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+    ui(new(Ui::HelpDialog))
+{
+	/* Invoke the Qt Designer generated object setup routine */
+	ui->setupUi(this);
 
+	//QFile licenseFile(QLatin1String(":/images/COPYING"));
+	QFile licenseFile(QLatin1String(":/help/licence.html"));
+	if (licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream in(&licenseFile);
+		ui->license->setText(in.readAll());
+	}
+
+	QFile authorsFile(QLatin1String(":/help/authors.html"));
+	if (authorsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream in(&authorsFile);
+		ui->authors->setText(in.readAll());
+	}
+
+	QFile thanksFile(QLatin1String(":/help/thanks.html"));
+	if (thanksFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream in(&thanksFile);
+		ui->thanks->setText(in.readAll());
+	}
+
+	QFile versionFile(QLatin1String(":/help/version.html"));
+	if (versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream in(&versionFile);
+		QString version = in.readAll();
+
+		ui->version->setText(version);
+	}
+
+	/* Add version numbers of libretroshare */
+	std::list<RsLibraryInfo> libraries;
+	RsControl::instance()->getLibraries(libraries);
+	addLibraries(ui->libraryLayout, "libretroshare", libraries);
+
+	/* Add version numbers of RetroShare */
+	// Add versions here. Find a better place.
+	libraries.clear();
+	libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
+	addLibraries(ui->libraryLayout, "RetroShare", libraries);
+
+	/* Add version numbers of plugins */
+	if (rsPlugins) {
+		for (int i = 0; i < rsPlugins->nbPlugins(); ++i) {
+			RsPlugin *plugin = rsPlugins->plugin(i);
+			if (plugin) {
+				libraries.clear();
+				plugin->getLibraries(libraries);
+				addLibraries(ui->libraryLayout, plugin->getPluginName(), libraries);
+			}
+		}
+	}
+}
+
+HelpDialog::~HelpDialog()
+{
+	delete(ui);
+}

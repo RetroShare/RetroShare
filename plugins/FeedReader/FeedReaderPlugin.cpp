@@ -32,6 +32,10 @@
 #include "gui/FeedReaderFeedNotify.h"
 #include "services/p3FeedReader.h"
 
+#include <libxml/xmlversion.h>
+#include <libxslt/xsltconfig.h>
+#include <curl/curlver.h>
+
 #define IMAGE_FEEDREADER ":/images/FeedReader.png"
 
 static void *inited = new FeedReaderPlugin();
@@ -157,6 +161,13 @@ std::string FeedReaderPlugin::getShortPluginDescription() const
 std::string FeedReaderPlugin::getPluginName() const
 {
 	return QApplication::translate("FeedReaderPlugin", "FeedReader").toUtf8().constData();
+}
+
+void FeedReaderPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
+{
+	libraries.push_back(RsLibraryInfo("LibCurl", LIBCURL_VERSION));
+	libraries.push_back(RsLibraryInfo("Libxml2", LIBXML_DOTTED_VERSION));
+	libraries.push_back(RsLibraryInfo("libxslt", LIBXSLT_DOTTED_VERSION));
 }
 
 QTranslator* FeedReaderPlugin::qt_translator(QApplication */*app*/, const QString& languageCode, const QString& externalDir) const

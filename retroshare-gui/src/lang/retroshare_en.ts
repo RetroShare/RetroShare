@@ -748,7 +748,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatDialog</name>
     <message>
-        <source>Talking to </source>
+        <source>Talking to</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -976,14 +976,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> Column</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Columns</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1063,6 +1055,14 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Create an identity and enter this lobby</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>column</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1252,10 +1252,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Private chat invite from </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1277,10 +1273,6 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Maximum storage period, in days (0=keep all):</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Name : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1312,14 +1304,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP id : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Valid until : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Maximum count for coloring matching text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1333,6 +1317,22 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Show Bar by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat invite from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP id :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valid until :</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1504,14 +1504,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Don&apos;t stop to color after </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> items found (need more CPU)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1521,10 +1513,6 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>&lt;b&gt;Find &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1577,6 +1565,18 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Type a message here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t stop to color after</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>items found (need more CPU)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1817,14 +1817,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> with </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;/li&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;li&gt;a &lt;b&gt;node ID&lt;/b&gt; and &lt;b&gt;name&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1854,6 +1846,14 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the encryption method used by &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>with</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>external signatures&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2173,14 +2173,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Certificate Load Failed:file %1 not found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2353,6 +2345,14 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Paste Cert of your friend from Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:can&apos;t read from file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate Load Failed:something is wrong with %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3094,7 +3094,7 @@ Do you want to reject this message?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Congrats, you found a bug! </source>
+        <source>Congrats, you found a bug!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3619,14 +3619,6 @@ Do you want to reject this message?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Proxy VIA </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Relay VIA </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3756,6 +3748,14 @@ Do you want to reject this message?</source>
     </message>
     <message>
         <source>DHT Graph</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy VIA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relay VIA</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4997,10 +4997,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>It has many features, including built-in chat, messaging, </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5028,6 +5024,10 @@ p, li { white-space: pre-wrap; }
         <source>RetroShare Support</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>It has many features, including built-in chat, messaging,</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GlobalRouterStatistics</name>
@@ -5048,10 +5048,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Managed keys</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> : Service ID = </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5088,6 +5084,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> : Service ID =</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5167,10 +5167,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> can relay anonymous tunnels to this directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No one can anonymously access this directory.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5187,7 +5183,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Only friend nodes in groups </source>
+        <source>Only friend nodes in groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>can relay anonymous tunnels to this directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6598,10 +6598,6 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error Loading Help Contents: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Supplied XML file is not a valid Contents document.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6619,6 +6615,10 @@ before you can comment</source>
     </message>
     <message>
         <source>Found %1 results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Loading Help Contents:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6689,13 +6689,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Libraries</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HelpTextBrowser</name>
-    <message>
-        <source>Error opening help file: </source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Opening External Link</source>
         <translation type="unfinished"></translation>
@@ -6714,6 +6714,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening help file:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6944,15 +6948,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Really delete? </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Identity name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Owned by node...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7041,14 +7037,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> Column</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Linked to a friend Retroshare node</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7089,14 +7077,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Node name: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Node Id  : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>+50 Known PGP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7110,6 +7090,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Do you really want to delete this identity?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Owned by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Node Id  :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Really delete?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7236,19 +7240,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GXS name: </source>
+        <source>GXS name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP name: </source>
+        <source>PGP name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GXS id: </source>
+        <source>GXS id:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP id: </source>
+        <source>PGP id:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7373,14 +7377,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The disk space in your </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> directory is running low (current limit is </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>MB). 
 
  RetroShare will now safely suspend any disk access to this directory. 
@@ -7461,10 +7457,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Really quit ? </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Internal Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7510,6 +7502,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show web interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The disk space in your</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>directory is running low (current limit is</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Really quit ?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8838,12 +8842,6 @@ For security, your keyring was previously backed-up to file
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Key removal has failed. Your keyring remains intact.
-
-Reported error: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Personal signature</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8950,6 +8948,12 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Search peer ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key removal has failed. Your keyring remains intact.
+
+Reported error:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9203,6 +9207,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Count occurences of my current identity</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Security Ip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -9220,10 +9228,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9260,6 +9264,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Please enter your PGP password for key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends).</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9303,11 +9311,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>By priority: </source>
+        <source>By priority:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>By service : </source>
+        <source>By service :</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9413,14 +9421,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This is your own PGP key, and it is signed by : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This key is signed by : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The trust level is a way to express your own trust in this key. It is not used by the software nor shared, but can be useful to you in order to remember good/bad keys.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9466,6 +9466,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You haven&apos;t set a trust level for this key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is your own PGP key, and it is signed by :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This key is signed by :</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10605,14 +10613,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <source>Subject: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Participants: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10792,11 +10792,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The following has not been added to your download list, because you already have it:
-    </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10837,14 +10832,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Login Failure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Maybe password is wrong</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10872,19 +10859,11 @@ Reported error is:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Id: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Click to send a private message to %1 (%2).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 (%2, Extra - Source included)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This cert is malformed. Error code: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10925,10 +10904,6 @@ Reported error is:
     </message>
     <message>
         <source>DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We&apos;re very sorry for that.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto Subscribe: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10981,6 +10956,30 @@ Reported error is:
     </message>
     <message>
         <source>%1 days ago</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subject:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Participants:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Subscribe:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This cert is malformed. Error code:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The following has not been added to your download list, because you already have it:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11159,10 +11158,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Do you really want to stop sharing this directory ? </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11187,6 +11182,10 @@ p, li { white-space: pre-wrap; }
 * Network Wide: 	anonymously shared over the network (including your friends)
 * Browsable: 	browsable by your friends
 * Universal: 		both</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to stop sharing this directory ?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11223,23 +11222,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSPermissionMatrixWidget</name>
     <message>
-        <source>Service name: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Allowed by default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Denied by default</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer name: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer Id: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11262,26 +11249,38 @@ p, li { white-space: pre-wrap; }
         <source>Switched Off</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Service name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Id:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RSettingsWin</name>
     <message>
-        <source>Error Saving Configuration on page </source>
+        <source>Error Saving Configuration on page</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>RatesStatus</name>
     <message>
-        <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11684,18 +11683,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid language code specified: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid GUI style specified: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid log level specified: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11709,6 +11696,18 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Revision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid language code specified:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid GUI style specified:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid log level specified:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12020,6 +12019,10 @@ Reducing image to %1x%2 pixels?</source>
         <source>&lt;p&gt;This is the IP your friend claims it is connected to. If you just changed IPs, this is a false warning. If not, that means your connection to this friend is forwarded by an intermediate peer, which would be suspicious.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This warning is here to protect you against traffic forwarding attacks. In such a case, the friend you&apos;re connected to will not see your external IP, but the attacker&apos;s IP. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;However, if you just changed IPs for some reason (some ISPs regularly force change IPs) this warning just tells you that a friend connected to the new IP before Retroshare figured out the IP changed. Nothing&apos;s wrong in this case.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can easily suppress false warnings by white-listing your own IPs (e.g. the range of your ISP), or by completely disabling these warnings in Options-&amp;gt;Notify-&amp;gt;News Feed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -12124,10 +12127,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Missing/Damaged SSL certificate for key </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12137,6 +12136,10 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Peer/node not in friendlist (PGP id=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing/Damaged SSL certificate for key</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12571,15 +12574,15 @@ Check your ports!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Share flags and groups: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit Shared Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share flags and groups:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13711,10 +13714,6 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>version: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Transferring</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13912,6 +13911,10 @@ Try to be patient!</source>
         <source>Show file list transfers</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>version:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -14072,11 +14075,11 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Forwarded data    </source>
+        <source>TR Forward probabilities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TR Forward probabilities</source>
+        <source>Forwarded data</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

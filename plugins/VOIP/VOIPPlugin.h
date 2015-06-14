@@ -53,6 +53,7 @@ class VOIPPlugin: public RsPlugin
 
 		virtual std::string getShortPluginDescription() const ;
 		virtual std::string getPluginName() const;
+		virtual void getLibraries(std::list<RsLibraryInfo> &libraries);
 		virtual void setInterfaces(RsPlugInInterfaces& interfaces);
 
 		//================================== RsPlugin Notify ==================================//

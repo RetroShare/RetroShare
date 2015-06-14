@@ -544,6 +544,7 @@ SOURCES +=	pqi/authgpg.cc \
 
 SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3face-server.cc \
+			rsserver/p3face-info.cc \
 			rsserver/p3history.cc \
 			rsserver/p3msgs.cc \
 			rsserver/p3peers.cc \

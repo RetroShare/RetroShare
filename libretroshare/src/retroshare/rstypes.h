@@ -388,4 +388,18 @@ public:
 	unsigned int retries;
 };
 
+/* class for the information about a used library */
+class RsLibraryInfo
+{
+public:
+	RsLibraryInfo() {}
+	RsLibraryInfo(const std::string &name, const std::string &version) :
+	    mName(name), mVersion(version)
+	{}
+
+public:
+	std::string mName;
+	std::string mVersion;
+};
+
 #endif
