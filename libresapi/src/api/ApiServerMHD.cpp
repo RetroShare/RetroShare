@@ -565,6 +565,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         MHD_add_response_header(resp, "Content-Type", type);
         secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
+        fclose(fd);
         return MHD_YES;
     }
 
