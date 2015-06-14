@@ -656,13 +656,6 @@ void p3GRouter::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtual
     }
     it->second.removeVirtualPeer(virtual_peer_id) ;
 
-    if(it->second.virtual_peers.empty())
-    {
-#ifdef GROUTER_DEBUG
-        std::cerr << "  last virtual peer removed. Also deleting hash entry." << std::endl;
-#endif
-        _tunnels.erase(it) ;
-    }
 #ifdef GROUTER_DEBUG
     std::cerr << "  setting tunnel status in pending message." << std::endl;
 #endif
@@ -670,6 +663,15 @@ void p3GRouter::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtual
      for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::iterator it2(_pending_messages.begin());it2!=_pending_messages.end();++it2)
          if(it2->second.tunnel_hash == hash && it->second.virtual_peers.empty())
              it2->second.tunnel_status = RS_GROUTER_TUNNEL_STATUS_PENDING ;
+
+     if(it->second.virtual_peers.empty())
+     {
+#ifdef GROUTER_DEBUG
+         std::cerr << "  last virtual peer removed. Also deleting hash entry." << std::endl;
+#endif
+         _tunnels.erase(it) ;
+     }
+
 }
 
 void p3GRouter::connectToTurtleRouter(p3turtle *pt)
