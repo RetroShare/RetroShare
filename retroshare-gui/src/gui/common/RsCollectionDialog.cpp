@@ -659,7 +659,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 {
 	QStringList fileToHash;
 	QMap<QString, QString > dirToAdd;
-	int count;//to not scan all items on list .count()
+    int count=0;//to not scan all items on list .count()
 
 	QModelIndexList milSelectionList =	ui._systemFileTW->selectionModel()->selectedIndexes();
 	foreach (QModelIndex index, milSelectionList)
