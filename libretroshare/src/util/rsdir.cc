@@ -646,13 +646,14 @@ bool RsDirUtil::hashFile(const std::string& filepath,
 bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint64_t &size, RsThread *thread /*= NULL*/)
 {
 	FILE *fd;
+
+	if (NULL == (fd = RsDirUtil::rs_fopen(filepath.c_str(), "rb")))
+		return false;
+
 	int  len;
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
-
-	if (NULL == (fd = RsDirUtil::rs_fopen(filepath.c_str(), "rb")))
-		return false;
 
 	/* determine size */
  	fseeko64(fd, 0, SEEK_END);
