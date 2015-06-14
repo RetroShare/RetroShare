@@ -739,11 +739,13 @@ QImage* PictureFlowSoftwareRenderer::surface(int slideIndex)
 				if(surfaceCache.contains(key))
 					return surfaceCache[key];
 
-	QImage* sr = prepareSurface(img, state->slideWidth, state->slideHeight, bgcolor, state->reflectionEffect);
-	surfaceCache.insert(key, sr);
+    QImage* sr = prepareSurface(img, state->slideWidth, state->slideHeight, bgcolor, state->reflectionEffect);
+    QImage *sr_copy = new QImage(*sr) ;
+
+    surfaceCache.insert(key, sr);	// this takes ownership on sr. So we can't use it afterwards
 	imageHash.insert(slideIndex, img);
 
-	return sr;
+    return sr_copy;
 }
 
 // Renders a slide to offscreen buffer. Returns a rect of the rendered area.
@@ -785,8 +787,11 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 	PFreal dist = distance * PFREAL_ONE;
 
 	int xi = qMax((PFreal)0, ((w*PFREAL_ONE/2) + fdiv(xs*h, dist+ys)) >> PFREAL_SHIFT);
-	if(xi >= w)
-		return rect;
+    if(xi >= w)
+    {
+        delete src ;
+        return rect;
+    }
 
 	bool flag = false;
 	rect.setLeft(xi);
@@ -855,7 +860,9 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 	}//for(int x = qMax(xi, col1); x <= col2; ++x)
 
 	rect.setTop(0);
-	rect.setBottom(h-1);
+    rect.setBottom(h-1);
+    delete src ;
+
 	return rect;
 }
 
