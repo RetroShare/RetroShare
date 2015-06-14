@@ -139,7 +139,7 @@ void FlowLayoutItem::dropEvent(QDropEvent *event)
 	} else {//if (source && source != this)
 		QWidget *wid =
 		    qobject_cast<QWidget *>(event->source());//QT5 return QObject
-		FlowLayout *layout;
+		FlowLayout *layout = NULL;
 		if (wid) layout =
 		    qobject_cast<FlowLayout *>(wid->layout());
 		if (layout) {
