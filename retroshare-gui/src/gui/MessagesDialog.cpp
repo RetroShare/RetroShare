@@ -542,9 +542,11 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     std::string mid;
 
     MessageInfo msgInfo;
-    if (getCurrentMsg(cid, mid)) {
-        rsMail->getMessage(mid, msgInfo);
-    }
+    if (!getCurrentMsg(cid, mid))
+        return ;
+
+    if(!rsMail->getMessage(mid, msgInfo))
+        return ;
 
     QList<QTreeWidgetItem*> itemsRead;
     QList<QTreeWidgetItem*> itemsUnread;
