@@ -2313,6 +2313,7 @@ void RsGenExchange::publishGrps()
 #ifdef GEN_EXCH_DEBUG
         	std::cerr << "RsGenExchange::publishGrps() failed grp, trying again " << std::endl;
 #endif
+        	delete grp;
         	ggps.mLastAttemptTS = time(NULL);
         	++vit;
         }
