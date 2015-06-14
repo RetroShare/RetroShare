@@ -125,7 +125,8 @@ void ChatLobbyUserNotify::iconClicked()
 	rsMsgs->getChatLobbyList(lobbies);
 	bool doUpdate=false;
 
-	for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();++itCL) {
+    for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
+    {
 		/// Create a menu per lobby ///
 		bool bFound=false;
 		QString strLobbyName=tr("Unknown Lobby");
@@ -143,10 +144,17 @@ void ChatLobbyUserNotify::iconClicked()
 			}
 		}
 
-		if (bFound){
-			makeSubMenu(trayMenu, icoLobby, strLobbyName, itCL->first);
-		} else {
-			_listMsg.erase(itCL);
+        if (bFound)
+        {
+            makeSubMenu(trayMenu, icoLobby, strLobbyName, itCL->first);
+            ++itCL ;
+        }
+        else
+        {
+            lobby_map::iterator ittmp(itCL);
+            ++ittmp ;
+            _listMsg.erase(itCL);
+            itCL=ittmp ;
 			doUpdate=true;
 		}
 	}
