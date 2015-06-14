@@ -1384,7 +1384,8 @@ RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::str
 				std::cerr << "p3FeedReaderThread::processXPath - unable to process xpath expression" << std::endl;
 #endif
 				errorString = *xpathIt;
-				return RS_FEED_ERRORSTATE_PROCESS_XPATH_WRONG_EXPRESSION;
+				result = RS_FEED_ERRORSTATE_PROCESS_XPATH_WRONG_EXPRESSION;
+				break;
 			}
 		}
 
