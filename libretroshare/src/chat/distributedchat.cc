@@ -1168,8 +1168,6 @@ void DistributedChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, cons
 		std::cerr << "Sending invitation to peer " << peer_id << " to lobby "<< std::hex << lobby_id << std::dec << std::endl;
 #endif
 
-	RsChatLobbyInviteItem *item = new RsChatLobbyInviteItem ;
-
 	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(lobby_id) ;
@@ -1181,6 +1179,9 @@ void DistributedChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, cons
 #endif
 		return ;
 	}
+
+	RsChatLobbyInviteItem *item = new RsChatLobbyInviteItem ;
+
 	item->lobby_id = lobby_id ;
 	item->lobby_name = it->second.lobby_name ;
 	item->lobby_topic = it->second.lobby_topic ;
