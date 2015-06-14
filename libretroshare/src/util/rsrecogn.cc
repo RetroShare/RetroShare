@@ -616,7 +616,6 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 	uint32_t len = serialiser.size(item);
 	char *buf = new char[len];
 	bool serOk = serialiser.serialise(item, buf, &len);
-	delete item;
 
 	if (serOk)
 	{
@@ -632,9 +631,11 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 		std::cerr << std::endl;
 		item->print(std::cerr);
 #endif // DEBUG_RECOGN
-		return false;
-	}
+        delete item;
+        return false;
+    }
 
+    delete item;
 	return serOk;
 }
 
