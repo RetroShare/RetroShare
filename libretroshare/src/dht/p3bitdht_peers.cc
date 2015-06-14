@@ -421,14 +421,18 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t t
 	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
 	if (!dpd)
 	{
-		DhtPeerDetails newdpd;
-		mPeers[id] = newdpd;
-		dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+        DhtPeerDetails newdpd;
 
-		dpd->mDhtId.id = id;
-		dpd->mRsId = pid;
-        	dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+        newdpd.mDhtId.id = id;
+        newdpd.mRsId = pid;
+            newdpd.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+            newdpd.mPeerType = RSDHT_PEERTYPE_ANY;
 
+        mPeers[id] = newdpd;
+        dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+
+        if(dpd == NULL)
+            std::cerr << "(EE) inconsistency error in p3BitDht::addInternalPeer_locked() Cannot find peer that was just added." << std::endl;
 	}
 
 	/* what do we need to reset? */
