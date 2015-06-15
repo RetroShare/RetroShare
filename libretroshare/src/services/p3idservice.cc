@@ -708,7 +708,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 #ifdef DEBUG_IDS
             std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
 #endif
-            usleep(500 * 1000) ;	// sleep for 500 msec.
+            if(force_load) usleep(500 * 1000) ;	// sleep for 500 msec.
         }
         else
             break ;
