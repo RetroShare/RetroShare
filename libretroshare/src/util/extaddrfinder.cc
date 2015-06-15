@@ -68,6 +68,11 @@ static void getPage(const std::string& server_name,std::string& page)
 	// socket creation
 
 	sockfd = unix_socket(PF_INET,SOCK_STREAM,0);
+	if (sockfd < 0)
+	{
+		std::cerr << "ExtAddrFinder: Failed to create socket" << std::endl;
+		return ;
+	}
 
 	serveur.sin_family = AF_INET;
 
@@ -78,6 +83,7 @@ static void getPage(const std::string& server_name,std::string& page)
 	if (hostinfo == NULL) /* l'hôte n'existe pas */
 	{
 		std::cerr << "ExtAddrFinder: Unknown host " << server_name << std::endl;
+		unix_close(sockfd);
 		return ;
 	}
 	serveur.sin_addr = *(struct in_addr*) hostinfo->h_addr; 
@@ -90,6 +96,7 @@ static void getPage(const std::string& server_name,std::string& page)
 	if(unix_connect(sockfd,(struct sockaddr *)&serveur, sizeof(serveur)) == -1)
 	{
 		std::cerr << "ExtAddrFinder: Connection error to " << server_name << std::endl ;
+		unix_close(sockfd);
 		return ;
 	}
 #ifdef EXTADDRSEARCH_DEBUG
@@ -107,6 +114,7 @@ static void getPage(const std::string& server_name,std::string& page)
 	if(send(sockfd,request,strlen(request),0)== -1)
 	{
 		std::cerr << "ExtAddrFinder: Could not send request to " << server_name << std::endl ;
+		unix_close(sockfd);
 		return ;
 	}
 	// recéption 
