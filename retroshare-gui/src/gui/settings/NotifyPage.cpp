@@ -347,10 +347,9 @@ void NotifyPage::load()
 
     notifyToggled();
 
-    ui.chatLobbies_TextToNotify->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
-    ui.chatLobbies_CountFollowingText->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
-
     if (mChatLobbyUserNotify){
+        ui.chatLobbies_TextToNotify->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
+        ui.chatLobbies_CountFollowingText->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
         ui.chatLobbies_CountUnRead->setChecked(mChatLobbyUserNotify->isCountUnRead());
         ui.chatLobbies_CheckNickName->setChecked(mChatLobbyUserNotify->isCheckForNickName());
         ui.chatLobbies_TextToNotify->setPlainText(mChatLobbyUserNotify->textToNotify());
