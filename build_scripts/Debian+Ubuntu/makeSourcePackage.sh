@@ -122,6 +122,8 @@ for i in ${dist}; do
         cp ../control.ubuntu_lucid debian/control
     elif test "${i}" = "squeeze" ; then
         cp ../control.squeeze_bubba3 debian/control
+    elif test "${i}" = "precise" ; then
+        cp ../control.precise debian/control
     else
         cp ../debian/control debian/control
     fi

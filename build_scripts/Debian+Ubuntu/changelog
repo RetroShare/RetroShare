@@ -1,6 +1,7 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    GUI
+      * Added version information of the libraries to HelpDialog.
       * Added own flag and new checkbox in settings for security ip feed items.
       * Changed NewsFeed::addUnique for SecurityIpItem to compare the ip addresses. That avoids duplicates when IP changes.
       * Removed banner pixmap for the ConnectFriendWizard of the standard style.
@@ -29,12 +30,47 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    Bug fixes
       * added missing size check in RsGxsRecognSerialiser
-      * fixed password handling in deferred signature algorithm (in case of cancel, enter wrong passphrase, etc). Fixes the bug of half-initialized 
-        identities not loading when cancel is pressed, or wrong passphrase is entered, at signature step.
+      * fixed password handling in deferred signature algorithm (in case of cancel, enter wrong passphrase, etc). Fixes the bug of 
+        half-initialized identities not loading when cancel is pressed, or wrong passphrase is entered, at signature step.
       * improved login system: do not re-ask for passphrase when user clicks cancel. Removed warning stating that "maybe passphrase is wrong".
       * fixed another x64 serialisation bug in FeedReader (see rev8396)(thanks to Eugene Tooms)
+      * Added missing dlcolse to RsPluginManager::loadPlugin.
+      * Added proper handling of the handle of the loaded plugin.
+      * Added check for trailing '/' of base directory in RsAccountsDetail::setupBaseDirectory.
+      * avoid unwanted wait in in p3IdService that slowed down the entire app (thx to jolavillette for finding this)
+      * Initialized the the member aes_key of DistantChatPeerInfo with memset.
+      * Fixed memory leak in p3FeedReaderThread::processXPath.
+      * Fixed uninitialized pointer read in FlowLayoutItem::dropEvent.
+      * Fixed memory leak in RsGenExchange::publishGrps.
+      * Fixed memory leak in RsGenExchange::publishMsgs.
+      * Fixed memory leak in DistantChatService::locked_sendDHPublicKey.
+      * Added missing fclose to RsAccountsDetail::loadPreferredAccount.
+      * Added missing fclose to ApiServerMHD::accessHandlerCallback.
+      * Fixed memory leak in RsRecogn::createTagRequest
+      * Fixed memory leak in DistributedChatService::invitePeerToLobby when lobby not found.
+      * Fixed memory leak in LookupDNSAddr.
+      * Fixed momory leak in RsDirUtil::getFileHash when the file doesn't exist.
+      * Fixed memory leak when RsServicePermissionItem::deserialise failed.
+      * Fixed uninitialised member in bdNodeManager
+      * fixed another uninitialised memory read in bitdht
+      * fixed uninitialised memory in bdfilter
+      * removed 2 unused members from FileDetails in ftextralist
+      * fixed situation leading to uninitialised message content in MessageDialog
+      * fixed use of wrong variable in GxsGenExchange
+      * fixed uninitialised variable in RSCollectionDialog
+      * removed ambiguous expression that confuses coverity, in TransfersDialog
+      * fixed access of delete iterator
+      * removed false positive access beyond range of iterator
+      * removed possibility to access invalidated iterator in grouter
+      * fixed invalid use of wrong iterator in GXS reputation system
+      * fixed bug in using invalid iterator in ChatLobbyNotify
+      * fixed wrong use of flags in pqibin (wtf??)
+      * remove potential use of deleted item in rsRecogn
+      * fixed use of pointer after memory ownership transferred to QCache
+      * fixed potential passing of deleted item to sendChatItem when a ChatLobbyItem is too big (would probably cause a crash. Found using coverity)
+      * fixed call to strncpy in network interface determination code which leaves unterminated string if strlen(ifptr->if_name)==16
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 14 June 2015 10:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 15 June 2015 22:00:00 +0100
 
 retroshare06 (0.6.0.RC1-0.8401~trusty) trusty; urgency=low
 
