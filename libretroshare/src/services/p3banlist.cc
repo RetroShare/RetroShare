@@ -54,7 +54,7 @@
 #define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 		240	// every 4 mins.
 #define RSBANLIST_DEFAULT_AUTORANGE_LIMIT    		3	// default number of IPs in same range to trigger a complete IP range filter.
 #define RSBANLIST_DEFAULT_AUTORANGE_ENABLED  		true
-#define RSBANLIST_DEFAULT_FRIEND_GATHERING_ENABLED  	true
+#define RSBANLIST_DEFAULT_FRIEND_GATHERING_ENABLED  	false
 #define RSBANLIST_DEFAULT_DHT_GATHERING_ENABLED  	false
 #define RSBANLIST_DEFAULT_ENABLED  			true
 
