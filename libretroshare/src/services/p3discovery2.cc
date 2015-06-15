@@ -865,6 +865,9 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
 		std::cerr << "p3discovery2::processContactInfo(" << fromId << ") PGPID: ";
 		std::cerr << item->pgpId << " Ignoring Info on self";
 		std::cerr << std::endl;
+#else
+		/* remove unused parameter warnings */
+		(void) fromId;
 #endif		
         delete item;
 		return;
@@ -1025,7 +1028,7 @@ void p3discovery2::sendPGPCertificate(const PGPID &aboutId, const SSLID &toId)
 }
 
 						  
-void p3discovery2::recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *item)
+void p3discovery2::recvPGPCertificate(const SSLID &/*fromId*/, RsDiscPgpCertItem *item)
 {
 	
 #ifdef P3DISC_DEBUG

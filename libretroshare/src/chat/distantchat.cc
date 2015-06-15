@@ -288,6 +288,9 @@ void DistantChatService::removeVirtualPeer(const TurtleFileHash& hash,const Turt
 
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "Distant chat: Removing virtual peer " << virtual_peer_id << " for hash " << hash << std::endl;
+#else
+    /* remove unused parameter warnings */
+    (void) hash;
 #endif
     {
         RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
@@ -354,6 +357,9 @@ void DistantChatService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
     std::cerr << "         hash = " << hash << std::endl;
     std::cerr << "         vpid = " << virtual_peer_id << std::endl;
     std::cerr << "    acting as = " << direction << std::endl;
+#else
+    /* remove unused parameter warnings */
+    (void) direction;
 #endif
 
     RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;

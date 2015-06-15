@@ -290,6 +290,8 @@ bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
+	/* remove unused parameter warnings */
+	(void) type;
 	(void) value;
 	return false;
 }

@@ -1248,7 +1248,6 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
 
     sockaddr_storage addr_filtered ;
     sockaddr_storage_copyip(addr_filtered,addr) ;
-    time_t now = time(NULL) ;
 
 #ifdef PEER_DEBUG
     std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr_filtered) << ", as reported by friend " << from << std::endl;
@@ -1296,6 +1295,9 @@ static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkM
     {
 #ifdef PEER_DEBUG
     std::cerr << "Checking IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " for peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
+#else
+    /* remove unused parameter warnings */
+    (void) pid;
 #endif
       if(!link_mgr->checkPotentialAddr( (*it2).mAddr,now - (*it2).mSeenTime))
       {

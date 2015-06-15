@@ -753,7 +753,7 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
     return true ;
 }
 
-void p3ChatService::locked_storeIncomingMsg(RsChatMsgItem *item)
+void p3ChatService::locked_storeIncomingMsg(RsChatMsgItem */*item*/)
 {
 #ifdef REMOVE
 	privateIncomingList.push_back(item) ;

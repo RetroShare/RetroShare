@@ -668,7 +668,7 @@ bool AuthSSLimpl::VerifyOwnSignBin(const void *data, const uint32_t len,
  * only using GPG functions - which lock themselves
  */
 
-X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
+X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 {
         /* Transform the X509_REQ into a suitable format to
          * generate DIGEST hash. (for SSL to do grunt work)
@@ -1109,10 +1109,10 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
     char    buf[256];
     X509   *err_cert;
-    int     err, depth;
 
     err_cert = X509_STORE_CTX_get_current_cert(ctx);
 #ifdef AUTHSSL_DEBUG
+    int err, depth;
     err = X509_STORE_CTX_get_error(ctx);
     depth = X509_STORE_CTX_get_error_depth(ctx);
 #endif
