@@ -136,7 +136,12 @@ HashCache::HashCache(const std::string& path)
 			return ;
 		}
 		FILE *F = fopen( (_path+".bin").c_str(),"rb") ;
-
+		if (!F)
+		{
+			std::cerr << "Cannot open file for reading encrypted file cache, filename " << (_path+".bin") << std::endl;
+			free(buffer);
+			return;
+		}
 		if(fread(buffer,1,file_size,F) != file_size)
 		{
 			std::cerr << "Cannot read from file " + _path+".bin" << ": something's wrong." << std::endl;
