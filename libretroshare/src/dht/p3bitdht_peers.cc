@@ -434,7 +434,7 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t t
         if(dpd == NULL)
         {
             std::cerr << "(EE) inconsistency error in p3BitDht::addInternalPeer_locked() Cannot find peer that was just added." << std::endl;
-            return;
+            return NULL;
         }
 	}
 
