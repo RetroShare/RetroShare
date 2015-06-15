@@ -299,6 +299,20 @@ bool RsAccountsDetail::setupBaseDirectory(std::string alt_basedir)
 		mBaseDirectory = alt_basedir;
 	}
 
+	/* Check for trailing '/' */
+	if (!mBaseDirectory.empty())
+	{
+		char lastChar = *mBaseDirectory.rbegin();
+		if (lastChar == '/'
+#ifdef WINDOWS_SYS
+		    || lastChar == '\\'
+#endif
+		    )
+		{
+			mBaseDirectory.erase(mBaseDirectory.end() - 1);
+		}
+	}
+
 	if (!RsDirUtil::checkCreateDirectory(mBaseDirectory))
 	{
 		std::cerr << "RsAccounts::setupBaseDirectory() Cannot Create BaseConfig Dir:" << mBaseDirectory;
