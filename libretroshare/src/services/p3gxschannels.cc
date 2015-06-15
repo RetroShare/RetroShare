@@ -1425,6 +1425,7 @@ void p3GxsChannels::handle_event(uint32_t event_type, const std::string &elabel)
 
 		case CHANNEL_PROCESS:
 			request_AllSubscribedGroups();
+			break;
 
 		default:
 			/* error */
