@@ -82,7 +82,7 @@ const uint32_t FT_CNTRL_SLOW_RATE     = 100   * 1024;
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
-	 mState(DOWNLOADING), mSize(0), mFlags(0)
+	 mState(DOWNLOADING), mSize(0), mFlags(0), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
 {
 	return;
 }
@@ -93,7 +93,7 @@ ftFileControl::ftFileControl(std::string fname,
 		ftFileCreator *fc, ftTransferModule *tm)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
-	 mSize(size), mFlags(flags)
+	 mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
 {
 	return;
 }
