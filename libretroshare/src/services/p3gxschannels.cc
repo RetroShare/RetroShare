@@ -217,6 +217,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							{
 								notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
 							}
+							break;
 						}
 
 						case RsGxsNotify::TYPE_PUBLISHKEY:
@@ -228,6 +229,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							{
 								notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_PUBLISHKEY, git->toStdString());
 							}
+							break;
 						}
 					}
 				}
