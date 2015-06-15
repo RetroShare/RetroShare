@@ -110,7 +110,7 @@ class RsAccountsDetail
 		bool getPreferredAccountId(RsPeerId &id);
 		bool getAccountDetails(const RsPeerId &id, RsPgpId& gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
 
-		bool getAccountOptions(bool &ishidden, bool isFirstTimeRun);
+		bool getAccountOptions(bool &ishidden, bool &isFirstTimeRun);
 
 
 		bool getAccountIds(std::list<RsPeerId> &ids);

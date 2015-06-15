@@ -490,7 +490,7 @@ bool     RsAccountsDetail::getAccountDetails(const RsPeerId &id,
 	return false;
 }
 
-bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool isFirstTimeRun)
+bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool &isFirstTimeRun)
 {
 	std::map<RsPeerId, AccountDetails>::iterator it;
 	it = mAccounts.find(mPreferredId);
