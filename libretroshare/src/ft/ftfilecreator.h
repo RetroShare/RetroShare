@@ -142,9 +142,6 @@ class ftFileCreator: public ftFileProvider
 		 * structure to track missing chunks 
 		 */
 
-		uint64_t mStart;
-		uint64_t mEnd;
-
 		std::map<uint64_t, ftChunk> mChunks;
 		std::map<RsPeerId,ZeroInitCounter> mChunksPerPeer ;
 
