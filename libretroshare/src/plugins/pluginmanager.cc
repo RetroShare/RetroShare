@@ -186,6 +186,11 @@ void RsPluginManager::stopPlugins()
 //			delete _plugins[i].plugin;
 //			_plugins[i].plugin = NULL;
 		}
+		if (_plugins[i].handle)
+		{
+			dlclose(_plugins[i].handle);
+			_plugins[i].handle = NULL;
+		}
 	}
 }
 
@@ -321,6 +326,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr  << "    -> No API version number." << std::endl;
 		pinfo.status = PLUGIN_STATUS_MISSING_API ;
 		pinfo.info_string = "" ;
+		dlclose(handle);
 		return false ;
 	} 
 	if(pinfo.svn_revision == 0)
@@ -328,6 +334,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr  << "    -> No svn revision number." << std::endl;
 		pinfo.status = PLUGIN_STATUS_MISSING_SVN ;
 		pinfo.info_string = "" ;
+		dlclose(handle);
 		return false ;
 	} 
 
@@ -340,6 +347,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr << dlerror() << std::endl ;
 		pinfo.status = PLUGIN_STATUS_MISSING_SYMBOL ;
 		pinfo.info_string = _plugin_entry_symbol ;
+		dlclose(handle);
 		return false ;
 	}
 	std::cerr << "   -> Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
@@ -351,11 +359,13 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr << "  Plugin entry function " << _plugin_entry_symbol << " returns NULL ! It should return an object of type RsPlugin* " << std::endl;
 		pinfo.status = PLUGIN_STATUS_NULL_PLUGIN ;
 		pinfo.info_string = "Plugin entry " + _plugin_entry_symbol + "() return NULL" ;
+		dlclose(handle);
 		return false ;
 	}
 
 	pinfo.status = PLUGIN_STATUS_LOADED ;
 	pinfo.plugin = p ;
+	pinfo.handle = handle;
 	p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
 	pinfo.info_string = "" ;
 
