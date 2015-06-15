@@ -133,7 +133,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 									notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
 								}
 							}
-							continue;
+							break;
 						}
 
 						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
@@ -146,8 +146,9 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							{
 								notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
 							}
-							continue;
+							break;
 						}
+						break;
 					}
 
 					case RsGxsNotify::TYPE_PUBLISHKEY:
@@ -162,8 +163,9 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							{
 								notify->AddFeedItem(RS_FEED_ITEM_FORUM_PUBLISHKEY, git->toStdString());
 							}
-							continue;
+							break;
 						}
+						break;
 					}
 				}
 			}
