@@ -186,11 +186,12 @@ void RsPluginManager::stopPlugins()
 //			delete _plugins[i].plugin;
 //			_plugins[i].plugin = NULL;
 		}
-		if (_plugins[i].handle)
-		{
-			dlclose(_plugins[i].handle);
-			_plugins[i].handle = NULL;
-		}
+// Causes a crash
+//		if (_plugins[i].handle)
+//		{
+//			dlclose(_plugins[i].handle);
+//			_plugins[i].handle = NULL;
+//		}
 	}
 }
 
