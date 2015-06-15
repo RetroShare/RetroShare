@@ -808,7 +808,7 @@ QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
         case 0: lobby_item = privateSubLobbyItem; break;
         case 1: lobby_item = publicSubLobbyItem; break;
         case 2: lobby_item = privateLobbyItem; break;
-        case 4: lobby_item = publicLobbyItem; break;
+        case 3: lobby_item = publicLobbyItem; break;
         default: lobby_item = publicLobbyItem;
         }
         //QTreeWidgetItem *lobby_item = (p==0)?publicLobbyItem:privateLobbyItem ;
