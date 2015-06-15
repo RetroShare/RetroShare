@@ -151,6 +151,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
     connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
     connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
+    connect(ui.color2btn, SIGNAL(clicked()), this, SLOT(textbackgroundColor()));
+
     connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
     connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
     //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
@@ -281,6 +283,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     QPixmap pxm(24,24);
     pxm.fill(Qt::black);
     ui.colorbtn->setIcon(pxm);
+    
+    QPixmap pxm2(24,24);
+    pxm2.fill(Qt::white);
+    ui.color2btn->setIcon(pxm2);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _smheader = ui.msgFileList->header () ;
@@ -2142,6 +2148,17 @@ void MessageComposer::textColor()
     colorChanged(col);
 }
 
+void MessageComposer::textbackgroundColor()
+{
+    QColor col2 = QColorDialog::getColor(ui.msgText->textBackgroundColor(), this);
+    if (!col2.isValid())
+        return;
+    QTextCharFormat fmt;
+    fmt.setBackground(col2);
+    mergeFormatOnWordOrSelection(fmt);
+    colorChanged2(col2);
+}
+
 void MessageComposer::textAlign(QAction *a)
 {
     if (a == actionAlignLeft)
@@ -2168,6 +2185,7 @@ void MessageComposer::currentCharFormatChanged(const QTextCharFormat &format)
 {
     fontChanged(format.font());
     colorChanged(format.foreground().color());
+    colorChanged2(format.background().color());
 }
 
 void MessageComposer::cursorPositionChanged()
@@ -2198,6 +2216,13 @@ void MessageComposer::colorChanged(const QColor &c)
     QPixmap pix(16, 16);
     pix.fill(c);
     ui.colorbtn->setIcon(pix);
+}
+
+void MessageComposer::colorChanged2(const QColor &c)
+{
+    QPixmap pix(16, 16);
+    pix.fill(c);
+    ui.color2btn->setIcon(pix);
 }
 
 void MessageComposer::alignmentChanged(Qt::Alignment a)

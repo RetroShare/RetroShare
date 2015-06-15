@@ -60,16 +60,7 @@
        </property>
        <widget class="QWidget" name="dockWidgetContents">
         <layout class="QGridLayout" name="gridLayout_4">
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>1</number>
          </property>
          <item row="1" column="0">
@@ -221,16 +212,7 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
-            <property name="leftMargin">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>6</number>
-            </property>
-            <property name="rightMargin">
-             <number>6</number>
-            </property>
-            <property name="bottomMargin">
+            <property name="margin">
              <number>6</number>
             </property>
             <item row="0" column="0">
@@ -238,7 +220,128 @@
               <property name="horizontalSpacing">
                <number>1</number>
               </property>
-              <item row="0" column="8">
+              <item row="0" column="2">
+               <widget class="QComboBox" name="comboSize">
+                <property name="maximumSize">
+                 <size>
+                  <width>45</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::ClickFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>Font size</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="5">
+               <widget class="QToolButton" name="sizeincreaseButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>1677</width>
+                  <height>1677</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>Increase font size</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="6">
+               <widget class="QToolButton" name="sizedecreaseButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>Decrease font size</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="7">
+               <widget class="QToolButton" name="boldbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>1677</width>
+                  <height>1677</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>Bold</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="9">
                <widget class="QToolButton" name="italicbtn">
                 <property name="minimumSize">
                  <size>
@@ -279,7 +382,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="12">
+              <item row="0" column="14">
                <widget class="QToolButton" name="imagebtn">
                 <property name="minimumSize">
                  <size>
@@ -383,156 +486,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="2">
-               <widget class="QComboBox" name="comboSize">
-                <property name="maximumSize">
-                 <size>
-                  <width>45</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::ClickFocus</enum>
-                </property>
-                <property name="toolTip">
-                 <string>Font size</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="4">
-               <widget class="QToolButton" name="sizeincreaseButton">
-                <property name="maximumSize">
-                 <size>
-                  <width>1677</width>
-                  <height>1677</height>
-                 </size>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="toolTip">
-                 <string>Increase font size</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="5">
-               <widget class="QToolButton" name="sizedecreaseButton">
-                <property name="maximumSize">
-                 <size>
-                  <width>167</width>
-                  <height>167</height>
-                 </size>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="toolTip">
-                 <string>Decrease font size</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="6">
-               <widget class="QToolButton" name="boldbtn">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>1677</width>
-                  <height>1677</height>
-                 </size>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="toolTip">
-                 <string>Bold</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="10">
-               <widget class="QToolButton" name="colorbtn">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>167</width>
-                  <height>167</height>
-                 </size>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="toolTip">
-                 <string>Select Color</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="11">
+              <item row="0" column="13">
                <widget class="QToolButton" name="textalignmentbtn">
                 <property name="minimumSize">
                  <size>
@@ -569,7 +523,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="9">
+              <item row="0" column="10">
                <widget class="QToolButton" name="codeButton">
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
@@ -595,7 +549,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="15">
+              <item row="0" column="17">
                <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -608,7 +562,7 @@
                 </property>
                </spacer>
               </item>
-              <item row="0" column="7">
+              <item row="0" column="8">
                <widget class="QToolButton" name="underlinebtn">
                 <property name="minimumSize">
                  <size>
@@ -649,7 +603,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="13">
+              <item row="0" column="15">
                <widget class="QToolButton" name="emoticonButton">
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
@@ -663,6 +617,50 @@
                   <width>24</width>
                   <height>24</height>
                  </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <widget class="QToolButton" name="colorbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>Set Text color</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QToolButton" name="color2btn">
+                <property name="toolTip">
+                 <string>Set Text background color</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
@@ -763,16 +761,7 @@
             <enum>QFrame::Box</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="leftMargin">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>6</number>
-            </property>
-            <property name="rightMargin">
-             <number>6</number>
-            </property>
-            <property name="bottomMargin">
+            <property name="margin">
              <number>6</number>
             </property>
             <item>
@@ -1009,16 +998,7 @@ border-image: url(:/images/closepressed.png)
        </widget>
        <widget class="QWidget" name="layoutWidget_1">
         <layout class="QGridLayout" name="layoutrecommended">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <property name="spacing">

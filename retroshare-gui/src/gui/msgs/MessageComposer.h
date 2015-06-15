@@ -124,6 +124,7 @@ private slots:
     void textSize(const QString &p);
     void textStyle(int styleIndex);
     void textColor();
+    void textbackgroundColor();
     void textAlign(QAction *a);
     void smileyWidget();
     void addSmileys();
@@ -187,6 +188,7 @@ private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
     void colorChanged(const QColor &c);
+    void colorChanged2(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
 
     bool sendMessage_internal(bool bDraftbox);
