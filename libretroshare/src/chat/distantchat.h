@@ -67,7 +67,7 @@ private:
     public:
         DistantChatPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0)
         {
-            *aes_key = 0;
+            memset(aes_key, 0, DISTANT_CHAT_AES_KEY_SIZE);
         }
 
         time_t last_contact ; 		// used to keep track of working connexion
