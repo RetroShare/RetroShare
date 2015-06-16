@@ -1322,7 +1322,7 @@ int 	pqissl::Authorise_SSL_Connection()
 
     if(!rsBanList->isAddressAccepted(remote_addr,checking_flags,&check_result))
     {
-        std::cerr << "(SS) connection attempt from banned IP address. Refusing it. Reason: " << check_result << ". Attack??" << std::endl;
+        std::cerr << "(SS) connection attempt from banned IP address " << sockaddr_storage_iptostring(remote_addr) << ". Refusing it. Reason: " << check_result << ". Attack??" << std::endl;
         RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_BLACKLISTED, PeerId().toStdString(), sockaddr_storage_iptostring(remote_addr), "", "", check_result);
     reset_locked();
     return 0 ;
