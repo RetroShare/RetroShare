@@ -1211,6 +1211,12 @@ ops_write_literal_data_from_file(const char *filename,
         n=read(fd,buf,1024);
         if (!n)
             break;
+        if (n == -1)
+        {
+            close(fd);
+            ops_memory_free(mem);
+            return ops_false;
+        }
         ops_memory_add(mem, &buf[0], n);
         }
     close(fd);    
