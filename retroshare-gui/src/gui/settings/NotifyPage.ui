@@ -94,7 +94,7 @@
             <item>
              <widget class="QCheckBox" name="notify_SecurityIp">
               <property name="text">
-               <string>Security Ip</string>
+               <string>Ip security</string>
               </property>
              </widget>
             </item>
