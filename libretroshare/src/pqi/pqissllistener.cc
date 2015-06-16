@@ -73,7 +73,17 @@ pqissllistenbase::pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMg
 
 pqissllistenbase::~pqissllistenbase()
 {
-	return;
+    if(lsock != -1)
+    {
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS // ie UNIX
+        shutdown(lsock, SHUT_RDWR);
+        close(lsock);
+#else //WINDOWS_SYS
+        closesocket(lsock);
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+    }
 }
 
 int 	pqissllistenbase::tick()
@@ -287,7 +297,7 @@ int	pqissllistenbase::resetlisten()
 		closesocket(lsock);
 #endif 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
+        lsock = -1;
 		active = false;
 		return 1;
 	}
