@@ -1797,7 +1797,7 @@ void DistributedChatService::cleanLobbyCaches()
 
 	// update the gui
 	for(std::list<ChatLobbyId>::const_iterator it(changed_lobbies.begin());it!=changed_lobbies.end();++it)
-		RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"------------","") ;
+        RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"","") ;
 
 	// send connection challenges
 	//
