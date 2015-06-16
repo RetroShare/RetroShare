@@ -1820,7 +1820,9 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& r
     if (!locked_addTransaction(newTrans))
         delete newTrans;
 
+#ifdef NXS_NET_DEBUG
     std::cerr << "  Requested new transaction for " << reqList.size() << " items." << std::endl;
+#endif
 }
 
 void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)

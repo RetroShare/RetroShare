@@ -255,7 +255,9 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
 
 bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 {
+#ifdef DEBUG_IDS
     std::cerr << "p3IdService::saveList()" << std::endl;
+#endif
 
     RS_STACK_MUTEX(mIdMtx) ;
     cleanup = true ;

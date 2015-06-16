@@ -1031,9 +1031,10 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
      * 1) No Flags => All Messages in those Groups.
      *
      */
+#ifdef DATA_DEBUG
     std::cerr << "RsGxsDataAccess::getMsgList()";
     std::cerr << std::endl;
-
+#endif
 
     bool onlyOrigMsgs = false;
     bool onlyLatestMsgs = false;
@@ -1042,21 +1043,27 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
     // Can only choose one of these two.
     if (opts.mOptions & RS_TOKREQOPT_MSG_ORIGMSG)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgList() MSG_ORIGMSG";
             std::cerr << std::endl;
+#endif
             onlyOrigMsgs = true;
     }
     else if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgList() MSG_LATEST";
             std::cerr << std::endl;
+#endif
             onlyLatestMsgs = true;
     }
 
     if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
     {
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::getMsgList() MSG_THREAD";
             std::cerr << std::endl;
+#endif
             onlyThreadHeadMsgs = true;
     }
 

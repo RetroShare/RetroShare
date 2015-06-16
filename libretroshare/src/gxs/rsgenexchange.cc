@@ -973,9 +973,11 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 
 bool RsGenExchange::checkAuthenFlag(const PrivacyBitPos& pos, const uint8_t& flag) const
 {
+#ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::checkMsgAuthenFlag(pos: " << pos << " flag: ";
     std::cerr << (int) flag << " mAuthenPolicy: " << mAuthenPolicy << ")";
     std::cerr << std::endl;
+#endif
 
     switch(pos)
     {
