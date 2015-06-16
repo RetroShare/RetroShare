@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>530</width>
-    <height>513</height>
+    <height>518</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -159,7 +159,7 @@
             </property>
             <property name="icon">
              <iconset resource="../images.qrc">
-              <normaloff>:/images/tags/pgp-known.png</normaloff>:/images/tags/pgp-known.png</iconset>
+              <normaloff>:/images/contact22.png</normaloff>:/images/contact22.png</iconset>
             </property>
             <property name="iconSize">
              <size>
