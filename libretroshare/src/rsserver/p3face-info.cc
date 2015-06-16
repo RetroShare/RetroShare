@@ -28,7 +28,12 @@
 #include <bzlib.h>
 #include <openssl/ssl.h>
 #include <zlib.h>
+
+#ifdef NO_SQLCIPHER
+#include <sqlite3.h>
+#else
 #include <sqlcipher/sqlite3.h>
+#endif
 
 void RsServer::getLibraries(std::list<RsLibraryInfo> &libraries)
 {
