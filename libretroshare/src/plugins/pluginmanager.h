@@ -98,7 +98,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		//
 		void loadPlugins(const std::vector<RsPlugin*>& explicit_plugin_entries) ;
 
-		void stopPlugins();
+		void stopPlugins(p3ServiceServer *pqih);
 
 		void registerCacheServices() ;
 		void registerClientServices(p3ServiceServer *pqih) ;

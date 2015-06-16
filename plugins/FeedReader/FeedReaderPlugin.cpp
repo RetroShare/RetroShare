@@ -44,11 +44,9 @@ extern "C" {
 #ifdef WIN32
 	__declspec(dllexport)
 #endif
-	void *RETROSHARE_PLUGIN_provide()
+	RsPlugin *RETROSHARE_PLUGIN_provide()
 	{
-		static FeedReaderPlugin *p = new FeedReaderPlugin();
-
-		return (void*)p;
+		return new FeedReaderPlugin();
 	}
 
 	// This symbol contains the svn revision number grabbed from the executable.

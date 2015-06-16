@@ -83,7 +83,7 @@ void RsServer::rsGlobalShutDown()
 
 	ConfigFinalSave(); // save configuration before exit
 
-	mPluginsManager->stopPlugins();
+	mPluginsManager->stopPlugins(pqih);
 
 	mNetMgr->shutdown(); /* Handles UPnP */
 

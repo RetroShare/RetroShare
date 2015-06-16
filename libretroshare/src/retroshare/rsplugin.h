@@ -121,6 +121,9 @@ public:
 class RsPlugin
 {
 	public:
+		RsPlugin() {}
+		virtual ~RsPlugin() {}
+
 		//
 		//================================ Services ==================================//
 		//

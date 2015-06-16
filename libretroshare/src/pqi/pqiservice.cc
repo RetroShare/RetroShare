@@ -84,6 +84,31 @@ int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 	return 1;
 }
 
+int p3ServiceServer::removeService(pqiService *ts)
+{
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+
+#ifdef SERVICE_DEBUG
+	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, "p3ServiceServer::removeService()");
+#endif
+
+	RsServiceInfo info = ts->getServiceInfo();
+
+	// This doesn't need to be in Mutex.
+	mServiceControl->deregisterService(info.mServiceType);
+
+	std::map<uint32_t, pqiService *>::iterator it = services.find(info.mServiceType);
+	if (it == services.end())
+	{
+		std::cerr << "p3ServiceServer::removeService(): Service not found with id " << info.mServiceType << "!" << std::endl;
+		return -1;
+	}
+
+	services.erase(it);
+
+	return 1;
+}
+
 bool	p3ServiceServer::recvItem(RsRawItem *item)
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/

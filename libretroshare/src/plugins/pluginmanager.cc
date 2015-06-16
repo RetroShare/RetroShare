@@ -174,7 +174,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 	saveConfiguration();
 }
 
-void RsPluginManager::stopPlugins()
+void RsPluginManager::stopPlugins(p3ServiceServer *pqih)
 {
 	std::cerr << "  Stopping plugins." << std::endl;
 
@@ -182,16 +182,21 @@ void RsPluginManager::stopPlugins()
 	{
 		if (_plugins[i].plugin != NULL)
 		{
+			p3Service *service = _plugins[i].plugin->p3_service();
+			if (service)
+			{
+				pqih->removeService(service);
+			}
+
 			_plugins[i].plugin->stop();
-//			delete _plugins[i].plugin;
-//			_plugins[i].plugin = NULL;
+			delete _plugins[i].plugin;
+			_plugins[i].plugin = NULL;
 		}
-// Causes a crash
-//		if (_plugins[i].handle)
-//		{
-//			dlclose(_plugins[i].handle);
-//			_plugins[i].handle = NULL;
-//		}
+		if (_plugins[i].handle)
+		{
+			dlclose(_plugins[i].handle);
+			_plugins[i].handle = NULL;
+		}
 	}
 }
 

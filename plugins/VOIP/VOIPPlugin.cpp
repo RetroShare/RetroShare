@@ -51,11 +51,9 @@ extern "C" {
 	// - always respect the C linkage convention
 	// - always return an object of type RsPlugin*
 	//
-	void *RETROSHARE_PLUGIN_provide()
+	RsPlugin *RETROSHARE_PLUGIN_provide()
 	{
-		static VOIPPlugin *p = new VOIPPlugin() ;
-
-		return (void*)p ;
+		return new VOIPPlugin() ;
 	}
 
 	// This symbol contains the svn revision number grabbed from the executable. 
