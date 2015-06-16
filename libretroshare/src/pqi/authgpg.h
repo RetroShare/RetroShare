@@ -164,6 +164,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		virtual bool	getGPGAcceptedList(std::list<RsPgpId> &ids);
 		virtual bool	getGPGSignedList(std::list<RsPgpId> &ids);
 		virtual bool   importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
+        virtual bool   importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
 		virtual bool   exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
 
         virtual bool   removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code) ;

@@ -783,8 +783,39 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,RsPgpId& imported_
 	if(ops_false == ops_keyring_read_from_file(tmp_keyring, ops_true, filename.c_str()))
 	{
 		import_error = "PGPHandler::readKeyRing(): cannot read key file. File corrupted?" ;
+        free(tmp_keyring);
 		return false ;
 	}
+
+    return checkAndImportKeyPair(tmp_keyring, imported_key_id, import_error);
+}
+
+bool PGPHandler::importGPGKeyPairFromString(const std::string &data, RsPgpId &imported_key_id, std::string &import_error)
+{
+    import_error = "" ;
+
+    ops_memory_t* mem = ops_memory_new();
+    ops_memory_add(mem, (unsigned char*)data.data(), data.length());
+
+    ops_keyring_t *tmp_keyring = allocateOPSKeyring();
+
+    if(ops_false == ops_keyring_read_from_mem(tmp_keyring, ops_true, mem))
+    {
+        import_error = "PGPHandler::importGPGKeyPairFromString(): cannot parse key data" ;
+        free(tmp_keyring);
+        return false ;
+    }
+    return checkAndImportKeyPair(tmp_keyring, imported_key_id, import_error);
+}
+
+bool PGPHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpId &imported_key_id, std::string &import_error)
+{
+    if(tmp_keyring == 0)
+    {
+        import_error = "PGPHandler::checkAndImportKey(): keyring is null" ;
+        return false;
+    }
+
 	if(tmp_keyring->nkeys != 2)
 	{
 		import_error = "PGPHandler::importKeyPair(): file does not contain a valid keypair." ;
@@ -923,6 +954,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,RsPgpId& imported_
 	// 6 - clean
 	//
 	ops_keyring_free(tmp_keyring) ;
+    free(tmp_keyring);
 
     // write public key to disk
     syncDatabase();

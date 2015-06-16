@@ -144,6 +144,7 @@ namespace RsAccounts
 	// PGP Support Functions.
 	bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
 	bool    ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
+    bool    ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
         void    GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 	bool    CopyGnuPGKeyrings() ;
 

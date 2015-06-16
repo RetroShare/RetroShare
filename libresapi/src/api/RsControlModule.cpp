@@ -39,6 +39,8 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     addResourceHandler("password", this, &RsControlModule::handlePassword);
     addResourceHandler("login", this, &RsControlModule::handleLogin);
     addResourceHandler("shutdown", this, &RsControlModule::handleShutdown);
+    addResourceHandler("import_pgp", this, &RsControlModule::handleImportPgp);
+    addResourceHandler("create_location", this, &RsControlModule::handleCreateLocation);
 }
 
 RsControlModule::~RsControlModule()
@@ -57,6 +59,12 @@ bool RsControlModule::askForPassword(const std::string &key_details, bool prev_i
 	cancelled = false ;
     {
         RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+        if(mFixedPassword != "")
+        {
+            password = mFixedPassword;
+            return true;
+        }
+
         mWantPassword = true;
         mKeyName = key_details;
         mPassword = "";
@@ -189,7 +197,7 @@ void RsControlModule::run()
     std::cerr << "RsControlModule: Retroshare stopped. Bye!" << std::endl;
 }
 
-void RsControlModule::handleRunState(Request &req, Response &resp)
+void RsControlModule::handleRunState(Request &, Response &resp)
 {
     RsStackMutex stack(mDataMtx); // ********** LOCKED **********
     std::string state;
@@ -221,7 +229,7 @@ void RsControlModule::handleRunState(Request &req, Response &resp)
     resp.setOk();
 }
 
-void RsControlModule::handleIdentities(Request &req, Response &resp)
+void RsControlModule::handleIdentities(Request &, Response &resp)
 {
     RsStackMutex stack(mDataMtx); // ********** LOCKED **********
     if(mRunState == WAITING_INIT || mRunState == FATAL_ERROR)
@@ -247,7 +255,7 @@ void RsControlModule::handleIdentities(Request &req, Response &resp)
     resp.setOk();
 }
 
-void RsControlModule::handleLocations(Request &req, Response &resp)
+void RsControlModule::handleLocations(Request &, Response &resp)
 {
     RsStackMutex stack(mDataMtx); // ********** LOCKED **********
     if(mRunState == WAITING_INIT || mRunState == FATAL_ERROR)
@@ -313,11 +321,137 @@ void RsControlModule::handleLogin(Request &req, Response &resp)
     resp.setOk();
 }
 
-void RsControlModule::handleShutdown(Request &req, Response &resp)
+void RsControlModule::handleShutdown(Request &, Response &resp)
 {
     RsStackMutex stack(mExitFlagMtx); // ********** LOCKED **********
     mProcessShouldExit = true;
     resp.setOk();
+}
+
+void RsControlModule::handleImportPgp(Request &req, Response &resp)
+{
+    std::string key_string;
+    req.mStream << makeKeyValueReference("key_string", key_string);
+
+    if(key_string.empty())
+    {
+        resp.setFail("required field key_string is empty");
+        return;
+    }
+
+    RsPgpId pgp_id;
+    std::string error_string;
+    if(RsAccounts::ImportIdentityFromString(key_string, pgp_id, error_string))
+    {
+        resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id);
+        resp.setOk();
+        return;
+    }
+
+    resp.setFail("Failed to import key: " + error_string);
+}
+
+void RsControlModule::handleCreateLocation(Request &req, Response &resp)
+{
+    std::string hidden_address;
+    std::string hidden_port_str;
+    req.mStream << makeKeyValueReference("hidden_adress", hidden_address)
+                << makeKeyValueReference("hidden_port", hidden_port_str);
+    uint16_t hidden_port = 0;
+    if(hidden_address.empty() != hidden_port_str.empty())
+    {
+        resp.setFail("you must both specify string hidden_adress and string hidden_port to create a hidden node.");
+        return;
+    }
+    if(!hidden_address.empty())
+    {
+        int p;
+        if(sscanf(hidden_port_str.c_str(), "%i", &p) != 1)
+        {
+            resp.setFail("failed to parse hidden_port, not a number. Must be a dec or hex number.");
+            return;
+        }
+        if(p < 0 || p > 0xFFFF)
+        {
+            resp.setFail("hidden_port out of range. It must fit into uint16!");
+            return;
+        }
+        hidden_port = p;
+    }
+
+    RsPgpId pgp_id;
+    std::string pgp_name;
+    std::string pgp_password;
+    std::string ssl_name;
+
+    req.mStream << makeKeyValueReference("pgp_id", pgp_id)
+                << makeKeyValueReference("pgp_name", pgp_name)
+                << makeKeyValueReference("pgp_password", pgp_password)
+                << makeKeyValueReference("ssl_name", ssl_name);
+
+    if(pgp_password.empty())
+    {
+        resp.setFail("Error: pgp_password is empty.");
+        return;
+    }
+
+    // pgp_id is set: use existing pgp key
+    // pgp_name is set: attempt to create a new key
+    if(pgp_id.isNull() && (pgp_name.empty()||pgp_password.empty()))
+    {
+        resp.setFail("You have to set pgp_id to use an existing key, or pgp_name and pgp_password to create a new pgp key.");
+        return;
+    }
+    if(pgp_id.isNull())
+    {
+        std::string err_string;
+        if(!RsAccounts::GeneratePGPCertificate(pgp_name, "", pgp_password, pgp_id, 2048, err_string))
+        {
+            resp.setFail("could not cerate pgp key: "+err_string);
+            return;
+        }
+    }
+
+    if(hidden_port)
+        RsInit::SetHiddenLocation(hidden_address, hidden_port);
+
+    std::string ssl_password = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
+
+    /* GenerateSSLCertificate - selects the PGP Account */
+    //RsInit::SelectGPGAccount(PGPId);
+
+    RsPeerId ssl_id;
+    std::string err_string;
+    // give the password to the password callback
+    {
+        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+        mFixedPassword = pgp_password;
+    }
+    bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
+
+    // clear fixed password to restore normal password operation
+    {
+        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+        mFixedPassword = "";
+    }
+
+    if (ssl_ok)
+    {
+        // load ssl password and load account
+        RsInit::LoadPassword(ssl_password);
+        // trigger login in init thread
+        {
+            RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+            mLoadPeerId = ssl_id;
+        }
+        resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id)
+                         << makeKeyValueReference("pgp_name", pgp_name)
+                         << makeKeyValueReference("ssl_name", ssl_name)
+                         << makeKeyValueReference("ssl_id", ssl_id);
+        resp.setOk();
+        return;
+    }
+    resp.setFail("could not create a new location. Error: "+err_string);
 }
 
 void RsControlModule::setRunState(RunState s, std::string errstr)

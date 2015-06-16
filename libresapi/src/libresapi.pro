@@ -37,7 +37,8 @@ SOURCES += \
 	api/RsControlModule.cpp	\
 	api/GetPluginInterfaces.cpp \
     api/ChatHandler.cpp \
-    api/LivereloadHandler.cpp
+    api/LivereloadHandler.cpp \
+    api/TmpBlobStore.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -58,4 +59,5 @@ HEADERS += \
 	api/RsControlModule.h	\
 	api/GetPluginInterfaces.h \
     api/ChatHandler.h \
-    api/LivereloadHandler.h
+    api/LivereloadHandler.h \
+    api/TmpBlobStore.h

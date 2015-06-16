@@ -8,7 +8,7 @@ namespace resource_api {
 // - account selection
 // - login
 // - shutdown
-class TerminalApiClient: private RsSingleJobThread{
+class TerminalApiClient: private RsTickingThread{
 public:
     // zero setup: create an instance of this class and destroy it when not needed anymore
     // no need to call start or stop or something
@@ -17,7 +17,7 @@ public:
     ~TerminalApiClient();
 protected:
     // from RsThread
-    virtual void run(); /* called once the thread is started. Should be overloaded by subclasses. */
+    virtual void data_tick(); /* called once the thread is started. Should be overloaded by subclasses. */
 private:
     void waitForResponse(ApiServer::RequestId id);
     bool isTokenValid(StateToken st);

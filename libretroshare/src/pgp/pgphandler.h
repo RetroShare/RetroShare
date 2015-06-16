@@ -74,6 +74,7 @@ class PGPHandler
 		bool haveSecretKey(const RsPgpId& id) const ;
 
 		bool importGPGKeyPair(const std::string& filename,RsPgpId& imported_id,std::string& import_error) ;
+        bool importGPGKeyPairFromString(const std::string& data,RsPgpId& imported_id,std::string& import_error) ;
 		bool exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_id) const ;
 
 		bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids);
@@ -151,6 +152,14 @@ class PGPHandler
 		// Returns true if the signatures have been updated
 		//
 		bool validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
+
+        /** Check public/private key and import them into the keyring
+         * @param keyring keyring with the new public/private key pair. Will be freed by the function.
+         * @param imported_key_id PGP id of the imported key
+         * @param import_error human readbale error message
+         * @returns true on success
+         * */
+        bool checkAndImportKeyPair(ops_keyring_t *keyring, RsPgpId& imported_key_id,std::string& import_error);
 
 		const ops_keydata_t *locked_getPublicKey(const RsPgpId&,bool stamp_the_key) const;
 		const ops_keydata_t *locked_getSecretKey(const RsPgpId&) const ;

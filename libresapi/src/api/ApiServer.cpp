@@ -256,6 +256,7 @@ ApiServer::ApiServer():
     mMtx("ApiServer mMtx"),
     mStateTokenServer(),
     mLivereloadhandler(&mStateTokenServer),
+    mTmpBlobStore(&mStateTokenServer),
     mMainModules(0)
 {
     mRouter.addResourceHandler("statetokenservice", dynamic_cast<ResourceRouter*>(&mStateTokenServer),

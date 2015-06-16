@@ -4,6 +4,7 @@ RS.start();
 
 var api_url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api/v2/";
 var filestreamer_url = window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "/fstream/";
+var upload_url = window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "/upload/";
 
 // livereload
 function start_live_reload()
@@ -716,10 +717,11 @@ var AccountSelectWidget =  React.createClass({
 		else
 		return(
 			<div>
-				<div><p>select a location to log in</p></div>
-				{this.state.data.map(function(location){
-					return <div className="btn2" key={location.id} onClick ={function(){component.selectAccount(location.id);}}>{location.name} ({location.location})</div>;
-				})}
+				{
+					this.state.data.map(function(location){
+						return <div className="btn2" key={location.id} onClick ={function(){component.selectAccount(location.id);}}>login {location.name} ({location.location})</div>;
+					})
+				}
 			</div>
 		);
 	},
@@ -757,6 +759,307 @@ var LoginWidget = React.createClass({
 	},
 });
 
+var LoginWidget2 = React.createClass({
+	debug: function(msg){
+		console.log(msg);
+	},
+	getInitialState: function(){
+		return {display_data:[], state: "waiting", hidden_node: false, error: ""};
+	},
+	componentDidMount: function()
+	{
+		this.update();
+		// FOR TESTING
+		//this.setState({state: "create_location"});
+	},
+	// this component depends on three resources
+	// have to fecth all, before can display anything
+	data: {},
+	clear_data: function()
+	{
+		this.debug("clear_data()");
+		data = 
+		{
+			have_runstate: false,
+			runstate: "",
+			have_identities: false,
+			identities: [],
+			have_locations: false,
+			locations: [],
+
+			pgp_id: undefined,
+			pgp_name: undefined,
+		};
+	},
+	update: function()
+	{
+		this.debug("update()");
+		var c = this;
+		c.clear_data();
+		function check_data()
+		{
+			if(c.data.have_runstate && c.data.have_locations && c.data.have_identities)
+			{
+				c.debug("update(): check_data(): have all data, will change to display mode");
+				var data = [];
+				var pgp_ids_with_loc = [];
+				function pgp_id_has_location(pgp_id)
+				{
+					for(var i in pgp_ids_with_loc)
+					{
+						if(pgp_id === pgp_ids_with_loc[i])
+							return true;
+					}
+					return false;
+				}
+				// collect all pgp ids with location
+				// collect location data
+				for(var i in c.data.locations)
+				{
+					if(!pgp_id_has_location(c.data.locations[i].pgp_id))
+						pgp_ids_with_loc.push(c.data.locations[i].pgp_id);
+					data.push(c.data.locations[i]);
+				}
+				// collect pgp data without location
+				for(var i in c.data.identities)
+				{
+					if(!pgp_id_has_location(c.data.identities[i].pgp_id))
+						data.push(c.data.identities[i]);
+				}
+				c.setState({
+					display_data: data,
+					state: "display",
+				});
+			}
+		}
+		RS.request({path:"control/runstate"}, function(resp){
+			c.debug("update(): got control/runstate");
+			if(resp.returncode === "ok"){
+				c.data.have_runstate = true;
+				c.data.runstate = resp.data.runstate;
+				check_data();
+			}
+		});
+		RS.request({path:"control/identities"}, function(resp){
+			c.debug("update(): got control/identities");
+			if(resp.returncode === "ok"){
+				c.data.have_identities = true;
+				c.data.identities = resp.data;
+				check_data();
+			}
+		});
+		RS.request({path:"control/locations"}, function(resp){
+			c.debug("update(): got control/locations");
+			if(resp.returncode === "ok"){
+				c.data.have_locations = true;
+				c.data.locations = resp.data;
+				check_data();
+			}
+		});
+	},
+	shutdown: function(){
+		RS.request({path: "control/shutdown"});
+	},
+	selectAccount: function(id){
+		this.debug("login with id="+id);
+		RS.request({path: "control/login", data:{id: id}});
+		var state = this.state;
+		state.mode = "wait";
+		this.setState(state);
+	},
+	onDrop: function(event)
+	{
+		this.debug("onDrop()");
+		this.debug(event.dataTransfer.files);
+		event.preventDefault();
+
+		var reader = new FileReader();  
+
+		var widget = this;
+
+		var c = this;
+		reader.onload = function(evt) {
+			c.debug("onDrop(): file loaded");
+			RS.request({path:"control/import_pgp", data:{key_string:evt.target.result}}, c.importCallback);
+		};
+		reader.readAsText(event.dataTransfer.files[0]);
+		this.setState({state:"waiting"});
+	},
+	importCallback: function(resp)
+	{
+		this.debug("importCallback()");
+		console.log(resp);
+		if(resp.returncode === "ok")
+		{
+			this.debug("import ok");
+			this.setState({error: "import ok"});
+		}
+		else
+		{
+			this.setState({error: "import error"});
+		}
+		this.update();
+
+	},
+	selectAccount: function(id){
+		console.log("login with id="+id)
+		RS.request({path: "control/login", data:{id: id}});
+		this.setState({state: "waiting"});
+	},
+	setupCreateLocation: function(pgp_id, pgp_name)
+	{
+		this.data.pgp_id = pgp_id;
+		this.data.pgp_name = pgp_name;
+		this.setState({state: "create_location"});
+	},
+	submitLoc: function()
+	{
+		var req = {
+			path: "control/create_location",
+			data: {
+				ssl_name: "nogui-webui"
+			}
+		};
+		if(this.data.pgp_id !== undefined)
+		{
+			req.data["pgp_password"] = this.refs.pwd1.getDOMNode().value;
+			req.data["pgp_id"] = this.data.pgp_id;
+		}
+		else
+		{
+			var pgp_name = this.refs.pgp_name.getDOMNode().value
+			var pwd1 = this.refs.pwd1.getDOMNode().value
+			var pwd2 = this.refs.pwd2.getDOMNode().value
+			if(pgp_name === "")
+			{
+				this.setState({error:"please fill in a name"});
+				return;
+			}
+			if(pwd1 === "")
+			{
+				this.setState({error:"please fill in a password"});
+				return;
+			}
+			if(pwd1 !== pwd2)
+			{
+				this.setState({error:"passwords do not match"});
+				return;
+			}
+			req.data["pgp_name"] = pgp_name;
+			req.data["pgp_password"] = pwd1;
+		}
+		if(this.refs.cb_hidden.getDOMNode().checked)
+		{
+			var addr = this.refs.tor_addr.getDOMNode().value
+			var port = this.refs.tor_port.getDOMNode().value
+			if(addr === "" || port === "")
+			{
+				this.setState({error:"please fill in hidden adress and hidden port"});
+				return;
+			}
+			req.data["hidden_adress"] = addr;
+			req.data["hidden_port"] = port;
+		}
+		var c = this;
+		RS.request(req, function(resp){
+			if(resp.returncode === "ok")
+			{
+				c.setState({state:"waiting_end", msg:"created account"});
+			}
+			else
+			{
+				c.setState({state:"display", error:"failed to create account: "+resp.debug_msg})
+			}
+		});
+		this.setState({state:"waiting"});
+	},
+	render: function(){
+		var c = this;
+		if(this.state.state === "waiting")
+		{
+			return(<div>
+				<p>please wait a second...</p>
+				</div>);
+			//return(<p>Retroshare is initialising...      please wait...</p>);
+		}
+		//else if(this.state.data.runstate === "waiting_account_select")
+		else if(this.state.state === "display")
+		{
+			if(this.data.runstate === "waiting_account_select")
+			{
+				return(
+				<div>
+					<div>{this.state.error}</div>
+					{
+						this.state.display_data.map(function(loc){
+							if(loc.peer_id)
+								return <div className="btn2" key={loc.id} onClick={function(){c.selectAccount(loc.id);}}
+										>{loc.name} ({loc.location})</div>;
+							else
+								return <div className="btn2" key={loc.id} onClick={function(){c.setupCreateLocation(loc.pgp_id, loc.name);}}
+										>{loc.name}</div>;
+						})
+					}
+					<div 
+						onDragOver={function(event){/*important: block default event*/event.preventDefault();}}
+						onDrop={this.onDrop}
+						className="btn2"
+					>drag and drop a profile file here</div>
+					<div className="btn2" onClick={function(){c.setupCreateLocation();}}>create new profile</div>
+					<div onClick={this.shutdown} className="btn2">shut down Retroshare</div>
+				</div>);
+			}
+			else
+			{
+				<div>
+					<p>This is the login page. It has no use at the moment, because Retroshare is aleady running.</p>
+				</div>
+			}
+		}
+		else if(this.state.state === "create_location")
+		{
+			return(
+				<div>
+					<div>Create a new node</div>
+					{function(){
+						if(c.data.pgp_id !== undefined)
+							return <div>
+							Create new nodw with pgp_id {c.data.pgp_id}
+							<input type="password" ref="pwd1" placeholder="password"/>
+							</div>
+						else
+							return <div>
+							<input type="text" ref="pgp_name" placeholder="name"/>
+							<input type="password" ref="pwd1" placeholder="password"/>
+							<input type="password" ref="pwd2" placeholder="password (repeat)"/>
+							</div>;
+					}()}
+					<input className="checkbox" type="checkbox" ref="cb_hidden"
+						onClick={function(){c.setState({hidden_node:c.refs.cb_hidden.getDOMNode().checked})}}
+					/>TOR hidden node<br/>
+					{function(){if(c.state.hidden_node)
+						return <div>
+						<input type="text" ref="tor_addr" placeholder="tor address"/>
+						<input type="text" ref="tor_port" placeholder="hidden service port"/>
+						</div>;}()
+					}
+					<div>{this.state.error}</div>
+					<div className="btn2" onClick={c.update}>cancel</div>
+					<div className="btn2" onClick={c.submitLoc}>go</div>
+				</div>
+			);
+		}
+		else
+		{
+			return(
+				<div>
+					<div onClick={this.shutdown} className="btn">shutdown Retroshare</div>
+				</div>
+			);
+		}
+	},
+});
+
 var Menu = React.createClass({
 	mixins: [SignalSlotMixin],
 	getInitialState: function(){
@@ -772,13 +1075,13 @@ var Menu = React.createClass({
 					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "main"});}}>
 						Start
 					</div>
-					{function(){
+					{/*function(){
 						if(outer.props.fullcontrol)
 							return (<div className="btn2" onClick={function(){outer.emit("change_url", {url: "login"});}}>
 								Login
 							</div>);
 						else return <div></div>;
-					}()}
+					}()*/}
 					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "friends"});}}>
 						Friends
 					</div>
@@ -836,6 +1139,82 @@ var TestWidget = React.createClass({
 	},
 });
 
+var FileUploadWidget = React.createClass({
+	getInitialState: function(){
+		// states:
+		// waiting_user waiting_upload upload_ok upload_failed
+		return {state: "waiting_user", file_name: "", file_id: 0};
+	},
+	onDrop: function(event)
+	{
+		console.log(event.dataTransfer.files);
+		event.preventDefault();
+
+		this.setState({state:"waiting_upload", file_name: event.dataTransfer.files[0].name});
+
+		var reader = new FileReader();  
+		var xhr = new XMLHttpRequest();
+
+		var self = this;
+		xhr.upload.addEventListener("progress", function(e) {
+			if (e.lengthComputable) {
+				var percentage = Math.round((e.loaded * 100) / e.total);
+				console.log("progress:"+percentage);
+			}
+		}, false);
+
+		var widget = this;
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState === 4) {
+				if(xhr.status !== 200)
+				{
+					console.log("upload failed status="+xhr.status);
+					widget.setState({state: "upload_failed"});
+					return;
+				}
+				//console.log("upload ok");
+				//console.log(JSON.parse(xhr.responseText));
+				var resp = JSON.parse(xhr.responseText);
+				if(resp.ok)
+				{
+					widget.setState({state:"upload_ok", file_id: resp.id});
+					// tell parent about successful upload
+					if(widget.props.onUploadReady)
+						widget.props.onUploadReady(resp.id);
+				}
+				else
+					widget.setState({state:"upload_fail"});
+			}
+		};
+		xhr.open("POST", upload_url);
+		reader.onload = function(evt) {
+			xhr.send(evt.target.result);
+		};
+		// must read as array buffer, to preserve binary data as it is
+		reader.readAsArrayBuffer(event.dataTransfer.files[0]);
+	},
+	render: function(){
+		var text = "bug-should not happen";
+		if(this.state.state ==="waiting_user")
+			text = "drop a file";
+		if(this.state.state ==="waiting_upload")
+			text = "File " + this.state.file_name + " is being uploaded";
+		if(this.state.state ==="upload_ok")
+			text = "File " + this.state.file_name + " uploaded ok. file_id=" + this.state.file_id;
+		if(this.state.state ==="upload_fail")
+			text = "Could not upload file" + this.state.file_name;
+
+		return (
+			<div 
+				onDragOver={function(event){/*important: block default event*/event.preventDefault();}}
+				onDrop={this.onDrop}
+			>
+				{text}
+			</div>
+		);
+	},
+});
+
 var MainWidget = React.createClass({
 	mixins: [SignalSlotMixin, AutoUpdateMixin],
 	getPath: function(){
@@ -872,48 +1251,49 @@ var MainWidget = React.createClass({
 		}
 		if(this.state.data.runstate === "waiting_init" || this.state.data.runstate === "waiting_account_select")
 		{
-			mainpage = <LoginWidget/>;
+			//mainpage = <LoginWidget/>;
+			mainpage = <LoginWidget2/>;
 		}
+
+		if(this.state.page === "testing")
+		{
+			//mainpage = <TestWidget/>;
+			//mainpage = <FileUploadWidget/>;
+			mainpage = <LoginWidget2/>;
+		}
+
 		if(this.state.data.runstate === "running_ok" || this.state.data.runstate ==="running_ok_no_full_control")
 		{
-		if(this.state.page === "main")
-		{
-			mainpage = <div><p>
-			A new webinterface for Retroshare. Build with react.js.
-			React allows to build a modern and user friendly single page application. 
-			The component system makes this very simple.
-			Updating the GUI is also very simple: one React mixin can handle updating for all components.
-			</p>
-			</div>;
-		}
-		if(this.state.page === "friends")
-		{
-			mainpage = <Peers3 />;
-		}
-		if(this.state.page === "downloads")
-		{
-			mainpage = <DownloadsWidget/>;
-		}
-		if(this.state.page === "search")
-		{
-			mainpage = <SearchWidget/>;
-		}
-		if(this.state.page === "add_friend")
-		{
-			mainpage = <AddPeerWidget/>;
-		}
-		if(this.state.page === "login")
-		{
-			mainpage = <LoginWidget/>;
-		}
-		if(this.state.page === "menu")
-		{
-			mainpage = <Menu fullcontrol = {this.state.data.runstate === "running_ok"}/>;
-		}
-		if(this.state.page === "testwidget")
-		{
-			mainpage = <TestWidget/>;
-		}
+			if(this.state.page === "main")
+			{
+				mainpage = <div><p>
+				A new webinterface for Retroshare. Build with react.js.
+				React allows to build a modern and user friendly single page application. 
+				The component system makes this very simple.
+				Updating the GUI is also very simple: one React mixin can handle updating for all components.
+				</p>
+				</div>;
+			}
+			if(this.state.page === "friends")
+			{
+				mainpage = <Peers3 />;
+			}
+			if(this.state.page === "downloads")
+			{
+				mainpage = <DownloadsWidget/>;
+			}
+			if(this.state.page === "search")
+			{
+				mainpage = <SearchWidget/>;
+			}
+			if(this.state.page === "add_friend")
+			{
+				mainpage = <AddPeerWidget/>;
+			}
+			if(this.state.page === "menu")
+			{
+				mainpage = <Menu fullcontrol = {this.state.data.runstate === "running_ok"}/>;
+			}
 		}
 
 		var menubutton = <div onClick={function(){outer.emit("change_url", {url: "menu"});}} className="btn2">&lt;- menu</div>;

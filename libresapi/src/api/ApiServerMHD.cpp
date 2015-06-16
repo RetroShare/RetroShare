@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <cstdio>
 #include <algorithm>
 
@@ -44,9 +45,15 @@ struct MHD_Response * MHD_create_response_from_fd(size_t size, int fd)
 {
 	unsigned char *buf = (unsigned char *)malloc(size) ;
 
-    if(buf == 0 || read(fd,buf,size) != size)
+    if(buf == 0)
+    {
+        std::cerr << "replacement MHD_create_response_from_fd: malloc failed, size was " << size << std::endl;
+        close(fd);
+        return NULL ;
+    }
+    if(read(fd,buf,size) != size)
 	{
-        std::cerr << "malloc failed or READ error in file descriptor " << fd <<  " requested read size was " << size << std::endl;
+        std::cerr << "replacement MHD_create_response_from_fd: READ error in file descriptor " << fd <<  " requested read size was " << size << std::endl;
         close(fd);
 		free(buf) ;
 		return NULL ;
@@ -69,6 +76,7 @@ std::string getDefaultDocroot()
 const char* API_ENTRY_PATH = "/api/v2";
 const char* FILESTREAMER_ENTRY_PATH = "/fstream/";
 const char* STATIC_FILES_ENTRY_PATH = "/static/";
+const char* UPLOAD_ENTRY_PATH = "/upload/";
 
 static void secure_queue_response(MHD_Connection *connection, unsigned int status_code, struct MHD_Response* response);
 static void sendMessage(MHD_Connection *connection, unsigned int status, std::string message);
@@ -87,6 +95,65 @@ public:
 };
 
 // handles calls to the resource_api
+class MHDUploadHandler: public MHDHandlerBase
+{
+public:
+    MHDUploadHandler(ApiServer* s): mState(BEGIN), mApiServer(s){}
+    virtual ~MHDUploadHandler(){}
+    // return MHD_NO or MHD_YES
+    virtual int handleRequest(  struct MHD_Connection *connection,
+                                const char */*url*/, const char *method, const char */*version*/,
+                                const char *upload_data, size_t *upload_data_size)
+    {
+        // new request
+        if(mState == BEGIN)
+        {
+            if(strcmp(method, "POST") == 0)
+            {
+                mState = WAITING_DATA;
+                // first time there is no data, do nothing and return
+                return MHD_YES;
+            }
+        }
+        if(mState == WAITING_DATA)
+        {
+            if(upload_data && *upload_data_size)
+            {
+                mRequesString += std::string(upload_data, *upload_data_size);
+                *upload_data_size = 0;
+                return MHD_YES;
+            }
+        }
+
+        std::vector<uint8_t> bytes(mRequesString.begin(), mRequesString.end());
+
+        int id = mApiServer->getTmpBlobStore()->storeBlob(bytes);
+
+        resource_api::JsonStream responseStream;
+        if(id)
+            responseStream << makeKeyValue("ok", true);
+        else
+            responseStream << makeKeyValue("ok", false);
+
+        responseStream << makeKeyValueReference("id", id);
+
+        std::string result = responseStream.getJsonString();
+
+        struct MHD_Response* resp = MHD_create_response_from_data(result.size(), (void*)result.data(), 0, 1);
+
+        MHD_add_response_header(resp, "Content-Type", "application/json");
+
+        secure_queue_response(connection, MHD_HTTP_OK, resp);
+        MHD_destroy_response(resp);
+        return MHD_YES;
+    }
+    enum State {BEGIN, WAITING_DATA};
+    State mState;
+    std::string mRequesString;
+    ApiServer* mApiServer;
+};
+
+// handles calls to the resource_api
 class MHDApiHandler: public MHDHandlerBase
 {
 public:
@@ -94,7 +161,7 @@ public:
     virtual ~MHDApiHandler(){}
     // return MHD_NO or MHD_YES
     virtual int handleRequest(  struct MHD_Connection *connection,
-                                const char *url, const char *method, const char *version,
+                                const char *url, const char *method, const char */*version*/,
                                 const char *upload_data, size_t *upload_data_size)
     {
         // new request
@@ -198,8 +265,8 @@ public:
 
     // return MHD_NO or MHD_YES
     virtual int handleRequest(  struct MHD_Connection *connection,
-                                const char *url, const char *method, const char *version,
-                                const char *upload_data, size_t *upload_data_size)
+                                const char *url, const char */*method*/, const char */*version*/,
+                                const char */*upload_data*/, size_t */*upload_data_size*/)
     {
         if(rsFiles == 0)
         {
@@ -346,7 +413,7 @@ ApiServerMHD::~ApiServerMHD()
     stop();
 }
 
-bool ApiServerMHD::configure(std::string docroot, uint16_t port, std::string bind_address, bool allow_from_all)
+bool ApiServerMHD::configure(std::string docroot, uint16_t port, std::string /*bind_address*/, bool allow_from_all)
 {
     mRootDir = docroot;
     // make sure the docroot dir ends with a slash
@@ -512,10 +579,14 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         url = url + strlen(STATIC_FILES_ENTRY_PATH);
         // else server static files
         std::string filename = mRootDir + url;
-        // important: binary open mode,
+        // important: binary open mode (windows)
         // else libmicrohttpd will replace crlf with lf and add garbage at the end of the file
-        FILE* fd = fopen(filename.c_str(), "rb");
-        if(fd == 0)
+#ifdef O_BINARY
+        int fd = open(filename.c_str(), O_RDONLY | O_BINARY);
+#else
+        int fd = open(filename.c_str(), O_RDONLY);
+#endif
+        if(fd == -1)
         {
 #warning sending untrusted string to the browser
             std::string msg = "<html><body><p>Error: can't open the requested file. Path is &quot;"+filename+"&quot;</p></body></html>";
@@ -524,9 +595,9 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         }
 
         struct stat s;
-        if(fstat(fileno(fd), &s) == -1)
+        if(fstat(fd, &s) == -1)
         {
-            fclose(fd);
+            close(fd);
             const char *error = "<html><body><p>Error: file was opened but stat failed.</p></body></html>";
             struct MHD_Response* resp = MHD_create_response_from_data(strlen(error), (void*)error, 0, 1);
             MHD_add_response_header(resp, "Content-Type", "text/html");
@@ -561,12 +632,19 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         else
             type = "application/octet-stream";
 
-        struct MHD_Response* resp = MHD_create_response_from_fd(s.st_size, fileno(fd));
+        struct MHD_Response* resp = MHD_create_response_from_fd(s.st_size, fd);
         MHD_add_response_header(resp, "Content-Type", type);
         secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
-        fclose(fd);
         return MHD_YES;
+    }
+
+    if(strstr(url, UPLOAD_ENTRY_PATH) == url)
+    {
+        // create a new handler and store it in con_cls
+        MHDHandlerBase* handler = new MHDUploadHandler(mApiServer);
+        *con_cls = (void*) handler;
+        return handler->handleRequest(connection, url, method, version, upload_data, upload_data_size);
     }
 
     // if url is not a valid path, then serve a help page
@@ -582,8 +660,8 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
     return MHD_YES;
 }
 
-void ApiServerMHD::requestCompletedCallback(struct MHD_Connection *connection,
-                                            void **con_cls, MHD_RequestTerminationCode toe)
+void ApiServerMHD::requestCompletedCallback(struct MHD_Connection */*connection*/,
+                                            void **con_cls, MHD_RequestTerminationCode /*toe*/)
 {
     if(*con_cls)
     {

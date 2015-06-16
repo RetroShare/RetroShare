@@ -10,6 +10,7 @@
 #include "FileSearchHandler.h"
 #include "TransfersHandler.h"
 #include "LivereloadHandler.h"
+#include "TmpBlobStore.h"
 
 namespace resource_api{
 
@@ -73,12 +74,14 @@ public:
     void addResourceHandler(std::string name, T* instance, void (T::*callback)(Request& req, Response& resp));
 
     StateTokenServer* getStateTokenServer(){ return &mStateTokenServer; }
+    TmpBlobStore* getTmpBlobStore(){ return &mTmpBlobStore; }
 
 private:
     RsMutex mMtx;
     StateTokenServer mStateTokenServer; // goes first, as others may depend on it
                                         // is always loaded, because it has no dependencies
     LivereloadHandler mLivereloadhandler;
+    TmpBlobStore mTmpBlobStore;
 
     // only pointers here, to load/unload modules at runtime
     ApiServerMainModules* mMainModules; // loaded when RS is started

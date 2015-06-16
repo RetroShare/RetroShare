@@ -51,9 +51,11 @@ td{
 	padding: 0.1em;
 }
 
-.btn2{
+.btn2, .box{
 	border-style: solid;
-	border-color: lime;
+	/*border-color: lime;*/
+	border-color: limeGreen;
+	/*border-width: 1px;*/
 	border-radius: 3mm;
 	padding: 2mm;
 	font-size: 10mm;

@@ -93,10 +93,10 @@ TerminalApiClient::TerminalApiClient(ApiServer *api):
 
 TerminalApiClient::~TerminalApiClient()
 {
-    //join();
+    fullstop();
 }
 
-void TerminalApiClient::run()
+void TerminalApiClient::data_tick()
 {
     // values in milliseconds
     const int MIN_WAIT_TIME           = 20; // sleep time must be smaller or equal than the smallest period
@@ -121,7 +121,7 @@ void TerminalApiClient::run()
 
     TerminalInput term;
 
-    while(isRunning())
+    while(!shouldStop())
     {
         // assuming sleep_time >> work_time
         // so we don't have to check the absolute time, just sleep every cycle

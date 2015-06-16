@@ -10,7 +10,7 @@ class StateTokenServer;
 class ApiServer;
 
 // resource api module to control accounts, startup and shutdown of retroshare
-// - this module handles everything, not things are required from outside
+// - this module handles everything, no things are required from outside
 // - exception: users of this module have to create an api server and register this module
 // tasks:
 // - show, import, export and create private pgp keys
@@ -47,6 +47,8 @@ private:
     void handlePassword(Request& req, Response& resp);
     void handleLogin(Request& req, Response& resp);
     void handleShutdown(Request& req, Response& resp);
+    void handleImportPgp(Request& req, Response& resp);
+    void handleCreateLocation(Request& req, Response& resp);
 
     void setRunState(RunState s, std::string errstr = "");
     // for startup
@@ -76,6 +78,11 @@ private:
     bool mWantPassword;
     std::string mKeyName;
     std::string mPassword;
+    // for ssl cert generation:
+    // we know the password already, so we want to avoid to rpompt the user
+    // we store the password in this variable, it has higher priority than the normal password variable
+    // it is also to avoid a lock, when we make a synchronous call into librs, like in ssl cert generation
+    std::string mFixedPassword;
 };
 
 } // namespace resource_api
