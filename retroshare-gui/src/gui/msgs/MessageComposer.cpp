@@ -239,6 +239,26 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     actionAlignJustify = new QAction(QIcon(":/images/textedit/textjustify.png"), tr("&Justify"), grp);
     actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
     actionAlignJustify->setCheckable(true);
+    
+    QActionGroup *grp2 = new QActionGroup(this);
+    connect(grp2, SIGNAL(triggered(QAction *)), this, SLOT(textStyle(QAction *)));
+    
+    actionDisc = new QAction(QIcon(""), tr("Bullet List (Disc)"), grp2);
+    actionDisc->setCheckable(true);
+    actionCircle = new QAction(QIcon(""), tr("Bullet List (Circle)"), grp2);
+    actionCircle->setCheckable(true);
+    actionSquare = new QAction(QIcon(""), tr("Bullet List (Square)"), grp2);
+    actionSquare->setCheckable(true);
+    actionDecimal= new QAction(QIcon(""), tr("Ordered List (Decimal)"), grp2);
+    actionDecimal->setCheckable(true);
+    actionLowerAlpha = new QAction(QIcon(""), tr("Ordered List (Alpha lower)"), grp2);
+    actionLowerAlpha->setCheckable(true);
+    actionUpperAlpha = new QAction(QIcon(""), tr("Ordered List (Alpha upper)"), grp2);
+    actionUpperAlpha->setCheckable(true);
+    actionLowerRoman = new QAction(QIcon(""), tr("Ordered List (Roman lower"), grp2);
+    actionLowerRoman->setCheckable(true);
+    actionUpperRoman = new QAction(QIcon(""), tr("Ordered List (Roman upper)"), grp2);
+    actionUpperRoman->setCheckable(true);
 
     setupFormatActions();
 
@@ -249,15 +269,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.filterComboBox->addItem(tr("Friend Nodes"));
     ui.filterComboBox->addItem(tr("Distant peer identities"));
     ui.filterComboBox->setCurrentIndex(0);
-
-    /*ui.comboStyle->addItem("Standard");
-    ui.comboStyle->addItem("Bullet List (Disc)");
-    ui.comboStyle->addItem("Bullet List (Circle)");
-    ui.comboStyle->addItem("Bullet List (Square)");
-    ui.comboStyle->addItem("Ordered List (Decimal)");
-    ui.comboStyle->addItem("Ordered List (Alpha lower)");
-    ui.comboStyle->addItem("Ordered List (Alpha upper)");*/
-    //connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(textStyle(int)));
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
@@ -279,6 +290,17 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     alignmentmenu->addAction(actionAlignRight);
     alignmentmenu->addAction(actionAlignJustify);
     ui.textalignmentbtn->setMenu(alignmentmenu);
+    
+    QMenu * formatlistmenu = new QMenu();
+    formatlistmenu->addAction(actionDisc);
+    formatlistmenu->addAction(actionCircle);
+    formatlistmenu->addAction(actionSquare);
+    formatlistmenu->addAction(actionDecimal);
+    formatlistmenu->addAction(actionLowerAlpha);
+    formatlistmenu->addAction(actionUpperAlpha);
+    formatlistmenu->addAction(actionLowerRoman);
+    formatlistmenu->addAction(actionUpperRoman);
+    ui.styleButton->setMenu(formatlistmenu);
 
     QPixmap pxm(24,24);
     pxm.fill(Qt::black);
@@ -2081,34 +2103,28 @@ void MessageComposer::changeFormatType(int styleIndex )
     cursor.endEditBlock();
 }
 
-void MessageComposer::textStyle(int styleIndex)
+void MessageComposer::textStyle(QAction *a)
 {
     QTextCursor cursor = ui.msgText->textCursor();
 
-    if (styleIndex != 0) {
         QTextListFormat::Style style = QTextListFormat::ListDisc;
-
-        switch (styleIndex) {
-            default:
-            case 1:
+        
+        if (a == actionDisc)
                 style = QTextListFormat::ListDisc;
-                break;
-            case 2:
+        else if (a == actionCircle)
                 style = QTextListFormat::ListCircle;
-                break;
-            case 3:
+        else if (a == actionSquare)
                 style = QTextListFormat::ListSquare;
-                break;
-            case 4:
+        else if (a == actionDecimal)
                 style = QTextListFormat::ListDecimal;
-                break;
-            case 5:
+        else if (a == actionLowerAlpha)
                 style = QTextListFormat::ListLowerAlpha;
-                break;
-            case 6:
+        else if (a == actionUpperAlpha)
                 style = QTextListFormat::ListUpperAlpha;
-                break;
-        }
+        else if (a == actionLowerRoman)
+                style = QTextListFormat::ListLowerRoman;
+        else if (a == actionUpperRoman)
+                style = QTextListFormat::ListUpperRoman;
 
         cursor.beginEditBlock();
 
@@ -2129,12 +2145,12 @@ void MessageComposer::textStyle(int styleIndex)
         cursor.createList(listFmt);
 
         cursor.endEditBlock();
-    } else {
+    /*} else {
         // ####
         QTextBlockFormat bfmt;
         bfmt.setObjectIndex(-1);
         cursor.mergeBlockFormat(bfmt);
-    }
+    }*/
 }
 
 void MessageComposer::textColor()

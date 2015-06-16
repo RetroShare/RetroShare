@@ -122,7 +122,7 @@ private slots:
     void textItalic();
     void textFamily(const QString &f);
     void textSize(const QString &p);
-    void textStyle(int styleIndex);
+    void textStyle(QAction *a);
     void textColor();
     void textbackgroundColor();
     void textAlign(QAction *a);
@@ -211,7 +211,15 @@ private:
     *actionRedo,
     *actionCut,
     *actionCopy,
-    *actionPaste;
+    *actionPaste,   
+    *actionDisc,
+    *actionCircle,
+    *actionSquare,
+    *actionDecimal,
+    *actionLowerAlpha,
+    *actionUpperAlpha,
+    *actionLowerRoman,
+    *actionUpperRoman;
 
     QAction *contactSidebarAction;
 
