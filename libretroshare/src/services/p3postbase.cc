@@ -354,8 +354,10 @@ void p3PostBase::background_requestUnprocessedGroup()
 
 void p3PostBase::background_requestGroupMsgs(const RsGxsGroupId &grpId, bool unprocessedOnly)
 {
-	std::cerr << "p3PostBase::background_requestGroupMsgs() id: " << grpId;
-	std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+    std::cerr << "p3PostBase::background_requestGroupMsgs() id: " << grpId;
+    std::cerr << std::endl;
+#endif
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
 	RsTokReqOptions opts;
@@ -404,8 +406,10 @@ void p3PostBase::background_loadAllMsgs(const uint32_t &token)
 void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 {
 	/* get messages */
-	std::cerr << "p3PostBase::background_loadMsgs()";
-	std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+    std::cerr << "p3PostBase::background_loadMsgs()";
+    std::cerr << std::endl;
+#endif
 
 	std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
@@ -462,10 +466,12 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 				RsStackMutex stack(mPostBaseMtx); /********** STACK LOCKED MTX ******/
 				if (mBgIncremental)
 				{
-					std::cerr << "p3PostBase::background_loadMsgs() Msg already Processed - Skipping";
+#ifdef POSTBASE_DEBUG
+                    std::cerr << "p3PostBase::background_loadMsgs() Msg already Processed - Skipping";
 					std::cerr << std::endl;
 					std::cerr << "p3PostBase::background_loadMsgs() ERROR This should not happen";
-					std::cerr << std::endl;
+                    std::cerr << std::endl;
+#endif
 					delete(*vit);
 					continue;
 				}
@@ -474,19 +480,23 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 			/* 3 types expected: PostedPost, Comment and Vote */
 			if (parentId.isNull())
 			{
-				/* we don't care about top-level (Posts) */
+#ifdef POSTBASE_DEBUG
+                /* we don't care about top-level (Posts) */
 				std::cerr << "\tIgnoring TopLevel Item";
-				std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 
 				/* but we need to notify GUI about them */	
 				msgChanges->msgChangeMap[mit->first].push_back((*vit)->meta.mMsgId);
 			}
 			else if (NULL != (commentItem = dynamic_cast<RsGxsCommentItem *>(*vit)))
 			{
-				/* comment - want all */
+#ifdef POSTBASE_DEBUG
+                /* comment - want all */
 				/* Comments are counted by Thread Id */
 				std::cerr << "\tProcessing Comment: " << commentItem;
-				std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 	
 				inc_counters = true;
 				comment_inc = 1;
@@ -499,9 +509,11 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 					/* Votes are organised by Parent Id,
 					 * ie. you can vote for both Posts and Comments
 					 */
-					std::cerr << "\tProcessing Vote: " << voteItem;
+#ifdef POSTBASE_DEBUG
+                    std::cerr << "\tProcessing Vote: " << voteItem;
 					std::cerr << std::endl;
-	
+#endif
+
 					inc_counters = true;
 					add_voter = true;
 					voterId = voteItem->meta.mAuthorId;
@@ -550,11 +562,13 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 					sit->second.voters.push_back(voterId);
 				}
 		
-				std::cerr << "\tThreadId: " << threadId;
+#ifdef POSTBASE_DEBUG
+                std::cerr << "\tThreadId: " << threadId;
 				std::cerr << " Comment Total: " << sit->second.comments;
 				std::cerr << " UpVote Total: " << sit->second.up_votes;
-				std::cerr << " DownVote Total: " << sit->second.down_votes;
-				std::cerr << std::endl;
+                std::cerr << " DownVote Total: " << sit->second.down_votes;
+                std::cerr << std::endl;
+#endif
 			}
 		
 			/* flag all messages as processed and new for the gui */
@@ -571,8 +585,10 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 	/* push updates of new Posts */
 	if (msgChanges->msgChangeMap.size() > 0)
 	{
-		std::cerr << "p3PostBase::background_processNewMessages() -> receiveChanges()";
-		std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+        std::cerr << "p3PostBase::background_processNewMessages() -> receiveChanges()";
+        std::cerr << std::endl;
+#endif
 
 		changes.push_back(msgChanges);
 	 	receiveHelperChanges(changes);
@@ -622,8 +638,10 @@ bool extractPostCache(const std::string &str, PostStats &s)
 
 void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 {
-	std::cerr << "p3PostBase::background_updateVoteCounts()";
-	std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+    std::cerr << "p3PostBase::background_updateVoteCounts()";
+    std::cerr << std::endl;
+#endif
 
 	GxsMsgMetaMap parentMsgList;
 	GxsMsgMetaMap::iterator mit;
@@ -633,8 +651,10 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 
 	if (!ok)
 	{
-		std::cerr << "p3PostBase::background_updateVoteCounts() ERROR";
-		std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+        std::cerr << "p3PostBase::background_updateVoteCounts() ERROR";
+        std::cerr << std::endl;
+#endif
 		background_cleanup();
 		return;
 	}
@@ -647,9 +667,11 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 	{
 		for(vit = mit->second.begin(); vit != mit->second.end(); ++vit)
 		{
-			std::cerr << "p3PostBase::background_updateVoteCounts() Processing Msg(" << mit->first;
-			std::cerr << ", " << vit->mMsgId << ")";
-			std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+            std::cerr << "p3PostBase::background_updateVoteCounts() Processing Msg(" << mit->first;
+            std::cerr << ", " << vit->mMsgId << ")";
+            std::cerr << std::endl;
+#endif
 	
 			RsStackMutex stack(mPostBaseMtx); /********** STACK LOCKED MTX ******/
 	
@@ -675,31 +697,37 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 	
 			if (it != mBgStatsMap.end())
 			{
-				std::cerr << "p3PostBase::background_updateVoteCounts() Adding to msgChangeMap: ";
+#ifdef POSTBASE_DEBUG
+                std::cerr << "p3PostBase::background_updateVoteCounts() Adding to msgChangeMap: ";
 				std::cerr << mit->first << " MsgId: " << vit->mMsgId;
-				std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 
 				stats.increment(it->second);
 				msgChanges->msgChangeMap[mit->first].push_back(vit->mMsgId);
 			}
 			else
 			{
-				// warning.
+#ifdef POSTBASE_DEBUG
+                // warning.
 				std::cerr << "p3PostBase::background_updateVoteCounts() Warning No New Votes found.";
 				std::cerr << " For MsgId: " << vit->mMsgId;
-				std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 			}
 	
 			std::string str;
 			if (!encodePostCache(str, stats))
-			{
+            {
 				std::cerr << "p3PostBase::background_updateVoteCounts() Failed to encode Votes";
 				std::cerr << std::endl;
 			}
 			else
 			{
-				std::cerr << "p3PostBase::background_updateVoteCounts() Encoded String: " << str;
-				std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+                std::cerr << "p3PostBase::background_updateVoteCounts() Encoded String: " << str;
+                std::cerr << std::endl;
+#endif
 				/* store new result */
 				uint32_t token_c;
 				RsGxsGrpMsgIdPair msgId = std::make_pair(vit->mGroupId, vit->mMsgId);
@@ -710,8 +738,10 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 
 	if (msgChanges->msgChangeMap.size() > 0)
 	{
-		std::cerr << "p3PostBase::background_updateVoteCounts() -> receiveChanges()";
-		std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+        std::cerr << "p3PostBase::background_updateVoteCounts() -> receiveChanges()";
+        std::cerr << std::endl;
+#endif
 
 		changes.push_back(msgChanges);
 	 	receiveHelperChanges(changes);
@@ -730,8 +760,10 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 
 bool p3PostBase::background_cleanup()
 {
-	std::cerr << "p3PostBase::background_cleanup()";
-	std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+    std::cerr << "p3PostBase::background_cleanup()";
+    std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(mPostBaseMtx); /********** STACK LOCKED MTX ******/
 
@@ -746,8 +778,10 @@ bool p3PostBase::background_cleanup()
 	// Overloaded from GxsTokenQueue for Request callbacks.
 void p3PostBase::handleResponse(uint32_t token, uint32_t req_type)
 {
-	std::cerr << "p3PostBase::handleResponse(" << token << "," << req_type << ")";
-	std::cerr << std::endl;
+#ifdef POSTBASE_DEBUG
+    std::cerr << "p3PostBase::handleResponse(" << token << "," << req_type << ")";
+    std::cerr << std::endl;
+#endif
 
 	// stuff.
 	switch(req_type)
