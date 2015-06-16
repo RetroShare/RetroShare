@@ -243,7 +243,7 @@ GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
 
 bool GrpCircleIdRequestVetting::cleared()
 {
-	std::vector<GrpIdCircleVet>::size_type i, count;
+    std::vector<GrpIdCircleVet>::size_type i, count=0;
 	for(i = 0; i < mGrpCircleV.size(); ++i)
 	{
 		GrpIdCircleVet& gic = mGrpCircleV[i];
