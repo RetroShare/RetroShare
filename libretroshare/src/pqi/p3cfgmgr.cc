@@ -512,6 +512,8 @@ bool p3GeneralConfig::saveList(bool &cleanup, std::list<RsItem *>& savelist)
 	{
 		savelist.push_back(item);
 	}
+    else
+        delete item;
 
 	return true;
 }
