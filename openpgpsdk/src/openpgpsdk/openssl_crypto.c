@@ -769,7 +769,6 @@ ops_keydata_t* ops_rsa_create_selfsigned_keypair(const int numbits, const unsign
         || ops_add_selfsigned_userid_to_keydata(keydata, userid) != ops_true)
         {
         ops_keydata_free(keydata);
-		  free(keydata) ;
         return NULL;
         }
 
