@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <unistd.h>
+#include <cstdio>
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
