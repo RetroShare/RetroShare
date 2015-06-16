@@ -1927,7 +1927,7 @@ static std::string printFloatNumber(float num,bool friendly=false)
 		std::string units[4] = { "B/s","KB/s","MB/s","GB/s" } ;
 
 		int k=0 ;
-		while(num >= 800.0f && k<5)
+        while(num >= 800.0f && k<4)
 			num /= 1024.0f,++k;
 
 		sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
