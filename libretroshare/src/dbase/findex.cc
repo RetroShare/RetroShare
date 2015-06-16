@@ -823,6 +823,7 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 		if(!RsCompress::uncompress_memory_chunk(compressed_data,size,uncompressed_data,uncompressed_data_size))
 		{
 			std::cerr << "FileIndex::loadIndex() Decompression failed! Fileindex can't be read." << std::endl;
+            free(uncompressed_data);
 			return 0 ;
 		}
 		s = std::string((char *)uncompressed_data,uncompressed_data_size) ;
@@ -1055,6 +1056,7 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 	if(!RsCompress::compress_memory_chunk((unsigned char *)s.c_str(),s.length(),compressed_data,compressed_data_size))
 	{
 		std::cerr << "(EE) ERROR in file list compression ! file list can't be saved" << std::endl;
+        free(compressed_data);
 		return false ;
 	}
 
@@ -1092,6 +1094,7 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 	if(compressed_data_size != (outwritten=fwrite(compressed_data,1,compressed_data_size,file)))
 	{
 		std::cerr << "FileIndex::saveIndex error. File not entirely written. Only " << outwritten << " bytes wrote out of " << compressed_data_size <<  " check for disk full, or disk quotas." << std::endl;
+        fclose(file);
 		return 0;
 	}
 
