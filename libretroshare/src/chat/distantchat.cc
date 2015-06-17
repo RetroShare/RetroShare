@@ -805,7 +805,7 @@ void DistantChatService::sendTurtleData(RsChatItem *item)
         if(!item->serialise(buff,rssize))
         {
             std::cerr << "(EE) DistantChatService::sendTurtleData(): Could not serialise item!" << std::endl;
-            delete[] buff ;
+            free(buff) ;
             delete item ;
             return ;
         }
