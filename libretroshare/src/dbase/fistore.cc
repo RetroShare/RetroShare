@@ -84,16 +84,15 @@ int FileIndexStore::loadCache(const RsCacheData &data)
 		//delete fi;
 	}
 
-	/* load Cache */
-
-	FileIndex *finew = new FileIndex(data.pid);
-
 	if(mPeerMgr->isFriend(data.pid))
 	{
 		// We discard file lists from non friends. This is the place to remove file lists of deleted friends
 		// from the cache. Doing this, the file list still shows in a session where we deleted a friend, but will be removed
 		// at next restart.
 		//
+
+        /* load Cache */
+        FileIndex *finew = new FileIndex(data.pid);
 
 		if (finew->loadIndex(data.path + '/' + data.name, data.hash, data.size))
 		{
