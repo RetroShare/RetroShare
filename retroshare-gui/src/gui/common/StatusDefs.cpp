@@ -249,16 +249,14 @@ QString StatusDefs::connectStateIpString(RsPeerDetails &details)
 		break;
 	case RS_PEER_CONNECTSTATE_TRYING_TCP:
 	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
-		stateString += qApp->translate("StatusDefs", "TCP");
-		stateString += QString(details.actAsServer ? "-in" : "-out");
+		stateString += QString(details.actAsServer ? qApp->translate("StatusDefs", "TCP-in") : qApp->translate("StatusDefs", "TCP-out"));
 		break;
 	case RS_PEER_CONNECTSTATE_TRYING_UDP:
 	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
 		stateString += qApp->translate("StatusDefs", "UDP");
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
-		stateString += qApp->translate("StatusDefs", "Tor");
-		stateString += QString(details.actAsServer ? "-in" : "-out");
+		stateString += QString(details.actAsServer ? qApp->translate("StatusDefs", "Tor-in") : qApp->translate("StatusDefs", "Tor-out"));
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
 		stateString += qApp->translate("StatusDefs", "unkown");
