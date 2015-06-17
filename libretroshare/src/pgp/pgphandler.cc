@@ -535,6 +535,7 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key,bool inc
 	}
 	else
 	{
+        ops_create_info_delete(cinfo);
 		std::cerr << "Unhandled key type " << key->type << std::endl;
 		return "ERROR: Cannot write key. Unhandled key type. " ;
 	}
