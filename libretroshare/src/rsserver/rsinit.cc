@@ -1222,8 +1222,7 @@ int RsServer::StartupRetroShare()
 	p3ServiceControl *serviceCtrl = new p3ServiceControl(mLinkMgr);
 	rsServiceControl = serviceCtrl;
 
-	SecurityPolicy *none = secpolicy_create();
-	pqih = new pqisslpersongrp(serviceCtrl, none, flags, mPeerMgr);
+    pqih = new pqisslpersongrp(serviceCtrl, flags, mPeerMgr);
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
@@ -1776,7 +1775,6 @@ int RsServer::StartupRetroShare()
 
 	mod -> peerid = ownId;
 	mod -> pqi = ploop;
-	mod -> sp = secpolicy_create();
 
 	pqih->AddSearchModule(mod);
 

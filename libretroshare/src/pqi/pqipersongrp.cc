@@ -139,8 +139,8 @@ int pqipersongrp::tickServiceSend()
 
 
 	// init
-pqipersongrp::pqipersongrp(p3ServiceControl *ctrl, SecurityPolicy *glob, unsigned long flags)
-	:pqihandler(glob), p3ServiceServer(this, ctrl), pqil(NULL), initFlags(flags)
+pqipersongrp::pqipersongrp(p3ServiceControl *ctrl, unsigned long flags)
+    :pqihandler(), p3ServiceServer(this, ctrl), pqil(NULL), initFlags(flags)
 {
 }
 
@@ -417,7 +417,6 @@ int     pqipersongrp::addPeer(const RsPeerId& id)
 		sm = new SearchModule();
 		sm -> peerid = id;
 		sm -> pqi = pqip;
-		sm -> sp = secpolicy_create();
 	
 		// reset it to start it working.
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::addPeer() => reset() called to initialise new person");
@@ -445,7 +444,6 @@ int     pqipersongrp::removePeer(const RsPeerId& id)
 	if (it != mods.end())
 	{
 		SearchModule *mod = it->second;
-		secpolicy_delete(mod -> sp);
 		pqiperson *p = (pqiperson *) mod -> pqi;
 		p -> stoplistening();
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::removePeer() => reset() called before deleting person");

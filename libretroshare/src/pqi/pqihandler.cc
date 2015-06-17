@@ -39,16 +39,9 @@ static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
 #define RSITEM_DEBUG 1
 ****/
 
-pqihandler::pqihandler(SecurityPolicy *Global) : coreMtx("pqihandler")
+pqihandler::pqihandler() : coreMtx("pqihandler")
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-
-	// The global security....
-	// if something is disabled here...
-	// cannot be enabled by module.
-	globsec = Global;
-
-	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "New pqihandler()\nSecurity Policy: " + secpolicy_print(globsec));
 
 	// setup minimal total+individual rates.
 	rateIndiv_out = 0.01;
@@ -188,16 +181,6 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 		return false;
 	}
 
-	// check security.
-	if (mod -> sp == NULL)
-	{
-		// create policy.
-		mod -> sp = secpolicy_create();
-	}
-
-	// limit to what global security allows.
-	secpolicy_limit(globsec, mod -> sp);
-
 	// store.
 	mods[mod->peerid] = mod;
 	return true;
@@ -282,9 +265,6 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 		return -1;
 	}
 
-	// check security... is output allowed.
-	if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
-	{
 		std::string out = "pqihandler::HandleRsItem() sending to chan: " + it -> first.toStdString();
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
 #ifdef DEBUG_TICK
@@ -294,21 +274,6 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 		// if yes send on item.
 		((it -> second) -> pqi) -> SendItem(item,computed_size);
 		return 1;
-	}
-	else
-	{
-		std::string out = "pqihandler::HandleRsItem() Sec not approved";
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
-#ifdef DEBUG_TICK
-		std::cerr << out << std::endl;
-#endif
-
-		delete item;
-		return -1;
-	}
-
-	// if successfully sent to at least one.
-	return 1;
 }
 
 int     pqihandler::SendRsRawItem(RsRawItem *ns)

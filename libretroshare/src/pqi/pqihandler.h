@@ -27,7 +27,6 @@
 #define MRK_PQI_HANDLER_HEADER
 
 #include "pqi/pqi.h"
-#include "pqi/pqisecurity.h"
 #include "pqi/pqiqos.h"
 
 #include "util/rsthreads.h"
@@ -42,7 +41,6 @@ class SearchModule
 	public:
 	RsPeerId peerid;
 	PQInterface *pqi;
-	SecurityPolicy *sp;
 };
 
 // Presents a P3 Face to the world!
@@ -51,7 +49,7 @@ class SearchModule
 class pqihandler: public P3Interface, public pqiPublisher
 {
 	public:
-		pqihandler(SecurityPolicy *Global);
+        pqihandler();
 
 		/**** Overloaded from pqiPublisher ****/
 		virtual bool sendItem(RsRawItem *item)
@@ -99,7 +97,6 @@ class pqihandler: public P3Interface, public pqiPublisher
 		RsMutex coreMtx; /* MUTEX */
 
 		std::map<RsPeerId, SearchModule *> mods;
-		SecurityPolicy *globsec;
 
 		std::list<RsItem *> in_service;
 

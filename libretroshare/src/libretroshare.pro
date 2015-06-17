@@ -373,7 +373,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqinetwork.h \
 			pqi/pqiperson.h \
 			pqi/pqipersongrp.h \
-			pqi/pqisecurity.h \
 			pqi/pqiservice.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
@@ -525,7 +524,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqinetwork.cc \
 			pqi/pqiperson.cc \
 			pqi/pqipersongrp.cc \
-			pqi/pqisecurity.cc \
 			pqi/pqiservice.cc \
 			pqi/pqissl.cc \
 			pqi/pqissllistener.cc \

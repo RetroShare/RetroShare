@@ -37,8 +37,8 @@ class pqissl ;
 class pqisslpersongrp: public pqipersongrp
 {
 	public:
-	pqisslpersongrp(p3ServiceControl *ctrl, SecurityPolicy *pol, unsigned long flags, p3PeerMgr *pm)
-	:pqipersongrp(ctrl, pol, flags), mPeerMgr(pm) { return; }
+    pqisslpersongrp(p3ServiceControl *ctrl, unsigned long flags, p3PeerMgr *pm)
+    :pqipersongrp(ctrl, flags), mPeerMgr(pm) { return; }
 
 	protected:
 

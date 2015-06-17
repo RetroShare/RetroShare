@@ -50,7 +50,7 @@ class RsPeerCryptoParams ;
 class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer, public pqiNetListener
 {
 	public:
-	pqipersongrp(p3ServiceControl *ctrl, SecurityPolicy *, unsigned long flags);
+    pqipersongrp(p3ServiceControl *ctrl, unsigned long flags);
 
 	/*************************** Setup *************************/
 	/* pqilistener */
@@ -129,8 +129,8 @@ virtual int checkOutgoingRsItem(RsItem *item, int global)
 class pqipersongrpDummy: public pqipersongrp
 {
 	public:
-	pqipersongrpDummy(p3ServiceControl *ctrl, SecurityPolicy *pol, unsigned long flags)
-	:pqipersongrp(ctrl, pol, flags) { return; }
+    pqipersongrpDummy(p3ServiceControl *ctrl, unsigned long flags)
+    :pqipersongrp(ctrl, flags) { return; }
 
 	protected:
 
