@@ -117,7 +117,7 @@ bool pqihandler::queueOutRsItem(RsItem *item)
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	uint32_t size ;
-	locked_HandleRsItem(item, 0, size);
+    locked_HandleRsItem(item, size);
 
 #ifdef DEBUG_QOS
 	if(item->priority_level() == QOS_PRIORITY_UNKNOWN)
@@ -201,49 +201,13 @@ bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 	return false;
 }
 
-// dummy output check
-int	pqihandler::locked_checkOutgoingRsItem(RsItem * /*item*/, int /*global*/)
-{
-	//pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "pqihandler::checkOutgoingPQItem() NULL fn");
-
-	return 1;
-}
-
-
-
 // generalised output
-int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& computed_size)
+int	pqihandler::locked_HandleRsItem(RsItem *item, uint32_t& computed_size)
 {
 	computed_size = 0 ;
 	std::map<RsPeerId, SearchModule *>::iterator it;
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
 	  "pqihandler::HandleRsItem()");
-
-	/* simplified to no global! */
-	if (allowglobal)
-	{
-		/* error */
-		std::string out = "pqihandler::HandleSearchItem() Cannot send out Global RsItem";
-		pqioutput(PQL_ALERT, pqihandlerzone, out);
-#ifdef DEBUG_TICK
-		std::cerr << out << std::endl;
-#endif
-		delete item;
-		return -1;
-	}
-
-	if (!locked_checkOutgoingRsItem(item, allowglobal))
-	{
-		std::string out = "pqihandler::HandleRsItem() checkOutgoingPQItem  Failed on item: \n";
-#ifdef DEBUG_TICK
-		std::cerr << out;
-#endif
-		item -> print_string(out);
-
-		pqioutput(PQL_ALERT, pqihandlerzone, out);
-		delete item;
-		return -1;
-	}
 
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
 	  "pqihandler::HandleRsItem() Sending to One Channel");

@@ -85,10 +85,9 @@ class pqihandler: public P3Interface, public pqiPublisher
 		 * generates warnings otherwise
 		 */
 
-		int	locked_HandleRsItem(RsItem *ns, int allowglobal,uint32_t& size);
+        int	locked_HandleRsItem(RsItem *ns, uint32_t& size);
 		bool  queueOutRsItem(RsItem *) ;
 
-		virtual int locked_checkOutgoingRsItem(RsItem *item, int global);
 #ifdef TO_BE_REMOVED
 		int		locked_GetItems();
 		void	locked_SortnStoreItem(RsItem *item);
