@@ -98,7 +98,7 @@ void FeedReaderFeedItem::toggle()
 	expand(ui->expandFrame->isHidden());
 }
 
-void FeedReaderFeedItem::expand(bool open)
+void FeedReaderFeedItem::doExpand(bool open)
 {
 	if (mParent) {
 		mParent->lockLayout(this, true);

@@ -166,7 +166,7 @@ void GxsChannelGroupItem::toggle()
 	expand(ui->expandFrame->isHidden());
 }
 
-void GxsChannelGroupItem::expand(bool open)
+void GxsChannelGroupItem::doExpand(bool open)
 {
 	if (mFeedHolder)
 	{

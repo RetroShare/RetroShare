@@ -317,3 +317,23 @@ string_is_hex(const QString &str)
   return true;
 }
 
+namespace RsStringUtil
+{
+
+QString CopyLines(const QString &s, quint16 lines)
+{
+	int index = -1;
+	for (int i = 0; i < lines; ++i) {
+		index = s.indexOf("\n", index + 1);
+		if (index == -1) {
+			break;
+		}
+	}
+	if (index != -1) {
+		return s.left(index);
+	}
+
+	return s;
+}
+
+}

@@ -42,8 +42,9 @@ public:
 	FeedReaderFeedItem(RsFeedReader *feedReader, FeedReaderNotify *notify, FeedHolder *parent, const FeedInfo &feedInfo, const FeedMsgInfo &msgInfo);
 	~FeedReaderFeedItem();
 
+protected:
 	/* FeedItem */
-	virtual void expand(bool open);
+	virtual void doExpand(bool open);
 
 private slots:
 	/* default stuff */

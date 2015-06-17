@@ -43,10 +43,10 @@ public:
 
 	bool setGroup(const RsGxsChannelGroup &group);
 
-	/* FeedItem */
-	virtual void expand(bool open);
-
 protected:
+	/* FeedItem */
+	virtual void doExpand(bool open);
+
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
 	virtual void loadGroup(const uint32_t &token);

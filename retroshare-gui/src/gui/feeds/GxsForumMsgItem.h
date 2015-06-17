@@ -46,10 +46,11 @@ public:
 	bool setGroup(const RsGxsForumGroup &group, bool doFill = true);
 	bool setMessage(const RsGxsForumMsg &msg, bool doFill = true);
 
-	/* FeedItem */
-	virtual void expand(bool open);
-
 protected:
+	/* FeedItem */
+	virtual void doExpand(bool open);
+	virtual void expandFill(bool first);
+
 	/* load message data */
 	void requestParentMessage(const RsGxsMessageId &msgId);
 	virtual void loadParentMessage(const uint32_t &token);
@@ -78,6 +79,7 @@ signals:
 private:
 	void setup();
 	void fill();
+	void fillExpandFrame();
 	void setReadStatus(bool isNew, bool isUnread);
 	void setAsRead();
 	bool isTop();

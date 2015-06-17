@@ -55,12 +55,13 @@ public:
 	QString getMsgLabel();
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
-	/* FeedItem */
-	virtual void expand(bool open);
-
     bool isUnread() const ;
 
 protected:
+	/* FeedItem */
+	virtual void doExpand(bool open);
+	virtual void expandFill(bool first);
+
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
 	virtual void loadGroup(const uint32_t &token);
@@ -92,6 +93,7 @@ signals:
 private:
 	void setup();
 	void fill();
+	void fillExpandFrame();
 	void setReadStatus(bool isNew, bool isUnread);
 
 private:

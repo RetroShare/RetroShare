@@ -195,7 +195,7 @@ void SecurityIpItem::toggle()
 	expand(ui->expandFrame->isHidden());
 }
 
-void SecurityIpItem::expand(bool open)
+void SecurityIpItem::doExpand(bool open)
 {
 	if (mParent) {
 		mParent->lockLayout(this, true);

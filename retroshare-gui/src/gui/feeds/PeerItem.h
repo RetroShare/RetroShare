@@ -43,8 +43,9 @@ public:
 
 	void updateItemStatic();
 
+protected:
 	/* FeedItem */
-	virtual void expand(bool open);
+	virtual void doExpand(bool open);
 
 private slots:
 	/* default stuff */

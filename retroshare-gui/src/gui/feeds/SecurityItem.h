@@ -45,8 +45,9 @@ public:
 
 	bool isSame(const RsPeerId &sslId, uint32_t type);
 
+protected:
 	/* FeedItem */
-	virtual void expand(bool open);
+	virtual void doExpand(bool open);
 
 private slots:
 	/* default stuff */

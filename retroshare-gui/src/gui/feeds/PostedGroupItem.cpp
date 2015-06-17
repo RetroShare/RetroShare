@@ -171,7 +171,7 @@ void PostedGroupItem::toggle()
 	expand(ui->expandFrame->isHidden());
 }
 
-void PostedGroupItem::expand(bool open)
+void PostedGroupItem::doExpand(bool open)
 {
 	if (mFeedHolder)
 	{

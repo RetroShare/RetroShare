@@ -286,7 +286,7 @@ void SecurityItem::toggle()
 	expand(expandFrame->isHidden());
 }
 
-void SecurityItem::expand(bool open)
+void SecurityItem::doExpand(bool open)
 {
 	if (mParent) {
 		mParent->lockLayout(this, true);

@@ -24,9 +24,23 @@
 /** Constructor */
 FeedItem::FeedItem(QWidget *parent) : QWidget(parent)
 {
+	mWasExpanded = false;
 }
 
 FeedItem::~FeedItem()
 {
 	emit feedItemDestroyed(this);
+}
+
+void FeedItem::expand(bool open)
+{
+	if (open) {
+		expandFill(!mWasExpanded);
+	}
+
+	doExpand(open);
+
+	if (open) {
+		mWasExpanded = true;
+	}
 }

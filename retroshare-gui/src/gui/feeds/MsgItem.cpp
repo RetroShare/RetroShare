@@ -69,7 +69,6 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
   updateItem();
 }
 
-
 void MsgItem::updateItemStatic()
 {
 	/* fill in */
@@ -148,8 +147,11 @@ void MsgItem::updateItemStatic()
 
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromUtf8(mi.title.c_str()));
-		
-    msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mi.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	mMsg = QString::fromUtf8(mi.msg.c_str());
+
+	if (wasExpanded() || expandFrame->isVisible()) {
+		fillExpandFrame();
+	}
 
 	std::list<FileInfo>::iterator it;
 	for(it = mi.files.begin(); it != mi.files.end(); ++it)
@@ -175,6 +177,10 @@ void MsgItem::updateItemStatic()
 	}
 }
 
+void MsgItem::fillExpandFrame()
+{
+	msgLabel->setText(RsHtml().formatText(NULL, mMsg, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+}
 
 void MsgItem::updateItem()
 {
@@ -207,7 +213,7 @@ void MsgItem::toggle()
 	expand(expandFrame->isHidden());
 }
 
-void MsgItem::expand(bool open)
+void MsgItem::doExpand(bool open)
 {
 	if (mParent) {
 		mParent->lockLayout(this, true);
@@ -234,6 +240,15 @@ void MsgItem::expand(bool open)
 
 	if (mParent) {
 		mParent->lockLayout(this, false);
+	}
+}
+
+void MsgItem::expandFill(bool first)
+{
+	FeedItem::expandFill(first);
+
+	if (first) {
+		fillExpandFrame();
 	}
 }
 

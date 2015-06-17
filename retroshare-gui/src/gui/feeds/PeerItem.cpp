@@ -201,7 +201,7 @@ void PeerItem::toggle()
 	expand(expandFrame->isHidden());
 }
 
-void PeerItem::expand(bool open)
+void PeerItem::doExpand(bool open)
 {
 	if (mParent) {
 		mParent->lockLayout(this, true);

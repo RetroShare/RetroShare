@@ -34,6 +34,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
+#include "util/stringutil.h"
 
 #include <iostream>
 
@@ -311,7 +312,9 @@ void GxsChannelPostItem::fill()
 	{
 		/* subject */
 		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
-		ui->subjectLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+		// fill first 4 lines of message
+		ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 		
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
@@ -376,8 +379,10 @@ void GxsChannelPostItem::fill()
 		voteDownButton->setEnabled(false);
 	}*/
 
-	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	ui->msgFrame->setVisible(!mPost.mMsg.empty());
+	if (wasExpanded() || ui->expandFrame->isVisible()) {
+		fillExpandFrame();
+	}
 
 	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
 
@@ -425,6 +430,11 @@ void GxsChannelPostItem::fill()
 	}
 
 	mInFill = false;
+}
+
+void GxsChannelPostItem::fillExpandFrame()
+{
+	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 }
 
 QString GxsChannelPostItem::messageName()
@@ -552,7 +562,7 @@ void GxsChannelPostItem::updateItem()
 	//downloadButton->setEnabled(true);
 }
 
-void GxsChannelPostItem::expand(bool open)
+void GxsChannelPostItem::doExpand(bool open)
 {
 	if (mFeedHolder)
 	{
@@ -579,6 +589,15 @@ void GxsChannelPostItem::expand(bool open)
 	if (mFeedHolder)
 	{
 		mFeedHolder->lockLayout(this, false);
+	}
+}
+
+void GxsChannelPostItem::expandFill(bool first)
+{
+	GxsFeedItem::expandFill(first);
+
+	if (first) {
+		fillExpandFrame();
 	}
 }
 

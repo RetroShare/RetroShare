@@ -39,8 +39,13 @@ public:
 
 	void updateItemStatic();
 
+protected:
 	/* FeedItem */
-	virtual void expand(bool open);
+	virtual void doExpand(bool open);
+	virtual void expandFill(bool first);
+
+private:
+	void fillExpandFrame();
 
 private slots:
 	/* default stuff */
@@ -61,6 +66,7 @@ private:
 
     ChatId mPeerId;
 	std::string mMsgId;
+	QString mMsg;
 
 	bool mIsHome;
 	bool mCloseOnRead;

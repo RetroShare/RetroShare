@@ -166,7 +166,7 @@ void GxsForumGroupItem::toggle()
 	expand(ui->expandFrame->isHidden());
 }
 
-void GxsForumGroupItem::expand(bool open)
+void GxsForumGroupItem::doExpand(bool open)
 {
 	if (mFeedHolder)
 	{

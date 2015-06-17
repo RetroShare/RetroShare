@@ -313,7 +313,9 @@ void GxsForumMsgItem::fill()
 	RetroShareLink msgLink;
 	msgLink.createGxsMessageLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, mMessage.mMeta.mMsgId, messageName());
 	ui->subLabel->setText(msgLink.toHtml());
-	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	if (wasExpanded() || ui->expandFrame->isVisible()) {
+		fillExpandFrame();
+	}
 
 	ui->timestamplabel->setText(DateTime::formatLongDateTime(mMessage.mMeta.mPublishTs));
 
@@ -355,12 +357,17 @@ void GxsForumMsgItem::fill()
 	mInFill = false;
 }
 
+void GxsForumMsgItem::fillExpandFrame()
+{
+	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+}
+
 QString GxsForumMsgItem::messageName()
 {
 	return QString::fromUtf8(mMessage.mMeta.mMsgName.c_str());
 }
 
-void GxsForumMsgItem::expand(bool open)
+void GxsForumMsgItem::doExpand(bool open)
 {
 	if (mFeedHolder)
 	{
@@ -392,6 +399,15 @@ void GxsForumMsgItem::expand(bool open)
 	if (mFeedHolder)
 	{
 		mFeedHolder->lockLayout(this, false);
+	}
+}
+
+void GxsForumMsgItem::expandFill(bool first)
+{
+	GxsFeedItem::expandFill(first);
+
+	if (first) {
+		fillExpandFrame();
 	}
 }
 

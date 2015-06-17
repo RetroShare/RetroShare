@@ -51,8 +51,9 @@ public:
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
 
+protected:
 	/* FeedItem */
-	virtual void expand(bool /*open*/) {}
+	virtual void doExpand(bool /*open*/) {}
 
 private slots:
 	void loadComments();

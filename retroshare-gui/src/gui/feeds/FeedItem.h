@@ -34,11 +34,19 @@ public:
 	/** Default Destructor */
 	virtual ~FeedItem();
 
-	virtual void expand(bool open) = 0;
+	bool wasExpanded() { return mWasExpanded; }
+	void expand(bool open);
+
+protected:
+	virtual void doExpand(bool open) = 0;
+	virtual void expandFill(bool /*first*/) {}
 
 signals:
 	void sizeChanged(FeedItem *feedItem);
 	void feedItemDestroyed(FeedItem *feedItem);
+
+private:
+	bool mWasExpanded;
 };
 
 #endif
