@@ -632,6 +632,8 @@ void p3HistoryMgr::setSaveCount(uint32_t chat_type, uint32_t count)
 		case RS_HISTORY_TYPE_PRIVATE: oldValue = mPrivateSaveCount ;
 											  mPrivateSaveCount = count ;
 											  break ;
+		default:
+			return;
 	}
 
 	if (oldValue != count) 
