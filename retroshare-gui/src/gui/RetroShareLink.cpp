@@ -163,6 +163,20 @@ void RetroShareLink::fromString(const QString& url)
 	fromUrl(QUrl::fromEncoded(url.toUtf8().constData()));
 }
 
+// Qt 4 and Qt5 use different classes
+// to make it work with Qt4 and Qt5, use a template
+template<class QUrl_or_QUrlQuery>
+QString decodedQueryItemValue(const QUrl_or_QUrlQuery& urlQuery, const QString& key)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    // Qt5 needs a additional flag to properly decode everything
+    // we have to decode, becaue we want only decoded stuff in our QString
+    return urlQuery.queryItemValue(key, QUrl::FullyDecoded);
+#else
+    return urlQuery.queryItemValue(key);
+#endif
+}
+
 void RetroShareLink::fromUrl(const QUrl& url)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -188,7 +202,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		bool ok ;
 
 		_type = TYPE_FILE;
-		_name = urlQuery.queryItemValue(FILE_NAME);
+        _name = decodedQueryItemValue(urlQuery, FILE_NAME);
 		_size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
 		_hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
 
@@ -220,7 +234,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		bool ok ;
 
 		_type = TYPE_EXTRAFILE;
-		_name = urlQuery.queryItemValue(FILE_NAME);
+        _name = decodedQueryItemValue(urlQuery, FILE_NAME);
 		_size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
 		_hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
 		_SSLid = urlQuery.queryItemValue(FILE_SOURCE);
@@ -239,7 +253,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 	}
 	if (url.host() == HOST_PERSON) {
 		_type = TYPE_PERSON;
-		_name = urlQuery.queryItemValue(PERSON_NAME);
+        _name = decodedQueryItemValue(urlQuery, PERSON_NAME);
 		_hash = urlQuery.queryItemValue(PERSON_HASH).left(40);	// normally not necessary, but it's a security.
 		check();
 		return;
@@ -247,7 +261,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	if (url.host() == HOST_FORUM) {
 		_type = TYPE_FORUM;
-		_name = urlQuery.queryItemValue(FORUM_NAME);
+        _name = decodedQueryItemValue(urlQuery, FORUM_NAME);
 		_hash = urlQuery.queryItemValue(FORUM_ID);
 		_msgId = urlQuery.queryItemValue(FORUM_MSGID);
 		check();
@@ -256,7 +270,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	if (url.host() == HOST_CHANNEL) {
 		_type = TYPE_CHANNEL;
-		_name = urlQuery.queryItemValue(CHANNEL_NAME);
+        _name = decodedQueryItemValue(urlQuery, CHANNEL_NAME);
 		_hash = urlQuery.queryItemValue(CHANNEL_ID);
 		_msgId = urlQuery.queryItemValue(CHANNEL_MSGID);
 		check();
@@ -265,7 +279,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	if (url.host() == HOST_SEARCH) {
 		_type = TYPE_SEARCH;
-		_name = urlQuery.queryItemValue(SEARCH_KEYWORDS);
+        _name = decodedQueryItemValue(urlQuery, SEARCH_KEYWORDS);
 		check();
 		return;
 	}
