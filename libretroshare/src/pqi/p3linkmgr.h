@@ -258,6 +258,7 @@ virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state); //
 /************************************************************************************************/
 
         p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr);
+        virtual ~p3LinkMgrIMPL();
 
 void 	tick();
 

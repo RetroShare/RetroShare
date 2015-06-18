@@ -162,6 +162,11 @@ p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
 	return;
 }
 
+p3LinkMgrIMPL::~p3LinkMgrIMPL()
+{
+	delete(mDNSResolver);
+}
+
 bool    p3LinkMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
