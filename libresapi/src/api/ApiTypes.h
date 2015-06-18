@@ -181,7 +181,7 @@ private:
 class Request
 {
 public:
-    Request(StreamBase& stream): mStream(stream){}
+    Request(StreamBase& stream): mStream(stream), mMethod(GET){}
 
     bool isGet(){ return mMethod == GET;}
     bool isPut(){ return mMethod == PUT;}
