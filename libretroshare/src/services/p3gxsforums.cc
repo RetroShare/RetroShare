@@ -58,6 +58,8 @@ p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 {
 	// For Dummy Msgs.
 	mGenActive = false;
+    mGenCount = 0;
+    mGenToken = 0;
 
 	// Test Data disabled in Repo.
 	//RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
