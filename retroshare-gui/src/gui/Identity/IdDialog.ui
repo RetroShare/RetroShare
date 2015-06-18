@@ -200,7 +200,7 @@
          </column>
          <column>
           <property name="text">
-           <string>Key ID</string>
+           <string>Identity ID</string>
           </property>
          </column>
          <column>
@@ -273,7 +273,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Send Message</string>
+             <string>Send message</string>
             </property>
             <property name="text">
              <string/>
@@ -299,7 +299,7 @@
        <item>
         <widget class="QGroupBox" name="detailsGroupBox">
          <property name="title">
-          <string>Identity Info</string>
+          <string>Identity info</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
@@ -553,7 +553,7 @@
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
-               <string>Edit Reputation</string>
+               <string>Edit reputation</string>
               </property>
               <property name="icon">
                <iconset resource="../images.qrc">
@@ -673,10 +673,10 @@
      <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
    </property>
    <property name="text">
-    <string>Edit Identity</string>
+    <string>Edit identity</string>
    </property>
    <property name="toolTip">
-    <string>Edit Identity</string>
+    <string>Edit identity</string>
    </property>
   </action>
   <action name="removeIdentity">
@@ -685,7 +685,7 @@
      <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
    </property>
    <property name="text">
-    <string>Delete Identity</string>
+    <string>Delete identity</string>
    </property>
   </action>
   <action name="chatIdentity">

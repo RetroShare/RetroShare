@@ -7027,13 +7027,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+17"/>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+411"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+416"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-54"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-56"/>
         <source>Comments</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7049,7 +7049,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+217"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="+224"/>
         <source>Expand</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7064,17 +7064,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-290"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-299"/>
         <source>Channel Feed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+104"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+88"/>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7094,7 +7094,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-204"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-211"/>
         <source>Comment</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7109,12 +7109,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-256"/>
+        <location filename="../gui/feeds/GxsChannelPostItem.cpp" line="-258"/>
         <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+302"/>
+        <location line="+306"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7459,7 +7459,7 @@ before you can comment</source>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="+387"/>
+        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="+394"/>
         <source>Expand</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7479,7 +7479,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="-287"/>
+        <location filename="../gui/feeds/GxsForumMsgItem.cpp" line="-294"/>
         <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7489,7 +7489,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+108"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8659,17 +8659,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="+400"/>
-        <source>Edit Reputation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-353"/>
-        <source>Key ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+278"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+325"/>
         <source>Reputation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8700,23 +8690,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+535"/>
-        <source>Delete Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-12"/>
-        <location line="+3"/>
-        <source>Edit Identity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-377"/>
-        <source>Identity Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+193"/>
+        <location line="+342"/>
         <source>Overall</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8736,7 +8710,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+19"/>
+        <source>Edit reputation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
         <source>Tweak Opinion</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8771,7 +8750,18 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+33"/>
+        <location line="+3"/>
+        <source>Edit identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Delete identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Chat with this peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8796,7 +8786,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="-110"/>
+        <source>Identity ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+73"/>
+        <source>Send message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Identity info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
         <source>Identity ID :</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8936,12 +8941,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-166"/>
-        <source>Send Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+128"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="-38"/>
         <source>Last used:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9529,18 +9529,18 @@ p, li { white-space: pre-wrap; }
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+14"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+885"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+907"/>
         <source>Compose</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+45"/>
-        <location line="+1076"/>
+        <location line="+1108"/>
         <source>Contacts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1019"/>
+        <location line="-1051"/>
         <source>&gt;&gt; To</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9560,7 +9560,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+273"/>
+        <location line="+73"/>
         <source>Paragraph</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9596,12 +9596,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-236"/>
+        <location line="+30"/>
         <source>Font size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+22"/>
         <source>Increase font size</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9621,17 +9621,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+145"/>
+        <location line="+79"/>
         <source>Alignment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-104"/>
+        <location line="-38"/>
         <source>Add an Image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+63"/>
         <source>Sets text font to code style</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9641,7 +9641,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+310"/>
+        <location line="+336"/>
         <source>Subject:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9657,7 +9657,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-199"/>
+        <location line="-225"/>
         <source>Set Text color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9667,7 +9667,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+365"/>
+        <location line="+391"/>
         <source>Recommended Files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9737,7 +9737,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-109"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-131"/>
         <source>Send To:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9762,7 +9762,47 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+267"/>
+        <location line="+7"/>
+        <source>Bullet List (Disc)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Bullet List (Circle)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Bullet List (Square)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered List (Decimal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered List (Alpha lower)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered List (Alpha upper)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered List (Roman lower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered List (Roman upper)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+268"/>
         <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9788,12 +9828,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+44"/>
-        <location line="+1720"/>
+        <location line="+1714"/>
         <source>Save Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1719"/>
+        <location line="-1713"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation type="unfinished"></translation>
@@ -10008,7 +10048,7 @@ Do you want to save message to draft box?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+277"/>
+        <location line="+271"/>
         <source>Open File...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10055,12 +10095,12 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.ui" line="-998"/>
+        <location filename="../gui/msgs/MessageComposer.ui" line="-1030"/>
         <source>Show:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+626"/>
+        <location line="+658"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10070,7 +10110,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-2249"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-2245"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10080,17 +10120,17 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+453"/>
+        <location line="+455"/>
         <source>Person Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-452"/>
+        <location line="-454"/>
         <source>Distant peer identities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+292"/>
         <source>Thanks, &lt;br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10949,7 +10989,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/MsgItem.cpp" line="+230"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="+236"/>
         <source>Expand</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10959,7 +10999,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.cpp" line="-110"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="-117"/>
         <source>Message From</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10979,7 +11019,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+90"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
