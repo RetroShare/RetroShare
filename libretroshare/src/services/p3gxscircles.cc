@@ -120,6 +120,7 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 
 	// Dummy Circles.
 //	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
+    mDummyIdToken = 0;
 
 }
 
