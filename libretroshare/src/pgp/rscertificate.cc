@@ -251,12 +251,11 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 #endif
 		// 1 - decode the string.
 		//
-		char *bf = NULL ;
-		size_t size ;
-		Radix64::decode(str,bf, size) ;
+        std::vector<uint8_t> bf = Radix64::decode(str) ;
+        size_t size = bf.size();
 
 		bool checksum_check_passed = false ;
-		unsigned char *buf = (unsigned char *)bf ;
+        unsigned char *buf = bf.data() ;
 		size_t total_s = 0 ;
 		only_pgp = true ;
 		uint8_t certificate_version = 0x00 ;
@@ -348,7 +347,7 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 																	  err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION ;
 																	  return false ;
 																  }
-																  uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)bf,size-5) ;
+                                                                  uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(bf.data(),size-5) ;
 																  uint32_t certificate_crc = buf[0] + (buf[1] << 8) + (buf[2] << 16) ;
 
 																  if(computed_crc != certificate_crc)
@@ -386,7 +385,6 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 		if(total_s != size)	
 			std::cerr << "(EE) Certificate contains trailing characters. Weird." << std::endl;
 
-		delete[] bf ;
 		return true ;
 	}
 	catch(std::exception& e)

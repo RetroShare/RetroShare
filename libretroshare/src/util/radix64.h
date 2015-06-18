@@ -3,11 +3,12 @@
 #include <string>
 #include <string.h>
 #include <vector>
+#include <stdint.h>
 
 class Radix64
 {
-	public:
-		static void decode(const std::string& buffer,char *& out, size_t& len)
+    public:
+        static std::vector<uint8_t> decode(const std::string& buffer)
 		{
 			char val;
 			int c = 0, c2;/* init c because gcc is not clever
@@ -17,7 +18,7 @@ class Radix64
 
 			radix64_init();
 
-			std::vector<char> buf ;
+            std::vector<uint8_t> buf ;
 			idx = 0;
 			val = 0;
 
@@ -94,10 +95,7 @@ again:
 
 			idx = idx;
 
-			len = buf.size() ;
-			out = new char[len] ;
-
-			memcpy(out,&buf[0],len) ;
+            return buf;
 		}
 
 		/****************

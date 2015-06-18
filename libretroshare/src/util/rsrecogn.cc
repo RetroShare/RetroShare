@@ -57,16 +57,12 @@ static std::string RecognSigningKeys[NUM_RECOGN_SIGN_KEYS] =
 EVP_PKEY *RsRecogn::loadMasterKey()
 {
 	/* load master signing key */
-	size_t keylen;
-	char *keyptr;
-	
-	Radix64::decode(RecognKey, keyptr, keylen);
+    std::vector<uint8_t> decoded = Radix64::decode(RecognKey);
 		
-	const unsigned char *keyptr2 = (const unsigned char *) keyptr;
-	long keylen2 = keylen;
+    const unsigned char *keyptr2 = decoded.data();
+    long keylen2 = decoded.size();
 	
 	RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr2), keylen2);
-	delete []keyptr;
 
 	if (!rsakey)
 	{
@@ -102,15 +98,11 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 
 	for(int i = 0; i < NUM_RECOGN_SIGN_KEYS; i++)
 	{
-		char *signerbuf;
-		size_t len;
-		Radix64::decode(RecognSigningKeys[i], signerbuf, len);
+        std::vector<uint8_t> signerbuf = Radix64::decode(RecognSigningKeys[i]);
 
-		uint32_t pktsize = len;
-		RsItem *pktitem = recognSerialiser.deserialise(signerbuf, &pktsize);
+        uint32_t pktsize = signerbuf.size();
+        RsItem *pktitem = recognSerialiser.deserialise(signerbuf.data(), &pktsize);
 		RsGxsRecognSignerItem *item = dynamic_cast<RsGxsRecognSignerItem *>(pktitem);
-
-		delete []signerbuf;
 
 		if (!item)
 		{
@@ -527,16 +519,13 @@ std::string RsRecogn::getRsaKeyId(RSA *pubkey)
 RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
 {
 	// Decode from Radix64 encoded Packet.
-	size_t buflen;
-	char *buffer;
 	uint32_t pktsize;
 
-	Radix64::decode(encoded, buffer, buflen);
-	pktsize = buflen;
+    std::vector<uint8_t> buffer = Radix64::decode(encoded);
+    pktsize = buffer.size();
 
 	RsGxsRecognSerialiser serialiser;
-	RsItem *item = serialiser.deserialise(buffer, &pktsize);
-	delete []buffer;
+    RsItem *item = serialiser.deserialise(buffer.data(), &pktsize);
 
 	if (!item)
 	{

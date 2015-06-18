@@ -29,16 +29,12 @@ bool PGPKeyManagement::createMinimalKey(const std::string& pgp_certificate,std::
 
 		// 1 - Convert armored key into binary key
 		//
-
-		char *keydata = NULL ;
-		size_t len = 0 ;
-
-		Radix64::decode(radix_cert,keydata,len) ;
+        std::vector<uint8_t> keydata = Radix64::decode(radix_cert) ;
 
 		size_t new_len ;
-		findLengthOfMinimalKey((unsigned char *)keydata,len,new_len) ;
+        findLengthOfMinimalKey(keydata.data(), keydata.size(), new_len) ;
 
-		cleaned_certificate = makeArmouredKey((unsigned char*)keydata,new_len,version_string) ;
+        cleaned_certificate = makeArmouredKey(keydata.data(), new_len, version_string) ;
 		return true ;
 	}
 	catch(std::exception& e)
