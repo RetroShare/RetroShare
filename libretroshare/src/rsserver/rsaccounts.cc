@@ -1006,8 +1006,6 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	std::string key_name = keypath + kFilenameKey;
 	std::string cert_name = keypath + kFilenameCert;
 
-	bool gen_ok = false;
-
 	/* Extra step required for SSL + PGP, user must have selected
 	 * or generated a suitable key so the signing can happen.
 	 */
@@ -1039,9 +1037,8 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	}
 
 	/* save to file */
-	if (x509)
-	{	
-		gen_ok = true;
+
+        bool gen_ok = true;
 
 		/* Print the signed Certificate! */
 		BIO *bio_out = NULL;
@@ -1057,14 +1054,6 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 		BIO_flush(bio_out);
 		BIO_free(bio_out);
 
-	}
-	else
-	{
-		gen_ok = false;
-	}
-
-	if (gen_ok)
-	{
 		/* Save cert to file */
 		// open the file.
 		FILE *out = NULL;
@@ -1088,7 +1077,6 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
         // store location name in a file
         if(!RsDirUtil::saveStringToFile(keypath + kFilenameLocation, loc))
             std::cerr << "RsInit::GenerateSSLCertificate() failed to save location name to into file." << std::endl;
-	}
 
 	if (!gen_ok)
 	{
