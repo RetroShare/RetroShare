@@ -77,6 +77,8 @@ p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService
 
 	// Test Data disabled in repo.
 	//RsTickEvent::schedule_in(CHANNEL_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
+    mGenToken = 0;
+    mGenCount = 0;
 
 }
 
