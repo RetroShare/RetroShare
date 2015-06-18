@@ -406,6 +406,7 @@ static void sendMessage(MHD_Connection *connection, unsigned int status, std::st
 ApiServerMHD::ApiServerMHD(ApiServer *server):
     mConfigOk(false), mDaemon(0), mApiServer(server)
 {
+    memset(&mListenAddr, 0, sizeof(mListenAddr));
 }
 
 ApiServerMHD::~ApiServerMHD()
