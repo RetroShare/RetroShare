@@ -594,6 +594,8 @@ void p3HistoryMgr::setEnable(uint32_t chat_type, bool enable)
 		case RS_HISTORY_TYPE_PRIVATE: oldValue = mPrivateEnable ;
 											  mPrivateEnable = enable ;
 											  break ;
+		default:
+			return;
 	}
 
 	if (oldValue != enable) 
