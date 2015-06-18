@@ -99,7 +99,7 @@ bool ExpressionWidget::isStringSearchExpression()
 
 void ExpressionWidget::adjustExprForTermType(int index)
 {
-    ExprSearchType type = (*GuiExprElement::TermsIndexMap)[index];
+    ExprSearchType type = GuiExprElement::TermsIndexMap[index];
     searchType = type;
     
     // now adjust the relevant elements
