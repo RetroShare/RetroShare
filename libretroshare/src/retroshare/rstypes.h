@@ -160,7 +160,8 @@ class FileInfo
 	/* old BaseInfo Entries */
 	public:
 
-		FileInfo() : mId(0) { return; }
+        FileInfo() : mId(0), searchId(0), size(0), avail(0), rank(0), age(0), queue_position(0),
+        transfered(0), tfRate(0), downloadStatus(0), priority(SPEED_NORMAL), lastTS(0){}
 //		RsCertId id; /* key for matching everything */
 
 		FileStorageFlags  storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.

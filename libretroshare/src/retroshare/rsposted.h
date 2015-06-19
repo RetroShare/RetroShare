@@ -115,7 +115,10 @@ class RsPostedPost
 		mDownVotes = 0;
 		mComments = 0;
 		mHaveVoted = false;
-		return;
+
+        mHotScore = 0;
+        mTopScore = 0;
+        mNewScore = 0;
 	}
 
 	bool calculateScores(time_t ref_time);

@@ -188,7 +188,7 @@ class RsConfigNetStatus
 		DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtAddressOk = false ;
 		uPnPState = 0 ;
 		//DHTPeers = 0 ;
-		
+        netDhtNetSize = netDhtRsNetSize = 0;
 	}
 
 	RsPeerId		ownId;

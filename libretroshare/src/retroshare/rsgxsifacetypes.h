@@ -41,6 +41,7 @@ public:
     RsGroupMetaData()
     {
             mGroupFlags = 0;
+            mSignFlags = 0;
             mSubscribeFlags = 0;
 
             mPop = 0;

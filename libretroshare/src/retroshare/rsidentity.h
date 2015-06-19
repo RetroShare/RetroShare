@@ -159,7 +159,7 @@ class RsIdentityDetails
 public:
     RsIdentityDetails()
             :mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
-              mReputation() { return; }
+              mReputation(), mLastUsageTS(0) { return; }
 
     RsGxsId mId;
 

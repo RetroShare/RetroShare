@@ -175,7 +175,7 @@ class MessageInfo_v2
 class MessageInfo
 {
 public:
-    MessageInfo() {}
+    MessageInfo(): msgflags(0), size(0), count(0), ts(0) {}
     std::string msgId;
 
     RsPeerId rspeerid_srcId;
@@ -212,7 +212,7 @@ public:
 class MsgInfoSummary 
 {
 	public:
-	MsgInfoSummary() {}
+    MsgInfoSummary(): msgflags(0), count(0), ts(0) {}
 
 	std::string msgId;
 	RsPeerId srcId;
@@ -344,7 +344,7 @@ class ChatLobbyInvite
 class VisibleChatLobbyRecord
 {
 public:
-    VisibleChatLobbyRecord() { total_number_of_peers = 0 ; }
+    VisibleChatLobbyRecord(): lobby_id(0), total_number_of_peers(0), last_report_time(0){}
 
     ChatLobbyId lobby_id ;									// unique id of the lobby
     std::string lobby_name ;								// name to use for this lobby
