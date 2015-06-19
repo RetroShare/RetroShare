@@ -131,6 +131,7 @@ class ZeroedInt
 
 BanListPeer::BanListPeer()
 {
+    memset(&addr, 0, sizeof(addr));
     masked_bytes=0;
     reason=RSBANLIST_REASON_UNKNOWN ;
     level=RSBANLIST_ORIGIN_UNKNOWN ;
