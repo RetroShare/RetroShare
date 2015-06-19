@@ -46,7 +46,6 @@ private:
 
     RsMutex mMtx;
 
-    uint32_t mLastBlobId;
     Blob* mBlobs;
 
 };
