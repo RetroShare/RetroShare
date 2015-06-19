@@ -90,7 +90,7 @@ void RSStyle::readSetting (QSettings &settings)
 		styleType = STYLETYPE_NONE;
 	}
 
-	colors.empty();
+    colors.clear();
 
 	int size = settings.beginReadArray("colors");
 	for (int i = 0; i < size; ++i) {
