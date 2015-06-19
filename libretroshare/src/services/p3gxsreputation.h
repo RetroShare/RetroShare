@@ -44,10 +44,10 @@ class ReputationConfig
 {
 public:
 	ReputationConfig()
-	:mPeerId(), mLatestUpdate(0) { return; }
+    :mPeerId(), mLatestUpdate(0), mLastQuery(0) { return; }
 
 	ReputationConfig(const RsPeerId& peerId)
-	:mPeerId(peerId), mLatestUpdate(0) { return; }
+    :mPeerId(peerId), mLatestUpdate(0), mLastQuery(0) { return; }
 
 	RsPeerId mPeerId;
 	time_t mLatestUpdate;
@@ -58,10 +58,10 @@ class Reputation
 {
 public:
 	Reputation()
-	:mOwnOpinion(0) { return; }
+    :mOwnOpinion(0), mOwnOpinionTs(0), mReputation(0) { return; }
 
 	Reputation(const RsGxsId& about)
-	:mGxsId(about), mOwnOpinion(0) { return; }
+    :mGxsId(about), mOwnOpinion(0), mOwnOpinionTs(0), mReputation(0) { return; }
 
 int32_t CalculateReputation();
 
