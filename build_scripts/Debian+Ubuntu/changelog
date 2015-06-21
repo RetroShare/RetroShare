@@ -1,6 +1,18 @@
 retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    GUI
+
+      * Used QTextBrowser to show the channel description for unsubscribed groups to avoid the horizontal growing of the channel list.
+      * fixed pasting of rslinks with special characters with Qt5
+      * fixed strings in IdDialog (patch from Henry)
+      * Optimized fill of feed items by moving the fill of the hidden area to the first expand of the frame.
+      * make IP connect state string fully translatable (patch from Henry)
+      * Use a better icon for "linked to your profile"
+      * Enabled ordered/bullet list for Message Composer
+      * changed default news feeds to include security_IP, remove Peer connects (this one drives most people crazy)
+      * change label "Security Ip" to "Ip security" in feed settings(patch from Henry)
+      * Added a second color button to Message Composer, for set text background color.
+      * Changed parameter isFirstTimeRun of RsAccountsDetail::getAccountOptions to output parameter.
       * Added version information of the libraries to HelpDialog.
       * Added own flag and new checkbox in settings for security ip feed items.
       * Changed NewsFeed::addUnique for SecurityIpItem to compare the ip addresses. That avoids duplicates when IP changes.
@@ -23,12 +35,63 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       * FeedReader: Added check for forum author.
       * Fixed VOIP linkage for ubuntu distributions (thx to Phenom)
 
+   WebUI
+      * added profile import/creation
+      * fixed leaking file descriptors
+      * added upload handler for small files
+      * fixed terminal thread
+      * removed some unused parameter warnings
+
    IP Filters
       * added check for whitelist before sending a Security item for IP changed.
       * improved voting for extr address, and make sure DHTStunner does not return a banned IP
       * removed/improved debug info
 
+   Various code improvements
+      * changed Radix64::decode to return result as std::vector
+      * removed unused branch and dummy function in pqihandler
+      * removed pqisecurity dummy functions. It is a packet filter which was never implemented. It's job is now done by service permissions.
+      * fixed compilation for versions not using sqlcipher
+      * added more debug info in pqissl when connection is attempted from banned address
+
    Bug fixes
+      * Fixed using uninitialized variable in p3HistoryMgr::setSaveCount.
+      * Fixed using uninitialized variable in p3HistoryMgr::setEnable.
+      * Fixed uninitialized members of bdProxyId and bdConnectionRequest.
+      * removed unused variable in TmpBlobStore
+      * let interface classes initialise their integers
+      * initialise BanListPeer::addr
+      * let turtle reputation classes initialise their integers
+      * let turtle items initialise their integers
+      * Added destructor to p3LinkMgrIMPL.
+      * Fixed memory leak in GuiExprElement.
+      * added missing initialisation in p3GxsChannels
+      * added missing initialisation in p3GxsCircles
+      * added missing initialisation in p3GxsForums
+      * removed useless ifs in rsaccounts.cc
+      * added missing initialisation in resource_api::Request
+      * added missing initialisation in ApiServerMHD
+      * fixed potential mismatch free/delete[] in distant chat
+      * added missing initialization for RsGXsIdGroup::mLastUsageTS
+      * added check for return value of fseek in ftFileProvider
+      * fixed potential memory leak in pgphandler
+      * fixed memory leak in FileIndexStore
+      * fixed uninitialised memory read in RsGxsNetUtils
+      * fixed Chat Lobby gui complaining about wrong string passed to RsGxsId constructor
+      * added missing delete in p3GeneralConfig
+      * Added proper shutdown of the plugins with remove of the service and dlcose of the plugin handle.
+      * fixed unlikely but possible invalid read in formatting of bandwidth numbers
+      * fixed potential use after free in openpgpsdk
+      * fixed double free in openpgpsdk
+      * added missing socket close in pqissllistenbase destructor
+      * added missing free and fclose in FileIndex
+      * fixed potential invalid memory read in openpgpsdk
+      * Removed unload of the plugins, because it causes a crash.
+      * Fixed possible dereference of null pointer in NotifyPage.
+      * Added missing breaks to p3GxsChannels::notifyChanges.
+      * Fixed possible fread from a null pointer in HashCache.
+      * Added missing breaks to p3GxsForums::notifyChanges.
+      * Added missing break in p3GxsChannels::handle_event.
       * added missing size check in RsGxsRecognSerialiser
       * fixed password handling in deferred signature algorithm (in case of cancel, enter wrong passphrase, etc). Fixes the bug of 
         half-initialized identities not loading when cancel is pressed, or wrong passphrase is entered, at signature step.
@@ -70,7 +133,7 @@ retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       * fixed potential passing of deleted item to sendChatItem when a ChatLobbyItem is too big (would probably cause a crash. Found using coverity)
       * fixed call to strncpy in network interface determination code which leaves unterminated string if strlen(ifptr->if_name)==16
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 15 June 2015 22:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 21 June 2015 22:00:00 +0100
 
 retroshare06 (0.6.0.RC1-0.8401~trusty) trusty; urgency=low
 
