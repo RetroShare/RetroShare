@@ -14,6 +14,8 @@
 !insertmacro LANG_STRING Section_Plugins_Desc "Components opcionals per afegir funcionalitat."
 !insertmacro LANG_STRING Section_Plugin_FeedReader "LectorFonts"
 !insertmacro LANG_STRING Section_Plugin_FeedReader_Desc "Instal·lar complement LectorFonts."
+!insertmacro LANG_STRING Section_Plugin_LinksCloud "NúvolEnllaços"
+!insertmacro LANG_STRING Section_Plugin_LinksCloud_Desc "Instal·lar complement NúvolEnllaços."
 !insertmacro LANG_STRING Section_Plugin_VOIP "VeuIP"
 !insertmacro LANG_STRING Section_Plugin_VOIP_Desc "Instal·lar complement VeuIP."
 !insertmacro LANG_STRING Section_AutoStart "Posada en marxa automàtica"

@@ -14,6 +14,8 @@
 !insertmacro LANG_STRING Section_Plugins_Desc "Optional plugins to extend functionality."
 !insertmacro LANG_STRING Section_Plugin_FeedReader "RSS订阅"
 !insertmacro LANG_STRING Section_Plugin_FeedReader_Desc "安装RSS订阅插件"
+!insertmacro LANG_STRING Section_Plugin_LinksCloud "LinksCloud"
+!insertmacro LANG_STRING Section_Plugin_LinksCloud_Desc "安装插件LinksCloud"
 !insertmacro LANG_STRING Section_Plugin_VOIP "语音"
 !insertmacro LANG_STRING Section_Plugin_VOIP_Desc "安装语音插件"
 !insertmacro LANG_STRING Section_AutoStart "Auto Startup"

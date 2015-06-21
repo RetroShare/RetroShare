@@ -1,16 +1,16 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.0"> 
+﻿<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.0"> 
 <context> 
   <name>Section_Main</name> 
   <message> 
     <source>${APPNAME}</source> 
-    <translation type="unfinished"/> 
+    <translation>${APPNAME}</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Main_Desc</name> 
   <message> 
     <source>Installs ${APPNAME} and required components.</source> 
-    <translation type="unfinished"/> 
+    <translation>Instaluje ${APPNAME} oraz wymagane komponenty.</translation> 
   </message> 
 </context> 
 <context> 
@@ -24,21 +24,21 @@
   <name>Section_Data_Desc</name> 
   <message> 
     <source>Installs skins.</source> 
-    <translation type="unfinished"/> 
+    <translation>Instaluje skórki.</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Shortcuts</name> 
   <message> 
     <source>Shortcut icons</source> 
-    <translation type="unfinished"/> 
+    <translation>Ikony skrótów</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Shortcuts_Desc</name> 
   <message> 
     <source>Adds shortcut icons.</source> 
-    <translation type="unfinished"/> 
+    <translation>Dodaje skróty ikon.</translation> 
   </message> 
 </context> 
 <context> 
@@ -52,7 +52,7 @@
   <name>Section_StartMenu_Desc</name> 
   <message> 
     <source>Adds icon to start menu.</source> 
-    <translation type="unfinished"/> 
+    <translation>Dodaje ikonę do menu start.</translation> 
   </message> 
 </context> 
 <context> 
@@ -80,7 +80,7 @@
   <name>Section_QuickLaunch_Desc</name> 
   <message> 
     <source>Adds icon to Quick Launch toolbar.</source> 
-    <translation type="unfinished"/> 
+    <translation>Dodaje ikonę do paska Szybkiego Uruchamiania.</translation> 
   </message> 
 </context> 
 <context> 
@@ -101,14 +101,28 @@
   <name>Section_Plugin_FeedReader</name> 
   <message> 
     <source>FeedReader</source> 
-    <translation type="unfinished"/> 
+    <translation>FeedReader</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Plugin_FeedReader_Desc</name> 
   <message> 
     <source>Installs plugin FeedReader.</source> 
+    <translation>Instaluje wtyczki FeedReader</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud</name> 
+  <message> 
+    <source>LinksCloud</source> 
     <translation type="unfinished"/> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud_Desc</name> 
+  <message> 
+    <source>Installs plugin LinksCloud.</source> 
+    <translation>Instaluje wtyczki LinksCloud.</translation> 
   </message> 
 </context> 
 <context> 
@@ -122,7 +136,7 @@
   <name>Section_Plugin_VOIP_Desc</name> 
   <message> 
     <source>Installs plugin VOIP.</source> 
-    <translation type="unfinished"/> 
+    <translation>Instaluje wtyczki VOIP.</translation> 
   </message> 
 </context> 
 <context> 
@@ -164,7 +178,7 @@
   <name>Page_InstallMode_Standard_Desc</name> 
   <message> 
     <source>Install ${APPNAME} for the current user of this machine.</source> 
-    <translation type="unfinished"/> 
+    <translation>Zainstaluj ${APPNAME} dla bieżącego użytkownika tej maszyny.</translation> 
   </message> 
 </context> 
 <context> 
@@ -178,7 +192,7 @@
   <name>Page_InstallMode_Portable_Desc</name> 
   <message> 
     <source>In portable mode all configuration data is stored in the application folder and no information is written to the registry.</source> 
-    <translation type="unfinished"/> 
+    <translation>W trybie przenośnym wszystkie dane konfiguracyjne są przechowywane w folderze aplikacji i nie są zapisywane w rejestrze.</translation> 
   </message> 
 </context> 
 <context> 

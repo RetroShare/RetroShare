@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.0"> 
+﻿<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.0"> 
 <context> 
   <name>Section_Main</name> 
   <message> 
@@ -45,7 +45,7 @@
   <name>Section_StartMenu</name> 
   <message> 
     <source>Start Menu icon</source> 
-    <translation>Ярлык меню Пуск</translation> 
+    <translation>Ярлык в меню Пуск</translation> 
   </message> 
 </context> 
 <context> 
@@ -112,17 +112,31 @@
   </message> 
 </context> 
 <context> 
+  <name>Section_Plugin_LinksCloud</name> 
+  <message> 
+    <source>LinksCloud</source> 
+    <translation>LinksCloud – Облако ссылок</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud_Desc</name> 
+  <message> 
+    <source>Installs plugin LinksCloud.</source> 
+    <translation>Установка плагина LinksCloud.</translation> 
+  </message> 
+</context> 
+<context> 
   <name>Section_Plugin_VOIP</name> 
   <message> 
     <source>VOIP</source> 
-    <translation>VOIP</translation> 
+    <translation>VoIP</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Plugin_VOIP_Desc</name> 
   <message> 
     <source>Installs plugin VOIP.</source> 
-    <translation>Установка плагина VOIP.</translation> 
+    <translation>Установка плагина VoIP.</translation> 
   </message> 
 </context> 
 <context> 
@@ -136,7 +150,7 @@
   <name>Section_AutoStart_Desc</name> 
   <message> 
     <source>Auto-Run at startup.</source> 
-    <translation>Автозапуск при загрузке.</translation> 
+    <translation>Автозапуск при загрузке системы.</translation> 
   </message> 
 </context> 
 <context> 
@@ -178,7 +192,7 @@
   <name>Page_InstallMode_Portable_Desc</name> 
   <message> 
     <source>In portable mode all configuration data is stored in the application folder and no information is written to the registry.</source> 
-    <translation>В режиме портативной установки все конфигурационные файлы сохраняются в папку приложения и в реестр не записывается никакой информации.</translation> 
+    <translation>В режиме портативной установки все конфигурационные файлы сохраняются в папку приложения и в системный реестр не записывается никакой информации.</translation> 
   </message> 
 </context> 
 <context> 

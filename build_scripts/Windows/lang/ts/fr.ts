@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.0"> 
+﻿<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.0"> 
 <context> 
   <name>Section_Main</name> 
   <message> 
@@ -17,14 +17,14 @@
   <name>Section_Data</name> 
   <message> 
     <source>Skins</source> 
-    <translation>Skins</translation> 
+    <translation>Habillages</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Data_Desc</name> 
   <message> 
     <source>Installs skins.</source> 
-    <translation>Installe des skins.</translation> 
+    <translation>Installe des habillages.</translation> 
   </message> 
 </context> 
 <context> 
@@ -45,7 +45,7 @@
   <name>Section_StartMenu</name> 
   <message> 
     <source>Start Menu icon</source> 
-    <translation>Icônes menu démarrage</translation> 
+    <translation>Icône de menu démarrage</translation> 
   </message> 
 </context> 
 <context> 
@@ -59,28 +59,28 @@
   <name>Section_Desktop</name> 
   <message> 
     <source>Desktop icon</source> 
-    <translation>Icônes bureau</translation> 
+    <translation>Icônes de bureau</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Desktop_Desc</name> 
   <message> 
     <source>Adds icon to desktop.</source> 
-    <translation>Ajoute l&apos;icône au bureau.</translation> 
+    <translation>Ajoute l&apos;icône sur le bureau.</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_QuickLaunch</name> 
   <message> 
     <source>Quick Launch icon</source> 
-    <translation>Icône Lancement Rapide</translation> 
+    <translation>Icône de lancement rapide</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_QuickLaunch_Desc</name> 
   <message> 
     <source>Adds icon to Quick Launch toolbar.</source> 
-    <translation>Ajoute icône à la barre d&apos;outils Lancement Rapide.</translation> 
+    <translation>Ajoute une icône à la barre d&apos;outils de lancement rapide.</translation> 
   </message> 
 </context> 
 <context> 
@@ -101,7 +101,7 @@
   <name>Section_Plugin_FeedReader</name> 
   <message> 
     <source>FeedReader</source> 
-    <translation>Lecteur de flux</translation> 
+    <translation>FeedReader</translation> 
   </message> 
 </context> 
 <context> 
@@ -109,6 +109,20 @@
   <message> 
     <source>Installs plugin FeedReader.</source> 
     <translation>Installe le plug-in FeedReader.</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud</name> 
+  <message> 
+    <source>LinksCloud</source> 
+    <translation>LinksCloud</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud_Desc</name> 
+  <message> 
+    <source>Installs plugin LinksCloud.</source> 
+    <translation>Installe le plug-in LinksCloud.</translation> 
   </message> 
 </context> 
 <context> 
@@ -136,7 +150,7 @@
   <name>Section_AutoStart_Desc</name> 
   <message> 
     <source>Auto-Run at startup.</source> 
-    <translation>Lancement automatique au démarrage</translation> 
+    <translation>Démarrage automatique au démarrage.</translation> 
   </message> 
 </context> 
 <context> 

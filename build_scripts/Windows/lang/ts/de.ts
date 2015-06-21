@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0"> 
+﻿<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0"> 
 <context> 
   <name>Section_Main</name> 
   <message> 
@@ -73,7 +73,7 @@
   <name>Section_QuickLaunch</name> 
   <message> 
     <source>Quick Launch icon</source> 
-    <translation>Schnellstartersymbol</translation> 
+    <translation>Schnellstartsymbol</translation> 
   </message> 
 </context> 
 <context> 
@@ -109,6 +109,20 @@
   <message> 
     <source>Installs plugin FeedReader.</source> 
     <translation>Installiert das Plug-in Feedreader.</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud</name> 
+  <message> 
+    <source>LinksCloud</source> 
+    <translation>Verknüpfungswolke</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud_Desc</name> 
+  <message> 
+    <source>Installs plugin LinksCloud.</source> 
+    <translation>Installiert das Plug-in Verknüpfungswolke.</translation> 
   </message> 
 </context> 
 <context> 
@@ -157,7 +171,7 @@
   <name>Page_InstallMode_Standard</name> 
   <message> 
     <source>&amp;Standard installation</source> 
-    <translation>&amp;Standard Installation</translation> 
+    <translation>&amp;Standardinstallation</translation> 
   </message> 
 </context> 
 <context> 

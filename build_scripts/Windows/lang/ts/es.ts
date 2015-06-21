@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.0"> 
+﻿<?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.0"> 
 <context> 
   <name>Section_Main</name> 
   <message> 
@@ -109,6 +109,20 @@
   <message> 
     <source>Installs plugin FeedReader.</source> 
     <translation>Instala el complemento FeedReader.</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud</name> 
+  <message> 
+    <source>LinksCloud</source> 
+    <translation>LinksCloud</translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Plugin_LinksCloud_Desc</name> 
+  <message> 
+    <source>Installs plugin LinksCloud.</source> 
+    <translation>Instala el complemento LinksCloud.</translation> 
   </message> 
 </context> 
 <context> 

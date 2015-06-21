@@ -14,6 +14,8 @@
 !insertmacro LANG_STRING Section_Plugins_Desc "Complementos opcionales para expandir la funcionalidad."
 !insertmacro LANG_STRING Section_Plugin_FeedReader "FeedReader"
 !insertmacro LANG_STRING Section_Plugin_FeedReader_Desc "Instala el complemento FeedReader."
+!insertmacro LANG_STRING Section_Plugin_LinksCloud "LinksCloud"
+!insertmacro LANG_STRING Section_Plugin_LinksCloud_Desc "Instala el complemento LinksCloud."
 !insertmacro LANG_STRING Section_Plugin_VOIP "VOIP"
 !insertmacro LANG_STRING Section_Plugin_VOIP_Desc "Instala el complemento VOIP"
 !insertmacro LANG_STRING Section_AutoStart "Auto iniciar"
