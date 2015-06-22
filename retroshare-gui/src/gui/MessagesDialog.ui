@@ -529,30 +529,6 @@
              <property name="contextMenuPolicy">
               <enum>Qt::CustomContextMenu</enum>
              </property>
-             <property name="isWrapping" stdset="0">
-              <bool>false</bool>
-             </property>
-             <property name="resizeMode">
-              <enum>QListView::Fixed</enum>
-             </property>
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="gridSize">
-              <size>
-               <width>100</width>
-               <height>18</height>
-              </size>
-             </property>
-             <property name="modelColumn">
-              <number>0</number>
-             </property>
-             <property name="uniformItemSizes">
-              <bool>false</bool>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
              <item>
               <property name="text">
                <string>Inbox</string>
