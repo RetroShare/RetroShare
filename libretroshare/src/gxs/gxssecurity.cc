@@ -202,7 +202,10 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvS
 
 bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& key, const RsTlvKeySignature& signature)
 {
-    RSA *rsakey = (key.keyFlags & RSTLV_KEY_TYPE_FULL)? RSAPublicKey_dup(::extractPrivateKey(key)) : RSAPublicKey_dup(::extractPublicKey(key)) ;
+    RSA *tmpkey = (key.keyFlags & RSTLV_KEY_TYPE_FULL)?(::extractPrivateKey(key)):(::extractPublicKey(key)) ;
+
+    RSA *rsakey = RSAPublicKey_dup(tmpkey) ;	// always extract public key
+    RSA_free(tmpkey) ;
 
 	if(!rsakey)
 	{
@@ -344,7 +347,10 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 	std::cerr << "GxsSecurity::encrypt() " << std::endl;
 #endif
 
-	RSA *rsa_publish_pub = RSAPublicKey_dup(::extractPublicKey(key)) ;
+    RSA *tmpkey = ::extractPublicKey(key) ;
+    RSA *rsa_publish_pub = RSAPublicKey_dup(tmpkey) ;
+    RSA_free(tmpkey) ;
+
 	EVP_PKEY *public_key = NULL;
 
 	//RSA* rsa_publish = EVP_PKEY_get1_RSA(privateKey);
@@ -447,7 +453,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "GxsSecurity::decrypt() " << std::endl;
 #endif
-	RSA *rsa_publish = RSAPrivateKey_dup(extractPrivateKey(key)) ;
+    RSA *rsa_publish = extractPrivateKey(key) ;
 	EVP_PKEY *privateKey = NULL;
 
 	//RSA* rsa_publish = EVP_PKEY_get1_RSA(privateKey);
