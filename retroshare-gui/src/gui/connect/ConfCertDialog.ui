@@ -76,7 +76,7 @@
             <item>
              <widget class="QGroupBox" name="groupBox_4">
               <property name="title">
-               <string>Location info</string>
+               <string>Node info</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_3">
                <item row="0" column="1">

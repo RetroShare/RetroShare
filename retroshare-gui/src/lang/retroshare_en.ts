@@ -2144,7 +2144,12 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+8"/>
+        <source>Node info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+180"/>
         <source>Peer Address</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2231,12 +2236,7 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+65"/>
-        <source>Location info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location line="+87"/>
         <source>Node name :</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2570,6 +2570,10 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <location line="-379"/>
+        <source>Node:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+393"/>
         <source>Location:</source>
         <translation type="unfinished"></translation>
@@ -4902,7 +4906,7 @@ you plug it in.</source>
 <context>
     <name>ExprParamElement</name>
     <message>
-        <location filename="../gui/advsearch/guiexprelement.cpp" line="+368"/>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="+365"/>
         <location line="+13"/>
         <location line="+115"/>
         <source>to</source>
@@ -6701,7 +6705,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GuiExprElement</name>
     <message>
-        <location filename="../gui/advsearch/guiexprelement.cpp" line="-437"/>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="-434"/>
         <source>and</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7202,7 +7206,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+230"/>
+        <location line="+234"/>
         <source>Feeds</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7212,7 +7216,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-341"/>
+        <location line="-345"/>
         <source>Subscribers</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13483,7 +13487,7 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <location filename="../gui/MainWindow.cpp" line="+312"/>
-        <location filename="../gui/RetroShareLink.cpp" line="+992"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+1006"/>
         <source>Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
