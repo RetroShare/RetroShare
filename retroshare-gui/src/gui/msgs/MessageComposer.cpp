@@ -243,21 +243,21 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     QActionGroup *grp2 = new QActionGroup(this);
     connect(grp2, SIGNAL(triggered(QAction *)), this, SLOT(textStyle(QAction *)));
     
-    actionDisc = new QAction(QIcon(""), tr("Bullet List (Disc)"), grp2);
+    actionDisc = new QAction(QIcon(""), tr("Bullet list (disc)"), grp2);
     actionDisc->setCheckable(true);
-    actionCircle = new QAction(QIcon(""), tr("Bullet List (Circle)"), grp2);
+    actionCircle = new QAction(QIcon(""), tr("Bullet list (circle)"), grp2);
     actionCircle->setCheckable(true);
-    actionSquare = new QAction(QIcon(""), tr("Bullet List (Square)"), grp2);
+    actionSquare = new QAction(QIcon(""), tr("Bullet list (square)"), grp2);
     actionSquare->setCheckable(true);
-    actionDecimal= new QAction(QIcon(""), tr("Ordered List (Decimal)"), grp2);
+    actionDecimal= new QAction(QIcon(""), tr("Ordered list (decimal)"), grp2);
     actionDecimal->setCheckable(true);
-    actionLowerAlpha = new QAction(QIcon(""), tr("Ordered List (Alpha lower)"), grp2);
+    actionLowerAlpha = new QAction(QIcon(""), tr("Ordered list (alpha lower)"), grp2);
     actionLowerAlpha->setCheckable(true);
-    actionUpperAlpha = new QAction(QIcon(""), tr("Ordered List (Alpha upper)"), grp2);
+    actionUpperAlpha = new QAction(QIcon(""), tr("Ordered list (alpha upper)"), grp2);
     actionUpperAlpha->setCheckable(true);
-    actionLowerRoman = new QAction(QIcon(""), tr("Ordered List (Roman lower"), grp2);
+    actionLowerRoman = new QAction(QIcon(""), tr("Ordered list (roman lower)"), grp2);
     actionLowerRoman->setCheckable(true);
-    actionUpperRoman = new QAction(QIcon(""), tr("Ordered List (Roman upper)"), grp2);
+    actionUpperRoman = new QAction(QIcon(""), tr("Ordered list (roman upper)"), grp2);
     actionUpperRoman->setCheckable(true);
 
     setupFormatActions();
