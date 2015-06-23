@@ -498,54 +498,54 @@ bool SetTlvString(void *data, uint32_t size, uint32_t *offset,
 bool GetTlvString(void *data, uint32_t size, uint32_t *offset, 
 			uint16_t type, std::string &in) 
 {
-	if (!data)
-		return false;
+    if (!data)
+        return false;
 
-	if (size < *offset)
-	{
+    if (size < *offset)
+    {
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
-		std::cerr << "GetTlvString() size: " << size << std::endl;
-		std::cerr << "GetTlvString() *offset: " << *offset << std::endl;
+        std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
+        std::cerr << "GetTlvString() size: " << size << std::endl;
+        std::cerr << "GetTlvString() *offset: " << *offset << std::endl;
 #endif
-		return false;
-	}
+        return false;
+    }
 
-	/* extract the type and size */
-	void *tlvstart = right_shift_void_pointer(data, *offset);
-	uint16_t tlvtype = GetTlvType(tlvstart);
-	uint32_t tlvsize = GetTlvSize(tlvstart);
+    /* extract the type and size */
+    void *tlvstart = right_shift_void_pointer(data, *offset);
+    uint16_t tlvtype = GetTlvType(tlvstart);
+    uint32_t tlvsize = GetTlvSize(tlvstart);
 
-	/* check that there is size */
-	uint32_t tlvend = *offset + tlvsize;
-	if (size < tlvend)
-	{
+    /* check that there is size */
+    uint32_t tlvend = *offset + tlvsize;
+    if (size < tlvend)
+    {
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
-		std::cerr << "GetTlvString() size: " << size << std::endl;
-		std::cerr << "GetTlvString() tlvsize: " << tlvsize << std::endl;
-		std::cerr << "GetTlvString() tlvend: " << tlvend << std::endl;
+        std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
+        std::cerr << "GetTlvString() size: " << size << std::endl;
+        std::cerr << "GetTlvString() tlvsize: " << tlvsize << std::endl;
+        std::cerr << "GetTlvString() tlvend: " << tlvend << std::endl;
 #endif
-		return false;
-	}
+        return false;
+    }
 
-	if (type != tlvtype)
-	{
+    if (type != tlvtype)
+    {
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "GetTlvString() FAILED - invalid type" << std::endl;
-		std::cerr << "GetTlvString() type: " << type << std::endl;
-		std::cerr << "GetTlvString() tlvtype: " << tlvtype << std::endl;
+        std::cerr << "GetTlvString() FAILED - invalid type" << std::endl;
+        std::cerr << "GetTlvString() type: " << type << std::endl;
+        std::cerr << "GetTlvString() tlvtype: " << tlvtype << std::endl;
 #endif
-		return false;
-	}
+        return false;
+    }
 
-	char *strdata = (char *) right_shift_void_pointer(tlvstart, TLV_HEADER_SIZE);
-	uint32_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
-        if (strsize <= 0) {
-            in = "";
-        } else {
-            in = std::string(strdata, strsize);
-        }
+    char *strdata = (char *) right_shift_void_pointer(tlvstart, TLV_HEADER_SIZE);
+    uint32_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
+    if (strsize <= 0) {
+        in = "";
+    } else {
+        in = std::string(strdata, strsize);
+    }
 
     // Check for string content. We want to avoid possible lol bombs as soon as possible.
 
@@ -553,9 +553,9 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
     static const std::string err_in = "**** String removed (SVG bomb?) ****" ;
     static std::string suspiscious_strings[number_of_suspiscious_strings] = { "<!e",     // base ingredient of xml bombs
                                                                               "<!E",
-                                                                      "PD94bW",  // this is the base64 encoding of "<?xml*"
-                                                              "PHN2Zy"   // this is the base64 encoding of "<svg*"
-    } ;
+                                                                              "PD94bW",  // this is the base64 encoding of "<?xml*"
+                                                                              "PHN2Zy"   // this is the base64 encoding of "<svg*"
+                                                                            } ;
 
 #ifdef TLV_BASE_DEBUG
     std::cerr << "Checking wide string \"" << in << std::endl;
@@ -579,8 +579,35 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
             break ;
         }
 
-	*offset += tlvsize; /* step along */
-	return true;
+    // Also check that the string does not contain invalid characters.
+    // Every character less than 0x20 will be turned into a space (0x20).
+    // This is compatible with utf8, as all utf8 chars are > 0x7f.
+    // We do this for strings that should not contain some
+    // special characters by design.
+
+    if(       type == 0				// this is used for mGroupName and mMsgName
+       || type == TLV_TYPE_STR_PEERID
+           || type == TLV_TYPE_STR_NAME
+           || type == TLV_TYPE_STR_PATH
+           || type == TLV_TYPE_STR_TITLE
+           || type == TLV_TYPE_STR_SUBJECT
+           || type == TLV_TYPE_STR_LOCATION
+           || type == TLV_TYPE_STR_VERSION   )
+    {
+        bool modified = false ;
+        for(uint32_t i=0;i<in.length();++i)
+            if(in[i] < 0x20 && in[i] > 0)
+            {
+                modified = true ;
+                in[i] = 0x20 ;
+            }
+
+        if(modified)
+            std::cerr << "(WW) De-serialised string of type " << type << " contains forbidden characters. They have been replaced by spaces. New string: \"" << in << "\"" << std::endl;
+    }
+
+    *offset += tlvsize; /* step along */
+    return true;
 }
 
 uint32_t GetTlvStringSize(const std::string &in) {
