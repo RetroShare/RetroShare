@@ -126,11 +126,6 @@
        </item>
        <item row="1" column="0">
         <widget class="RSTreeWidget" name="feedTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
