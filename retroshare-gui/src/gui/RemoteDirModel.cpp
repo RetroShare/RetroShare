@@ -551,7 +551,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::SizeHintRole)
 	{       
-		return QSize(18, 18);     
+		return QVariant(); // Use standard
 	} /* end of SizeHintRole */ 
 
 	if (role == Qt::TextAlignmentRole)
