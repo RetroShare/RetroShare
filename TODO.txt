@@ -1,3 +1,9 @@
+List of pending non backward compatible changes
+===============================================
+
+	* RsGxsGrpMetaData::deserialis should use a proper TLV_STR_TYPE_NAME instead of 0 for mGroupName and mMsgName, in rsgxsdata.cc
+	* p3IdService::service_CreateGroup() should convert the mPgpSign member to radix64!! For now it is hard-coded in binary in a string.
+
 List of fixes/improvements before 0.6
 =====================================
 
