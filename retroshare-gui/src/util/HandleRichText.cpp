@@ -845,7 +845,7 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 			embeddedImage.append(encodedByteArray);
 			embeddedImage.append("\">");
 		} else {
-			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer\n");
+            //fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer\n");
 			return false;
 		}
 	} else {

@@ -1351,8 +1351,10 @@ int 	pqissl::Authorise_SSL_Connection()
 /* This function is public, and callable from pqilistener - so must be mutex protected */
 int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
 {
+#ifdef PQISSL_DEBUG
 	std::cerr << "pqissl::accept()";
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
