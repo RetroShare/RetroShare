@@ -476,6 +476,9 @@ border-image: url(:/images/closepressed.png)
        </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
          <item>
           <widget class="QLabel" name="typingpixmapLabel">
            <property name="minimumSize">
@@ -506,6 +509,12 @@ border-image: url(:/images/closepressed.png)
            <property name="indent">
             <number>3</number>
            </property>
+         <property name="maximumSize">
+          <size>
+           <width>400</width>
+           <height>18</height>
+          </size>
+	 </property>
           </widget>
          </item>
         </layout>
