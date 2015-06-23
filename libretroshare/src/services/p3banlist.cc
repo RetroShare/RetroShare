@@ -877,7 +877,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                     else
                         std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
 
-                    std::cerr << "Read whitelisted range " << sockaddr_storage_iptostring(blp.addr) << "/" << blp.masked_bytes << std::endl;
+                    std::cerr << "Read whitelisted range " << sockaddr_storage_iptostring(blp.addr) << "/" << 32 - 8*(blp.masked_bytes) << std::endl;
                 }
             }
             else
