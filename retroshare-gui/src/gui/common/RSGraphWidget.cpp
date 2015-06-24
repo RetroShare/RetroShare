@@ -388,7 +388,10 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 
     //std::cerr << "Got " << values.size() << " values for index 0" << std::endl;
 
-    float last_px = SCALE_WIDTH ;
+    float FS = QFontMetricsF(font()).height();
+    float fact = FS/14.0 ;
+
+    float last_px = SCALE_WIDTH*fact ;
     float last_py = 0.0f ;
 
     for (uint i = 0; i < values.size(); ++i)
@@ -400,10 +403,10 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 		 qreal px = x - (values[i].x()-last)*_time_scale ;
 		 qreal py = y -  valueToPixels(values[i].y()) ;
 
-		 if(px >= SCALE_WIDTH && last_px < SCALE_WIDTH)
+         if(px >= SCALE_WIDTH *fact&& last_px < SCALE_WIDTH*fact)
 		 {
-			 float alpha = (SCALE_WIDTH - last_px)/(px - last_px) ;
-			 float ipx = SCALE_WIDTH ;
+             float alpha = (SCALE_WIDTH*fact - last_px)/(px - last_px) ;
+             float ipx = SCALE_WIDTH*fact ;
 			 float ipy = (1-alpha)*last_py + alpha*py ;
 
 			 points << QPointF(ipx,y) ;
@@ -415,7 +418,7 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 		 last_px = px ;
 		 last_py = py ;
 
-		 if(px < SCALE_WIDTH)
+         if(px < SCALE_WIDTH*fact)
 			 continue ;
 
 		 _maxValue = std::max(_maxValue,values[i].y()) ;
@@ -475,8 +478,11 @@ void RSGraphWidget::paintLine(const QVector<QPointF>& points, QColor color, Qt::
 /** Paints selected total indicators on the graph. */
 void RSGraphWidget::paintTotals()
 {
-  int x = SCALE_WIDTH + FONT_SIZE, y = 0;
-  int rowHeight = FONT_SIZE;
+    float FS = QFontMetricsF(font()).height();
+    float fact = FS/14.0 ;
+
+  int x = SCALE_WIDTH*fact + FS, y = 0;
+  int rowHeight = FS;
 
 #if !defined(Q_WS_MAC)
   /* On Mac, we don't need vertical spacing between the text rows. */
@@ -503,7 +509,10 @@ QString RSGraphWidget::totalToStr(qreal total)
 /** Paints the scale on the graph. */
 void RSGraphWidget::paintScale1()
 {
-	int top = _rec.y();
+    float FS = QFontMetricsF(font()).height();
+    float fact = FS/14.0 ;
+
+    int top = _rec.y();
 	int bottom = _rec.height();
 	qreal paintStep = (bottom - (bottom/10)) / 4;
 
@@ -525,31 +534,34 @@ void RSGraphWidget::paintScale1()
 		QString text = _source->displayValue(scale) ;
 
 		_painter->setPen(SCALE_COLOR);
-		_painter->drawText(QPointF(5, pos+0.5*FONT_SIZE),  text);
+        _painter->drawText(QPointF(5*fact, pos+0.5*FS),  text);
 		_painter->setPen(GRID_COLOR);
-		_painter->drawLine(QPointF(SCALE_WIDTH, pos),  QPointF(_rec.width(), pos));
+        _painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 	}
 
 	/* Draw vertical separator */
-	_painter->drawLine(SCALE_WIDTH, top, SCALE_WIDTH, bottom);
+    _painter->drawLine(SCALE_WIDTH*fact, top, SCALE_WIDTH*fact, bottom);
 }
 
 void RSGraphWidget::paintScale2()
 {
     // draw time below the graph
 
-    int bottom = _rec.height();
-    static const int npix = 100 ;
+    float FS = QFontMetricsF(font()).height();
+    float fact = FS/14.0 ;
 
-    for(int i=_rec.width();i>SCALE_WIDTH;i-=npix)
+    int bottom = _rec.height();
+    static const int npix = 100*fact ;
+
+    for(int i=_rec.width();i>SCALE_WIDTH*fact;i-=npix)
     {
-        qreal pos = bottom - FONT_SIZE;
+        qreal pos = bottom - FS;
 
         int seconds = (_rec.width()-i)/_time_scale ;	// pixels / (pixels per second) => seconds
         QString text = QString::number(seconds)+ " secs";
 
         _painter->setPen(SCALE_COLOR);
-        _painter->drawText(QPointF(i, _rec.height()-0.5*FONT_SIZE),  text);
+        _painter->drawText(QPointF(i, _rec.height()-0.5*FS),  text);
     }
 }
 
@@ -571,23 +583,26 @@ void RSGraphWidget::paintLegend()
   _source->getCurrentValues(vals) ;
   int j=0;
 
+    float FS = QFontMetricsF(font()).height();
+    float fact = FS/14.0 ;
+
     for(uint i=0;i<vals.size();++i)
       if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
       {
-          if( _rec.width() - (vals[i].x()-0)*_time_scale < SCALE_WIDTH )
+          if( _rec.width() - (vals[i].x()-0)*_time_scale < SCALE_WIDTH*fact )
               continue ;
 
-          qreal paintStep = 4+FONT_SIZE;
-          qreal pos = 20+j*paintStep;
+          qreal paintStep = 4*fact+FS;
+          qreal pos = 15*fact+j*paintStep;
           QString text = _source->legend(i,vals[i].y()) ;
 
           QPen oldPen = _painter->pen();
           _painter->setPen(QPen(getColor(i), Qt::SolidLine));
-          _painter->drawLine(QPointF(SCALE_WIDTH+10.0, pos),  QPointF(SCALE_WIDTH+30.0, pos));
+          _painter->drawLine(QPointF(SCALE_WIDTH*fact+10.0*fact, pos),  QPointF(SCALE_WIDTH*fact+30.0*fact, pos));
           _painter->setPen(oldPen);
 
           _painter->setPen(SCALE_COLOR);
-          _painter->drawText(QPointF(SCALE_WIDTH + 40,pos + 0.5*FONT_SIZE), text) ;
+          _painter->drawText(QPointF(SCALE_WIDTH *fact+ 40*fact,pos + 0.5*FS), text) ;
 
           ++j ;
       }

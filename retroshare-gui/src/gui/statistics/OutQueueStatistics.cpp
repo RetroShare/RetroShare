@@ -52,8 +52,11 @@ static QString serviceName(uint16_t s)
 
 void OutQueueStatisticsWidget::updateStatistics(OutQueueStatistics& stats)
 {
-	static const int cellx = 6 ;
-	static const int celly = 10+4 ;
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+
+    const int cellx = 6*fact ;
+    const int celly = (10+4) *fact;
 
 	QPixmap tmppixmap(maxWidth, maxHeight);
 	tmppixmap.fill(Qt::transparent);
@@ -62,11 +65,11 @@ void OutQueueStatisticsWidget::updateStatistics(OutQueueStatistics& stats)
 	QPainter painter(&tmppixmap);
 	painter.initFrom(this);
 
-	maxHeight = 500 ;
+    maxHeight = 500*fact ;
 
 	// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
 	// draw...
-	int ox=5,oy=5 ;
+    int ox=5*fact,oy=5*fact ;
 
     painter.setPen(QColor::fromRgb(70,70,70)) ;
     //painter.drawLine(0,oy,maxWidth,oy) ;

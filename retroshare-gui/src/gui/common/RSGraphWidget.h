@@ -32,7 +32,6 @@
 
 #include <stdint.h>
 
-#define HOR_SPC       2   /** Space between data points */
 #define SCALE_WIDTH   75  /** Width of the scale */
 #define MINUSER_SCALE 2000  /** 2000 users is the minimum scale */  
 #define SCROLL_STEP   4   /** Horizontal change on graph update */
@@ -42,8 +41,6 @@
 #define GRID_COLOR    Qt::lightGray
 #define RSDHT_COLOR   Qt::magenta
 #define ALLDHT_COLOR  Qt::yellow
-
-#define FONT_SIZE     11
 
 // This class provides a source value that the graph can retrieve on demand.
 // In order to use your own source, derive from RSGraphSource and overload the value() method.

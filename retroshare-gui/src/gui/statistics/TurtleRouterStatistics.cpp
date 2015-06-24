@@ -48,129 +48,132 @@ class TRHistogram
 				return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
 		}
 
-		virtual void draw(QPainter *painter,int& ox,int& oy,const QString& title) 
-		{
-			static const int MaxTime = 61 ;
-			static const int MaxDepth = 8 ;
-			static const int cellx = 7 ;
-			static const int celly = 12 ;
+        virtual void draw(QPainter *painter,int& ox,int& oy,const QString& title,float fontHeight)
+        {
+            static const int MaxTime = 61 ;
+            static const int MaxDepth = 8 ;
 
-			int save_ox = ox ;
-			painter->setPen(QColor::fromRgb(0,0,0)) ;
-			painter->drawText(2+ox,celly+oy,title) ;
-			oy+=2+2*celly ;
+            float fact = fontHeight/14.0 ;
 
-			if(_infos.empty())
-				return ;
+            const int cellx = fact*7 ;
+            const int celly = fact*12 ;
 
-			ox += 10 ;
+            int save_ox = ox ;
+            painter->setPen(QColor::fromRgb(0,0,0)) ;
+            painter->drawText(2*fact+ox,celly+oy,title) ;
+            oy+=2*fact+2*celly ;
+
+            if(_infos.empty())
+                return ;
+
+            ox += 10 *fact;
             std::map<RsPeerId,std::vector<int> > hits ;
             std::map<RsPeerId,std::vector<int> > depths ;
             std::map<RsPeerId,std::vector<int> >::iterator it ;
 
-			int max_hits = 1;
-			int max_depth = 1;
+            int max_hits = 1;
+            int max_depth = 1;
 
-			for(uint32_t i=0;i<_infos.size();++i)
-			{
-				std::vector<int>& h(hits[_infos[i].source_peer_id]) ;
-				std::vector<int>& g(depths[_infos[i].source_peer_id]) ;
+            for(uint32_t i=0;i<_infos.size();++i)
+            {
+                std::vector<int>& h(hits[_infos[i].source_peer_id]) ;
+                std::vector<int>& g(depths[_infos[i].source_peer_id]) ;
 
-				if(h.size() <= _infos[i].age)
-					h.resize(MaxTime,0) ;
+                if(h.size() <= _infos[i].age)
+                    h.resize(MaxTime,0) ;
 
-				if(g.empty())
-					g.resize(MaxDepth,0) ;
+                if(g.empty())
+                    g.resize(MaxDepth,0) ;
 
-				if(_infos[i].age < h.size())
-				{
-					++h[_infos[i].age] ;
-					if(h[_infos[i].age] > max_hits)
-						max_hits = h[_infos[i].age] ;
-				}
-				if(_infos[i].depth < g.size())
-				{
-					++g[_infos[i].depth] ;
+                if(_infos[i].age < h.size())
+                {
+                    ++h[_infos[i].age] ;
+                    if(h[_infos[i].age] > max_hits)
+                        max_hits = h[_infos[i].age] ;
+                }
+                if(_infos[i].depth < g.size())
+                {
+                    ++g[_infos[i].depth] ;
 
-					if(g[_infos[i].depth] > max_depth)
-						max_depth = g[_infos[i].depth] ;
-				}
-			}
+                    if(g[_infos[i].depth] > max_depth)
+                        max_depth = g[_infos[i].depth] ;
+                }
+            }
 
-			int max_bi = std::max(max_hits,max_depth) ;
-			int p=0 ;
+            int max_bi = std::max(max_hits,max_depth) ;
+            int p=0 ;
 
-			for(it=depths.begin();it!=depths.end();++it,++p)
-				for(int i=0;i<MaxDepth;++i)
-					painter->fillRect(ox+MaxTime*cellx+20+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_bi)) ;
-			
-			painter->setPen(QColor::fromRgb(0,0,0)) ;
-			painter->drawRect(ox+MaxTime*cellx+20,oy,MaxDepth*cellx,p*celly) ;
+            for(it=depths.begin();it!=depths.end();++it,++p)
+                for(int i=0;i<MaxDepth;++i)
+                    painter->fillRect(ox+MaxTime*cellx+20*fact+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_bi)) ;
 
-			for(int i=0;i<MaxTime;i+=5)
-				painter->drawText(ox+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
+            painter->setPen(QColor::fromRgb(0,0,0)) ;
+            painter->drawRect(ox+MaxTime*cellx+20*fact,oy,MaxDepth*cellx,p*celly) ;
 
-			p=0 ;
-			int great_total = 0 ;
+            for(int i=0;i<MaxTime;i+=5)
+                painter->drawText(ox+i*cellx,oy+(p+1)*celly+4*fact,QString::number(i)) ;
 
-			for(it=hits.begin();it!=hits.end();++it,++p)
-			{
-				int total = 0 ;
+            p=0 ;
+            int great_total = 0 ;
 
-				for(int i=0;i<MaxTime;++i)
-				{
-					painter->fillRect(ox+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_bi)) ;
-					total += it->second[i] ;
-				}
+            for(it=hits.begin();it!=hits.end();++it,++p)
+            {
+                int total = 0 ;
 
-				painter->setPen(QColor::fromRgb(0,0,0)) ;
-				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx,oy+(p+1)*celly,TurtleRouterStatistics::getPeerName(it->first)) ;
-				painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+(p+1)*celly,"("+QString::number(total)+")") ;
-				great_total += total ;
-			}
+                for(int i=0;i<MaxTime;++i)
+                {
+                    painter->fillRect(ox+i*cellx,oy+p*celly,cellx,celly,colorScale(it->second[i]/(float)max_bi)) ;
+                    total += it->second[i] ;
+                }
 
-			painter->drawRect(ox,oy,MaxTime*cellx,p*celly) ;
+                painter->setPen(QColor::fromRgb(0,0,0)) ;
+                painter->drawText(ox+MaxDepth*cellx+30*fact+(MaxTime+1)*cellx,oy+(p+1)*celly,TurtleRouterStatistics::getPeerName(it->first)) ;
+                painter->drawText(ox+MaxDepth*cellx+30*fact+(MaxTime+1)*cellx+120*fact,oy+(p+1)*celly,"("+QString::number(total)+")") ;
+                great_total += total ;
+            }
 
-			for(int i=0;i<MaxTime;i+=5)
-				painter->drawText(ox+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
-			for(int i=0;i<MaxDepth;++i)
-				painter->drawText(ox+MaxTime*cellx+20+i*cellx,oy+(p+1)*celly+4,QString::number(i)) ;
-			painter->setPen(QColor::fromRgb(255,130,80)) ;
-			painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+(p+1)*celly+4,"("+QString::number(great_total)+")");
+            painter->drawRect(ox,oy,MaxTime*cellx,p*celly) ;
 
-			oy += (p+1)*celly+6 ;
+            for(int i=0;i<MaxTime;i+=5)
+                painter->drawText(ox+i*cellx,oy+(p+1)*celly+4*fact,QString::number(i)) ;
+            for(int i=0;i<MaxDepth;++i)
+                painter->drawText(ox+MaxTime*cellx+20*fact+i*cellx,oy+(p+1)*celly+4*fact,QString::number(i)) ;
+            painter->setPen(QColor::fromRgb(255,130,80)) ;
+            painter->drawText(ox+MaxDepth*cellx+30*fact+(MaxTime+1)*cellx+120*fact,oy+(p+1)*celly+4*fact,"("+QString::number(great_total)+")");
 
-			painter->setPen(QColor::fromRgb(0,0,0)) ;
-			painter->drawText(ox,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "Age in seconds")+")");
-			painter->drawText(ox+MaxTime*cellx+20,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "Depth")+")");
+            oy += (p+1)*celly+6 ;
 
-			painter->drawText(ox+MaxDepth*cellx+30+(MaxTime+1)*cellx+120,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "total")+")");
+            painter->setPen(QColor::fromRgb(0,0,0)) ;
+            painter->drawText(ox,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "Age in seconds")+")");
+            painter->drawText(ox+MaxTime*cellx+20*fact,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "Depth")+")");
 
-			oy += 3*celly ;
+            painter->drawText(ox+MaxDepth*cellx+30*fact+(MaxTime+1)*cellx+120,oy+celly,"("+QApplication::translate("TurtleRouterStatistics", "total")+")");
 
-			// now, draw a scale
+            oy += 3*celly ;
 
-			int last_hts = -1 ;
-			int cellid = 0 ;
+            // now, draw a scale
 
-			for(int i=0;i<=10;++i)
-			{
-				int hts = (int)(max_bi*i/10.0) ;
+            int last_hts = -1 ;
+            int cellid = 0 ;
 
-				if(hts > last_hts)
-				{
-					painter->fillRect(ox+cellid*(cellx+22),oy,cellx,celly,colorScale(i/10.0f)) ;
-					painter->setPen(QColor::fromRgb(0,0,0)) ;
-					painter->drawRect(ox+cellid*(cellx+22),oy,cellx,celly) ;
-					painter->drawText(ox+cellid*(cellx+22)+cellx+4,oy+celly,QString::number(hts)) ;
-					last_hts = hts ;
-					++cellid ;
-				}
-			}
+            for(int i=0;i<=10;++i)
+            {
+                int hts = (int)(max_bi*i/10.0) ;
 
-			oy += celly*2 ;
+                if(hts > last_hts)
+                {
+                    painter->fillRect(ox+cellid*(cellx+22*fact),oy,cellx,celly,colorScale(i/10.0f)) ;
+                    painter->setPen(QColor::fromRgb(0,0,0)) ;
+                    painter->drawRect(ox+cellid*(cellx+22*fact),oy,cellx,celly) ;
+                    painter->drawText(ox+cellid*(cellx+22*fact)+cellx+4*fact,oy+celly,QString::number(hts)) ;
+                    last_hts = hts ;
+                    ++cellid ;
+                }
+            }
 
-			ox = save_ox ;
+            oy += celly*2 ;
+
+            ox = save_ox ;
 		}
 
 	private:
@@ -275,9 +278,6 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 																const std::vector<TurtleRequestDisplayInfo >& tunnel_reqs_info)
 
 {
-	static const int cellx = 6 ;
-	static const int celly = 10+4 ;
-
 	QPixmap tmppixmap(maxWidth, maxHeight);
 	tmppixmap.fill(Qt::transparent);
 	setFixedHeight(maxHeight);
@@ -285,19 +285,27 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	QPainter painter(&tmppixmap);
 	painter.initFrom(this);
 
-	maxHeight = 500 ;
+
+        // extracts the height of the fonts in pixels. This is used to callibrate the size of the objects to draw.
+
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+    maxHeight = 500*fact ;
+
+    int cellx = 6*fact ;
+    int celly = (10+4)*fact ;
 
 	// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
 	// draw...
-	int ox=5,oy=5 ;
+    int ox=5*fact,oy=5*fact ;
 
-	TRHistogram(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":") ;
+    TRHistogram(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":",fontHeight) ;
 
 	painter.setPen(QColor::fromRgb(70,70,70)) ;
 	painter.drawLine(0,oy,maxWidth,oy) ;
 	oy += celly ;
 
-	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":") ;
+    TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":",fontHeight) ;
 
 	// now give information about turtle traffic.
 	//

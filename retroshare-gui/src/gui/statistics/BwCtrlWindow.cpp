@@ -166,9 +166,12 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->restore();
 }
 
-QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const
+QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & option/*option*/, const QModelIndex & /*index*/) const
 {
-	return QSize(50,17);
+    float FS = QFontMetricsF(option.font).height();
+    float fact = FS/14.0 ;
+
+    return QSize(50*fact,17*fact);
 }
 
 BwCtrlWindow::BwCtrlWindow(QWidget *parent) 
@@ -179,9 +182,12 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
     BWDelegate = new BWListDelegate();
     bwTreeWidget->setItemDelegate(BWDelegate);
     
+    float FS = QFontMetricsF(font()).height();
+    float fact = FS/14.0 ;
+
     /* Set header resize modes and initial section sizes Peer TreeView*/
     QHeaderView * _header = bwTreeWidget->header () ;
-    _header->resizeSection ( COLUMN_RSNAME, 170 );
+    _header->resizeSection ( COLUMN_RSNAME, 170*fact );
 }
 
 BwCtrlWindow::~BwCtrlWindow()
