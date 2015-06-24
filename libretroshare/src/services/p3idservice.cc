@@ -409,7 +409,8 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
 
-        if(details.mNickname.length() > 200)
+        // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
+        if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
             details.mNickname = "[too long a name]" ;
 
             return true;
