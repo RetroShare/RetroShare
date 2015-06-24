@@ -46,9 +46,13 @@ public:
 	void setId(const RsGxsId &id, int column, bool retryWhenFailed);
 	bool getId(RsGxsId &id);
 
-	int idColumn() { return mColumn; }
+	int idColumn() const { return mColumn; }
     void processResult(bool success);
     uint32_t iconTypeMask() const { return mIconTypeMask ;}
+
+	void setAvatar(const RsGxsImage &avatar);
+	virtual QVariant data(int column, int role) const;
+
 private slots:
 	void startProcess();
 
@@ -60,6 +64,7 @@ private:
 	bool mIdFound;
 	bool mRetryWhenFailed;
     uint32_t mIconTypeMask;
+	RsGxsImage mAvatar;
 };
 
 #endif
