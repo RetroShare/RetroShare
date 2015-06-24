@@ -24,13 +24,17 @@ void peerDetailsToStream(StreamBase& stream, RsPeerDetails& details)
             ;
 }
 
-bool peerInfoToStream(StreamBase& stream, RsPeerDetails& details, RsPeers* peers, std::list<RsGroupInfo>& grpInfo)
+bool peerInfoToStream(StreamBase& stream, RsPeerDetails& details, RsPeers* peers, std::list<RsGroupInfo>& grpInfo, bool have_avatar)
 {
     bool ok = true;
     peerDetailsToStream(stream, details);
     stream << makeKeyValue("is_online", peers->isOnline(details.id));
 
     std::string avatar_address = "/"+details.id.toStdString()+"/avatar_image";
+
+    if(!have_avatar)
+        avatar_address = "";
+
     stream << makeKeyValue("avatar_address", avatar_address);
 
     StreamBase& grpStream = stream.getStreamToMember("groups");
@@ -77,6 +81,12 @@ void PeersHandler::notifyListChange(int list, int type)
     }
 }
 
+void PeersHandler::notifyPeerHasNewAvatar(std::string /*peer_id*/)
+{
+    RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+    mStateTokenServer->replaceToken(mStateToken);
+}
+
 void PeersHandler::tick()
 {
     std::list<RsPeerId> online;
@@ -89,6 +99,18 @@ void PeersHandler::tick()
         mStateTokenServer->discardToken(mStateToken);
         mStateToken = mStateTokenServer->getNewToken();
     }
+}
+
+static bool have_avatar(RsMsgs* msgs, const RsPeerId& id)
+{
+    // check if avatar data is available
+    // requests missing avatar images as a side effect
+    unsigned char *data = NULL ;
+    int size = 0 ;
+    msgs->getAvatarData(id, data,size) ;
+    std::vector<uint8_t> avatar(data, data+size);
+    delete[] data;
+    return size != 0;
 }
 
 void PeersHandler::handleWildcard(Request &req, Response &resp)
@@ -132,7 +154,7 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                 mRsPeers->getGroupInfoList(grpInfo);
                 RsPeerDetails details;
                 ok &= mRsPeers->getPeerDetails(RsPeerId(str), details);
-                ok = peerInfoToStream(resp.mDataStream, details, mRsPeers, grpInfo);
+                ok = peerInfoToStream(resp.mDataStream, details, mRsPeers, grpInfo, have_avatar(mRsMsgs, RsPeerId(str)));
             }
         }
     }
@@ -182,7 +204,7 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                 for(std::vector<RsPeerDetails>::iterator vit = detailsVec.begin(); vit != detailsVec.end(); ++vit)
                 {
                     if(vit->gpg_id == *lit)
-                        peerInfoToStream(locationStream.getStreamToMember(),*vit, mRsPeers, grpInfo);
+                        peerInfoToStream(locationStream.getStreamToMember(),*vit, mRsPeers, grpInfo, have_avatar(mRsMsgs, vit->id));
                 }
             }
             resp.mStateToken = getCurrentStateToken();

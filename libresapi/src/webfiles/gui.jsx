@@ -314,7 +314,7 @@ var Peers3 = React.createClass({
 					return(<div key={loc.peer_id} style={{color: loc.is_online? "lime": "grey"}}>{/*<div style={online_style}></div>*/}{loc.location}</div>);
 				});
 				var avatars = this.props.data.locations.map(function(loc){
-					if(loc.is_online)
+					if(loc.is_online && (loc.avatar_address !== ""))
 					{
 						var avatar_url = api_url + component.getPath() + loc.avatar_address;
 						return <img style={{borderRadius: "3mm", margin: "2mm"}} src={avatar_url}/>;
