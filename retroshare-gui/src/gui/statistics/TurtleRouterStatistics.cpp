@@ -196,6 +196,11 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
 	
 	routertabWidget->addTab(new TurtleRouterDialog(),QString(tr("Tunnel Requests")));
+
+
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+    frmGraph->setMinimumHeight(200*fact);
 	
 	// load settings
     processSettings(true);

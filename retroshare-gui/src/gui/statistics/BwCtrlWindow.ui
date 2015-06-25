@@ -90,12 +90,6 @@
       </property>
       <widget class="OutQueueStatisticsWidget" name="_outqueue_stats_W" native="true"/>
       <widget class="BWGraph" name="frmGraph" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>80</height>
-        </size>
-       </property>
        <property name="contextMenuPolicy">
         <enum>Qt::NoContextMenu</enum>
        </property>

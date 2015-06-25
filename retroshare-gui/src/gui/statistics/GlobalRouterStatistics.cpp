@@ -115,7 +115,10 @@ QString GlobalRouterStatistics::getPeerName(const RsPeerId &peer_id)
 GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
 	: QWidget(parent)
 {
-	maxWidth = 400 ;
+    float size = QFontMetricsF(font()).height() ;
+    float fact = size/14.0 ;
+
+    maxWidth = 400*fact ;
 	maxHeight = 0 ;
 }
 
@@ -126,6 +129,9 @@ void GlobalRouterStatisticsWidget::updateContent()
 
     rsGRouter->getRoutingCacheInfo(cache_infos) ;
     rsGRouter->getRoutingMatrixInfo(matrix_info) ;
+
+    float size = QFontMetricsF(font()).height() ;
+    float fact = size/14.0 ;
 
     // What do we need to draw?
     //
@@ -149,21 +155,21 @@ void GlobalRouterStatisticsWidget::updateContent()
     painter.initFrom(this);
     painter.setPen(QColor::fromRgb(0,0,0)) ;
 
-    QFont times_f("Times") ;
-    QFont monospace_f("Monospace") ;
+    QFont times_f(font());//"Times") ;
+    QFont monospace_f(font());//"Monospace") ;
     monospace_f.setStyleHint(QFont::TypeWriter) ;
 
-    QFontMetrics fm_monospace(monospace_f) ;
-    QFontMetrics fm_times(times_f) ;
+    QFontMetricsF fm_monospace(monospace_f) ;
+    QFontMetricsF fm_times(times_f) ;
 
     static const int cellx = fm_monospace.width(QString(" ")) ;
     static const int celly = fm_monospace.height() ;
 
-    maxHeight = 500 ;
+    maxHeight = 500*fact ;
 
     // std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
     // draw...
-    int ox=5,oy=5 ;
+    int ox=5*fact,oy=5*fact ;
 
 
     painter.setFont(times_f) ;
@@ -226,7 +232,7 @@ void GlobalRouterStatisticsWidget::updateContent()
         // now compute max column sizes
 
         for(int j=0;j<nb_fields;++j)
-            max_column_width[j] = std::max(max_column_width[j],fm_monospace.width(strings[j])) ;
+            max_column_width[j] = std::max(max_column_width[j],(int)(fm_monospace.boundingRect(strings[j]).width()+cellx+2*fact)) ;
     }
 
     // compute cumulated sizes
@@ -235,7 +241,7 @@ void GlobalRouterStatisticsWidget::updateContent()
 
     for(int i=1;i<=nb_fields;++i)
     {
-        cumulated_sizes[i] = std::max(max_column_width[i-1],fm_monospace.width(fname[i-1])) ;
+        cumulated_sizes[i] = std::max(max_column_width[i-1],(int)(fm_monospace.boundingRect(fname[i-1]).width()+cellx+2*fact)) ;
         cumulated_sizes[i] += cumulated_sizes[i-1] ;
     }
 
@@ -247,7 +253,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
 
     int top_matrix_oy = oy ;
-    oy += celly +2;
+    oy += celly +2*fact;
 
     painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
 
@@ -259,7 +265,7 @@ void GlobalRouterStatisticsWidget::updateContent()
         oy += celly ;
     }
 
-    oy += 2;
+    oy += 2*fact;
 
     for(int i=0;i<=nb_fields;++i)
         painter.drawLine(ox+cumulated_sizes[i],top_matrix_oy,ox+cumulated_sizes[i],oy) ;
@@ -275,19 +281,19 @@ void GlobalRouterStatisticsWidget::updateContent()
 
     // draw scale
 
-    for(int i=0;i<100;++i)
+    for(int i=0;i<100*fact;++i)
     {
-        painter.setPen(colorScale(i/100.0)) ;
-        painter.drawLine(fm_times.width(Q)+i,oy+celly+2,fm_times.width(Q)+i,oy+2) ;
+        painter.setPen(colorScale(i/100.0/fact)) ;
+        painter.drawLine(ox+fm_times.width(Q)+i,oy+fm_times.height()*0.5,ox+fm_times.width(Q)+i,oy+fm_times.height()) ;
     }
     painter.setPen(QColor::fromRgb(0,0,0)) ;
 
-    painter.drawText(ox+fm_times.width(Q) + 100,oy+celly,")") ;
+    painter.drawText(ox+fm_times.width(Q) + 102*fact,oy+celly,")") ;
 
     oy += celly ;
     oy += celly ;
 
-    static const int MaxKeySize = 20 ;
+    static const int MaxKeySize = 20*fact ;
     painter.setFont(monospace_f) ;
 
     for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it)

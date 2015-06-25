@@ -235,6 +235,9 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
 
   _y_scale = 1.0f ;
   _timer->start(1000);
+
+    float FS = QFontMetricsF(font()).height();
+  setMinimumHeight(12*FS);
 }
 
 void RSGraphWidget::updateIfPossible()
@@ -318,6 +321,22 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
 
   /* Stop the painter */
   _painter->end();
+}
+
+QSizeF RSGraphWidget::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+{
+    float FS = QFontMetricsF(font()).height();
+    float fact = FS/14.0 ;
+
+    switch(which)
+    {
+defaut:
+    case Qt::MinimumSize:
+    case Qt::PreferredSize:
+        return QSizeF(70*FS,12*FS);
+    case Qt::MaximumSize:
+        return QSizeF(700*FS,120*FS);
+    }
 }
 
 QColor RSGraphWidget::getColor(int i)
@@ -598,7 +617,7 @@ void RSGraphWidget::paintLegend()
 
           QPen oldPen = _painter->pen();
           _painter->setPen(QPen(getColor(i), Qt::SolidLine));
-          _painter->drawLine(QPointF(SCALE_WIDTH*fact+10.0*fact, pos),  QPointF(SCALE_WIDTH*fact+30.0*fact, pos));
+          _painter->drawLine(QPointF(SCALE_WIDTH*fact+10.0*fact, pos+FS/3),  QPointF(SCALE_WIDTH*fact+30.0*fact, pos+FS/3));
           _painter->setPen(oldPen);
 
           _painter->setPen(SCALE_COLOR);

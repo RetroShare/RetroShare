@@ -75,6 +75,10 @@ void DhtWindow::updateDisplay()
 	updateRelays();
 
 	RsAutoUpdatePage::unlockAllEvents() ;
+
+        ui.peerTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
+        ui.dhtTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
+        ui.relayTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
 

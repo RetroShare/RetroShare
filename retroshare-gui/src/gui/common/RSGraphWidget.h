@@ -153,6 +153,8 @@ class RSGraphWidget: public QFrame
 		/** Overloaded QWidget::paintEvent() */
 		void paintEvent(QPaintEvent *event);
 
+        virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
+
 	protected slots:
         void updateIfPossible() ;
 

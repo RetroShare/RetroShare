@@ -11,7 +11,10 @@
 OutQueueStatisticsWidget::OutQueueStatisticsWidget(QWidget *parent)
 	: QWidget(parent)
 {
-	maxWidth = 200 ;
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+
+    maxWidth = 200*fact ;
 	maxHeight = 0 ;
 }
 
