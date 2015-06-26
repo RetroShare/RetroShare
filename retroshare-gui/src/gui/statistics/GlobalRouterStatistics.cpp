@@ -156,8 +156,9 @@ void GlobalRouterStatisticsWidget::updateContent()
     painter.setPen(QColor::fromRgb(0,0,0)) ;
 
     QFont times_f(font());//"Times") ;
-    QFont monospace_f(font());//"Monospace") ;
+    QFont monospace_f("Monospace") ;
     monospace_f.setStyleHint(QFont::TypeWriter) ;
+    monospace_f.setPointSize(font().pointSize()) ;
 
     QFontMetricsF fm_monospace(monospace_f) ;
     QFontMetricsF fm_times(times_f) ;
@@ -214,7 +215,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     for(int i=0;i<cache_infos.size();++i)
     {
         std::vector<QString> strings;
-        strings.push_back( QString::number(cache_infos[i].mid,16) ) ;
+        strings.push_back( QString::number(cache_infos[i].mid,16).rightJustified(16,'0') ) ;
         strings.push_back( QString::fromStdString(cache_infos[i].destination.toStdString()) ) ;
 
         //for(std::set<RsPeerId>::const_iterator it(cache_infos[i].local_origin.begin());it!=cache_infos[i].local_origin.end();++it)
