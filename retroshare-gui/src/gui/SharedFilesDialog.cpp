@@ -359,7 +359,7 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 	ui.dirTreeView->update();
 
 	QHeaderView * header = ui.dirTreeView->header () ;
-	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
 
 	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_DIR) ;
 

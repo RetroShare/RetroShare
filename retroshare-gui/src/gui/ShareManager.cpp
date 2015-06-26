@@ -79,7 +79,7 @@ ShareManager::ShareManager()
     ui.removeButton->setEnabled(false);
 
     QHeaderView* header = ui.shareddirList->horizontalHeader();
-    QHeaderView_setSectionResizeMode(header, COLUMN_PATH, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(header, COLUMN_PATH, QHeaderView::Stretch);
 
     //header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
     //header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::Fixed);

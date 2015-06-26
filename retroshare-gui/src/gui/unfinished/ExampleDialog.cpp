@@ -61,18 +61,18 @@ ExampleDialog::ExampleDialog(QWidget *parent)
   
     /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.peertreeWidget->header () ;
-	QHeaderView_setSectionResizeMode(_header, 0, QHeaderView::Custom);
-	QHeaderView_setSectionResizeMode(_header, 1, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 2, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 3, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 4, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 5, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 6, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 7, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 8, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 9, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 10, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(_header, 11, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 0, QHeaderView::Custom);
+	QHeaderView_setSectionResizeModeColumn(_header, 1, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 2, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 3, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 4, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 5, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 6, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 7, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 8, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 9, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 10, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(_header, 11, QHeaderView::Interactive);
 
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );

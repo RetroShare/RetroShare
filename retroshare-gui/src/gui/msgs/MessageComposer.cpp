@@ -325,9 +325,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     QHeaderView *header = ui.recipientWidget->horizontalHeader();
 //    header->resizeSection(COLUMN_RECIPIENT_TYPE, ui.fromLabel->size().width()); // see ::eventFilter
     header->resizeSection(COLUMN_RECIPIENT_ICON, 22);
-    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_NAME, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(header, COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(header, COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(header, COLUMN_RECIPIENT_NAME, QHeaderView::Fixed);
     header->setStretchLastSection(true);
     ui.fromLabel->installEventFilter(this);
 

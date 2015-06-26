@@ -91,9 +91,9 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
-	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Stretch);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
 	header->resizeSection(COLUMN_NAME, 170);
-	QHeaderView_setSectionResizeMode(header, COLUMN_POPULARITY, QHeaderView::Fixed);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
 	header->resizeSection(COLUMN_POPULARITY, 25);
 
 	/* add filter actions */

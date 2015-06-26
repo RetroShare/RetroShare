@@ -22,6 +22,7 @@
 #include "BwCtrlWindow.h"
 #include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
+#include "util/QtVersion.h"
 #include <QTimer>
 #include <QDateTime>
 
@@ -192,7 +193,7 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
     /* Set header resize modes and initial section sizes Peer TreeView*/
     QHeaderView * _header = bwTreeWidget->header () ;
 //    _header->resizeSection ( COLUMN_RSNAME, 170*fact );
-    _header->setResizeMode(QHeaderView::ResizeToContents);
+    QHeaderView_setSectionResizeMode(_header, QHeaderView::ResizeToContents);
 }
 
 BwCtrlWindow::~BwCtrlWindow()

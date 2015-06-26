@@ -162,17 +162,17 @@ SearchDialog::SearchDialog(QWidget *parent)
     ui.searchSummaryWidget->setColumnHidden(SS_SEARCH_ID_COL, true);
 
     QHeaderView * _smheader = ui.searchSummaryWidget->header () ;
-    QHeaderView_setSectionResizeMode(_smheader, SS_KEYWORDS_COL, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_smheader, SS_RESULTS_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_smheader, SS_KEYWORDS_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_smheader, SS_RESULTS_COL, QHeaderView::Interactive);
 
     _smheader->resizeSection ( SS_KEYWORDS_COL, 160 );
     _smheader->resizeSection ( SS_RESULTS_COL, 50 );
 
     ui.searchResultWidget->setColumnCount(SR_COL_COUNT);
     _smheader = ui.searchResultWidget->header () ;
-    QHeaderView_setSectionResizeMode(_smheader, SR_NAME_COL, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_smheader, SR_SIZE_COL, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_smheader, SR_SOURCES_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_smheader, SR_NAME_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_smheader, SR_SIZE_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_smheader, SR_SOURCES_COL, QHeaderView::Interactive);
 
     _smheader->resizeSection ( SR_NAME_COL, 240 );
     _smheader->resizeSection ( SR_SIZE_COL, 75 );

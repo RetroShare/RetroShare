@@ -26,9 +26,15 @@
 
 // Renamed QHeaderView::setResizeMode to QHeaderView::setSectionResizeMode
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
-#define QHeaderView_setSectionResizeMode(header, column, mode) header->setSectionResizeMode(column, mode);
+#define QHeaderView_setSectionResizeModeColumn(header, column, mode) header->setSectionResizeMode(column, mode);
 #else
-#define QHeaderView_setSectionResizeMode(header, column, mode) header->setResizeMode(column, mode);
+#define QHeaderView_setSectionResizeModeColumn(header, column, mode) header->setResizeMode(column, mode);
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+#define QHeaderView_setSectionResizeMode(header, mode) header->setSectionResizeMode(mode);
+#else
+#define QHeaderView_setSectionResizeMode(header, mode) header->setResizeMode(mode);
 #endif
 
 // Renamed QHeaderView::setMovable to QHeaderView::setSectionsMovable

@@ -89,10 +89,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	headerItem->setTextAlignment(COLUMN_SUBSCRIBED, Qt::AlignHCenter | Qt::AlignVCenter);
 
 	QHeaderView *header = ui.lobbyTreeWidget->header();
-	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(header, COLUMN_USER_COUNT, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(header, COLUMN_TOPIC, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(header, COLUMN_SUBSCRIBED, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_USER_COUNT, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_TOPIC, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(header, COLUMN_SUBSCRIBED, QHeaderView::Interactive);
 
     privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
     privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed Lobbies"));

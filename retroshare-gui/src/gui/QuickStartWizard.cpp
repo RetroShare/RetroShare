@@ -59,8 +59,8 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 //	  bool b = rsPeers->getAllowTunnelConnection() ;
 //    ui.checkBoxTunnelConnection->setChecked(b) ;
     
-    QHeaderView_setSectionResizeMode(ui.shareddirList->horizontalHeader(), 0, QHeaderView::Stretch);
-    QHeaderView_setSectionResizeMode(ui.shareddirList->horizontalHeader(), 2, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 0, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 2, QHeaderView::Interactive);
  
     ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
     ui.shareddirList->horizontalHeader()->setStretchLastSection(false);

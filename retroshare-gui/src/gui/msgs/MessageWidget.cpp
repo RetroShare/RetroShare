@@ -148,9 +148,9 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
-	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_NAME, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_SIZE, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_HASH, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(msglheader, COLUMN_FILE_NAME, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(msglheader, COLUMN_FILE_SIZE, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(msglheader, COLUMN_FILE_HASH, QHeaderView::Interactive);
 
 	msglheader->resizeSection (COLUMN_FILE_NAME, 200);
 	msglheader->resizeSection (COLUMN_FILE_SIZE, 100);

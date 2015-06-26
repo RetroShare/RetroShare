@@ -218,10 +218,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (COLUMN_SIGNATURE,    24);
     msgwheader->resizeSection (COLUMN_DATE,         140);
 
-    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_STAR, 24);
 
-    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
@@ -257,14 +257,14 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     processSettings(true);
 
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
-    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_DATE, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_SIGNATURE, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_DATE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_SIGNATURE, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
     msgwheader->resizeSection (COLUMN_SIGNATURE, 24);
     msgwheader->resizeSection (COLUMN_STAR, 24);
-    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->setStretchLastSection(false);
 
     // fill folder list

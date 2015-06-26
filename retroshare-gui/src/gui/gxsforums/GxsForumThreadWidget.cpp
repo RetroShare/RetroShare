@@ -157,7 +157,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
-	QHeaderView_setSectionResizeMode(ttheader, COLUMN_THREAD_TITLE, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(ttheader, COLUMN_THREAD_TITLE, QHeaderView::Interactive);
 	ttheader->resizeSection (COLUMN_THREAD_DATE,  140);
 	ttheader->resizeSection (COLUMN_THREAD_TITLE, 440);
 	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150);
@@ -183,7 +183,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	/* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
 	ttheader->resizeSection (COLUMN_THREAD_READ,  24);
-	QHeaderView_setSectionResizeMode(ttheader, COLUMN_THREAD_READ, QHeaderView::Fixed);
+	QHeaderView_setSectionResizeModeColumn(ttheader, COLUMN_THREAD_READ, QHeaderView::Fixed);
 	ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
 	ui->progressBar->hide();
