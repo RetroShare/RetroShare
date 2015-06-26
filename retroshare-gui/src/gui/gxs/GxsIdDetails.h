@@ -81,6 +81,7 @@ public:
     static QImage makeDefaultIcon(const RsGxsId& id);
 
 	/* Processing */
+	static void enableProcess(bool enable);
 	static bool process(const RsGxsId &id, GxsIdDetailsCallbackFunction callback, QObject *object, const QVariant &data = QVariant());
 
 signals:
@@ -131,7 +132,7 @@ protected:
 	/* Pending data */
 	QList<CallbackData> mPendingData;
     int mCheckTimerId;
-    std::map<RsGxsId,QImage> image_cache ;
+	int mProcessDisableCount;
 
 	/* Thread safe */
 	QMutex mMutex;

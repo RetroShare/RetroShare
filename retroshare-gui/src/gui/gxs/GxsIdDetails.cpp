@@ -47,8 +47,9 @@
 #define IMAGE_DEV_PATCHER        ":/images/tags/dev-patcher.png"
 #define IMAGE_DEV_DEVELOPER      ":/images/tags/developer.png"
 
-#define TIMER_INTERVAL 1000
-#define MAX_ATTEMPTS   10
+#define TIMER_INTERVAL              500
+#define MAX_ATTEMPTS                10
+#define MAX_PROCESS_COUNT_PER_TIMER 50
 
 const int kRecognTagClass_DEVELOPMENT = 1;
 
@@ -65,6 +66,7 @@ GxsIdDetails::GxsIdDetails()
     : QObject()
 {
 	mCheckTimerId = 0;
+	mProcessDisableCount = 0;
 
 	connect(this, SIGNAL(startTimerFromThread()), this, SLOT(doStartTimer()));
 }
@@ -147,37 +149,43 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 			if (rsIdentity) {
 				QMutexLocker lock(&mMutex);
 
-				if (!mPendingData.empty()) {
-					/* Check pending id's */
-					QList<CallbackData>::iterator dataIt;
-					for (dataIt = mPendingData.begin(); dataIt != mPendingData.end(); ) {
-						CallbackData &pendingData = *dataIt;
+				if (mProcessDisableCount == 0) {
+					if (!mPendingData.empty()) {
+						/* Check pending id's */
+						int processed = qMin(MAX_PROCESS_COUNT_PER_TIMER, mPendingData.size());
+						while (!mPendingData.isEmpty()) {
+							if (processed-- <= 0) {
+								break;
+							}
 
-						RsIdentityDetails details;
-						if (rsIdentity->getIdDetails(pendingData.mId, details)) {
-							/* Got details */
-							pendingData.mCallback(GXS_ID_DETAILS_TYPE_DONE, details, pendingData.mObject, pendingData.mData);
+							CallbackData &pendingData = mPendingData.front();
 
-							QObject *object = pendingData.mObject;
-							dataIt = mPendingData.erase(dataIt);
-							connectObject_locked(object, false);
+							RsIdentityDetails details;
+							if (rsIdentity->getIdDetails(pendingData.mId, details)) {
+								/* Got details */
+								pendingData.mCallback(GXS_ID_DETAILS_TYPE_DONE, details, pendingData.mObject, pendingData.mData);
 
-							continue;
+								QObject *object = pendingData.mObject;
+								mPendingData.pop_front();
+								connectObject_locked(object, false);
+
+								continue;
+							}
+
+							if (++pendingData.mAttempt > MAX_ATTEMPTS) {
+								/* Max attempts reached, stop trying */
+								details.mId = pendingData.mId;
+								pendingData.mCallback(GXS_ID_DETAILS_TYPE_FAILED, details, pendingData.mObject, pendingData.mData);
+
+								QObject *object = pendingData.mObject;
+								mPendingData.pop_front();
+								connectObject_locked(object, false);
+
+								continue;
+							}
+
+							mPendingData.move(0, mPendingData.size() - 1);
 						}
-
-						if (++pendingData.mAttempt > MAX_ATTEMPTS) {
-							/* Max attempts reached, stop trying */
-							details.mId = pendingData.mId;
-							pendingData.mCallback(GXS_ID_DETAILS_TYPE_FAILED, details, pendingData.mObject, pendingData.mData);
-
-							QObject *object = pendingData.mObject;
-							dataIt = mPendingData.erase(dataIt);
-							connectObject_locked(object, false);
-
-							continue;
-						}
-
-						++dataIt;
 					}
 				}
 			}
@@ -204,6 +212,24 @@ void GxsIdDetails::doStartTimer()
 	}
 
 	mCheckTimerId = startTimer(TIMER_INTERVAL);
+}
+
+void GxsIdDetails::enableProcess(bool enable)
+{
+	if (!mInstance) {
+		return;
+	}
+
+	QMutexLocker lock(&mInstance->mMutex);
+
+	if (enable) {
+		--mInstance->mProcessDisableCount;
+		if (mInstance->mProcessDisableCount < 0) {
+			mInstance->mProcessDisableCount = 0;
+		}
+	} else {
+		++mInstance->mProcessDisableCount;
+	}
 }
 
 bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callback, QObject *object, const QVariant &data)
