@@ -160,7 +160,8 @@ int main(int argc, char *argv[])
 
 	QStringList args = char_array_to_stringlist(argv+1, argc-1);
 
-	Q_INIT_RESOURCE(images);
+    Q_INIT_RESOURCE(images);
+    Q_INIT_RESOURCE(icons);
 
 	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
 	//

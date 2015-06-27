@@ -26,7 +26,7 @@
 
 #include "ui_FriendsDialog.h"
 
-#define IMAGE_NETWORK         	":/images/logo/logo_32.png"
+#define IMAGE_NETWORK         	":/icons/logo_128.png"
 
 class QAction;
 class NetworkDialog;

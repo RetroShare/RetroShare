@@ -6,7 +6,7 @@
 #include "RsAutoUpdatePage.h"
 #include "chat/ChatLobbyUserNotify.h"
 
-#define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
+#define IMAGE_CHATLOBBY			    ":/icons/chat_128.png"
 
 #define CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1
 #define CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2

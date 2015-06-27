@@ -34,7 +34,7 @@
 
 #include "ui_PeopleDialog.h"
 
-#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
+#define IMAGE_IDENTITY          ":/icons/friends_128.png"
 
 class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, public TokenResponse
 {

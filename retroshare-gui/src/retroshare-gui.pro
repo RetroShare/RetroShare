@@ -911,7 +911,7 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
+RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \

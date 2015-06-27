@@ -28,7 +28,6 @@
 #include "ui_IdDialog.h"
 #include "IdEditDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -928,46 +927,6 @@ void IdDialog::insertRepList(uint32_t token)
 {
 	Q_UNUSED(token)
 	mStateHelper->setLoading(IDDIALOG_REPLIST, false);
-#if 0
-
-	std::vector<RsGxsIdOpinion> opinions;
-	std::vector<RsGxsIdOpinion>::iterator vit;
-	if (!rsIdentity->getMsgData(token, opinions))
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDialog::insertRepList() Error getting Opinions";
-		std::cerr << std::endl;
-#endif
-
-		mStateHelper->setActive(IDDIALOG_REPLIST, false);
-		mStateHelper->clear(IDDIALOG_REPLIST);
-
-		return;
-	}
-
-	for(vit = opinions.begin(); vit != opinions.end(); ++vit)
-	{
-		RsGxsIdOpinion &op = (*vit);
-		GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem();
-
-		/* insert 4 columns */
-
-		/* friend name */
-		item->setId(op.mMeta.mAuthorId, RSIDREP_COL_NAME);
-
-		/* score */
-		item->setText(RSIDREP_COL_OPINION, QString::number(op.getOpinion()));
-
-		/* comment */
-		item->setText(RSIDREP_COL_COMMENT, QString::fromUtf8(op.mComment.c_str()));
-
-		/* local reputation */
-		item->setText(RSIDREP_COL_REPUTATION, QString::number(op.getReputation()));
-
-		ui->treeWidget_RepList->addTopLevelItem(item);
-	}
-#endif
-
 	mStateHelper->setActive(IDDIALOG_REPLIST, true);
 }
 
