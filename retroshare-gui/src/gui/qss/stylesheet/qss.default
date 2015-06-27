@@ -197,3 +197,18 @@ IdEditDialog QLabel#info_label
 {
 	qproperty-fontSizeFactor: 125;
 }
+
+GenCertDialog QLabel#header_label
+{
+	qproperty-fontSizeFactor: 120;
+}
+
+GenCertDialog QLabel#genprofileinfo_label
+{
+	qproperty-fontSizeFactor: 120;
+}
+
+GenCertDialog QLabel#entropy_label
+{
+	qproperty-fontSizeFactor: 115;
+}
