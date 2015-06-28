@@ -136,7 +136,7 @@ public:
 
         // compute time(NULL) in msecs, for a more accurate bw estimate.
 
-        uint64_t now = tv.tv_sec * 1000 + tv.tv_usec/1000 ;
+        uint64_t now = (uint64_t) tv.tv_sec * 1000 + tv.tv_usec/1000 ;
 
         total_record += bw ;
         ++total_events ;
