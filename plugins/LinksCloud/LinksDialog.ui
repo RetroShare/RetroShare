@@ -32,11 +32,6 @@
       <layout class="QGridLayout">
        <item row="0" column="0" colspan="13">
         <widget class="QTreeWidget" name="linkTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -522,7 +517,6 @@ background: white;}</string>
        <widget class="QLabel" name="titleBarLabel">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>

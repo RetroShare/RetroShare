@@ -92,7 +92,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="titleLabel">
+             <widget class="StyledLabel" name="titleLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -101,7 +101,6 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -337,6 +336,13 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="FeedReader_images.qrc"/>
   <include location="../../../retroshare-gui/src/gui/images.qrc"/>

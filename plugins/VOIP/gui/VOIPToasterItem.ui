@@ -125,7 +125,7 @@
       <item row="1" column="0">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="1">
-         <widget class="QLabel" name="textLabel">
+         <widget class="StyledLabel" name="textLabel">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -140,7 +140,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -214,6 +213,11 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67,
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
   <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
