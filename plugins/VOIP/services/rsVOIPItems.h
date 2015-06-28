@@ -86,7 +86,7 @@ class RsVOIPItem: public RsItem
 class RsVOIPPingItem: public RsVOIPItem
 {
 	public:
-		RsVOIPPingItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PING) {}
+		RsVOIPPingItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PING), mSeqNo(0), mPingTS(0) {}
 		RsVOIPPingItem(void *data,uint32_t size) ;
 
 		virtual bool serialise(void *data,uint32_t& size) ;	
