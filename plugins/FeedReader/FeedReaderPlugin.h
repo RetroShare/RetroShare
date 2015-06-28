@@ -42,6 +42,7 @@ public:
 
 	virtual MainPage *qt_page() const;
 	virtual QIcon *qt_icon() const;
+	virtual std::string qt_stylesheet() { return "FeedReader"; }
 	virtual QTranslator *qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;
 
 	virtual void getPluginVersion(int &major, int &minor, int &build, int &svn_rev) const;

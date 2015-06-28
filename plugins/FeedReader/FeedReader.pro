@@ -56,8 +56,9 @@ FORMS =		gui/FeedReaderDialog.ui \
 TARGET = FeedReader
 
 RESOURCES = gui/FeedReader_images.qrc \
-			lang/FeedReader_lang.qrc
-			
+			lang/FeedReader_lang.qrc \
+			qss/FeedReader_qss.qrc
+
 TRANSLATIONS +=  \
 			lang/FeedReader_ca_ES.ts \
 			lang/FeedReader_cs.ts \

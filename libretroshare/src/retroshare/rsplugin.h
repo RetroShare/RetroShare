@@ -176,6 +176,7 @@ class RsPlugin
 		// Provide buttons for the ChatWidget
 		virtual ChatWidgetHolder    *qt_get_chat_widget_holder(ChatWidget */*chatWidget*/) const { return NULL ; }
 
+		virtual std::string    qt_stylesheet() { return ""; }
 		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */, const QString& /* externalDir */ ) const	{ return NULL ; }
 
 		//

@@ -95,6 +95,9 @@ VOIPPlugin::VOIPPlugin()
 	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const RsPeerId&)),Qt::QueuedConnection) ;
 	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const RsPeerId&)),Qt::QueuedConnection) ;
 	QObject::connect(mVOIPNotify,SIGNAL(voipBandwidthInfoReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const RsPeerId&,int)),Qt::QueuedConnection) ;
+
+	Q_INIT_RESOURCE(VOIP_images);
+	Q_INIT_RESOURCE(VOIP_qss);
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -164,8 +167,6 @@ void VOIPPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 QIcon *VOIPPlugin::qt_icon() const
 {
 	if (mIcon == NULL) {
-		Q_INIT_RESOURCE(VOIP_images);
-
 		mIcon = new QIcon(IMAGE_VOIP);
 	}
 

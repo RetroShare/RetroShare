@@ -43,6 +43,7 @@ class VOIPPlugin: public RsPlugin
 		virtual ChatWidgetHolder *qt_get_chat_widget_holder(ChatWidget *chatWidget) const ;
 		
 		virtual QIcon *qt_icon() const;
+		virtual std::string    qt_stylesheet() { return "VOIP"; }
 		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;
 		virtual void           qt_sound_events(SoundEvents &events) const;
 

@@ -84,6 +84,9 @@ FeedReaderPlugin::FeedReaderPlugin()
 	mFeedReader = NULL;
 	mNotify = NULL;
 	mFeedNotify = NULL;
+
+	Q_INIT_RESOURCE(FeedReader_images);
+	Q_INIT_RESOURCE(FeedReader_qss);
 }
 
 void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -143,8 +146,6 @@ void FeedReaderPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 QIcon *FeedReaderPlugin::qt_icon() const
 {
 	if (mIcon == NULL) {
-		Q_INIT_RESOURCE(FeedReader_images);
-
 		mIcon = new QIcon(IMAGE_FEEDREADER);
 	}
 

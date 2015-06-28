@@ -38,6 +38,7 @@
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rsversion.h>
+#include <retroshare/rsplugin.h>
 #include <lang/languagesupport.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -444,50 +445,92 @@ void Rshare::resetLanguageAndStyle()
     setSheet(_args.value(ARG_GUISTYLESHEET));
 }
 
+// RetroShare:
+//   Default:
+//     :/qss/stylesheet/qss.default
+//     :/qss/stylesheet/qss.<locale>
+//   Internal:
+//     :/qss/stylesheet/<name>.qss
+//   External:
+//     <ConfigDirectory|DataDirectory>/qss/<name>.qss
+//   Language depended stylesheet
+//     <Internal|External>_<locale>.lqss
+//
+// Plugin:
+//   Default:
+//     :/qss/stylesheet/<plugin>/<plugin>_qss.default
+//     :/qss/stylesheet/<plugin>/<plugin>_qss.<locale>
+//   Internal:
+//     :/qss/stylesheet/<plugin>/<plugin>_<name>.qss
+//   External:
+//     <ConfigDirectory|DataDirectory>/qss/<plugin>/<plugin>_<name>.qss
+//   Language depended stylesheet
+//     <Internal|External>_<locale>.lqss
+
 void Rshare::loadStyleSheet(const QString &sheetName)
 {
     QString locale = QLocale().name();
     QString styleSheet;
 
-    /* load the default stylesheet */
-    QFile file(":/qss/stylesheet/qss.default");
-    if (file.open(QFile::ReadOnly)) {
-        styleSheet = QLatin1String(file.readAll()) + "\n";
-        file.close();
-    }
+    QStringList names;
+    names.push_back(""); // RetroShare
 
-    /* load locale depended default stylesheet */
-    file.setFileName(":/qss/stylesheet/qss." + locale);
-    if (file.open(QFile::ReadOnly)) {
-        styleSheet = QLatin1String(file.readAll()) + "\n";
-        file.close();
-    }
-
-    if (!sheetName.isEmpty()) {
-        /* load stylesheet */
-        if (sheetName.left(1) == ":") {
-            /* internal stylesheet */
-            file.setFileName(":/qss/stylesheet/" + sheetName.mid(1) + ".qss");
-        } else {
-            /* external stylesheet */
-            file.setFileName(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()) + "/qss/" + sheetName + ".qss");
-            if (!file.exists()) {
-                file.setFileName(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/qss/" + sheetName + ".qss");
+    /* Get stylesheet from plugins */
+    if (rsPlugins) {
+        int count = rsPlugins->nbPlugins();
+        for (int i = 0; i < count; ++i) {
+            RsPlugin* plugin = rsPlugins->plugin(i);
+            if (plugin) {
+                QString pluginStyleSheetName = QString::fromUtf8(plugin->qt_stylesheet().c_str());
+                if (!pluginStyleSheetName.isEmpty()) {
+                    names.push_back(QString("%1/%1_").arg(pluginStyleSheetName));
+                }
             }
         }
+    }
+
+    foreach (QString name, names) {
+        /* load the default stylesheet */
+        QFile file(QString(":/qss/stylesheet/%1qss.default").arg(name));
         if (file.open(QFile::ReadOnly)) {
             styleSheet += QLatin1String(file.readAll()) + "\n";
             file.close();
+        }
 
-            /* load language depended stylesheet */
-            QFileInfo fileInfo(file.fileName());
-            file.setFileName(fileInfo.path() + "/" + fileInfo.baseName() + "_" + locale + ".lqss");
+        /* load locale depended default stylesheet */
+        file.setFileName(QString(":/qss/stylesheet/%1qss.%2").arg(name, locale));
+        if (file.open(QFile::ReadOnly)) {
+            styleSheet += QLatin1String(file.readAll()) + "\n";
+            file.close();
+        }
+
+        if (!sheetName.isEmpty()) {
+            /* load stylesheet */
+            if (sheetName.left(1) == ":") {
+                /* internal stylesheet */
+                file.setFileName(QString(":/qss/stylesheet/%1%2.qss").arg(name, sheetName.mid(1)));
+            } else {
+                /* external stylesheet */
+                file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()), name, sheetName));
+                if (!file.exists()) {
+                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::DataDirectory().c_str()), name, sheetName));
+                }
+            }
             if (file.open(QFile::ReadOnly)) {
                 styleSheet += QLatin1String(file.readAll()) + "\n";
                 file.close();
+
+                /* load language depended stylesheet */
+                QFileInfo fileInfo(file.fileName());
+                file.setFileName(fileInfo.path() + "/" + fileInfo.baseName() + "_" + locale + ".lqss");
+                if (file.open(QFile::ReadOnly)) {
+                    styleSheet += QLatin1String(file.readAll()) + "\n";
+                    file.close();
+                }
             }
         }
     }
+
     qApp->setStyleSheet(styleSheet);
 }
 
@@ -548,6 +591,7 @@ void Rshare::refreshStyleSheet(QWidget *widget, bool processChildren)
 /** Initialize plugins. */
 void Rshare::initPlugins()
 {
+    loadStyleSheet(_stylesheet);
     LanguageSupport::translatePlugins(_language);
 }
 
