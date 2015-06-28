@@ -55,7 +55,10 @@ class RsGxsChannelGroup
 
 class RsGxsChannelPost
 {
-	public:
+public:
+	RsGxsChannelPost() : mCount(0), mSize(0) {}
+
+public:
 	RsMsgMetaData mMeta;
 	std::string mMsg;  // UTF8 encoded.
 
