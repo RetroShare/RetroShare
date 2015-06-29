@@ -592,11 +592,12 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 {
 	if (role == Qt::SizeHintRole)
 	{
-		int defw = 50;
-		int defh = 21;
+		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
+		int defh = QFontMetricsF(QWidget().font()).height();
+
 		if (section < 2)
 		{
-			defw = 200;
+			defw = 200/16.0*defh;
 		}
 		return QSize(defw, defh);
 	}
@@ -637,11 +638,12 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 {
 	if (role == Qt::SizeHintRole)
 	{
-		int defw = 50;
-		int defh = 21;
+		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
+		int defh = QFontMetricsF(QWidget().font()).height();
+
 		if (section < 2)
 		{
-			defw = 200;
+			defw = defh*200/16.0;
 		}
 		return QSize(defw, defh);
 	}

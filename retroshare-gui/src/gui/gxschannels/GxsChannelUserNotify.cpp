@@ -42,7 +42,7 @@ QIcon GxsChannelUserNotify::getIcon()
 
 QIcon GxsChannelUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/channels_new.png") : QIcon(":/images/channels.png");
+    return hasNew ? QIcon(":/icons/channels_red_128.png") : QIcon(":/icons/channels_128.png");
 }
 
 void GxsChannelUserNotify::iconClicked()

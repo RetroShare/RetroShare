@@ -7,18 +7,29 @@
 		<file>icons/blank_green_128.png</file>
 		<file>icons/browsable_blue_128.png</file>
 		<file>icons/browsable_green_128.png</file>
+		<file>icons/channels_128.png</file>
+		<file>icons/channels_red_128.png</file>
 		<file>icons/chat_128.png</file>
+		<file>icons/chat_red_128.png</file>
 		<file>icons/circles_128.png</file>
 		<file>icons/friends_128.png</file>
 		<file>icons/help_128.png</file>
 		<file>icons/information_128.png</file>
 		<file>icons/internet_128.png</file>
+		<file>icons/knews_128.png</file>
+		<file>icons/knews_red_128.png</file>
 		<file>icons/konversation_128.png</file>
+		<file>icons/konversation_red_128.png</file>
 		<file>icons/ktorrent_128.png</file>
 		<file>icons/logo_128.png</file>
 		<file>icons/mail_128.png</file>
+		<file>icons/mail_old_128.png</file>
+		<file>icons/mail_red_128.png</file>
 		<file>icons/newsfeed128.png</file>
 		<file>icons/plugins_128.png</file>
+		<file>icons/posted_128.png</file>
+		<file>icons/posted_red_128.png</file>
+		<file>icons/quit_128.png</file>
 		<file>icons/security_high_128.png</file>
 		<file>icons/security_low_128.png</file>
 		<file>icons/security_medium_128.png</file>

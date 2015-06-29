@@ -174,12 +174,14 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize ULListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-	return QSize(50,17);
-	QVariant value = index.data(Qt::FontRole);
-	QFont fnt = value.isValid() ? qvariant_cast<QFont>(value) : option.font;
-	QFontMetrics fontMetrics(fnt);
-	const QString text = index.data(Qt::DisplayRole).toString();
-	QRect textRect = QRect(0, 0, 0, fontMetrics.lineSpacing() * (text.count(QLatin1Char('\n')) + 1));
-	return textRect.size();
+    int S = QFontMetricsF(option.font).height() ;
+    return QSize(4*S,S);
+    //return QSize(50,17);
+    //QVariant value = index.data(Qt::FontRole);
+    //QFont fnt = value.isValid() ? qvariant_cast<QFont>(value) : option.font;
+    //QFontMetrics fontMetrics(fnt);
+    //const QString text = index.data(Qt::DisplayRole).toString();
+    //QRect textRect = QRect(0, 0, 0, fontMetrics.lineSpacing() * (text.count(QLatin1Char('\n')) + 1));
+    //return textRect.size();
 }
 

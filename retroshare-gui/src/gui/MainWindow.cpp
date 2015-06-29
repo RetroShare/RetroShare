@@ -115,18 +115,21 @@
 #include <iomanip>
 #include <unistd.h>
 
+#define IMAGE_QUIT              ":/icons/quit_128.png"
+#define IMAGE_PREFERENCES       ":/icons/system_128.png"
+#define IMAGE_ABOUT             ":/icons/information_128.png"
+#define IMAGE_ADDFRIEND         ":/icons/add_user_256.png"
+#define IMAGE_RETROSHARE        ":/icons/logo_128.png"
+
 /* Images for toolbar icons */
 //#define IMAGE_NETWORK2          ":/images/rs1.png"
 //#define IMAGE_PEERS         	":/images/groupchat.png"
 //#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
-#define IMAGE_FILES   	        ":/images/fileshare32.png"
-#define IMAGE_CHANNELS       	":/images/channels.png"
-#define IMAGE_FORUMS            ":/images/konversation.png"
-#define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
-#define IMAGE_CHAT          	":/images/groupchat.png"
-#define IMAGE_RETROSHARE        ":/images/logo/logo_16.png"
-#define IMAGE_ABOUT             ":/images/informations_24x24.png"
-#define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
+//#define IMAGE_FILES   	        ":/images/fileshare32.png"
+//#define IMAGE_CHANNELS       	":/images/channels.png"
+//#define IMAGE_FORUMS            ":/images/konversation.png"
+//#define IMAGE_CHAT          	":/images/groupchat.png"
+//#define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
 //#define IMAGE_MESSAGES          ":/images/evolution.png"
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
 #define IMAGE_RSM32             ":/images/kdmconfig.png"
@@ -136,11 +139,9 @@
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
-#define IMAGE_ADDFRIEND         ":/images/user/add_user24.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
-#define IMAGE_QUIT              ":/images/exit_24x24.png"
 #define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 #define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
@@ -209,7 +210,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/logo/logo_32.png")));
+    this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
@@ -354,65 +355,28 @@ void MainWindow::initStackedPage()
 
   /* Create the Main pages and actions */
   QActionGroup *grp = new QActionGroup(this);
-  //QAction *action;
 
-  //ui->stackPages->add(newsFeed = new NewsFeed(ui->stackPages),
-  //                   action = createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(newsFeed, action));
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
-
-  //ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
-  //                   action = createPageAction(QIcon(IMAGE_PEERS), tr("Network"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
 #ifdef RS_USE_CIRCLES
   PeopleDialog *peopleDialog = NULL;
-  //ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages),
-  //                   action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
 #endif
 
   IdDialog *idDialog = NULL;
-  //ui->stackPages->add(idDialog = new IdDialog(ui->stackPages),
-  //                   action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Itentities"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(idDialog, action));
   addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
 #ifdef RS_USE_CIRCLES
   CirclesDialog *circlesDialog = NULL;
-  //ui->stackPages->add(circlesDialog = new CirclesDialog(ui->stackPages),
-  //                   action = createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
   addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 #endif
 
-  //ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
-  //                  action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
-
-  //ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
-  //                  action = createPageAction(QIcon(IMAGE_CHATLOBBY), tr("Chat Lobbies"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(chatLobbyDialog, action));
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
-
-  //ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
-  //                  action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
-
-  //ui->stackPages->add(gxschannelDialog = new GxsChannelDialog(ui->stackPages),
-  //                  action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("Channels"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(gxschannelDialog, action));
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
-
-  //ui->stackPages->add(gxsforumDialog = new GxsForumsDialog(ui->stackPages),
-  //                  action = createPageAction(QIcon(IMAGE_GXSFORUMS), tr("Forums"), grp));
-  //notify.push_back(QPair<MainPage*, QAction*>(gxsforumDialog, action));
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
-  
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
 #ifdef RS_USE_WIKI
@@ -421,9 +385,6 @@ void MainWindow::initStackedPage()
 #endif
 
 #ifdef BLOGS
-  //ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages),
-  //                    createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
-  //TODO: Add iconPixmap, pageName and helpText to BlogsDialog.h
   addPage(blogsFeed = new BlogsDialog(ui->stackPages), grp, NULL);
 #endif
 
@@ -443,9 +404,6 @@ void MainWindow::initStackedPage()
 		 MainPage *pluginPage = rsPlugins->plugin(i)->qt_page();
 		 pluginPage->setIconPixmap(icon);
 		 pluginPage->setPageName(QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()));
-		 //QAction *pluginAction = createPageAction(icon, QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()), grp);
-		 //ui->stackPages->add(pluginPage, pluginAction);
-		 //notify.push_back(QPair<MainPage*, QAction*>(pluginPage, pluginAction));
 		 addPage(pluginPage, grp, &notify);
 	 }
 	 else if(rsPlugins->plugin(i) == NULL)
@@ -457,9 +415,6 @@ void MainWindow::initStackedPage()
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
-  //ui->stackPages->add(pluginsPage = new PluginsPage(ui->stackPages),
-  //                   createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
-  //TODO: Add iconPixmap, pageName and helpText to PluginsPage.h
   addPage(pluginsPage = new PluginsPage(ui->stackPages), grp, NULL);
 #endif
 #endif

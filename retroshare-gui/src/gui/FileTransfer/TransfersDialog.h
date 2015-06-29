@@ -29,7 +29,7 @@
 
 #include "ui_TransfersDialog.h"
 
-#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
+#define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
 
 class DLListDelegate;
 class ULListDelegate;

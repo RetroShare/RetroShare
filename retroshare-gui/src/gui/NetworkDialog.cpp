@@ -439,7 +439,9 @@ void NetworkDialog::insertConnect()
 #endif
 				item = new RSTreeWidgetItem(NULL, 0);
 				item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-                item -> setSizeHint(COLUMN_CHECK, QSize( 18,18 ) );
+
+				int S = QFontMetricsF(font()).height() ;
+                item -> setSizeHint(COLUMN_CHECK, QSize( S,S ) );
 
 				/* (1) Person */
 				item -> setText(COLUMN_PEERNAME, QString::fromUtf8(detail.name.c_str()));

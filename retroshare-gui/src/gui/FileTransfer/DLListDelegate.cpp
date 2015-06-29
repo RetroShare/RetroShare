@@ -245,8 +245,11 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->restore();
 }
 
-QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const
+QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-	return QSize(50,17);
+    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+
+    int S = QFontMetricsF(option.font).height() ;
+    return QSize(w,S);
 }
 

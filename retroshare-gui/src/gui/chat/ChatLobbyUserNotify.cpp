@@ -94,7 +94,7 @@ QIcon ChatLobbyUserNotify::getIcon()
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/chat_red24.png") : QIcon(":/images/chat_32.png");
+    return hasNew ? QIcon(":/icons/chat_red_128.png") : QIcon(":/icons/chat_128.png");
 }
 
 unsigned int ChatLobbyUserNotify::getNewCount()

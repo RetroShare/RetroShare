@@ -106,7 +106,13 @@ bool AppearancePage::save(QString &errmsg)
 		break;
 		case 3:
 			Settings->setToolButtonSize(32);
-	}
+        break;
+        case 4:
+            Settings->setToolButtonSize(64);
+        break;
+        case 5:
+            Settings->setToolButtonSize(128);
+    }
 	switch (ui.cmboListItemSize->currentIndex())
 	{
 		case 0:
@@ -121,7 +127,13 @@ bool AppearancePage::save(QString &errmsg)
 		break;
 		case 3:
 			Settings->setListItemIconSize(32);
-	}
+        break;
+        case 4:
+            Settings->setListItemIconSize(64);
+        break;
+        case 5:
+            Settings->setListItemIconSize(128);
+    }
 
 	/* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
@@ -183,7 +195,13 @@ void AppearancePage::load()
 		break;
 		case 32:
 			ui.cmboTollButtonsSize->setCurrentIndex(3);
-	}
+        break;
+        case 64:
+            ui.cmboTollButtonsSize->setCurrentIndex(4);
+        break;
+        case 128:
+            ui.cmboTollButtonsSize->setCurrentIndex(5);
+    }
 	switch (Settings->getListItemIconSize())
 	{
 		case 8:
@@ -198,7 +216,13 @@ void AppearancePage::load()
 		break;
 		case 32:
 			ui.cmboListItemSize->setCurrentIndex(3);
-	}
+        break;
+        case 64:
+            ui.cmboListItemSize->setCurrentIndex(4);
+        break;
+        case 128:
+            ui.cmboListItemSize->setCurrentIndex(5);
+    }
 
 	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
 	ui.checkBoxHideSoundStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());

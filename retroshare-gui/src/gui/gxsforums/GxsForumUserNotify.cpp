@@ -38,12 +38,12 @@ bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsForumUserNotify::getIcon()
 {
-	return QIcon(":/images/konversation16.png");
+    return QIcon(":/icons/konversation_128.png");
 }
 
 QIcon GxsForumUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/forums_new.png") : QIcon(":/images/konversation.png");
+    return hasNew ? QIcon(":/icons/konversation_red_128.png") : QIcon(":/icons/konversation_128.png");
 }
 
 void GxsForumUserNotify::iconClicked()

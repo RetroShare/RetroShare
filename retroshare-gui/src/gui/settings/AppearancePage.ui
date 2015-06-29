@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
+    <width>1160</width>
     <height>567</height>
    </rect>
   </property>
@@ -301,29 +301,29 @@
         </property>
         <layout class="QGridLayout" name="gridLayoutToolListStyle">
          <item row="2" column="0">
-       <widget class="QComboBox" name="cmboTollButtonsStyle">
-        <item>
-         <property name="text">
-          <string>Icon Only</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Text Only</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Text Beside Icon</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Text Under Icon</string>
-         </property>
-        </item>
-       </widget>
-      </item>
+          <widget class="QComboBox" name="cmboTollButtonsStyle">
+           <item>
+            <property name="text">
+             <string>Icon Only</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Text Only</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Text Beside Icon</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Text Under Icon</string>
+            </property>
+           </item>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="labelToolButtonStyle">
            <property name="sizePolicy">
@@ -351,53 +351,73 @@
           </widget>
          </item>
          <item row="1" column="0">
-       <widget class="QComboBox" name="cmboTollButtonsSize">
-        <item>
-         <property name="text">
-          <string>Icon Size = 8x8</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Icon Size = 16x16</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Icon Size = 24x24</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Icon Size = 32x32</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="1" column="1">
-          <widget class="QComboBox" name="cmboListItemSize">
+          <widget class="QComboBox" name="cmboTollButtonsSize">
            <item>
             <property name="text">
              <string>Icon Size = 8x8</string>
-        </property>
-      </item>
+            </property>
+           </item>
            <item>
             <property name="text">
              <string>Icon Size = 16x16</string>
-     </property>
-      </item>
+            </property>
+           </item>
            <item>
             <property name="text">
              <string>Icon Size = 24x24</string>
-        </property>
+            </property>
            </item>
            <item>
             <property name="text">
              <string>Icon Size = 32x32</string>
-        </property>
-      </item>
-    </widget>
-   </item>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 64x64</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 128x128</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="cmboListItemSize">
+           <item>
+            <property name="text">
+             <string>Icon Size = 8x8</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 16x16</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 24x24</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 32x32</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 64x64</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 128x128</string>
+            </property>
+           </item>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>

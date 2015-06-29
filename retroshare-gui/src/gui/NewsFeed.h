@@ -28,7 +28,7 @@
 #include "util/TokenQueue.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
-#define IMAGE_NEWSFEED ":/images/newsfeed/news-feed-32.png"
+#define IMAGE_NEWSFEED ":/icons/plugins_128.png"
 
 namespace Ui {
 class NewsFeed;

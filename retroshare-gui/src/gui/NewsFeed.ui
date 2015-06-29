@@ -6,21 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
+    <width>598</width>
     <height>376</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -50,7 +41,7 @@
          </size>
         </property>
         <property name="pixmap">
-         <pixmap resource="images.qrc">:/images/newsfeed/news-feed-32.png</pixmap>
+         <pixmap resource="icons.qrc">:/icons/knews_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -100,8 +91,14 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
-          <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/information_128.png</normaloff>:/icons/information_128.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -141,6 +138,7 @@
  </customwidgets>
  <resources>
   <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

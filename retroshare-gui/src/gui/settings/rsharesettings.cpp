@@ -252,6 +252,10 @@ int RshareSettings::getToolButtonSize()
 		return 24;
 	case 32:
 		return 32;
+    case 64:
+            return 64 ;
+case 128:
+    return 128 ;
 	}
 }
 
@@ -272,7 +276,14 @@ void RshareSettings::setToolButtonSize(int size)
 		break;
 	case 32:
 		setValue(SETTING_TOOLBUTTONSIZE, 32);
-	}
+        break;
+    case 64:
+        setValue(SETTING_TOOLBUTTONSIZE, 64);
+        break;
+    case 128:
+        setValue(SETTING_TOOLBUTTONSIZE, 128);
+        break;
+    }
 }
 
 /** Gets the list item icon's size.*/
@@ -290,7 +301,11 @@ int RshareSettings::getListItemIconSize()
 		return 24;
 	case 32:
 		return 32;
-	}
+    case 64:
+        return 64;
+    case 128:
+        return 128;
+    }
 }
 
 /** Sets the list item icon's size.*/
@@ -310,7 +325,14 @@ void RshareSettings::setListItemIconSize(int size)
 		break;
 	case 32:
 		setValue(SETTING_LISTITEMICONSIZE, 32);
-	}
+            break ;
+    case 64:
+        setValue(SETTING_LISTITEMICONSIZE, 64);
+        break ;
+    case 128:
+        setValue(SETTING_LISTITEMICONSIZE, 128);
+        break ;
+    }
 }
 
 static QString getKeyForLastDir(RshareSettings::enumLastDir type)
