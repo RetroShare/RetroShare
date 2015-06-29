@@ -834,7 +834,7 @@ behind a firewall or a VPN.</string>
              <bool>true</bool>
             </property>
             <property name="plainText">
-             <string>Tor Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
+             <string>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
 
 You can connect to Hidden Nodes, even if you 
 are running a standard Node, so why not setup Tor? </string>

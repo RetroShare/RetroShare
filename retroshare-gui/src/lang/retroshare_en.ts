@@ -741,7 +741,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>BWListDelegate</name>
     <message>
-        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+60"/>
+        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+62"/>
         <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>
@@ -883,7 +883,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+177"/>
+        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+187"/>
         <source>TOTALS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1742,7 +1742,7 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+335"/>
+        <location line="+344"/>
         <source>Send</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1910,12 +1910,12 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="-801"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="-810"/>
         <source>(Status)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+529"/>
+        <location line="+538"/>
         <source>Set text font &amp; color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4431,7 +4431,7 @@ Do you want to reject this message?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/statistics/DhtWindow.cpp" line="+109"/>
+        <location filename="../gui/statistics/DhtWindow.cpp" line="+114"/>
         <source>Unknown NetState</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5574,7 +5574,7 @@ you plug it in.</source>
 <context>
     <name>FriendsDialog</name>
     <message>
-        <location filename="../gui/FriendsDialog.ui" line="+162"/>
+        <location filename="../gui/FriendsDialog.ui" line="+144"/>
         <source>Edit status message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5673,7 +5673,7 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.ui" line="-288"/>
+        <location filename="../gui/FriendsDialog.ui" line="-270"/>
         <location filename="../gui/FriendsDialog.h" line="+60"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
@@ -5702,7 +5702,7 @@ you plug it in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+379"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5754,7 +5754,7 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+239"/>
+        <location line="+290"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5769,7 +5769,7 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="-92"/>
+        <location filename="../gui/GenCertDialog.ui" line="-143"/>
         <source>Port</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5828,13 +5828,13 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="-251"/>
+        <location filename="../gui/GenCertDialog.ui" line="-314"/>
         <source>You can create a new profile with this form.
 Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+81"/>
         <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5881,7 +5881,7 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+38"/>
         <source>Use profile</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5902,12 +5902,12 @@ Alternatively you can use an existing profile. Just uncheck &quot;Create a new p
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+48"/>
         <source>PGP key length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+120"/>
         <location filename="../gui/GenCertDialog.cpp" line="+104"/>
         <location line="+52"/>
         <source>Create new profile</source>
@@ -6064,12 +6064,12 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="-258"/>
+        <location filename="../gui/GenCertDialog.ui" line="-308"/>
         <source>Tor address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+173"/>
+        <location line="+162"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure Tor to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;Tor configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6405,7 +6405,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GlobalRouterStatisticsWidget</name>
     <message>
-        <location line="+76"/>
+        <location line="+83"/>
         <source>Pending packets</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7664,7 +7664,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+398"/>
         <source>Anonymous</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7684,7 +7684,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+700"/>
+        <location line="+687"/>
         <location line="+31"/>
         <location line="+33"/>
         <source>RetroShare</source>
@@ -7731,7 +7731,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-935"/>
+        <location line="-945"/>
         <source>Forum name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8135,7 +8135,7 @@ before you can comment</source>
 <context>
     <name>GxsIdDetails</name>
     <message>
-        <location filename="../gui/gxs/GxsIdDetails.cpp" line="+773"/>
+        <location filename="../gui/gxs/GxsIdDetails.cpp" line="+799"/>
         <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8394,28 +8394,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is an Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralized commmunication platform.	&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides file sharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Useful external links to more information:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Wiki&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare&apos;s Forum&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Project Page&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twiter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+37"/>
+        <location line="+65"/>
         <source>Authors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8462,7 +8441,28 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="-119"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is an Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralized commmunication platform.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides file sharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Useful external links to more information:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare&apos;s Forum&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Project Page&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twitter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+175"/>
         <source>Libraries</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8658,7 +8658,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="+167"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+166"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8866,7 +8866,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+413"/>
+        <location line="+373"/>
         <source>Distant chat cannot work</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8878,7 +8878,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/Identity/IdDialog.ui" line="-322"/>
         <location line="+185"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-933"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-893"/>
         <location filename="../gui/Identity/IdDialog.h" line="+51"/>
         <source>People</source>
         <translation type="unfinished"></translation>
@@ -8920,7 +8920,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+309"/>
         <source>Chat with this person</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8950,7 +8950,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-360"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-320"/>
         <source>+50 Known PGP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10597,7 +10597,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+233"/>
+        <location line="+209"/>
         <location filename="../gui/MessagesDialog.cpp" line="+612"/>
         <location line="+841"/>
         <location line="+10"/>
@@ -10907,7 +10907,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-682"/>
+        <location filename="../gui/MessagesDialog.ui" line="-658"/>
         <location filename="../gui/MessagesDialog.h" line="+48"/>
         <source>Messages</source>
         <translation type="unfinished"></translation>
@@ -11849,7 +11849,7 @@ Reported error:</source>
 <context>
     <name>OutQueueStatisticsWidget</name>
     <message>
-        <location filename="../gui/statistics/OutQueueStatistics.cpp" line="+83"/>
+        <location filename="../gui/statistics/OutQueueStatistics.cpp" line="+89"/>
         <source>Outqueue statistics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13710,7 +13710,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="+183"/>
+        <location filename="../main.cpp" line="+184"/>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13741,7 +13741,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="+642"/>
+        <location filename="../rshare.cpp" line="+686"/>
         <location line="+7"/>
         <source>Multiple instances</source>
         <translation type="unfinished"></translation>
@@ -13844,7 +13844,7 @@ Reported error is:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="-228"/>
+        <location filename="../main.cpp" line="-229"/>
         <source>You appear to have nodes associated to DSA keys:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14209,7 +14209,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSGraphWidget</name>
     <message>
-        <location filename="../gui/common/RSGraphWidget.cpp" line="+493"/>
+        <location filename="../gui/common/RSGraphWidget.cpp" line="+518"/>
         <source>%1 KB</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14785,7 +14785,7 @@ Reducing image to %1x%2 pixels?</source>
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="-403"/>
+        <location filename="../rshare.cpp" line="-446"/>
         <source>Resets ALL stored RetroShare settings.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14830,17 +14830,17 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+211"/>
         <source>built-in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+87"/>
         <source>Could not create data directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-408"/>
+        <location line="-451"/>
         <source>Revision</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15594,7 +15594,15 @@ HiddenServicePort 9191 127.0.0.1:9191</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+409"/>
+        <location line="+367"/>
+        <source>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
+
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup Tor? </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+42"/>
         <source>Test</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15790,15 +15798,7 @@ HiddenServicePort 9191 127.0.0.1:9191</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
-        <source>Tor Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
-
-You can connect to Hidden Nodes, even if you 
-are running a standard Node, so why not setup Tor? </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="+42"/>
         <source>Incoming Tor Connections</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16338,7 +16338,7 @@ Select the Friends with which you want to Share your Channel.</source>
 <context>
     <name>SplashScreen</name>
     <message>
-        <location filename="../main.cpp" line="+200"/>
+        <location filename="../main.cpp" line="+201"/>
         <source>Load profile</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17795,7 +17795,7 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="+144"/>
+        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="+147"/>
         <source>Age in seconds</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17810,7 +17810,7 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+117"/>
         <source>Unknown Peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17820,7 +17820,7 @@ Try to be patient!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="-64"/>
+        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="-69"/>
         <source>Tunnel Requests</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17828,7 +17828,7 @@ Try to be patient!</source>
 <context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
-        <location line="+99"/>
+        <location line="+109"/>
         <source>Search requests repartition</source>
         <translation type="unfinished"></translation>
     </message>
