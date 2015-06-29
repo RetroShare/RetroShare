@@ -46,7 +46,7 @@ QIcon TransferUserNotify::getIcon()
 
 QIcon TransferUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/transfers_new.png") : QIcon(":/images/ktorrent32.png");
+    return hasNew ? QIcon(":/icons/ktorrent_red_128.png") : QIcon(":/icons/ktorrent_128.png");
 }
 
 unsigned int TransferUserNotify::getNewCount()
