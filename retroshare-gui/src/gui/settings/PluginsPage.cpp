@@ -151,7 +151,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 }
 QString PluginsPage::helpText() const
 {
-   return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Plugins</h1>     \
+   return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Plugins</h1>     \
               <p>Plugins are loaded from the directories listed in the bottom list.</p>         \
               <p>For security reasons, accepted plugins load automatically until                \
               the main Retroshare executable or the plugin library changes. In                  \

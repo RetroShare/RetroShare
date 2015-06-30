@@ -66,7 +66,7 @@ void WebuiPage::load()
 
 QString WebuiPage::helpText() const
 {
-    return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Webinterface</h1>  \
+    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Webinterface</h1>  \
      <p>The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.</p>\
      <p>Warning: don't expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.</p>");
 }

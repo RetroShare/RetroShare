@@ -42,7 +42,7 @@ ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags
 
 QString ServicePermissionsPage::helpText() const
 {
-   return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Permissions</h1>  \
+   return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Permissions</h1>  \
     <p>Permissions allow you to control which services are available to which friends</p>\
     <p>Each interruptor shows two lights, indicating whether you or your friend has enabled\
              that service. Both needs to be ON (showing <img height=20 src=\":/images/switch11.png\"/>) to\

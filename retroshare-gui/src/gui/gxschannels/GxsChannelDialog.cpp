@@ -51,7 +51,7 @@ GxsChannelDialog::~GxsChannelDialog()
 
 QString GxsChannelDialog::getHelpString() const
 {
-	QString hlp_str = tr("<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Channels</h1>    \
+	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Channels</h1>    \
     <p>Channels allow you to post data (e.g. movies, music) that will spread in the network</p>            \
     <p>You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to \
     your friends. This promotes good channels in the network.</p>\

@@ -32,10 +32,10 @@
 #include "RsAutoUpdatePage.h"
 #include "PopupDistantChatDialog.h"
 
-#define IMAGE_RED_LED ":/images/redled.png"
-#define IMAGE_YEL_LED ":/images/yellowled.png"
-#define IMAGE_GRN_LED ":/images/greenled.png"
-#define IMAGE_GRY_LED ":/images/grayled.png"
+#define IMAGE_RED_LED ":/icons/bullet_red_64.png"
+#define IMAGE_YEL_LED ":/icons/bullet_yellow_64.png"
+#define IMAGE_GRN_LED ":/icons/bullet_green_64.png"
+#define IMAGE_GRY_LED ":/icons/bullet_grey_64.png"
 
 PopupDistantChatDialog::~PopupDistantChatDialog() 
 { 

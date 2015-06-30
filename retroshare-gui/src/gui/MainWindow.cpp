@@ -120,6 +120,9 @@
 #define IMAGE_ABOUT             ":/icons/information_128.png"
 #define IMAGE_ADDFRIEND         ":/icons/add_user_256.png"
 #define IMAGE_RETROSHARE        ":/icons/logo_128.png"
+#define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
+#define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
+#define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 
 /* Images for toolbar icons */
 //#define IMAGE_NETWORK2          ":/images/rs1.png"
@@ -148,9 +151,6 @@
 //#define IMG_HELP                ":/images/help24.png"
 //#define IMAGE_NEWSFEED          ":/images/newsfeed/news-feed-32.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-#define IMAGE_NOONLINE          ":/images/logo/logo_24_0.png"
-#define IMAGE_ONEONLINE         ":/images/logo/logo_24_1.png"
-#define IMAGE_TWOONLINE         ":/images/logo/logo_24_2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
 //#define IMAGE_CHATLOBBY			    ":/images/chat_32.png"

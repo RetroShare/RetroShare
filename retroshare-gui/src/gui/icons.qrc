@@ -7,6 +7,10 @@
 		<file>icons/blank_green_128.png</file>
 		<file>icons/browsable_blue_128.png</file>
 		<file>icons/browsable_green_128.png</file>
+		<file>icons/bullet_green_64.png</file>
+		<file>icons/bullet_grey_64.png</file>
+		<file>icons/bullet_red_64.png</file>
+		<file>icons/bullet_yellow_64.png</file>
 		<file>icons/channels_128.png</file>
 		<file>icons/channels_red_128.png</file>
 		<file>icons/chat_128.png</file>
@@ -14,14 +18,19 @@
 		<file>icons/circles_128.png</file>
 		<file>icons/friends_128.png</file>
 		<file>icons/help_128.png</file>
+		<file>icons/help_64.png</file>
 		<file>icons/information_128.png</file>
 		<file>icons/internet_128.png</file>
 		<file>icons/knews_128.png</file>
 		<file>icons/knews_red_128.png</file>
 		<file>icons/konversation_128.png</file>
+		<file>icons/konversation128.png</file>
 		<file>icons/konversation_red_128.png</file>
 		<file>icons/ktorrent_128.png</file>
+		<file>icons/logo_0_connected_128.png</file>
 		<file>icons/logo_128.png</file>
+		<file>icons/logo_1_connected_128.png</file>
+		<file>icons/logo_2_connected_128.png</file>
 		<file>icons/mail_128.png</file>
 		<file>icons/mail_old_128.png</file>
 		<file>icons/mail_red_128.png</file>

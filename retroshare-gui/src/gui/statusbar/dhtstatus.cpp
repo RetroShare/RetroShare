@@ -75,10 +75,11 @@ void DHTStatus::getDHTStatus()
 	RsConfigNetStatus config;
 	rsConfig->getConfigNetStatus(config);
 
+    int S = QFontMetricsF(dhtstatusLabel->font()).height();
 	if (!(config.DHTActive))
 	{
 		// GRAY.
-		dhtstatusLabel->setPixmap(QPixmap(":/images/grayled.png"));
+        dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_grey_64.png").scaledToHeight(S,Qt::SmoothTransformation));
 		dhtstatusLabel->setToolTip( text + tr("DHT Off"));
 
 		spaceLabel->setVisible(false);
@@ -96,8 +97,8 @@ void DHTStatus::getDHTStatus()
 			// YELLOW or GREEN.
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
-				dhtstatusLabel->setPixmap(QPixmap(":/images/yellowled.png"));
-				dhtstatusLabel->setToolTip( text + tr("DHT Searching for RetroShare Peers"));
+                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_yellow_64.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setToolTip( text + tr("DHT Searching for RetroShare Peers"));
 
 				spaceLabel->setVisible(true);
 				dhtnetworkLabel->setVisible(true);
@@ -108,7 +109,7 @@ void DHTStatus::getDHTStatus()
 			}
 			else
 			{
-				dhtstatusLabel->setPixmap(QPixmap(":/images/greenled.png"));
+                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_green_64.png").scaledToHeight(S,Qt::SmoothTransformation));
 				dhtstatusLabel->setToolTip( text + tr("DHT Good"));
 
 				spaceLabel->setVisible(true);
@@ -122,8 +123,8 @@ void DHTStatus::getDHTStatus()
 		else
 		{
 			// RED - some issue.
-			dhtstatusLabel->setPixmap(QPixmap(":/images/redled.png"));
-			dhtstatusLabel->setToolTip( text + tr("DHT Error"));
+                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_red_64.png").scaledToHeight(S,Qt::SmoothTransformation));
+            dhtstatusLabel->setToolTip( text + tr("DHT Error"));
 
 			spaceLabel->setVisible(false);
 			dhtnetworkLabel->setVisible(false);

@@ -56,57 +56,58 @@ void NATStatus::getNATStatus()
 
 	statusNAT->setVisible(!_compactMode);
 	QString text = _compactMode?statusNAT->text():"";
+    int S = QFontMetricsF(iconLabel->font()).height() ;
 
 	switch(netState)
 	{
 		default:
 		case RSNET_NETSTATE_BAD_UNKNOWN:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/yellowled.png")) ;
-			iconLabel->setToolTip( text + tr("Network Status Unknown")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setToolTip( text + tr("Network Status Unknown")) ;
 		}
 		break ;
 
 		case RSNET_NETSTATE_BAD_OFFLINE:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/grayled.png")) ;
-			iconLabel->setToolTip( text + tr("Offline")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_grey_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setToolTip( text + tr("Offline")) ;
 		}
 		break ;
 
 // BAD. (RED)
 		case RSNET_NETSTATE_BAD_NATSYM:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/redled.png")) ;
-			iconLabel->setToolTip( text + tr("Nasty Firewall")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_red_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setToolTip( text + tr("Nasty Firewall")) ;
 		}
 		break ;
 
 		case RSNET_NETSTATE_BAD_NODHT_NAT:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/redled.png")) ;
-			iconLabel->setToolTip( text + tr("DHT Disabled and Firewalled")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_red_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setToolTip( text + tr("DHT Disabled and Firewalled")) ;
 		}
 		break ;
 
 // CAUTION. (ORANGE)
 		case RSNET_NETSTATE_WARNING_RESTART:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/yellowled.png")) ;
-			iconLabel->setToolTip( text + tr("Network Restarting")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setToolTip( text + tr("Network Restarting")) ;
 		}
 		break ;
 
 		case RSNET_NETSTATE_WARNING_NATTED:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/yellowled.png")) ;
-			iconLabel->setToolTip( text + tr("Behind Firewall")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
+            iconLabel->setToolTip( text + tr("Behind Firewall")) ;
 		}
 		break ;
 
 		case RSNET_NETSTATE_WARNING_NODHT:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/yellowled.png")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_yellow_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("DHT Disabled")) ;
 		}
 		break ;
@@ -114,89 +115,17 @@ void NATStatus::getNATStatus()
 // GOOD (GREEN)
 		case RSNET_NETSTATE_GOOD:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/greenled.png")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_green_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("RetroShare Server")) ;
 		}
 		break ;
 
 		case RSNET_NETSTATE_ADV_FORWARD:
 		{
-			iconLabel->setPixmap(QPixmap(":/images/greenled.png")) ;
+            iconLabel->setPixmap(QPixmap(":/icons/bullet_green_64.png").scaledToHeight(S,Qt::SmoothTransformation)) ;
 			iconLabel->setToolTip( text + tr("Forwarded Port")) ;
 		}
 		break ;
 	}
 }
 
-#if 0
-
-void NATStatus::getNATStatus()
-{
-	uint32_t netMode = rsConfig -> getNetworkMode();
-	uint32_t natType = rsConfig -> getNatTypeMode();
-	uint32_t natHole = rsConfig -> getNatHoleMode();
-
-    rsiface->lockData(); /* Lock Interface */
-
-    /* now the extra bit .... switch on check boxes */
-    const RsConfig &config = rsiface->getConfig();
-    
-//    if(config.netUpnpOk)
-//    {
-//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-//      iconLabel->setToolTip(tr("UPNP is active."));
-//    }
-//    else
-//    {
-//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
-//      iconLabel->setToolTip(tr("UPNP NOT FOUND."));
-//    }
-//
-//    if(config.netExtOk)
-//    {
-//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-//      iconLabel->setToolTip(tr("Stable External IP Address"));
-//    }
-//    else
-//    {
-//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
-//      iconLabel->setToolTip(tr("Not Found External Address"));
-//    }
-//
-//    if(config.netUdpOk)
-//    {
-//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/yellowled.png"));
-//      iconLabel->setToolTip(tr("UDP Port is reachable"));
-//    }
-//    else
-//    {
-//      iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
-//      iconLabel->setToolTip(tr("UDP Port is not reachable"));
-//    }
-    
-    if (config.netUpnpOk)
-    {
-        iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
-        iconLabel->setToolTip(tr("OK | RetroShare Server"));
-    }
-    else if (config.netStunOk || config.netExtraAddressOk)
-    {
-        iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
-        iconLabel->setToolTip(tr("Internet connection"));
-    }
-    else if (config.netLocalOk)
-    {
-        iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
-        iconLabel->setToolTip(tr("No internet connection"));
-    }
-    else
-    {
-        iconLabel->setPixmap(QPixmap(":/images/redled.png"));
-        iconLabel->setToolTip(tr("No local network"));
-    }
-
-    rsiface->unlockData(); /* UnLock Interface */
-
-}
-
-#endif

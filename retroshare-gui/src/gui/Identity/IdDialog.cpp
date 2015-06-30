@@ -208,7 +208,7 @@ IdDialog::IdDialog(QWidget *parent) :
 #endif
 
 	QString hlp_str = tr(
-			" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Identities</h1>    \
+			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
 			<p>In this tab you can create/edit pseudo-anonymous identities. \
 			</p>                                                   \
 			<p>Identities are used to securely identify your data: sign forum and channel posts,\

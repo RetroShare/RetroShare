@@ -100,7 +100,7 @@
         </property>
         <property name="icon">
          <iconset resource="../images.qrc">
-          <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
+          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
          <bool>true</bool>

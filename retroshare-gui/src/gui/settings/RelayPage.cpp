@@ -55,7 +55,7 @@ RelayPage::RelayPage(QWidget * parent, Qt::WindowFlags flags)
 
 QString RelayPage::helpText() const
 {
-   return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Relays</h1>                   \
+   return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Relays</h1>                   \
               <p>By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  \
 				  users who cannot connect directly, e.g. because they're firewalled.</p>                        \
 				  <p>You may choose to act as a relay by checking <i>enable relay connections</i>, or simply     \

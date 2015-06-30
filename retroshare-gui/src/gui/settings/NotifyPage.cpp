@@ -173,7 +173,7 @@ uint NotifyPage::getNewsFlags()
 
 QString NotifyPage::helpText() const
 {
-			return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Notify</h1> \
+			return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Notify</h1> \
 		  <p>Retroshare will notify you about what happens in your network.         \
 		  Depending on your usage, you may want to enable or disable some of the    \
 		  notifications. This page is designed for that!</p>                        \

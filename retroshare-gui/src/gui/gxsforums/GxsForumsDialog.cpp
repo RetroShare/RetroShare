@@ -50,7 +50,7 @@ GxsForumsDialog::~GxsForumsDialog()
 QString GxsForumsDialog::getHelpString() const
 {
 	QString hlp_str = tr(
-			"<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Forums</h1>               \
+			"<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Forums</h1>               \
 			<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>    \
 			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
 			your friends. This automatically promotes interesting forums in the network.</p>            \

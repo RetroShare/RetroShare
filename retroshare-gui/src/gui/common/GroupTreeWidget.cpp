@@ -89,12 +89,14 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* Initialize tree widget */
 	ui->treeWidget->setColumnCount(COLUMN_COUNT);
 
+            int S = QFontMetricsF(font()).height();
+
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
-	header->resizeSection(COLUMN_NAME, 170);
+    header->resizeSection(COLUMN_NAME, 10*S);
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
-	header->resizeSection(COLUMN_POPULARITY, 25);
+    header->resizeSection(COLUMN_POPULARITY, 1.5*S);
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
@@ -103,6 +105,8 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
+
+        ui->treeWidget->setIconSize(QSize(S*1.2,S*1.2)) ;
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -283,7 +287,10 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	item->setData(COLUMN_DATA, ROLE_NAME, name);
 	item->setFont(COLUMN_NAME, font);
 	item->setIcon(COLUMN_NAME, icon);
-	item->setSizeHint(COLUMN_NAME, QSize(18, 18));
+
+        int S = QFontMetricsF(font).height();
+
+    item->setSizeHint(COLUMN_NAME, QSize(S*1.1, S*1.1));
 	item->setForeground(COLUMN_NAME, QBrush(textColorCategory()));
 	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
@@ -364,8 +371,8 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		/* Set popularity */
         QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
 
-		item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
-		item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
+        item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
+        item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
 
 		/* Set tooltip */
 		if (itemInfo.privatekey) {
