@@ -1325,7 +1325,8 @@ int RsServer::StartupRetroShare()
 			mGxsIdService, mGxsIdService->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,
 			pgpAuxUtils,
-			false); // don't synchronise group automatic (need explicit group request)
+            false,false); // don't synchronise group automatic (need explicit group request)
+                        // don't sync messages at all.
 
         mGxsIdService->setNes(gxsid_ns);
         /**** GxsCircle service ****/

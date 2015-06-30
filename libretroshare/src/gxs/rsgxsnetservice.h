@@ -87,12 +87,12 @@ public:
      * arrive
      */
     RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
-                RsNxsNetMgr *netMgr, 
- 		RsNxsObserver *nxsObs,  // used to be = NULL.
-		const RsServiceInfo serviceInfo,
-		RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, 
-		PgpAuxUtils *pgpUtils = NULL,
-		bool grpAutoSync = true);
+                RsNxsNetMgr *netMgr,
+        RsNxsObserver *nxsObs,  // used to be = NULL.
+        const RsServiceInfo serviceInfo,
+        RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL,
+        PgpAuxUtils *pgpUtils = NULL,
+        bool grpAutoSync = true, bool msgAutoSync = true);
 
     virtual ~RsGxsNetService();
 
@@ -483,6 +483,7 @@ private:
     RsGixsReputation* mReputations;
     PgpAuxUtils *mPgpUtils;
     bool mGrpAutoSync;
+    bool mAllowMsgSync;
 
     // need to be verfied
     std::vector<AuthorPending*> mPendingResp;
