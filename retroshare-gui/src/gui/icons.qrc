@@ -43,5 +43,9 @@
 		<file>icons/security_low_128.png</file>
 		<file>icons/security_medium_128.png</file>
 		<file>icons/system_128.png</file>
+		<file>icons/tile_checking_48.png</file>
+		<file>icons/tile_downloaded_48.png</file>
+		<file>icons/tile_downloading_48.png</file>
+		<file>icons/tile_inactive_48.png</file>
 	</qresource>
 </RCC>
