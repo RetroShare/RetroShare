@@ -64,8 +64,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
+            int S = QFontMetricsF(font()).height() ;
+    ui.participantsList->setIconSize(QSize(S,S));
+
     ui.participantsList->setColumnCount(COLUMN_COUNT);
-    ui.participantsList->setColumnWidth(COLUMN_ICON, 20);
+    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.25*S);
     ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
@@ -78,8 +81,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	// Add a button to invite friends.
 	//
 	inviteFriendsButton = new QToolButton ;
-	inviteFriendsButton->setMinimumSize(QSize(28,28)) ;
-	inviteFriendsButton->setMaximumSize(QSize(28,28)) ;
+    inviteFriendsButton->setMinimumSize(QSize(2*S,2*S)) ;
+    inviteFriendsButton->setMaximumSize(QSize(2*S,2*S)) ;
 	inviteFriendsButton->setText(QString()) ;
 	inviteFriendsButton->setAutoRaise(true) ;
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
@@ -91,7 +94,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/images/edit_add24.png")) ;
 	inviteFriendsButton->setIcon(icon) ;
-	inviteFriendsButton->setIconSize(QSize(22,22)) ;
+    inviteFriendsButton->setIconSize(QSize(2*S,2*S)) ;
 	}
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
@@ -109,8 +112,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
 
     unsubscribeButton = new QToolButton ;
-	unsubscribeButton->setMinimumSize(QSize(28,28)) ;
-	unsubscribeButton->setMaximumSize(QSize(28,28)) ;
+    unsubscribeButton->setMinimumSize(QSize(2*S,2*S)) ;
+    unsubscribeButton->setMaximumSize(QSize(2*S,2*S)) ;
 	unsubscribeButton->setText(QString()) ;
 	unsubscribeButton->setAutoRaise(true) ;
 	unsubscribeButton->setToolTip(tr("Leave this lobby (Unsubscribe)"));
@@ -119,7 +122,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/images/door_in.png")) ;
 	unsubscribeButton->setIcon(icon) ;
-	unsubscribeButton->setIconSize(QSize(24,24)) ;
+    unsubscribeButton->setIconSize(QSize(1.5*S,1.5*S)) ;
 	}
 
 	/* Initialize splitter */
@@ -430,16 +433,16 @@ void ChatLobbyDialog::updateParticipantsList()
             time_t now = time(NULL);
 
             if(isParticipantMuted(it2->first))
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_32.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_64.png"));
             else if (tLastAct<now-60*30)
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_grey_32.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_grey_64.png"));
         else
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_green_32.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_green_64.png"));
 
             RsGxsId gxs_id;
             rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
 
-            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/yellowled.png"));
+            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_yellow_64.png"));
 
             QTime qtLastAct=QTime(0,0,0).addSecs(now-tLastAct);
             widgetitem->setToolTip(COLUMN_ICON,tr("Right click to mute/unmute participants<br/>Double click to address this person<br/>")

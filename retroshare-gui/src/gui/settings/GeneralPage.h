@@ -41,7 +41,7 @@ public:
   /** Loads the settings for this page */
   virtual void load();
 
-  virtual QPixmap iconPixmap() const { return QPixmap(":/images/kcmsystem24.png") ; }
+  virtual QPixmap iconPixmap() const { return QPixmap(":/icons/system_128.png") ; }
   virtual QString pageName() const { return tr("General") ; }
   virtual QString helpText() const { return ""; }
 
