@@ -17,6 +17,8 @@
 		<file>icons/chat_red_128.png</file>
 		<file>icons/circles_128.png</file>
 		<file>icons/friends_128.png</file>
+		<file>icons/global_switch_off_128.png</file>
+		<file>icons/global_switch_on_128.png</file>
 		<file>icons/help_128.png</file>
 		<file>icons/help_64.png</file>
 		<file>icons/information_128.png</file>
@@ -42,6 +44,10 @@
 		<file>icons/security_high_128.png</file>
 		<file>icons/security_low_128.png</file>
 		<file>icons/security_medium_128.png</file>
+		<file>icons/switch00_128.png</file>
+		<file>icons/switch01_128.png</file>
+		<file>icons/switch10_128.png</file>
+		<file>icons/switch11_128.png</file>
 		<file>icons/system_128.png</file>
 		<file>icons/tile_checking_48.png</file>
 		<file>icons/tile_downloaded_48.png</file>

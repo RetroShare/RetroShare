@@ -46,12 +46,12 @@
 //   indication. When both the current and adverse permissions are granted, the switch should show it as well.
 // - we should use tooltips
 
-const int RSPermissionMatrixWidget::ICON_SIZE_X    = 40 ;
-const int RSPermissionMatrixWidget::ICON_SIZE_Y    = 40 ;
-const int RSPermissionMatrixWidget::ROW_SIZE       = 42 ;
-const int RSPermissionMatrixWidget::COL_SIZE       = 42 ;
-const int RSPermissionMatrixWidget::MATRIX_START_X =  5 ;
-const int RSPermissionMatrixWidget::MATRIX_START_Y =100 ;
+const float RSPermissionMatrixWidget::fICON_SIZE_X    = 40/16.0 ;
+const float RSPermissionMatrixWidget::fICON_SIZE_Y    = 40/16.0 ;
+const float RSPermissionMatrixWidget::fROW_SIZE       = 42/16.0 ;
+const float RSPermissionMatrixWidget::fCOL_SIZE       = 42/16.0 ;
+const float RSPermissionMatrixWidget::fMATRIX_START_X =  5/16.0 ;
+const float RSPermissionMatrixWidget::fMATRIX_START_Y =100/16.0 ;
 
 /** Default contructor */
 RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
@@ -152,19 +152,34 @@ void RSPermissionMatrixWidget::mouseMoveEvent(QMouseEvent *e)
     uint32_t service_id ;
     RsPeerId peer_id ;
 
-    if(!computeServiceAndPeer(e->x(),e->y(),service_id,peer_id))
+    if(computeServiceAndPeer(e->x(),e->y(),service_id,peer_id))
     {
-        service_id = ~0 ;
-        peer_id.clear() ;
+        if(_current_service_id != service_id || _current_peer_id != peer_id)
+        {
+            _current_service_id = service_id ;
+            _current_peer_id = peer_id ;
+
+            // redraw!
+            update() ;
+        }
     }
+    else if(computeServiceGlobalSwitch(e->x(),e->y(),service_id))
+    {
+        peer_id.clear() ;
 
     if(_current_service_id != service_id || _current_peer_id != peer_id)
     {
         _current_service_id = service_id ;
         _current_peer_id = peer_id ;
 
-    // redraw!
+        // redraw!
         update() ;
+    }
+    }
+    else
+    {
+        service_id = ~0 ;
+        peer_id.clear() ;
     }
 }
 
@@ -200,6 +215,8 @@ bool sortRsPeerIdByNameLocation(const RsPeerId &a, const RsPeerId &b)
 void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 {
     //std::cerr << "In paint event!" << std::endl;
+
+    int S = QFontMetricsF(font()).height();
 
   /* Set current graph dimensions */
   _rec = this->frameRect();
@@ -279,13 +296,13 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   _painter->setPen(pen) ;
   int i=0;
-  int x=5 ;
-  int y=MATRIX_START_Y ;
+  int x=5/14.0*S ;
+  int y=S*fMATRIX_START_Y ;
 
   for(std::list<RsPeerId>::const_iterator it(ssllist.begin());it!=ssllist.end();++it,++i)
   {
-      float X = MATRIX_START_X + peer_name_size - fm.width(names[i]) ;
-      float Y = MATRIX_START_Y + (i+0.5)*ROW_SIZE + line_height/2.0f-2 ;
+      float X = S*fMATRIX_START_X + peer_name_size - fm.width(names[i]) ;
+      float Y = S*fMATRIX_START_Y + (i+0.5)*S*fROW_SIZE + line_height/2.0f-2 ;
 
       _painter->drawText(QPointF(X,Y),names[i]) ;
 
@@ -295,7 +312,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       y += line_height ;
   }
 
-  matrix_start_x = 5 + MATRIX_START_X + peer_name_size ;
+  matrix_start_x = S*5/14.0 + S*fMATRIX_START_X + peer_name_size ;
 
   // now draw the service names
 
@@ -307,13 +324,13 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       QString name = QString::fromUtf8(it->second.mServiceName.c_str()) ;
       int text_width = fm.width(name) ;
 
-      int X = matrix_start_x + COL_SIZE/2 - 2 + i*COL_SIZE - text_width/2;
+      int X = matrix_start_x + S*fCOL_SIZE/2 - 2 + i*S*fCOL_SIZE - text_width/2;
 
       int height_index = 0 ;
       while(last_width[height_index] > X-5 && height_index < last_width.size()-1)
           ++height_index ;
 
-      int Y = MATRIX_START_Y - ICON_SIZE_Y - 2 - line_height * height_index;
+      int Y = S*fMATRIX_START_Y - S*fICON_SIZE_Y - 2 - line_height * height_index;
 
       last_width[height_index] = X + text_width ;
        // draw a half-transparent rectangle
@@ -338,7 +355,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       //_painter->drawRect(info_pos) ;
 
       _painter->drawLine(QPointF(X,Y+3),QPointF(X+text_width,Y+3)) ;
-      _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,MATRIX_START_Y+peer_ids.size()*ROW_SIZE - ROW_SIZE+5)) ;
+      _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,S*fMATRIX_START_Y+peer_ids.size()*S*fROW_SIZE - S*fROW_SIZE+5)) ;
 
       pen.setBrush(Qt::black) ;
       _painter->setPen(pen) ;
@@ -355,8 +372,8 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   for(std::map<uint32_t, RsServiceInfo>::const_iterator sit(ownServices.mServiceList.begin());sit!=ownServices.mServiceList.end();++sit)
       service_ids.push_back(sit->first) ;
 
-  static const std::string global_switch[2] = { ":/images/global_switch_off.png",
-                                                ":/images/global_switch_on.png" } ;
+  static const std::string global_switch[2] = { ":/icons/global_switch_off_128.png",
+                                                ":/icons/global_switch_on_128.png" } ;
 
   for(int i=0;i<service_ids.size();++i)
   {
@@ -366,20 +383,20 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       QPixmap pix(global_switch[serv_perm.mDefaultAllowed].c_str()) ;
       QRect position = computeNodePosition(0,i,false) ;
 
-      position.setY(position.y() - ICON_SIZE_Y + 8) ;
-      position.setX(position.x() + 3) ;
-      position.setHeight(30) ;
-      position.setWidth(30) ;
+      position.setY(position.y() - S*fICON_SIZE_Y + 8/14.0*S) ;
+      position.setX(position.x() + 3/14.0*S) ;
+      position.setHeight(30/14.0*S) ;
+      position.setWidth(30/14.0*S) ;
 
-      _painter->drawPixmap(position,pix,QRect(0,0,30,30)) ;
+      _painter->drawPixmap(position,pix.scaledToHeight(S*fICON_SIZE_Y*0.9,Qt::SmoothTransformation),QRect(0,0,S*fICON_SIZE_X,S*fICON_SIZE_Y)) ;
   }
 
   // We draw for each service.
 
-  static const std::string pixmap_names[4] = { ":/images/switch00.png",
-                                               ":/images/switch01.png",
-                                               ":/images/switch10.png",
-                                               ":/images/switch11.png" } ;
+  static const std::string pixmap_names[4] = { ":/icons/switch00_128.png",
+                                               ":/icons/switch01_128.png",
+                                               ":/icons/switch10_128.png",
+                                               ":/icons/switch11_128.png" } ;
 
   int n_col = 0 ;
   int n_col_selected = -1 ;
@@ -409,17 +426,17 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
           bool  local_allowed =  local_service_perms.mServiceList.find(sit->first) !=  local_service_perms.mServiceList.end() ;
           bool remote_allowed = remote_service_perms.mServiceList.find(sit->first) != remote_service_perms.mServiceList.end() ;
 
-      QPixmap pix(pixmap_names[(local_allowed << 1) + remote_allowed].c_str()) ;
+          QPixmap pix(pixmap_names[(local_allowed << 1) + remote_allowed].c_str()) ;
 
-      bool selected = (sit->first == _current_service_id && *it == _current_peer_id) ;
-      QRect position = computeNodePosition(n_row,n_col,selected) ;
+          bool selected = (sit->first == _current_service_id && *it == _current_peer_id) ;
+          QRect position = computeNodePosition(n_row,n_col,selected) ;
 
-      if(selected)
-      {
-          n_row_selected = n_row ;
-          n_col_selected = n_col ;
-      }
-          _painter->drawPixmap(position,pix,QRect(0,0,ICON_SIZE_X,ICON_SIZE_Y)) ;
+          if(selected)
+          {
+              n_row_selected = n_row ;
+              n_col_selected = n_col ;
+          }
+          _painter->drawPixmap(position,pix.scaledToHeight(S*fICON_SIZE_X,Qt::SmoothTransformation),QRect(0,0,S*fICON_SIZE_X,S*fICON_SIZE_Y)) ;
       }
   }
 
@@ -477,15 +494,15 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
       _painter->setPen(pen) ;
 
-      QRect info_pos( position.x() + 50, position.y() - 10, text_size_x + 10, line_height * 5 + 5) ;
+      QRect info_pos( position.x() + 50*S/14.0, position.y() - 10*S/14.0, text_size_x + 10*S/14.0, line_height * 5 + 5*S/14.0) ;
 
       _painter->fillRect(info_pos,brush) ;
       _painter->drawRect(info_pos) ;
 
       // draw the text
 
-      float x = info_pos.x() + 5 ;
-      float y = info_pos.y() + line_height + 1 ;
+      float x = info_pos.x()               + 5*S/14.0 ;
+      float y = info_pos.y() + line_height + 1*S/14.0 ;
 
       _painter->drawText(QPointF(x,y), service_name)  ; y += line_height ;
       _painter->drawText(QPointF(x,y), peer_name)     ; y += line_height ;
@@ -494,8 +511,8 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawText(QPointF(x,y), local_status)  ; y += line_height ;
   }
 
-  _max_height = MATRIX_START_Y + (peer_ids.size()+3) * ROW_SIZE ;
-  _max_width  = matrix_start_x + (service_ids.size()+3) * COL_SIZE ;
+  _max_height = S*fMATRIX_START_Y + (peer_ids.size()+3) * S*fROW_SIZE ;
+  _max_width  = matrix_start_x + (service_ids.size()+3) * S*fCOL_SIZE ;
 
   /* Stop the painter */
   _painter->end();
@@ -505,10 +522,12 @@ QRect RSPermissionMatrixWidget::computeNodePosition(int n_row,int n_col,bool sel
 {
     float fact = selected?1.2f:1.0f;
 
-    return QRect(matrix_start_x + n_col * COL_SIZE + (COL_SIZE-ICON_SIZE_X*fact)/2,
-                 MATRIX_START_Y + n_row * ROW_SIZE + (ROW_SIZE-ICON_SIZE_Y*fact)/2,
-                 ICON_SIZE_X*fact,
-                 ICON_SIZE_Y*fact) ;
+    float S = QFontMetricsF(font()).height();
+
+    return QRect(matrix_start_x + n_col * S*fCOL_SIZE + (S*fCOL_SIZE-S*fICON_SIZE_X*fact)/2,
+                 S*fMATRIX_START_Y + n_row * S*fROW_SIZE + (S*fROW_SIZE-S*fICON_SIZE_Y*fact)/2,
+                 S*fICON_SIZE_X*fact,
+                 S*fICON_SIZE_Y*fact) ;
 }
 
 // This function is the inverse of the previous function. Given a mouse position, it
@@ -519,22 +538,24 @@ bool RSPermissionMatrixWidget::computeServiceAndPeer(int x,int y,uint32_t& servi
 {
     // 1 - make sure that x and y are on a widget
 
+    float S = QFontMetricsF(font()).height();
+
     x -= matrix_start_x ;
-    y -= MATRIX_START_Y ;
+    y -= S*fMATRIX_START_Y ;
 
-    if(x < 0 || x >= service_ids.size() * COL_SIZE) return false ;
-    if(y < 0 || y >= peer_ids.size()    * ROW_SIZE) return false ;
+    if(x < 0 || x >= service_ids.size() * S*fCOL_SIZE) return false ;
+    if(y < 0 || y >= peer_ids.size()    * S*fROW_SIZE) return false ;
 
-    if( (x % COL_SIZE) < (COL_SIZE - ICON_SIZE_X)/2) return false ;
-    if( (x % COL_SIZE) > (COL_SIZE + ICON_SIZE_X)/2) return false ;
+    if( (x % (int)(S*fCOL_SIZE)) < (S*fCOL_SIZE - S*fICON_SIZE_X)/2) return false ;
+    if( (x % (int)(S*fCOL_SIZE)) > (S*fCOL_SIZE + S*fICON_SIZE_X)/2) return false ;
 
-    if( (y % ROW_SIZE) < (ROW_SIZE - ICON_SIZE_Y)/2) return false ;
-    if( (y % ROW_SIZE) > (ROW_SIZE + ICON_SIZE_Y)/2) return false ;
+    if( (y % (int)(S*fROW_SIZE)) < (S*fROW_SIZE - S*fICON_SIZE_Y)/2) return false ;
+    if( (y % (int)(S*fROW_SIZE)) > (S*fROW_SIZE + S*fICON_SIZE_Y)/2) return false ;
 
     // 2 - find which widget, by looking into the service perm matrix
 
-    service_id = service_ids[x / COL_SIZE] ;
-    peer_id = peer_ids[y / COL_SIZE] ;
+    service_id = service_ids[x / (int)(S*fCOL_SIZE)] ;
+    peer_id = peer_ids[y / (int)(S*fCOL_SIZE)] ;
 
     return true ;
 }
@@ -543,20 +564,22 @@ bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& 
 {
     // 1 - make sure that x and y are on a widget
 
+    float S = QFontMetricsF(font()).height();
+
     x -= matrix_start_x ;
-    y -= MATRIX_START_Y ;
+    y -= S*fMATRIX_START_Y ;
 
-    if(x < 0 || x >= service_ids.size() * COL_SIZE) return false ;
+    if(x < 0 || x >= service_ids.size() * S*fCOL_SIZE) return false ;
 
-    if( (x % COL_SIZE) < (COL_SIZE - ICON_SIZE_X)/2) return false ;
-    if( (x % COL_SIZE) > (COL_SIZE + ICON_SIZE_X)/2) return false ;
+    if( (x % (int)(S*fCOL_SIZE)) < (S*fCOL_SIZE - S*fICON_SIZE_X)/2) return false ;
+    if( (x % (int)(S*fCOL_SIZE)) > (S*fCOL_SIZE + S*fICON_SIZE_X)/2) return false ;
 
-    if( y < -ROW_SIZE ) return false ;
+    if( y < -S*fROW_SIZE ) return false ;
     if( y >  0        ) return false ;
 
     // 2 - find which widget, by looking into the service perm matrix
 
-    service_id = service_ids[x / COL_SIZE] ;
+    service_id = service_ids[x / (int)(S*fCOL_SIZE)] ;
 
     return true ;
 }

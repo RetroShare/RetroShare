@@ -100,12 +100,12 @@ private:
     /** The current dimensions of the graph. */
     QRect _rec;
 
-    static const int ROW_SIZE ;
-    static const int COL_SIZE ;
-    static const int ICON_SIZE_X ;
-    static const int ICON_SIZE_Y ;
-    static const int MATRIX_START_X ;
-    static const int MATRIX_START_Y ;
+    static const float fROW_SIZE ;
+    static const float fCOL_SIZE ;
+    static const float fICON_SIZE_X ;
+    static const float fICON_SIZE_Y ;
+    static const float fMATRIX_START_X ;
+    static const float fMATRIX_START_Y ;
 };
 
 
