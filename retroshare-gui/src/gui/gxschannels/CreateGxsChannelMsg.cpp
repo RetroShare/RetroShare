@@ -35,7 +35,7 @@
 
 #include <iostream>
 
-#define ENABLE_GENERATE
+//#define ENABLE_GENERATE
 
 #define CREATEMSG_CHANNELINFO 0x002
 
