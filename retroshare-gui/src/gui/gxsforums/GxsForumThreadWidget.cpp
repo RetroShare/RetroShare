@@ -313,8 +313,10 @@ void GxsForumThreadWidget::changeEvent(QEvent *e)
 	}
 }
 
-static void removeMessages(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds, const QList<RsGxsMessageId> &removeMsgId)
+static void removeMessages(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds, QList<RsGxsMessageId> &removeMsgId)
 {
+	QList<RsGxsMessageId> removedMsgId;
+
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator grpIt;
 	for (grpIt = msgIds.begin(); grpIt != msgIds.end(); ) {
 		std::vector<RsGxsMessageId> &msgs = grpIt->second;
@@ -323,6 +325,7 @@ static void removeMessages(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > 
 		for (removeMsgIt = removeMsgId.begin(); removeMsgIt != removeMsgId.end(); ++removeMsgIt) {
 			std::vector<RsGxsMessageId>::iterator msgIt = std::find(msgs.begin(), msgs.end(), *removeMsgIt);
 			if (msgIt != msgs.end()) {
+				removedMsgId.push_back(*removeMsgIt);
 				msgs.erase(msgIt);
 			}
 		}
@@ -332,6 +335,14 @@ static void removeMessages(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > 
 			msgIds.erase(grpItErase);
 		} else {
 			++grpIt;
+		}
+	}
+
+	if (!removedMsgId.isEmpty()) {
+		QList<RsGxsMessageId>::const_iterator removedMsgIt;
+		for (removedMsgIt = removedMsgId.begin(); removedMsgIt != removedMsgId.end(); ++removedMsgIt) {
+			// remove first message id
+			removeMsgId.removeOne(*removedMsgIt);
 		}
 	}
 }
@@ -367,7 +378,6 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 		if (!mIgnoredMsgId.empty()) {
 			/* Filter ignored messages */
 			removeMessages(msgIds, mIgnoredMsgId);
-			mIgnoredMsgId.clear();
 		}
 
 		if (msgIds.find(groupId()) != msgIds.end()) {
