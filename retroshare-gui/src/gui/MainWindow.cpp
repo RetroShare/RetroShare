@@ -123,6 +123,7 @@
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
 #define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
+#define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 /* Images for toolbar icons */
 //#define IMAGE_NETWORK2          ":/images/rs1.png"
@@ -743,7 +744,7 @@ void MainWindow::updateFriends()
     QIcon icon;
     if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
         QPixmap trayImage(trayIconResource);
-        QPixmap overlayImage(":/images/rstray_star.png");
+        QPixmap overlayImage(IMAGE_OVERLAY);
 
         QPainter painter(&trayImage);
         painter.drawPixmap(0, 0, overlayImage);
