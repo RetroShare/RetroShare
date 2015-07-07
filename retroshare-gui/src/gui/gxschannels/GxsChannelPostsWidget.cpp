@@ -249,7 +249,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId);
+    bool autoDownload ;
+            rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
 
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
@@ -464,8 +465,8 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 		return;
 	}
 
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(grpId);
-	if (!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+    bool autoDownload ;
+        if(!rsGxsChannels->getChannelAutoDownload(grpId,autoDownload) || !rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
 	{
 		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
 		std::cerr << std::endl;

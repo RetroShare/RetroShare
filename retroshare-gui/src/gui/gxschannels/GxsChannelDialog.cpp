@@ -19,6 +19,11 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMenu>
+#include <QFileDialog>
+
+#include <retroshare/rsfiles.h>
+
 #include "GxsChannelDialog.h"
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
@@ -138,19 +143,101 @@ GxsMessageFrameWidget *GxsChannelDialog::createMessageFrameWidget(const RsGxsGro
 	return new GxsChannelPostsWidget(groupId);
 }
 
+void GxsChannelDialog::setDefaultDirectory()
+{
+    RsGxsGroupId grpId = groupId() ;
+    if (grpId.isNull())
+        return ;
+
+    rsGxsChannels->setChannelDownloadDirectory(grpId,"") ;
+}
+void GxsChannelDialog::specifyDownloadDirectory()
+{
+    RsGxsGroupId grpId = groupId() ;
+    if (grpId.isNull())
+        return ;
+
+    QString dir = QFileDialog::getExistingDirectory(NULL,tr("Select channel download directory")) ;
+
+    if(dir.isNull())
+        return ;
+
+    rsGxsChannels->setChannelDownloadDirectory(grpId,std::string(dir.toUtf8())) ;
+}
+void GxsChannelDialog::setDownloadDirectory()
+{
+    RsGxsGroupId grpId = groupId() ;
+    if (grpId.isNull())
+        return ;
+
+    QAction *action = qobject_cast<QAction*>(sender()) ;
+
+    if(!action)
+        return ;
+
+    QString directory = action->data().toString() ;
+
+    rsGxsChannels->setChannelDownloadDirectory(grpId,std::string(directory.toUtf8())) ;
+}
 void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions)
 {
-	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(grpId);
+    bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
+    bool autoDownload ;
+    rsGxsChannels->getChannelAutoDownload(grpId,autoDownload);
 
-	if (isSubscribed)
-	{
-		QAction *action = autoDownload ? (new QAction(QIcon(":/images/redled.png"), tr("Disable Auto-Download"), this))
-		                               : (new QAction(QIcon(":/images/start.png"),tr("Enable Auto-Download"), this));
+    if (isSubscribed)
+    {
+        QAction *action = autoDownload ? (new QAction(QIcon(":/images/redled.png"), tr("Disable Auto-Download"), this))
+                                       : (new QAction(QIcon(":/images/start.png"),tr("Enable Auto-Download"), this));
 
-		connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
-		actions.append(action);
-	}
+        connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
+        actions.append(action);
+
+        std::string dl_directory;
+        rsGxsChannels->getChannelDownloadDirectory(grpId,dl_directory) ;
+
+        QMenu *mnu = new QMenu(tr("Set download directory")) ;
+
+        if(dl_directory.empty())
+            mnu->addAction(QIcon(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
+        else
+            mnu->addAction(tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
+
+        std::list<SharedDirInfo> lst ;
+        rsFiles->getSharedDirectories(lst) ;
+        bool found = false ;
+
+        for(std::list<SharedDirInfo>::const_iterator it(lst.begin());it!=lst.end();++it)
+        {
+            QAction *action = NULL;
+
+            if(dl_directory == it->filename)
+            {
+                action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
+                found = true ;
+            }
+            else
+                action = new QAction(QString::fromUtf8(it->filename.c_str()),NULL) ;
+
+            connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
+            action->setData(QString::fromUtf8(it->filename.c_str())) ;
+
+            mnu->addAction(action) ;
+        }
+
+        if(!found && !dl_directory.empty())
+        {
+            QAction *action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
+            connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
+            action->setData(QString::fromUtf8(dl_directory.c_str())) ;
+
+            mnu->addAction(action) ;
+        }
+
+        mnu->addAction(tr("Specify..."), this, SLOT(specifyDownloadDirectory())) ;
+
+        actions.push_back( mnu->menuAction()) ;
+    }
 }
 
 RsGxsCommentService *GxsChannelDialog::getCommentService()
@@ -170,8 +257,9 @@ void GxsChannelDialog::toggleAutoDownload()
 		return;
 	}
 
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(grpId);
-	if (!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+    bool autoDownload ;
+
+        if(!rsGxsChannels->getChannelAutoDownload(grpId,autoDownload) || !rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
 	{
 		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
 		std::cerr << std::endl;

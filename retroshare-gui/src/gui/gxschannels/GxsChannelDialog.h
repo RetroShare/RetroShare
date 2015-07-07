@@ -51,6 +51,9 @@ protected:
 
 private slots:
 	void toggleAutoDownload();
+        void setDefaultDirectory();
+        void setDownloadDirectory();
+        void specifyDownloadDirectory();
 
 private:
 	/* GxsGroupFrameDialog */

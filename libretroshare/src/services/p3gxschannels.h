@@ -50,6 +50,7 @@ class SSGxsChannelGroup
 	std::string save() const;
 
 	bool mAutoDownload;
+        std::string mDownloadDirectory ;
 };
 
 
@@ -97,7 +98,9 @@ virtual bool updateGroup(uint32_t &token, RsGxsChannelGroup &group);
 
 // no tokens... should be cached.
 virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled);
-virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid);
+virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled);
+virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory);
+virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory);
 
 	/* Comment service - Provide RsGxsCommentService - redirect to p3GxsCommentService */
 virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &msgs)
@@ -173,7 +176,7 @@ static uint32_t channelsAuthenPolicy();
 	void updateSubscribedGroup(const RsGroupMetaData &group);
 	void clearUnsubscribedGroup(const RsGxsGroupId &id);
 	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
-	bool autoDownloadEnabled(const RsGxsGroupId &id);
+    bool autoDownloadEnabled(const RsGxsGroupId &id, bool &enabled);
 
 
 

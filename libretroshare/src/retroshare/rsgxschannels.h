@@ -97,7 +97,11 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 
 virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled) = 0;
-virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid) = 0;
+virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled) = 0;
+
+virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory)=0;
+virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory)=0;
+
 //virtual void setChannelAutoDownload(uint32_t& token, const RsGxsGroupId& groupId, bool autoDownload) = 0;
 
 //virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);

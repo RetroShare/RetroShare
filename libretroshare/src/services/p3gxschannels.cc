@@ -25,6 +25,8 @@
 
 #include "services/p3gxschannels.h"
 #include "serialiser/rsgxschannelitems.h"
+#include "util/radix64.h"
+#include "util/rsmemory.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsfiles.h>
@@ -60,7 +62,7 @@ RsGxsChannels *rsGxsChannels = NULL;
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
 
 #define CHANNEL_DOWNLOAD_PERIOD 	(3600 * 24 * 7)
-#define CHANNEL_MAX_AUTO_DL		(1024 * 1024 * 1024)
+#define CHANNEL_MAX_AUTO_DL		(8 * 1024 * 1024 * 1024ull)	// 8 GB. Just a security ;-)
 	
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -182,8 +184,9 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
 					std::cerr << std::endl;
 #endif
+                                bool enabled = false ;
 
-					if (autoDownloadEnabled(mit->first))
+                    if (autoDownloadEnabled(mit->first, enabled) && enabled)
 					{
 #ifdef GXSCHANNELS_DEBUG
 						std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
@@ -439,12 +442,83 @@ bool p3GxsChannels::setChannelAutoDownload(const RsGxsGroupId &groupId, bool ena
 }
 
 	
-bool p3GxsChannels::getChannelAutoDownload(const RsGxsGroupId &groupId)
+bool p3GxsChannels::getChannelAutoDownload(const RsGxsGroupId &groupId, bool& enabled)
 {
-	return autoDownloadEnabled(groupId);
+    return autoDownloadEnabled(groupId,enabled);
 }
 	
+bool p3GxsChannels::setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory)
+{
+#ifdef GXSCHANNELS_DEBUG
+    std::cerr << "p3GxsChannels::setDownloadDirectory() id: " << groupId << " to: " << directory << std::endl;
+#endif
 
+    std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
+
+    it = mSubscribedGroups.find(groupId);
+    if (it == mSubscribedGroups.end())
+    {
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::setAutoDownload() Missing Group" << std::endl;
+#endif
+        return false;
+    }
+
+    /* extract from ServiceString */
+    SSGxsChannelGroup ss;
+    ss.load(it->second.mServiceString);
+
+    if (directory == ss.mDownloadDirectory)
+    {
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::setDownloadDirectory() WARNING setting looks okay already" << std::endl;
+#endif
+
+    }
+
+    /* we are just going to set it anyway. */
+    ss.mDownloadDirectory = directory;
+    std::string serviceString = ss.save();
+    uint32_t token;
+
+    it->second.mServiceString = serviceString; // update Local Cache.
+    RsGenExchange::setGroupServiceString(token, groupId, serviceString); // update dbase.
+
+    /* now reload it */
+    std::list<RsGxsGroupId> groups;
+    groups.push_back(groupId);
+
+    request_SpecificSubscribedGroups(groups);
+
+    return true;
+}
+
+bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & id,std::string& directory)
+{
+#ifdef GXSCHANNELS_DEBUG
+    std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")" << std::endl;
+#endif
+
+    std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
+
+    it = mSubscribedGroups.find(id);
+
+    if (it == mSubscribedGroups.end())
+    {
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::autoDownloadEnabled() No Entry" << std::endl;
+#endif
+
+        return false;
+    }
+
+    /* extract from ServiceString */
+    SSGxsChannelGroup ss;
+    ss.load(it->second.mServiceString);
+    directory = ss.mDownloadDirectory;
+
+    return true ;
+}
 
 void p3GxsChannels::request_AllSubscribedGroups()
 {
@@ -511,7 +585,9 @@ void p3GxsChannels::load_SubscribedGroups(const uint32_t &token)
 #endif
 
 			updateSubscribedGroup(*it);
-			if (autoDownloadEnabled(it->mGroupId))
+            bool enabled = false ;
+
+            if (autoDownloadEnabled(it->mGroupId,enabled) && enabled)
 			{
 #ifdef GXSCHANNELS_DEBUG
 				std::cerr << "p3GxsChannels::load_SubscribedGroups() remembering AutoDownload Group: " << it->mGroupId;
@@ -706,8 +782,10 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 		return;
 	}
 
+    bool enabled = false ;
+
 	/* check that autodownload is set */
-	if (autoDownloadEnabled(msg.mMeta.mGroupId))
+    if (autoDownloadEnabled(msg.mMeta.mGroupId,enabled) && enabled )
 	{
 			
 		
@@ -720,31 +798,39 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 		time_t age = time(NULL) - msg.mMeta.mPublishTs;
 
 		if (age < (time_t) CHANNEL_DOWNLOAD_PERIOD )
-		{
-			/* start download */
-			// NOTE WE DON'T HANDLE PRIVATE CHANNELS HERE.
-			// MORE THOUGHT HAS TO GO INTO THAT STUFF.
+    {
+        /* start download */
+        // NOTE WE DON'T HANDLE PRIVATE CHANNELS HERE.
+        // MORE THOUGHT HAS TO GO INTO THAT STUFF.
 
 #ifdef GXSCHANNELS_DEBUG
-			std::cerr << "p3GxsChannels::handleUnprocessedPost() START DOWNLOAD";
-			std::cerr << std::endl;
+        std::cerr << "p3GxsChannels::handleUnprocessedPost() START DOWNLOAD";
+        std::cerr << std::endl;
 #endif
 
-			std::list<RsGxsFile>::const_iterator fit;
-			for(fit = msg.mFiles.begin(); fit != msg.mFiles.end(); ++fit)
-			{
-				std::string fname = fit->mName;
-				Sha1CheckSum hash  = Sha1CheckSum(fit->mHash);
-				uint64_t size     = fit->mSize;
-	
-				std::list<RsPeerId> srcIds;
-				std::string localpath = "";
-				TransferRequestFlags flags = RS_FILE_REQ_BACKGROUND | RS_FILE_REQ_ANONYMOUS_ROUTING;
+        std::list<RsGxsFile>::const_iterator fit;
+        for(fit = msg.mFiles.begin(); fit != msg.mFiles.end(); ++fit)
+        {
+            std::string fname = fit->mName;
+            Sha1CheckSum hash  = Sha1CheckSum(fit->mHash);
+            uint64_t size     = fit->mSize;
 
-				if (size < CHANNEL_MAX_AUTO_DL)
-					rsFiles->FileRequest(fname, hash, size, localpath, flags, srcIds);
-			}
-		}
+            std::list<RsPeerId> srcIds;
+            std::string localpath = "";
+            TransferRequestFlags flags = RS_FILE_REQ_BACKGROUND | RS_FILE_REQ_ANONYMOUS_ROUTING;
+
+            if (size < CHANNEL_MAX_AUTO_DL)
+            {
+                std::string directory ;
+                if(getChannelDownloadDirectory(msg.mMeta.mGroupId,directory))
+                    localpath = directory ;
+
+                rsFiles->FileRequest(fname, hash, size, localpath, flags, srcIds);
+            }
+            else
+                std::cerr << "WARNING: Channel file is not auto-downloaded because its size exceeds the threshold of " << CHANNEL_MAX_AUTO_DL << " bytes." << std::endl;
+        }
+    }
 
 		/* mark as processed */
 		uint32_t token;
@@ -797,7 +883,7 @@ void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
 /********************************************************************************************/
 
 
-bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id)
+bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id,bool& enabled)
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")";
@@ -820,38 +906,68 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id)
 	/* extract from ServiceString */
 	SSGxsChannelGroup ss;
 	ss.load(it->second.mServiceString);
-	return ss.mAutoDownload;
-}
+            enabled = ss.mAutoDownload;
 
-#define RSGXSCHANNEL_MAX_SERVICE_STRING	128
+    return true ;
+}
 
 bool SSGxsChannelGroup::load(const std::string &input)
 {
-	char line[RSGXSCHANNEL_MAX_SERVICE_STRING];
-	int download_val;
-	mAutoDownload = false;
-	if (1 == sscanf(input.c_str(), "D:%d", &download_val))
-	{
-		if (download_val == 1)
-		{
-			mAutoDownload = true;
-		}
-	}
-	return true;
+    int download_val;
+    mAutoDownload = false;
+    mDownloadDirectory.clear();
+
+    RsTemporaryMemory tmpmem(input.length());
+
+    if (1 == sscanf(input.c_str(), "D:%d", &download_val))
+    {
+        if (download_val == 1)
+            mAutoDownload = true;
+    }
+    else  if( 2 == sscanf(input.c_str(),"v2 {D:%d} {P:%[^}]}",&download_val,(unsigned char*)tmpmem))
+    {
+        if (download_val == 1)
+            mAutoDownload = true;
+
+        std::vector<uint8_t> vals = Radix64::decode(std::string((char*)(unsigned char *)tmpmem)) ;
+        mDownloadDirectory = std::string((char*)vals.data(),vals.size());
+    }
+    else  if( 1 == sscanf(input.c_str(),"v2 {D:%d}",&download_val))
+    {
+        if (download_val == 1)
+            mAutoDownload = true;
+    }
+    else
+    {
+        std::cerr << "SSGxsChannelGroup::load(): could not parse string \"" << input << "\"" << std::endl;
+        return false ;
+    }
+
+    std::cerr << "DECODED STRING: autoDL=" << mAutoDownload << ", directory=\"" << mDownloadDirectory << "\"" << std::endl;
+
+    return true;
 }
 
 std::string SSGxsChannelGroup::save() const
 {
-	std::string output;
-	if (mAutoDownload)
-	{
-		output += "D:1";
-	}
-	else
-	{
-		output += "D:0";
-	}
-	return output;
+    std::string output = "v2 ";
+
+    if (mAutoDownload)
+        output += "{D:1}";
+    else
+        output += "{D:0}";
+
+    if(!mDownloadDirectory.empty())
+    {
+        std::string encoded_str ;
+        Radix64::encode(mDownloadDirectory.c_str(),mDownloadDirectory.length(),encoded_str);
+
+        output += " {P:" + encoded_str + "}";
+    }
+
+    std::cerr << "ENCODED STRING: " << output << std::endl;
+
+    return output;
 }
 
 bool p3GxsChannels::setAutoDownload(const RsGxsGroupId &groupId, bool enabled)
