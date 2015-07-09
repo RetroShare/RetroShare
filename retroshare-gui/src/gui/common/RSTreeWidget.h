@@ -37,17 +37,28 @@ public:
 
 	void filterItems(int filterColumn, const QString &text);
 
+	void processSettings(bool load);
+
+	void setColumnCustomizable(bool customizable);
+
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
+	void columnVisibleChanged(int column, bool visible);
 
 private:
 	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text);
+
+private slots:
+	void headerContextMenuRequested(const QPoint &pos);
+	void columnVisible();
 
 protected:
 	void paintEvent(QPaintEvent *event);
 	virtual void mousePressEvent(QMouseEvent *event);
 
+private:
 	QString mPlaceholderText;
+	bool mColumnCustomizable;
 };
 
 #endif
