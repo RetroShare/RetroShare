@@ -718,9 +718,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 
     if(signature_key.keyData.bin_data == NULL)
     {
-#ifdef DEBUG_IDS
         std::cerr << "(EE) Cannot validate signature for unknown key " << signature.keyId << std::endl;
-#endif
         signing_error = RS_GIXS_ERROR_KEY_NOT_AVAILABLE ;
         return false;
     }

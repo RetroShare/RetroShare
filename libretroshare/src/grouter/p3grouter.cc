@@ -1516,9 +1516,9 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 #endif
         if(!verifySignedDataItem(data_item))	// we should get proper flags out of this
         {
-#ifdef GROUTER_DEBUG
             std::cerr << "    verifying item signature: FAILED! Droping that item" ;
-#endif
+            std::cerr << "    You probably received a message from a person you don't have key." << std::endl;
+            std::cerr << "    Signature key ID: " << data_item->signature.keyId << std::endl;
         return ;
         }
 #ifdef GROUTER_DEBUG
@@ -1814,11 +1814,12 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
         {
             switch(error_status)
             {
-                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key is not available. Cannot verify." << std::endl;
+                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key for GXS Id " << item->signature.keyId << " is not available. Cannot verify." << std::endl;
                                         break ;
                 case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/Corrupted/MITM?." << std::endl;
                                         break ;
-            default: break ;
+            default:  std::cerr << "(EE) Signature verification failed on GRouter message. Unknown error status: " << error_status << std::endl;
+                break ;
             }
             return false;
         }

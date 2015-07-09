@@ -939,11 +939,15 @@ bool SSGxsChannelGroup::load(const std::string &input)
     }
     else
     {
+#ifdef GXSCHANNELS_DEBUG
         std::cerr << "SSGxsChannelGroup::load(): could not parse string \"" << input << "\"" << std::endl;
+#endif
         return false ;
     }
 
+#ifdef GXSCHANNELS_DEBUG
     std::cerr << "DECODED STRING: autoDL=" << mAutoDownload << ", directory=\"" << mDownloadDirectory << "\"" << std::endl;
+#endif
 
     return true;
 }
@@ -965,7 +969,9 @@ std::string SSGxsChannelGroup::save() const
         output += " {P:" + encoded_str + "}";
     }
 
+#ifdef GXSCHANNELS_DEBUG
     std::cerr << "ENCODED STRING: " << output << std::endl;
+#endif
 
     return output;
 }

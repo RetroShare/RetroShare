@@ -29,7 +29,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
-#define GXSCOMMENT_DEBUG	1
+//#define GXSCOMMENT_DEBUG	1
 
 
 uint32_t RsGxsCommentSerialiser::size(RsItem *item)

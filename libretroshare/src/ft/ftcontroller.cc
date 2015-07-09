@@ -170,9 +170,9 @@ void ftController::addFileSource(const RsFileHash& hash,const RsPeerId& peer_id)
 
     std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash);
 
-//#ifdef CONTROL_DEBUG
+#ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
-//#endif
+#endif
 	if(it != mDownloads.end())
 	{
 		it->second->mTransfer->addFileSource(peer_id);

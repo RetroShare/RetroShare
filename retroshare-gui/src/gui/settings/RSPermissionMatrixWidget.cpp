@@ -470,7 +470,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       QString remote_status = remotely_allowed?tr("Enabled by remote peer"):tr("Disabled by remote peer") ;
 
       if(!service_perms.mDefaultAllowed)
-          local_status = tr("Switched Off") ;
+          local_status = tr("Globally switched Off") ;
 
       const QFont& font(_painter->font()) ;
       QFontMetrics fm(font);
