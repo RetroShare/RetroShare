@@ -719,5 +719,8 @@
         <file>images/view-feeds.png</file>
         <file>images/view-files.png</file>
         <file>images/emblem-web.png</file>
+        <file>images/rsmessenger16.png</file>
+        <file>images/rsmessenger32.png</file>
+        <file>images/rsmessenger48.png</file>
     </qresource>
 </RCC>
