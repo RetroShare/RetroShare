@@ -71,7 +71,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTreeWidget" name="peerTreeWidget">
+    <widget class="RSTreeWidget" name="peerTreeWidget">
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>
@@ -87,9 +87,6 @@
      <property name="indentation">
       <number>20</number>
      </property>
-     <property name="itemsExpandable">
-      <bool>true</bool>
-     </property>
      <property name="sortingEnabled">
       <bool>true</bool>
      </property>
@@ -102,11 +99,8 @@
      <property name="columnCount">
       <number>5</number>
      </property>
-     <attribute name="headerCascadingSectionResizes">
-      <bool>true</bool>
-     </attribute>
      <attribute name="headerStretchLastSection">
-      <bool>true</bool>
+      <bool>false</bool>
      </attribute>
      <column>
       <property name="text">
@@ -144,25 +138,6 @@
     <string>Hide Offline Friends</string>
    </property>
   </action>
-  <action name="actionShowStatusColumn">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Status</string>
-   </property>
-  </action>
-  <action name="actionSortByState">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>State</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort by State</string>
-   </property>
-  </action>
   <action name="actionHideState">
    <property name="checkable">
     <bool>true</bool>
@@ -172,85 +147,6 @@
    </property>
    <property name="text">
     <string>Hide State</string>
-   </property>
-  </action>
-  <action name="actionSortPeersDescendingOrder">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/sort_decrease.png</normaloff>:/images/sort_decrease.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sort Descending Order</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort Descending Order</string>
-   </property>
-  </action>
-  <action name="actionSortPeersAscendingOrder">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/sort_incr.png</normaloff>:/images/sort_incr.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sort Ascending Order</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort Ascending Order</string>
-   </property>
-  </action>
-  <action name="actionShowAvatarColumn">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Avatar</string>
-   </property>
-   <property name="toolTip">
-    <string>Show Avatar Column</string>
-   </property>
-  </action>
-  <action name="actionSortByName">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Name</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort by Name</string>
-   </property>
-  </action>
-  <action name="actionSortByLastContact">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Last Contact</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort by last contact</string>
-   </property>
-  </action>
-  <action name="actionShowLastContactColumn">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Last Contact</string>
-   </property>
-   <property name="toolTip">
-    <string>Show Last Contact Column</string>
-   </property>
-  </action>
-  <action name="actionRootIsDecorated">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Set root is Decorated</string>
-   </property>
-   <property name="toolTip">
-    <string>Set Root Decorated</string>
    </property>
   </action>
   <action name="actionShowGroups">
@@ -264,34 +160,17 @@
     <string>Show Groups</string>
    </property>
   </action>
-  <action name="actionSortByIP">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>IP</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort by IP</string>
-   </property>
-  </action>
-  <action name="actionShowIPColumn">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>IP</string>
-   </property>
-   <property name="toolTip">
-    <string>Show IP Column</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

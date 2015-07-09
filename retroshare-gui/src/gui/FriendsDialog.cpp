@@ -142,11 +142,10 @@ QList<int> sizes;
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
-    ui.friendList->setShowStatusColumn(false);
-    ui.friendList->setShowLastContactColumn(false);
-    ui.friendList->setShowAvatarColumn(true);
-    ui.friendList->setShowIPColumn(false);
-    ui.friendList->setRootIsDecorated(true);
+    ui.friendList->setColumnVisible(FriendList::COLUMN_STATE, false);
+    ui.friendList->setColumnVisible(FriendList::COLUMN_LAST_CONTACT, false);
+    ui.friendList->setColumnVisible(FriendList::COLUMN_AVATAR, true);
+    ui.friendList->setColumnVisible(FriendList::COLUMN_IP, false);
     ui.friendList->setShowGroups(true);
     processSettings(true);
     RsAutoUpdatePage::unlockAllEvents();

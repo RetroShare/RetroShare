@@ -49,12 +49,22 @@ class FriendList : public RsAutoUpdatePage
     Q_PROPERTY(QColor textColorStatusInactive READ textColorStatusInactive WRITE setTextColorStatusInactive)
 
 public:
+    enum Column
+    {
+        COLUMN_NAME         = 0,
+        COLUMN_AVATAR       = 1,
+        COLUMN_STATE        = 2,
+        COLUMN_LAST_CONTACT = 3,
+        COLUMN_IP           = 4
+    };
+
+public:
     explicit FriendList(QWidget *parent = 0);
     ~FriendList();
 
     // Add a tool button to the tool area
     void addToolButton(QToolButton *toolButton);
-    void processSettings(bool bLoad);
+    void processSettings(bool load);
     void addGroupToExpand(const std::string &groupId);
     bool getExpandedGroups(std::set<std::string> &groups) const;
     void addPeerToExpand(const std::string &gpgId);
@@ -63,6 +73,8 @@ public:
     std::string getSelectedGroupId() const;
 
     virtual void updateDisplay();
+    void setColumnVisible(Column column, bool visible);
+    void sortByColumn(Column column, Qt::SortOrder sortOrder);
 
     QColor textColorGroup() const { return mTextColorGroup; }
     QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
@@ -85,17 +97,9 @@ public slots:
     void setShowGroups(bool show);
     void setHideUnconnected(bool hidden);
     void setHideState(bool hidden);
-    void setShowStatusColumn(bool show);
-    void setShowLastContactColumn(bool show);
-    void setShowIPColumn(bool show);
-    void setShowAvatarColumn(bool show);
-    void setRootIsDecorated(bool show);
-    void setSortByName();
-    void setSortByState();
-    void setSortByLastContact();
-    void setSortByIP();
-    void sortPeersAscendingOrder();
-    void sortPeersDescendingOrder();
+
+private slots:
+    void peerTreeColumnVisibleChanged(int column, bool visible);
 
 protected:
     void changeEvent(QEvent *e);
@@ -111,7 +115,7 @@ private:
     bool mHideState;
     bool mHideUnconnected;
 
-    QString filterText;
+    QString mFilterText;
 
     bool groupsHasChanged;
     std::set<std::string> *openGroups;
@@ -122,8 +126,6 @@ private:
     QColor mTextColorStatus[RS_STATUS_COUNT];
 
     QTreeWidgetItem *getCurrentPeer() const;
-    static bool filterItem(QTreeWidgetItem *item, const QString &text);
-    void updateHeader();
     void initializeHeader(bool afterLoadSettings);
     void getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds);
 
