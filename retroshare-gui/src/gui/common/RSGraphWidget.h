@@ -134,7 +134,7 @@ class RSGraphWidget: public QFrame
 		// sets the update interval period.
 		//
 		void setTimerPeriod(int miliseconds) ;				
-		void addSource(RSGraphSource *gs) ;
+		void setSource(RSGraphSource *gs) ;
         void setTimeScale(float pixels_per_second) ;
 
 		/** Add data points. */

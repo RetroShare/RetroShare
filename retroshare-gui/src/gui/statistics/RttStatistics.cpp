@@ -125,7 +125,7 @@ RttStatisticsGraph::RttStatisticsGraph(QWidget *parent)
     src->setDigits(1) ;
     src->start() ;
 
-    addSource(src) ;
+    setSource(src) ;
 
     setTimeScale(2.0f) ; // 1 pixels per second of time.
 

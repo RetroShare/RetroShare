@@ -27,7 +27,7 @@
 #include <QTimer>
 
 #include <gui/common/rwindow.h>
-#include <gui/statistics/bwgraph.h>
+#include <gui/statistics/BWGraph.h>
 
 #include "ui_BandwidthGraphWindow.h"
 

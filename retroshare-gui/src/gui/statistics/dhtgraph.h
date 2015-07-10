@@ -67,7 +67,7 @@ class DhtGraph : public RSGraphWidget
             src->setDigits(0) ;
 			src->start() ;
 
-			addSource(src) ;
+			setSource(src) ;
 
 			setTimeScale(1.0f) ; // 1 pixels per second of time.
 

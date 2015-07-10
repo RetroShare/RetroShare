@@ -42,7 +42,7 @@ class TurtleGraph: public RSGraphWidget
             src->setDigits(2) ;
 			src->start() ;
 
-			addSource(src) ;
+			setSource(src) ;
 
 			setTimeScale(1.0f) ; // 1 pixels per second of time.
 

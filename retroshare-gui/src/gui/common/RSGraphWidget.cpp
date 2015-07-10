@@ -142,7 +142,7 @@ void RSGraphWidget::setShowEntry(uint32_t entry,bool b)
         _masked_entries.insert(_source->displayName(entry).toStdString()) ;
 }
 
-void RSGraphWidget::addSource(RSGraphSource *gs)
+void RSGraphWidget::setSource(RSGraphSource *gs)
 {
 if(_source != NULL)
     delete _source ;

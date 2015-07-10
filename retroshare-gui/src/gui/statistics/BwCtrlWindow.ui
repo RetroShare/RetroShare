@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>597</width>
-    <height>469</height>
+    <width>1447</width>
+    <height>911</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,28 +88,17 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="OutQueueStatisticsWidget" name="_outqueue_stats_W" native="true"/>
-      <widget class="BWGraph" name="frmGraph" native="true">
-       <property name="contextMenuPolicy">
-        <enum>Qt::NoContextMenu</enum>
-       </property>
-      </widget>
      </widget>
+     <widget class="BandwidthStatsWidget" name="widget" native="true"/>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>BWGraph</class>
+   <class>BandwidthStatsWidget</class>
    <extends>QWidget</extends>
-   <header>gui/statistics/bwgraph.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>OutQueueStatisticsWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/statistics/OutQueueStatistics.h</header>
+   <header>gui/statistics/BandwidthStatsWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

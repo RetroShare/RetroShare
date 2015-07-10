@@ -355,8 +355,15 @@ HEADERS +=  rshare.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
             gui/statistics/dhtgraph.h \
-            gui/statistics/bwgraph.h \
+            gui/statistics/BandwidthGraphWindow.h \
             gui/statistics/turtlegraph.h \
+            gui/statistics/BandwidthStatsWidget.h \
+            gui/statistics/DhtWindow.h \
+            gui/statistics/GlobalRouterStatistics.h \
+            gui/statistics/StatisticsWindow.h \
+            gui/statistics/BwCtrlWindow.h \
+            gui/statistics/RttStatistics.h \
+            gui/statistics/OutQueueStatistics.h \
             gui/FileTransfer/TransferUserNotify.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/ImHistoryBrowser.h \
@@ -390,7 +397,6 @@ HEADERS +=  rshare.h \
             util/ObjectPainter.h \
             util/QtVersion.h \
             util/RsFile.h \
-            gui/bwgraph/BandwidthGraphWindow.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -540,13 +546,8 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
             gui/GetStartedDialog.h \
-            gui/statistics/DhtWindow.h \
-            gui/statistics/GlobalRouterStatistics.h \
-            gui/statistics/StatisticsWindow.h \
-            gui/statistics/BwCtrlWindow.h \
-            gui/statistics/RttStatistics.h \
-            gui/statistics/OutQueueStatistics.h \
-    gui/settings/WebuiPage.h
+    gui/settings/WebuiPage.h \
+    gui/statistics/BWGraph.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -585,7 +586,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/ServicePermissionDialog.ui \
-            gui/bwgraph/BandwidthGraphWindow.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
             gui/profile/ProfileManager.ui \
@@ -653,6 +653,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/HeaderFrame.ui \
             gui/common/RSFeedWidget.ui \
             gui/style/StyleDialog.ui \
+            gui/statistics/BandwidthGraphWindow.ui \
+            gui/statistics/BandwidthStatsWidget.ui \
             gui/statistics/DhtWindow.ui \
             gui/statistics/TurtleRouterDialog.ui \
             gui/statistics/TurtleRouterStatistics.ui \
@@ -739,7 +741,6 @@ SOURCES +=  main.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
-            gui/bwgraph/BandwidthGraphWindow.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
@@ -844,6 +845,7 @@ SOURCES +=  main.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/settings/GroupFrameSettingsWidget.cpp \
+                gui/settings/WebuiPage.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/dhtstatus.cpp \
@@ -884,6 +886,8 @@ SOURCES +=  main.cpp \
             gui/connect/ConnectProgressDialog.cpp \
             gui/groups/CreateGroup.cpp \
             gui/GetStartedDialog.cpp \
+            gui/statistics/BandwidthGraphWindow.cpp \
+            gui/statistics/BandwidthStatsWidget.cpp \
             gui/statistics/DhtWindow.cpp \
             gui/statistics/TurtleRouterDialog.cpp \
             gui/statistics/TurtleRouterStatistics.cpp \
@@ -892,7 +896,7 @@ SOURCES +=  main.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \
-    gui/settings/WebuiPage.cpp
+            gui/statistics/BWGraph.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
