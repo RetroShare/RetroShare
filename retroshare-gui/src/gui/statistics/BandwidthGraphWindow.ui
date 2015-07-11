@@ -438,7 +438,7 @@
   <customwidget>
    <class>BWGraph</class>
    <extends>QWidget</extends>
-   <header location="global">gui/statistics/bwgraph.h</header>
+   <header location="global">gui/statistics/BWGraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
