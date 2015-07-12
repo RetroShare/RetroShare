@@ -509,6 +509,11 @@ bool DistantChatService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
 
 void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 {
+    if (!item)
+    {
+        return;
+    }
+
 #ifdef DEBUG_DISTANT_CHAT
     std::cerr << "DistantChatService:  Received DH public key." << std::endl;
     item->print(std::cerr, 0) ;
