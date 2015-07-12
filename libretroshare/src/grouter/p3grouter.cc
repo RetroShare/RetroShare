@@ -357,17 +357,41 @@ void p3GRouter::handleLowLevelServiceItems()
     RsItem *item = NULL;
 
     while(NULL != (item = recvItem()))
-        handleLowLevelServiceItem(dynamic_cast<RsGRouterTransactionItem*>(item)) ;
+    {
+        RsGRouterTransactionItem *gtitem = dynamic_cast<RsGRouterTransactionItem*>(item);
+        if (gtitem)
+        {
+            handleLowLevelServiceItem(gtitem) ;
+        }
+        else
+        {
+            delete(item);
+        }
+    }
 }
 
 void p3GRouter::handleLowLevelServiceItem(RsGRouterTransactionItem *item)
 {
     switch(item->PacketSubType())
     {
-    case  RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:  handleLowLevelTransactionAckItem(dynamic_cast<RsGRouterTransactionAcknItem*>(item)) ;
+    case  RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:
+    {
+        RsGRouterTransactionAcknItem  *trans_ack_item = dynamic_cast<RsGRouterTransactionAcknItem*>(item);
+        if (trans_ack_item)
+        {
+            handleLowLevelTransactionAckItem(trans_ack_item) ;
+        }
         break ;
-    case  RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK: handleLowLevelTransactionChunkItem(dynamic_cast<RsGRouterTransactionChunkItem*>(item)) ;
+    }
+    case  RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK:
+    {
+        RsGRouterTransactionChunkItem *chunk_item = dynamic_cast<RsGRouterTransactionChunkItem*>(item);
+        if (chunk_item)
+        {
+            handleLowLevelTransactionChunkItem(chunk_item) ;
+        }
         break ;
+    }
     default:
         std::cerr << "p3GRouter::handleIncoming: Unknown packet subtype " << item->PacketSubType() << std::endl ;
     }
