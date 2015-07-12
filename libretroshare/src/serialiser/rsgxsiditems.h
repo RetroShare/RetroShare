@@ -140,11 +140,21 @@ public:
 
     virtual uint32_t 	size (RsItem *item)
     {
-        return dynamic_cast<RsGxsIdItem *>(item)->serial_size() ;
+        RsGxsIdItem *idItem = dynamic_cast<RsGxsIdItem *>(item);
+        if (!idItem)
+        {
+            return 0;
+        }
+        return idItem->serial_size() ;
     }
     virtual bool serialise(RsItem *item, void *data, uint32_t *size)
     {
-        return dynamic_cast<RsGxsIdItem *>(item)->serialise(data,*size) ;
+        RsGxsIdItem *idItem = dynamic_cast<RsGxsIdItem *>(item);
+        if (!idItem)
+        {
+            return false;
+        }
+        return idItem->serialise(data,*size) ;
     }
     virtual RsItem *deserialise (void *data, uint32_t *size) ;
 
