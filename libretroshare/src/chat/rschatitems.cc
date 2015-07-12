@@ -86,10 +86,10 @@ std::ostream& RsChatLobbyListRequestItem::print(std::ostream &out, uint16_t inde
 }
 std::ostream& RsChatLobbyBouncingObject::print(std::ostream &out, uint16_t indent)
 {
-	printIndent(out, indent); out << "Lobby ID: " << std::hex << lobby_id << std::endl;
+	printIndent(out, indent); out << "Lobby ID: " << std::hex << lobby_id << std::dec << std::endl;
 	printIndent(out, indent); out << "Msg ID: " << std::hex << msg_id << std::dec << std::endl;
-	printIndent(out, indent); out << "Nick: " << nick << std::dec << std::endl;
-    printIndent(out, indent); out << "Sign: " << signature.keyId << std::dec << std::endl;
+	printIndent(out, indent); out << "Nick: " << nick << std::endl;
+    printIndent(out, indent); out << "Sign: " << signature.keyId << std::endl;
 
 	return out;
 }
@@ -97,7 +97,7 @@ std::ostream& RsChatLobbyUnsubscribeItem::print(std::ostream &out, uint16_t inde
 {
 	printRsItemBase(out, "RsChatLobbyUnsubscribeItem", indent);
 	printIndent(out, indent);
-	out << "Lobby id: " << std::hex << lobby_id << std::endl;
+	out << "Lobby id: " << std::hex << lobby_id << std::dec << std::endl;
 	printRsItemEnd(out, "RsChatLobbyUnsubscribeItem", indent);
 	return out;
 }
@@ -115,7 +115,7 @@ std::ostream& RsChatLobbyConnectChallengeItem::print(std::ostream &out, uint16_t
 {
 	printRsItemBase(out, "RsChatLobbyConnectChallengeItem", indent);
 	printIndent(out, indent);
-	out << "Challenge Code: " << std::hex << challenge_code << std::endl;
+	out << "Challenge Code: " << std::hex << challenge_code << std::dec << std::endl;
 	printRsItemEnd(out, "RsChatLobbyConnectChallengeItem", indent);
 	return out;
 }
