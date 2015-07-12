@@ -1312,84 +1312,105 @@ int ftServer::handleIncoming()
 			case RS_PKT_SUBTYPE_FT_DATA_REQUEST: 
 				{
 					RsFileTransferDataRequestItem *f = dynamic_cast<RsFileTransferDataRequestItem*>(item) ;
+					if (f)
+					{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received data request for hash " << f->file.hash << ", offset=" << f->fileoffset << ", chunk size=" << f->chunksize << std::endl;
+						std::cerr << "ftServer::handleIncoming: received data request for hash " << f->file.hash << ", offset=" << f->fileoffset << ", chunk size=" << f->chunksize << std::endl;
 #endif
-					mFtDataplex->recvDataRequest(f->PeerId(), f->file.hash,  f->file.filesize, f->fileoffset, f->chunksize);
+						mFtDataplex->recvDataRequest(f->PeerId(), f->file.hash,  f->file.filesize, f->fileoffset, f->chunksize);
+					}
 				}
 				break ;
 
 			case RS_PKT_SUBTYPE_FT_DATA:
 				{
 					RsFileTransferDataItem *f = dynamic_cast<RsFileTransferDataItem*>(item) ;
+					if (f)
+					{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received data for hash " << f->fd.file.hash << ", offset=" << f->fd.file_offset << ", chunk size=" << f->fd.binData.bin_len << std::endl;
+						std::cerr << "ftServer::handleIncoming: received data for hash " << f->fd.file.hash << ", offset=" << f->fd.file_offset << ", chunk size=" << f->fd.binData.bin_len << std::endl;
 #endif
-					mFtDataplex->recvData(f->PeerId(), f->fd.file.hash,  f->fd.file.filesize, f->fd.file_offset, f->fd.binData.bin_len, f->fd.binData.bin_data);
+						mFtDataplex->recvData(f->PeerId(), f->fd.file.hash,  f->fd.file.filesize, f->fd.file_offset, f->fd.binData.bin_len, f->fd.binData.bin_data);
 
-					/* we've stolen the data part -> so blank before delete
-					 */
-					f->fd.binData.TlvShallowClear();
+						/* we've stolen the data part -> so blank before delete
+						 */
+						f->fd.binData.TlvShallowClear();
+					}
 				}
 				break ;
 
 			case RS_PKT_SUBTYPE_FT_CHUNK_MAP_REQUEST:
 				{
 					RsFileTransferChunkMapRequestItem *f = dynamic_cast<RsFileTransferChunkMapRequestItem*>(item) ;
+					if (f)
+					{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received chunkmap request for hash " << f->hash << ", client=" << f->is_client << std::endl;
+						std::cerr << "ftServer::handleIncoming: received chunkmap request for hash " << f->hash << ", client=" << f->is_client << std::endl;
 #endif
-					mFtDataplex->recvChunkMapRequest(f->PeerId(), f->hash,f->is_client) ;
+						mFtDataplex->recvChunkMapRequest(f->PeerId(), f->hash,f->is_client) ;
+					}
 				}
 				break ;
 
 			case RS_PKT_SUBTYPE_FT_CHUNK_MAP:
 				{
 					RsFileTransferChunkMapItem *f = dynamic_cast<RsFileTransferChunkMapItem*>(item) ;
+					if (f)
+					{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received chunkmap for hash " << f->hash << ", client=" << f->is_client << /*", map=" << f->compressed_map <<*/ std::endl;
+						std::cerr << "ftServer::handleIncoming: received chunkmap for hash " << f->hash << ", client=" << f->is_client << /*", map=" << f->compressed_map <<*/ std::endl;
 #endif
-					mFtDataplex->recvChunkMap(f->PeerId(), f->hash,f->compressed_map,f->is_client) ;
+						mFtDataplex->recvChunkMap(f->PeerId(), f->hash,f->compressed_map,f->is_client) ;
+					}
 				}
 				break ;
 
 			case RS_PKT_SUBTYPE_FT_CHUNK_CRC_REQUEST:
 				{
 					RsFileTransferSingleChunkCrcRequestItem *f = dynamic_cast<RsFileTransferSingleChunkCrcRequestItem*>(item) ;
+					if (f)
+					{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << std::endl;
+						std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << std::endl;
 #endif
-					mFtDataplex->recvSingleChunkCRCRequest(f->PeerId(), f->hash,f->chunk_number) ;
+						mFtDataplex->recvSingleChunkCRCRequest(f->PeerId(), f->hash,f->chunk_number) ;
+					}
 				}
 				break ;
 
 			case RS_PKT_SUBTYPE_FT_CHUNK_CRC:
 				{
 					RsFileTransferSingleChunkCrcItem *f = dynamic_cast<RsFileTransferSingleChunkCrcItem *>(item) ;
+					if (f)
+					{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << ", checksum = " << f->check_sum << std::endl;
+						std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << ", checksum = " << f->check_sum << std::endl;
 #endif
-					mFtDataplex->recvSingleChunkCRC(f->PeerId(), f->hash,f->chunk_number,f->check_sum); 
+						mFtDataplex->recvSingleChunkCRC(f->PeerId(), f->hash,f->chunk_number,f->check_sum);
+					}
 				}
 				break ;
 
 			case RS_PKT_SUBTYPE_FT_CACHE_ITEM:
 				{
 					RsFileTransferCacheItem *ci = dynamic_cast<RsFileTransferCacheItem*>(item) ;
+					if (ci)
+					{
 #ifdef SERVER_DEBUG_CACHE
-					std::cerr << "ftServer::handleIncoming: received cache item hash=" << ci->file.hash << ". from peer " << ci->PeerId() << std::endl;
+						std::cerr << "ftServer::handleIncoming: received cache item hash=" << ci->file.hash << ". from peer " << ci->PeerId() << std::endl;
 #endif
-					/* these go to the CacheStrapper! */
-					RsCacheData data;
-					data.pid = ci->PeerId();
-					data.cid = CacheId(ci->cacheType, ci->cacheSubId);
-					data.path = ci->file.path;
-					data.name = ci->file.name;
-					data.hash = ci->file.hash;
-					data.size = ci->file.filesize;
-					data.recvd = time(NULL) ;
+						/* these go to the CacheStrapper! */
+						RsCacheData data;
+						data.pid = ci->PeerId();
+						data.cid = CacheId(ci->cacheType, ci->cacheSubId);
+						data.path = ci->file.path;
+						data.name = ci->file.name;
+						data.hash = ci->file.hash;
+						data.size = ci->file.filesize;
+						data.recvd = time(NULL) ;
 
-					mCacheStrapper->recvCacheResponse(data, time(NULL));
+						mCacheStrapper->recvCacheResponse(data, time(NULL));
+					}
 				}
 				break ;
 
@@ -1397,9 +1418,12 @@ int ftServer::handleIncoming()
 //				{
 //					// do nothing
 //					RsFileTransferCacheRequestItem *cr = dynamic_cast<RsFileTransferCacheRequestItem*>(item) ;
+//					if (cr)
+//					{
 //#ifdef SERVER_DEBUG_CACHE
-//					std::cerr << "ftServer::handleIncoming: received cache request from peer " << cr->PeerId() << std::endl;
+//						std::cerr << "ftServer::handleIncoming: received cache request from peer " << cr->PeerId() << std::endl;
 //#endif
+//					}
 //				}
 //				break ;
 		}
