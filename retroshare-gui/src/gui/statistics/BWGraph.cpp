@@ -1,5 +1,6 @@
 #include "BWGraph.h"
 
+#include <time.h>
 
 void BWGraphSource::update()
 {
