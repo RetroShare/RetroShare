@@ -62,7 +62,8 @@ class pqistreamer: public PQInterface
 		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
-        virtual int     gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count); // extracting data.
+		virtual int     gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count); // extracting data.
+		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
     protected:
 
 		int tick_bio();
@@ -78,7 +79,8 @@ class pqistreamer: public PQInterface
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const ;
 		virtual void *locked_pop_out_data() ;
-        virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
+        //virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
+		virtual int     locked_gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
 
 
 	protected:
@@ -90,7 +92,7 @@ class pqistreamer: public PQInterface
 
 	private:
 		int queue_outpqi_locked(RsItem *i,uint32_t& serialized_size);
-		int handleincomingitem_locked(RsItem *i);
+		int handleincomingitem_locked(RsItem *i, int len);
 
 		// ticked regularly (manages out queues and sending
 		// via above interfaces.
@@ -146,7 +148,15 @@ class pqistreamer: public PQInterface
 
 		time_t mLastIncomingTs;
 	
+        	// traffic statistics
 
+        	std::list<RSTrafficClue> mPreviousStatsChunk_In ;
+        	std::list<RSTrafficClue> mPreviousStatsChunk_Out ;
+        	std::list<RSTrafficClue> mCurrentStatsChunk_In ;
+        	std::list<RSTrafficClue> mCurrentStatsChunk_Out ;
+		time_t mStatisticsTimeStamp ;
+
+            void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
 };
 
 #endif //MRK_PQI_STREAMER_HEADER

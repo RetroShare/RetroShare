@@ -318,6 +318,15 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 #ifdef DEBUG_PQISTREAMER
 	std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
 #endif
+
+        /*******************************************************************************************/
+    	// keep info for stats for a while. Only keep the items for the last two seconds. sec n is ongoing and second n-1
+    	// is a full statistics chunk that can be used in the GUI
+
+    	locked_addTrafficClue(pqi,pktsize,mCurrentStatsChunk_Out) ;
+
+        /*******************************************************************************************/
+
 	if (mRsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
 		locked_storeInOutputQueue(ptr,pqi->priority_level()) ;
@@ -345,7 +354,7 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 	return 1; // keep error internal.
 }
 
-int 	pqistreamer::handleincomingitem_locked(RsItem *pqi)
+int 	pqistreamer::handleincomingitem_locked(RsItem *pqi,int len)
 {
 
 #ifdef DEBUG_PQISTREAMER
@@ -358,7 +367,42 @@ int 	pqistreamer::handleincomingitem_locked(RsItem *pqi)
 	pqi -> PeerId(PeerId());
     mIncoming.push_back(pqi);
     ++mIncomingSize ;
+
+            /*******************************************************************************************/
+    	// keep info for stats for a while. Only keep the items for the last two seconds. sec n is ongoing and second n-1
+    	// is a full statistics chunk that can be used in the GUI
+
+    	locked_addTrafficClue(pqi,len,mCurrentStatsChunk_In) ;
+
+        /*******************************************************************************************/
+
 	return 1;
+}
+
+void pqistreamer::locked_addTrafficClue(const RsItem *pqi,uint32_t pktsize,std::list<RSTrafficClue>& lst)
+{
+    time_t now = time(NULL) ;
+
+    if(now > mStatisticsTimeStamp)	// new chunk => get rid of oldest, replace old list by current list, clear current list.
+    {
+	    mPreviousStatsChunk_Out = mCurrentStatsChunk_Out ;
+	    mPreviousStatsChunk_In = mCurrentStatsChunk_In ;
+	    mCurrentStatsChunk_Out.clear() ;
+	    mCurrentStatsChunk_In.clear() ;
+
+	    mStatisticsTimeStamp = now ;
+    }
+
+    RSTrafficClue tc ;
+    tc.TS = now ;
+    tc.size = pktsize ;
+    tc.priority = pqi->priority_level() ;
+    tc.peer_id = pqi->PeerId() ;
+    tc.count = 1 ;
+    tc.service_id = pqi->PacketService() ;
+    tc.service_sub_id = pqi->PacketSubType() ;
+
+    lst.push_back(tc) ;
 }
 
 time_t	pqistreamer::getLastIncomingTS()
@@ -742,16 +786,9 @@ continue_packet:
 		std::cerr << "[" << (void*)pthread_self() << "] " << "deserializing. Size=" << pktlen << std::endl ;
 #endif
 
-//		if(pktlen == 17306)
-//		{
-//			FILE *f = RsDirUtil::rs_fopen("dbug.packet.bin","w");
-//			fwrite(block,pktlen,1,f) ;
-//			fclose(f) ;
-//			exit(-1) ;
-//		}
 		RsItem *pkt = mRsSerialiser->deserialise(block, &pktlen);
 
-		if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt)))
+		if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt,pktlen)))
 		{
 #ifdef DEBUG_PQISTREAMER
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
@@ -988,11 +1025,19 @@ void pqistreamer::free_rpend_locked()
 
 int     pqistreamer::gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count)
 {
+#ifdef TO_REMOVE
     RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
     return locked_gatherStatistics(per_service_count,per_priority_count);
+#endif
 }
 
+int     pqistreamer::gatherStatistics(std::list<RSTrafficClue>& outqueue_lst,std::list<RSTrafficClue>& inqueue_lst)
+{
+    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+    return locked_gatherStatistics(outqueue_lst,inqueue_lst);
+}
 int     pqistreamer::getQueueSize(bool in)
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
@@ -1046,9 +1091,9 @@ int pqistreamer::locked_compute_out_pkt_size() const
 	return total ;
 }
 
-int pqistreamer::locked_gatherStatistics(std::vector<uint32_t>&,std::vector<uint32_t>&) const
+int pqistreamer::locked_gatherStatistics(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
 {
-    std::cerr << "(II) called overloaded function locked_gatherStatistics(). This is probably an error" << std::endl;
+//    std::cerr << "(II) called overloaded function pqistreamer::locked_gatherStatistics(). " << std::endl;
     return 1 ;
 }
 

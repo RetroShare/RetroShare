@@ -89,7 +89,7 @@ public:
 protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
     // if the collection system needs it. Otherwise, the default method will call getValues()
-    void update() ;
+    virtual void update() ;
 	 void updateIfPossible() ;
 
 protected:

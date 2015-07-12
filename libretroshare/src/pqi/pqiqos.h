@@ -95,7 +95,7 @@ class pqiQoS
         // get some stats about what's going on. service_packets will contain the number of
         // packets per service, and queue_sizes will contain the size of the different priority queues.
 
-                int gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const ;
+                //int gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const ;
 
 		void computeTotalItemSize() const ;
 		int debug_computeTotalItemSize() const ;

@@ -95,6 +95,7 @@ class p3BandwidthControl: public p3Service, public pqiServiceMonitor
 
 
         virtual int ExtractOutQueueStatistics(OutQueueStatistics& stats) ;
+        virtual int ExtractTrafficInfo(std::list<RSTrafficClue> &in_stats, std::list<RSTrafficClue> &out_stats);
 
 		/*!
 		 * Interface stuff.
@@ -110,8 +111,7 @@ class p3BandwidthControl: public p3Service, public pqiServiceMonitor
 		//virtual void saveDone();
 		//virtual bool loadList(std::list<RsItem*>& load) ;
 
-
-	private:
+private:
 
 		bool 	checkAvailableBandwidth();
 		bool 	processIncoming();

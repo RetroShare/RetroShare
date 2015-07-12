@@ -187,14 +187,16 @@ int 	p3ServerConfig::getConfigStartup(RsConfigStartup &/*params*/)
 	return 0;
 }
 
-#if 0
-int 	p3ServerConfig::getConfigDataRates(RsConfigDataRates &/*params*/)
-{
-	return 0;
-}
-#endif
+/***** for RsConfig -> p3BandwidthControl ****/
 
-                /***** for RsConfig -> p3BandwidthControl ****/
+int p3ServerConfig::getTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
+{
+
+    if (rsBandwidthControl)
+        return rsBandwidthControl->ExtractTrafficInfo(out_lst,in_lst);
+    else
+        return 0 ;
+}
 
 int 	p3ServerConfig::getTotalBandwidthRates(RsConfigDataRates &rates)
 {

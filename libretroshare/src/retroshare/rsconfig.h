@@ -171,6 +171,21 @@ class RsConfigDataRates
 	int	mQueueOut;
 };
 
+class RSTrafficClue
+{
+public:
+    time_t     TS ;
+    uint32_t   size ;
+    uint8_t    priority ;
+    uint16_t   service_id ;
+    uint8_t    service_sub_id ;
+    RsPeerId   peer_id ;
+    uint32_t   count ;
+
+    RSTrafficClue() { TS=0;size=0;service_id=0;service_sub_id=0; count=0; }
+    RSTrafficClue& operator+=(const RSTrafficClue& tc) { size += tc.size; count += tc.count ; return *this ;}
+};
+
 class OutQueueStatistics
 {
     public:
@@ -232,59 +247,61 @@ class RsConfigNetStatus
 
 class RsServerConfig
 {
-	public:
+public:
 
-	RsServerConfig()  { return; }
-virtual ~RsServerConfig() { return; }
+    RsServerConfig()  {}
+    virtual ~RsServerConfig() {}
 
-	/* From RsIface::RsConfig */
-	// Implemented Only this one!
-virtual int 	getConfigNetStatus(RsConfigNetStatus &status) = 0;
+    /* From RsIface::RsConfig */
+    // Implemented Only this one!
+    virtual int 	getConfigNetStatus(RsConfigNetStatus &status) = 0;
 
-// NOT IMPLEMENTED YET!
-//virtual int 	getConfigStartup(RsConfigStartup &params) = 0;
+    // NOT IMPLEMENTED YET!
+    //virtual int 	getConfigStartup(RsConfigStartup &params) = 0;
 
-virtual int 	getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
-virtual int 	getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap) = 0;
-virtual int	getOutQueueStatistics(OutQueueStatistics& stats) = 0 ;
-	/* From RsInit */
+    virtual int getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
+    virtual int getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap) = 0;
+    virtual int getOutQueueStatistics(OutQueueStatistics& stats) = 0 ;
+    virtual int getTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst) = 0 ;
 
-// NOT IMPLEMENTED YET!
-//virtual std::string      RsConfigDirectory() = 0;
-//virtual std::string      RsConfigKeysDirectory() = 0;
+    /* From RsInit */
 
-//virtual std::string  RsProfileConfigDirectory() = 0;
-//virtual bool         getStartMinimised() = 0;
-//virtual std::string  getRetroShareLink() = 0;
+    // NOT IMPLEMENTED YET!
+    //virtual std::string      RsConfigDirectory() = 0;
+    //virtual std::string      RsConfigKeysDirectory() = 0;
 
-//virtual bool getAutoLogin() = 0;
-//virtual void setAutoLogin(bool autoLogin) = 0;
-//virtual bool RsClearAutoLogin() = 0;
+    //virtual std::string  RsProfileConfigDirectory() = 0;
+    //virtual bool         getStartMinimised() = 0;
+    //virtual std::string  getRetroShareLink() = 0;
 
-//virtual std::string getRetroshareDataDirectory() = 0;
+    //virtual bool getAutoLogin() = 0;
+    //virtual void setAutoLogin(bool autoLogin) = 0;
+    //virtual bool RsClearAutoLogin() = 0;
 
-	/* New Stuff */
+    //virtual std::string getRetroshareDataDirectory() = 0;
 
-virtual uint32_t getUserLevel() = 0;
+    /* New Stuff */
 
-virtual uint32_t getNetState() = 0;
-virtual uint32_t getNetworkMode() = 0;
-virtual uint32_t getNatTypeMode() = 0;
-virtual uint32_t getNatHoleMode() = 0;
-virtual uint32_t getConnectModes() = 0;
+    virtual uint32_t getUserLevel() = 0;
 
-virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;
-virtual bool setConfigurationOption(uint32_t key, const std::string &opt) = 0;
+    virtual uint32_t getNetState() = 0;
+    virtual uint32_t getNetworkMode() = 0;
+    virtual uint32_t getNatTypeMode() = 0;
+    virtual uint32_t getNatHoleMode() = 0;
+    virtual uint32_t getConnectModes() = 0;
+
+    virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;
+    virtual bool setConfigurationOption(uint32_t key, const std::string &opt) = 0;
 
 
-	/* Operating Mode */
-virtual uint32_t getOperatingMode() = 0;
-virtual bool     setOperatingMode(uint32_t opMode) = 0;
+    /* Operating Mode */
+    virtual uint32_t getOperatingMode() = 0;
+    virtual bool     setOperatingMode(uint32_t opMode) = 0;
 
-	/* Data Rate Control - to be moved here */
-virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
-virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
-virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
+    /* Data Rate Control - to be moved here */
+    virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
+    virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
+    virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
 
 };
 

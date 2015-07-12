@@ -407,6 +407,17 @@ int     pqihandler::ExtractOutQueueStatistics(OutQueueStatistics& stats)
     return 1 ;
 }
 
+int     pqihandler::ExtractTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
+{
+    in_lst.clear() ;
+    out_lst.clear() ;
+
+    for( std::map<RsPeerId, SearchModule *>::iterator it = mods.begin(); it != mods.end(); ++it)
+        (it -> second)->pqi->gatherStatistics(out_lst,in_lst) ;
+
+    return 1 ;
+}
+
 // NEW extern fn to extract rates.
 int     pqihandler::ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &total)
 {

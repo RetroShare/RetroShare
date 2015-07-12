@@ -37,6 +37,8 @@
 
 #include "pqi/pqinetwork.h"
 
+class RSTrafficClue ;
+
 /*** Base DataTypes: ****/
 #include "serialiser/rsserial.h"
 #include "retroshare/rstypes.h"
@@ -93,6 +95,8 @@ virtual void    getRates(RsBwRates &rates)
 }
 
     virtual int gatherOutQueueStatistics(std::vector<uint32_t>& /*per_service_count*/,std::vector<uint32_t>& /*per_priority_count*/) { return 0;}
+    virtual int gatherStatistics(std::list<RSTrafficClue>& /* outqueue_lst */,std::list<RSTrafficClue>& /* inqueue_lst */) { return 0;}
+
 virtual int     getQueueSize(bool /* in */) { return 0;}
 virtual float	getRate(bool in)
 	{

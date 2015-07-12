@@ -203,6 +203,7 @@ void RSGraphSource::update()
         else
             ++it ;
 }
+
 void RSGraphSource::reset()
 {
     _points.clear() ;

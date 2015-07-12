@@ -41,7 +41,7 @@ class pqiQoSstreamer: public pqithreadstreamer, public pqiQoS
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const { return _total_item_size ; }
         virtual void *locked_pop_out_data() ;
-                virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
+                //virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
 
 
 		virtual int getQueueSize(bool in) ;

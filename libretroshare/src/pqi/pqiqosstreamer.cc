@@ -43,10 +43,10 @@ int pqiQoSstreamer::getQueueSize(bool in)
 	}
 }
 
-int  pqiQoSstreamer::locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const // extracting data.
-{
-    return pqiQoS::gatherStatistics(per_service_count,per_priority_count) ;
-}
+//int  pqiQoSstreamer::locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const // extracting data.
+//{
+//    return pqiQoS::gatherStatistics(per_service_count,per_priority_count) ;
+//}
 
 void pqiQoSstreamer::locked_storeInOutputQueue(void *ptr,int priority)
 {

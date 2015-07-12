@@ -56,28 +56,28 @@ void pqiQoS::in_rsItem(void *ptr,int priority)
 	++_nb_items ;
 }
 
-int pqiQoS::gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const
-{
-    assert(per_priority_count.size() == 10) ;
-    assert(per_service_count.size() == 65536) ;
-
-    for(uint32_t i=0;i<_item_queues.size();++i)
-    {
-        per_priority_count[i] += _item_queues[i].size() ;
-
-        for(std::list<void*>::const_iterator it(_item_queues[i]._items.begin());it!=_item_queues[i]._items.end();++it)
-        {
-                        uint32_t type = 0;
-                        uint32_t offset = 0;
-                        getRawUInt32((uint8_t*)(*it), 4, &offset, &type);
-
-            uint16_t service_id =  (type >> 8) & 0xffff ;
-
-            ++per_service_count[service_id] ;
-        }
-    }
-    return 1 ;
-}
+// int pqiQoS::gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const
+// {
+//     assert(per_priority_count.size() == 10) ;
+//     assert(per_service_count.size() == 65536) ;
+//
+//     for(uint32_t i=0;i<_item_queues.size();++i)
+//     {
+//         per_priority_count[i] += _item_queues[i].size() ;
+//
+//         for(std::list<void*>::const_iterator it(_item_queues[i]._items.begin());it!=_item_queues[i]._items.end();++it)
+//         {
+//                         uint32_t type = 0;
+//                         uint32_t offset = 0;
+//                         getRawUInt32((uint8_t*)(*it), 4, &offset, &type);
+//
+//             uint16_t service_id =  (type >> 8) & 0xffff ;
+//
+//             ++per_service_count[service_id] ;
+//         }
+//     }
+//     return 1 ;
+// }
 
 
 void *pqiQoS::out_rsItem()
