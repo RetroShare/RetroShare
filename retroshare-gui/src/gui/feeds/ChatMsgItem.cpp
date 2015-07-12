@@ -163,12 +163,15 @@ void ChatMsgItem::removeItem()
 	std::cerr << std::endl;
 #endif
 
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
 
-	if (mParent)
-	{
+	hide();
+
+	if (mParent) {
+		mParent->lockLayout(this, false);
+
 		mParent->deleteFeedItem(this, mFeedId);
 	}
 }
