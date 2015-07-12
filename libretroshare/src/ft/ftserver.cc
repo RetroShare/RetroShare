@@ -1160,34 +1160,42 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_FILE_REQUEST: 		
 			{
 				RsTurtleFileRequestItem *item = dynamic_cast<RsTurtleFileRequestItem *>(i) ;
+				if (item)
+				{
 #ifdef SERVER_DEBUG
-				std::cerr << "ftServer::receiveTurtleData(): received file data request for " << hash << " from peer " << virtual_peer_id << std::endl;
+					std::cerr << "ftServer::receiveTurtleData(): received file data request for " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
-				getMultiplexer()->recvDataRequest(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size) ;
+					getMultiplexer()->recvDataRequest(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size) ;
+				}
 			}
 			break ;
 
 		case RS_TURTLE_SUBTYPE_FILE_DATA : 	
 			{
 				RsTurtleFileDataItem *item = dynamic_cast<RsTurtleFileDataItem *>(i) ;
+				if (item)
+				{
 #ifdef SERVER_DEBUG
-				std::cerr << "ftServer::receiveTurtleData(): received file data for " << hash << " from peer " << virtual_peer_id << std::endl;
+					std::cerr << "ftServer::receiveTurtleData(): received file data for " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
-				getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
+					getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
 
-				item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
-				// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
-
+					item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
+					// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
+				}
 			}
 			break ;
 
 		case RS_TURTLE_SUBTYPE_FILE_MAP : 	
 			{
 				RsTurtleFileMapItem *item = dynamic_cast<RsTurtleFileMapItem *>(i) ;
+				if (item)
+				{
 #ifdef SERVER_DEBUG
-				std::cerr << "ftServer::receiveTurtleData(): received chunk map for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+					std::cerr << "ftServer::receiveTurtleData(): received chunk map for hash " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
-				getMultiplexer()->recvChunkMap(virtual_peer_id,hash,item->compressed_map,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
+					getMultiplexer()->recvChunkMap(virtual_peer_id,hash,item->compressed_map,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
+				}
 			}
 			break ;
 
@@ -1204,20 +1212,26 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_CHUNK_CRC : 			
 			{
 				RsTurtleChunkCrcItem *item = dynamic_cast<RsTurtleChunkCrcItem *>(i) ;
+				if (item)
+				{
 #ifdef SERVER_DEBUG
-				std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+					std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC for hash " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
-				getMultiplexer()->recvSingleChunkCRC(virtual_peer_id,hash,item->chunk_number,item->check_sum) ;
+					getMultiplexer()->recvSingleChunkCRC(virtual_peer_id,hash,item->chunk_number,item->check_sum) ;
+				}
 			}
 			break ;
 
 		case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST:	
 			{
 				RsTurtleChunkCrcRequestItem *item = dynamic_cast<RsTurtleChunkCrcRequestItem *>(i) ;
+				if (item)
+				{
 #ifdef SERVER_DEBUG
-				std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+					std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
-				getMultiplexer()->recvSingleChunkCRCRequest(virtual_peer_id,hash,item->chunk_number) ;
+					getMultiplexer()->recvSingleChunkCRCRequest(virtual_peer_id,hash,item->chunk_number) ;
+				}
 			}
 			break ;
 		default:
