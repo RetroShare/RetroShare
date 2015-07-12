@@ -101,7 +101,10 @@ DetailsDialog::show()
 
 void DetailsDialog::setFileHash(const RsFileHash & hash)
 {
-	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash(hash) ;
+	FileTransferInfoWidget *ftiWidget = dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget());
+	if (ftiWidget) {
+		ftiWidget->setFileHash(hash) ;
+	}
 
 	FileInfo nfo ;
 	if(!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, nfo)) 
