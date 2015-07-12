@@ -41,7 +41,6 @@
 
 #define ROLE_MSGID     Qt::UserRole
 #define ROLE_PLAINTEXT Qt::UserRole + 1
-#define ROLE_OFFLINE   Qt::UserRole + 2
 
 ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const ChatId& peerId)
     : QThread(parent)
@@ -277,7 +276,6 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
 
     itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_MSGID, msg.msgId);
-    itemWidget->setData(ROLE_OFFLINE, (type == ChatStyle::FORMATMSG_OOUTGOING) ? true : false);
 
     /* calculate plain text */
     QTextDocument doc;
