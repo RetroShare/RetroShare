@@ -240,7 +240,10 @@ void ChatLobbyDialog::init()
 
     // add to window
 
-    dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->addChatPage(this) ;
+    ChatLobbyWidget *chatLobbyPage = dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby));
+    if (chatLobbyPage) {
+        chatLobbyPage->addChatPage(this) ;
+    }
 
     /** List of muted Participants */
     mutedParticipants.clear() ;
