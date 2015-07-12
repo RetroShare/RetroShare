@@ -328,7 +328,8 @@ void ChatLobbyUserNotify::subMenuClicked(QAction* action)
 		if (count==0) _listMsg.erase(itCL);
 		emit countChanged(actionTag.cli, count);
 	} else if(actionTag.cli==0x0){
-		for(itCL=_listMsg.begin();itCL!=_listMsg.end();++itCL){
+		while (!_listMsg.empty()) {
+			itCL = _listMsg.begin();
 			emit countChanged(itCL->first, 0);
 			_listMsg.erase(itCL);
 		}
