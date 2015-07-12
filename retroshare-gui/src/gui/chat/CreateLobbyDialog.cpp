@@ -138,7 +138,7 @@ void CreateLobbyDialog::createLobby()
 
     ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
 
-    std::cerr << "gui: Created chat lobby " << std::hex << id << std::endl ;
+    std::cerr << "gui: Created chat lobby " << std::hex << id << std::dec << std::endl ;
 
     // open chat window !!
     ChatDialog::chatFriend(ChatId(id)) ;
