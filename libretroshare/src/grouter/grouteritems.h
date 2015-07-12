@@ -293,11 +293,21 @@ public:
 
     virtual uint32_t 	size (RsItem *item)
     {
-        return dynamic_cast<RsGRouterItem *>(item)->serial_size() ;
+        RsGRouterItem *gitem = dynamic_cast<RsGRouterItem *>(item);
+        if (!gitem)
+        {
+            return 0;
+        }
+        return gitem->serial_size() ;
     }
     virtual bool serialise(RsItem *item, void *data, uint32_t *size)
     {
-        return dynamic_cast<RsGRouterItem *>(item)->serialise(data,*size) ;
+        RsGRouterItem *gitem = dynamic_cast<RsGRouterItem *>(item);
+        if (!gitem)
+        {
+            return false;
+        }
+        return gitem->serialise(data,*size) ;
     }
     virtual RsItem *deserialise (void *data, uint32_t *size) ;
 
