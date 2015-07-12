@@ -188,11 +188,21 @@ public:
 
     virtual uint32_t size (RsItem *item)
     {
-        return dynamic_cast<RsServiceControlItem *>(item)->serial_size() ;
+        RsServiceControlItem *scitem = dynamic_cast<RsServiceControlItem *>(item);
+        if (!scitem)
+        {
+            return 0;
+        }
+        return scitem->serial_size() ;
     }
     virtual bool serialise(RsItem *item, void *data, uint32_t *size)
     {
-        return dynamic_cast<RsServiceControlItem *>(item)->serialise((uint8_t*)data,*size) ;
+        RsServiceControlItem *scitem = dynamic_cast<RsServiceControlItem *>(item);
+        if (!scitem)
+        {
+            return false;
+        }
+        return scitem->serialise((uint8_t*)data,*size) ;
     }
     virtual RsItem *deserialise (void *data, uint32_t *size)
     {
