@@ -53,11 +53,13 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm)
         :pqissl(NULL, parent, lm), tou_bio(NULL),
-	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
+	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0), mConnectBandwidth(0)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
 	sockaddr_storage_clear(remote_addr);
+	sockaddr_storage_clear(mConnectProxyAddr);
+	sockaddr_storage_clear(mConnectSrcAddr);
 	return;
 }
 

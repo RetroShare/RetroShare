@@ -58,7 +58,6 @@ class xProgressBar : public QObject
 Q_OBJECT
 	private:
 		// progress vlues
-		uint32_t _nb_chunks ;
 		int schemaIndex;
 		bool displayText;
 		int vSpan;

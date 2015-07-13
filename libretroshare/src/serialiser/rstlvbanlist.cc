@@ -45,6 +45,7 @@ void RsTlvBanListEntry::TlvClear()
 	reason = 0;
     age = 0;
     comment.clear();
+	masked_bytes = 0;
 }
 
 uint32_t RsTlvBanListEntry::TlvSize() const

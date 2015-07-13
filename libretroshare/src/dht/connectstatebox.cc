@@ -91,6 +91,9 @@ PeerConnectStateBox::PeerConnectStateBox()
         mNoFailedAttempts = 0;
         mNextAttemptTS = now;
         mAttemptLength = 0;
+	mProxyPortFlags = 0;
+	mProxyPortChoice = false;
+	mProxyPortTS = 0;
 
 
 }

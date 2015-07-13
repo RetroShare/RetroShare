@@ -338,11 +338,16 @@ TBoard::TBoard(QWidget *parent) {
     
     setFocusPolicy(Qt::StrongFocus);
     isStarted = false;
+    isWaitingAfterLine = false;
+    numLinesRemoved = 0;
+    numPiecesDropped = 0;
     isPaused = false;
     clearBoard();
     nextPiece.setRandomShape();
     score = 0;
     level = 0;
+    curX = 0;
+    curY = 0;
 
     maxScore = Settings->value("/about/maxsc").toInt();
 }

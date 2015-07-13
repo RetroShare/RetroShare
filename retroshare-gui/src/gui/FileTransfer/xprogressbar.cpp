@@ -45,6 +45,7 @@ xProgressBar::xProgressBar(const FileProgressInfo& pinfo,QRect rect, QPainter *p
 	this->schemaIndex = schemaIndex;
 	this->rect = rect;
 	this->painter = painter;
+	displayText = false;
 	// set the progress bar colors
 	setColor();
 	// configure span

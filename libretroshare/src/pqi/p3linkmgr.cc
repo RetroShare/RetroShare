@@ -87,9 +87,11 @@ const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 30;  // this represents how long i
 void  printConnectState(std::ostream &out, peerConnectState &peer);
 
 peerConnectAddress::peerConnectAddress()
-	:delay(0), period(0), type(0), flags(0), ts(0), domain_port(0)
+	:delay(0), period(0), type(0), flags(0), ts(0), bandwidth(0), domain_port(0)
 {
 	sockaddr_storage_clear(addr);
+	sockaddr_storage_clear(proxyaddr);
+	sockaddr_storage_clear(srcaddr);
 }
 
 

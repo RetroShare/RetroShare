@@ -93,6 +93,12 @@ TcpStream::TcpStream(UdpSubReceiver *lyr)
 	retransTimerOn(false),
 	retransTimeout(TCP_RETRANS_TIMEOUT),
 	retransTimerTs(0),
+	keepAliveTimer(0),
+	lastIncomingPkt(0),
+	lastSentAck(0),
+	lastSentWinSize(0),
+	initOurSeqno(0),
+	initPeerSeqno(0),
 	lastWriteTF(0),lastReadTF(0),
 	wcount(0), rcount(0),
 	errorState(0),
@@ -102,12 +108,15 @@ TcpStream::TcpStream(UdpSubReceiver *lyr)
 	congestThreshold(TCP_MAX_WIN),
 	congestWinSize(MAX_SEG),
 	congestUpdate(0),
+	ttl(0),
         mTTL_period(0), 
         mTTL_start(0),
         mTTL_end(0), 
 	peerKnown(false),
 	udp(lyr)
 {
+	sockaddr_clear(&peeraddr);
+
 	return;
 }
 

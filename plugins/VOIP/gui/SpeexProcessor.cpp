@@ -84,7 +84,8 @@ SpeexInputProcessor::SpeexInputProcessor(QObject *parent) : QIODevice(parent),
         //pfMicInput = pfEchoInput = pfOutput = NULL;
 
         iRealTimeBitrate = 0;
-        dPeakSignal = dPeakSpeaker = dPeakMic = dPeakCleanMic = dVoiceAcivityLevel = 0.0;
+        dPeakSignal = dPeakSpeaker = dMaxMic = dPeakMic = dPeakCleanMic = dVoiceAcivityLevel = 0.0;
+        dMaxMic = 0.0;
 
         //if (g.uiSession) {
         //TODO : get the maxbitrate from a rs service or a dynamic code

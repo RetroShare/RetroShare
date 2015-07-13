@@ -103,7 +103,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
 	readpkt(NULL), pktlen(0), total_len(0),
 	attempt_ts(0),
-	sameLAN(false), n_read_zero(0), mReadZeroTS(0), 
+	sameLAN(false), n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
 	mConnectDelay(0), mConnectTS(0),
 	mConnectTimeout(0), mTimeoutTS(0)
 {

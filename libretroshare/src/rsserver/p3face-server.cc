@@ -81,6 +81,7 @@ RsServer::RsServer()
 	mPeerMgr = NULL;
 	mLinkMgr = NULL;
 	mNetMgr = NULL;
+	mHistoryMgr = NULL;
 
 	pqih = NULL;
 

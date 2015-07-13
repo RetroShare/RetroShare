@@ -65,6 +65,7 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     inputAudioProcessor = NULL;
     inputAudioDevice = NULL;
     abSpeech = NULL;
+    qtTick = NULL;
 
 	 // Create the video pipeline.
 	 //

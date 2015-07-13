@@ -21,7 +21,7 @@ typedef std::string (*PassphraseCallback)(void *data, const char *uid_hint, cons
 class PGPCertificateInfo
 {
 	public:
-		PGPCertificateInfo() {}
+		PGPCertificateInfo() : _trustLvl(0), _validLvl(0), _flags(0), _type(0), _time_stamp(0), _key_index(0) {}
 
 		std::string _name;
 		std::string _email;
