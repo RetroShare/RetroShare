@@ -52,8 +52,6 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::ProfileManager ui;
-
-	bool genNewGPGKey;
 };
 
 #endif
