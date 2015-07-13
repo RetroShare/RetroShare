@@ -46,9 +46,7 @@ class RsMutex
 		/* remove unused parameter warnings */
 
 		pthread_mutex_init(&realMutex, NULL);
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
 		_thread_id = 0 ;
-#endif
 #ifdef RSMUTEX_DEBUG
 		this->_name = name;
 #else
