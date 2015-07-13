@@ -64,6 +64,7 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
     mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
     mIncomingSize = 0 ;
 
+    mStatisticsTimeStamp = 0 ;
 	/* allocated once */
     mPkt_rpend_size = 0;
     mPkt_rpending = 0;
@@ -1093,7 +1094,9 @@ int pqistreamer::locked_compute_out_pkt_size() const
 
 int pqistreamer::locked_gatherStatistics(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
 {
-//    std::cerr << "(II) called overloaded function pqistreamer::locked_gatherStatistics(). " << std::endl;
+    out_lst = mPreviousStatsChunk_Out ;
+     in_lst = mPreviousStatsChunk_In ;
+
     return 1 ;
 }
 

@@ -2,20 +2,47 @@
 
 #include <time.h>
 
+//#define BWGRAPH_DEBUG 1
+
 void BWGraphSource::update()
 {
-//    std::cerr << "Updating BW graphsource..." << std::endl;
-
-    std::list<RSTrafficClue> in_rstcl ;
-    std::list<RSTrafficClue> out_rstcl ;
+#ifdef BWGRAPH_DEBUG
+    std::cerr << "Updating BW graphsource..." << std::endl;
+#endif
 
     TrafficHistoryChunk thc ;
     rsConfig->getTrafficInfo(thc.out_rstcl,thc.in_rstcl);
 
+#ifdef BWGRAPH_DEBUG
+    std::cerr << "  got " << std::dec << thc.out_rstcl.size() << " out clues" << std::endl;
+    std::cerr << "  got " << std::dec << thc.in_rstcl.size() << " in clues" << std::endl;
+#endif
+
     // keep track of them, in case we need to change the sorting
 
-    thc.time_stamp = time(NULL) ;
+    thc.time_stamp = getTime() ;
     mTrafficHistory.push_back(thc) ;
+
+    // add visible friends/services
+
+    for(std::list<RSTrafficClue>::const_iterator it(thc.out_rstcl.begin());it!=thc.out_rstcl.end();++it)
+    {
+        mVisibleFriends.insert(it->peer_id) ;
+        mVisibleServices.insert(it->service_id) ;
+    }
+
+    for(std::list<RSTrafficClue>::const_iterator it(thc.in_rstcl.begin());it!=thc.in_rstcl.end();++it)
+    {
+        mVisibleFriends.insert(it->peer_id) ;
+        mVisibleServices.insert(it->service_id) ;
+    }
+
+#ifdef BWGRAPH_DEBUG
+    std::cerr << "  visible friends: " << std::dec << mVisibleFriends.size() << std::endl;
+    std::cerr << "  visible service: " << std::dec << mVisibleServices.size() << std::endl;
+#endif
+
+    // now, convert data to current curve points.
 
     std::map<std::string,float> vals ;
     convertTrafficClueToValues(thc.out_rstcl,vals) ;
@@ -54,11 +81,26 @@ void BWGraphSource::update()
     // also clears history
 
     for(std::list<TrafficHistoryChunk>::iterator it = mTrafficHistory.begin();it!=mTrafficHistory.end();++it)
-            if( ms - 1000*(*it).time_stamp > _time_limit_msecs)
+    {
+#ifdef BWGRAPH_DEBUG
+        std::cerr << "TS=" << (*it).time_stamp << ", ms = " << ms << ", diff=" << ms - (*it).time_stamp  << " compared to  " << _time_limit_msecs << std::endl;
+#endif
+
+            if( ms - (*it).time_stamp > _time_limit_msecs)
+            {
                 it = mTrafficHistory.erase(it) ;
+
+#ifdef BWGRAPH_DEBUG
+                std::cerr << "Removing 1 item of traffic history" << std::endl;
+#endif
+            }
             else
                 break ;
+    }
 
+#ifdef BWGRAPH_DEBUG
+    std::cerr << "Traffic history has size " << mTrafficHistory.size() << std::endl;
+#endif
 }
 
 void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& lst,std::map<std::string,float>& vals) const
@@ -109,6 +151,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 		}
 		}
 		break ;
+
 	case GRAPH_TYPE_ALL:
 		switch(_service_graph_type)
 		{
@@ -228,25 +271,100 @@ QString BWGraphSource::niceNumber(float v) const
         return QString::number(v/(1024*1024.0*1024),'f',2) + " GB";
 }
 
-void BWGraphSource::setSelector(int selector_class,int selector_type,const std::string& selector_client_string)
+void BWGraphSource::setSelector(int selector_type,int graph_type,const std::string& selector_client_string)
 {
+    std::cerr << "Setting Graph Source selector to " << selector_type << " - " << graph_type << " - " << selector_client_string << std::endl;
 
+    bool changed = false ;
+
+    if(selector_type == SELECTOR_TYPE_FRIEND && (_friend_graph_type != graph_type || (graph_type == GRAPH_TYPE_SINGLE && selector_client_string != _current_selected_friend.toStdString())))
+    {
+	    changed = true ;
+	    _friend_graph_type = graph_type ;
+	    if(graph_type ==  GRAPH_TYPE_SINGLE)
+	    {
+
+		    RsPeerId ns(selector_client_string) ;
+
+		    if(!ns.isNull())
+			    _current_selected_friend = ns ;
+		    else
+			    std::cerr << "(EE) Cannot set current friend to " << selector_client_string << ": unrecognized friend string." << std::endl;
+	    }
+    }
+    else if(selector_type == SELECTOR_TYPE_SERVICE && _service_graph_type != graph_type)
+    {
+	    changed = true ;
+	    _service_graph_type = graph_type ;
+    }
+
+    // now re-convert all traffic history into the appropriate curves
+
+            if(changed)
+    recomputeCurrentCurves() ;
+}
+void BWGraphSource::setUnit(int unit)
+{
+    if(unit == _current_unit)
+        return ;
+
+    _current_unit = unit ;
+
+    recomputeCurrentCurves() ;
+}
+void BWGraphSource::setDirection(int dir)
+{
+    if(dir == _current_direction)
+        return ;
+
+    _current_direction = dir ;
+
+    recomputeCurrentCurves() ;
+}
+void BWGraphSource::recomputeCurrentCurves()
+{
+    std::cerr << "BWGraphSource: recomputing current curves." << std::endl;
+
+    _points.clear() ;
+
+    // now, convert data to current curve points.
+
+    for(std::list<TrafficHistoryChunk>::const_iterator it(mTrafficHistory.begin());it!=mTrafficHistory.end();++it)
+    {
+	    std::map<std::string,float> vals ;
+	    qint64 ms = (*it).time_stamp ;
+
+	    if(_current_direction==DIRECTION_UP)
+		    convertTrafficClueToValues((*it).out_rstcl,vals) ;
+	    else
+		    convertTrafficClueToValues((*it).in_rstcl,vals) ;
+
+	    for(std::map<std::string,float>::iterator it2=vals.begin();it2!=vals.end();++it2)
+		    _points[it2->first].push_back(std::make_pair(ms,it2->second)) ;
+    }
+
+    std::cerr << "  points() contains " << _points.size() << " curves." << std::endl;
 }
 
 BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)
 {
     _local_source = new BWGraphSource() ;
 
+    std::cerr << "creaitng new BWGraph Source " << (void*)_local_source << std::endl;
     _local_source->setCollectionTimeLimit(30*60*1000) ; // 30  mins
     _local_source->setCollectionTimePeriod(1000) ;      // collect every second
     _local_source->setDigits(2) ;
     _local_source->start() ;
+    _local_source->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+    _local_source->setDirection(BWGraphSource::DIRECTION_UP) ;
+    _local_source->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_ALL) ;
+    _local_source->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
 
     setSource(_local_source) ;
 
     setTimeScale(1.0f) ; // 1 pixels per second of time.
 
-    resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+    setFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
     resetFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
 
     setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;

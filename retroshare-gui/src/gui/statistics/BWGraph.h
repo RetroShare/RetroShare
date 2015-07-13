@@ -16,6 +16,7 @@ public:
     enum { SELECTOR_TYPE_FRIEND=0x00, SELECTOR_TYPE_SERVICE=0x01 };
     enum { GRAPH_TYPE_SINGLE=0x00, GRAPH_TYPE_ALL=0x01, GRAPH_TYPE_SUM=0x02 };
     enum { UNIT_KILOBYTES=0x00, UNIT_COUNT=0x01 };
+    enum { DIRECTION_UP=0x00, DIRECTION_DOWN=0x01 };
 
     // re-derived from RSGraphSource
 
@@ -27,10 +28,21 @@ public:
 
     // own methdods to control what's used to create displayed info
 
-    void setSelector(int selector_class,int selector_type,const std::string& selector_client_string = std::string()) ;
+    void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string()) ;
+    void setDirection(int dir) ;
+    void setUnit(int unit) ;
+
+    int direction() const { return _current_direction ;}
+    int unit() const { return _current_unit ;}
+    int friendGraphType() const { return _friend_graph_type ;}
+    int serviceGraphType() const { return _service_graph_type ;}
+
+    const std::set<RsPeerId>& visibleFriends() const { return mVisibleFriends; }
+    const std::set<uint16_t>& visibleServices() const { return mVisibleServices; }
 
 protected:
     void convertTrafficClueToValues(const std::list<RSTrafficClue> &lst, std::map<std::string, float> &vals) const;
+    void recomputeCurrentCurves() ;
 
 private:
     QString niceNumber(float v) const;
@@ -41,12 +53,16 @@ private:
     int _friend_graph_type ;
     int _service_graph_type ;
 
-    RsPeerId _current_selected_friend ;
+    RsPeerId    _current_selected_friend ;
     std::string _current_selected_friend_name ;
-    uint16_t _current_selected_service ;
-    int _current_unit ;
+    uint16_t    _current_selected_service ;
+    int         _current_unit ;
+    int         _current_direction ;
 
     std::list<TrafficHistoryChunk> mTrafficHistory ;
+
+    std::set<RsPeerId> mVisibleFriends ;
+    std::set<uint16_t> mVisibleServices ;
 };
 
 class BWGraph: public RSGraphWidget
@@ -56,6 +72,8 @@ class BWGraph: public RSGraphWidget
 
         BWGraphSource *source() ;
 
+    const std::set<RsPeerId>& visibleFriends() const { return _local_source->visibleFriends(); }
+    const std::set<uint16_t>& visibleServices() const { return _local_source->visibleServices(); }
 protected:
         BWGraphSource *_local_source ;
 };
