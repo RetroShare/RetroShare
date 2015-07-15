@@ -118,7 +118,9 @@ class RSGraphWidget: public QFrame
         static const uint32_t RSGRAPH_FLAGS_LOG_SCALE_Y     	= 0x0002 ;// log scale in Y
         static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  	= 0x0004 ;// keep collecting while not displayed
         static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_PLAIN	= 0x0008 ;// use plain / line drawing style
-        static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND         = 0x0010 ;// show legend in the graph
+        static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND       = 0x0010 ;// show legend in the graph
+        static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_FLAT  = 0x0020 ;// do not interpolate, and draw flat colored boxes
+
 		/** Bandwidth graph style. */
 		enum GraphStyle 
 		{

@@ -22,6 +22,10 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     ui.unit_CB->addItem(tr("KB/s")) ;
     ui.unit_CB->addItem(tr("Count")) ;
 
+    ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
+    ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
+    ui.bwgraph_BW->source()->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+
     // Setup connections
 
     QObject::connect(ui.friend_CB ,SIGNAL(currentIndexChanged(int)),this, SLOT( updateFriendSelection(int))) ;

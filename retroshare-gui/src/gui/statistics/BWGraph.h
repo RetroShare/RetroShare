@@ -13,6 +13,8 @@ public:
         std::list<RSTrafficClue>  in_rstcl ;
     };
 
+    BWGraphSource() ;
+
     enum { SELECTOR_TYPE_FRIEND=0x00, SELECTOR_TYPE_SERVICE=0x01 };
     enum { GRAPH_TYPE_SINGLE=0x00, GRAPH_TYPE_ALL=0x01, GRAPH_TYPE_SUM=0x02 };
     enum { UNIT_KILOBYTES=0x00, UNIT_COUNT=0x01 };

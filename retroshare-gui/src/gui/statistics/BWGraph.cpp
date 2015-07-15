@@ -228,6 +228,23 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 	}
 }
 
+BWGraphSource::BWGraphSource()
+	: RSGraphSource()
+{
+
+    _total_sent =0;
+    _total_recv =0;
+
+    _friend_graph_type = GRAPH_TYPE_SUM;
+    _service_graph_type = GRAPH_TYPE_SUM;
+
+    _current_selected_friend.clear() ;
+    _current_selected_service = 0;
+    _current_unit = UNIT_KILOBYTES;
+    _current_direction = DIRECTION_UP;
+
+}
+
 void BWGraphSource::getValues(std::map<std::string,float>& values) const
 {
     RsConfigDataRates totalRates;
@@ -240,16 +257,30 @@ void BWGraphSource::getValues(std::map<std::string,float>& values) const
     _total_recv += 1024 * totalRates.mRateIn * _update_period_msecs/1000.0f ;
 }
 
-QString BWGraphSource::unitName() const { return tr("KB/s"); }
+QString BWGraphSource::unitName() const { return (_current_unit == UNIT_KILOBYTES)?tr("KB/s"):QString(); }
 
 QString BWGraphSource::displayValue(float v) const
 {
-    if(v < 1000)
-        return QString::number(v,'f',2) + " B/s" ;
-    else if(v < 1000*1024)
-        return QString::number(v/1024.0,'f',2) + " KB/s" ;
+    if(_current_unit == UNIT_KILOBYTES)
+    {
+	    if(v < 1000)
+		    return QString::number(v,'f',2) + " B/s" ;
+	    else if(v < 1000*1024)
+		    return QString::number(v/1024.0,'f',2) + " KB/s" ;
+	    else
+		    return QString::number(v/(1024.0*1024),'f',2) + " MB/s" ;
+    }
+    else if(_current_unit == UNIT_COUNT)
+    {
+	    if(v < 1000)
+		    return QString::number(v,'f',0) ;
+	    else if(v < 1000*1024)
+		    return QString::number(v/1024.0,'f',1) + "k" ;
+	    else
+		    return QString::number(v/(1024.0*1024),'f',1) + "M" ;
+    }
     else
-        return QString::number(v/(1024.0*1024),'f',2) + " MB/s" ;
+    return QString() ;
 }
 
 QString BWGraphSource::legend(int i,float v) const
@@ -279,29 +310,57 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 
     if(selector_type == SELECTOR_TYPE_FRIEND && (_friend_graph_type != graph_type || (graph_type == GRAPH_TYPE_SINGLE && selector_client_string != _current_selected_friend.toStdString())))
     {
-	    changed = true ;
-	    _friend_graph_type = graph_type ;
 	    if(graph_type ==  GRAPH_TYPE_SINGLE)
 	    {
 
 		    RsPeerId ns(selector_client_string) ;
 
 		    if(!ns.isNull())
+		    {
 			    _current_selected_friend = ns ;
+			    changed = true ;
+			    _friend_graph_type = graph_type ;
+		    }
+
 		    else
 			    std::cerr << "(EE) Cannot set current friend to " << selector_client_string << ": unrecognized friend string." << std::endl;
 	    }
+	    else
+	    {
+		    changed = true ;
+		    _friend_graph_type = graph_type ;
+	    }
     }
-    else if(selector_type == SELECTOR_TYPE_SERVICE && _service_graph_type != graph_type)
+    else if(selector_type == SELECTOR_TYPE_SERVICE
+                    && (_service_graph_type != graph_type || (graph_type == GRAPH_TYPE_SINGLE && selector_client_string != QString::number(_current_selected_service,16).toStdString())))
     {
-	    changed = true ;
-	    _service_graph_type = graph_type ;
+	    if(graph_type ==  GRAPH_TYPE_SINGLE)
+	    {
+		    bool ok = false ;
+		    int tmp = QString::fromStdString(selector_client_string).toInt() ;
+
+		    if(tmp > 0 && tmp < 0x10000)
+		    {
+			    _current_selected_service = tmp ;
+
+			    changed = true ;
+			    _service_graph_type = graph_type ;
+		    }
+                    else
+			    std::cerr << "(EE) Cannot set current service to " << selector_client_string << ": unrecognized service string." << std::endl;
+
+	    }
+	    else
+	    {
+		    changed = true ;
+		    _service_graph_type = graph_type ;
+	    }
     }
 
     // now re-convert all traffic history into the appropriate curves
 
-            if(changed)
-    recomputeCurrentCurves() ;
+    if(changed)
+	    recomputeCurrentCurves() ;
 }
 void BWGraphSource::setUnit(int unit)
 {
