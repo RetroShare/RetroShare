@@ -112,7 +112,17 @@ class GxsSecurity
 		 * @param sign Signature for the data 
 		 * @return true if signature checks
 		 */
-		static bool validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& pubKey, const RsTlvKeySignature& sign);
+        static bool validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& pubKey, const RsTlvKeySignature& sign);
+
+        /*!
+         * Checks that the public key has correct fingerprint and correct flags.
+         * @brief checkPublicKey
+         * @param key
+         * @return false if the key is invalid.
+         */
+
+        static bool checkPublicKey(const RsTlvSecurityKey &key);
+        static bool checkPrivateKey(const RsTlvSecurityKey &key);
 };
 
 #endif // GXSSECURITY_H

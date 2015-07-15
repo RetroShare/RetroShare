@@ -54,6 +54,19 @@ static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
         return RsGxsId(s.toStdString().substr(0,2*CERTSIGNLEN));
 }
 
+static RSA *extractPrivateKey(const RsTlvSecurityKey & key)
+{
+    assert(key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+
+        const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+        long keylen = key.keyData.bin_len;
+
+        /* extract admin key */
+        RSA *rsakey = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
+
+        return rsakey;
+}
+
 static RSA *extractPublicKey(const RsTlvSecurityKey& key)
 {
     assert(!(key.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
@@ -77,6 +90,69 @@ static void setRSAPublicKeyData(RsTlvSecurityKey & key, RSA *rsa_pub)
 		  free(data) ;
 }
 
+bool GxsSecurity::checkPrivateKey(const RsTlvSecurityKey& key)
+{
+    std::cerr << "Checking private key " << key.keyId << " ..." << std::endl;
+
+    if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_FULL)
+    {
+        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): private key has wrong flags " << std::hex << (key.keyFlags & RSTLV_KEY_TYPE_MASK) << std::dec << ". This is unexpected." << std::endl;
+        return false ;
+    }
+    RSA *rsa_prv = ::extractPrivateKey(key) ;
+
+    if(rsa_prv == NULL)
+    {
+        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): no private key can be extracted from key ID " << key.keyId << ". Key is corrupted?" << std::endl;
+        return false ;
+    }
+    RSA *rsa_pub = RSAPublicKey_dup(rsa_prv);
+    RSA_free(rsa_prv) ;
+
+    if(rsa_pub == NULL)
+    {
+        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): no public key can be extracted from key ID " << key.keyId << ". Key is corrupted?" << std::endl;
+        return false ;
+    }
+    RsGxsId recomputed_key_id = getRsaKeyFingerprint(rsa_pub) ;
+    RSA_free(rsa_pub) ;
+
+    if(recomputed_key_id != key.keyId)
+    {
+        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! This is unexpected." << std::endl;
+        return false ;
+    }
+
+    return true ;
+}
+bool GxsSecurity::checkPublicKey(const RsTlvSecurityKey& key)
+{
+    std::cerr << "Checking public key " << key.keyId << " ..." << std::endl;
+
+    if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_PUBLIC_ONLY)
+    {
+        std::cerr << "(WW) GxsSecurity::checkPublicKey(): public key has wrong flags " << std::hex << (key.keyFlags & RSTLV_KEY_TYPE_MASK) << std::dec << ". This is unexpected." << std::endl;
+        return false ;
+    }
+    RSA *rsa_pub = ::extractPublicKey(key) ;
+
+    if(rsa_pub == NULL)
+    {
+        std::cerr << "(WW) GxsSecurity::checkPublicKey(): no public key can be extracted from key ID " << key.keyId << ". Key is corrupted?" << std::endl;
+        return false ;
+    }
+    RsGxsId recomputed_key_id = getRsaKeyFingerprint(rsa_pub) ;
+    RSA_free(rsa_pub) ;
+
+    if(recomputed_key_id != key.keyId)
+    {
+        std::cerr << "(WW) GxsSecurity::checkPublicKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! This is unexpected." << std::endl;
+        return false ;
+    }
+
+    return true ;
+}
+
 static void setRSAPrivateKeyData(RsTlvSecurityKey & key, RSA *rsa_priv)
 {
         unsigned char *data = NULL ;
@@ -86,19 +162,6 @@ static void setRSAPrivateKeyData(RsTlvSecurityKey & key, RSA *rsa_priv)
         key.keyId = getRsaKeyFingerprint(rsa_priv);
 
 		  free(data) ;
-}
-
-static RSA *extractPrivateKey(const RsTlvSecurityKey & key)
-{
-    assert(key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
-
-        const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
-        long keylen = key.keyData.bin_len;
-
-        /* extract admin key */
-        RSA *rsakey = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
-
-        return rsakey;
 }
 
 bool GxsSecurity::generateKeyPair(RsTlvSecurityKey& public_key,RsTlvSecurityKey& private_key)
