@@ -567,22 +567,27 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 
     if(signature_key.keyData.bin_data == NULL)
     {
-        std::cerr << "  (EE) Key unknown for checking signature from " << senders_id << ", can't verify signature." << std::endl;
-        std::cerr << "       Using key provided in DH packet." << std::endl;
+	    std::cerr << "  (EE) Key unknown for checking signature from " << senders_id << ", can't verify signature. Using key provided in DH packet (without adding to the keyring)." << std::endl;
 
-        signature_key = item->gxs_key ;
+	    // check GXS key for defects.
 
-#warning At this point, we should check that the key Ids  match!!
-    }
-    else if(signature_key.keyId != item->gxs_key.keyId)
-    {
-        std::cerr << "(EE) DH session key is signed by an ID that is not the ID of the key provided inthe packet. Refusing distant chat with this peer." << std::endl;
-        return;
+	    if(!GxsSecurity::checkPublicKey(item->gxs_key))
+	    {
+		    std::cerr << "(SS) Security error in distant chat DH handshake: supplied key " << item->gxs_key.keyId << " is inconsistent. Refusing chat!" << std::endl;
+		    return ;
+	    }
+	    if(item->gxs_key.keyId != item->signature.keyId)
+	    {
+		    std::cerr << "(SS) Security error in distant chat DH handshake: supplied key " << item->gxs_key.keyId << " is not the same than the item's signature key " << item->signature.keyId << ". Refusing chat!" << std::endl;
+		    return ;
+	    }
+
+	    signature_key = item->gxs_key ;
     }
 
     if(!GxsSecurity::validateSignature((char*)data,pubkey_size,signature_key,item->signature))
     {
-        std::cerr << "  (EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
+        std::cerr << "(SS) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         return ;
     }
     mGixs->timeStampKey(item->signature.keyId) ;
