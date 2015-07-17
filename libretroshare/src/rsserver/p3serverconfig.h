@@ -58,7 +58,6 @@ virtual int 	getConfigStartup(RsConfigStartup &params);
 
 virtual int getTotalBandwidthRates(RsConfigDataRates &rates);
 virtual int getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap);
-    virtual int getOutQueueStatistics(OutQueueStatistics& stats) ;
     virtual int getTrafficInfo(std::list<RSTrafficClue>& out_lst, std::list<RSTrafficClue> &in_lst) ;
 
 	/* From RsInit */

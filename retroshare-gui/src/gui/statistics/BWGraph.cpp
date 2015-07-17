@@ -1,6 +1,9 @@
 #include "BWGraph.h"
 
 #include <time.h>
+#include <math.h>
+#include "retroshare/rsservicecontrol.h"
+#include "retroshare/rspeers.h"
 
 //#define BWGRAPH_DEBUG 1
 
@@ -23,18 +26,33 @@ void BWGraphSource::update()
     thc.time_stamp = getTime() ;
     mTrafficHistory.push_back(thc) ;
 
+    std::set<RsPeerId> fds ;
+
     // add visible friends/services
 
     for(std::list<RSTrafficClue>::const_iterator it(thc.out_rstcl.begin());it!=thc.out_rstcl.end();++it)
     {
-        mVisibleFriends.insert(it->peer_id) ;
+        fds.insert(it->peer_id) ;
         mVisibleServices.insert(it->service_id) ;
     }
 
     for(std::list<RSTrafficClue>::const_iterator it(thc.in_rstcl.begin());it!=thc.in_rstcl.end();++it)
     {
-        mVisibleFriends.insert(it->peer_id) ;
+        fds.insert(it->peer_id) ;
         mVisibleServices.insert(it->service_id) ;
+    }
+
+    for(std::set<RsPeerId>::const_iterator it(fds.begin());it!=fds.end();++it)
+    {
+        std::string& s(mVisibleFriends[*it]) ;
+
+        if(s.empty())
+        {
+            RsPeerDetails pd ;
+            rsPeers->getPeerDetails(*it,pd) ;
+
+            s = pd.name + " (" + pd.location + ")" ;
+        }
     }
 
 #ifdef BWGRAPH_DEBUG
@@ -49,11 +67,24 @@ void BWGraphSource::update()
 
     qint64 ms = getTime() ;
 
+    std::set<std::string> unused_vals ;
+
+    for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator it=_points.begin();it!=_points.end();++it)
+        unused_vals.insert(it->first) ;
+
     for(std::map<std::string,float>::iterator it=vals.begin();it!=vals.end();++it)
     {
         std::list<std::pair<qint64,float> >& lst(_points[it->first]) ;
 
+        if(!lst.empty() && fabsf(lst.back().first - ms) > _update_period_msecs*1.2 )
+        {
+            lst.push_back(std::make_pair(lst.back().first,0)) ;
+            lst.push_back(std::make_pair(              ms,0)) ;
+        }
+
         lst.push_back(std::make_pair(ms,it->second)) ;
+
+        unused_vals.erase(it->first) ;
 
         for(std::list<std::pair<qint64,float> >::iterator it2=lst.begin();it2!=lst.end();)
             if( ms - (*it2).first > _time_limit_msecs)
@@ -64,6 +95,11 @@ void BWGraphSource::update()
             else
                 break ;
     }
+
+    // make sure that all values are fed.
+
+    for(std::set<std::string>::const_iterator it(unused_vals.begin());it!=unused_vals.end();++it)
+        _points[*it].push_back(std::make_pair(ms,0)) ;
 
     // remove empty lists
 
@@ -122,7 +158,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 
 			for(uint32_t i=0;i<256;++i)
 				if(clue_per_sub_id[i].count > 0)
-					vals[QString::number(i,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size/1000.0f):(clue_per_sub_id[i].count) ;
+					vals["item #"+QString::number(i,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
 		}
 			break ;
 
@@ -135,7 +171,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 					clue_per_id[it->service_id] += *it ;
 
 			for(std::map<uint16_t,RSTrafficClue>::const_iterator it(clue_per_id.begin());it!=clue_per_id.end();++it)
-				vals[QString::number(it->first,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(it->second.size/1000.0f):(it->second.count) ;
+		    		vals[mServiceInfoMap[it->first].mServiceName] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
 		}
 			break ;
 		case GRAPH_TYPE_SUM:	// single friend, sum services => one curve
@@ -147,7 +183,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 				if(it->peer_id == _current_selected_friend)
 					total += *it ;
 
-			vals[_current_selected_friend_name] = (_current_unit == UNIT_KILOBYTES)?(total.size/1000.0f):(total.count) ;
+			vals[visibleFriendName(_current_selected_friend)] = (_current_unit == UNIT_KILOBYTES)?(total.size):(total.count) ;
 		}
 		}
 		break ;
@@ -164,7 +200,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 					clue_per_peer_id[it->peer_id] += *it ;
 
 			for(std::map<RsPeerId,RSTrafficClue>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
-				vals[it->first.toStdString()] = (_current_unit == UNIT_KILOBYTES)?(it->second.size/1000.0f):(it->second.count) ;
+				vals[visibleFriendName(it->first)] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
 		}
 			break ;
 
@@ -178,7 +214,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 				clue_per_peer_id[it->peer_id] += *it;
 
 			for(std::map<RsPeerId,RSTrafficClue>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
-				vals[it->first.toStdString()] = (_current_unit == UNIT_KILOBYTES)?(it->second.size/1000.0f):(it->second.count) ;
+				vals[visibleFriendName(it->first)] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
 		}
 			break ;
 		}
@@ -197,7 +233,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 
 			for(uint32_t i=0;i<256;++i)
 				if(clue_per_sub_id[i].count > 0)
-					vals[QString::number(i,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size/1000.0f):(clue_per_sub_id[i].count) ;
+					vals["item #"+QString::number(i,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
 		}
 			break ;
 
@@ -209,7 +245,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 				clue_per_service[it->service_id] += *it;
 
 			for(std::map<uint16_t,RSTrafficClue>::const_iterator it(clue_per_service.begin());it!=clue_per_service.end();++it)
-				vals[QString::number(it->first,16).toStdString()] = (_current_unit == UNIT_KILOBYTES)?(it->second.size/1000.0f):(it->second.count) ;
+				vals[mServiceInfoMap[it->first].mServiceName] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
 		}
 			break ;
 
@@ -220,12 +256,22 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				total += *it;
 
-			vals[QString("Total").toStdString()] = (_current_unit == UNIT_KILOBYTES)?(total.size/1000.0f):(total.count) ;
+			vals[QString("Total").toStdString()] = (_current_unit == UNIT_KILOBYTES)?(total.size):(total.count) ;
 		}
 			break ;
 		}
 		break ;
 	}
+}
+
+std::string BWGraphSource::visibleFriendName(const RsPeerId& pid) const
+{
+    std::map<RsPeerId,std::string>::const_iterator it = mVisibleFriends.find(pid) ;
+
+    if(it != mVisibleFriends.end())
+        return it->second;
+    else
+        return std::string("[unknown]") ;
 }
 
 BWGraphSource::BWGraphSource()
@@ -243,6 +289,11 @@ BWGraphSource::BWGraphSource()
     _current_unit = UNIT_KILOBYTES;
     _current_direction = DIRECTION_UP;
 
+    RsPeerServiceInfo rspsi ;
+    rsServiceControl->getOwnServices(rspsi) ;
+
+    for(std::map<uint32_t,RsServiceInfo>::const_iterator it(rspsi.mServiceList.begin());it!=rspsi.mServiceList.end();++it)
+        mServiceInfoMap[ (it->first >> 8) & 0xffff ] = it->second ;
 }
 
 void BWGraphSource::getValues(std::map<std::string,float>& values) const
@@ -258,6 +309,27 @@ void BWGraphSource::getValues(std::map<std::string,float>& values) const
 }
 
 QString BWGraphSource::unitName() const { return (_current_unit == UNIT_KILOBYTES)?tr("KB/s"):QString(); }
+
+//QString BWGraphSource::displayName(int i) const
+//{
+//    int n=0;
+//    for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator  it = _points.begin();it!=_points.end() ;++it)
+//        if(n++ == i)
+//        {
+//            // find out what is displayed
+//
+//            if(_service_graph_type == GRAPH_TYPE_SINGLE )
+//                if(_friend_graph_type != GRAPH_TYPE_ALL)
+//		    return QString::fromStdString(it->first) ;// sub item
+//		else
+//		    return QString::fromStdString(mVisibleFriends[RsPeerId(it->first)]) ;// peer id item
+//            else
+//
+//
+//        }
+//
+//    return QString("[error]");
+//}
 
 QString BWGraphSource::displayValue(float v) const
 {
@@ -285,10 +357,7 @@ QString BWGraphSource::displayValue(float v) const
 
 QString BWGraphSource::legend(int i,float v) const
 {
-    if(i==0)
-        return RSGraphSource::legend(i,v) + " Total: " + niceNumber(_total_recv) ;
-    else
-        return RSGraphSource::legend(i,v) + " Total: " + niceNumber(_total_sent) ;
+        return RSGraphSource::legend(i,v) ;//+ " Total: " + niceNumber(_total_recv) ;
 }
 QString BWGraphSource::niceNumber(float v) const
 {
@@ -304,7 +373,9 @@ QString BWGraphSource::niceNumber(float v) const
 
 void BWGraphSource::setSelector(int selector_type,int graph_type,const std::string& selector_client_string)
 {
+#ifdef BWGRAPH_DEBUG
     std::cerr << "Setting Graph Source selector to " << selector_type << " - " << graph_type << " - " << selector_client_string << std::endl;
+#endif
 
     bool changed = false ;
 
@@ -382,16 +453,22 @@ void BWGraphSource::setDirection(int dir)
 }
 void BWGraphSource::recomputeCurrentCurves()
 {
+#ifdef BWGRAPH_DEBUG
     std::cerr << "BWGraphSource: recomputing current curves." << std::endl;
+#endif
 
     _points.clear() ;
 
     // now, convert data to current curve points.
 
+    std::set<std::string> used_values_ref ;
+
     for(std::list<TrafficHistoryChunk>::const_iterator it(mTrafficHistory.begin());it!=mTrafficHistory.end();++it)
     {
 	    std::map<std::string,float> vals ;
 	    qint64 ms = (*it).time_stamp ;
+
+	    std::set<std::string> unused_values = used_values_ref ;
 
 	    if(_current_direction==DIRECTION_UP)
 		    convertTrafficClueToValues((*it).out_rstcl,vals) ;
@@ -399,10 +476,19 @@ void BWGraphSource::recomputeCurrentCurves()
 		    convertTrafficClueToValues((*it).in_rstcl,vals) ;
 
 	    for(std::map<std::string,float>::iterator it2=vals.begin();it2!=vals.end();++it2)
+	    {
 		    _points[it2->first].push_back(std::make_pair(ms,it2->second)) ;
+		    used_values_ref.insert(it2->first) ;
+		    unused_values.erase(it2->first) ;
+	    }
+
+	    for(std::set<std::string>::const_iterator it(unused_values.begin());it!=unused_values.end();++it)
+		    _points[*it].push_back(std::make_pair(ms,0)) ;
     }
 
+#ifdef BWGRAPH_DEBUG
     std::cerr << "  points() contains " << _points.size() << " curves." << std::endl;
+#endif
 }
 
 BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)

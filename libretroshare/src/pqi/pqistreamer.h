@@ -62,7 +62,6 @@ class pqistreamer: public PQInterface
 		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
-		virtual int     gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count); // extracting data.
 		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
     protected:
 

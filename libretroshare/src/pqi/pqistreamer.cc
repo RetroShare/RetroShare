@@ -1024,15 +1024,6 @@ void pqistreamer::free_rpend_locked()
     mPkt_rpend_size = 0;
 }
 
-int     pqistreamer::gatherOutQueueStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count)
-{
-#ifdef TO_REMOVE
-    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
-    return locked_gatherStatistics(per_service_count,per_priority_count);
-#endif
-}
-
 int     pqistreamer::gatherStatistics(std::list<RSTrafficClue>& outqueue_lst,std::list<RSTrafficClue>& inqueue_lst)
 {
     RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/

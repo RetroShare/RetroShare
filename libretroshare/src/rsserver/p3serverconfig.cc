@@ -207,13 +207,6 @@ int 	p3ServerConfig::getTotalBandwidthRates(RsConfigDataRates &rates)
 	return 0;
 }
 
-int 	p3ServerConfig::getOutQueueStatistics(OutQueueStatistics& stats)
-{
-    if (rsBandwidthControl)
-        return rsBandwidthControl->ExtractOutQueueStatistics(stats);
-    else
-        return 0;
-}
 int 	p3ServerConfig::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap)
 {
 	if (rsBandwidthControl)

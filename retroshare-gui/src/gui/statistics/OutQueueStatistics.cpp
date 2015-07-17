@@ -35,7 +35,7 @@ static QString serviceName(uint16_t s)
         case /* RS_SERVICE_TYPE_BWCTRL          */ 0x0021: return QString("BdwCtrl") ;
         case /* RS_SERVICE_TYPE_BANLIST         */ 0x0101: return QString("BanList") ;
         case /* RS_SERVICE_TYPE_STATUS          */ 0x0102: return QString("Status") ;
-        case /* RS_SERVICE_TYPE_NXS 	        */ 0x0200: return QString("Nxs") ;
+        case /* RS_SERVICE_TYPE_NXS 	         */ 0x0200: return QString("Nxs") ;
         case /* RS_SERVICE_GXS_TYPE_GXSID       */ 0x0211: return QString("Gxs Ids") ;
         case /* RS_SERVICE_GXS_TYPE_PHOTO       */ 0x0212: return QString("Gxs Photo") ;
         case /* RS_SERVICE_GXS_TYPE_WIKI        */ 0x0213: return QString("Gxs Wiki") ;

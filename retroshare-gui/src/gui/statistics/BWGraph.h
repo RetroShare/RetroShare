@@ -1,6 +1,7 @@
 #pragma once
 
 #include "retroshare/rsconfig.h"
+#include "retroshare/rsservicecontrol.h"
 #include <gui/common/RSGraphWidget.h>
 
 class BWGraphSource: public RSGraphSource
@@ -24,6 +25,7 @@ public:
 
     virtual void getValues(std::map<std::string,float>& values) const;
     virtual QString displayValue(float v) const;
+//    virtual QString displayName(int i) const;
     virtual QString legend(int i,float v) const;
     virtual void update();
     QString unitName() const ;
@@ -39,12 +41,13 @@ public:
     int friendGraphType() const { return _friend_graph_type ;}
     int serviceGraphType() const { return _service_graph_type ;}
 
-    const std::set<RsPeerId>& visibleFriends() const { return mVisibleFriends; }
+    const std::map<RsPeerId,std::string>& visibleFriends() const { return mVisibleFriends; }
     const std::set<uint16_t>& visibleServices() const { return mVisibleServices; }
 
 protected:
     void convertTrafficClueToValues(const std::list<RSTrafficClue> &lst, std::map<std::string, float> &vals) const;
     void recomputeCurrentCurves() ;
+    std::string visibleFriendName(const RsPeerId &pid) const ;
 
 private:
     QString niceNumber(float v) const;
@@ -56,15 +59,16 @@ private:
     int _service_graph_type ;
 
     RsPeerId    _current_selected_friend ;
-    std::string _current_selected_friend_name ;
     uint16_t    _current_selected_service ;
     int         _current_unit ;
     int         _current_direction ;
 
     std::list<TrafficHistoryChunk> mTrafficHistory ;
 
-    std::set<RsPeerId> mVisibleFriends ;
+    std::map<RsPeerId,std::string> mVisibleFriends ;
     std::set<uint16_t> mVisibleServices ;
+
+    mutable std::map<uint16_t,RsServiceInfo> mServiceInfoMap ;
 };
 
 class BWGraph: public RSGraphWidget
@@ -74,7 +78,7 @@ class BWGraph: public RSGraphWidget
 
         BWGraphSource *source() ;
 
-    const std::set<RsPeerId>& visibleFriends() const { return _local_source->visibleFriends(); }
+    const std::map<RsPeerId,std::string>& visibleFriends() const { return _local_source->visibleFriends(); }
     const std::set<uint16_t>& visibleServices() const { return _local_source->visibleServices(); }
 protected:
         BWGraphSource *_local_source ;

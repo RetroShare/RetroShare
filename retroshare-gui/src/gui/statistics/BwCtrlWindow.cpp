@@ -220,11 +220,6 @@ void BwCtrlWindow::updateDisplay()
 	}
 
     updateBandwidth();
-
-    OutQueueStatistics stats ;
-    rsConfig->getOutQueueStatistics(stats) ;
-
-    //_outqueue_stats_W->updateStatistics(stats) ;
 }
 
 void BwCtrlWindow::updateBandwidth()

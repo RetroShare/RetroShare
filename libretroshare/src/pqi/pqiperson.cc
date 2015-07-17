@@ -592,16 +592,6 @@ void    pqiperson::getRates(RsBwRates &rates)
 		return;
 	activepqi -> getRates(rates);
 }
-int     pqiperson::gatherOutQueueStatistics(std::vector<uint32_t>& per_service,std::vector<uint32_t>& per_priority)
-{
-    RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
-
-    // get the rate from the active one.
-    if ((!active) || (activepqi == NULL))
-        return 0;
-    return activepqi -> gatherOutQueueStatistics(per_service,per_priority);
-}
-
 int     pqiperson::gatherStatistics(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
 {
     RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/

@@ -387,33 +387,20 @@ RsRawItem *pqihandler::GetRsRawItem()
 
 static const float MIN_RATE = 0.01; // 10 B/s
 
-int     pqihandler::ExtractOutQueueStatistics(OutQueueStatistics& stats)
-{
-    stats.per_service_item_count.clear() ;
-
-    std::vector<uint32_t> item_counts(65536,0) ;
-    stats.per_priority_item_count.clear() ;
-    stats.per_priority_item_count.resize(10,0) ;
-
-    std::map<RsPeerId, SearchModule *>::iterator it;
-
-    for(it = mods.begin(); it != mods.end(); ++it)
-        (it -> second)->pqi->gatherOutQueueStatistics(item_counts,stats.per_priority_item_count) ;
-
-    for(int i=0;i<65536;++i)
-        if(item_counts[i] > 0)
-            stats.per_service_item_count[i] = item_counts[i] ;
-
-    return 1 ;
-}
-
 int     pqihandler::ExtractTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
 {
     in_lst.clear() ;
     out_lst.clear() ;
 
     for( std::map<RsPeerId, SearchModule *>::iterator it = mods.begin(); it != mods.end(); ++it)
-        (it -> second)->pqi->gatherStatistics(out_lst,in_lst) ;
+    {
+        std::list<RSTrafficClue> ilst,olst ;
+
+        (it -> second)->pqi->gatherStatistics(olst,ilst) ;
+
+        for(std::list<RSTrafficClue>::const_iterator it(ilst.begin());it!=ilst.end();++it) in_lst.push_back(*it) ;
+        for(std::list<RSTrafficClue>::const_iterator it(olst.begin());it!=olst.end();++it) out_lst.push_back(*it) ;
+    }
 
     return 1 ;
 }

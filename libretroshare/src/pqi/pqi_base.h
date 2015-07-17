@@ -94,7 +94,6 @@ virtual void    getRates(RsBwRates &rates)
 	return;
 }
 
-    virtual int gatherOutQueueStatistics(std::vector<uint32_t>& /*per_service_count*/,std::vector<uint32_t>& /*per_priority_count*/) { return 0;}
     virtual int gatherStatistics(std::list<RSTrafficClue>& /* outqueue_lst */,std::list<RSTrafficClue>& /* inqueue_lst */) { return 0;}
 
 virtual int     getQueueSize(bool /* in */) { return 0;}

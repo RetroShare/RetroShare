@@ -78,7 +78,6 @@ class pqihandler: public P3Interface, public pqiPublisher
 
 		// TESTING INTERFACE.
 		int     ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &totals);
-        int     ExtractOutQueueStatistics(OutQueueStatistics& stats) ;
         int 	ExtractTrafficInfo(std::list<RSTrafficClue> &out_lst, std::list<RSTrafficClue> &in_lst);
 
 protected:

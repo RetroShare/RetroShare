@@ -2,6 +2,7 @@
 #include <QTimer>
 
 #include "retroshare/rspeers.h"
+#include "retroshare/rsservicecontrol.h"
 #include "util/RsProtectedTimer.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "BandwidthStatsWidget.h"
@@ -52,23 +53,23 @@ void BandwidthStatsWidget::updateComboBoxes()
     // Setup button/combobox info
 
     uint32_t indx = 2 ;
-    RsPeerDetails details ;
+    //RsPeerDetails details ;
     RsPeerId current_friend_id(ui.friend_CB->itemData(ui.friend_CB->currentIndex()).toString().toStdString()) ;
 
-    for(std::set<RsPeerId>::const_iterator it(ui.bwgraph_BW->visibleFriends().begin());it!=ui.bwgraph_BW->visibleFriends().end();++it)
+    for(std::map<RsPeerId,std::string>::const_iterator it(ui.bwgraph_BW->visibleFriends().begin());it!=ui.bwgraph_BW->visibleFriends().end();++it)
     {
-	    if( (*it).toStdString() != ui.friend_CB->itemData(indx).toString().toStdString())
+	    if( it->first.toStdString() != ui.friend_CB->itemData(indx).toString().toStdString())
 	    {
-		    std::cerr << "   friends: " << *it << " not in combo at place " << indx << ". Adding it." << std::endl;
+		    std::cerr << "   friends: " << it->first << " not in combo at place " << indx << ". Adding it." << std::endl;
 
-                    QString name = "[Unknown]" ;
+                    QString name = QString::fromUtf8(it->second.c_str()) ;
                     QVariant data ;
 
-		    if(rsPeers->getPeerDetails(*it,details))
-		    {
-                        name = QString::fromUtf8(details.name.c_str())+" ("+QString::fromUtf8(details.location.c_str())+")" ;
-			data = QVariant(QString::fromStdString( (*it).toStdString())) ;
-                    }
+		    //if(rsPeers->getPeerDetails(*it,details))
+		    //{
+                       // name = QString::fromUtf8(details.name.c_str())+" ("+QString::fromUtf8(details.location.c_str())+")" ;
+			data = QVariant(QString::fromStdString( (it->first).toStdString())) ;
+                    //}
 
 		    if(ui.friend_CB->count() <= indx)
 			    ui.friend_CB->addItem(name,data) ;
@@ -78,7 +79,7 @@ void BandwidthStatsWidget::updateComboBoxes()
 			    ui.friend_CB->setItemData(indx,data) ;
 		    }
 
-		    if(current_friend_id == *it && ui.friend_CB->currentIndex() != indx)
+		    if(current_friend_id == it->first && ui.friend_CB->currentIndex() != indx)
 			    ui.friend_CB->setCurrentIndex(indx) ;
 	    }
 	    ++indx ;
@@ -92,6 +93,9 @@ void BandwidthStatsWidget::updateComboBoxes()
 
     // now one entry per service
 
+    RsPeerServiceInfo service_info_map ;
+    rsServiceControl->getOwnServices(service_info_map) ;
+
     indx = 2 ;
     uint16_t current_service_id = ui.service_CB->itemData(ui.service_CB->currentIndex()).toInt() ;
 
@@ -99,13 +103,13 @@ void BandwidthStatsWidget::updateComboBoxes()
     {
 	    if(*it != ui.service_CB->itemData(indx).toInt())
 	    {
-		    std::cerr << "   services: " << std::hex << *it << std::dec << " not in combo at place " << indx << ". Adding it." << std::endl;
+	    QString sname = QString::fromUtf8(service_info_map.mServiceList[ ((*it)<<8) + 0x02000000].mServiceName.c_str()) ;
 
 		    if(ui.service_CB->count() <= indx)
-			    ui.service_CB->addItem(QString::number(*it,16),QVariant(*it)) ;
+			    ui.service_CB->addItem(sname + " (0x"+QString::number(*it,16)+")",QVariant(*it)) ;
 		    else
 		    {
-			    ui.service_CB->setItemText(indx,QString::number(*it,16)) ;
+			    ui.service_CB->setItemText(indx,sname + " (0x"+QString::number(*it,16)+")") ;
 			    ui.service_CB->setItemData(indx,QVariant(*it)) ;
 		    }
 

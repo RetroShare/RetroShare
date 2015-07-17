@@ -414,6 +414,8 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
     float last_px = SCALE_WIDTH*fact ;
     float last_py = 0.0f ;
 
+ //   float min_x_no_data_threshold = 1.5 ; // 1.5 sec.
+
     for (uint i = 0; i < values.size(); ++i)
 	 {
 		 //std::cerr << "Value: (" << values[i].x() << " , " << values[i].y() << ")" << std::endl;
@@ -423,7 +425,7 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 		 qreal px = x - (values[i].x()-last)*_time_scale ;
 		 qreal py = y -  valueToPixels(values[i].y()) ;
 
-         if(px >= SCALE_WIDTH *fact&& last_px < SCALE_WIDTH*fact)
+         if(px >= SCALE_WIDTH*fact && last_px < SCALE_WIDTH*fact)
 		 {
              float alpha = (SCALE_WIDTH*fact - last_px)/(px - last_px) ;
              float ipx = SCALE_WIDTH*fact ;
@@ -433,10 +435,12 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 			 points << QPointF(ipx,ipy) ;
 		 }
 		 else if(i==0)
+         {
+             if(px < SCALE_WIDTH*fact)
+			 points << QPointF(SCALE_WIDTH*fact,py) ;
+             else
 			 points << QPointF(px,y) ;
-
-		 last_px = px ;
-		 last_py = py ;
+         }
 
          if(px < SCALE_WIDTH*fact)
 			 continue ;
@@ -448,10 +452,20 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 		 if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
 			 points.pop_back() ;
 
+//         	if(fabs(px - last_px)/_time_scale > min_x_no_data_threshold)
+//            {
+//                points << QPointF(last_px,y) ;
+//                points << QPointF(px,y) ;
+//            }
+
 		 points << QPointF(px,py) ;
 
 		 if(i==values.size()-1)
 			 points << QPointF(px,y) ;
+
+		 last_px = px ;
+		 last_py = py ;
+
 	 }
 }
 

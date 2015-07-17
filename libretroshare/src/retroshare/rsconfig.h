@@ -186,13 +186,6 @@ public:
     RSTrafficClue& operator+=(const RSTrafficClue& tc) { size += tc.size; count += tc.count ; return *this ;}
 };
 
-class OutQueueStatistics
-{
-    public:
-        std::map<uint16_t,uint32_t> per_service_item_count ;
-        std::vector<uint32_t> per_priority_item_count ;
-};
-
 class RsConfigNetStatus
 {
 	public:
@@ -261,7 +254,6 @@ public:
 
     virtual int getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
     virtual int getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap) = 0;
-    virtual int getOutQueueStatistics(OutQueueStatistics& stats) = 0 ;
     virtual int getTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst) = 0 ;
 
     /* From RsInit */
