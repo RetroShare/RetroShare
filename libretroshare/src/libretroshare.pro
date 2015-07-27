@@ -161,7 +161,7 @@ linux-* {
 	include_rsiface.files = $$PUBLIC_HEADERS
 	INSTALLS += include_rsiface
 
-	#CONFIG += version_detail_bash_script
+	CONFIG += version_detail_bash_script
 
 
 	# linux/bsd can use either - libupnp is more complete and packaged.
@@ -192,7 +192,7 @@ linux-g++-64 {
 version_detail_bash_script {
     QMAKE_EXTRA_TARGETS += write_version_detail
     PRE_TARGETDEPS = write_version_detail
-    write_version_detail.commands = ./version_detail.sh
+    write_version_detail.commands = ./version_detail_lib.sh
 }
 
 #################### Cross compilation for windows under Linux ####################

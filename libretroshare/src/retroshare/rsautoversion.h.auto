@@ -1,0 +1,4 @@
+#define RS_REVISION_NUMBER 8617
+#define RS_GIT_BRANCH "automate_version_detail2"
+#define RS_GIT_INFO "v0.6.0-rc1-214-gcbdd3e7"
+#define RS_GIT_HASH "cbdd3e7b5d087ef4bb1845e3806a8ee6e29cdfcb"
