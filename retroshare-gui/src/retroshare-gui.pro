@@ -162,6 +162,8 @@ win32 {
 		CONFIG += console
 	}
 
+	CONFIG += version_detail_ps_script
+
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
@@ -220,6 +222,14 @@ win32 {
 		# Qt 4
 		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
 	}
+}
+
+version_detail_ps_script {
+	DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
+	QMAKE_EXTRA_TARGETS += write_version_detail
+	PRE_TARGETDEPS = write_version_detail
+	#-NoProfile to make powershell start faster, remove it if you are using profile file to setup git
+	write_version_detail.commands = "powershell -NoProfile -File $$PWD\version_detail_gui.ps1"
 }
 
 ##################################### MacOS ######################################

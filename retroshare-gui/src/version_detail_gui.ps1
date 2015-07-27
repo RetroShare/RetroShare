@@ -1,3 +1,6 @@
+$scriptpath = $MyInvocation.MyCommand.Path
+$dir = Split-Path $scriptpath
+cd $dir
 
 . ../../get_version.ps1
 
