@@ -127,8 +127,11 @@ void IdentityHandler::handleWildcard(Request &req, Response &resp)
 ResponseTask* IdentityHandler::handleOwn(Request &req, Response &resp)
 {
     std::list<RsGxsId> ids;
-    mRsIdentity->getOwnIds(ids);
-    return new SendIdentitiesListTask(mRsIdentity, ids);
+    if(mRsIdentity->getOwnIds(ids))
+        return new SendIdentitiesListTask(mRsIdentity, ids);
+    resp.mDataStream.getStreamToMember();
+    resp.setWarning("identities not loaded yet");
+    return 0;
 }
 
 } // namespace resource_api

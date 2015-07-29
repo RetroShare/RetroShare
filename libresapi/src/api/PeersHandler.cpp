@@ -28,7 +28,8 @@ bool peerInfoToStream(StreamBase& stream, RsPeerDetails& details, RsPeers* peers
 {
     bool ok = true;
     peerDetailsToStream(stream, details);
-    stream << makeKeyValue("is_online", peers->isOnline(details.id));
+    stream << makeKeyValue("is_online", peers->isOnline(details.id))
+           << makeKeyValue("chat_id", ChatId(details.id).toStdString());
 
     std::string avatar_address = "/"+details.id.toStdString()+"/avatar_image";
 
@@ -91,7 +92,7 @@ void PeersHandler::tick()
 {
     std::list<RsPeerId> online;
     mRsPeers->getOnlineList(online);
-    if(!std::equal(online.begin(), online.end(), mOnlinePeers.begin()))
+    if(online != mOnlinePeers)
     {
         mOnlinePeers = online;
 
@@ -99,6 +100,13 @@ void PeersHandler::tick()
         mStateTokenServer->discardToken(mStateToken);
         mStateToken = mStateTokenServer->getNewToken();
     }
+}
+
+void PeersHandler::notifyUnreadMsgCountChanged(const RsPeerId &peer, uint32_t count)
+{
+    RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+    mUnreadMsgsCounts[peer] = count;
+    mStateTokenServer->replaceToken(mStateToken);
 }
 
 static bool have_avatar(RsMsgs* msgs, const RsPeerId& id)
@@ -163,6 +171,11 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
         // no more path element
         if(req.isGet())
         {
+            std::map<RsPeerId, uint32_t> unread_msgs;
+            {
+                RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
+                unread_msgs = mUnreadMsgsCounts;
+            }
             // list all peers
             ok = true;
             std::list<RsPgpId> identities;
@@ -204,7 +217,14 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                 for(std::vector<RsPeerDetails>::iterator vit = detailsVec.begin(); vit != detailsVec.end(); ++vit)
                 {
                     if(vit->gpg_id == *lit)
-                        peerInfoToStream(locationStream.getStreamToMember(),*vit, mRsPeers, grpInfo, have_avatar(mRsMsgs, vit->id));
+                    {
+                        StreamBase& stream = locationStream.getStreamToMember();
+                        double unread = 0;
+                        if(unread_msgs.find(vit->id) != unread_msgs.end())
+                            unread = unread_msgs.find(vit->id)->second;
+                        stream << makeKeyValueReference("unread_msgs", unread);
+                        peerInfoToStream(stream,*vit, mRsPeers, grpInfo, have_avatar(mRsMsgs, vit->id));
+                    }
                 }
             }
             resp.mStateToken = getCurrentStateToken();

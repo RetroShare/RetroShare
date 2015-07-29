@@ -227,7 +227,8 @@ public:
         mIdentityHandler(ifaces.mIdentity),
         mServiceControlHandler(rsServiceControl), // TODO: don't use global variable here
         mFileSearchHandler(sts, ifaces.mNotify, ifaces.mTurtle, ifaces.mFiles),
-        mTransfersHandler(sts, ifaces.mFiles)
+        mTransfersHandler(sts, ifaces.mFiles),
+        mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler)
     {
         // the dynamic cast is to not confuse the addResourceHandler template like this:
         // addResourceHandler(derived class, parent class)
@@ -243,6 +244,8 @@ public:
                                    &FileSearchHandler::handleRequest);
         router.addResourceHandler("transfers", dynamic_cast<ResourceRouter*>(&mTransfersHandler),
                                    &TransfersHandler::handleRequest);
+        router.addResourceHandler("chat", dynamic_cast<ResourceRouter*>(&mChatHandler),
+                                  &ChatHandler::handleRequest);
     }
 
     PeersHandler mPeersHandler;
@@ -250,6 +253,7 @@ public:
     ServiceControlHandler mServiceControlHandler;
     FileSearchHandler mFileSearchHandler;
     TransfersHandler mTransfersHandler;
+    ChatHandler mChatHandler;
 };
 
 ApiServer::ApiServer():

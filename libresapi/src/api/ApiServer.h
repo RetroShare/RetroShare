@@ -11,6 +11,7 @@
 #include "TransfersHandler.h"
 #include "LivereloadHandler.h"
 #include "TmpBlobStore.h"
+#include "ChatHandler.h"
 
 namespace resource_api{
 

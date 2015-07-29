@@ -117,7 +117,7 @@ QString WebuiPage::helpText() const
     }
     else
     {
-        QMessageBox::warning(0, tr("Webinterface not enabled"), "The webinterface is not enabled. Enable it in Settings -> Webinterface.");
+        QMessageBox::warning(0, tr("Webinterface not enabled"), tr("The webinterface is not enabled. Enable it in Settings -> Webinterface."));
     }
 }
 

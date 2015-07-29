@@ -112,4 +112,17 @@ void GxsResponseTask::streamGxsId(RsGxsId id, StreamBase &stream)
     }
 }
 
+std::string GxsResponseTask::getName(RsGxsId id)
+{
+    for(std::vector<RsIdentityDetails>::iterator vit = mIdentityDetails.begin();
+        vit != mIdentityDetails.end(); ++vit)
+    {
+        if(vit->mId == id)
+            return vit->mNickname;
+    }
+    std::cerr << "Warning: identity not found in GxsResponseTask::getName(). This is probably a bug. You must call GxsResponseTask::requestGxsId() before you can get the name." << std::endl;
+    return "";
+}
+
+
 } // namespace resource_api

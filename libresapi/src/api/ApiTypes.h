@@ -240,7 +240,10 @@ public:
     std::ostream& mDebug;
 
     inline void setOk(){mReturnCode = OK;}
-    inline void setWarning(){ mReturnCode = WARNING;}
+    inline void setWarning(std::string msg = ""){
+        mReturnCode = WARNING;
+        if(msg != "")
+            mDebug << msg << std::endl;}
     inline void setFail(std::string msg = ""){
         mReturnCode = FAIL;
         if(msg != "")

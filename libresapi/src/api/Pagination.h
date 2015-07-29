@@ -11,13 +11,15 @@ namespace resource_api
 // the type returned by dereferencing the iterator should have a stream operator for StreamBase
 // the stream operator must not add an element "id", this is done by the pagination handler
 template<class C>
-void handlePaginationRequest(Request& req, Response& resp, const C& data)
+void handlePaginationRequest(Request& req, Response& resp, C& data)
 {
+    /*
     if(!req.isGet()){
         resp.mDebug << "unsupported method. only GET is allowed." << std::endl;
         resp.setFail();
         return;
     }
+    */
     if(data.begin() == data.end()){
         // set result type to list
         resp.mDataStream.getStreamToMember();
@@ -25,15 +27,16 @@ void handlePaginationRequest(Request& req, Response& resp, const C& data)
         return;
     }
 
-    std::string first;
+    std::string begin_after;
     std::string last;
-    req.mStream << makeKeyValueReference("first", first) << makeKeyValueReference("last", last);
+    req.mStream << makeKeyValueReference("begin_after", begin_after) << makeKeyValueReference("last", last);
 
-    C::iterator it_first = data.begin();
-    if(first != "begin")
+    typename C::iterator it_first = data.begin();
+    if(begin_after != "begin" && begin_after != "")
     {
-        while(it_first != data.end() && id(*it_first) != first)
+        while(it_first != data.end() && id(*it_first) != begin_after)
             it_first++;
+        it_first++; // get after the specified element
         if(it_first == data.end())
         {
             resp.setFail("Error: first id did not match any element");
@@ -41,8 +44,8 @@ void handlePaginationRequest(Request& req, Response& resp, const C& data)
         }
     }
 
-    C::iterator it_last = data.begin();
-    if(last == "end")
+    typename C::iterator it_last = data.begin();
+    if(last == "end" || last == "")
     {
         it_last = data.end();
     }
@@ -59,7 +62,7 @@ void handlePaginationRequest(Request& req, Response& resp, const C& data)
     }
 
     int count = 0;
-    for(C::iterator it = it_first; it != it_last; ++it)
+    for(typename C::iterator it = it_first; it != it_last; ++it)
     {
         StreamBase& stream = resp.mDataStream.getStreamToMember();
         stream << *it;

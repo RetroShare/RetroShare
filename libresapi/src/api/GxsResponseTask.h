@@ -36,6 +36,7 @@ protected:
     void requestGxsId(RsGxsId id);
     // call stream function in the next cycle, then the names are available
     void streamGxsId(RsGxsId id, StreamBase& stream);
+    std::string getName(RsGxsId id);
 private:
     RsIdentity* mIdService;
     RsTokenService* mTokenService;

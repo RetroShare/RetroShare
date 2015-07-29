@@ -98,7 +98,43 @@ var AutoUpdateMixin =
 	},
 };
 
-// the signlaSlotServer decouples event senders from event receivers
+// similar to auto update mixin, but for immutable resources
+// fetches data only once
+var OneTimeUpdateMixin = 
+{
+	// react component lifecycle callbacks
+	componentDidMount: function()
+	{
+		this._aum_debug("OneTimeUpdateMixin did mount path="+this.getPath());
+		this._aum_on_data_changed();
+	},
+	// private OneTimeUpdateMixin methods
+	_aum_debug: function(msg)
+	{
+		console.log(msg);
+	},
+	_aum_on_data_changed: function()
+	{
+		RS.request({path: this.getPath()}, this._aum_response_callback);
+	},
+	_aum_response_callback: function(resp)
+	{
+		this._aum_debug("OneTimeUpdateMixin received data: "+JSON.stringify(resp));
+		// it is impossible to update the state of an unmounted component
+		// but it may happen that the component is unmounted before a request finishes
+		// if response is too late, we drop it
+		if(!this.isMounted())
+		{
+			this._aum_debug("OneTimeUpdateMixin: component not mounted. Discarding response. path="+this.getPath());
+			return;
+		}
+		var state = this.state;
+		state.data = resp.data;
+		this.setState(state);
+	},
+};
+
+// the signalSlotServer decouples event senders from event receivers
 // senders just send their events
 // the server will forwards them to all receivers
 // receivers have to register/unregister at the server
@@ -311,7 +347,12 @@ var Peers3 = React.createClass({
 					};
 					if(loc.is_online)
 						online_style.backgroundColor = "lime";
-					return(<div key={loc.peer_id} style={{color: loc.is_online? "lime": "grey"}}>{/*<div style={online_style}></div>*/}{loc.location}</div>);
+					//console.log(loc);
+					return(<div key={loc.peer_id}
+								style={{color: loc.is_online? "lime": "grey", cursor: loc.is_online ? "pointer": "auto"}}
+								onClick={function(){component.emit("change_url", {url: "chat/"+loc.chat_id});}}>
+									{/*<div style={online_style}></div>*/}{loc.location} {loc.unread_msgs !== 0? ("("+loc.unread_msgs + " unread msgs)"): ""}
+							</div>);
 				});
 				var avatars = this.props.data.locations.map(function(loc){
 					if(loc.is_online && (loc.avatar_address !== ""))
@@ -978,7 +1019,7 @@ var LoginWidget2 = React.createClass({
 		if(this.state.state === "waiting")
 		{
 			return(<div>
-				<p>please wait a second...</p>
+				<p>please wait a second... (LoginWidget2)</p>
 				</div>);
 			//return(<p>Retroshare is initialising...      please wait...</p>);
 		}
@@ -1070,6 +1111,12 @@ var Menu = React.createClass({
 	},
 	render: function(){
 		var outer = this;
+		var shutdownbutton;
+		if(this.props.fullcontrol === true)
+			shutdownbutton = <div onClick={function(){RS.request({path: "control/shutdown"});}} className="btn2">shutdown Retroshare</div>;
+		else
+			shutdownbutton = <div></div>;
+
 		return (
 				<div>
 					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "main"});}}>
@@ -1091,9 +1138,338 @@ var Menu = React.createClass({
 					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "search"});}}>
 						Search
 					</div>
+					<div className="btn2" onClick={function(){outer.emit("change_url", {url: "lobbies"});}}>
+						Chatlobbies (unfinished)
+					</div>
+					{shutdownbutton}
 					{/*<div className="btn2" onClick={function(){outer.emit("change_url", {url: "testwidget"});}}>
 						TestWidget
 					</div>*/}
+			</div>
+		);
+	},
+});
+
+var global_author_identity = null;
+
+var IdentitySelectorWidget =  React.createClass({
+	mixins: [AutoUpdateMixin],
+	getInitialState: function(){
+		return {data: []};
+	},
+	getPath: function(){
+		return "identity/own";
+	},
+	render: function(){
+		if(this.state.data.length !== 0)
+		{
+			global_author_identity = this.state.data[0].gxs_id;
+			return <div>using identity {this.state.data[0].name}</div>;
+		}
+		else
+		{
+			return <div>error: no identity found. create_new_identity not implemented. try a page reload.</div>;
+		}
+		var c = this;
+		return(
+			<div>
+				{
+					this.state.data.map(function(id){
+						return <div className="btn2" key={id.id} onClick ={function(){}}>{id.name}</div>;
+					})
+				}
+			</div>
+		);
+	},
+});
+
+var LobbyListWidget =  React.createClass({
+	mixins: [AutoUpdateMixin, SignalSlotMixin],
+	getInitialState: function(){
+		return {data: []};
+	},
+	getPath: function(){
+		return "chat/lobbies";
+	},
+	enterLobby: function(id, chat_id)
+	{
+		var c = this;
+		if(global_author_identity === null)
+		{
+			alert("no identity selected, can't join a lobby");
+			return;
+		}
+		RS.request(
+			{path:"chat/subscribe_lobby", data:{id:id, gxs_id:global_author_identity}},
+			function(){
+				c.emit("change_url", {url: "chat/"+chat_id});
+			}
+		);
+	},
+	render: function(){
+		var c = this;
+		return(
+			<div>
+				{
+					this.state.data.map(function(lobby){
+						return <div className="btn2" key={lobby.id} onClick ={function(){c.enterLobby(lobby.id, lobby.chat_id);}}>{lobby.name}<br/>{lobby.topic}<br/>{lobby.unread_msg_count + " unread msgs"}</div>;
+					})
+				}
+			</div>
+		);
+	},
+});
+
+// implements automatic update using the state token system
+// components using this mixin should have a member "getPath()" to specify the resource
+// this widget handles paginated resources
+var ListAutoUpdateMixin = 
+{
+	// react component lifecycle callbacks
+	componentDidMount: function()
+	{
+		this._aum_debug("ListAutoUpdateMixin did mount path="+this.getPath());
+		this._aum_on_data_changed();
+	},
+	componentWillUnmount: function()
+	{
+		this._aum_debug("ListAutoUpdateMixin will unmount path="+this.getPath());
+		RS.unregister_token_listener(this._aum_on_data_changed);
+	},
+
+	// private auto update mixin methods
+	_aum_debug: function(msg)
+	{
+		console.log(msg);
+	},
+	_aum_on_data_changed: function()
+	{
+		if(this.state.data.length === 0)
+		{
+			this._aum_debug("ListAutoUpdateMixin: first request");
+			RS.request({path: this.getPath()}, this._aum_response_callback);
+		}
+		else
+		{
+			this._aum_debug("ListAutoUpdateMixin: requesting elements after id="+this._aum_last_id);
+			RS.request({path: this.getPath(), data: {begin_after: this.state.data[this.state.data.length-1].id}}, this._aum_response_callback);
+		}
+	},
+	_aum_response_callback: function(resp)
+	{
+		this._aum_debug("Mixin received data: "+JSON.stringify(resp));
+		// it is impossible to update the state of an unmounted component
+		// but it may happen that the component is unmounted before a request finishes
+		// if response is too late, we drop it
+		if(!this.isMounted())
+		{
+			this._aum_debug("ListAutoUpdateMixin: component not mounted. Discarding response. path="+this.getPath());
+			return;
+		}
+		var state = this.state;
+		if(state.data.length === 0)
+		{
+			this._aum_debug("ListAutoUpdateMixin: received first response");
+			state.data = resp.data;
+		}
+		else
+		{
+			this._aum_debug("ListAutoUpdateMixin: appending response to the end");
+			state.data = state.data.concat(resp.data);
+			if(resp.data.length !== 0)
+				this._aum_last_id = resp.data[resp.data.length-1].id;
+		}
+		if(this.onDataUpdated)
+			this.onDataUpdated();
+		this.setState(state);
+		// load mroe data until there is no more data left
+		if(resp.data.length === 0)
+		{
+			RS.unregister_token_listener(this._aum_on_data_changed);
+			RS.register_token_listener(this._aum_on_data_changed, resp.statetoken);
+		}
+		else
+		{
+			this._aum_on_data_changed();
+		}
+	},
+};
+
+function getChatTypeString(info)
+{
+	if(info.is_broadcast)
+		return "[broadcast]";
+	if(info.is_gxs_id)
+		return "[distant]";
+	if(info.is_lobby)
+		return "[lobby]";
+	if(info.is_peer)
+		return "[friend]";
+	return "[unknown chat type]";
+}
+
+var ChatInfoWidget  = React.createClass({
+	mixins: [OneTimeUpdateMixin],
+	getInitialState: function(){
+		return {data: null};
+	},
+	getPath: function(){
+		return "chat/info/"+this.props.id;
+	},
+	render: function(){
+		if(this.state.data === null)
+			return <div></div>
+		return(
+			<div>
+				{getChatTypeString(this.state.data)} {this.state.data.remote_author_name}
+				<hr/>
+			</div>
+		);
+	},
+});
+
+// ChatWidget sets this, and the unread msgs widget ignores unread smgs with this id
+var global_current_chat_id = null;
+
+var UnreadChatMsgsCountWidget  = React.createClass({
+	mixins: [AutoUpdateMixin, SignalSlotMixin],
+	getInitialState: function(){
+		return {data: []};
+	},
+	getPath: function(){
+		return "chat/unread_msgs";
+	},
+	render: function(){
+		var c = this;
+		var count = 0;
+		for(var i in this.state.data)
+		{
+			if(this.state.data[i].id !== global_current_chat_id)
+				count = count + parseInt(this.state.data[i].unread_count);
+		}
+		return(
+			<div style={{cursor: "pointer"}}
+			     onClick={function(){c.emit("change_url", {url: "unread_chats"});}}
+		     >
+				{count !== 0? (count + " unread chat messages. click here to read them."): ""}
+			</div>
+		);
+	},
+});
+
+var UnreadChatMsgsListWidget  = React.createClass({
+	mixins: [AutoUpdateMixin, SignalSlotMixin],
+	getInitialState: function(){
+		return {data: []};
+	},
+	getPath: function(){
+		return "chat/unread_msgs";
+	},
+	render: function(){
+		var c = this;
+		return(
+			<div>
+				<div>Unread Chats:</div>
+				{this.state.data.map(function(i){
+					return <div className="btn2" key={i.id} onClick={function(){c.emit("change_url", {url: "chat/"+i.id});}}>
+						{getChatTypeString(i)} {"["+i.unread_count+"]"} {i.remote_author_name}
+					</div>;
+				})}
+			</div>
+		);
+	},
+});
+
+var LinkWidget = React.createClass({
+	getInitialState: function(){
+		return {expanded: false};
+	},
+	render: function(){
+		var c = this;
+		if(this.state.expanded){
+			return <div>Really follow this link? <a href={this.props.url}>{this.props.url}</a> <div onClick={function(){c.setState({expanded: false});}}>close</div></div>;
+		}
+		else{
+			return <a onClick={function(e){c.setState({expanded: true});e.stopPropagation();}} href={this.props.url}>{this.props.label}</a>;
+		}
+	},
+});
+
+// text: a string
+// links: [{first:1, second:2, third:3}]
+// text between first and second is the url of the link
+// text between secon and third is the link label
+function markup(text, links)
+{
+	function debug(stuff){console.log(stuff)}
+	var out = [];
+	var last_link = 0;
+	debug(text);
+	debug(links);
+	for(var i in links)
+	{
+		out.push(text.substr(last_link, links[i].first).replace(/&nbsp;/g, " "));
+		var url = text.substr(links[i].first, links[i].second);
+		url = url.replace(/&amp;/g, "&");
+		var label = text.substr(links[i].second, links[i].third);
+		label = label.replace(/&nbsp;/g, " ");
+		last_link = links[i].third;
+		debug(links[i]);
+		debug(url);
+		debug(label);
+		out.push(<LinkWidget url={url} label={label}/>);
+	}
+	out.push(text.substr(last_link).replace(/&nbsp;/g, " "));
+	debug(out);
+	return out;
+}
+
+var ChatWidget = React.createClass({
+	mixins: [ListAutoUpdateMixin],
+	getInitialState: function(){
+		return {data: []};
+	},
+	getPath: function(){
+		return "chat/messages/"+this.props.id;
+	},
+	onDataUpdated: function()
+	{
+		RS.request({path:"chat/mark_chat_as_read/"+this.props.id});
+	},
+	// react component lifecycle callbacks
+	componentDidMount: function()
+	{
+		global_current_chat_id = this.props.id;
+	},
+	componentWillUnmount: function()
+	{
+		global_current_chat_id = null;
+	},
+	render: function(){
+		var c = this;
+		return(
+			<div>
+				<ChatInfoWidget id={this.props.id}/>
+				{
+					this.state.data.map(function(msg){
+						return <div key={msg.id}>{msg.send_time} {msg.author_name}: {markup(msg.msg, msg.links)}</div>;
+					})
+				}
+				<input type="text" ref="input" onKeyDown={
+					function(event){
+						if(event.keyCode == 13){
+							RS.request({
+								path:"chat/send_message",
+								data:{
+									chat_id: c.props.id,
+									msg: c.refs.input.getDOMNode().value
+								}
+							});
+							// hack: directly mofify the DOM node
+							c.refs.input.getDOMNode().value = "";
+						}
+					}
+				}/>
 			</div>
 		);
 	},
@@ -1242,6 +1618,9 @@ var MainWidget = React.createClass({
 		});
 	},
 	render: function(){
+		console.log("MainWidget render()");
+		console.log(this.state);
+
 		var outer = this;
 		var mainpage = <p>page not implemented: {this.state.page}</p>;
 
@@ -1286,6 +1665,18 @@ var MainWidget = React.createClass({
 			{
 				mainpage = <SearchWidget/>;
 			}
+			if(this.state.page === "lobbies")
+			{
+				mainpage = <LobbyListWidget/>;
+			}
+			if(this.state.page.split("/")[0] === "chat")
+			{
+				mainpage = <ChatWidget id={this.state.page.split("/")[1]}/>;
+			}
+			if(this.state.page === "unread_chats")
+			{
+				mainpage = <UnreadChatMsgsListWidget/>;
+			}
 			if(this.state.page === "add_friend")
 			{
 				mainpage = <AddPeerWidget/>;
@@ -1294,6 +1685,12 @@ var MainWidget = React.createClass({
 			{
 				mainpage = <Menu fullcontrol = {this.state.data.runstate === "running_ok"}/>;
 			}
+			mainpage = 	<div>
+							<UnreadChatMsgsCountWidget/>
+							<AudioPlayerWidget/>
+							<IdentitySelectorWidget/>
+							{mainpage}
+						</div>;
 		}
 
 		var menubutton = <div onClick={function(){outer.emit("change_url", {url: "menu"});}} className="btn2">&lt;- menu</div>;
@@ -1304,7 +1701,6 @@ var MainWidget = React.createClass({
 				{/*<div id="overlay"><div className="paddingbox"><div className="btn2">test</div></div></div>*/}
 				<ConnectionStatusWidget/>
 				<PasswordWidget/>
-				<AudioPlayerWidget/>
 				{menubutton}
 				{mainpage}
 				{/*<ProgressBar progress={0.7}/>*/}
