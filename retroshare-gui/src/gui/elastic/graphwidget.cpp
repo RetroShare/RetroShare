@@ -404,7 +404,7 @@ void GraphWidget::setNameSearch(QString s)
 		std::string ns = QString::fromStdString(ni->descString()).toLower().toStdString();
 
 		if (ns.find(qs) != std::string::npos) {
-			std::cout << "found!" << '\n';
+			//std::cout << "found!" << '\n';
 			ni->setNodeDrawSize(22);
 			//std::cout << ni->getNodeDrawSize() << '\n';
 		} else {

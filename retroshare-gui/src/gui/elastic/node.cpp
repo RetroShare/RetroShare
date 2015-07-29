@@ -285,7 +285,8 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::darkGray);
-	painter->drawEllipse(-7, -7, mNodeDrawSize, mNodeDrawSize);
+	int mNodeDrawSize2 = mNodeDrawSize/2;
+	painter->drawEllipse(-mNodeDrawSize2+3, -mNodeDrawSize2+3, mNodeDrawSize, mNodeDrawSize);
 
 	QRadialGradient gradient(-3, -3, 10);
 	if (option->state & QStyle::State_Sunken) 
@@ -312,7 +313,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	}
 	painter->setBrush(gradient);
 	painter->setPen(QPen(Qt::black, 0));
-	painter->drawEllipse(-10, -10, mNodeDrawSize, mNodeDrawSize);
+	painter->drawEllipse(-mNodeDrawSize2, -mNodeDrawSize2, mNodeDrawSize, mNodeDrawSize);
 	painter->drawText(-10, 0, QString::fromUtf8(_desc_string.c_str()));
 
 	if (!mDeterminedBB)
