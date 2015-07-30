@@ -331,7 +331,7 @@ QSizeF RSGraphWidget::sizeHint(Qt::SizeHint which, const QSizeF &constraint) con
 
     switch(which)
     {
-defaut:
+default:
     case Qt::MinimumSize:
     case Qt::PreferredSize:
         return QSizeF(70*FS,12*FS);
