@@ -494,6 +494,61 @@ bool SetTlvString(void *data, uint32_t size, uint32_t *offset,
 	return ok;
 }
 
+static bool readHex(char s1,char s2,uint8_t& v)
+{
+    v=0 ;
+
+    if(s1 >= 'a' && s1 <= 'f')
+	    v += (s1-'a')+10;
+    else if(s1 >= 'A' && s1 <= 'F')
+	    v += (s1-'A')+10;
+    else if(s1 >= '0' && s1 <= '9')
+	    v += s1 - '0' ;
+    else
+	    return false ;
+
+    v = v << 4;
+
+    if(s2 >= 'a' && s2 <= 'f')
+	    v += (s2-'a')+10;
+    else if(s2 >= 'A' && s2 <= 'F')
+	    v += (s2-'A')+10;
+    else if(s2 >= '0' && s2 <= '9')
+	    v += s2 - '0' ;
+    else
+	    return false ;
+
+    return true ;
+}
+
+static bool find_decoded_string(const std::string& in,const std::string& suspicious_string)
+{
+    int ss_pointer = 0 ;
+            
+    for(int i=0;i<in.length();++i)
+    {
+        uint8_t hexv ;
+        char next_char ;
+        
+        if(in[i] == '%' && i+2 < in.length() && readHex(in[i+1],in[i+2],hexv))
+        {
+            next_char = hexv ;
+            i += 2 ;
+        }
+        else
+            next_char = in[i] ;
+        
+        if(suspicious_string[ss_pointer] == next_char)
+            ss_pointer++ ;
+        else
+            ss_pointer = 0 ;
+        
+        if(ss_pointer == suspicious_string.length())
+            return true ;
+    }
+    return false ;
+}
+
 //tested
 bool GetTlvString(void *data, uint32_t size, uint32_t *offset, 
 			uint16_t type, std::string &in) 
@@ -564,7 +619,7 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
     // TODO: check what happens with partial messages
     //
     for(int i=0;i<number_of_suspiscious_strings;++i)
-        if (in.find(suspiscious_strings[i]) != std::string::npos)
+        if (find_decoded_string(in,suspiscious_strings[i]))
         {
             std::cerr << "**** suspiscious wstring contains \"" << suspiscious_strings[i] << "\" (SVG bomb suspected). " ;
             std::cerr << "========== Original string =========" << std::endl;
