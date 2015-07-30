@@ -333,8 +333,18 @@ void ChatHandler::tick()
                && last_six_chars.size() >= a.size()
                && last_six_chars.substr(last_six_chars.size()-a.size()) == a)
             {
-                current_link.third = out.size();
-                links.push_back(current_link);
+                // only allow these protocols
+                // we don't want for example javascript:alert(0)
+                std::string http = "http://";
+                std::string https = "https://";
+                std::string retroshare = "retroshare://";
+                if(    out.substr(current_link.first, http.size()) == http
+                    || out.substr(current_link.first, https.size()) == https
+                    || out.substr(current_link.first, retroshare.size()) == retroshare)
+                {
+                    current_link.third = out.size();
+                    links.push_back(current_link);
+                }
                 current_link = Triple();
             }
         }

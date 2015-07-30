@@ -1386,12 +1386,27 @@ var LinkWidget = React.createClass({
 	},
 	render: function(){
 		var c = this;
-		if(this.state.expanded){
-			return <div>Really follow this link? <a href={this.props.url}>{this.props.url}</a> <div onClick={function(){c.setState({expanded: false});}}>close</div></div>;
-		}
-		else{
-			return <a onClick={function(e){c.setState({expanded: true});e.stopPropagation();}} href={this.props.url}>{this.props.label}</a>;
-		}
+		// setting href={something} is unsafe!
+		// only allow known link types
+		// we don't want javascript:alert(0) in a link
+		var http = "http://";
+		var https = "https://";
+		var retroshare = "retroshare://";
+		if(this.props.url.substr(0, http.length) === http
+                    || this.props.url.substr(0, https.lenth) === https
+                    || this.props.url.substr(0, retroshare.length) === retroshare)
+                {
+                    if(this.state.expanded){
+                            return <div>Really follow this link? <a href={this.props.url}>{this.props.url}</a> <span onClick={function(){c.setState({expanded: false});}}> close</span></div>;
+                    }
+                    else{
+                            return <a onClick={function(e){c.setState({expanded: true});e.preventDefault();}} href={this.props.url}>{this.props.label}</a>;
+                    }
+                }
+                else
+                {
+                    return <a>{"[unsafe link type detected: \""+this.props.url+"\"] "+this.props.label}</a>;
+                }
 	},
 });
 
