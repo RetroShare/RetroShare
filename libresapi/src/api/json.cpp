@@ -521,6 +521,15 @@ std::string SerializeValue(const Value& v)
         case StringVal		: str = "\"" + EscapeJSONString((std::string)v) + "\""; break;
 	}
 
+    // snprintf creates commas on german computers
+    // json expets decimal points, so replace all commas with decimal points
+    if(v.GetType() == FloatVal || v.GetType() == DoubleVal)
+    {
+        for(int i = 0; i < str.size(); i++)
+            if(str[i] == ',')
+                str[i] = '.';
+    }
+
 	return str;
 }
 
