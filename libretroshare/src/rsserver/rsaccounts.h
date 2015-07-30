@@ -74,7 +74,12 @@ class RsAccountsDetail
 		bool	checkAccountDirectory();
 
 		// Paths.
-        static std::string 	PathDataDirectory();
+        /**
+         * @brief PathDataDirectory
+         * @param check if set to true and directory does not exist, return empty string
+         * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
+         */
+        static std::string 	PathDataDirectory(bool check = true);
 		std::string 	PathBaseDirectory();
 
 		// PGP Path is only dependent on BaseDirectory.

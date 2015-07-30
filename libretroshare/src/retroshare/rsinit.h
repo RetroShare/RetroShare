@@ -132,7 +132,13 @@ namespace RsAccounts
 {
 	// Directories.
 	std::string ConfigDirectory(); // aka Base Directory. (normally ~/.retroshare)
-    std::string DataDirectory(); // you can call this method even before initialisation (you can't with the other methods)
+    /**
+     * @brief DataDirectory
+     * you can call this method even before initialisation (you can't with the other methods)
+     * @param check if set to true and directory does not exist, return empty string
+     * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
+     */
+    std::string DataDirectory(bool check = true);
 	std::string PGPDirectory();
 	std::string AccountDirectory();
 

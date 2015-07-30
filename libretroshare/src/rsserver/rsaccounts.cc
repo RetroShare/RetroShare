@@ -743,7 +743,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	//#include <CFBundle.h>
 #endif
 
-/*static*/ std::string RsAccountsDetail::PathDataDirectory()
+/*static*/ std::string RsAccountsDetail::PathDataDirectory(bool check)
 {
 	std::string dataDirectory;
 
@@ -808,6 +808,9 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	dataDirectory = ".";
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+    if(!check)
+        return dataDirectory;
 
 	/* Make sure the directory exists, else return emptyString */
 	if (!RsDirUtil::checkDirectory(dataDirectory))
@@ -1246,7 +1249,7 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
 
         // Directories.
 std::string RsAccounts::ConfigDirectory() { return rsAccounts->PathBaseDirectory(); }
-std::string RsAccounts::DataDirectory() { return RsAccountsDetail::PathDataDirectory(); }
+std::string RsAccounts::DataDirectory(bool check) { return RsAccountsDetail::PathDataDirectory(check); }
 std::string RsAccounts::PGPDirectory() { return rsAccounts->PathPGPDirectory(); }
 std::string RsAccounts::AccountDirectory() { return rsAccounts->PathAccountDirectory(); }
 

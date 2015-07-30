@@ -6,6 +6,8 @@
 #include <cstdio>
 #include <algorithm>
 
+#include <util/rsdir.h>
+
 // for filestreamer
 #include <retroshare/rsfiles.h>
 
@@ -70,7 +72,7 @@ namespace resource_api{
 
 std::string getDefaultDocroot()
 {
-    return RsAccounts::DataDirectory() + "/webui";
+    return RsAccounts::DataDirectory(false) + "/webui";
 }
 
 const char* API_ENTRY_PATH = "/api/v2";
@@ -403,6 +405,21 @@ static void sendMessage(MHD_Connection *connection, unsigned int status, std::st
     MHD_destroy_response(resp);
 }
 
+// convert all character to hex html entities
+static std::string escape_html(std::string in)
+{
+    std::string out;
+    for(int i = 0; i < in.size(); i++)
+    {
+        char a = (in[i]&0xF0)>>4;
+        a = a < 10? a+'0': a-10+'A';
+        char b = (in[i]&0x0F);
+        b = b < 10? b+'0': b-10+'A';
+        out += std::string("&#x")+a+b+";";
+    }
+    return out;
+}
+
 ApiServerMHD::ApiServerMHD(ApiServer *server):
     mConfigOk(false), mDaemon(0), mApiServer(server)
 {
@@ -589,8 +606,12 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
 #endif
         if(fd == -1)
         {
-#warning sending untrusted string to the browser
-            std::string msg = "<html><body><p>Error: can't open the requested file. Path is &quot;"+filename+"&quot;</p></body></html>";
+            std::string direxists;
+            if(RsDirUtil::checkDirectory(mRootDir))
+                direxists = "directory &quot;"+mRootDir+"&quot; exists";
+            else
+                direxists = "directory &quot;"+mRootDir+"&quot; does not exist!";
+            std::string msg = "<html><body><p>Error: can't open the requested file. path=&quot;"+escape_html(filename)+"&quot;</p><p>"+direxists+"</p></body></html>";
             sendMessage(connection, MHD_HTTP_NOT_FOUND, msg);
             return MHD_YES;
         }
