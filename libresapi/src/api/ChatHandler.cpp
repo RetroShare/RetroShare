@@ -319,15 +319,6 @@ void ChatHandler::tick()
             {
                 ignore = true;
             }
-            std::string a = "</a>";
-            if(   current_link.first != -1
-               && last_six_chars.size() >= a.size()
-               && last_six_chars.substr(last_six_chars.size()-a.size()) == a)
-            {
-                current_link.third = out.size();
-                links.push_back(current_link);
-                current_link = Triple();
-            }
             if(!ignore || keep_link)
                 out += in[i];
             // "falling edge" resets mode to keep
@@ -337,6 +328,15 @@ void ChatHandler::tick()
             last_six_chars += in[i];
             if(last_six_chars.size() > 6)
                 last_six_chars = last_six_chars.substr(1);
+            std::string a = "</a>";
+            if(   current_link.first != -1
+               && last_six_chars.size() >= a.size()
+               && last_six_chars.substr(last_six_chars.size()-a.size()) == a)
+            {
+                current_link.third = out.size();
+                links.push_back(current_link);
+                current_link = Triple();
+            }
         }
         m.msg = out;
         m.links = links;
