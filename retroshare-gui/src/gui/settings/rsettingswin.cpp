@@ -154,13 +154,16 @@ RSettingsWin::initStackedWidget()
 
 	 // add widgets from plugins
 
-	 for(int i=0;i<rsPlugins->nbPlugins();++i)
-	 {
-		 RsPlugin *pl = rsPlugins->plugin(i) ;
-
-		 if(pl != NULL && pl->qt_config_page() != NULL)
-			 addPage(pl->qt_config_page()) ;
-	 }
+	for(int i=0;i<rsPlugins->nbPlugins();++i)
+	{
+		RsPlugin *pl = rsPlugins->plugin(i) ;
+		if(pl != NULL)
+		{
+			ConfigPage* cp = pl->qt_config_page();
+			if(cp != NULL)
+				addPage(cp) ;
+		}
+	}
 
 	 // make the first page the default.
 
