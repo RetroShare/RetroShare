@@ -2,12 +2,12 @@
 
 ###################### PARAMETERS ####################
 version="0.6.0"
-svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
+gitpath="https://github.com/RetroShare/RetroShare.git"
 workdir=retroshare06-${version}
 #bubba3="Y"		# comment out to compile for bubba3
 ######################################################
 
-echo This script is going to build the debian source package for RetroShare, from the SVN repository.
+echo This script is going to build the debian source package for RetroShare, from the Git repository.
 
 if test -d "${workdir}" ;  then
     echo Removing the ${workdir} directory...
@@ -15,14 +15,15 @@ if test -d "${workdir}" ;  then
 fi
 
 # Parse options
-svnrev=""
+rev=""
 dist=""
 # This is the key for "Cyril Soler <csoler@sourceforge.net>"
-gpgkey="C737CA98"
+gpgkey="0932399B"
+
 while [ ${#} -gt 0 ]; do
     case ${1} in
         "-rev") shift
-            svnrev=${1}
+            rev=${1}
             shift
             ;;
         "-distribution") shift
@@ -49,46 +50,47 @@ if test "${dist}" = "" ; then
 	dist="precise trusty utopic vivid"
 fi
 
+echo Attempting to get revision number...
+ccount=`git rev-list --count --all`
+ccount=`expr $ccount + 8613 - 8267`
+
+date=`git log --pretty=format:"%ai" | head -1 | cut -d\  -f1`
+hhsh=`git log --pretty=format:"%h" | head -1`
+
+rev=${ccount}.${hhsh}
+
 echo "  "Using PGP key id   : ${gpgkey}
 echo "  "Using distributions: ${dist}
-echo "  "Using svn          : ${rev}
-
-echo Updating SVN...
-svn update
-
-if test "${svnrev}" = "" ; then
-    echo Attempting to get SVN revision number...
-    svnrev=`svn info|awk '/^Revision:/ {print $NF}'`
-else
-    echo SVN number has been provided. Forcing update.
-fi
+echo "  "Commit count       : ${ccount}
+echo "  "Date               : ${date}
+echo "  "Hash               : ${hhsh}
+echo "  "Using revision     : ${rev}
 
 echo Done.
-version="${version}"."${svnrev}"
+version="${version}"."${rev}"
 echo Got version number ${version}. 
 echo Please check that the changelog is up to date. 
 echo Hit ENTER if this is correct. Otherwise hit Ctrl+C 
 read tmp
 
-packages="."
-
-echo SVN number is ${svnrev}
-echo Version is ${version}
-
 echo Extracting base archive...
 
 mkdir -p ${workdir}/src
+echo Checking out latest snapshot...
+cd ${workdir}/src
+git clone https://github.com/RetroShare/RetroShare.git .
+cd -
+
 cp -r data   ${workdir}/src/
 cp -r debian ${workdir}/debian
 
-echo Checking out latest snapshot...
-cd ${workdir}/src
-svn co -r${svnrev} ${svnpath}/trunk/ . 
-cd -
+#svn co -r${rev} ${svnpath}/trunk/ . 
 
 # VOIP tweak  
 cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
 
+echo waiting...
+read tmp
 #   # handling of libssh
 #   LIBSSH_VERSION=0.6.4
 #   LIBSSH_LOCATION=https://git.libssh.org/projects/libssh.git/snapshot/libssh-${LIBSSH_VERSION}.tar.gz
@@ -107,7 +109,7 @@ cd ${workdir}
 echo Setting version numbers...
 
 # setup version numbers
-sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   ${svnrev}%" src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
+sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   ${rev}%" src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
 
 # Various cleaning
 echo Cleaning...
@@ -116,7 +118,7 @@ find . -depth -name ".svn" -a -type d -exec rm -rf {} \;    # remove all svn rep
 echo Calling debuild...
 for i in ${dist}; do
     echo copying changelog for ${i}
-    sed -e s/XXXXXX/"${svnrev}"/g -e s/YYYYYY/"${i}"/g ../changelog > debian/changelog
+    sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g ../changelog > debian/changelog
 
     if test "${i}" = "lucid" ; then
         cp ../control.ubuntu_lucid debian/control
