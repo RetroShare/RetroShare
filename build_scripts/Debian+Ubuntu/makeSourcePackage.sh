@@ -47,7 +47,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty utopic vivid"
+	dist="precise trusty vivid"
 fi
 
 echo Attempting to get revision number...
