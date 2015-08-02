@@ -54,15 +54,17 @@ echo Attempting to get revision number...
 ccount=`git rev-list --count --all`
 ccount=`expr $ccount + 8613 - 8267`
 
-date=`git log --pretty=format:"%ai" | head -1 | cut -d\  -f1`
+date=`git log --pretty=format:"%ai" | head -1 | cut -d\  -f1 | sed -e s/-//g`
+time=`git log --pretty=format:"%aD" | head -1 | cut -d\  -f5 | sed -e s/://g`
 hhsh=`git log --pretty=format:"%h" | head -1`
 
-rev=${ccount}.${hhsh}
+rev=${date}.${hhsh}
 
 echo "  "Using PGP key id   : ${gpgkey}
 echo "  "Using distributions: ${dist}
 echo "  "Commit count       : ${ccount}
 echo "  "Date               : ${date}
+echo "  "Time               : ${time}
 echo "  "Hash               : ${hhsh}
 echo "  "Using revision     : ${rev}
 
@@ -109,7 +111,7 @@ cd ${workdir}
 echo Setting version numbers...
 
 # setup version numbers
-sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   ${rev}%" src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
+sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x0${hssh}%"  > src/libretroshare/src/retroshare/rsversion.h
 
 # Various cleaning
 echo Cleaning...
