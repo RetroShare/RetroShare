@@ -161,7 +161,7 @@ linux-* {
 	include_rsiface.files = $$PUBLIC_HEADERS
 	INSTALLS += include_rsiface
 
-	#CONFIG += version_detail_bash_script
+	CONFIG += version_detail_bash_script
 
 
 	# linux/bsd can use either - libupnp is more complete and packaged.
@@ -192,7 +192,7 @@ linux-g++-64 {
 version_detail_bash_script {
     QMAKE_EXTRA_TARGETS += write_version_detail
     PRE_TARGETDEPS = write_version_detail
-    write_version_detail.commands = ./version_detail.sh
+    write_version_detail.commands = ./version_detail_lib.sh
 }
 
 #################### Cross compilation for windows under Linux ####################
@@ -245,12 +245,20 @@ win32 {
 	DEFINES += USE_CMD_ARGS
 
 	CONFIG += upnp_miniupnpc
+	CONFIG += version_detail_ps_script
 
 	LIBS_DIR = $$PWD/../../../libs
 	OPENPGPSDK_DIR = $$PWD/../../openpgpsdk/src
 
 	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
 	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
+}
+
+version_detail_ps_script {
+    QMAKE_EXTRA_TARGETS += write_version_detail
+    PRE_TARGETDEPS = write_version_detail
+    #-NoProfile to make powershell start faster, remove it if you are using profile file to setup git
+    write_version_detail.commands = "powershell -NoProfile -File $$PWD\version_detail_lib.ps1"
 }
 
 ################################# MacOSX ##########################################
