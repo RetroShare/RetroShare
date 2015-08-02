@@ -83,6 +83,11 @@ cd ${workdir}/src
 git clone https://github.com/RetroShare/RetroShare.git .
 cd -
 
+if ! test -d ${workdir}/src/libretroshare/; then
+	echo Git clone failed. 
+	exit
+fi
+
 cp -r data   ${workdir}/src/
 cp -r debian ${workdir}/debian
 
@@ -91,8 +96,6 @@ cp -r debian ${workdir}/debian
 # VOIP tweak  
 cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
 
-echo waiting...
-read tmp
 #   # handling of libssh
 #   LIBSSH_VERSION=0.6.4
 #   LIBSSH_LOCATION=https://git.libssh.org/projects/libssh.git/snapshot/libssh-${LIBSSH_VERSION}.tar.gz
@@ -111,11 +114,13 @@ cd ${workdir}
 echo Setting version numbers...
 
 # setup version numbers
-sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x0${hssh}%"  > src/libretroshare/src/retroshare/rsversion.h
+sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x${hhsh}%"  src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
 
 # Various cleaning
 echo Cleaning...
-find . -depth -name ".svn" -a -type d -exec rm -rf {} \;    # remove all svn repositories
+
+\rm -rf src/.git
+#find . -depth -name ".svn" -a -type d -exec rm -rf {} \;    # remove all svn repositories
 
 echo Calling debuild...
 for i in ${dist}; do
