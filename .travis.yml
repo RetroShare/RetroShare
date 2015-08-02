@@ -10,6 +10,6 @@ addons:
       name: "cavebeat/RetroShare"
       description: "Build submitted via Travis CI"
     notification_email: cave@cavebeat.org
-    build_command_prepend: "./configure; make clean"
+    build_command_prepend: "qmake; make clean"
     build_command:   "make -j 4"
     branch_pattern: coverity_scan
