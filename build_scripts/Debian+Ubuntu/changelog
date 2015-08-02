@@ -1,4 +1,84 @@
-retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+   GUI
+      - improved filtering method against lol bombs. Thx to ConcernedCitizen for pointing this out
+      - fix #21 typo "defaut" instead of "default" in switch statement in RSGraphWidget (patch from Chozabu)
+      - moved all bw graph files in statistics. Removed outqueue info widget. Created new cpp files to host the bw graph code. 
+        Started minimal UI to display bw information. The goal is t
+      - fixed position of scaled/highlighted nodes in node graph (patch from Chozabu)
+      - fixed a few bugs in statistics GUI. Still misses names and proper curve display
+      - Enabled Messenger Window in system tray icon.
+      - Fixed overlay icon (star) for tray icon.
+      - fixed up various places in the GUI for high DPI screens (new icons and icon qrc file generation script, font-size based widgets, etc)
+      - disable update of group messages for IdService since it is unused and takes some bandwidth
+      - fixed typo in server page "127.0.01"
+      - Added stylesheet to plugins.
+      - Moved fix font from GenCertDialog to qss (Modified patch from Henry). Added defaults to ui without style sheet
+      - Fixed typo in string (Patch from Henry).
+      - Added customize of columns to RSTreeWidget.
+      - added back functionality to choose DL directory for each channel
+      - Removed generate of channel messages.
+      - FriendList: - Added customize of columns with RSTreeWidget. - Reduced display menu.
+      - Optimized fill of forums when modifying the read state.
+      - Fixed compile with Qt 5
+      - Added disable/enable of GxsIdDetails process. Disabled GxsIdDetails process when filling gxs id's in forums.
+      - Optimized load of forums by moving the avatar handling for the tooltip to the tooltip creation.
+
+
+    added correct image file for finished transfers
+
+      - added correct image file for finished transfers
+
+   Backend / Coverity bug fixes
+      - removed old function entry to collect outqueue stats.
+      - removed unused method for OutQueue statistics; improved BW curve display; fixed a few display bugs
+      - Added missing initialization in - pqissl - pqissludp - PeerConnectStateBox - RsTlvBanListEntry - RsServer 
+        TcpStream - PGPCertificateInfo - peerConnectAddress - AudioInputConfig
+      - Fixed usage of member _thread_id in RsMutex
+      - Removed unused member from ProfileManager.
+      - Added missing restore of ostream format (std::dec) in rschatitems.cc.
+      - Added missing restore of ostream format (std::dec) in CreateLobbyDialog::createLobby.
+      - Fixed crash in ChatMsgItem::removeItem when "mParent == NULL".
+      - Added missing restore of ostream format (std::dec) in p3ServiceServer::sendItem.
+      - Fixed crash in ChatLobbyUserNotify::subMenuClicked when using "Remove All" of the chat lobby notifier.
+      - Fixed possible crash in DetailsDialog::setFileHash by checking return value of dynamic_cast.
+      - Fixed possible crash in ftServer::receiveTurtleData by checking return value of dynamic_cast.
+      - Fixed possible crash in ftServer::handleIncoming by checking return value of dynamic_cast.
+      - Fixed possible crash in ServiceControlSerialiser by checking return value of dynamic_cast.
+      - Fixed possible crash in RsFileTransferSerialiser by checking return value of dynamic_cast.
+      - Fixed possible crash in ChatLobbyDialog::init by checking return value of dynamic_cast.
+      - Fixed possible crash in RsGRouterSerialiser by checking return value of dynamic_cast.
+      - added basic functions to collect bandwidth info in pqistreamer both ways; added a sorting method in BWGraphSource 
+        to create curves from extracted BW info. Still not yet functiona
+      - Fixed possible crash in RsGxsIdSerialiser by checking return value of dynamic_cast.
+      - Fixed possible crash in p3GRouter by checking return value of dynamic_cast.
+      - Removed dead code from ImHistoryBrowser::fillItem.
+      - Removed potentially unintentional integer overflow in NxsBandwidthRecorder::recordEvent.
+      - Added initialize of RsGxsChannelPost members.
+      - fixed potential integer problem in image de-serialization (reported by HM)
+      - Added initialize of RsVOIPPingItem members
+      - fixed potential integer problems in de-serialization of different TLV items (patch from Henry)
+
+   Plugins
+      - fix #20 crash on shutdown with plugins enabled. Settings window did leak plugin config pages (patch from hunbernd)
+
+   WebUI
+      - allow only whitelisted link protocols to prevent javascript in links
+      - improved error message in webui: show full path of file if read failed
+      - make link detection work if the message ends with </a>
+      - added chat
+      - fix serialisation of floating point numbers in SuperEasyJSON for german locale. JSON expects decimal points, but german locale used comma.
+
+   GXS IDs
+      - added additional key checking for IDs received during distant chat DH handshake
+      - added methods to check public/private keys for consistent fingerprint and content. Should be later used to check GXS keys when they arrive from neighbor nodes.
+
+   Distant chat
+      - Added check of function parameter to DistantChatService::handleRecvDHPublicKey.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 02 Aug 2015 16:00:00 +0100
+
+retroshare06 (0.6.0-0.8551~precise) precise; urgency=low
 
    GUI
 
