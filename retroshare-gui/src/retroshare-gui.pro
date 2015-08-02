@@ -69,7 +69,7 @@ INCLUDEPATH *= retroshare-gui
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
-	#CONFIG += version_detail_bash_script
+	CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
@@ -121,7 +121,7 @@ version_detail_bash_script {
 	DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
 	QMAKE_EXTRA_TARGETS += write_version_detail
 	PRE_TARGETDEPS = write_version_detail
-	write_version_detail.commands = ./version_detail.sh
+	write_version_detail.commands = ./version_detail_gui.sh
 }
 
 install_rs {
@@ -161,6 +161,8 @@ win32 {
 		# show console output
 		CONFIG += console
 	}
+
+	CONFIG += version_detail_ps_script
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -220,6 +222,14 @@ win32 {
 		# Qt 4
 		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
 	}
+}
+
+version_detail_ps_script {
+	DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
+	QMAKE_EXTRA_TARGETS += write_version_detail
+	PRE_TARGETDEPS = write_version_detail
+	#-NoProfile to make powershell start faster, remove it if you are using profile file to setup git
+	write_version_detail.commands = "powershell -NoProfile -File $$PWD\version_detail_gui.ps1"
 }
 
 ##################################### MacOS ######################################
