@@ -1,50 +1,15 @@
-language: cpp
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "iQ4oroMsE1Olp2ClnAXw45zzTlGcgQBuu/s2k7GGGLibXcuQkkwMpyIQaWQzrs/lPgNOu7o2vT2OzyAkW6xKvpuGW2s3cJ2+kMetVuEaB8thrBhfz44g5uHB8ep1+eDCSW3c1TyWpI5c6R0FTwwRcloJdwLsFm8wvR0bHDQ9B9CdixiX1/RtWw4U9/QqtmuSWbQFz3skNo4MurbjKh3u/DmuddFSWJoS/B69vkSrUtfHDBP8x2dVqXOXMfQZ6vZI+RhQPp7LN17g5VbyMzPlNihGY7muBuxn1i56d1Q3hz82d1bfSAywK1aiGOL/fZwkd5cpvUIF9mltYs9l5Xj/1mkcBLUhVuMbi7FfrbKgXwInG4p9zduEADGsg44kQ7W6fp9qcEpaInrDsXk55KqP2IF6/MkoG5zqRHgqgjnGy8qW7PTXHyZeagvXOdQHyCeR+XC4P973n7elTF4a/VM2VAvjm6+AGhNUjPaHz8fmLdgNs+WZZxRMqDKvUo0qk3KH4N6rrNkVOp/gkSDQrpN+jaK7QASyCeEo9DYjNstabzsYYu0dEjj7ZrRN5cUGYt6hBk2HTU2suUiSi5zVocXEJRDDHWGD0reXKDsnWTtjqtj+ef7tk9uo3UhKwNvC/WAktzrgMQfj5MGZ0rz3P7A96dKeWmCmmjR9X5Xne0iqW1M="
 
-compiler:
-  - gcc
-
-before_install:
-  - echo $LANG
-  - echo $LC_ALL
-  - sudo apt-get update
-  - sudo apt-get install build-essential checkinstall cmake g++ git libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libdc1394-22-dev libglib2.0-dev libcv-dev libopencv-highgui-dev libhighgui-dev
-  - sudo apt-get install libgnome-keyring-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev libjasper-dev libjpeg-dev libmicrohttpd-dev libopencv-dev libprotobuf-dev libqt4-dev
-  - sudo apt-get install libspeex-dev libspeexdsp-dev libsqlite3-dev libssl-dev libswscale-dev
-  - sudo apt-get install libtbb-dev libtiff4-dev libupnp-dev libv4l-dev libxine-dev libxslt1-dev libxss-dev make pkg-config protobuf-compiler python-dev python-numpy subversion git yasm qtmobility-dev
-#  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get install -y llvm-3.4 llvm-3.4-dev; fi
-#  - rvm use $RVM --install --binary --fuzzy
-#  - gem update --system
-#  - gem --version
-
-before_script:
-  - qmake
-
-script: make
-
-#after_success:
-#  - if [ $TRAVIS_BRANCH == $TRAVIS_TAG ]; then rake deploy; fi
-
-#branches:
-#  only:
-#    - master
-#    - travis
-
-notifications:
-  email: false
-  irc:
-    channels:
-      - "chat.freenode.net#retroshare"
-    template:
-      - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
-#  webhooks:
-#    urls:
-#      - https://webhooks.gitter.im/e/9502afd22ca6c8e85fb3
-#    on_success: change
-#    on_failure: always
-#    on_start: always
-
-#env:
-#  - RVM=2.0.0 LANG="en_US.UTF-8"
-
-os:
-  - linux
+addons:
+  coverity_scan:
+    project:
+      name: "cavebeat/RetroShare"
+      description: "Build submitted via Travis CI"
+    notification_email: cave@cavebeat.org
+    build_command_prepend: "./configure; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
