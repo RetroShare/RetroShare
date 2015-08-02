@@ -272,6 +272,7 @@ mac {
 		DESTDIR = lib
 
 		CONFIG += upnp_miniupnpc
+		CONFIG += version_detail_bash_script
 
 		# zeroconf disabled at the end of libretroshare.pro (but need the code)
 		CONFIG += zeroconf
