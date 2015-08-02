@@ -56,7 +56,7 @@ ccount=`expr $ccount + 8613 - 8267`
 
 date=`git log --pretty=format:"%ai" | head -1 | cut -d\  -f1 | sed -e s/-//g`
 time=`git log --pretty=format:"%aD" | head -1 | cut -d\  -f5 | sed -e s/://g`
-hhsh=`git log --pretty=format:"%h" | head -1`
+hhsh=`git log --pretty=format:"%H" | head -1 | cut -c1-8`
 
 rev=${date}.${hhsh}
 
