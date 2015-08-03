@@ -131,7 +131,9 @@ for i in ${dist}; do
         cp ../control.ubuntu_lucid debian/control
     elif test "${i}" = "squeeze" ; then
         cp ../control.squeeze_bubba3 debian/control
-    elif test "${i}" = "precise" -o "${i}" = "wheezy" -o "${i}" = "jessie" ; then
+    elif test "${i}" = "precise" ; then
+        cp ../control.${i} debian/control
+    elif test "${i}" = "wheezy" -o "${i}" = "jessie" ; then
         # Cloning sqlcipher
         git clone https://github.com/sqlcipher/sqlcipher.git
         cd sqlcipher
