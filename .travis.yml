@@ -15,7 +15,9 @@ before_install:
 before_script:
   - qmake
 
-script: make
+
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
+
 
 env:
   global:
