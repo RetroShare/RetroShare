@@ -6,7 +6,7 @@ TARGET = retroshare
 
 #GXS Stuff.
 # This should be disabled for releases until further notice.
-CONFIG += gxs debug
+CONFIG += gxs 
 
 #CONFIG += dsdv
 
@@ -19,7 +19,6 @@ profiling {
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
 
-CONFIG += debug
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
