@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/RetroShare/RetroShare.svg?branch=master)](https://travis-ci.org/RetroShare/RetroShare)
+
 To compile:
 
 - install the package dependencies. On ubuntu:
