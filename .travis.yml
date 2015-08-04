@@ -16,10 +16,26 @@ before_install:
 #  - gem update --system
 #  - gem --version
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "iQ4oroMsE1Olp2ClnAXw45zzTlGcgQBuu/s2k7GGGLibXcuQkkwMpyIQaWQzrs/lPgNOu7o2vT2OzyAkW6xKvpuGW2s3cJ2+kMetVuEaB8thrBhfz44g5uHB8ep1+eDCSW3c1TyWpI5c6R0FTwwRcloJdwLsFm8wvR0bHDQ9B9CdixiX1/RtWw4U9/QqtmuSWbQFz3skNo4MurbjKh3u/DmuddFSWJoS/B69vkSrUtfHDBP8x2dVqXOXMfQZ6vZI+RhQPp7LN17g5VbyMzPlNihGY7muBuxn1i56d1Q3hz82d1bfSAywK1aiGOL/fZwkd5cpvUIF9mltYs9l5Xj/1mkcBLUhVuMbi7FfrbKgXwInG4p9zduEADGsg44kQ7W6fp9qcEpaInrDsXk55KqP2IF6/MkoG5zqRHgqgjnGy8qW7PTXHyZeagvXOdQHyCeR+XC4P973n7elTF4a/VM2VAvjm6+AGhNUjPaHz8fmLdgNs+WZZxRMqDKvUo0qk3KH4N6rrNkVOp/gkSDQrpN+jaK7QASyCeEo9DYjNstabzsYYu0dEjj7ZrRN5cUGYt6hBk2HTU2suUiSi5zVocXEJRDDHWGD0reXKDsnWTtjqtj+ef7tk9uo3UhKwNvC/WAktzrgMQfj5MGZ0rz3P7A96dKeWmCmmjR9X5Xne0iqW1M="
+
+addons:
+  coverity_scan:
+    project:
+      name: "cavebeat/RetroShare"
+      description: "Build submitted via Travis CI"
+    notification_email: cave@cavebeat.org
+    build_command_prepend: "qmake; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
+
 before_script:
   - qmake
 
-script: make
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
 
 #after_success:
 #  - if [ $TRAVIS_BRANCH == $TRAVIS_TAG ]; then rake deploy; fi
