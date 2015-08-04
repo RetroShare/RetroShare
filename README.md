@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/RetroShare/RetroShare.svg?branch=master)](https://travis-ci.org/RetroShare/RetroShare)
+
 To compile:
 
 - install the package dependencies. On ubuntu:
@@ -7,43 +9,41 @@ To compile:
       libspeex-dev libspeexdsp-dev libxslt1-dev libprotobuf-dev \
       protobuf-compiler cmake libcurl4-openssl-dev
 
-- create project directory (e.g. ~/retroshare) and check out the source code
-   # mkdir ~/retroshare
-   # cd ~/retroshare && svn co svn://svn.code.sf.net/p/retroshare/code/trunk trunk
+- create project directory (e.g. ~/workbench) and check out the source code
+   # cd ~
+   # mkdir workbench
+   # cd ~/workbench
+   # git clone --depth 1 https://github.com/RetroShare/RetroShare.git retroshare
 
 - create a new directory named lib
    # mkdir lib
 
-- get source code for libssh-0.5.4, unzip it, and create build directory (if needed) 
-
-   # cd lib
-   # wget http://git.libssh.org/projects/libssh.git/snapshot/libssh-libssh-0.6.4.zip
-   # tar zxvf libssh-0.6.4.tar.gz
-   # cd libssh-0.6.4
+- get source code for libssh-0.7.1 and create build directory (if needed) 
+   # cd ~/workbench/lib
+   # git clone -b 'libssh-0.7.1' --single-branch  --depth 1 git://git.libssh.org/projects/libssh.git 
+   # cd libssh
    # mkdir build
    # cd build
    # cmake -DWITH_STATIC_LIB=ON -DWITH_GSSAPI=OFF ..
    # make
    # cd ../../..
 
-- get source code for sqlcipher, and build it (only needed for GXS) 
-
-   # cd lib
-   # git clone git://github.com/sqlcipher/sqlcipher.git
+- get source code for sqlcipher-v3.3.1, and build it  
+   # cd ~/workbench/lib
+   # git clone -b 'v3.3.1' --single-branch --depth 1 git://github.com/sqlcipher/sqlcipher.git
    # cd sqlcipher
    # ./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" \
      LDFLAGS="-lcrypto"
    # make
    # cd ..
 
-- go to your svn base directory
-   # cd trunk
-   # qmake CONFIG=release
-   # make -j 4
+- go to your retroshare directory
+   # cd ~/workbench/retroshare
+   # qmake CONFIG=release && make clean && make -j 4
 
    => the executable produced will be 
-         trunk/retroshare-gui/src/Retroshare
-         trunk/retroshare-nogui/src/retroshare-nogui
+         retroshare/retroshare-gui/src/Retroshare
+         retroshare/retroshare-nogui/src/retroshare-nogui
 
 - to use the SSH RS server (nogui):
 
