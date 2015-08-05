@@ -6,7 +6,8 @@ Compilation on Ubuntu/Debian
    # sudo apt-get install libglib2.0-dev libupnp-dev qt4-dev-tools \
       qt4-dev-tools libqt4-dev libssl-dev libxss-dev libgnome-keyring-dev libbz2-dev \
       libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev \
-      libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev
+      libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev \
+      libopencv-dev, tcl8.5, libmicrohttpd-dev
 
 2 - checkout the source code
 
