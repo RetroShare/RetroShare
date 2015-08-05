@@ -17,14 +17,15 @@ Compilation on Ubuntu/Debian
 
 3 - compile
 
-   # cd trunk
-   # qmake CONFIG=debug
+   # mkdir build
+   # cd build
+   # qmake CONFIG=debug ../trunk
    # make
 
    => the executables produced will be 
 
-         trunk/retroshare-gui/src/Retroshare
-         trunk/retroshare-nogui/src/retroshare-nogui
+         build/retroshare-gui/src/Retroshare
+         build/retroshare-nogui/src/retroshare-nogui
 
 If libsqlcipher is not available as a package:
 =============================================
@@ -67,5 +68,3 @@ Using retroshare-nogui & webUI
       http://localhost:9090
 
    That also works with a retroshare GUI of course.
-
-
