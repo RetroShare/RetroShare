@@ -406,9 +406,9 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     if(pgp_id.isNull())
     {
         std::string err_string;
-        if(!RsAccounts::GeneratePGPCertificate(pgp_name, "", pgp_password, pgp_id, 2048, err_string))
+        if(!RsAccounts::GeneratePGPCertificate(pgp_name, "", pgp_password, pgp_id, 4096, err_string))
         {
-            resp.setFail("could not cerate pgp key: "+err_string);
+            resp.setFail("could not create pgp key: "+err_string);
             return;
         }
     }

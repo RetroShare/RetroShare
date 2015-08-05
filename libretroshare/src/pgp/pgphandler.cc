@@ -34,6 +34,7 @@ static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_PASSWD_SIZE = 1024 ;
 
 //#define DEBUG_PGPHANDLER 1
 //#define PGPHANDLER_DSA_SUPPORT
+#define MkstempFailed -1
 
 PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
@@ -1955,7 +1956,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_to_remov
 	char template_name[_pubring_path.length()+8] ;
 	sprintf(template_name,"%s.XXXXXX",_pubring_path.c_str()) ;
 	
-	if(mktemp(template_name) == NULL)
+	if(mkstemp(template_name) == MkstempFailed)
 	{
 		std::cerr << "PGPHandler::removeKeysFromPGPKeyring(): cannot create keyring backup file. Giving up." << std::endl;
 		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP ;
