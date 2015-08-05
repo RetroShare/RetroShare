@@ -189,9 +189,16 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-    QMAKE_EXTRA_TARGETS += write_version_detail
-    PRE_TARGETDEPS = write_version_detail
-    write_version_detail.commands = ./version_detail.sh
+    linux-* {
+        QMAKE_EXTRA_TARGETS += write_version_detail
+        PRE_TARGETDEPS = write_version_detail
+        write_version_detail.commands = ./version_detail.sh
+    }
+    win32 {
+        QMAKE_EXTRA_TARGETS += write_version_detail
+        PRE_TARGETDEPS = write_version_detail
+        write_version_detail.commands = $$PWD/version_detail.bat
+    }
 }
 
 #################### Cross compilation for windows under Linux ####################
