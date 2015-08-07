@@ -115,11 +115,6 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
         item->sendTime = cm.sendTime;
         item->recvTime = cm.recvTime;
 
-        if (cm.chat_id.isLobbyId()) {
-			// disable save to disc for chat lobbies until they are saved
-			item->saveToDisc = false;
-		}
-
         item->message = cm.msg ;
 		//librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
 
