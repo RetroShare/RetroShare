@@ -113,6 +113,7 @@ void QVideoOutputDevice::showFrameOff()
 
 void QVideoOutputDevice::showFrame(const QImage& img)
 {
-	setPixmap(QPixmap::fromImage(img).scaled(minimumSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
+    std::cerr << "img.size = " << img.width() << " x " << img.height() << std::endl;
+	setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*640/480,height()),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
 }
 
