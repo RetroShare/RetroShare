@@ -88,7 +88,10 @@ void QVideoInputDevice::grabFrame()
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
-	return _video_encoder->nextPacket(chunk) ;
+    if(_video_encoder)
+	    return _video_encoder->nextPacket(chunk) ;
+    else 
+	    return false ;
 }
 
 QVideoInputDevice::~QVideoInputDevice()

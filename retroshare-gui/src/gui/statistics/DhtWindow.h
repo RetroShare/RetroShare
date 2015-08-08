@@ -42,10 +42,16 @@ public:
 public slots:
 	virtual void updateDisplay() ;
 	
+  void filterColumnChanged(int);
+  void filterItems(const QString &text);
+
+	
 protected:
     //void changeEvent(QEvent *e);
 
 private:
+
+    bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
     /** Qt Designer generated object */
     Ui::DhtWindow ui;
