@@ -56,6 +56,8 @@ struct RsVOIPDataChunk
 	void *data ; // create/delete using malloc/free.
 	uint32_t size ;
 	RsVOIPDataType type ;	// video or audio
+    
+    	void clear() ;
 };
 
 class RsVOIP
