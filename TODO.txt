@@ -63,7 +63,7 @@ GUI
 0013 [ ]    new design, new icons, minimal UI (from purplehaze420) comment: use webui as base for minimal ui
             cyril: we cannot change everything now. But purplehaze420 said he would provide a consistent set of icons. That would be great.
 
-0014 [ ]    go to Settings -> Permissions: wait for scrollbars to appear go back to any other setting (e.g. Notify): the page now 
+0014 [X]    go to Settings -> Permissions: wait for scrollbars to appear go back to any other setting (e.g. Notify): the page now 
             needs the same space as the permission matrix (happens on windows + linux; can be "fixed" by closing and reopen the setting window)
             (from sehraf)
 
