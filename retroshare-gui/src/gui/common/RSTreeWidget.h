@@ -37,9 +37,11 @@ public:
 
 	void filterItems(int filterColumn, const QString &text);
 
+	void setSettingsVersion(qint32 version);
 	void processSettings(bool load);
 
-	void setColumnCustomizable(bool customizable);
+	void enableColumnCustomize(bool customizable);
+	void setColumnCustomizable(int column, bool customizable);
 
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
@@ -58,7 +60,9 @@ protected:
 
 private:
 	QString mPlaceholderText;
-	bool mColumnCustomizable;
+	bool mEnableColumnCustomize;
+	quint32 mSettingsVersion;
+	QMap<int, bool> mColumnCustomizable;
 };
 
 #endif

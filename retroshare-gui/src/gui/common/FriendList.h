@@ -52,10 +52,14 @@ public:
     enum Column
     {
         COLUMN_NAME         = 0,
-        COLUMN_AVATAR       = 1,
-        COLUMN_STATE        = 2,
-        COLUMN_LAST_CONTACT = 3,
-        COLUMN_IP           = 4
+        COLUMN_LAST_CONTACT = 1,
+        COLUMN_IP           = 2
+    };
+
+    enum SortMode
+    {
+        SORT_MODE_NAME  = 1,
+        SORT_MODE_STATE = 2
     };
 
 public:
@@ -74,7 +78,9 @@ public:
 
     virtual void updateDisplay();
     void setColumnVisible(Column column, bool visible);
-    void sortByColumn(Column column, Qt::SortOrder sortOrder);
+
+    void setSortMode(SortMode sortMode);
+    SortMode sortMode();
 
     QColor textColorGroup() const { return mTextColorGroup; }
     QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
@@ -92,11 +98,12 @@ public:
 
 public slots:
     void filterItems(const QString &text);
+    void setSortByName();
+    void setSortByState();
 
-    void setBigName(bool bigName); // show customStateString in second line of the name cell
     void setShowGroups(bool show);
     void setHideUnconnected(bool hidden);
-    void setHideState(bool hidden);
+    void setShowState(bool show);
 
 private slots:
     void peerTreeColumnVisibleChanged(int column, bool visible);
@@ -107,12 +114,11 @@ protected:
 
 private:
     Ui::FriendList *ui;
-    RSTreeWidgetItemCompareRole *m_compareRole;
+    RSTreeWidgetItemCompareRole *mCompareRole;
 
     // Settings for peer list display
-    bool mBigName;
     bool mShowGroups;
-    bool mHideState;
+    bool mShowState;
     bool mHideUnconnected;
 
     QString mFilterText;
@@ -126,14 +132,12 @@ private:
     QColor mTextColorStatus[RS_STATUS_COUNT];
 
     QTreeWidgetItem *getCurrentPeer() const;
-    void initializeHeader(bool afterLoadSettings);
     void getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds);
 
 private slots:
     void groupsChanged();
     void insertPeers();
     void peerTreeWidgetCustomPopupMenu();
-    void updateAvatar(const QString &);
     void updateMenu();
 
     void pastePerson();

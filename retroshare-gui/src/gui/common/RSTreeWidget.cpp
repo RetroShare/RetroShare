@@ -29,7 +29,8 @@
 
 RSTreeWidget::RSTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
-	mColumnCustomizable = false;
+	mEnableColumnCustomize = false;
+	mSettingsVersion = 0; // disabled
 }
 
 void RSTreeWidget::setPlaceholderText(const QString &text)
@@ -117,32 +118,45 @@ bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QSt
 	return (itemVisible || visibleChildCount);
 }
 
+void RSTreeWidget::setSettingsVersion(qint32 version)
+{
+	mSettingsVersion = version;
+}
+
 void RSTreeWidget::processSettings(bool load)
 {
 	if (load) {
-		// load settings
+		// Load settings
 
-		// state of tree widget
-		header()->restoreState(Settings->value(objectName()).toByteArray());
+		// State of tree widget
+		if (mSettingsVersion == 0 || Settings->value(QString("%1Version").arg(objectName())) == mSettingsVersion) {
+			// Compare version, because Qt can crash in restoreState after column changes
+			header()->restoreState(Settings->value(objectName()).toByteArray());
+		}
 	} else {
-		// save settings
+		// Save settings
 
 		// state of tree widget
 		Settings->setValue(objectName(), header()->saveState());
+
+		// Save version
+		if (mSettingsVersion) {
+			Settings->setValue(QString("%1Version").arg(objectName()), mSettingsVersion);
+		}
 	}
 }
 
-void RSTreeWidget::setColumnCustomizable(bool customizable)
+void RSTreeWidget::enableColumnCustomize(bool customizable)
 {
-	if (customizable == mColumnCustomizable) {
+	if (customizable == mEnableColumnCustomize) {
 		return;
 	}
 
-	mColumnCustomizable = customizable;
+	mEnableColumnCustomize = customizable;
 
 	QHeaderView *h = header();
 
-	if (mColumnCustomizable) {
+	if (mEnableColumnCustomize) {
 		h->setContextMenuPolicy(Qt::CustomContextMenu);
 		connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 	} else {
@@ -151,9 +165,14 @@ void RSTreeWidget::setColumnCustomizable(bool customizable)
 	}
 }
 
+void RSTreeWidget::setColumnCustomizable(int column, bool customizable)
+{
+	mColumnCustomizable[column] = customizable;
+}
+
 void RSTreeWidget::headerContextMenuRequested(const QPoint &pos)
 {
-	if (!mColumnCustomizable) {
+	if (!mEnableColumnCustomize) {
 		return;
 	}
 
@@ -162,6 +181,10 @@ void RSTreeWidget::headerContextMenuRequested(const QPoint &pos)
 	QTreeWidgetItem *item = headerItem();
 	int columnCount = item->columnCount();
 	for (int column = 0; column < columnCount; ++column) {
+		QMap<int, bool>::const_iterator it = mColumnCustomizable.find(column);
+		if (it != mColumnCustomizable.end() && *it == false) {
+			continue;
+		}
 		QAction *action = contextMenu.addAction(QIcon(), item->text(column), this, SLOT(columnVisible()));
 		action->setCheckable(true);
 		action->setData(column);
