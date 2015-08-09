@@ -86,15 +86,15 @@ const char *StatusDefs::imageStatus(unsigned int status)
 {
 	switch (status) {
 	case RS_STATUS_OFFLINE:
-		return ":/images/status/user-offline.png";
+		return ":/icons/user-offline_64.png";
 	case RS_STATUS_AWAY:
-		return ":/images/status/user-away.png";
+		return ":/icons/user-away_64.png";
 	case RS_STATUS_BUSY:
-		return ":/images/status/user-busy.png";
+		return ":/icons/user-busy_64.png";
 	case RS_STATUS_ONLINE:
-		return ":/images/status/user-online.png";
+		return ":/icons/user-online_64.png";
 	case RS_STATUS_INACTIVE:
-		return ":/images/status/user-away-extended.png";
+		return ":/icons/user-away-extended_64.png";
 	}
 
 	std::cerr << "StatusDefs::imageUser: Unknown status requested " << status;
