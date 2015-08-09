@@ -69,6 +69,7 @@ class AudioInputConfig : public ConfigPage
 		//VideoDecoder *videoDecoder ;
 		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
+        	VideoDecoder *videoDecoder ;
 		bool loaded;
 
         voipGraphSource *graph_source ;
@@ -96,6 +97,7 @@ class AudioInputConfig : public ConfigPage
 	private slots:
 		void loadSettings();
 		void emptyBuffer();
+		void togglePreview(bool) ;
 
 		void on_qsTransmitHold_valueChanged(int v);
 		void on_qsAmp_valueChanged(int v);

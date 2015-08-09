@@ -42,6 +42,12 @@ class QVideoInputDevice: public QObject
 		//
 		bool getNextEncodedPacket(RsVOIPDataChunk&) ;
 
+        	// gets the estimated current bandwidth required to transmit the encoded data, in B/s
+        	//
+        	uint32_t currentBandwidth() const { return _estimated_bw ; }
+        
+        	// control
+        
 		void start() ;
 		void stop() ;
 
@@ -59,5 +65,9 @@ class QVideoInputDevice: public QObject
 		QVideoOutputDevice *_echo_output_device ;
 
 		std::list<RsVOIPDataChunk> _out_queue ;
+        
+        	uint32_t _estimated_bw ;
+	    time_t _last_bw_estimate_TS;
+        uint32_t _total_encoded_size ;
 };
 

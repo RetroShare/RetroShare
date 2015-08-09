@@ -55,9 +55,9 @@ void AudioInputDialog::showEvent(QShowEvent *) {
 class voipGraphSource: public RSGraphSource
 {
 public:
-    voipGraphSource() {}
+    voipGraphSource() : video_input(NULL) {}
     
-    void setVideoInput(QVideoInputDevice *vid) { video_input = vid ; }
+    void setVideoInput(const QVideoInputDevice *vid) { video_input = vid ; }
     
      virtual QString displayName(int) const { return tr("Required bandwidth") ;}
     
@@ -73,21 +73,14 @@ public:
     
     virtual void getValues(std::map<std::string,float>& vals) const
     {
-        RsVOIPDataChunk chunk ;
-        uint32_t total_size = 0 ;
         vals.clear() ;
         
-	while(video_input && video_input->getNextEncodedPacket(chunk))
-	{
-                total_size += chunk.size ;
-              chunk.clear() ;  
-	}
-    
-    	vals[std::string("bw")] = (float)total_size ;
+	if(video_input)
+		vals[std::string("bw")] = video_input->currentBandwidth() ;
     }
     
 private:
-    QVideoInputDevice *video_input ;
+    const QVideoInputDevice *video_input ;
 };
 
 void voipGraph::setVoipSource(voipGraphSource *gs) 
@@ -127,12 +120,31 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
 	 videoInput->setEchoVideoTarget(ui.videoDisplay) ;
 	 videoInput->setVideoEncoder(new JPEGVideoEncoder()) ;
      
+     videoDecoder = new JPEGVideoDecoder;
+     videoDecoder->setDisplayTarget(NULL) ;
+             
      graph_source = new voipGraphSource ;
      ui.voipBwGraph->setSource(graph_source);
      
      graph_source->setVideoInput(videoInput) ;
      graph_source->setCollectionTimeLimit(1000*300) ;
      graph_source->start() ;
+     
+     QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
+}
+
+void AudioInputConfig::togglePreview(bool b)
+{
+    if(b)
+    {
+        videoInput->setEchoVideoTarget(NULL) ;
+	videoDecoder->setDisplayTarget(ui.videoDisplay) ;
+    }
+    else
+    {
+        videoInput->setEchoVideoTarget(ui.videoDisplay) ;
+	videoDecoder->setDisplayTarget(NULL) ;
+    }
 }
 
 AudioInputConfig::~AudioInputConfig()
@@ -352,6 +364,15 @@ void AudioInputConfig::on_Tick_timeout() {
         abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
 
         abSpeech->update();
+        
+        // also transmit encoded video
+    RsVOIPDataChunk chunk ;
+    
+    while(videoInput->getNextEncodedPacket(chunk))
+    {
+        videoDecoder->receiveEncodedData(static_cast<const unsigned char*>(chunk.data),chunk.size) ;
+        chunk.clear() ;
+    }
 }
 
 void AudioInputConfig::emptyBuffer() {

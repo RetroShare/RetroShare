@@ -49,12 +49,12 @@ class VideoDecoder
 class VideoEncoder
 {
 	public:
-		VideoEncoder() {}
+		VideoEncoder() ;
 		virtual ~VideoEncoder() {}
 
 		// Takes the next image to be encoded. 
 		//
-		bool addImage(const QImage& Image) ;
+		bool addImage(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
 
 		bool packetReady() const { return !_out_queue.empty() ; }
 		bool nextPacket(RsVOIPDataChunk& ) ;
@@ -62,12 +62,14 @@ class VideoEncoder
 		// Used to tweak the compression ratio so that the video can stream ok.
 		//
 		void setMaximumFrameRate(uint32_t bytes_per_second) ;
-
+        	void setInternalFrameSize(QSize) ;
+            
 	protected:
-		//virtual bool sendEncodedData(unsigned char *mem,uint32_t size) = 0 ;
-		virtual void encodeData(const QImage& image) = 0 ;
+		virtual void encodeData(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) =0;
 
 		std::list<RsVOIPDataChunk> _out_queue ;
+        
+        	QSize _frame_size ;
 };
 
 // Now derive various image encoding/decoding algorithms.
@@ -75,16 +77,45 @@ class VideoEncoder
 
 class JPEGVideoDecoder: public VideoDecoder
 {
-	protected:
-		virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) ;
+protected:
+    virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) ;
+    
+private:
+    	QImage _last_reference_frame ;
 };
 
 class JPEGVideoEncoder: public VideoEncoder
 {
-	public:
-		JPEGVideoEncoder() {}
+public:
+	JPEGVideoEncoder() ;
 
-	protected:
-		virtual void encodeData(const QImage& Image) ;
+protected:
+	virtual void encodeData(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
+    
+private:
+    	QImage _reference_frame ;
+        uint32_t _ref_frame_max_distance ;	// max distance between two reference frames.
+        uint32_t _ref_frame_count ;
 };
 
+class DifferentialWaveletEncoder: public VideoEncoder
+{
+public:
+	DifferentialWaveletEncoder() {}
+
+protected:
+	virtual void encodeData(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
+    
+};
+
+class DifferentialWaveletDecoder: public VideoDecoder
+{
+public:
+	DifferentialWaveletDecoder() {}
+
+protected:
+	virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) ;
+
+private:
+	QImage _last_reference_frame ;
+};

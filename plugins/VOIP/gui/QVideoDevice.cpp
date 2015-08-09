@@ -13,6 +13,9 @@ QVideoInputDevice::QVideoInputDevice(QWidget *parent)
 	_capture_device = NULL ;
 	_video_encoder = NULL ;
 	_echo_output_device = NULL ;
+    	_estimated_bw = 0 ;
+        _total_encoded_size = 0 ;
+        _last_bw_estimate_TS = time(NULL) ;
 }
 
 void QVideoInputDevice::stop()
@@ -54,36 +57,52 @@ void QVideoInputDevice::start()
 
 void QVideoInputDevice::grabFrame()
 {
-	IplImage *img=cvQueryFrame(_capture_device);    
+    IplImage *img=cvQueryFrame(_capture_device);    
 
-	if(img == NULL)
-	{
-		std::cerr << "(EE) Cannot capture image from camera. Something's wrong." << std::endl;
-		return ;
-	}
-	// get the image data
+    if(img == NULL)
+    {
+	    std::cerr << "(EE) Cannot capture image from camera. Something's wrong." << std::endl;
+	    return ;
+    }
+    // get the image data
 
-	if(img->nChannels != 3)
-	{
-		std::cerr << "(EE) expected 3 channels. Got " << img->nChannels << std::endl;
-		return ;
-	}
+    if(img->nChannels != 3)
+    {
+	    std::cerr << "(EE) expected 3 channels. Got " << img->nChannels << std::endl;
+	    return ;
+    }
 
     // convert to RGB and copy to new buffer, because cvQueryFrame tells us to not modify the buffer
     cv::Mat img_rgb;
     cv::cvtColor(cv::Mat(img), img_rgb, CV_BGR2RGB);
 
-	static const int _encoded_width = 128 ;
-	static const int _encoded_height = 128 ;
+    QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888);
 
-    QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888).scaled(QSize(_encoded_width,_encoded_height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
+    if(_video_encoder != NULL) 
+    {
+	    uint32_t encoded_size ;
 
-	if(_video_encoder != NULL) 
-	{
-		_video_encoder->addImage(image) ;
-		emit networkPacketReady() ;
-	}
-	if(_echo_output_device != NULL) _echo_output_device->showFrame(image) ;
+	    _video_encoder->addImage(image,0,encoded_size) ;
+
+        std::cerr << "Encoded size = " << encoded_size << std::endl;
+	    _total_encoded_size += encoded_size ;
+
+	    time_t now = time(NULL) ;
+
+	    if(now > _last_bw_estimate_TS)
+	    {
+		    _estimated_bw = uint32_t(0.75*_estimated_bw + 0.25 * (_total_encoded_size / (float)(now - _last_bw_estimate_TS))) ;
+            
+		    _total_encoded_size = 0 ;
+		    _last_bw_estimate_TS = now ;
+            
+            std::cerr << "new bw estimate: " << _estimated_bw << std::endl;
+	    }
+
+	    emit networkPacketReady() ;
+    }
+    if(_echo_output_device != NULL) 
+	    _echo_output_device->showFrame(image) ;
 }
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
