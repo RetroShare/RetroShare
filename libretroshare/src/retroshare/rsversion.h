@@ -8,4 +8,5 @@
 //
 // Do not forget the 0x, since the RS_REVISION_NUMBER should be an integer.
 //
+#define RS_REVISION_STRING   "01234567"
 #define RS_REVISION_NUMBER   0x01234567

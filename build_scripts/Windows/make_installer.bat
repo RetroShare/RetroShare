@@ -24,32 +24,27 @@ if "%MinGWDir%" NEQ ""   set NSIS_PARAM=%NSIS_PARAM% /DMINGWDIR="%MinGWDir%"
 if "%OutDir%" NEQ ""     set NSIS_PARAM=%NSIS_PARAM% /DOUTDIR="%OutDir%"
 
 :: Scan version from source
+set Revision=
 set BuildAdd=
-set VersionFile="%SourceDir%\libretroshare\src\retroshare\rsversion.h"
+call "%~dp0GetRsVersion.bat" RS_REVISION_STRING Revision
+if errorlevel 1 goto exit
+call "%~dp0GetRsVersion.bat" RS_BUILD_NUMBER_ADD BuildAdd
+if errorlevel 1 goto exit
 
-if not exist "%VersionFile%" (
+if "%Revision%"=="" (
 	echo.
-	echo Version file doesn't exist.
+	echo Version not found in
 	echo %VersionFile%
-	goto :exit
+	goto exit
 )
-
-for /F "usebackq tokens=1,2,3" %%A in (%VersionFile%) do (
-	if "%%A"=="#define" (
-		if "%%B"=="RS_BUILD_NUMBER_ADD" (
-			set BuildAdd=%%~C
-		)
-	)
-)
-
 if "%BuildAdd%"=="" (
 	echo.
 	echo Version not found in
 	echo %VersionFile%
-	goto :exit
+	goto exit
 )
 
-set NSIS_PARAM=%NSIS_PARAM% /DBUILDADD=%BuildAdd%
+set NSIS_PARAM=%NSIS_PARAM% /DREVISION=%Revision% /DBUILDADD=%BuildAdd%
 
 :: Create installer
 "%NSIS_EXE%" %NSIS_PARAM% "%~dp0retroshare.nsi"

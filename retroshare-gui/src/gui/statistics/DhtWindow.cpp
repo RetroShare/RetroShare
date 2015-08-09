@@ -40,7 +40,9 @@ DhtWindow::DhtWindow(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
 {
     ui.setupUi(this);
-
+    
+    connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
+    connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 }
 
 DhtWindow::~DhtWindow()
@@ -700,3 +702,46 @@ void DhtWindow::getDHTStatus()
 // 		}
 // 	}
 }
+
+void DhtWindow::filterColumnChanged(int)
+{
+    filterItems(ui.filterLineEdit->text());
+}
+
+void DhtWindow::filterItems(const QString &text)
+{
+    int filterColumn = ui.filterLineEdit->currentFilter();
+
+    int count = ui.dhtTreeWidget->topLevelItemCount ();
+    for (int index = 0; index < count; ++index) {
+        filterItem(ui.dhtTreeWidget->topLevelItem(index), text, filterColumn);
+    }
+}
+
+bool DhtWindow::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
+{
+    bool visible = true;
+
+    if (text.isEmpty() == false) {
+        if (item->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
+            visible = false;
+        }
+    }
+
+    int visibleChildCount = 0;
+    int count = item->childCount();
+    for (int index = 0; index < count; ++index) {
+        if (filterItem(item->child(index), text, filterColumn)) {
+            ++visibleChildCount;
+        }
+    }
+
+    if (visible || visibleChildCount) {
+        item->setHidden(false);
+    } else {
+        item->setHidden(true);
+    }
+
+    return (visible || visibleChildCount);
+}
+

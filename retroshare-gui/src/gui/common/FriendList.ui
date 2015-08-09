@@ -81,15 +81,6 @@
        <height>38</height>
       </size>
      </property>
-     <property name="autoExpandDelay">
-      <number>1</number>
-     </property>
-     <property name="indentation">
-      <number>20</number>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
      <property name="allColumnsShowFocus">
       <bool>true</bool>
      </property>
@@ -97,7 +88,7 @@
       <bool>false</bool>
      </property>
      <property name="columnCount">
-      <number>5</number>
+      <number>3</number>
      </property>
      <attribute name="headerStretchLastSection">
       <bool>false</bool>
@@ -106,15 +97,8 @@
       <property name="text">
        <string>Friend nodes</string>
       </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Avatar</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Status</string>
+      <property name="textAlignment">
+       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
       </property>
      </column>
      <column>
@@ -138,15 +122,37 @@
     <string>Hide Offline Friends</string>
    </property>
   </action>
-  <action name="actionHideState">
+  <action name="actionSortByName">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="enabled">
-    <bool>false</bool>
+   <property name="text">
+    <string>Name</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort by Name</string>
+   </property>
+  </action>
+  <action name="actionSortByState">
+   <property name="checkable">
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide State</string>
+    <string>State</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort by State</string>
+   </property>
+  </action>
+  <action name="actionShowState">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show State</string>
+   </property>
+   <property name="toolTip">
+    <string>Show State</string>
    </property>
   </action>
   <action name="actionShowGroups">

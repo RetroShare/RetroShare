@@ -60,10 +60,7 @@
         <file>images/btn_green.png</file>
         <file>images/btn_green_hover.png</file>
         <file>images/btn_green_pressed.png</file>
-        <file>images/connect_established.png</file>
-        <file>images/connect_established_low.png</file>
         <file>images/connect_creating.png</file>
-        <file>images/connect_no.png</file>
         <file>images/dht16.png</file>
         <file>images/dht32.png</file>
         <file>images/edit-clear-history.png</file>
@@ -424,7 +421,6 @@
         <file>images/replymail-pressed.png</file>
         <file>images/replymail24.png</file>
         <file>images/replymailall24-hover.png</file>
-        <file>images/reload24.png</file>
         <file>images/reset.png</file>
         <file>images/resume.png</file>
         <file>images/security-high-16.png</file>
@@ -694,11 +690,6 @@
         <file>images/tags/dev-translator.png</file>
         <file>images/tags/dev-patcher.png</file>
         <file>images/tags/developer.png</file>
-        <file>images/status/user-online.png</file>
-        <file>images/status/user-offline.png</file>
-        <file>images/status/user-busy.png</file>
-        <file>images/status/user-away-extended.png</file>
-        <file>images/status/user-away.png</file>
         <file>images/circles/circles_32.png</file>
         <file>images/circles/circles_64.png</file>
         <file>images/newsfeed/news-feed-32.png</file>
