@@ -67,6 +67,18 @@ RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
 
   _max_width = 400 ;
   _max_height = 0 ;
+
+  mHideOffline = false;
+}
+
+void RSPermissionMatrixWidget::setHideOffline(bool hide)
+{
+    if (mHideOffline == hide) {
+        return;
+    }
+
+    mHideOffline = hide;
+    repaint();
 }
 
 void RSPermissionMatrixWidget::updateDisplay()
@@ -238,25 +250,21 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   // sort list
   {
-      // RSPermissionMatrixWidgets parent is ServicePermissionsPage which holds the checkbox
-      ServicePermissionsPage *spp = dynamic_cast<ServicePermissionsPage*>(parentWidget());
-      if(spp != NULL) {
-          // sort out offline peers
-          if(spp->isHideOfflineChecked()) {
-              RsPeerDetails peerDetails;
-              for(std::list<RsPeerId>::iterator it = ssllist.begin(); it != ssllist.end();) {
-                  rsPeers->getPeerDetails(*it, peerDetails);
+      // sort out offline peers
+      if(mHideOffline) {
+          RsPeerDetails peerDetails;
+          for(std::list<RsPeerId>::iterator it = ssllist.begin(); it != ssllist.end();) {
+              rsPeers->getPeerDetails(*it, peerDetails);
 
-                  switch (peerDetails.connectState) {
-                  case RS_PEER_CONNECTSTATE_OFFLINE:
-                  case RS_PEER_CONNECTSTATE_TRYING_TCP:
-                  case RS_PEER_CONNECTSTATE_TRYING_UDP:
-                      it = ssllist.erase(it);
-                      break;
-                  default:
-                      it++;
-                      break;
-                  }
+              switch (peerDetails.connectState) {
+              case RS_PEER_CONNECTSTATE_OFFLINE:
+              case RS_PEER_CONNECTSTATE_TRYING_TCP:
+              case RS_PEER_CONNECTSTATE_TRYING_UDP:
+                  it = ssllist.erase(it);
+                  break;
+              default:
+                  it++;
+                  break;
               }
           }
       }
