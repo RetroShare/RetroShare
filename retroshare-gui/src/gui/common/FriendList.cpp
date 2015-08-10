@@ -126,8 +126,8 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
     connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
     connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
-	connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlist()));
-	connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlist()));
+    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlist()));
+    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlist()));
 
     connect(ui->actionSortByName, SIGNAL(triggered()), this, SLOT(setSortByName()));
     connect(ui->actionSortByState, SIGNAL(triggered()), this, SLOT(setSortByState()));
@@ -1644,7 +1644,7 @@ void FriendList::removeGroup()
         return;
     }
 
-	rsPeers->removeGroup(groupId);
+    rsPeers->removeGroup(groupId);
 }
 
 #include "rsserver/rsaccounts.h"
