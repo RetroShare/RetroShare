@@ -36,6 +36,7 @@
 
 #define GRP_LAST_POST_UPDATE_TRIGGER std::string("LAST_POST_UPDATE")
 
+#define MSG_INDEX_GRPID std::string("INDEX_MESSAGES_GRPID")
 
 // generic
 #define KEY_NXS_FILE std::string("nxsFile")
@@ -274,6 +275,8 @@ void RsDataService::initialise(){
     		" UPDATE " + GRP_TABLE_NAME + " SET " + KEY_GRP_LAST_POST + "= new."
     		+ KEY_RECV_TS + " WHERE " + KEY_GRP_ID + "=new." + KEY_GRP_ID + ";"
     		+ std::string("END;"));
+
+    mDb->execSQL("CREATE INDEX IF NOT EXISTS " + MSG_INDEX_GRPID + " ON " + MSG_TABLE_NAME + "(" + KEY_GRP_ID +  ");");
 }
 
 RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
@@ -1286,6 +1289,7 @@ int RsDataService::resetDataStore()
             delete mit->second;
         }
 
+        mDb->execSQL("DROP INDEX " + MSG_INDEX_GRPID);
         mDb->execSQL("DROP TABLE " + MSG_TABLE_NAME);
         mDb->execSQL("DROP TABLE " + GRP_TABLE_NAME);
         mDb->execSQL("DROP TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER);
