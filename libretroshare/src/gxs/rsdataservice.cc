@@ -216,7 +216,7 @@ void RsDataService::initialise(){
 
 
     // create table for msg data
-    mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" +
+    mDb->execSQL("CREATE TABLE IF NOT EXISTS " + MSG_TABLE_NAME + "(" +
                  KEY_MSG_ID + " TEXT PRIMARY KEY," +
                  KEY_GRP_ID +  " TEXT," +
                  KEY_NXS_FLAGS + " INT,"  +
@@ -238,7 +238,7 @@ void RsDataService::initialise(){
                  KEY_NXS_FILE_LEN + " INT);");
 
     // create table for grp data
-    mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" +
+    mDb->execSQL("CREATE TABLE IF NOT EXISTS " + GRP_TABLE_NAME + "(" +
                  KEY_GRP_ID + " TEXT PRIMARY KEY," +
                  KEY_TIME_STAMP + " INT," +
                  KEY_NXS_FILE + " TEXT," +
@@ -268,7 +268,7 @@ void RsDataService::initialise(){
                  KEY_GRP_REP_CUTOFF + " INT," +
                  KEY_SIGN_SET + " BLOB);");
 
-    mDb->execSQL("CREATE TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER +
+    mDb->execSQL("CREATE TRIGGER IF NOT EXISTS " + GRP_LAST_POST_UPDATE_TRIGGER +
     		" INSERT ON " + MSG_TABLE_NAME +
     		std::string(" BEGIN ") +
     		" UPDATE " + GRP_TABLE_NAME + " SET " + KEY_GRP_LAST_POST + "= new."
