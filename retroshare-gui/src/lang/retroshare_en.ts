@@ -5379,10 +5379,6 @@ you plug it in.</source>
     </message>
     <message>
         <location line="+8"/>
-        <source>Stow State</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location line="+3"/>
         <source>Show State</source>
         <translation type="unfinished"></translation>

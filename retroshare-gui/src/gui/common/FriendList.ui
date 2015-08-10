@@ -149,7 +149,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Stow State</string>
+    <string>Show State</string>
    </property>
    <property name="toolTip">
     <string>Show State</string>
