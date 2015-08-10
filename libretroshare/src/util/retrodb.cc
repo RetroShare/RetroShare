@@ -183,12 +183,11 @@ RetroCursor* RetroDb::sqlQuery(const std::string& tableName, const std::list<std
     std::list<std::string>::const_iterator it = columns.begin();
 
     for(; it != columns.end(); ++it){
-        columnSelection += *it;
-
-        ++it;
-        if(it != columns.end())
+        if (it != columns.begin()) {
             columnSelection += ",";
-        --it;
+        }
+
+        columnSelection += *it;
     }
 
     // construct query
