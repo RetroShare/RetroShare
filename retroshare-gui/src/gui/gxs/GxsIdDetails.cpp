@@ -37,7 +37,7 @@
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
-#define IMAGE_PGPKNOWN    ":/images/tags/pgp-known.png"
+#define IMAGE_PGPKNOWN    ":/images/contact.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
 #define IMAGE_ANON        ":/images/tags/anon.png"
 
