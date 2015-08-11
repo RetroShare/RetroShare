@@ -60,6 +60,9 @@ public:
     RSPermissionMatrixWidget(QWidget *parent=NULL);
     virtual ~RSPermissionMatrixWidget() ;
 
+public slots:
+    void setHideOffline(bool hide);
+
 protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
     // if the collection system needs it. Otherwise, the default method will call getValues()
@@ -99,6 +102,8 @@ private:
 
     /** The current dimensions of the graph. */
     QRect _rec;
+
+    bool mHideOffline;
 
     static const float fROW_SIZE ;
     static const float fCOL_SIZE ;

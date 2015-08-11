@@ -142,13 +142,10 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
-    ui.friendList->setColumnVisible(FriendList::COLUMN_STATE, false);
     ui.friendList->setColumnVisible(FriendList::COLUMN_LAST_CONTACT, false);
-    ui.friendList->setColumnVisible(FriendList::COLUMN_AVATAR, true);
     ui.friendList->setColumnVisible(FriendList::COLUMN_IP, false);
     ui.friendList->setShowGroups(false);
     processSettings(true);
-    ui.friendList->setBigName(true);
     RsAutoUpdatePage::unlockAllEvents();
 
     // add self nick

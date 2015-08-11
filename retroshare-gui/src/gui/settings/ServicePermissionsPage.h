@@ -44,10 +44,7 @@ public:
     virtual QString pageName() const { return tr("Permissions") ; }
     virtual QString helpText() const ;
 
-    bool isHideOfflineChecked();
-
 private:
-
     Ui::ServicePermissionsPage ui;
 };
 

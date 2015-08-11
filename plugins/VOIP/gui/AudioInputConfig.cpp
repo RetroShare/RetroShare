@@ -39,6 +39,7 @@
 //#include "NetworkConfig.h"
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
+#include "gui/common/RSGraphWidget.h"
 #include <interface/rsVOIP.h>
 
 #define iroundf(x) ( static_cast<int>(x) )
@@ -50,6 +51,59 @@
 void AudioInputDialog::showEvent(QShowEvent *) {
 	qtTick->start(20);
 }*/
+
+class voipGraphSource: public RSGraphSource
+{
+public:
+    voipGraphSource() {}
+    
+    void setVideoInput(QVideoInputDevice *vid) { video_input = vid ; }
+    
+     virtual QString displayName(int) const { return tr("Required bandwidth") ;}
+    
+    virtual QString displayValue(float v) const
+    {
+        if(v < 1000)
+            return QString::number(v,10,2) + " B/s" ;
+        else if(v < 1000*1024)
+            return QString::number(v/1024,10,2) + " KB/s" ;
+        else
+            return QString::number(v/(1024*1024),10,2) + " MB/s" ;
+    }
+    
+    virtual void getValues(std::map<std::string,float>& vals) const
+    {
+        RsVOIPDataChunk chunk ;
+        uint32_t total_size = 0 ;
+        vals.clear() ;
+        
+	while(video_input && video_input->getNextEncodedPacket(chunk))
+	{
+                total_size += chunk.size ;
+              chunk.clear() ;  
+	}
+    
+    	vals[std::string("bw")] = (float)total_size ;
+    }
+    
+private:
+    QVideoInputDevice *video_input ;
+};
+
+void voipGraph::setVoipSource(voipGraphSource *gs) 
+{
+_src = gs ;
+RSGraphWidget::setSource(gs) ;
+}
+
+voipGraph::voipGraph(QWidget *parent)
+	: RSGraphWidget(parent)
+{
+     setFlags(RSGraphWidget::RSGRAPH_FLAGS_SHOW_LEGEND) ;
+     setFlags(RSGraphWidget::RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
+     
+     _src = NULL ;
+}
 
 /** Constructor */
 AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
@@ -71,11 +125,21 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
 	 //
 	 videoInput = new QVideoInputDevice(this) ;
 	 videoInput->setEchoVideoTarget(ui.videoDisplay) ;
-	 videoInput->setVideoEncoder(NULL) ;
+	 videoInput->setVideoEncoder(new JPEGVideoEncoder()) ;
+     
+     graph_source = new voipGraphSource ;
+     ui.voipBwGraph->setSource(graph_source);
+     
+     graph_source->setVideoInput(videoInput) ;
+     graph_source->setCollectionTimeLimit(1000*300) ;
+     graph_source->start() ;
 }
 
 AudioInputConfig::~AudioInputConfig()
 {
+        graph_source->stop() ;
+        graph_source->setVideoInput(NULL) ;
+        
 	std::cerr << "Deleting audioInputConfig object" << std::endl;
 	if(videoInput != NULL)
 	{

@@ -35,10 +35,27 @@
 
 #include "retroshare-gui/configpage.h"
 
-#include "ui_AudioInputConfig.h"
 #include "SpeexProcessor.h"
 #include "VideoProcessor.h"
 #include "AudioStats.h"
+#include "gui/common/RSGraphWidget.h"
+
+class voipGraphSource ;
+
+class voipGraph: public RSGraphWidget
+{
+public:
+    voipGraph(QWidget *parent) ;
+    
+    voipGraphSource *voipSource() const { return _src ; }
+    
+    void setVoipSource(voipGraphSource *gs) ;
+    
+private:
+    voipGraphSource *_src ;
+};
+
+#include "ui_AudioInputConfig.h"
 
 class AudioInputConfig : public ConfigPage 
 {
@@ -54,6 +71,7 @@ class AudioInputConfig : public ConfigPage
 		QVideoInputDevice *videoInput ;
 		bool loaded;
 
+        voipGraphSource *graph_source ;
 
 	protected:
 		QTimer *qtTick;

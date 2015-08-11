@@ -3,9 +3,6 @@ set MINGW=C:\MinGW
 
 set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\retroshare\rsversion.in libretroshare\src\retroshare\rsversion.h
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\retroshare.in retroshare-gui\src\retroshare.nsi
-
 
 @echo off
 rem emptying used variables in case the script was aborted and tempfile
@@ -65,6 +62,13 @@ qmake openpgpsdk.pro
 
 mingw32-make
 
+cd ..\..\libresapi\src
+
+if not %clean%x==x mingw32-make clean 
+
+qmake libresapi.pro
+
+mingw32-make %%a
 
 cd ..\..\libretroshare\src
 

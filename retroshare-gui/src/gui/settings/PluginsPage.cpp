@@ -90,8 +90,9 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 			 if(plugin!=NULL)
 			 {
-				if(plugin->qt_icon() != NULL)
-				plugin_icon = *plugin->qt_icon() ;
+				QIcon *icon = plugin->qt_icon();
+				if(icon != NULL)
+					plugin_icon = *icon ;
 
 				pluginTitle = QString::fromUtf8(plugin->getPluginName().c_str()) ;
 				pluginDescription = QString::fromUtf8(plugin->getShortPluginDescription().c_str()) ;
@@ -169,8 +170,9 @@ void PluginsPage::aboutPlugin(int i)
 {
 	std::cerr << "Launching about window for plugin " << i << std::endl;
 
-	if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_about_page() != NULL)
-		rsPlugins->plugin(i)->qt_about_page()->exec() ;
+	QDialog *dialog = NULL;
+	if(rsPlugins->plugin(i) != NULL && (dialog = rsPlugins->plugin(i)->qt_about_page()) != NULL)
+		dialog->exec() ;
 }
 void PluginsPage::configurePlugin(int i)
 {

@@ -147,6 +147,14 @@ RsServiceInfo p3VOIP::getServiceInfo()
                          TURTLE_MIN_MINOR_VERSION);
 }
 
+void RsVOIPDataChunk::clear()
+{ 
+    
+    if(data) 
+	    free(data) ; 
+    data=NULL; 
+    size=0 ;
+}
 int	p3VOIP::tick()
 {
 #ifdef DEBUG_VOIP
