@@ -36,6 +36,7 @@
 
 #define GRP_LAST_POST_UPDATE_TRIGGER std::string("LAST_POST_UPDATE")
 
+#define MSG_INDEX_GRPID std::string("INDEX_MESSAGES_GRPID")
 
 // generic
 #define KEY_NXS_FILE std::string("nxsFile")
@@ -216,7 +217,7 @@ void RsDataService::initialise(){
 
 
     // create table for msg data
-    mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" +
+    mDb->execSQL("CREATE TABLE IF NOT EXISTS " + MSG_TABLE_NAME + "(" +
                  KEY_MSG_ID + " TEXT PRIMARY KEY," +
                  KEY_GRP_ID +  " TEXT," +
                  KEY_NXS_FLAGS + " INT,"  +
@@ -238,7 +239,7 @@ void RsDataService::initialise(){
                  KEY_NXS_FILE_LEN + " INT);");
 
     // create table for grp data
-    mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" +
+    mDb->execSQL("CREATE TABLE IF NOT EXISTS " + GRP_TABLE_NAME + "(" +
                  KEY_GRP_ID + " TEXT PRIMARY KEY," +
                  KEY_TIME_STAMP + " INT," +
                  KEY_NXS_FILE + " TEXT," +
@@ -268,12 +269,14 @@ void RsDataService::initialise(){
                  KEY_GRP_REP_CUTOFF + " INT," +
                  KEY_SIGN_SET + " BLOB);");
 
-    mDb->execSQL("CREATE TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER +
+    mDb->execSQL("CREATE TRIGGER IF NOT EXISTS " + GRP_LAST_POST_UPDATE_TRIGGER +
     		" INSERT ON " + MSG_TABLE_NAME +
     		std::string(" BEGIN ") +
     		" UPDATE " + GRP_TABLE_NAME + " SET " + KEY_GRP_LAST_POST + "= new."
     		+ KEY_RECV_TS + " WHERE " + KEY_GRP_ID + "=new." + KEY_GRP_ID + ";"
     		+ std::string("END;"));
+
+    mDb->execSQL("CREATE INDEX IF NOT EXISTS " + MSG_INDEX_GRPID + " ON " + MSG_TABLE_NAME + "(" + KEY_GRP_ID +  ");");
 }
 
 RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
@@ -1286,6 +1289,7 @@ int RsDataService::resetDataStore()
             delete mit->second;
         }
 
+        mDb->execSQL("DROP INDEX " + MSG_INDEX_GRPID);
         mDb->execSQL("DROP TABLE " + MSG_TABLE_NAME);
         mDb->execSQL("DROP TABLE " + GRP_TABLE_NAME);
         mDb->execSQL("DROP TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER);

@@ -81,9 +81,9 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
-//	mStateHelper->addWidget(IDDIALOG_IDLIST, ui->treeWidget_IdList);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui->treeWidget_IdList, false);
-	mStateHelper->addClear(IDDIALOG_IDLIST, ui->treeWidget_IdList);
+//	mStateHelper->addWidget(IDDIALOG_IDLIST, ui->idTreeWidget);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui->idTreeWidget, false);
+	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
 
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
@@ -142,8 +142,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
 	connect(ui->chatIdentity, SIGNAL(triggered()), this, SLOT(chatIdentity()));
 
-	connect(ui->treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
-	connect(ui->treeWidget_IdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
+	connect(ui->idTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
+	connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
 	connect(ui->filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
@@ -172,33 +172,28 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->filterComboBox->setCurrentIndex(0);
 
 	/* Add filter actions */
-	QTreeWidgetItem *headerItem = ui->treeWidget_IdList->headerItem();
+	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
 	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
 	headerText = headerItem->text(RSID_COL_KEYID);
 	ui->filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
 
-	initializeHeader(true);
-
 	/* Setup tree */
-	ui->treeWidget_IdList->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
-	ui->treeWidget_IdList->setContextMenuPolicy(Qt::CustomContextMenu) ;
-	
-	/** Setup the actions for the header context menu */
-	hideIdAct= new QAction(headerItem->text(RSID_COL_KEYID),this);
-	hideIdAct->setCheckable(true); hideIdAct->setToolTip(tr("Show")+" "+hideIdAct->text()+" "+tr("column"));
-	connect(hideIdAct,SIGNAL(triggered(bool)),this,SLOT(setHideIdColumn(bool))) ;
-	
-	hideTypeAct= new QAction(headerItem->text(RSID_COL_IDTYPE),this);
-	hideTypeAct->setCheckable(true); hideTypeAct->setToolTip(tr("Show")+" "+hideTypeAct->text()+" "+tr("column"));
-	connect(hideTypeAct,SIGNAL(triggered(bool)),this,SLOT(setHideIdTypeColumn(bool))) ;
-		
+	ui->idTreeWidget->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
+
+	ui->idTreeWidget->enableColumnCustomize(true);
+	ui->idTreeWidget->setColumnCustomizable(RSID_COL_NICKNAME, false);
+
+	/* Set initial column width */
+	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
+	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 18 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 25 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
+
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 	mStateHelper->setActive(IDDIALOG_REPLIST, false);
-
-	ui->treeWidget_IdList->setColumnHidden(RSID_COL_IDTYPE, true);
 
 	// Hiding RepList until that part is finished.
 	//ui->treeWidget_RepList->setVisible(false);
@@ -243,18 +238,6 @@ IdDialog::~IdDialog()
 	delete(mIdQueue);
 }
 
-void IdDialog::initializeHeader(bool )
-{
-    /* Set header resize modes and initial section sizes ID TreeView*/
-    QHeaderView * _idheader = ui->treeWidget_IdList->header () ;
-    _idheader->resizeSection ( RSID_COL_NICKNAME, 170 );
-    _idheader->resizeSection ( RSID_COL_KEYID, 120 );
-    _idheader->resizeSection ( RSID_COL_IDTYPE, 170 );
-  
-
-
-}
-
 void IdDialog::todo()
 {
 	QMessageBox::information(this, "Todo",
@@ -265,18 +248,16 @@ void IdDialog::todo()
 
 void IdDialog::processSettings(bool load)
 {
-	QHeaderView *header = ui->treeWidget_IdList->header();
-
 	Settings->beginGroup("IdDialog");
+
+	// state of peer tree
+	ui->idTreeWidget->processSettings(load);
 
 	if (load) {
 		// load settings
 
 		// filterColumn
 		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RSID_COL_NICKNAME).toInt());
-
-		// state of thread tree
-		header->restoreState(Settings->value("IdList").toByteArray());
 
 		// state of splitter
 		ui->splitter->restoreState(Settings->value("splitter").toByteArray());
@@ -285,9 +266,6 @@ void IdDialog::processSettings(bool load)
 
 		// filterColumn
 		Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
-
-		// state of thread tree
-		Settings->setValue("IdList", header->saveState());
 
 		// state of splitter
 		Settings->setValue("splitter", ui->splitter->saveState());
@@ -308,7 +286,7 @@ void IdDialog::filterChanged(const QString& /*text*/)
 
 void IdDialog::updateSelection()
 {
-	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
 	RsGxsGroupId id;
 
 	if (item) {
@@ -478,7 +456,7 @@ void IdDialog::insertIdList(uint32_t token)
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
 	/* Update existing and remove not existing items */
-	QTreeWidgetItemIterator itemIterator(ui->treeWidget_IdList);
+	QTreeWidgetItemIterator itemIterator(ui->idTreeWidget);
 	QTreeWidgetItem *item = NULL;
 	while ((item = *itemIterator) != NULL) {
 		++itemIterator;
@@ -510,7 +488,7 @@ void IdDialog::insertIdList(uint32_t token)
 		item = NULL;
 		if (fillIdListItem(*vit, item, ownPgpId, accept))
 		{
-			ui->treeWidget_IdList->addTopLevelItem(item);
+			ui->idTreeWidget->addTopLevelItem(item);
 		}
 	}
 
@@ -853,7 +831,7 @@ void IdDialog::addIdentity()
 
 void IdDialog::removeIdentity()
 {
-	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
 	if (!item)
 	{
 #ifdef ID_DEBUG
@@ -876,7 +854,7 @@ void IdDialog::removeIdentity()
 
 void IdDialog::editIdentity()
 {
-	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
 	if (!item)
 	{
 #ifdef ID_DEBUG
@@ -901,7 +879,7 @@ void IdDialog::filterIds()
 	int filterColumn = ui->filterLineEdit->currentFilter();
 	QString text = ui->filterLineEdit->text();
 
-	ui->treeWidget_IdList->filterItems(filterColumn, text);
+	ui->idTreeWidget->filterItems(filterColumn, text);
 }
 
 void IdDialog::requestRepList()
@@ -970,7 +948,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	std::list<RsGxsId> own_identities ;
 	rsIdentity->getOwnIds(own_identities) ;
 
-	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
 	if (item) {
 		uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
 
@@ -1015,19 +993,12 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	
 	contextMnu.addSeparator();
 
-	hideIdAct->setChecked(!ui->treeWidget_IdList->isColumnHidden(RSID_COL_KEYID));
-	hideTypeAct->setChecked(!ui->treeWidget_IdList->isColumnHidden(RSID_COL_IDTYPE));
-
-	QMenu *menu = contextMnu.addMenu(tr("Columns"));
-	menu->addAction(hideIdAct);
-	menu->addAction(hideTypeAct);
-
 	contextMnu.exec(QCursor::pos());
 }
 
 void IdDialog::chatIdentity()
 {
-	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
 	if (!item)
 	{
 		std::cerr << "IdDialog::editIdentity() Invalid item";
@@ -1050,7 +1021,7 @@ void IdDialog::chatIdentity()
 
 void IdDialog::sendMsg()
 {
-	QTreeWidgetItem *item = ui->treeWidget_IdList->currentItem();
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
 	if (!item)
 	{
 		return;
@@ -1069,35 +1040,4 @@ void IdDialog::sendMsg()
 
     /* window will destroy itself! */
 
-}
-
-void IdDialog::setHideIdColumn(bool show)
-{
-	if (ui->treeWidget_IdList->isColumnHidden(RSID_COL_KEYID) == show) {
-		ui->treeWidget_IdList->setColumnHidden(RSID_COL_KEYID, !show);
-	}
-	ui->treeWidget_IdList->header()->setVisible(getNumColVisible()>1);
-	
-	initializeHeader(true);
-}
-
-void IdDialog::setHideIdTypeColumn(bool show)
-{
-	if (ui->treeWidget_IdList->isColumnHidden(RSID_COL_IDTYPE) == show) {
-		ui->treeWidget_IdList->setColumnHidden(RSID_COL_IDTYPE, !show);
-	}
-	ui->treeWidget_IdList->header()->setVisible(getNumColVisible()>1);
-	
-	initializeHeader(true);
-}
-
-int IdDialog::getNumColVisible()
-{
-	int iNumColVis=0;
-	for (int iColumn = 0; iColumn <RSID_COL_IDTYPE; ++iColumn) {
-		if (!ui->treeWidget_IdList->isColumnHidden(iColumn)) {
-			++iNumColVis;
-		}
-	}
-    return iNumColVis;
 }

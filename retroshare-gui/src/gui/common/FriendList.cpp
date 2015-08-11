@@ -463,15 +463,18 @@ void FriendList::groupsChanged()
 
 static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 {
+    int avatarWidth = avatar.width();
+    int avatarHeight = avatar.height();
+
     QPixmap pixmap(avatar);
 
-    int x = avatar.width() / 2;
-    int y = avatar.height() / 2;
-    int w = avatar.width() / 2;
-    int h = avatar.height() / 2;
+    int overlayWidth = avatarWidth / 2.5;
+    int overlayHeight = avatarHeight / 2.5;
+    int overlayX = avatarWidth - overlayWidth;
+    int overlayY = avatarHeight - overlayHeight;
 
     QPainter painter(&pixmap);
-    painter.drawPixmap(x, y, w, h, overlay);
+    painter.drawPixmap(overlayX, overlayY, overlayWidth, overlayHeight, overlay);
 
     QIcon icon;
     icon.addPixmap(pixmap);
