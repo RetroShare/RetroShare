@@ -29,17 +29,14 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <QTimer>
 
-//#include "AudioInput.h"
-//#include "AudioOutput.h"
 #include "AudioStats.h"
 #include "AudioInputConfig.h"
-//#include "Global.h"
-//#include "NetworkConfig.h"
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
 #include "gui/common/RSGraphWidget.h"
+#include "util/RsProtectedTimer.h"
+
 #include <interface/rsVOIP.h>
 
 #define iroundf(x) ( static_cast<int>(x) )
@@ -104,33 +101,33 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
 {
 	std::cerr << "Creating audioInputConfig object" << std::endl;
 
-    /* Invoke the Qt Designer generated object setup routine */
-    ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-    loaded = false;
+	loaded = false;
 
-    inputAudioProcessor = NULL;
-    inputAudioDevice = NULL;
-    abSpeech = NULL;
-    qtTick = NULL;
+	inputAudioProcessor = NULL;
+	inputAudioDevice = NULL;
+	abSpeech = NULL;
+	qtTick = NULL;
 
-	 // Create the video pipeline.
-	 //
-	 videoInput = new QVideoInputDevice(this) ;
-	 videoInput->setEchoVideoTarget(ui.videoDisplay) ;
-	 videoInput->setVideoEncoder(new JPEGVideoEncoder()) ;
-     
-     videoDecoder = new JPEGVideoDecoder;
-     videoDecoder->setDisplayTarget(NULL) ;
-             
-     graph_source = new voipGraphSource ;
-     ui.voipBwGraph->setSource(graph_source);
-     
-     graph_source->setVideoInput(videoInput) ;
-     graph_source->setCollectionTimeLimit(1000*300) ;
-     graph_source->start() ;
-     
-     QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
+	// Create the video pipeline.
+	//
+	videoInput = new QVideoInputDevice(this) ;
+	videoInput->setEchoVideoTarget(ui.videoDisplay) ;
+	videoInput->setVideoEncoder(new JPEGVideoEncoder()) ;
+
+	videoDecoder = new JPEGVideoDecoder;
+	videoDecoder->setDisplayTarget(NULL) ;
+
+	graph_source = new voipGraphSource ;
+	ui.voipBwGraph->setSource(graph_source);
+
+	graph_source->setVideoInput(videoInput) ;
+	graph_source->setCollectionTimeLimit(1000*300) ;
+	graph_source->start() ;
+
+	QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
 }
 
 void AudioInputConfig::togglePreview(bool b)
@@ -178,7 +175,7 @@ void AudioInputConfig::load()
     //connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
     //connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
 
-    qtTick = new QTimer(this);
+    qtTick = new RsProtectedTimer(this);
     connect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
     qtTick->start(20);
     /*if (AudioInputRegistrar::qmNew) {

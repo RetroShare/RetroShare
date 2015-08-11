@@ -80,8 +80,11 @@ class JPEGVideoDecoder: public VideoDecoder
 protected:
     virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) ;
     
+        static const uint32_t HEADER_SIZE = 0x04 ;
+        
+        static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
 private:
-    	QImage _last_reference_frame ;
+    	QImage _reference_frame ;
 };
 
 class JPEGVideoEncoder: public VideoEncoder
@@ -92,10 +95,13 @@ public:
 protected:
 	virtual void encodeData(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
     
+        static const uint32_t HEADER_SIZE = 0x04 ;
+
+        static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
 private:
-    	QImage _reference_frame ;
-        uint32_t _ref_frame_max_distance ;	// max distance between two reference frames.
-        uint32_t _ref_frame_count ;
+	QImage _reference_frame ;
+	uint32_t _ref_frame_max_distance ;	// max distance between two reference frames.
+	uint32_t _ref_frame_count ;
 };
 
 class DifferentialWaveletEncoder: public VideoEncoder
