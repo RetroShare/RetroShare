@@ -177,22 +177,22 @@
         <layout class="QHBoxLayout" name="filterLayout"/>
        </item>
        <item>
-        <widget class="RSTreeWidget" name="treeWidget_IdList">
+        <widget class="RSTreeWidget" name="idTreeWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="iconSize">
-          <size>
-           <width>22</width>
-           <height>22</height>
-          </size>
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
          </property>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>Identity name</string>
@@ -725,7 +725,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>todoPushButton</tabstop>
-  <tabstop>treeWidget_IdList</tabstop>
+  <tabstop>idTreeWidget</tabstop>
   <tabstop>lineEdit_Nickname</tabstop>
   <tabstop>lineEdit_KeyId</tabstop>
   <tabstop>lineEdit_GpgId</tabstop>
