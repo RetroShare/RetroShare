@@ -24,10 +24,18 @@
  *
  */
 
+/*****
+ * #define RS_DATA_SERVICE_DEBUG       1
+ * #define RS_DATA_SERVICE_DEBUG_TIME  1
+ ****/
 
 #include <fstream>
 #include <util/rsdir.h>
 #include <algorithm>
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+#include <util/rsscopetimer.h>
+#endif
 
 #include "rsdataservice.h"
 
@@ -36,6 +44,7 @@
 
 #define GRP_LAST_POST_UPDATE_TRIGGER std::string("LAST_POST_UPDATE")
 
+#define MSG_INDEX_GRPID std::string("INDEX_MESSAGES_GRPID")
 
 // generic
 #define KEY_NXS_FILE std::string("nxsFile")
@@ -140,10 +149,6 @@
 #define COL_IDENTITY 4
 #define COL_HASH 5
 
-/*****
- * #define RS_DATA_SERVICE_DEBUG  1
- ****/
-
 const std::string RsGeneralDataService::GRP_META_SERV_STRING = KEY_NXS_SERV_STRING;
 const std::string RsGeneralDataService::GRP_META_STATUS = KEY_GRP_STATUS;
 const std::string RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG = KEY_GRP_SUBCR_FLAG;
@@ -216,7 +221,7 @@ void RsDataService::initialise(){
 
 
     // create table for msg data
-    mDb->execSQL("CREATE TABLE " + MSG_TABLE_NAME + "(" +
+    mDb->execSQL("CREATE TABLE IF NOT EXISTS " + MSG_TABLE_NAME + "(" +
                  KEY_MSG_ID + " TEXT PRIMARY KEY," +
                  KEY_GRP_ID +  " TEXT," +
                  KEY_NXS_FLAGS + " INT,"  +
@@ -238,7 +243,7 @@ void RsDataService::initialise(){
                  KEY_NXS_FILE_LEN + " INT);");
 
     // create table for grp data
-    mDb->execSQL("CREATE TABLE " + GRP_TABLE_NAME + "(" +
+    mDb->execSQL("CREATE TABLE IF NOT EXISTS " + GRP_TABLE_NAME + "(" +
                  KEY_GRP_ID + " TEXT PRIMARY KEY," +
                  KEY_TIME_STAMP + " INT," +
                  KEY_NXS_FILE + " TEXT," +
@@ -268,12 +273,14 @@ void RsDataService::initialise(){
                  KEY_GRP_REP_CUTOFF + " INT," +
                  KEY_SIGN_SET + " BLOB);");
 
-    mDb->execSQL("CREATE TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER +
+    mDb->execSQL("CREATE TRIGGER IF NOT EXISTS " + GRP_LAST_POST_UPDATE_TRIGGER +
     		" INSERT ON " + MSG_TABLE_NAME +
     		std::string(" BEGIN ") +
     		" UPDATE " + GRP_TABLE_NAME + " SET " + KEY_GRP_LAST_POST + "= new."
     		+ KEY_RECV_TS + " WHERE " + KEY_GRP_ID + "=new." + KEY_GRP_ID + ";"
     		+ std::string("END;"));
+
+    mDb->execSQL("CREATE INDEX IF NOT EXISTS " + MSG_INDEX_GRPID + " ON " + MSG_TABLE_NAME + "(" + KEY_GRP_ID +  ");");
 }
 
 RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
@@ -897,7 +904,13 @@ bool RsDataService::validSize(RsNxsGrp* grp) const
 	return false;
 }
 
-int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool /* cache */){
+int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool /* cache */)
+{
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    RsScopeTimer timer("");
+    int resultCount = 0;
+    int requestedGroups = grp.size();
+#endif
 
     if(grp.empty()){
 
@@ -910,6 +923,10 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
 
                 locked_retrieveGroups(c, grps);
                 std::vector<RsNxsGrp*>::iterator vit = grps.begin();
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                resultCount = grps.size();
+#endif
 
                 for(; vit != grps.end(); ++vit)
                 {
@@ -940,6 +957,10 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
                 {
                         RsNxsGrp* ng = grps.front();
                         grp[ng->grpId] = ng;
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                        ++resultCount;
+#endif
                 }else{
                         toRemove.push_back(grpId);
                 }
@@ -954,6 +975,10 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
             grp.erase(*grpIdIt);
         }
     }
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    std::cerr << "RsDataService::retrieveNxsGrps() Requests: " << requestedGroups << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+#endif
 
     if(withMeta && !grp.empty())
     {
@@ -977,6 +1002,10 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
 	    std::cerr << std::endl;
 #endif
         }
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+        std::cerr << "RsDataService::retrieveNxsGrps() Time with meta: " << timer.duration() << std::endl;
+#endif
     }
 
     return 1;
@@ -1002,6 +1031,10 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
 
 int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */, bool withMeta)
 {
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    RsScopeTimer timer("");
+    int resultCount = 0;
+#endif
 
     GxsMsgReq::const_iterator mit = reqIds.begin();
 
@@ -1023,7 +1056,13 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
             if(c)
+            {
                 locked_retrieveMessages(c, msgSet);
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                resultCount += msgSet.size();
+#endif
+            }
 
             delete c;
         }else{
@@ -1040,7 +1079,13 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
 
                 if(c)
+                {
                     locked_retrieveMessages(c, msgSet);
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                    resultCount += c->getResultCount();
+#endif
+                }
 
                 delete c;
             }
@@ -1062,6 +1107,10 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         }
         msgSet.clear();
     }
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    std::cerr << "RsDataService::retrieveNxsMsgs() Requests: " << reqIds.size() << "Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+#endif
 
     // tres expensive !?
     if(withMeta)
@@ -1114,6 +1163,10 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
                 meta_lit = msgMetaV.erase(meta_lit);
             }
         }
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+        std::cerr << "RsDataService::retrieveNxsMsgs() Time with meta: " << timer.duration() << std::endl;
+#endif
     }
 
     return 1;
@@ -1126,7 +1179,7 @@ void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg
         RsNxsMsg* m = locked_getMessage(*c);
 
         if(m){
-            msgs.push_back(m);;
+            msgs.push_back(m);
         }
 
         valid = c->moveToNext();
@@ -1136,8 +1189,12 @@ void RsDataService::locked_retrieveMessages(RetroCursor *c, std::vector<RsNxsMsg
 
 int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaResult &msgMeta)
 {
-
     RsStackMutex stack(mDbMutex);
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    RsScopeTimer timer("");
+    int resultCount = 0;
+#endif
 
     GxsMsgReq::const_iterator mit = reqIds.begin();
 
@@ -1153,8 +1210,14 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
         if(msgIdV.empty()){
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
-            locked_retrieveMsgMeta(c, metaSet);
+            if (c)
+            {
+                locked_retrieveMsgMeta(c, metaSet);
 
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                resultCount += metaSet.size();
+#endif
+            }
         }else{
 
             // request each grp
@@ -1165,12 +1228,23 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
 
-                locked_retrieveMsgMeta(c, metaSet);
+                if (c)
+                {
+                    locked_retrieveMsgMeta(c, metaSet);
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                    resultCount += c->getResultCount();
+#endif
+                }
             }
         }
 
         msgMeta[grpId] = metaSet;
     }
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    std::cerr << "RsDataService::retrieveGxsMsgMetaData() Requests: " << reqIds.size() << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+#endif
 
     return 1;
 }
@@ -1201,6 +1275,10 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 #endif
 
     RsStackMutex stack(mDbMutex);
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    RsScopeTimer timer("");
+#endif
 
     if(grp.empty()){
 
@@ -1257,6 +1335,9 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 
       }
 
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+    std::cerr << "RsDataService::retrieveGxsGrpMetaData() Time: " << timer.duration() << std::endl;
+#endif
 
     return 1;
 }
@@ -1286,6 +1367,7 @@ int RsDataService::resetDataStore()
             delete mit->second;
         }
 
+        mDb->execSQL("DROP INDEX " + MSG_INDEX_GRPID);
         mDb->execSQL("DROP TABLE " + MSG_TABLE_NAME);
         mDb->execSQL("DROP TABLE " + GRP_TABLE_NAME);
         mDb->execSQL("DROP TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER);
@@ -1446,6 +1528,11 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 {
     RsStackMutex stack(mDbMutex);
 
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+	RsScopeTimer timer("");
+	int resultCount = 0;
+#endif
+
 	RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpIdColumn, "", "");
 
 	if(c)
@@ -1458,6 +1545,10 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 			c->getString(0, grpId);
 			grpIds.push_back(RsGxsGroupId(grpId));
 			valid = c->moveToNext();
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+			++resultCount;
+#endif
 		}
 		delete c;
 	}else
@@ -1465,11 +1556,19 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 		return 0;
 	}
 
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+	std::cerr << "RsDataService::retrieveGroupIds() Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+#endif
+
 	return 1;
 }
 
-int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId,
-		RsGxsMessageId::std_vector& msgIds) {
+int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgIds)
+{
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+	RsScopeTimer timer("");
+	int resultCount = 0;
+#endif
 
 	RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgIdColumn, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
@@ -1487,12 +1586,20 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId,
 
 			msgIds.push_back(RsGxsMessageId(msgId));
 			valid = c->moveToNext();
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+			++resultCount;
+#endif
 		}
 		delete c;
 	}else
 	{
 		return 0;
 	}
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+	std::cerr << "RsDataService::retrieveNxsGrps() Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+#endif
 
 	return 1;
 

@@ -1,13 +1,12 @@
 set QTDIR=C:\Qt\4.8.6
 set MINGW=C:\MinGW
+set GIT=C:\Program Files\Git
 
-set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
+set PATH=%QTDIR%\bin;%MINGW%\bin;;%GIT%\bin;%PATH% 
 
-"c:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare\rsversion.in retroshare\rsversion.h
+mingw32-make clean 
 
-mingw32-make clean
-
-qmake libretroshare.pro
+qmake libretroshare.pro "CONFIG+=version_detail_bash_script" 
 
 mingw32-make
 
