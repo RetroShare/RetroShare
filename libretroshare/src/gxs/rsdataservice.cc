@@ -161,8 +161,8 @@ const uint32_t RsGeneralDataService::GXS_MAX_ITEM_SIZE = 1572864; // 1.5 Mbytes
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
                              RsGxsSearchModule * /* mod */, const std::string& key)
-    : RsGeneralDataService(), mDbMutex("RsDataService"), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType),
-    mDb( new RetroDb(mDbName, RetroDb::OPEN_READWRITE_CREATE, key)) {
+    : RsGeneralDataService(), mDbMutex("RsDataService"), mServiceDir(serviceDir), mDbName(dbName), mDbPath(mServiceDir + "/" + dbName), mServType(serviceType),
+    mDb( new RetroDb(mDbPath, RetroDb::OPEN_READWRITE_CREATE, key)) {
 
     initialise();
 
@@ -977,7 +977,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
     }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    std::cerr << "RsDataService::retrieveNxsGrps() Requests: " << requestedGroups << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+    std::cerr << "RsDataService::retrieveNxsGrps() " << mDbName << ", Requests: " << requestedGroups << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
     if(withMeta && !grp.empty())
@@ -1004,7 +1004,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
         }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-        std::cerr << "RsDataService::retrieveNxsGrps() Time with meta: " << timer.duration() << std::endl;
+        std::cerr << "RsDataService::retrieveNxsGrps() " << mDbName << ", Time with meta: " << timer.duration() << std::endl;
 #endif
     }
 
@@ -1109,7 +1109,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
     }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    std::cerr << "RsDataService::retrieveNxsMsgs() Requests: " << reqIds.size() << "Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+    std::cerr << "RsDataService::retrieveNxsMsgs() " << mDbName << ", Requests: " << reqIds.size() << "Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
     // tres expensive !?
@@ -1165,7 +1165,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-        std::cerr << "RsDataService::retrieveNxsMsgs() Time with meta: " << timer.duration() << std::endl;
+        std::cerr << "RsDataService::retrieveNxsMsgs() " << mDbName << ", Time with meta: " << timer.duration() << std::endl;
 #endif
     }
 
@@ -1243,7 +1243,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
     }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    std::cerr << "RsDataService::retrieveGxsMsgMetaData() Requests: " << reqIds.size() << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+    std::cerr << "RsDataService::retrieveGxsMsgMetaData() " << mDbName << ", Requests: " << reqIds.size() << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
     return 1;
@@ -1336,7 +1336,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
       }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    std::cerr << "RsDataService::retrieveGxsGrpMetaData() Time: " << timer.duration() << std::endl;
+    std::cerr << "RsDataService::retrieveGxsGrpMetaData() " << mDbName << ", Time: " << timer.duration() << std::endl;
 #endif
 
     return 1;
@@ -1557,7 +1557,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 	}
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-	std::cerr << "RsDataService::retrieveGroupIds() Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+	std::cerr << "RsDataService::retrieveGroupIds() " << mDbName << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
 	return 1;
@@ -1598,7 +1598,7 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std
 	}
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-	std::cerr << "RsDataService::retrieveNxsGrps() Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+	std::cerr << "RsDataService::retrieveNxsGrps() " << mDbName << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
 	return 1;

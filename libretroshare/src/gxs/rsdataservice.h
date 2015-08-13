@@ -270,7 +270,9 @@ private:
     std::list<std::string> grpMetaColumns;
     std::list<std::string> grpIdColumn;
 
-    std::string mServiceDir, mDbName;
+    std::string mServiceDir;
+    std::string mDbName;
+    std::string mDbPath;
     uint16_t mServType;
 
     RetroDb* mDb;
