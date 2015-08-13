@@ -1109,7 +1109,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
     }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    std::cerr << "RsDataService::retrieveNxsMsgs() " << mDbName << ", Requests: " << reqIds.size() << "Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
+    std::cerr << "RsDataService::retrieveNxsMsgs() " << mDbName << ", Requests: " << reqIds.size() << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
     // tres expensive !?
