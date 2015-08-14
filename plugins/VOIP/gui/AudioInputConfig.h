@@ -69,7 +69,7 @@ class AudioInputConfig : public ConfigPage
 		//VideoDecoder *videoDecoder ;
 		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
-        	VideoDecoder *videoDecoder ;
+        	VideoProcessor *videoProcessor ;
 		bool loaded;
 
         voipGraphSource *graph_source ;

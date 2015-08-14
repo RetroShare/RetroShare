@@ -123,8 +123,7 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	inputAudioDevice = NULL ;
 
 	inputVideoDevice = new QVideoInputDevice(mChatWidget) ; // not started yet ;-)
-	inputVideoProcessor = new JPEGVideoEncoder ;
-	outputVideoProcessor = new JPEGVideoDecoder ;
+	videoProcessor = new VideoProcessor ;
 
 	// Make a widget with two video devices, one for echo, and one for the talking peer.
 	videoWidget = new QWidget(mChatWidget) ;
@@ -144,8 +143,8 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	mChatWidget->addChatHorizontalWidget(videoWidget) ;
 
 	inputVideoDevice->setEchoVideoTarget(echoVideoDevice) ;
-	inputVideoDevice->setVideoEncoder(inputVideoProcessor) ;
-	outputVideoProcessor->setDisplayTarget(outputVideoDevice) ;
+	inputVideoDevice->setVideoProcessor(videoProcessor) ;
+	videoProcessor->setDisplayTarget(outputVideoDevice) ;
 }
 
 VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
@@ -154,8 +153,7 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 		inputAudioDevice->stop() ;
 
 	delete inputVideoDevice ;
-	delete inputVideoProcessor ;
-	delete outputVideoProcessor ;
+	delete videoProcessor ;
 
 	button_map::iterator it = buttonMapTakeVideo.begin();
 	while (it != buttonMapTakeVideo.end()) {
@@ -287,42 +285,50 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* array)
 {
-	if (!videoCaptureToggleButton->isChecked()) {
-		if (mChatWidget) {
-			QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
-			if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
-			button_map::iterator it = buttonMapTakeVideo.find(buttonName);
-			if (it == buttonMapTakeVideo.end()){
-				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
-				                        , tr("%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
-				RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Video Call"));
-				button->setToolTip(tr("Activate camera"));
-				button->setStyleSheet(QString("border: 1px solid #199909;")
-                              .append("font-size: 12pt;  color: white;")
-                              .append("min-width: 128px; min-height: 24px;")
-				                      .append("border-radius: 6px;")
-				                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-                                        "stop: 0 #22c70d, stop: 1 #116a06);")
+    if (!videoCaptureToggleButton->isChecked()) 
+    {
+	    if (mChatWidget) {
+		    QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+		    if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
+		    button_map::iterator it = buttonMapTakeVideo.find(buttonName);
+		    if (it == buttonMapTakeVideo.end()){
+			    mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			                            , tr("%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+			    RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Video Call"));
+			    button->setToolTip(tr("Activate camera"));
+			    button->setStyleSheet(QString("border: 1px solid #199909;")
+			                          .append("font-size: 12pt;  color: white;")
+			                          .append("min-width: 128px; min-height: 24px;")
+			                          .append("border-radius: 6px;")
+			                          .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+			                                  "stop: 0 #22c70d, stop: 1 #116a06);")
 
-				                      );
+			                          );
 
-				button->updateImage();
+			    button->updateImage();
 
-				connect(button,SIGNAL(clicked()),this,SLOT(startVideoCapture()));
-				connect(button,SIGNAL(mouseEnter()),this,SLOT(botMouseEnter()));
-				connect(button,SIGNAL(mouseLeave()),this,SLOT(botMouseLeave()));
+			    connect(button,SIGNAL(clicked()),this,SLOT(startVideoCapture()));
+			    connect(button,SIGNAL(mouseEnter()),this,SLOT(botMouseEnter()));
+			    connect(button,SIGNAL(mouseLeave()),this,SLOT(botMouseLeave()));
 
-				buttonMapTakeVideo.insert(buttonName, button);
-			}
-		}
+			    buttonMapTakeVideo.insert(buttonName, button);
+		    }
+	    }
 
-		//TODO make a sound for the incoming call
-//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
-		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(peer_id);
+	    //TODO make a sound for the incoming call
+	    //        soundManager->play(VOIP_SOUND_INCOMING_CALL);
+	    if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(peer_id);
 
-	} else {
-		outputVideoProcessor->receiveEncodedData((unsigned char *)array->data(),array->size()) ;
-	}
+    } 
+    else 
+    {
+	    RsVOIPDataChunk chunk ;
+	    chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+	    chunk.size = array->size() ;
+	    chunk.data = array->data() ;
+
+	    videoProcessor->receiveEncodedData(chunk) ;
+    }
 }
 
 void VOIPChatWidgetHolder::botMouseEnter()
@@ -359,7 +365,7 @@ void VOIPChatWidgetHolder::botMouseLeave()
 
 void VOIPChatWidgetHolder::setAcceptedBandwidth(uint32_t bytes_per_sec)
 {
-	inputVideoProcessor->setMaximumFrameRate(bytes_per_sec) ;
+	videoProcessor->setMaximumFrameRate(bytes_per_sec) ;
 }
 
 void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* array)

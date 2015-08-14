@@ -34,6 +34,7 @@
 #include "AudioInputConfig.h"
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
+#include "gui/VideoProcessor.h"
 #include "gui/common/RSGraphWidget.h"
 #include "util/RsProtectedTimer.h"
 
@@ -99,35 +100,36 @@ voipGraph::voipGraph(QWidget *parent)
 AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
-	std::cerr << "Creating audioInputConfig object" << std::endl;
+    std::cerr << "Creating audioInputConfig object" << std::endl;
 
-	/* Invoke the Qt Designer generated object setup routine */
-	ui.setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
 
-	loaded = false;
+    loaded = false;
 
-	inputAudioProcessor = NULL;
-	inputAudioDevice = NULL;
-	abSpeech = NULL;
-	qtTick = NULL;
+    inputAudioProcessor = NULL;
+    inputAudioDevice = NULL;
+    abSpeech = NULL;
+    qtTick = NULL;
 
-	// Create the video pipeline.
-	//
-	videoInput = new QVideoInputDevice(this) ;
-	videoInput->setEchoVideoTarget(ui.videoDisplay) ;
-	videoInput->setVideoEncoder(new JPEGVideoEncoder()) ;
+    // Create the video pipeline.
+    //
+    videoInput = new QVideoInputDevice(this) ;
+    videoInput->setEchoVideoTarget(ui.videoDisplay) ;
 
-	videoDecoder = new JPEGVideoDecoder;
-	videoDecoder->setDisplayTarget(NULL) ;
+    videoProcessor = new VideoProcessor() ;
+    videoProcessor->setDisplayTarget(NULL) ;
 
-	graph_source = new voipGraphSource ;
-	ui.voipBwGraph->setSource(graph_source);
+    videoInput->setVideoProcessor(videoProcessor) ;
 
-	graph_source->setVideoInput(videoInput) ;
-	graph_source->setCollectionTimeLimit(1000*300) ;
-	graph_source->start() ;
+    graph_source = new voipGraphSource ;
+    ui.voipBwGraph->setSource(graph_source);
 
-	QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
+    graph_source->setVideoInput(videoInput) ;
+    graph_source->setCollectionTimeLimit(1000*300) ;
+    graph_source->start() ;
+
+    QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
 }
 
 void AudioInputConfig::togglePreview(bool b)
@@ -135,12 +137,12 @@ void AudioInputConfig::togglePreview(bool b)
     if(b)
     {
         videoInput->setEchoVideoTarget(NULL) ;
-	videoDecoder->setDisplayTarget(ui.videoDisplay) ;
+	videoProcessor->setDisplayTarget(ui.videoDisplay) ;
     }
     else
     {
         videoInput->setEchoVideoTarget(ui.videoDisplay) ;
-	videoDecoder->setDisplayTarget(NULL) ;
+	videoProcessor->setDisplayTarget(NULL) ;
     }
 }
 
@@ -367,7 +369,7 @@ void AudioInputConfig::on_Tick_timeout() {
     
     while(videoInput->getNextEncodedPacket(chunk))
     {
-        videoDecoder->receiveEncodedData(static_cast<const unsigned char*>(chunk.data),chunk.size) ;
+        videoProcessor->receiveEncodedData(chunk) ;
         chunk.clear() ;
     }
 }

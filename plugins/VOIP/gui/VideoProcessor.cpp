@@ -1,4 +1,5 @@
 #include <iostream>
+#include <assert.h>
 
 #include <QByteArray>
 #include <QBuffer>
@@ -7,127 +8,182 @@
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
 
-VideoDecoder::VideoDecoder()
+VideoProcessor::VideoProcessor()
+    :_encoded_frame_size(256,256) 
 {
-	_output_device = NULL ;
+	_decoded_output_device = NULL ;
 }
 
-VideoEncoder::VideoEncoder()
-    :_frame_size(256,256) 
+bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint,uint32_t& encoded_size)
 {
+    VideoCodec *codec ;
+
+    switch(_encoding_current_codec)
+    {
+    case VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO: codec = &_jpeg_video_codec ;
+	    break ;
+    case VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO: codec = &_ddwt_video_codec ;
+	    break ;
+    default:
+	    codec = NULL ;
+    }
+
+    //    std::cerr << "reducing to " << _frame_size.width() << " x " << _frame_size.height() << std::endl;
+
+    void *data = NULL;
+    encoded_size = 0 ;
+
+    if(codec)
+    {
+	    RsVOIPDataChunk chunk ;
+
+	    codec->encodeData(img.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),size_hint,chunk) ;
+
+	    if(chunk.size == 0)		// the codec might be buffering the frame for compression reasons
+		    return true ;
+
+	    _encoded_out_queue.push_back(chunk) ;
+
+	    return true ;
+    }
+    else
+	    return false ;
 }
 
-bool VideoEncoder::addImage(const QImage& img,uint32_t size_hint,uint32_t& encoded_size)
+bool VideoProcessor::nextEncodedPacket(RsVOIPDataChunk& chunk)
 {
-//    std::cerr << "reducing to " << _frame_size.width() << " x " << _frame_size.height() << std::endl;
-	encodeData(img.scaled(_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),size_hint,encoded_size) ;
-	//encodeData(img,size_hint,encoded_size) ;
-
-	return true ;
-}
-
-bool VideoEncoder::nextPacket(RsVOIPDataChunk& chunk)
-{
-	if(_out_queue.empty())
+	if(_encoded_out_queue.empty())
 		return false ;
 
-	chunk = _out_queue.front() ;
-	_out_queue.pop_front() ;
+	chunk = _encoded_out_queue.front() ;
+	_encoded_out_queue.pop_front() ;
 
 	return true ;
 }
 
-void VideoDecoder::receiveEncodedData(const unsigned char *data,uint32_t size)
+void VideoProcessor::setInternalFrameSize(QSize s)
 {
-    if(_output_device)
-	_output_device->showFrame(decodeData(data,size)) ;
+    _encoded_frame_size = s ;
 }
 
-QImage JPEGVideoDecoder::decodeData(const unsigned char *encoded_image_data,uint32_t size)
+void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
 {
     static const int HEADER_SIZE = 4 ;
 
     // read frame type. Use first 4 bytes to give info about content.
+    // 
+    //    Byte       Meaning       Values
+    //      00         Codec         CODEC_ID_JPEG_VIDEO      Basic Jpeg codec
+    //                               CODEC_ID_DDWT_VIDEO      Differential wavelet compression
+    //
+    //      01        Unused                      		Might be useful later
+    //
+    //    0203         Flags                      		Codec specific flags.
+    //
 
-    if(size < HEADER_SIZE)
+    if(chunk.size < HEADER_SIZE)
     {
-	    std::cerr << "JPEGVideoDecoder::decodeData(): Too small a data packet. size=" << size << std::endl;
-	    return QImage() ;
+	    std::cerr << "JPEGVideoDecoder::decodeData(): Too small a data packet. size=" << chunk.size << std::endl;
+	    return ;
     }
 
-    uint32_t flags = encoded_image_data[0] + (encoded_image_data[1] << 8) ;
+    uint32_t codid = ((unsigned char *)chunk.data)[0] + (((unsigned char *)chunk.data)[1] << 8) ;
+    uint16_t flags = ((unsigned char *)chunk.data)[2] + (((unsigned char *)chunk.data)[3] << 8) ;
 
-    //  un-compress image data
+    VideoCodec *codec ;
 
-    QByteArray qb((char*)&encoded_image_data[HEADER_SIZE],(int)size - HEADER_SIZE) ;
-    QImage image ;
-    if(!image.loadFromData(qb,"JPEG"))
+    switch(codid)
     {
-	    std::cerr << "image.loadFromData(): returned an error.: " << std::endl;
-	    return QImage() ;
+    case VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO: codec = &_jpeg_video_codec ;
+	    break ;
+    case VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO: codec = &_ddwt_video_codec ;
+	    break ;
+    default:
+	    codec = NULL ;
     }
+    QImage img ;
 
-    // now see if the frame is a differential frame, or just a reference frame.
+    if(codec != NULL)
+	    codec->decodeData(chunk,img) ;
 
-    if(flags & JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME)
-    {
-            if(_reference_frame.size() != image.size())
-            {
-                std::cerr << "Bad reference frame!" << std::endl;
-                return image ;
-            }
-            
-	    QImage res = _reference_frame ;
-
-	    for(uint32_t i=0;i<image.byteCount();++i)
-		    res.bits()[i] += (image.bits()[i] - 128) & 0xff ;	// it should be -128, but we're doing modulo 256 arithmetic
-
-	    return res ;
-    }
-    else
-    {
-	    _reference_frame = image ;
-
-	    return image ;
-    }
+    if(_decoded_output_device)
+	    _decoded_output_device->showFrame(img) ;
 }
 
-void VideoEncoder::setMaximumFrameRate(uint32_t bytes_per_sec)
+void VideoProcessor::setMaximumFrameRate(uint32_t bytes_per_sec)
 {
     std::cerr << "Video Encoder: maximum frame rate is set to " << bytes_per_sec << " Bps" << std::endl;
 }
 
-void VideoEncoder::setInternalFrameSize(QSize s)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+JPEGVideo::JPEGVideo()
+	: _encoded_ref_frame_max_distance(50),_encoded_ref_frame_count(50) 
 {
-    _frame_size = s ;
 }
 
-JPEGVideoEncoder::JPEGVideoEncoder()
-	: _ref_frame_max_distance(50),_ref_frame_count(50) 
+bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 {
+    // now see if the frame is a differential frame, or just a reference frame.
+
+    uint16_t codec = ((unsigned char *)chunk.data)[0] + (((unsigned char *)chunk.data)[1] << 8) ;
+    uint16_t flags = ((unsigned char *)chunk.data)[2] + (((unsigned char *)chunk.data)[3] << 8) ;
+    
+    assert(codec == VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO) ;
+    
+    //  un-compress image data
+
+    QByteArray qb((char*)&((uint8_t*)chunk.data)[HEADER_SIZE],(int)chunk.size - HEADER_SIZE) ;
+
+    if(!image.loadFromData(qb,"JPEG"))
+    {
+	    std::cerr << "image.loadFromData(): returned an error.: " << std::endl;
+	    return false ;
+    }
+
+   
+    if(flags & JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME)
+    {
+            if(_decoded_reference_frame.size() != image.size())
+            {
+                std::cerr << "Bad reference frame!" << std::endl;
+                return false ;
+            }
+            
+	    QImage res = _decoded_reference_frame ;
+
+	    for(uint32_t i=0;i<image.byteCount();++i)
+		    res.bits()[i] += (image.bits()[i] - 128) & 0xff ;	// it should be -128, but we're doing modulo 256 arithmetic
+
+	    image = res ;
+    }
+    
+    return true ;
 }
 
-void JPEGVideoEncoder::encodeData(const QImage& image,uint32_t /* size_hint */,uint32_t& encoded_size)
+bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDataChunk& voip_chunk)
 {
     // check if we make a diff image, or if we use the full frame.
 
     QImage encoded_frame ;
     bool differential_frame ;
 
-    if(_ref_frame_count++ < _ref_frame_max_distance && image.size() == _reference_frame.size())
+    if(_encoded_ref_frame_count++ < _encoded_ref_frame_max_distance && image.size() == _encoded_reference_frame.size())
     {
 	    // compute difference with reference frame.
 	    encoded_frame = image ;
 
 	    for(uint32_t i=0;i<image.byteCount();++i)
-		    encoded_frame.bits()[i] = (image.bits()[i] - _reference_frame.bits()[i]) + 128;
+		    encoded_frame.bits()[i] = (image.bits()[i] - _encoded_reference_frame.bits()[i]) + 128;
         
         differential_frame = true ;
     }
     else
     {
-	    _ref_frame_count = 0 ;
-	    _reference_frame = image ;
+	    _encoded_ref_frame_count = 0 ;
+	    _encoded_reference_frame = image ;
 	    encoded_frame = image ;
         
         differential_frame = false ;
@@ -139,23 +195,21 @@ void JPEGVideoEncoder::encodeData(const QImage& image,uint32_t /* size_hint */,u
     buffer.open(QIODevice::WriteOnly) ;
     encoded_frame.save(&buffer,"JPEG") ;
 
-    RsVOIPDataChunk voip_chunk ;
     voip_chunk.data = malloc(HEADER_SIZE + qb.size());
     
     // build header
     uint32_t flags = differential_frame ? JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME : 0x0 ;
     
-    ((unsigned char *)voip_chunk.data)[0] = flags & 0xff ;
-    ((unsigned char *)voip_chunk.data)[1] = (flags >> 8) & 0xff ;
-    ((unsigned char *)voip_chunk.data)[2] = 0 ;
-    ((unsigned char *)voip_chunk.data)[3] = 0 ;
+    ((unsigned char *)voip_chunk.data)[0] =  VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO       & 0xff ;
+    ((unsigned char *)voip_chunk.data)[1] = (VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO >> 8) & 0xff ;
+    ((unsigned char *)voip_chunk.data)[2] = flags & 0xff ;
+    ((unsigned char *)voip_chunk.data)[3] = (flags >> 8) & 0xff ;
     
     memcpy(voip_chunk.data+HEADER_SIZE,qb.data(),qb.size()) ;
+    
     voip_chunk.size = HEADER_SIZE + qb.size() ;
     voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 
-    _out_queue.push_back(voip_chunk) ;
-
-    encoded_size = voip_chunk.size ;
+    return true ;
 }
 

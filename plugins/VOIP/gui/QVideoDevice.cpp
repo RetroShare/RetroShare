@@ -11,7 +11,7 @@ QVideoInputDevice::QVideoInputDevice(QWidget *parent)
 {
 	_timer = NULL ;
 	_capture_device = NULL ;
-	_video_encoder = NULL ;
+	_video_processor = NULL ;
 	_echo_output_device = NULL ;
     	_estimated_bw = 0 ;
         _total_encoded_size = 0 ;
@@ -78,11 +78,11 @@ void QVideoInputDevice::grabFrame()
 
     QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888);
 
-    if(_video_encoder != NULL) 
+    if(_video_processor != NULL) 
     {
 	    uint32_t encoded_size ;
 
-	    _video_encoder->addImage(image,0,encoded_size) ;
+	    _video_processor->processImage(image,0,encoded_size) ;
 
         std::cerr << "Encoded size = " << encoded_size << std::endl;
 	    _total_encoded_size += encoded_size ;
@@ -107,8 +107,8 @@ void QVideoInputDevice::grabFrame()
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
-    if(_video_encoder)
-	    return _video_encoder->nextPacket(chunk) ;
+    if(_video_processor)
+	    return _video_processor->nextEncodedPacket(chunk) ;
     else 
 	    return false ;
 }

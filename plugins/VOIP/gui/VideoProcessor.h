@@ -6,58 +6,91 @@
 
 class QVideoOutputDevice ;
 
+class VideoCodec
+{
+public:
+    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) = 0;
+    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) = 0;
+};
+
+// Now derive various image encoding/decoding algorithms.
+//
+
+class JPEGVideo: public VideoCodec
+{
+public:
+    JPEGVideo() ;
+    
+protected:
+    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) ;
+    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
+
+    static const uint32_t HEADER_SIZE = 0x04 ;
+    static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
+private:
+    QImage _decoded_reference_frame ;
+    QImage _encoded_reference_frame ;
+
+    uint32_t _encoded_ref_frame_max_distance ;	// max distance between two reference frames.
+    uint32_t _encoded_ref_frame_count ;
+};
+
+class DifferentialWaveletVideo: public VideoCodec
+{
+public:
+	DifferentialWaveletVideo() {}
+
+protected:
+    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) { return true ; }
+    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) { return true ; }
+
+private:
+	QImage _last_reference_frame ;
+};
+
 // This class decodes video from a stream. It keeps a queue of
 // decoded frame that needs to be retrieved using the getNextImage() method.
 //
-class VideoDecoder
+class VideoProcessor
 {
 	public:
-		VideoDecoder() ;
-		virtual ~VideoDecoder() {}
+		VideoProcessor() ;
+		virtual ~VideoProcessor() {}
 
+        	enum CodecId {
+                		VIDEO_PROCESSOR_CODEC_ID_UNKNOWN    = 0x0000,
+                		VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO = 0x0001,
+                		VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO = 0x0002
+            };
+            
+// =====================================================================================
+// =------------------------------------ DECODING -------------------------------------=
+// =====================================================================================
+        
 		// Gets the next image to be displayed. Once returned, the image should
 		// be cleared from the incoming queue.
 		//
-		void setDisplayTarget(QVideoOutputDevice *odev) { _output_device = odev ; }
-
-		virtual void receiveEncodedData(const unsigned char *data,uint32_t size) ;
+		void setDisplayTarget(QVideoOutputDevice *odev) { _decoded_output_device = odev ; }
+		virtual void receiveEncodedData(const RsVOIPDataChunk& chunk) ;
 
 		// returns the current (measured) frame rate in bytes per second.
 		//
-		uint32_t currentFrameRate() const; 
+		uint32_t currentDecodingFrameRate() const; 
 
 	private:
-		QVideoOutputDevice *_output_device ;
+		QVideoOutputDevice *_decoded_output_device ;
+		std::list<QImage> _decoded_image_queue ;
 
-		std::list<QImage> _image_queue ;
-
-		// Incoming data is processed by a video codec and converted into images.
-		//
-		virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) = 0 ;
-
-//		// This buffer accumulated incoming encoded data, until a full packet is obtained,
-//		// since the stream might not send images at once. When incoming images are decoded, the
-//		// data is removed from the buffer.
-//		//
-//		unsigned char *buffer ;
-//		uint32_t buffer_size ;
-};
-
-// This class encodes video using a video codec (possibly homemade, or based on existing codecs)
-// and produces a data stream that is sent to the network transfer service (e.g. p3VOIP).
-//
-class VideoEncoder
-{
+// =====================================================================================
+// =------------------------------------ ENCODING -------------------------------------=
+// =====================================================================================
+        
 	public:
-		VideoEncoder() ;
-		virtual ~VideoEncoder() {}
-
 		// Takes the next image to be encoded. 
 		//
-		bool addImage(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
-
-		bool packetReady() const { return !_out_queue.empty() ; }
-		bool nextPacket(RsVOIPDataChunk& ) ;
+		bool processImage(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
+		bool encodedPacketReady() const { return !_encoded_out_queue.empty() ; }
+		bool nextEncodedPacket(RsVOIPDataChunk& ) ;
 
 		// Used to tweak the compression ratio so that the video can stream ok.
 		//
@@ -65,63 +98,16 @@ class VideoEncoder
         	void setInternalFrameSize(QSize) ;
             
 	protected:
-		virtual void encodeData(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) =0;
-
-		std::list<RsVOIPDataChunk> _out_queue ;
+		std::list<RsVOIPDataChunk> _encoded_out_queue ;
+        	QSize _encoded_frame_size ;
+            
+// =====================================================================================
+// =------------------------------------- Codecs --------------------------------------=
+// =====================================================================================
         
-        	QSize _frame_size ;
+	    JPEGVideo                _jpeg_video_codec ;
+            DifferentialWaveletVideo _ddwt_video_codec ;
+            
+            uint16_t _encoding_current_codec ;
 };
 
-// Now derive various image encoding/decoding algorithms.
-//
-
-class JPEGVideoDecoder: public VideoDecoder
-{
-protected:
-    virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) ;
-    
-        static const uint32_t HEADER_SIZE = 0x04 ;
-        
-        static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
-private:
-    	QImage _reference_frame ;
-};
-
-class JPEGVideoEncoder: public VideoEncoder
-{
-public:
-	JPEGVideoEncoder() ;
-
-protected:
-	virtual void encodeData(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
-    
-        static const uint32_t HEADER_SIZE = 0x04 ;
-
-        static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
-private:
-	QImage _reference_frame ;
-	uint32_t _ref_frame_max_distance ;	// max distance between two reference frames.
-	uint32_t _ref_frame_count ;
-};
-
-class DifferentialWaveletEncoder: public VideoEncoder
-{
-public:
-	DifferentialWaveletEncoder() {}
-
-protected:
-	virtual void encodeData(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
-    
-};
-
-class DifferentialWaveletDecoder: public VideoDecoder
-{
-public:
-	DifferentialWaveletDecoder() {}
-
-protected:
-	virtual QImage decodeData(const unsigned char *encoded_image,uint32_t encoded_image_size) ;
-
-private:
-	QImage _last_reference_frame ;
-};
