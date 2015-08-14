@@ -60,8 +60,8 @@ public:
 protected:
 	/* GxsMessageFramePostWidget */
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
-	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
-	virtual void insertRelatedPosts(const uint32_t &token);
+	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
+	virtual void insertPosts(const uint32_t &token);
 	virtual void clearPosts();
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
 
