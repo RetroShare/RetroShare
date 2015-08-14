@@ -29,6 +29,7 @@ SOURCES += \
 	api/PeersHandler.cpp \
 	api/Operators.cpp \
 	api/IdentityHandler.cpp \
+	api/ForumHandler.cpp \
 	api/ServiceControlHandler.cpp \
 	api/StateTokenServer.cpp \
 	api/GxsResponseTask.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
 	api/PeersHandler.h \
 	api/Operators.h \
 	api/IdentityHandler.h \
+	api/ForumHandler.h \
 	api/ServiceControlHandler.h \
 	api/GxsMetaOperators.h \
 	api/StateTokenServer.h \
