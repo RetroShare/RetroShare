@@ -55,11 +55,11 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	/* Setup UI helper */
 
-	mStateHelper->addWidget(mTokenTypePosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
-	mStateHelper->addWidget(mTokenTypePosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
-	mStateHelper->addWidget(mTokenTypePosts, ui->filterLineEdit);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->filterLineEdit);
 
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypePosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
 
 	mStateHelper->addLoadPlaceholder(mTokenTypeGroupData, ui->nameLabel);
 
@@ -175,7 +175,7 @@ void GxsChannelPostsWidget::groupNameChanged(const QString &name)
 
 QIcon GxsChannelPostsWidget::groupIcon()
 {
-	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypePosts)) {
+	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypeAllPosts)) {
 		return QIcon(":/images/kalarm.png");
 	}
 
@@ -488,7 +488,7 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	return false;
 }
 
-void GxsChannelPostsWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
+void GxsChannelPostsWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
 {
 	std::vector<RsGxsChannelPost> posts;
 	rsGxsChannels->getPostData(token, posts);
@@ -496,10 +496,10 @@ void GxsChannelPostsWidget::insertPosts(const uint32_t &token, GxsMessageFramePo
 	insertChannelPosts(posts, thread, false);
 }
 
-void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
+void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
 {
 	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getRelatedPosts(token, posts);
+	rsGxsChannels->getPostData(token, posts);
 
 	insertChannelPosts(posts, NULL, true);
 }

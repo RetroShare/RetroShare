@@ -1,5 +1,5 @@
 /*
- * libretroshare/src/util: rsscopetimer.h
+ * libretroshare/src/util: rsscopetimer.cc
  *
  * 3P/PQI network interface for RetroShare.
  *
@@ -23,30 +23,37 @@
  *
  */
 
-// Use this class to measure and display time duration of a given environment:
-//
-// {
-//     RsScopeTimer timer("callToMeasure()") ;
-//
-//     callToMeasure() ;
-// }
-//
+#include <iostream>
+#include <sys/time.h>
+#include "rsscopetimer.h"
 
-#include <string>
-
-class RsScopeTimer
+RsScopeTimer::RsScopeTimer(const std::string& name)
 {
-public:
-	RsScopeTimer(const std::string& name);
-	~RsScopeTimer();
+	_name = name ;
+	start();
+}
 
-	void start();
-	double duration();
+RsScopeTimer::~RsScopeTimer()
+{
+	if (!_name.empty())
+	{
+		std::cerr << "Time for \"" << _name << "\": " << duration() << std::endl;
+	}
+}
 
-private:
-	double currentTime();
+double RsScopeTimer::currentTime()
+{
+	timeval tv ;
+	gettimeofday(&tv,NULL) ;
+	return (tv.tv_sec % 10000) + tv.tv_usec/1000000.0f ;	// the %1000 is here to allow double precision to cover the decimals.
+}
 
-private:
-	std::string _name ;
-	double _seconds ;
-};
+void RsScopeTimer::start()
+{
+	_seconds = currentTime();
+}
+
+double RsScopeTimer::duration()
+{
+	return currentTime() - _seconds;
+}
