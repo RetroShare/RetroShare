@@ -93,6 +93,24 @@ public:
 
 
     /*!
+     * Start transaction
+     * @return true/false
+     */
+    bool beginTransaction();
+
+    /*!
+     * Commit transaction
+     * @return true/false
+     */
+    bool commitTransaction();
+
+    /*!
+     * Rollback transaction
+     * @return true/false
+     */
+    bool rollbackTransaction();
+
+    /*!
      * To a make query which do not return a result \n
      * below are the type of queries this method should be used for \n
      * ALTER TABLE \n

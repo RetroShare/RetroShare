@@ -570,7 +570,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     std::map<RsNxsMsg*, RsGxsMsgMetaData* >::iterator mit = msg.begin();
 
     // start a transaction
-    mDb->execSQL("BEGIN;");
+    mDb->beginTransaction();
 
     for(; mit != msg.end(); ++mit){
 
@@ -654,7 +654,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     }
 
     // finish transaction
-    bool ret = mDb->execSQL("COMMIT;");
+    bool ret = mDb->commitTransaction();
 
     for(mit = msg.begin(); mit != msg.end(); ++mit)
     {
@@ -685,7 +685,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     std::map<RsNxsGrp*, RsGxsGrpMetaData* >::iterator sit = grp.begin();
 
     // begin transaction
-    mDb->execSQL("BEGIN;");
+    mDb->beginTransaction();
 
     for(; sit != grp.end(); ++sit)
     {
@@ -769,7 +769,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 	}
     }
     // finish transaction
-    bool ret = mDb->execSQL("COMMIT;");
+    bool ret = mDb->commitTransaction();
 
     for(sit = grp.begin(); sit != grp.end(); ++sit)
     {
@@ -791,7 +791,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     std::map<RsNxsGrp*, RsGxsGrpMetaData* >::iterator sit = grp.begin();
 
     // begin transaction
-    mDb->execSQL("BEGIN;");
+    mDb->beginTransaction();
 
     for(; sit != grp.end(); ++sit)
     {
@@ -858,7 +858,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpPtr->grpId.toStdString() + "'", cv);
     }
     // finish transaction
-    bool ret = mDb->execSQL("COMMIT;");
+    bool ret = mDb->commitTransaction();
 
     for(sit = grp.begin(); sit != grp.end(); ++sit)
     {
@@ -877,7 +877,7 @@ int RsDataService::updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurity
     RsStackMutex stack(mDbMutex);
 
     // begin transaction
-    mDb->execSQL("BEGIN;");
+    mDb->beginTransaction();
 
     /*!
      * STORE key set
@@ -895,7 +895,7 @@ int RsDataService::updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurity
     mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpId.toStdString() + "'", cv);
 
     // finish transaction
-    return  mDb->execSQL("COMMIT;");
+    return  mDb->commitTransaction();
 }
 
 bool RsDataService::validSize(RsNxsGrp* grp) const
@@ -1608,7 +1608,7 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std
 bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)
 {
     // start a transaction
-    bool ret = mDb->execSQL("BEGIN;");
+    bool ret = mDb->beginTransaction();
 
     MsgUpdates::const_iterator mit = updates.begin();
 
@@ -1627,7 +1627,7 @@ bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)
     	}
     }
 
-    ret &= mDb->execSQL("COMMIT;");
+    ret &= mDb->commitTransaction();
 
     return ret;
 }
@@ -1635,7 +1635,7 @@ bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)
 bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
 {
     // start a transaction
-    bool ret = mDb->execSQL("BEGIN;");
+    bool ret = mDb->beginTransaction();
 
     GxsMsgReq::const_iterator mit = msgIds.begin();
 
@@ -1653,7 +1653,7 @@ bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
     	}
     }
 
-    ret &= mDb->execSQL("COMMIT;");
+    ret &= mDb->commitTransaction();
 
     return ret;
 }
@@ -1661,7 +1661,7 @@ bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
 bool RsDataService::locked_removeGroupEntries(const std::vector<RsGxsGroupId>& grpIds)
 {
     // start a transaction
-    bool ret = mDb->execSQL("BEGIN;");
+    bool ret = mDb->beginTransaction();
 
     std::vector<RsGxsGroupId>::const_iterator vit = grpIds.begin();
 
@@ -1672,7 +1672,7 @@ bool RsDataService::locked_removeGroupEntries(const std::vector<RsGxsGroupId>& g
 		mDb->sqlDelete(GRP_TABLE_NAME, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
     }
 
-    ret &= mDb->execSQL("COMMIT;");
+    ret &= mDb->commitTransaction();
 
     return ret;
 }

@@ -264,6 +264,32 @@ std::string RetroDb::getKey() const
 	return mKey;
 }
 
+bool RetroDb::beginTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("BEGIN;");
+}
+
+bool RetroDb::commitTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("COMMIT;");
+}
+bool RetroDb::rollbackTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("ROLLBACK;");
+}
+
 bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &paramBindings){
 
     // prepare statement
