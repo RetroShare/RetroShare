@@ -1827,6 +1827,12 @@ bool 	pqissl::moretoread(uint32_t usec)
 	}
 #endif
 
+	if(sockfd == -1)
+	{
+	   std::cerr << "pqissl::moretoread(): socket is invalid or closed." << std::endl;
+	   return 0 ;
+	}
+
 	fd_set ReadFDs, WriteFDs, ExceptFDs;
 	FD_ZERO(&ReadFDs);
 	FD_ZERO(&WriteFDs);
@@ -1888,6 +1894,12 @@ bool 	pqissl::cansend(uint32_t usec)
 	rslog(RSL_DEBUG_ALL, pqisslzone, 
 		"pqissl::cansend() polling socket!");
 #endif
+
+	if(sockfd == -1)
+	{
+	   std::cerr << "pqissl::moretoread(): socket is invalid or closed." << std::endl;
+	   return 0 ;
+	}
 
 	// Interestingly - This code might be portable....
 
