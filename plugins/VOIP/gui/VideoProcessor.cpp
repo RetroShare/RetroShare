@@ -9,7 +9,7 @@
 #include "QVideoDevice.h"
 
 VideoProcessor::VideoProcessor()
-    :_encoded_frame_size(256,256) 
+    :_encoded_frame_size(128,128) 
 {
 	_decoded_output_device = NULL ;
     _encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO;
@@ -40,6 +40,8 @@ bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint,uint32_t&
 
 	    codec->encodeData(img.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),size_hint,chunk) ;
 
+        	encoded_size = chunk.size ;
+            
 	    if(chunk.size == 0)		// the codec might be buffering the frame for compression reasons
 		    return true ;
 
@@ -146,7 +148,6 @@ bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 	    std::cerr << "image.loadFromData(): returned an error.: " << std::endl;
 	    return false ;
     }
-
    
     if(flags & JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME)
     {
@@ -187,6 +188,9 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
 
 	    for(uint32_t i=0;i<image.byteCount();++i)
 	    {
+		    // We cannot use basic modulo 256 arithmetic, because the decompressed JPeg frames do not follow the same rules (values are clamped)
+		    // and cause color blotches when perturbated by a differential frame.
+
 		    int diff = ( (int)image.bits()[i] - (int)_encoded_reference_frame.bits()[i]) + 128;
 		    encoded_frame.bits()[i] = (unsigned char)std::max(0,std::min(255,diff)) ;
 	    }
@@ -198,8 +202,8 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
 	    _encoded_ref_frame_count = 0 ;
 	    _encoded_reference_frame = image ;
 	    encoded_frame = image ;
-        
-        differential_frame = false ;
+
+	    differential_frame = false ;
     }
 
     QByteArray qb ;
@@ -209,17 +213,17 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
     encoded_frame.save(&buffer,"JPEG") ;
 
     voip_chunk.data = malloc(HEADER_SIZE + qb.size());
-    
+
     // build header
     uint32_t flags = differential_frame ? JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME : 0x0 ;
-    
+
     ((unsigned char *)voip_chunk.data)[0] =  VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO       & 0xff ;
     ((unsigned char *)voip_chunk.data)[1] = (VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO >> 8) & 0xff ;
     ((unsigned char *)voip_chunk.data)[2] = flags & 0xff ;
     ((unsigned char *)voip_chunk.data)[3] = (flags >> 8) & 0xff ;
-    
+
     memcpy(voip_chunk.data+HEADER_SIZE,qb.data(),qb.size()) ;
-    
+
     voip_chunk.size = HEADER_SIZE + qb.size() ;
     voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 
