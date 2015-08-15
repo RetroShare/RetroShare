@@ -110,6 +110,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
                 // not very happy about this, i think the flags should stay hidden in rsidentities
                 bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
                 bool pgp_linked = (grp.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+                bool subscribed = IS_GROUP_SUBSCRIBED(grp.mMeta.mSubscribeFlags);
                 resp.mDataStream.getStreamToMember()
                         << id
                         //<< pgp_id
@@ -123,6 +124,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
                         << makeKeyValueReference("parent_grp_id", grp.mMeta.mParentGrpId)
                         << makeKeyValueReference("description", grp.mDescription)
                         << makeKeyValueReference("own", own)
+                        << makeKeyValueReference("subscribed", subscribed)
                         << makeKeyValueReference("pgp_linked", pgp_linked);
             }
         }
