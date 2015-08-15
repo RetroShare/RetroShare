@@ -36,7 +36,7 @@ class ChatLobbyToaster : public QWidget
 	Q_OBJECT
 
 public:
-    ChatLobbyToaster(const  ChatLobbyId &lobby_id, const QString &name, const QString &message);
+	ChatLobbyToaster(const  ChatLobbyId &lobby_id, const RsGxsId &sender_id, const QString &message);
 
 private slots:
 	void chatButtonSlot();
