@@ -12,6 +12,7 @@ VideoProcessor::VideoProcessor()
     :_encoded_frame_size(256,256) 
 {
 	_decoded_output_device = NULL ;
+    _encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO;
 }
 
 bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint,uint32_t& encoded_size)
@@ -47,7 +48,10 @@ bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint,uint32_t&
 	    return true ;
     }
     else
+    {
+        std::cerr << "No codec for codec ID = " << _encoding_current_codec << ". Please call VideoProcessor::setCurrentCodec()" << std::endl;
 	    return false ;
+    }
 }
 
 bool VideoProcessor::nextEncodedPacket(RsVOIPDataChunk& chunk)
@@ -120,7 +124,7 @@ void VideoProcessor::setMaximumFrameRate(uint32_t bytes_per_sec)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 JPEGVideo::JPEGVideo()
-	: _encoded_ref_frame_max_distance(50),_encoded_ref_frame_count(50) 
+	: _encoded_ref_frame_max_distance(10),_encoded_ref_frame_count(10) 
 {
 }
 
@@ -146,19 +150,25 @@ bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
    
     if(flags & JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME)
     {
-            if(_decoded_reference_frame.size() != image.size())
-            {
-                std::cerr << "Bad reference frame!" << std::endl;
-                return false ;
-            }
-            
+	    if(_decoded_reference_frame.size() != image.size())
+	    {
+		    std::cerr << "Bad reference frame!" << std::endl;
+		    return false ;
+	    }
+
 	    QImage res = _decoded_reference_frame ;
 
 	    for(uint32_t i=0;i<image.byteCount();++i)
-		    res.bits()[i] += (image.bits()[i] - 128) & 0xff ;	// it should be -128, but we're doing modulo 256 arithmetic
+	    {
+		    int new_val = (int)res.bits()[i] + ((int)image.bits()[i] - 128) ;
+
+		    res.bits()[i] = std::max(0,std::min(255,new_val)) ;
+	    }
 
 	    image = res ;
     }
+    else
+        _decoded_reference_frame = image ;
     
     return true ;
 }
@@ -176,9 +186,12 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
 	    encoded_frame = image ;
 
 	    for(uint32_t i=0;i<image.byteCount();++i)
-		    encoded_frame.bits()[i] = (image.bits()[i] - _encoded_reference_frame.bits()[i]) + 128;
-        
-        differential_frame = true ;
+	    {
+		    int diff = ( (int)image.bits()[i] - (int)_encoded_reference_frame.bits()[i]) + 128;
+		    encoded_frame.bits()[i] = (unsigned char)std::max(0,std::min(255,diff)) ;
+	    }
+
+	    differential_frame = true ;
     }
     else
     {
