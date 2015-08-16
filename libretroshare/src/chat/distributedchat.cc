@@ -157,7 +157,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     //name = cli->nick;
     //popupChatFlag = RS_POPUP_CHATLOBBY;
 
-    RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, cli->signature.keyId.toStdString(), cli->nick, cli->message); /* notify private chat message */
+	RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, virtual_peer_id.toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
 
     return true ;
 }
