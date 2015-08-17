@@ -11,6 +11,9 @@ class VideoCodec
 public:
     virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) = 0;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) = 0;
+    
+protected:
+    static const uint32_t HEADER_SIZE = 0x04 ;
 };
 
 // Now derive various image encoding/decoding algorithms.
@@ -25,7 +28,6 @@ protected:
     virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
 
-    static const uint32_t HEADER_SIZE = 0x04 ;
     static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
 private:
     QImage _decoded_reference_frame ;
@@ -35,17 +37,24 @@ private:
     uint32_t _encoded_ref_frame_count ;
 };
 
-class DifferentialWaveletVideo: public VideoCodec
+class WaveletVideo: public VideoCodec
 {
 public:
-	DifferentialWaveletVideo() {}
+    WaveletVideo() {}
 
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) { return true ; }
-    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) { return true ; }
-
+    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) ;
+    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
 private:
-	QImage _last_reference_frame ;
+
+    static const int MANTISSE_BITS =  9 ;
+    static const int EXPONENT_BITS =  6 ;
+    
+    static void serialise_ufloat(unsigned char *mem, float f);
+    static float deserialise_ufloat(const unsigned char *mem);
+    
+    static float from_quantized_16b(uint16_t n, float M);
+    static uint16_t quantize_16b(float x, float M);
 };
 
 // This class decodes video from a stream. It keeps a queue of
@@ -106,7 +115,7 @@ class VideoProcessor
 // =====================================================================================
         
 	    JPEGVideo                _jpeg_video_codec ;
-            DifferentialWaveletVideo _ddwt_video_codec ;
+            WaveletVideo _ddwt_video_codec ;
             
             uint16_t _encoding_current_codec ;
 };
