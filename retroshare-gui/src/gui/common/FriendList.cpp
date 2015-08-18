@@ -28,6 +28,7 @@
 #include <QDateTime>
 #include <QPainter>
 
+#include "rsserver/rsaccounts.h"
 #include "retroshare/rspeers.h"
 
 #include "GroupDefs.h"
@@ -126,6 +127,8 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
     connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
     connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
+    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
+    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
 
     connect(ui->actionSortByName, SIGNAL(triggered()), this, SLOT(setSortByName()));
     connect(ui->actionSortByState, SIGNAL(triggered()), this, SLOT(setSortByState()));
@@ -1648,6 +1651,351 @@ void FriendList::removeGroup()
     rsPeers->removeGroup(groupId);
 }
 
+void FriendList::exportFriendlistClicked()
+{
+    QString fileName;
+    if(!importExportFriendlistFileDialog(fileName, false))
+        // error was already shown - just return
+        return;
+
+    if(!exportFriendlist(fileName))
+        // error was already shown - just return
+        return;
+
+    QMessageBox mbox;
+    mbox.setIcon(QMessageBox::Information);
+    mbox.setText(tr("Done!"));
+    mbox.setInformativeText("Your friendlist is stored at:\n" + fileName +
+                            "\n(keep in mind that the file is unencrypted!)");
+    mbox.setStandardButtons(QMessageBox::Ok);
+    mbox.exec();
+}
+
+void FriendList::importFriendlistClicked()
+{
+    QString fileName;
+    if(!importExportFriendlistFileDialog(fileName, true))
+        // error was already shown - just return
+        return;
+
+    bool errorPeers, errorGroups;
+    if(importFriendlist(fileName, errorPeers, errorGroups)) {
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Information);
+        mbox.setText(tr("Done!"));
+        mbox.setInformativeText("Your friendlist was imported from:\n" + fileName);
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+    } else {
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Done - but errors happened!"));
+        mbox.setInformativeText("Your friendlist was imported from:\n" + fileName +
+                                (errorPeers  ? "\nat least one peer was not added" : "") +
+                                (errorGroups ? "\nat least one peer was not added to a group" : "")
+                                );
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+    }
+}
+
+/**
+ * @brief opens a file dialog to select a file containing a friendlist
+ * @param fileName file containing a friendlist
+ * @param import show dialog for importing (true) or exporting (false) friendlist
+ * @return success or failure
+ *
+ * This function also shows an error message when no valid file was selected
+ */
+bool FriendList::importExportFriendlistFileDialog(QString &fileName, bool import)
+{
+    if(!misc::getSaveFileName(this,
+                              RshareSettings::LASTDIR_CERT,
+                              (import ? tr("Select file for importing yoour friendlist from") :
+                                        tr("Select a file for exporting your friendlist to")),
+                              tr("Text file (*.txt);; Ini File (*.ini);;All Files (*)"),
+                              fileName,
+                              NULL,
+                              (import ? QFileDialog::DontConfirmOverwrite : (QFileDialog::Options)0)
+                              )) {
+        // show error to user
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Error"));
+        mbox.setInformativeText("Failed to get a file!");
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @brief exports friendlist to a given file
+ * @param fileName file for storing friendlist
+ * @return success or failure
+ *
+ * This function also shows an error message when the selected file is invalid/not writable
+ */
+bool FriendList::exportFriendlist(QString &fileName)
+{
+    // this has to be IniFormat because it is platform idependet (qsettings documentation)
+    QSettings s(fileName, QSettings::IniFormat);
+    s.clear();
+    if(!s.isWritable()) {
+        // show error to user
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Error"));
+        mbox.setInformativeText("File is not writeable!\n" + fileName + "\nStatus: " +
+                    (
+                        (s.status() == QSettings::NoError) ? "no error" :
+                        (
+                            (s.status() == QSettings::AccessError) ? "access error" : "format error"
+                        )
+                    )
+                );
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+        return false;
+    }
+
+    std::list<RsPgpId> gpg_ids;
+    rsPeers->getGPGAcceptedList(gpg_ids);
+
+    std::list<RsGroupInfo> group_info_list;
+    rsPeers->getGroupInfoList(group_info_list);
+
+    s.beginGroup("pgpIDs");
+    RsPeerDetails details;
+    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
+        rsPeers->getGPGDetails(*list_iter, details);
+        s.beginGroup(details.gpg_id.toStdString().c_str());
+        // since everything is loaded from the public key there is no need to save these
+        //s.setValue("pgpID", details.gpg_id.toStdString().c_str());
+        s.setValue("name", details.name.c_str());  // storing name for better human readability
+        //s.setValue("email", details.email.c_str());
+        //s.setValue("trustLvl", details.trustLvl);
+
+        s.beginGroup("sslIDs");
+        std::list<RsPeerId> ssl_ids;
+        rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
+        for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); list_iter++) {
+            RsPeerDetails detail2;
+            if (!rsPeers->getPeerDetails(*list_iter, detail2))
+                continue;
+
+            std::string invite = rsPeers->GetRetroshareInvite(detail2.id, true);
+            std::string sid = detail2.id.toStdString();
+
+            s.beginGroup(sid.c_str());
+            // since everything is loaded from the public key there is no need to save these
+            //s.setValue("sslID", sid.c_str());
+            //s.setValue("location", detail2.location.c_str());
+            s.setValue("pubkey", invite.c_str());
+            s.setValue("service_perm_flags", detail2.service_perm_flags.toUInt32());
+            s.endGroup(); // sid
+        }
+        s.endGroup(); // sslIDs
+
+        s.endGroup(); // details.gpg_id
+    }
+    s.endGroup(); // pgpIDs
+
+    s.beginGroup("groups");
+    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
+        RsGroupInfo group_info = *list_iter;
+        s.beginGroup(group_info.id.c_str());
+        // id is not needed since it may differ between locatiosn / pgp ids (groups are identified by name)
+        s.setValue("name", group_info.name.c_str());
+        s.setValue("flag", group_info.flag);
+
+        s.beginGroup("peerIDs");
+        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
+            std::string pid = i->toStdString();
+            // key = peerId, value = arbitrary
+            s.setValue(pid.c_str(), 0);
+        }
+        s.endGroup(); // peerIDs
+
+        s.endGroup(); // group_info.id
+    }
+    s.endGroup(); // groups
+
+    return true;
+}
+
+/**
+ * @brief Imports friends from a given file
+ * @param fileName file to load friends from
+ * @param errorPeers an error occured while adding a peer
+ * @param errorGroups an error occured while adding a peer to a group
+ * @return success or failure (an error means that adding a peer and/or adding a peer to a group failed at least once)
+ */
+bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups)
+{
+    // this has to be IniFormat because it is platform idependet (qsettings documentation)
+    QSettings s(fileName, QSettings::IniFormat);
+    errorPeers = false;
+    errorGroups = false;
+
+    uint32_t error_code;
+    std::string error_string;
+    RsPeerDetails rsPeerDetails;
+    RsPeerId rsPeerID;
+    RsPgpId rsPgpID;
+
+    // lock all events for faster processing
+    RsAutoUpdatePage::lockAllEvents();
+
+    s.beginGroup("pgpIDs");
+    QStringList pgpIDs = s.childGroups();
+    foreach (QString pgpID, pgpIDs) {
+        s.beginGroup(pgpID);
+
+        // enter sslIDs group and iterate over all ssl IDs
+        s.beginGroup("sslIDs");
+        QStringList sslIDs = s.childGroups();
+        foreach (QString sslID, sslIDs) {
+            s.beginGroup(sslID);
+
+            rsPeerID.clear();
+            rsPgpID.clear();
+
+            // load everything needed from the pubkey string
+            std::string pubkey = s.value("pubkey").toString().toStdString();
+            if(rsPeers->loadDetailsFromStringCert(pubkey, rsPeerDetails, error_code)) {
+                if(rsPeers->loadCertificateFromString(pubkey, rsPeerID, rsPgpID, error_string)) {
+                    ServicePermissionFlags service_perm_flags(s.value("service_perm_flags").toInt());
+
+                    // everything is loaded - start setting things
+                    if (!rsPeerDetails.id.isNull() && !rsPeerDetails.gpg_id.isNull()) {
+                        // pgp and ssl ID are available
+                        rsPeers->addFriend(rsPeerDetails.id, rsPeerDetails.gpg_id, service_perm_flags);
+                        if(rsPeerDetails.isHiddenNode) {
+                            // for hidden notes
+                            if (!rsPeerDetails.hiddenNodeAddress.empty() && rsPeerDetails.hiddenNodePort)
+                                rsPeers->setHiddenNode(rsPeerDetails.id, rsPeerDetails.hiddenNodeAddress, rsPeerDetails.hiddenNodePort);
+                        } else {
+                            // for normal nodes
+                            if (!rsPeerDetails.extAddr.empty() && rsPeerDetails.extPort)
+                                rsPeers->setExtAddress(rsPeerDetails.id, rsPeerDetails.extAddr, rsPeerDetails.extPort);
+                            if (!rsPeerDetails.localAddr.empty() && rsPeerDetails.localPort)
+                                rsPeers->setLocalAddress(rsPeerDetails.id, rsPeerDetails.localAddr, rsPeerDetails.localPort);
+                            if (!rsPeerDetails.dyndns.empty())
+                                rsPeers->setDynDNS(rsPeerDetails.id, rsPeerDetails.dyndns);
+                            if (!rsPeerDetails.location.empty())
+                                rsPeers->setLocation(rsPeerDetails.id, rsPeerDetails.location);
+                        }
+                    } else if (!rsPeerDetails.gpg_id.isNull()) {
+                        // only pgp id is avaiable
+                        RsPeerId pid;
+                        rsPeers->addFriend(pid, rsPeerDetails.gpg_id, service_perm_flags);
+                    } else {
+                        errorPeers = true;
+                        std::cerr << "FriendList::importFriendlist(): error while procvessing SSL id " << sslID.toStdString() << std::endl;
+                    }
+                } else {
+                    errorPeers = true;
+                    std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslID.toStdString() << " - error: " << error_string << ")" << std::endl;
+                }
+            } else {
+                errorPeers = true;
+                std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslID.toStdString() << " - error: " << error_code << ")" << std::endl;
+            }
+            s.endGroup(); // sslID
+        }
+        s.endGroup(); // sslIDs
+        s.endGroup(); // pgpID
+    }
+    s.endGroup(); // pgpIDs
+
+    // enter groups group and iterate over all groups
+    s.beginGroup("groups");
+    QStringList groupList = s.childGroups();
+    foreach (QString group, groupList) {
+        s.beginGroup(group);
+
+        // get name and flags and try to get the group ID
+        std::string groupName = s.value("name").toString().toStdString();
+        uint32_t flag = s.value("flag").toUInt();
+        std::string groupId;
+        if(getOrCreateGroup(groupName, flag, groupId)) {
+            // group id found!
+            // enter peerIDs group and iterate over all pgpIDs of this group
+            s.beginGroup("peerIDs");
+            QStringList pgpIDsForGroup = s.allKeys();
+            foreach (QString pgpIDForGroup, pgpIDsForGroup) {
+                // add pgp id to group
+                RsPgpId rsPgpId(pgpIDForGroup.toStdString());
+                if(rsPeers->assignPeerToGroup(groupId, rsPgpId, true)) {
+                    errorPeers = true;
+                    std::cerr << "FriendList::importFriendlist(): failed to add '" << rsPeers->getGPGName(rsPgpId) << "'' to group '" << groupName << "'" << std::endl;
+                }
+            }
+            s.endGroup(); // peerIDs
+        } else {
+            errorGroups = true;
+            std::cerr << "FriendList::importFriendlist(): failed to find/create group '" << groupName << "'" << std::endl;
+        }
+        s.endGroup(); // group
+    }
+    s.endGroup(); // groups
+
+    // unlock events
+    RsAutoUpdatePage::unlockAllEvents();
+
+    return !(errorPeers || errorGroups);
+}
+
+/**
+ * @brief Gets the groups ID for a given group name
+ * @param name group name to search for
+ * @param id groupd id for the given name
+ * @return success or fail
+ */
+bool FriendList::getGroupIdByName(const std::string &name, std::string &id)
+{
+    std::list<RsGroupInfo> grpList;
+    if(!rsPeers->getGroupInfoList(grpList))
+        return false;
+
+    foreach (const RsGroupInfo &grp, grpList) {
+        if(grp.name == name) {
+            id = grp.id;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * @brief Gets the groups ID for a given group name. If no groupd was it will create one
+ * @param name group name to search for
+ * @param flag flag to use when creating the group
+ * @param id groupd id
+ * @return success or failure
+ */
+bool FriendList::getOrCreateGroup(const std::string &name, const uint &flag, std::string &id)
+{
+    if(getGroupIdByName(name, id))
+        return true;
+
+    // -> create one
+    RsGroupInfo grp;
+    grp.id = "0"; // RS will generate an ID
+    grp.name = name;
+    grp.flag = flag;
+
+    if(!rsPeers->addGroup(grp))
+        return false;
+
+    // try again
+    return getGroupIdByName(name, id);
+}
+
+
 void FriendList::setHideUnconnected(bool hidden)
 {
     if (mHideUnconnected != hidden) {
@@ -1793,6 +2141,8 @@ void FriendList::createDisplayMenu()
     displayMenu->addAction(ui->actionHideOfflineFriends);
     displayMenu->addAction(ui->actionShowState);
     displayMenu->addAction(ui->actionShowGroups);
+    displayMenu->addAction(ui->actionExportFriendlist);
+    displayMenu->addAction(ui->actionImportFriendlist);
 
     ui->displayButton->setMenu(displayMenu);
 }

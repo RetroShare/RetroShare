@@ -134,6 +134,13 @@ private:
     QTreeWidgetItem *getCurrentPeer() const;
     void getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds);
 
+    bool getOrCreateGroup(const std::string &name, const uint &flag, std::string &id);
+    bool getGroupIdByName(const std::string &name, std::string &id);
+
+    bool importExportFriendlistFileDialog(QString &fileName, bool import);
+    bool exportFriendlist(QString &fileName);
+    bool importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups);
+
 private slots:
     void groupsChanged();
     void insertPeers();
@@ -164,6 +171,9 @@ private slots:
 
     void editGroup();
     void removeGroup();
+
+    void exportFriendlistClicked();
+    void importFriendlistClicked();
 
 //	 void inviteToLobby();
 //	 void createchatlobby();
