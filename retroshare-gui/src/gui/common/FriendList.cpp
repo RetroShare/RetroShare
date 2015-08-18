@@ -1929,7 +1929,7 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
                 // add pgp id to group
                 RsPgpId rsPgpId(pgpIDForGroup.toStdString());
                 if(rsPeers->assignPeerToGroup(groupId, rsPgpId, true)) {
-                    errorPeers = true;
+                    errorGroups = true;
                     std::cerr << "FriendList::importFriendlist(): failed to add '" << rsPeers->getGPGName(rsPgpId) << "'' to group '" << groupName << "'" << std::endl;
                 }
             }
