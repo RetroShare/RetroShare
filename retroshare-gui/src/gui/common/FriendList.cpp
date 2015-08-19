@@ -1805,7 +1805,7 @@ bool FriendList::exportFriendlist(QString &fileName)
 
         QDomElement group = doc.createElement("group");
         // id is not needed since it may differ between locatiosn / pgp ids (groups are identified by name)
-        group.setAttribute("name", QString::fromStdString(group_info.name));
+        group.setAttribute("name", QString::fromUtf8(group_info.name.c_str()));
         group.setAttribute("flag", group_info.flag);
 
         for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
