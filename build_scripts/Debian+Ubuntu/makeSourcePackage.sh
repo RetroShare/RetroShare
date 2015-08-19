@@ -80,7 +80,7 @@ echo Extracting base archive...
 mkdir -p ${workdir}/src
 echo Checking out latest snapshot...
 cd ${workdir}/src
-git clone https://github.com/RetroShare/RetroShare.git .
+git clone --depth 1 https://github.com/RetroShare/RetroShare.git .
 cd -
 
 if ! test -d ${workdir}/src/libretroshare/; then

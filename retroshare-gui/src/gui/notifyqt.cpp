@@ -29,6 +29,7 @@
 #include "notifyqt.h"
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsidentity.h>
 #include <util/rsdir.h>
 
 #include "RsAutoUpdatePage.h"
@@ -862,28 +863,23 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
 					{
-                        if(RsPeerId::SIZE_IN_BYTES < sizeof(ChatLobbyId))
-                        {
-                            std::cerr << "NotifyQt::UpdateGUI() Error: ChatLobbyId does not fit into a RsPeerId, this should not happen!" << std::endl;
-                            break;
-                        }
-                        RsPeerId vpid(id); // create virtual peer id
-                        ChatLobbyId lobby_id;
-                        // copy first bytes of virtual peer id, to make a chat lobby id
-                        memcpy(&lobby_id, vpid.toByteArray(), sizeof(ChatLobbyId));
+						ChatLobbyId lobby_id;
+						if(!rsMsgs->isLobbyId(RsPeerId(id), lobby_id))
+							break;
 
-                        ChatDialog *chatDialog = ChatDialog::getChat(ChatId(lobby_id));
-                        ChatWidget *chatWidget;
+						ChatDialog *chatDialog = ChatDialog::getChat(ChatId(lobby_id));
+						ChatWidget *chatWidget;
                         if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
                             // do not show when active
                             break;
                         }
                         ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
 
-                        if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(RsGxsId(title)))
+						RsGxsId sender(title);
+						if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(sender))
                             break; // participant is muted
 
-                        toaster = new ToasterItem(new ChatLobbyToaster(lobby_id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
+						toaster = new ToasterItem(new ChatLobbyToaster(lobby_id, sender, QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:
@@ -1002,8 +998,13 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 				toaster = new ToasterItem(new GroupChatToaster(id, message));
 				break;
 			case RS_POPUP_CHATLOBBY:
-                toaster = new ToasterItem(new ChatLobbyToaster(0, title, message));
-				break;
+				{
+					std::list<RsGxsId> gxsid;
+					if(rsIdentity->getOwnIds(gxsid) && (gxsid.size() > 0)){
+						toaster = new ToasterItem(new ChatLobbyToaster(0, gxsid.front(), message));
+					}
+					break;
+				}
 			case RS_POPUP_CONNECT_ATTEMPT:
 				toaster = new ToasterItem(new FriendRequestToaster(pgpid, title, id));
 				break;

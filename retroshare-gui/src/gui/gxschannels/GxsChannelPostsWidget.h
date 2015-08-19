@@ -67,8 +67,8 @@ protected:
 	/* GxsMessageFramePostWidget */
 	virtual void groupNameChanged(const QString &name);
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
-	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
-	virtual void insertRelatedPosts(const uint32_t &token);
+	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
+	virtual void insertPosts(const uint32_t &token);
 	virtual void clearPosts();
 	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);

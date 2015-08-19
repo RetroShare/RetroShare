@@ -1,5 +1,51 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   f6b830d (branch merging) Merge pull request #35 from hunbernd/chat-fix
+   16859a1 (GUI           ) Fix: chatlobby toaster not working
+   2e08dde (Bug fix       ) additional check for pqissl::sockfd before using it (patch from Jenster)
+   384e7ba (GXS           ) Reworked processing of requests in RsGxsDataAccess to prevent freezes of the gui.
+   4a50a62 (Git management) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   6eccd57 (Git management) merging before commit
+   3084d2a (Debug info    ) improved security message in console for whitelisted peers
+   0402e53 (GUI           ) Fix: empty line duplication bug
+   4095d9d (GXS           ) Switched retrieve of posts in GxsMessageFramePostWidget from "requestMsgRelatedInfo" to "requestMsgInfo".
+   b1101ed (GXS           ) Prevent selecting data from the database in RsGxsNetService::syncWithPeers without online friends.
+   3731617 (Debug info    ) Fixed typo in debug output.
+   e667071 (GUI           ) Moved IP Filter Widgets into Tabs
+   caa97cc (GXS           ) Added database name to the debug output in RsDataService.
+   2a6b623 (GXS           ) Added extended debug outputs of times in RsDataService.
+   7472f81 (Git management) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   9d291aa (GUI           ) update windows build scripts changed gxs id icon for linked with profile.
+   a765016 (GUI           ) Moved column show/hide from context menu of the tree to the context menu of the header in IdDialog.
+   e73e68d (GUI           ) Reduced the size of the status icon on the avatar image in FriendList.
+   442ec23 (GXS           ) Added index in database for column grpId in table MESSAGES.
+   b8edb75 (GXS           ) Optimized SELECT creation in RetroDb::sqlQuery
+   ab538c6 (GXS           ) Avoid error messages "table already exists" in RsDataService::initialise by using "IF NOT EXISTS"
+   783465b (GUI           ) forget to commit this, for the Search Filter DHT IPs
+   13e77fb (Bugs          ) Merge pull request #19 from sehraf/pr-fix_crash_on_shutdown
+   9d0b066 (Bugs          ) Fixed hide offline friends in ServicePermissionsPage
+   c919786 (GUI           ) Fixed typo. Updated english translation.
+   d5c95c4 (GUI           ) Fixed layout of the ServicePermissionsPage
+   9265145 (GUI           ) Updated english translation
+   87f2e6d (GUI           ) FriendList: - Removed avatar column, state column. Added combined avatar and status icon 
+   ec67ee0 (VOIP          ) added graph display of instantly required bandwidth for VOIP, in preparation to chosing new 
+                            video codec. GUI layout 
+   d5c33f5 (Packaging     ) fixed windows build script
+   c168765 (GUI           ) Added tab for the DHT TreeWidgets for better view Added a search Filter for DHT IP addresses
+   48bb8b4 (Git management) sequel to 6b2ed2fb2d84d7e48b15fa917aa4eb8015922d15
+   fabc3a3 (Git management) added some rules to .gitignore
+   168eb45 (Debug info    ) removed debug info about missing keys; added debug info about deserialization checking of string
+   311358b (Git management) merged changes from master
+   a87adb8 (Debug info    ) improved README file
+   51ab1fc (Debug info    ) updated readme file
+   43db562 (Packaging     ) Fixed build script for Windows installer
+   789df68 (Packaging     ) Added update of version information for Windows build - Added template file version.html.in - Removed RS_BUILD_NUM
+   1412dc6 (Packaging     ) Removed utopic, added new ppa name
+   
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 16 Aug 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20150802.34ec6dfd~precise) precise; urgency=low
+
    GUI
       - improved filtering method against lol bombs. Thx to ConcernedCitizen for pointing this out
       - fix #21 typo "defaut" instead of "default" in switch statement in RSGraphWidget (patch from Chozabu)

@@ -75,12 +75,6 @@
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>
-     <property name="iconSize">
-      <size>
-       <width>38</width>
-       <height>38</height>
-      </size>
-     </property>
      <property name="allColumnsShowFocus">
       <bool>true</bool>
      </property>

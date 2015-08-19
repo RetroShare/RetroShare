@@ -53,6 +53,7 @@
 #include "util/QtVersion.h"
 #include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
+#include "gui/common/ElidedLabel.h"
 
 #include "FriendList.h"
 #include "ui_FriendList.h"
@@ -104,6 +105,8 @@
  * #define FRIENDS_DEBUG 1
  *****/
 
+Q_DECLARE_METATYPE(ElidedLabel*)
+
 FriendList::FriendList(QWidget *parent) :
     RsAutoUpdatePage(1500, parent),
     ui(new Ui::FriendList),
@@ -147,12 +150,19 @@ FriendList::FriendList(QWidget *parent) :
     ui->peerTreeWidget->enableColumnCustomize(true);
     ui->peerTreeWidget->setColumnCustomizable(COLUMN_NAME, false);
     connect(ui->peerTreeWidget, SIGNAL(columnVisibleChanged(int,bool)), this, SLOT(peerTreeColumnVisibleChanged(int,bool)));
+    connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(peerTreeItemCollapsedExpanded(QTreeWidgetItem*)));
+    connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(peerTreeItemCollapsedExpanded(QTreeWidgetItem*)));
+
+    QFontMetricsF fontMetrics(ui->peerTreeWidget->font());
 
     /* Set initial column width */
-    int fontWidth = QFontMetricsF(ui->peerTreeWidget->font()).width("W");
+    int fontWidth = fontMetrics.width("W");
     ui->peerTreeWidget->setColumnWidth(COLUMN_NAME, 22 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_LAST_CONTACT, 12 * fontWidth);
     ui->peerTreeWidget->setColumnWidth(COLUMN_IP, 15 * fontWidth);
+
+    int avatarHeight = fontMetrics.height() * 3;
+    ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
 
     /* Initialize display menu */
     createDisplayMenu();
@@ -474,6 +484,37 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
     return icon;
 }
 
+static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, ElidedLabel *&textLabel)
+{
+    QWidget *widget = treeWidget->itemWidget(item, FriendList::COLUMN_NAME);
+
+    if (!widget) {
+        widget = new QWidget;
+        nameLabel = new ElidedLabel(widget);
+        textLabel = new ElidedLabel(widget);
+
+        widget->setProperty("nameLabel", qVariantFromValue(nameLabel));
+        widget->setProperty("textLabel", qVariantFromValue(textLabel));
+
+        QVBoxLayout *layout = new QVBoxLayout;
+        layout->setSpacing(0);
+        layout->setContentsMargins(3, 0, 0, 0);
+
+        nameLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+        textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+
+        layout->addWidget(nameLabel);
+        layout->addWidget(textLabel);
+
+        widget->setLayout(layout);
+
+        treeWidget->setItemWidget(item, FriendList::COLUMN_NAME, widget);
+    } else {
+        nameLabel = widget->property("nameLabel").value<ElidedLabel*>();
+        textLabel = widget->property("textLabel").value<ElidedLabel*>();
+    }
+}
+
 /**
  * Get the list of peers from the RsIface.
  * Adds all friend gpg ids, with their nodes as children to the peerTreeWidget.
@@ -752,9 +793,6 @@ void FriendList::insertPeers()
 
             ++availableCount;
 
-            QString gpgName = QString::fromUtf8(detail.name.c_str());
-            QString gpgItemText = gpgName;
-
             // remove items that are not friends anymore
             int childCount = gpgItem->childCount();
             int childIndex = 0;
@@ -953,31 +991,50 @@ void FriendList::insertPeers()
                 }
 
                 /* Location */
-                QString sName = QString::fromUtf8(sslDetail.location.c_str());
-                QString sText = sName;
+                QString sslName = QString::fromUtf8(sslDetail.location.c_str());
+                QString sslText;
 
                 if (mShowState) {
                     if (!connectStateString.isEmpty()) {
-                        sText += "\n" + connectStateString;
+                        sslText = connectStateString;
                         if (!customStateString.isEmpty()) {
-                            sText += " [" + customStateString + "]";
+                            sslText += " [" + customStateString + "]";
                         }
                     } else {
                         if (!customStateString.isEmpty()) {
-                            sText += "\n" + customStateString;
+                            sslText = customStateString;
                         }
                     }
 
                     sslItem->setToolTip(COLUMN_NAME, "");
                 } else {
                     if (!customStateString.isEmpty()) {
-                        sText += "\n" + customStateString;
+                        sslText = customStateString;
                     }
 
                     /* Show the state as tooltip */
                     sslItem->setToolTip(COLUMN_NAME, connectStateString);
                 }
-                sslItem->setText(COLUMN_NAME, sText);
+
+                /* Create or get ssl label */
+                ElidedLabel *sslNameLabel = NULL;
+                ElidedLabel *sslTextLabel = NULL;
+
+                getNameWidget(ui->peerTreeWidget, sslItem, sslNameLabel, sslTextLabel);
+
+                if (sslNameLabel) {
+                    sslNameLabel->setText(sslName);
+                    sslNameLabel->setFont(sslFont);
+
+                    QPalette palette = sslNameLabel->palette();
+                    palette.setColor(sslNameLabel->foregroundRole(), sslColor);
+
+                    sslNameLabel->setPalette(palette);
+                }
+                if (sslTextLabel) {
+                    sslTextLabel->setText(sslText);
+                    sslTextLabel->setVisible(!sslText.isEmpty());
+                }
 
                 if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
                     // private chat is available
@@ -987,7 +1044,7 @@ void FriendList::insertPeers()
                 sslItem->setIcon(COLUMN_NAME, createAvatar(sslAvatar, sslOverlayIcon));
 
                 /* Sort data */
-                sslItem->setData(COLUMN_SORT, ROLE_SORT_NAME, sName);
+                sslItem->setData(COLUMN_SORT, ROLE_SORT_NAME, sslName);
                 sslItem->setData(COLUMN_SORT, ROLE_SORT_STATE, peerState);
 
                 for (int i = 0; i < columnCount; ++i) {
@@ -995,6 +1052,13 @@ void FriendList::insertPeers()
                     sslItem->setFont(i, sslFont);
                 }
             }
+
+            QString gpgName = QString::fromUtf8(detail.name.c_str());
+            QString gpgText;
+            QFont gpgFont;
+            QColor gpgColor;
+
+            bool showInfoAtGpgItem = !gpgItem->isExpanded();
 
             QPixmap gpgOverlayIcon;
             if (gpg_connected) {
@@ -1008,56 +1072,51 @@ void FriendList::insertPeers()
                     bestRSState = RS_STATUS_ONLINE;
                 }
 
-                QColor textColor = mTextColorStatus[bestRSState];
-                QFont font = StatusDefs::font(bestRSState);
-                for(int i = 0; i < columnCount; ++i) {
-                    gpgItem->setTextColor(i, textColor);
-                    gpgItem->setFont(i, font);
-                }
+                gpgColor = mTextColorStatus[bestRSState];
+                gpgFont = StatusDefs::font(bestRSState);
 
-                gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
+                if (showInfoAtGpgItem) {
+                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
 
-                if (mShowState) {
-                    gpgItemText += "\n" + StatusDefs::name(bestRSState);
-                    if (!bestCustomStateString.isEmpty()) {
-                        gpgItemText += " [" + bestCustomStateString + "]";
-                    }
-                } else {
-                    if (!bestCustomStateString.isEmpty()) {
-                        gpgItemText += "\n" + bestCustomStateString;
+                    if (mShowState) {
+                        gpgText = StatusDefs::name(bestRSState);
+                        if (!bestCustomStateString.isEmpty()) {
+                            gpgText += " [" + bestCustomStateString + "]";
+                        }
+                    } else {
+                        if (!bestCustomStateString.isEmpty()) {
+                            gpgText = bestCustomStateString;
+                        }
                     }
                 }
             } else if (gpg_online) {
-                if (mShowState) {
-                    gpgItemText += "\n" + tr("Available");
-                }
-
-                bestPeerState = PEER_STATE_AVAILABLE;
-                ++onlineCount;
                 gpgItem->setHidden(mHideUnconnected);
-                gpgOverlayIcon = QPixmap(IMAGE_AVAILABLE);
+                ++onlineCount;
+                bestPeerState = PEER_STATE_AVAILABLE;
 
-                QFont font;
-                font.setBold(true);
-                QColor textColor = mTextColorStatus[RS_STATUS_ONLINE];
-                for(int i = 0; i < columnCount; ++i) {
-                    gpgItem->setTextColor(i, textColor);
-                    gpgItem->setFont(i,font);
+                gpgFont.setBold(true);
+                gpgColor = mTextColorStatus[RS_STATUS_ONLINE];
+
+                if (showInfoAtGpgItem) {
+                    if (mShowState) {
+                        gpgText += tr("Available");
+                    }
+
+                    gpgOverlayIcon = QPixmap(IMAGE_AVAILABLE);
                 }
             } else {
-                if (mShowState) {
-                    gpgItemText += "\n" + StatusDefs::name(RS_STATUS_OFFLINE);
-                }
-
                 bestPeerState = PEER_STATE_OFFLINE;
                 gpgItem->setHidden(mHideUnconnected);
-                gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
 
-                QColor textColor = mTextColorStatus[RS_STATUS_OFFLINE];
-                QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
-                for(int i = 0; i < columnCount; ++i) {
-                    gpgItem->setTextColor(i, textColor);
-                    gpgItem->setFont(i, font);
+                gpgFont = StatusDefs::font(RS_STATUS_OFFLINE);
+                gpgColor = mTextColorStatus[RS_STATUS_OFFLINE];
+
+                if (showInfoAtGpgItem) {
+                    if (mShowState) {
+                        gpgText += StatusDefs::name(RS_STATUS_OFFLINE);
+                    }
+
+                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
                 }
             }
 
@@ -1067,13 +1126,37 @@ void FriendList::insertPeers()
 
             gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? QPixmap(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon));
 
-            gpgItem->setText(COLUMN_NAME, gpgItemText);
-            gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(bestLastContact));
-            gpgItem->setText(COLUMN_IP, bestIP);
+            /* Create or get gpg label */
+            ElidedLabel *gpgNameLabel = NULL;
+            ElidedLabel *gpgTextLabel = NULL;
+
+            getNameWidget(ui->peerTreeWidget, gpgItem, gpgNameLabel, gpgTextLabel);
+
+            if (gpgNameLabel) {
+                gpgNameLabel->setText(gpgName);
+                gpgNameLabel->setFont(gpgFont);
+
+                QPalette palette = gpgNameLabel->palette();
+                palette.setColor(gpgNameLabel->foregroundRole(), gpgColor);
+
+                gpgNameLabel->setPalette(palette);
+            }
+            if (gpgTextLabel) {
+                gpgTextLabel->setText(gpgText);
+                gpgTextLabel->setVisible(!gpgText.isEmpty());
+            }
+
+            gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
+            gpgItem->setText(COLUMN_IP, showInfoAtGpgItem ? bestIP : "");
 
             /* Sort data */
             gpgItem->setData(COLUMN_SORT, ROLE_SORT_NAME, gpgName);
             gpgItem->setData(COLUMN_SORT, ROLE_SORT_STATE, bestPeerState);
+
+            for (int i = 0; i < columnCount; ++i) {
+                gpgItem->setTextColor(i, gpgColor);
+                gpgItem->setFont(i, gpgFont);
+            }
 
             if (openPeers != NULL && openPeers->find(gpgId.toStdString()) != openPeers->end()) {
                 gpgItem->setExpanded(true);
@@ -1665,6 +1748,17 @@ void FriendList::setColumnVisible(Column column, bool visible)
 void FriendList::peerTreeColumnVisibleChanged(int /*column*/, bool visible)
 {
     if (visible) {
+        insertPeers();
+    }
+}
+
+void FriendList::peerTreeItemCollapsedExpanded(QTreeWidgetItem *item)
+{
+    if (!item) {
+        return;
+    }
+
+    if (item->type() == TYPE_GPG) {
         insertPeers();
     }
 }

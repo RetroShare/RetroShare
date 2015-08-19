@@ -44,13 +44,13 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	ui->setupUi(this);
 
 	/* Setup UI helper */
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->hotSortButton);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->newSortButton);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->topSortButton);
+
 	mStateHelper->addWidget(mTokenTypePosts, ui->hotSortButton);
 	mStateHelper->addWidget(mTokenTypePosts, ui->newSortButton);
 	mStateHelper->addWidget(mTokenTypePosts, ui->topSortButton);
-
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->hotSortButton);
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->newSortButton);
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->topSortButton);
 
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->submitPostButton);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
@@ -107,7 +107,7 @@ void PostedListWidget::processSettings(bool /*load*/)
 
 QIcon PostedListWidget::groupIcon()
 {
-	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypePosts)) {
+	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypeAllPosts)) {
 //		return QIcon(":/images/kalarm.png");
 	}
 
@@ -526,7 +526,7 @@ bool PostedListWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &m
 	return false;
 }
 
-void PostedListWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThread */*thread*/)
+void PostedListWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread */*thread*/)
 {
 	std::vector<RsPostedPost> posts;
 	rsPosted->getPostData(token, posts);
@@ -541,10 +541,10 @@ void PostedListWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThr
 	applyRanking();
 }
 
-void PostedListWidget::insertRelatedPosts(const uint32_t &token)
+void PostedListWidget::insertPosts(const uint32_t &token)
 {
 	std::vector<RsPostedPost> posts;
-	rsPosted->getRelatedPosts(token, posts);
+	rsPosted->getPostData(token, posts);
 
 	std::vector<RsPostedPost>::iterator vit;
 	for(vit = posts.begin(); vit != posts.end(); ++vit)
