@@ -1783,9 +1783,6 @@ void FriendList::importFriendlist()
     QSettings s(fileName, QSettings::IniFormat);
     bool error = false;
 
-    // lock all events for faster processing
-    RsAutoUpdatePage::lockAllEvents();
-
     //
     s.beginGroup("pgpIDs");
     QStringList pgpIDs = s.childGroups();
@@ -1891,9 +1888,6 @@ void FriendList::importFriendlist()
     } else {
         std::cerr << "FriendList::importFriendlist() ### OK - GROUPS ###" << std::endl;
     }
-
-    // unlock events
-    RsAutoUpdatePage::unlockAllEvents();
 
     QMessageBox mbox;
     mbox.setIcon(QMessageBox::Information);
