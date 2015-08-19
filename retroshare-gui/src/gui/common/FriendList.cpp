@@ -126,13 +126,8 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
     connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
     connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
-<<<<<<< HEAD
 	connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlist()));
 	connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlist()));
-=======
-    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlist()));
-    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlist()));
->>>>>>> pr-friendlist_import_export
 
     connect(ui->actionSortByName, SIGNAL(triggered()), this, SLOT(setSortByName()));
     connect(ui->actionSortByState, SIGNAL(triggered()), this, SLOT(setSortByState()));
@@ -1659,71 +1654,72 @@ void FriendList::removeGroup()
 
 void FriendList::exportFriendlist()
 {
-    QString fileName;
+	QString fileName;
 
     if(!misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Select a file for exporting your friendlist to"), tr("Text file (*.txt);; Ini File (*.ini);;All Files (*)"), fileName)) {
-        // show error to user
-        QMessageBox mbox;
-        mbox.setIcon(QMessageBox::Warning);
-        mbox.setText(tr("Error"));
+		// show error to user
+		QMessageBox mbox;
+		mbox.setIcon(QMessageBox::Warning);
+		mbox.setText(tr("Error"));
         mbox.setInformativeText("Failed to get a file!");
-        mbox.setStandardButtons(QMessageBox::Ok);
-        mbox.exec();
-        return;
-    }
+		mbox.setStandardButtons(QMessageBox::Ok);
+		mbox.exec();
+		return;
+	}
 
     // this has to be IniFormat because it is platform idependet (qsettings documentation)
     QSettings s(fileName, QSettings::IniFormat);
-    s.clear();
-    if(!s.isWritable()) {
-        // show error to user
-        QMessageBox mbox;
-        mbox.setIcon(QMessageBox::Warning);
-        mbox.setText(tr("Error"));
-        mbox.setInformativeText("File is not writeable!\n" + fileName + "\nStatus: " +
-                    (
-                        (s.status() == QSettings::NoError) ? "no error" :
-                        (
-                            (s.status() == QSettings::AccessError) ? "access error" : "format error"
-                        )
-                    )
-                );
-        mbox.setStandardButtons(QMessageBox::Ok);
-        mbox.exec();
-        return;
-    }
+	s.clear();
+	if(!s.isWritable()) {
+		// show error to user
+		QMessageBox mbox;
+		mbox.setIcon(QMessageBox::Warning);
+		mbox.setText(tr("Error"));
+		mbox.setInformativeText("File is not writeable!\n" + fileName + "\nStatus: " +
+					(
+						(s.status() == QSettings::NoError) ? "no error" :
+						(
+							(s.status() == QSettings::AccessError) ? "access error" :
+												"format error"
+						)
+					)
+				);
+		mbox.setStandardButtons(QMessageBox::Ok);
+		mbox.exec();
+		return;
+	}
 
-    std::list<RsPgpId> gpg_ids;
-    rsPeers->getGPGAcceptedList(gpg_ids);
+	std::list<RsPgpId> gpg_ids;
+	rsPeers->getGPGAcceptedList(gpg_ids);
 
-    std::list<RsGroupInfo> group_info_list;
-    rsPeers->getGroupInfoList(group_info_list);
+	std::list<RsGroupInfo> group_info_list;
+	rsPeers->getGroupInfoList(group_info_list);
 
-    s.beginGroup("groups");
-    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
-        RsGroupInfo group_info = *list_iter;
-        s.beginGroup(group_info.id.c_str());
+	s.beginGroup("groups");
+	for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
+		RsGroupInfo group_info = *list_iter;
+		s.beginGroup(group_info.id.c_str());
         // id is not needed since it may differ between locatiosn / pgp ids (groups are identified by name)
-        s.setValue("name", group_info.name.c_str());
-        s.setValue("flag", group_info.flag);
+		s.setValue("name", group_info.name.c_str());
+		s.setValue("flag", group_info.flag);
 
         s.beginGroup("peerIDs");
-        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
-            std::string pid = i->toStdString();
+		for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
+			std::string pid = i->toStdString();
             // key = peerId, value = arbitrary
             s.setValue(pid.c_str(), 0);
-        }
+		}
         s.endGroup(); // peerIDs
 
-        s.endGroup(); // group_info.id
-    }
-    s.endGroup(); // groups
+		s.endGroup(); // group_info.id
+	}
+	s.endGroup(); // groups
 
-    s.beginGroup("pgpIDs");
-    RsPeerDetails details;
-    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
-        rsPeers->getGPGDetails(*list_iter, details);
-        s.beginGroup(details.gpg_id.toStdString().c_str());
+	s.beginGroup("pgpIDs");
+	RsPeerDetails details;
+	for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
+		rsPeers->getGPGDetails(*list_iter, details);
+		s.beginGroup(details.gpg_id.toStdString().c_str());
         // since everything is loaded from the public key - no need to save these
         //s.setValue("pgpID", details.gpg_id.toStdString().c_str());
         s.setValue("name", details.name.c_str());  // storing name for better human readability
@@ -1751,9 +1747,9 @@ void FriendList::exportFriendlist()
         }
         s.endGroup(); // sslIDs
 
-        s.endGroup(); // details.gpg_id
-    }
-    s.endGroup(); // pgpIDs
+		s.endGroup(); // details.gpg_id
+	}
+	s.endGroup(); // pgpIDs
 
     QMessageBox mbox;
     mbox.setIcon(QMessageBox::Information);

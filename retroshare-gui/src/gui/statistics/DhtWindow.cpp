@@ -36,14 +36,6 @@
 #include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
 
-#define DTW_COL_BUCKET	0
-#define DTW_COL_IPADDR	1
-#define DTW_COL_PEERID	2
-#define DTW_COL_FLAGS	3
-#define DTW_COL_FOUND	4
-#define DTW_COL_SEND	5
-#define DTW_COL_RECV	6
-
 DhtWindow::DhtWindow(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
 {
@@ -51,10 +43,6 @@ DhtWindow::DhtWindow(QWidget *parent)
     
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
-    
-        /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("IP"), DTW_COL_IPADDR, tr("Search IP"));
-    ui.filterLineEdit->setCurrentFilter(DTW_COL_IPADDR);
 }
 
 DhtWindow::~DhtWindow()
@@ -589,6 +577,14 @@ void DhtWindow::updateRelays()
 /****************************/
 
 
+#define DTW_COL_BUCKET	0
+#define DTW_COL_IPADDR	1
+#define DTW_COL_PEERID	2
+#define DTW_COL_FLAGS	3
+#define DTW_COL_FOUND	4
+#define DTW_COL_SEND	5
+#define DTW_COL_RECV	6
+
 class DhtTreeWidgetItem : public QTreeWidgetItem
     {
 public:
@@ -670,10 +666,6 @@ void DhtWindow::updateDhtPeers()
 		dht_item -> setData(DTW_COL_RECV, Qt::DisplayRole, lastrecvstr);
 
 		ui.dhtTreeWidget->addTopLevelItem(dht_item);
-		
-		if (ui.filterLineEdit->text().isEmpty() == false) {
-		filterItems(ui.filterLineEdit->text());
-	}
 	}
 
 }
