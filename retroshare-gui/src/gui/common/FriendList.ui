@@ -14,16 +14,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -38,16 +29,7 @@
       <property name="spacing">
        <number>3</number>
       </property>
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
+      <property name="margin">
        <number>2</number>
       </property>
       <item>
@@ -182,22 +164,6 @@
    </property>
    <property name="toolTip">
     <string>Show Groups</string>
-   </property>
-  </action>
-  <action name="actionExportFriendlist">
-   <property name="text">
-    <string>export your friendlist</string>
-   </property>
-   <property name="toolTip">
-    <string>export your friendlist to a file</string>
-   </property>
-  </action>
-  <action name="actionImportFriendlist">
-   <property name="text">
-    <string>import your friendlist</string>
-   </property>
-   <property name="toolTip">
-    <string>import your friendlist from a file</string>
    </property>
   </action>
  </widget>
