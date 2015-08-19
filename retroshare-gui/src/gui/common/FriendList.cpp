@@ -27,6 +27,7 @@
 #include <QWidgetAction>
 #include <QDateTime>
 #include <QPainter>
+#include <QtXml>
 
 #include "rsserver/rsaccounts.h"
 #include "retroshare/rspeers.h"
@@ -1665,8 +1666,8 @@ void FriendList::exportFriendlistClicked()
     QMessageBox mbox;
     mbox.setIcon(QMessageBox::Information);
     mbox.setText(tr("Done!"));
-    mbox.setInformativeText("Your friendlist is stored at:\n" + fileName +
-                            "\n(keep in mind that the file is unencrypted!)");
+    mbox.setInformativeText(tr("Your friendlist is stored at:\n") + fileName +
+                            tr("\n(keep in mind that the file is unencrypted!)"));
     mbox.setStandardButtons(QMessageBox::Ok);
     mbox.exec();
 }
@@ -1683,16 +1684,16 @@ void FriendList::importFriendlistClicked()
         QMessageBox mbox;
         mbox.setIcon(QMessageBox::Information);
         mbox.setText(tr("Done!"));
-        mbox.setInformativeText("Your friendlist was imported from:\n" + fileName);
+        mbox.setInformativeText(tr("Your friendlist was imported from:\n") + fileName);
         mbox.setStandardButtons(QMessageBox::Ok);
         mbox.exec();
     } else {
         QMessageBox mbox;
         mbox.setIcon(QMessageBox::Warning);
         mbox.setText(tr("Done - but errors happened!"));
-        mbox.setInformativeText("Your friendlist was imported from:\n" + fileName +
-                                (errorPeers  ? "\nat least one peer was not added" : "") +
-                                (errorGroups ? "\nat least one peer was not added to a group" : "")
+        mbox.setInformativeText(tr("Your friendlist was imported from:\n") + fileName +
+                                (errorPeers  ? tr("\nat least one peer was not added") : "") +
+                                (errorGroups ? tr("\nat least one peer was not added to a group") : "")
                                 );
         mbox.setStandardButtons(QMessageBox::Ok);
         mbox.exec();
@@ -1713,7 +1714,7 @@ bool FriendList::importExportFriendlistFileDialog(QString &fileName, bool import
                               RshareSettings::LASTDIR_CERT,
                               (import ? tr("Select file for importing yoour friendlist from") :
                                         tr("Select a file for exporting your friendlist to")),
-                              tr("Text file (*.txt);; Ini File (*.ini);;All Files (*)"),
+                              tr("XML File (*.xml);;All Files (*)"),
                               fileName,
                               NULL,
                               (import ? QFileDialog::DontConfirmOverwrite : (QFileDialog::Options)0)
@@ -1722,7 +1723,7 @@ bool FriendList::importExportFriendlistFileDialog(QString &fileName, bool import
         QMessageBox mbox;
         mbox.setIcon(QMessageBox::Warning);
         mbox.setText(tr("Error"));
-        mbox.setInformativeText("Failed to get a file!");
+        mbox.setInformativeText(tr("Failed to get a file!"));
         mbox.setStandardButtons(QMessageBox::Ok);
         mbox.exec();
         return false;
@@ -1739,22 +1740,17 @@ bool FriendList::importExportFriendlistFileDialog(QString &fileName, bool import
  */
 bool FriendList::exportFriendlist(QString &fileName)
 {
-    // this has to be IniFormat because it is platform idependet (qsettings documentation)
-    QSettings s(fileName, QSettings::IniFormat);
-    s.clear();
-    if(!s.isWritable()) {
+    QDomDocument doc("FriendListWithGroups");
+    QDomElement root = doc.createElement("root");
+    doc.appendChild(root);
+
+    QFile file(fileName);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         // show error to user
         QMessageBox mbox;
         mbox.setIcon(QMessageBox::Warning);
         mbox.setText(tr("Error"));
-        mbox.setInformativeText("File is not writeable!\n" + fileName + "\nStatus: " +
-                    (
-                        (s.status() == QSettings::NoError) ? "no error" :
-                        (
-                            (s.status() == QSettings::AccessError) ? "access error" : "format error"
-                        )
-                    )
-                );
+        mbox.setInformativeText(tr("File is not writeable!\n") + fileName);
         mbox.setStandardButtons(QMessageBox::Ok);
         mbox.exec();
         return false;
@@ -1766,18 +1762,15 @@ bool FriendList::exportFriendlist(QString &fileName)
     std::list<RsGroupInfo> group_info_list;
     rsPeers->getGroupInfoList(group_info_list);
 
-    s.beginGroup("pgpIDs");
+    QDomElement pgpIDs = doc.createElement("pgpIDs");
     RsPeerDetails details;
     for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
         rsPeers->getGPGDetails(*list_iter, details);
-        s.beginGroup(details.gpg_id.toStdString().c_str());
-        // since everything is loaded from the public key there is no need to save these
-        //s.setValue("pgpID", details.gpg_id.toStdString().c_str());
-        s.setValue("name", details.name.c_str());  // storing name for better human readability
-        //s.setValue("email", details.email.c_str());
-        //s.setValue("trustLvl", details.trustLvl);
+        QDomElement pgpID = doc.createElement("pgpID");
+        // these values aren't used and just stored for better human readability
+        pgpID.setAttribute("id", QString::fromStdString(details.gpg_id.toStdString()));
+        pgpID.setAttribute("name", QString::fromUtf8(details.name.c_str()));
 
-        s.beginGroup("sslIDs");
         std::list<RsPeerId> ssl_ids;
         rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
         for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); list_iter++) {
@@ -1786,43 +1779,65 @@ bool FriendList::exportFriendlist(QString &fileName)
                 continue;
 
             std::string invite = rsPeers->GetRetroshareInvite(detail2.id, true);
-            std::string sid = detail2.id.toStdString();
 
-            s.beginGroup(sid.c_str());
-            // since everything is loaded from the public key there is no need to save these
-            //s.setValue("sslID", sid.c_str());
-            //s.setValue("location", detail2.location.c_str());
-            s.setValue("pubkey", invite.c_str());
-            s.setValue("service_perm_flags", detail2.service_perm_flags.toUInt32());
-            s.endGroup(); // sid
+            QDomElement sslID = doc.createElement("sslID");
+            // these values aren't used and just stored for better human readability
+            sslID.setAttribute("sslID", QString::fromStdString(detail2.id.toStdString()));
+            sslID.setAttribute("location", QString::fromUtf8(detail2.location.c_str()));
+
+            // required values
+            sslID.setAttribute("pubkey", QString::fromStdString(invite));
+            sslID.setAttribute("service_perm_flags", detail2.service_perm_flags.toUInt32());
+
+            pgpID.appendChild(sslID);
         }
-        s.endGroup(); // sslIDs
-
-        s.endGroup(); // details.gpg_id
+        pgpIDs.appendChild(pgpID);
     }
-    s.endGroup(); // pgpIDs
+    root.appendChild(pgpIDs);
 
-    s.beginGroup("groups");
+    QDomElement groups = doc.createElement("groups");
     for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
         RsGroupInfo group_info = *list_iter;
-        s.beginGroup(group_info.id.c_str());
+
+        //skip groups without peers
+        if(group_info.peerIds.empty())
+            continue;
+
+        QDomElement group = doc.createElement("group");
         // id is not needed since it may differ between locatiosn / pgp ids (groups are identified by name)
-        s.setValue("name", group_info.name.c_str());
-        s.setValue("flag", group_info.flag);
+        group.setAttribute("name", QString::fromStdString(group_info.name));
+        group.setAttribute("flag", group_info.flag);
 
-        s.beginGroup("peerIDs");
         for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
+            QDomElement pgpID = doc.createElement("pgpID");
             std::string pid = i->toStdString();
-            // key = peerId, value = arbitrary
-            s.setValue(pid.c_str(), 0);
+            pgpID.setAttribute("id", QString::fromStdString(pid));
+            group.appendChild(pgpID);
         }
-        s.endGroup(); // peerIDs
-
-        s.endGroup(); // group_info.id
+        groups.appendChild(group);
     }
-    s.endGroup(); // groups
+    root.appendChild(groups);
+
+    QTextStream ts(&file);
+    ts.setCodec("UTF-8");
+    ts << doc.toString();
+    file.close();
 
     return true;
+}
+
+/**
+ * @brief helper function to show a message box
+ */
+void showXMLParsingError()
+{
+    // show error to user
+    QMessageBox mbox;
+    mbox.setIcon(QMessageBox::Warning);
+    mbox.setText(QObject::tr("Error"));
+    mbox.setInformativeText(QObject::tr("unable to parse XML file!"));
+    mbox.setStandardButtons(QMessageBox::Ok);
+    mbox.exec();
 }
 
 /**
@@ -1830,12 +1845,41 @@ bool FriendList::exportFriendlist(QString &fileName)
  * @param fileName file to load friends from
  * @param errorPeers an error occured while adding a peer
  * @param errorGroups an error occured while adding a peer to a group
- * @return success or failure (an error means that adding a peer and/or adding a peer to a group failed at least once)
+ * @return success or failure (an error can also happen when adding a peer and/or adding a peer to a group fails at least once)
  */
 bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups)
 {
-    // this has to be IniFormat because it is platform idependet (qsettings documentation)
-    QSettings s(fileName, QSettings::IniFormat);
+    QDomDocument doc;
+    // load from file
+    {
+        QFile file(fileName);
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            // show error to user
+            QMessageBox mbox;
+            mbox.setIcon(QMessageBox::Warning);
+            mbox.setText(tr("Error"));
+            mbox.setInformativeText(tr("File is not readable!\n") + fileName);
+            mbox.setStandardButtons(QMessageBox::Ok);
+            mbox.exec();
+            return false;
+        }
+
+        bool ok = doc.setContent(&file);
+        file.close();
+
+        if(!ok) {
+            showXMLParsingError();
+            return false;
+        }
+    }
+
+    QDomElement root = doc.documentElement();
+    if(root.tagName() != "root") {
+        showXMLParsingError();
+        return false;
+    }
+
     errorPeers = false;
     errorGroups = false;
 
@@ -1848,25 +1892,33 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
     // lock all events for faster processing
     RsAutoUpdatePage::lockAllEvents();
 
-    s.beginGroup("pgpIDs");
-    QStringList pgpIDs = s.childGroups();
-    foreach (QString pgpID, pgpIDs) {
-        s.beginGroup(pgpID);
+    // pgp and ssl IDs
+    QDomElement pgpIDs;
+    {
+        QDomNodeList nodes = root.elementsByTagName("pgpIDs");
+        if(nodes.isEmpty() || nodes.size() != 1){
+            showXMLParsingError();
+            return false;
+        }
 
-        // enter sslIDs group and iterate over all ssl IDs
-        s.beginGroup("sslIDs");
-        QStringList sslIDs = s.childGroups();
-        foreach (QString sslID, sslIDs) {
-            s.beginGroup(sslID);
-
+        pgpIDs = nodes.item(0).toElement();
+        if(pgpIDs.isNull()){
+            showXMLParsingError();
+            return false;
+        }
+    }
+    QDomNode pgpIDElem = pgpIDs.firstChildElement("pgpID");
+    while (!pgpIDElem.isNull()) {
+        QDomElement sslIDElem = pgpIDElem.firstChildElement("sslID");
+        while (!sslIDElem.isNull()) {
             rsPeerID.clear();
             rsPgpID.clear();
 
             // load everything needed from the pubkey string
-            std::string pubkey = s.value("pubkey").toString().toStdString();
+            std::string pubkey = sslIDElem.attribute("pubkey").toStdString();
             if(rsPeers->loadDetailsFromStringCert(pubkey, rsPeerDetails, error_code)) {
                 if(rsPeers->loadCertificateFromString(pubkey, rsPeerID, rsPgpID, error_string)) {
-                    ServicePermissionFlags service_perm_flags(s.value("service_perm_flags").toInt());
+                    ServicePermissionFlags service_perm_flags(sslIDElem.attribute("service_perm_flags").toInt());
 
                     // everything is loaded - start setting things
                     if (!rsPeerDetails.id.isNull() && !rsPeerDetails.gpg_id.isNull()) {
@@ -1893,54 +1945,62 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
                         rsPeers->addFriend(pid, rsPeerDetails.gpg_id, service_perm_flags);
                     } else {
                         errorPeers = true;
-                        std::cerr << "FriendList::importFriendlist(): error while procvessing SSL id " << sslID.toStdString() << std::endl;
+                        std::cerr << "FriendList::importFriendlist(): error while processing SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << std::endl;
                     }
                 } else {
                     errorPeers = true;
-                    std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslID.toStdString() << " - error: " << error_string << ")" << std::endl;
+                    std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_string << ")" << std::endl;
                 }
             } else {
                 errorPeers = true;
-                std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslID.toStdString() << " - error: " << error_code << ")" << std::endl;
+                std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_code << ")" << std::endl;
             }
-            s.endGroup(); // sslID
+            sslIDElem = sslIDElem.nextSiblingElement("sslID");
         }
-        s.endGroup(); // sslIDs
-        s.endGroup(); // pgpID
+        pgpIDElem = pgpIDElem.nextSiblingElement("pgpID");
     }
-    s.endGroup(); // pgpIDs
 
-    // enter groups group and iterate over all groups
-    s.beginGroup("groups");
-    QStringList groupList = s.childGroups();
-    foreach (QString group, groupList) {
-        s.beginGroup(group);
+    // groups
+    QDomElement groups;
+    {
+        QDomNodeList nodes = root.elementsByTagName("groups");
+        if(nodes.isEmpty() || nodes.size() != 1){
+            showXMLParsingError();
+            return false;
+        }
 
+        groups = nodes.item(0).toElement();
+        if(groups.isNull()){
+            showXMLParsingError();
+            return false;
+        }
+    }
+    QDomElement group = groups.firstChildElement("group");
+    while (!group.isNull()) {
         // get name and flags and try to get the group ID
-        std::string groupName = s.value("name").toString().toStdString();
-        uint32_t flag = s.value("flag").toUInt();
+        std::string groupName = group.attribute("name").toStdString();
+        uint32_t flag = group.attribute("flag").toInt();
         std::string groupId;
         if(getOrCreateGroup(groupName, flag, groupId)) {
             // group id found!
-            // enter peerIDs group and iterate over all pgpIDs of this group
-            s.beginGroup("peerIDs");
-            QStringList pgpIDsForGroup = s.allKeys();
-            foreach (QString pgpIDForGroup, pgpIDsForGroup) {
+            QDomElement pgpID = group.firstChildElement("pgpID");
+            while (!pgpID.isNull()) {
                 // add pgp id to group
-                RsPgpId rsPgpId(pgpIDForGroup.toStdString());
-                if(rsPeers->assignPeerToGroup(groupId, rsPgpId, true)) {
+                RsPgpId rsPgpId(pgpID.attribute("id").toStdString());
+                if(rsPgpID.isNull() || !rsPeers->assignPeerToGroup(groupId, rsPgpId, true)) {
                     errorGroups = true;
                     std::cerr << "FriendList::importFriendlist(): failed to add '" << rsPeers->getGPGName(rsPgpId) << "'' to group '" << groupName << "'" << std::endl;
                 }
+
+                pgpID = pgpID.nextSiblingElement("pgpID");
             }
-            s.endGroup(); // peerIDs
+            pgpID = pgpID.nextSiblingElement("pgpID");
         } else {
             errorGroups = true;
             std::cerr << "FriendList::importFriendlist(): failed to find/create group '" << groupName << "'" << std::endl;
         }
-        s.endGroup(); // group
+        group = group.nextSiblingElement("group");
     }
-    s.endGroup(); // groups
 
     // unlock events
     RsAutoUpdatePage::unlockAllEvents();
