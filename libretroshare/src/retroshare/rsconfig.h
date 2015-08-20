@@ -288,10 +288,10 @@ public:
     virtual bool     setOperatingMode(const std::string &opModeStr) = 0;
 
     /* Data Rate Control - to be moved here */
-    virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
-    virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
-    
+    virtual int SetMaxDataRates( int downKb, int upKb, int downKbWhenIdle, int upKbWhenIdle ) = 0;
+    virtual int GetMaxDataRates( int &inKb, int &outKb, int &downKbWhenIdle, int &upKbWhenIdle ) = 0;
     virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
+    virtual void setIsIdle(bool isIdle) = 0;
 };
 
 #endif

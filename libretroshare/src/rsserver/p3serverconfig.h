@@ -88,9 +88,11 @@ virtual uint32_t getOperatingMode();
 virtual bool     setOperatingMode(uint32_t opMode);
 virtual bool     setOperatingMode(const std::string &opModeStr);
 
-virtual int SetMaxDataRates( int downKb, int upKb );
-virtual int GetMaxDataRates( int &downKb, int &upKb );
+virtual int SetMaxDataRates(int downKb, int upKb , int downKBWhenIdle, int upKBWhenIdle);
+virtual int GetMaxDataRates(int &downKb, int &upKb  , int &downKBWhenIdle, int &upKBWhenIdle);
 virtual int GetCurrentDataRates( float &inKb, float &outKb );
+
+virtual void setIsIdle(bool isIdle);
 
 /********************* ABOVE is RsConfig Interface *******/
 
@@ -110,6 +112,9 @@ bool findConfigurationOption(uint32_t key, std::string &keystr);
 	uint32_t mUserLevel; // store last one... will later be a config Item too.
 	float mRateDownload;
 	float mRateUpload;
+	float mRateDownloadWhenIdle;
+	float mRateUploadWhenIdle;
+	bool mIsIdle;
 
 	uint32_t mOpMode;
 };
