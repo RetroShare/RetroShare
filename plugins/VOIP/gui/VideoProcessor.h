@@ -57,6 +57,27 @@ private:
     static uint16_t quantize_16b(float x, float M);
 };
 
+struct AVCodec ;
+struct AVCodecContext ;
+struct AVFrame ;
+
+class FFmpegVideo: public VideoCodec
+{
+public:
+    FFmpegVideo() ;
+    ~FFmpegVideo() ;
+
+protected:
+    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) ;
+    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
+    
+private:
+    AVCodec *codec;
+    AVCodecContext *context;
+    AVFrame *frame_buffer ;
+    uint64_t frame_count ;
+};
+
 // This class decodes video from a stream. It keeps a queue of
 // decoded frame that needs to be retrieved using the getNextImage() method.
 //
@@ -69,7 +90,8 @@ class VideoProcessor
         	enum CodecId {
                 		VIDEO_PROCESSOR_CODEC_ID_UNKNOWN    = 0x0000,
                 		VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO = 0x0001,
-                		VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO = 0x0002
+                		VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO = 0x0002,
+                		VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO = 0x0003
             };
             
 // =====================================================================================
@@ -114,8 +136,9 @@ class VideoProcessor
 // =------------------------------------- Codecs --------------------------------------=
 // =====================================================================================
         
-	    JPEGVideo                _jpeg_video_codec ;
+	    JPEGVideo    _jpeg_video_codec ;
             WaveletVideo _ddwt_video_codec ;
+            FFmpegVideo  _mpeg_video_codec ;
             
             uint16_t _encoding_current_codec ;
 };
