@@ -184,6 +184,11 @@ bool p3LinkMgrIMPL::getLocalAddress(struct sockaddr_storage &addr)
 	return true;
 }
 
+void p3LinkMgrIMPL::forceNTPRefresh()
+{
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+	mNetMgr->forceNTPRefresh();
+}
 
 bool    p3LinkMgrIMPL::isOnline(const RsPeerId &ssl_id)
 {

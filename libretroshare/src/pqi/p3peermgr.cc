@@ -49,6 +49,8 @@ const int p3peermgrzone = 9531;
 #include "retroshare/rspeers.h" // Needed for Group Parameters.
 #include "retroshare/rsbanlist.h" // Needed for banned IPs
 
+#include <sstream>
+
 /* Network setup States */
 
 const uint32_t RS_NET_NEEDS_RESET = 	0x0000;
@@ -80,6 +82,9 @@ static const std::string kConfigKeyProxyServerIpAddrTor = "PROXY_SERVER_IPADDR";
 static const std::string kConfigKeyProxyServerPortTor = "PROXY_SERVER_PORT";
 static const std::string kConfigKeyProxyServerIpAddrI2P = "PROXY_SERVER_IPADDR_I2P";
 static const std::string kConfigKeyProxyServerPortI2P = "PROXY_SERVER_PORT_I2P";
+static const std::string kConfigKeyNTPFinder = "USE_NTP_FINDER";
+static const std::string kConfigKeyNTPServers = "NTP_SERVERS";
+static const std::string kConfigDefaultNTPServers = "www.pool.ntp.org\\google.com";
 	
 void  printConnectState(std::ostream &out, peerState &peer);
 
@@ -1916,6 +1921,13 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	cleanup = false;
 	bool useExtAddrFinder = mNetMgr->getIPServersEnabled();
 
+	bool useNTPFinder = mNetMgr->getNTPFinderEnabled();
+	std::list<std::string> ntpServersList;
+	mNetMgr->getNTPServersList(ntpServersList);
+	std::string ntpServers;
+	for(std::list<std::string>::const_iterator it(ntpServersList.begin()); it!=ntpServersList.end(); ++it)
+		ntpServers += (ntpServers.empty()?"":"\\") + (*it);
+
 	/* gather these information before mPeerMtx is locked! */
 	struct sockaddr_storage proxy_addr_tor, proxy_addr_i2p;
 	getProxyServerAddress(RS_HIDDEN_TYPE_TOR, proxy_addr_tor);
@@ -2059,6 +2071,14 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	kv.value = sockaddr_storage_porttostring(proxy_addr_i2p);
 	vitem->tlvkvs.pairs.push_back(kv) ;
 	
+	kv.key = kConfigKeyNTPFinder ;
+	kv.value = (useNTPFinder)?"TRUE":"FALSE" ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = kConfigKeyNTPServers ;
+	kv.value = ntpServers ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
 	saveData.push_back(vitem);
 	saveCleanupList.push_back(vitem);
 
@@ -2096,6 +2116,11 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	uint16_t    proxyPortTor = kConfigDefaultProxyServerPortTor;
 	std::string proxyIpAddressI2P = kConfigDefaultProxyServerIpAddr;
 	uint16_t    proxyPortI2P = kConfigDefaultProxyServerPortI2P;
+
+	bool useNTPFinder = true;
+	std::string ntpServers = kConfigDefaultNTPServers;
+	std::string proxyIpAddress = kConfigDefaultProxyServerIpAddr;
+	uint16_t    proxyPort = kConfigDefaultProxyServerPort;
 
         if (load.empty()) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
@@ -2226,6 +2251,16 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 					std::cerr << std::endl ;
 #endif
 				}
+				else if(kit->key == kConfigKeyNTPFinder)
+				{
+					useNTPFinder = (kit->value == "TRUE");
+					std::cerr << "setting use_ntp_finder to " << useNTPFinder << std::endl ;
+				}
+				else if(kit->key == kConfigKeyNTPServers)
+				{
+					ntpServers = kit->value;
+					std::cerr << "Loaded ntpServers: " << ntpServers << std::endl ;
+				}
 			}
 
 			delete(*it);
@@ -2335,6 +2370,14 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	}
 
 	mNetMgr->setIPServersEnabled(useExtAddrFinder);
+	mNetMgr->setNTPFinderEnabled(useNTPFinder);
+	std::list<std::string> ntpServersList;
+	std::stringstream ss(ntpServers);
+	std::string item;
+	while (std::getline(ss, item, '\\')) {
+		ntpServersList.push_back(item);
+	}
+	mNetMgr->setNTPServersList(ntpServersList);
 
 	// Configure Proxy Server.
 	struct sockaddr_storage proxy_addr;

@@ -35,6 +35,7 @@
 #include "util/rsdebug.h"
 
 #include "util/extaddrfinder.h"
+#include "util/ntpfinder.h"
 #include "util/dnsresolver.h"
 
 //#include "util/rsprint.h"
@@ -82,10 +83,11 @@ const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
 pqiNetStatus::pqiNetStatus()
 	:mLocalAddrOk(false), mExtAddrOk(false), mExtAddrStableOk(false), 
-	mUpnpOk(false), mDhtOk(false), mResetReq(false)
+	mNTPOk(false), mUpnpOk(false), mDhtOk(false), mResetReq(false)
 {
         mDhtNetworkSize = 0;
         mDhtRsNetworkSize = 0;
+        mNTPError = 0;
 
 	sockaddr_storage_clear(mLocalAddr);
 	sockaddr_storage_clear(mExtAddr);
@@ -101,6 +103,9 @@ void pqiNetStatus::print(std::ostream &out)
         out << " mExtAddrOk: " << mExtAddrOk;
         out << " mExtAddrStableOk: " << mExtAddrStableOk;
 	out << std::endl;
+	out << " mNTPOk: " << mNTPOk ;
+	out << " mNTPTime: " << mNTPTime ;
+	out << " mNTPError: " << mNTPError ;
         out << " mUpnpOk: " << mUpnpOk;
         out << " mDhtOk: " << mDhtOk;
         out << " mResetReq: " << mResetReq;
@@ -126,6 +131,8 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 
 		mUseExtAddrFinder = true;
 		mExtAddrFinder = new ExtAddrFinder();
+		mUseNTPFinder = true;
+		mNTPFinder = new NTPFinder();
 		mNetInitTS = 0;
 	
 		mNetFlags = pqiNetStatus();
@@ -260,6 +267,21 @@ void p3NetMgrIMPL::netReset()
 	{
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::netReset() ExtAddrFinder Disabled" << std::endl;
+#endif
+	}
+
+	// Will initiate a new call for determining the NTP time.
+	if (mUseNTPFinder)
+	{
+#ifdef NETMGR_DEBUG_RESET
+		std::cerr << "p3NetMgrIMPL::netReset() restarting NTPFinder" << std::endl;
+#endif
+		mNTPFinder->reset() ;
+	}
+	else
+	{
+#ifdef NETMGR_DEBUG_RESET
+		std::cerr << "p3NetMgrIMPL::netReset() NTPFinder Disabled" << std::endl;
 #endif
 	}
 
@@ -558,6 +580,8 @@ void p3NetMgrIMPL::netTick()
 		default:
 			break;
 	}
+
+	netNTPCheck();
 
 	return;
 }
@@ -991,6 +1015,28 @@ void p3NetMgrIMPL::netExtCheck()
 		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::netExtCheck() Network Setup Complete");
 	}
 
+}
+
+void p3NetMgrIMPL::netNTPCheck()
+{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+	std::cerr << "p3NetMgrIMPL::netNTPCheck()" << std::endl;
+#endif
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		bool ntpFinderOk = false;
+		time_t ntpTime = 0;
+		int ntpError = 0;
+		/* NTPFinder */
+		if (mUseNTPFinder)
+		{
+			ntpFinderOk = mNTPFinder->hasValidNTPTime(&(ntpTime));
+			mNTPFinder->getNTPError(&(ntpError));
+		}
+		mNetFlags.mNTPOk = ntpFinderOk;
+		mNetFlags.mNTPTime = ntpTime;
+		mNetFlags.mNTPError = ntpError;
+	}
 }
 
 /**********************************************************************************************
@@ -1689,6 +1735,47 @@ void p3NetMgrIMPL::setIPServersEnabled(bool b)
 
 }
 
+
+/**********************************************************************************************
+ ************************************** NTPFinder *********************************************
+ **********************************************************************************************/
+
+void p3NetMgrIMPL::setNTPFinderEnabled(bool b)
+{
+	{
+		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+		mUseNTPFinder = b;
+	}
+#ifdef NETMGR_DEBUG
+	std::cerr << "p3NetMgr: setNTPServers to " << b << std::endl ;
+#endif
+}
+
+bool  p3NetMgrIMPL::getNTPFinderEnabled()
+{
+	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
+	return mUseNTPFinder;
+}
+
+void  p3NetMgrIMPL::setNTPServersList(std::list<std::string>& ntp_servers)
+{
+	mNTPFinder->setNTPServersList(ntp_servers);
+}
+
+void  p3NetMgrIMPL::getNTPServersList(std::list<std::string>& ntp_servers)
+{
+	mNTPFinder->getNTPServersList(ntp_servers);
+}
+
+void  p3NetMgrIMPL::getNTPError(int *ntp_error)
+{
+	mNTPFinder->getNTPError(ntp_error);
+}
+
+void  p3NetMgrIMPL::forceNTPRefresh()
+{
+	mNTPFinder->forceNTPRefresh();
+}
 
 
 /**********************************************************************************************

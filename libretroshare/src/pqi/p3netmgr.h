@@ -40,6 +40,7 @@
 #include "util/rsthreads.h"
 
 class ExtAddrFinder ;
+class NTPFinder ;
 class DNSResolver ;
 
 	/* RS_VIS_STATE_XXXX
@@ -62,6 +63,7 @@ class pqiNetStatus
         bool mLocalAddrOk;     // Local address is not loopback.
         bool mExtAddrOk;       // have external address.
         bool mExtAddrStableOk; // stable external address.
+        bool mNTPOk;            // NTP Time received is OK.
         bool mUpnpOk;          // upnp is ok.
         bool mDhtOk;           // dht is ok.
 
@@ -70,6 +72,9 @@ class pqiNetStatus
 
 	struct sockaddr_storage mLocalAddr; // percieved ext addr.
 	struct sockaddr_storage mExtAddr; // percieved ext addr.
+
+	int    mNTPError; // Error in NTP Header
+	time_t mNTPTime;  // Time read in NTP Header
 
 	bool mResetReq; // Not Used yet!.
 
@@ -142,6 +147,13 @@ virtual bool  getIPServersEnabled() = 0;
 virtual void  setIPServersEnabled(bool b)  = 0;
 virtual void  getIPServersList(std::list<std::string>& ip_servers)  = 0;
 
+virtual void  setNTPFinderEnabled(bool b) = 0;
+virtual bool  getNTPFinderEnabled() = 0;
+virtual void  setNTPServersList(std::list<std::string>& ntp_servers) = 0;
+virtual void  getNTPServersList(std::list<std::string>& ntp_servers) = 0;
+virtual void  getNTPError(int *ntp_error) = 0;
+virtual void  forceNTPRefresh() = 0;
+
 	// ONLY USED by p3face-config.cc WHICH WILL BE REMOVED.
 virtual void 	getNetStatus(pqiNetStatus &status) = 0;
 virtual bool    getUPnPState() = 0;
@@ -197,6 +209,13 @@ virtual bool	shutdown(); /* blocking shutdown call */
 virtual bool  getIPServersEnabled();
 virtual void  setIPServersEnabled(bool b);
 virtual void  getIPServersList(std::list<std::string>& ip_servers);
+
+virtual void  setNTPFinderEnabled(bool b);
+virtual bool  getNTPFinderEnabled();
+virtual void  setNTPServersList(std::list<std::string>& ntp_servers);
+virtual void  getNTPServersList(std::list<std::string>& ntp_servers);
+virtual void  getNTPError(int *ntp_error);
+virtual void  forceNTPRefresh();
 
 	// ONLY USED by p3face-config.cc WHICH WILL BE REMOVED.
 virtual void 	getNetStatus(pqiNetStatus &status);
@@ -286,28 +305,29 @@ void 	netDhtInit();
 void 	netUdpInit();
 void 	netStunInit();
 
-
-
 void	netInit();
 
 void 	netExtInit();
 void 	netExtCheck();
+
+void netNTPCheck();
 
 void 	netUpnpInit();
 void 	netUpnpCheck();
 
 void    netUnreachableCheck();
 
-
 	/* net state via NetStateBox */
 void 	updateNetStateBox_temporal();
 void 	updateNetStateBox_startup();
 void 	updateNetStateBox_reset();
 void    updateNatSetting();
+void updateNTPTime();
 
 private:
 	// These should have there own Mutex Protection,
 	ExtAddrFinder *mExtAddrFinder ;
+	NTPFinder *mNTPFinder ;
 
 	/* These are considered static from a MUTEX perspective */
 	std::map<uint32_t, pqiNetAssistFirewall *> mFwAgents;
@@ -340,6 +360,7 @@ void 	netStatusReset_locked();
 	bool     mStatusChanged;
 
 	bool mUseExtAddrFinder;
+	bool     mUseNTPFinder;
 
 	/* network status flags (read by rsiface) */
 	pqiNetStatus mNetFlags;

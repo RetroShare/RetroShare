@@ -79,6 +79,7 @@
 #include "statusbar/natstatus.h"
 #include "statusbar/ratesstatus.h"
 #include "statusbar/dhtstatus.h"
+#include "statusbar/ntpstatus.h"
 #include "statusbar/hashingstatus.h"
 #include "statusbar/discstatus.h"
 #include "statusbar/OpModeStatus.h"
@@ -260,6 +261,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     dhtstatus = new DHTStatus();
     statusBar()->addWidget(dhtstatus);
 
+    ntpstatus = new NTPStatus();
+    statusBar()->addWidget(ntpstatus);
+
     hashingstatus = new HashingStatus();
     statusBar()->addPermanentWidget(hashingstatus, 1);
 
@@ -328,6 +332,7 @@ MainWindow::~MainWindow()
     delete natstatus;
     delete dhtstatus;
     delete hashingstatus;
+    delete ntpstatus;
     delete discstatus;
     delete ratesstatus;
     delete opModeStatus;
@@ -704,6 +709,9 @@ void MainWindow::updateStatus()
         
     if (dhtstatus)
         dhtstatus->getDHTStatus();
+
+    if (ntpstatus)
+        ntpstatus->getNTPStatus();
 
     if (discstatus) {
         discstatus->update();
