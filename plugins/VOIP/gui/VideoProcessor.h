@@ -72,10 +72,13 @@ protected:
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
     
 private:
-    AVCodec *codec;
-    AVCodecContext *context;
-    AVFrame *frame_buffer ;
-    uint64_t frame_count ;
+    AVCodec *encoding_codec;
+    AVCodec *decoding_codec;
+    AVCodecContext *encoding_context;
+    AVCodecContext *decoding_context;
+    AVFrame *encoding_frame_buffer ;
+    AVFrame *decoding_frame_buffer ;
+    uint64_t encoding_frame_count ;
 };
 
 // This class decodes video from a stream. It keeps a queue of

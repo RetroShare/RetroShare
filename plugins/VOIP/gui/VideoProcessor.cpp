@@ -481,162 +481,203 @@ float WaveletVideo::deserialise_ufloat(const unsigned char *mem)
 
 FFmpegVideo::FFmpegVideo()
 {
-    codec = NULL ;
-    frame_buffer = NULL ;
-    context = NULL ;
+    // Encoding   
+     
+    encoding_codec = NULL ;
+    encoding_frame_buffer = NULL ;
+    encoding_context = NULL ;
     
     AVCodecID codec_id = AV_CODEC_ID_H264 ; // AV_CODEC_ID_MPEG1VIDEO
     
     uint8_t endcode[] = { 0, 0, 1, 0xb7 };
 
     /* find the mpeg1 video encoder */
-    codec = avcodec_find_encoder(codec_id);
+    encoding_codec = avcodec_find_encoder(codec_id);
     
-    if (!codec) 
-        throw("AV codec not found for codec id ") ;
+    if (!encoding_codec)  throw("AV codec not found for codec id ") ;
 
-    context = avcodec_alloc_context3(codec);
+    encoding_context = avcodec_alloc_context3(encoding_codec);
     
-    if (!context) 
-        throw std::runtime_error("AV: Could not allocate video codec context");
+    if (!encoding_context)  throw std::runtime_error("AV: Could not allocate video codec encoding context");
+    if (!decoding_context)  throw std::runtime_error("AV: Could not allocate video codec decoding context");
 
     /* put sample parameters */
-    context->bit_rate = 400000;
+    encoding_context->bit_rate = 400000;
     /* resolution must be a multiple of two */
-    context->width = 352;
-    context->height = 288;
+    encoding_context->width = 352;
+    encoding_context->height = 288;
     /* frames per second */
-    context->time_base = (AVRational){1,25};
+    encoding_context->time_base = (AVRational){1,25};
     /* emit one intra frame every ten frames
      * check frame pict_type before passing frame
      * to encoder, if frame->pict_type is AV_PICTURE_TYPE_I
      * then gop_size is ignored and the output of encoder
      * will always be I frame irrespective to gop_size
      */
-    context->gop_size = 10;
-    context->max_b_frames = 1;
+    encoding_context->gop_size = 10;
+    encoding_context->max_b_frames = 1;
     //context->pix_fmt = AV_PIX_FMT_RGB24;
-    context->pix_fmt = AV_PIX_FMT_YUV420P;
+    encoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
 
     if (codec_id == AV_CODEC_ID_H264)
-        av_opt_set(context->priv_data, "preset", "slow", 0);
+        av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
 
     /* open it */
-    if (avcodec_open2(context, codec, NULL) < 0) 
+    if (avcodec_open2(encoding_context, encoding_codec, NULL) < 0) 
         throw std::runtime_error( "AV: Could not open codec context. Something's wrong.");
 
-    frame_buffer = (AVFrame*)malloc(sizeof(AVFrame)) ;
+    encoding_frame_buffer = (AVFrame*)malloc(sizeof(AVFrame)) ;
     
-    frame_buffer->format = context->pix_fmt;
-    frame_buffer->width  = context->width;
-    frame_buffer->height = context->height;
+    encoding_frame_buffer->format = encoding_context->pix_fmt;
+    encoding_frame_buffer->width  = encoding_context->width;
+    encoding_frame_buffer->height = encoding_context->height;
 
     /* the image can be allocated by any means and av_image_alloc() is
      * just the most convenient way if av_malloc() is to be used */
     
-    int ret = av_image_alloc(frame_buffer->data, frame_buffer->linesize, context->width, context->height, context->pix_fmt, 32);
+    int ret = av_image_alloc(encoding_frame_buffer->data, encoding_frame_buffer->linesize, encoding_context->width, encoding_context->height, encoding_context->pix_fmt, 32);
     
     if (ret < 0) 
        throw std::runtime_error("AV: Could not allocate raw picture buffer");
     
-    frame_count = 0 ;
+    encoding_frame_count = 0 ;
+    
+    // Decoding
+    
+    
+    decoding_codec = avcodec_find_decoder(codec_id);
+    
+    if (!decoding_codec)  
+        throw("AV codec not found for codec id ") ;
+    
+    decoding_context = avcodec_alloc_context3(decoding_codec);
+    
 }
  
 FFmpegVideo::~FFmpegVideo()
 {
-    avcodec_close(context);
-    
-    av_free(context);
-    
-    av_freep(&frame_buffer->data[0]);
-    
-    free(frame_buffer);
+    avcodec_close(encoding_context);
+    avcodec_close(decoding_context);
+    av_free(encoding_context);
+    av_free(decoding_context);
+    av_freep(&encoding_frame_buffer->data[0]);
+    av_freep(&decoding_frame_buffer->data[0]);
+    free(encoding_frame_buffer);
+    free(decoding_frame_buffer);
 }
 
 
 bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataChunk& voip_chunk)
 {
-    AVPacket pkt ;
-    av_init_packet(&pkt);
-    pkt.data = NULL;    // packet data will be allocated by the encoder
-    pkt.size = 0;
+	AVPacket pkt ;
+	av_init_packet(&pkt);
+	pkt.data = NULL;    // packet data will be allocated by the encoder
+	pkt.size = 0;
 
-    QImage input ;
+	QImage input ;
 
-    if(image.width() != frame_buffer->width || image.height() != frame_buffer->height)
-	    input = image.scaled(QSize(frame_buffer->width,frame_buffer->height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
-    else
-	    input = image ;
+	if(image.width() != encoding_frame_buffer->width || image.height() != encoding_frame_buffer->height)
+		input = image.scaled(QSize(encoding_frame_buffer->width,encoding_frame_buffer->height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
+	else
+		input = image ;
 
-    /* prepare a dummy image */
-    /* Y */
-    for (int y = 0; y < context->height; y++) 
-	    for (int x = 0; x < context->width; x++) 
+	/* prepare a dummy image */
+	/* Y */
+	for (int y = 0; y < encoding_context->height; y++) 
+		for (int x = 0; x < encoding_context->width; x++) 
+		{
+			QRgb pix = image.pixel(QPoint(x,y)) ;
+
+			register int R = (pix >> 16) & 0xff ;
+			register int G = (pix >>  8) & 0xff ;
+			register int B = (pix >>  0) & 0xff ;
+
+			register int y =  (0.257 * R) + (0.504 * G) + (0.098 * B) + 16  ;
+			register int u =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128 ;
+			register int v = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128 ;
+
+			encoding_frame_buffer->data[0][y * encoding_frame_buffer->linesize[0] + x] = std::min(255,std::max(0,y)); // Y
+			encoding_frame_buffer->data[0][y * encoding_frame_buffer->linesize[0] + x] = std::min(255,std::max(0,u));// Cr
+			encoding_frame_buffer->data[0][y * encoding_frame_buffer->linesize[0] + x] = std::min(255,std::max(0,v));// Cb
+		}
+
+
+	encoding_frame_buffer->pts = encoding_frame_count++;
+
+	/* encode the image */
+
+	int got_output = 0;
+
+	AVFrame *frame = encoding_frame_buffer ;
+
+	//    do
+	//    {
+	int ret = avcodec_encode_video2(encoding_context, &pkt, frame, &got_output) ;
+
+	if (ret < 0) 
 	{
-		QRgb pix = image.pixel(QPoint(x,y)) ;
+		std::cerr << "Error encoding frame!" << std::endl;
+		return false ;
+	}
+	//        frame = NULL ;	// next attempts: do not encode anything. Do this to just flush the buffer
+	//
+	//    } while(got_output) ;
 
-		register int R = (pix >> 16) & 0xff ;
-		register int G = (pix >>  8) & 0xff ;
-		register int B = (pix >>  0) & 0xff ;
+	if(got_output)
+	{
+		voip_chunk.data = pkt.data ;
+		voip_chunk.size = pkt.size ;
+		voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 
-        	register int y =  (0.257 * R) + (0.504 * G) + (0.098 * B) + 16  ;
-        	register int u =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128 ;
-        	register int v = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128 ;
-        
-		frame_buffer->data[0][y * frame_buffer->linesize[0] + x] = std::min(255,std::max(0,y)); // Y
-		frame_buffer->data[0][y * frame_buffer->linesize[0] + x] = std::min(255,std::max(0,u));// Cr
-		frame_buffer->data[0][y * frame_buffer->linesize[0] + x] = std::min(255,std::max(0,v));// Cb
+		std::cerr << "Output : " << pkt.size << " bytes." << std::endl;
+	}
+	else
+	{
+		voip_chunk.data = NULL;
+		voip_chunk.size = 0;
+		voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+
+		std::cerr << "No output produced." << std::endl;
 	}
 
 
-    frame_buffer->pts = frame_count++;
+	pkt.data = NULL ;	// transfer ownership to chunk
+	pkt.size = 0 ;
 
-    /* encode the image */
+	av_free_packet(&pkt);
 
-    int got_output = 0;
-
-        AVFrame *frame = frame_buffer ;
-                
-//    do
-//    {
-	    int ret = avcodec_encode_video2(context, &pkt, frame, &got_output) ;
-
-	    if (ret < 0) 
-	    {
-		    std::cerr << "Error encoding frame!" << std::endl;
-		    return false ;
-	    }
-//        frame = NULL ;	// next attempts: do not encode anything. Do this to just flush the buffer
-//
-//    } while(got_output) ;
-
-        if(got_output)
-        {
-    voip_chunk.data = pkt.data ;
-    voip_chunk.size = pkt.size ;
-    voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
-    
-    std::cerr << "Output : " << pkt.size << " bytes." << std::endl;
-        }
-        else
-        {
-    voip_chunk.data = NULL;
-    voip_chunk.size = 0;
-    voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
-    
-    std::cerr << "No output produced." << std::endl;
-        }
-            
-
-    pkt.data = NULL ;	// transfer ownership to chunk
-    pkt.size = 0 ;
-
-    av_free_packet(&pkt);
-
-    return true ;
+	return true ;
 }
 bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 {
+    AVPacket pkt ;
+    
+	av_init_packet(&pkt);
+	pkt.data = static_cast<unsigned char*>(chunk.data);    // packet data will be allocated by the encoder
+	pkt.size = chunk.size;
+    
+    int got_frame = 0 ;
+    int len = avcodec_decode_video2(decoding_context,decoding_frame_buffer,&got_frame,&pkt) ;
+    
+    if(!got_frame)
+        return true;
+    
+    image = QImage(QSize(decoding_frame_buffer->width,decoding_frame_buffer->height),QImage::Format_ARGB32) ;
+    
+ for (int y = 0; y < decoding_frame_buffer->height; y++) 
+		for (int x = 0; x < decoding_frame_buffer->width; x++) 
+		{
+			int Y  = decoding_frame_buffer->data[0][y * decoding_frame_buffer->linesize[0] + x] ;
+			int U  = decoding_frame_buffer->data[0][y * decoding_frame_buffer->linesize[0] + x] ;
+			int V  = decoding_frame_buffer->data[0][y * decoding_frame_buffer->linesize[0] + x] ;
+            
+			register int R = std::min(255,std::max(0,(int)(1.164*(Y - 16) + 1.596*(V - 128)))) ;
+			register int G = std::min(255,std::max(0,(int)(1.164*(Y - 16) - 0.813*(V - 128) - 0.391*(U - 128)))) ;
+			register int B = std::min(255,std::max(0,(int)(1.164*(Y - 16)                   + 2.018*(U - 128)
+))) ;
+			image.setPixel(QPoint(x,y),QRgb( 0xff000000 + (R << 16) + (G << 8) + B)) ;
+		}
+
 	return true ;
 }
 
