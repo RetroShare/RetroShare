@@ -79,6 +79,8 @@ private:
     AVFrame *encoding_frame_buffer ;
     AVFrame *decoding_frame_buffer ;
     uint64_t encoding_frame_count ;
+    
+    FILE *encoding_debug_file ;
 };
 
 // This class decodes video from a stream. It keeps a queue of
