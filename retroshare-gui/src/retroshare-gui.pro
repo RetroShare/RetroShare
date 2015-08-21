@@ -164,7 +164,7 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-	debug {
+	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
 	}
