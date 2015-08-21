@@ -80,7 +80,7 @@ public:
 	int addColumn(const QString &title);
 	void start();
 
-	bool sortByState();
+	bool isSortByState();
 
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
@@ -128,7 +128,7 @@ signals:
 	void itemSelectionChanged();
 
 public slots:
-	void setSortByState(bool sort);
+	void sortByState(bool sort);
 
 private slots:
 	void groupsChanged(int type);

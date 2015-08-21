@@ -107,7 +107,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	mCompareRole = new RSTreeWidgetItemCompareRole;
 	mActionSortByState = new QAction(tr("Sort by state"), this);
 	mActionSortByState->setCheckable(true);
-	connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(setSortByState(bool)));
+	connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
 	ui->friendList->addHeaderContextMenuAction(mActionSortByState);
 
 	/* initialize list */
@@ -116,7 +116,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 
 	/* sort list by name ascending */
 	ui->friendList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
-	setSortByState(false);
+	sortByState(false);
 
 	ui->filterLineEdit->setPlaceholderText(tr("Search Friends"));
 	ui->filterLineEdit->showFilterIcon();
@@ -1087,28 +1087,25 @@ std::string FriendSelectionWidget::idFromItem(QTreeWidgetItem *item)
 	return item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
 }
 
-void FriendSelectionWidget::setSortByState(bool sort)
+void FriendSelectionWidget::sortByState(bool sort)
 {
-	// Add changes also in FriendSelectionWidget::sortByState
 	mCompareRole->setRole(COLUMN_NAME, ROLE_SORT_GROUP);
 	mCompareRole->addRole(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP);
 
 	if (sort) {
 		mCompareRole->addRole(COLUMN_NAME, ROLE_SORT_STATE);
 		mCompareRole->addRole(COLUMN_NAME, ROLE_SORT_NAME);
-
-		mActionSortByState->setChecked(true);
 	} else {
 		mCompareRole->addRole(COLUMN_NAME, ROLE_SORT_NAME);
 		mCompareRole->addRole(COLUMN_NAME, ROLE_SORT_STATE);
-
-		mActionSortByState->setChecked(false);
 	}
+
+	mActionSortByState->setChecked(sort);
 
 	ui->friendList->resort();
 }
 
-bool FriendSelectionWidget::sortByState()
+bool FriendSelectionWidget::isSortByState()
 {
 	return mActionSortByState->isChecked();
 }
