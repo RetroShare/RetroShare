@@ -908,7 +908,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
     PrivacyBitPos pos = GRP_OPTION_BITS;
 
     // Check required permissions, and allow them to sign it - if they want too - as well!
-    if (!(metaData.mAuthorId.isNull()) || checkAuthenFlag(pos, author_flag))
+    if ((!metaData.mAuthorId.isNull()) || checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
         std::cerr << "Needs Identity sign! (Service Flags)";
