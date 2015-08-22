@@ -1268,8 +1268,8 @@ int RsServer::StartupRetroShare()
     if (stat("/usr/lib64", &sb) == 0) {
         abs_usr_lib = realpath("/usr/lib", NULL);
         abs_usr_lib64 = realpath("/usr/lib64", NULL);
-        if (!abs_usr_lib &&
-            !abs_usr_lib64 &&
+        if (abs_usr_lib &&
+            abs_usr_lib64 &&
             !((strcmp(abs_usr_lib, "/usr/lib64") == 0) ||
               (strcmp(abs_usr_lib64, "/usr/lib") == 0)
              )
