@@ -781,9 +781,9 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	std::cerr << "getRetroshareDataDirectory() BSD: " << dataDirectory;
 
   #else
-	/* For Linux, we have a fixed standard data directory  */
-    dataDirectory = "/usr/share/RetroShare06";
-	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory;
+	/* For Linux, the data directory is set in libretroshare.pro  */
+	dataDirectory = DATA_DIR;
+	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory << std::endl;
 
   #endif
 #else

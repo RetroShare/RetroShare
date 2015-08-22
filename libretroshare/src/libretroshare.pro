@@ -173,6 +173,9 @@ unix {
 	isEmpty(LIB_DIR)  { LIB_DIR = "$${PREFIX}/lib" }
 	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
 
+	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
+	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+
 	# where to put the librarys interface
 	include_rsiface.path = "$${INC_DIR}"
 	include_rsiface.files = $$PUBLIC_HEADERS
