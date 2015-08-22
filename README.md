@@ -43,7 +43,7 @@ Compilation on Linux
 
    The executables produced will be:
 
-         trunk/retroshare-gui/src/Retroshare
+         trunk/retroshare-gui/src/RetroShare
          trunk/retroshare-nogui/src/retroshare-nogui
 
 If libsqlcipher is not available as a package
