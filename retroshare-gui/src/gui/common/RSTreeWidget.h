@@ -43,6 +43,11 @@ public:
 	void enableColumnCustomize(bool customizable);
 	void setColumnCustomizable(int column, bool customizable);
 
+	void resort();
+
+	// Add QAction to context menu (action won't be deleted)
+	void addHeaderContextMenuAction(QAction *action);
+
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
 	void columnVisibleChanged(int column, bool visible);
@@ -63,6 +68,7 @@ private:
 	bool mEnableColumnCustomize;
 	quint32 mSettingsVersion;
 	QMap<int, bool> mColumnCustomizable;
+	QList<QAction*> mHeaderContextMenuActions;
 };
 
 #endif

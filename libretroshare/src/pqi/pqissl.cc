@@ -1897,7 +1897,7 @@ bool 	pqissl::cansend(uint32_t usec)
 
 	if(sockfd == -1)
 	{
-	   std::cerr << "pqissl::moretoread(): socket is invalid or closed." << std::endl;
+	   std::cerr << "pqissl::cansend(): socket is invalid or closed." << std::endl;
 	   return 0 ;
 	}
 

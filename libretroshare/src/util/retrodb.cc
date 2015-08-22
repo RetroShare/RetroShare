@@ -264,6 +264,32 @@ std::string RetroDb::getKey() const
 	return mKey;
 }
 
+bool RetroDb::beginTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("BEGIN;");
+}
+
+bool RetroDb::commitTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("COMMIT;");
+}
+bool RetroDb::rollbackTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("ROLLBACK;");
+}
+
 bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &paramBindings){
 
     // prepare statement
@@ -531,6 +557,43 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
     return execSQL_bind(sqlQuery, paramBindings);
 }
 
+bool RetroDb::tableExists(const std::string &tableName)
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    std::string sqlQuery = "PRAGMA table_info(" + tableName + ");";
+
+    bool result = false;
+    sqlite3_stmt* stmt = NULL;
+
+    int rc = sqlite3_prepare_v2(mDb, sqlQuery.c_str(), sqlQuery.length(), &stmt, NULL);
+    if (rc == SQLITE_OK) {
+        rc = sqlite3_step(stmt);
+        switch (rc) {
+        case SQLITE_ROW:
+            result = true;
+            break;
+        case SQLITE_DONE:
+            break;
+        default:
+            std::cerr << "RetroDb::tableExists(): Error executing statement (code: " << rc << ")"
+                      << std::endl;
+            return false;
+        }
+    } else {
+        std::cerr << "RetroDb::tableExists(): Error preparing statement\n";
+        std::cerr << "Error code: " <<  sqlite3_errmsg(mDb)
+                  << std::endl;
+    }
+
+    if (stmt) {
+        sqlite3_finalize(stmt);
+    }
+
+    return result;
+}
 
 /********************** RetroCursor ************************/
 

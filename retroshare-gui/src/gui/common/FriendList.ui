@@ -75,6 +75,9 @@
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
      <property name="allColumnsShowFocus">
       <bool>true</bool>
      </property>
@@ -114,28 +117,6 @@
    </property>
    <property name="text">
     <string>Hide Offline Friends</string>
-   </property>
-  </action>
-  <action name="actionSortByName">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Name</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort by Name</string>
-   </property>
-  </action>
-  <action name="actionSortByState">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>State</string>
-   </property>
-   <property name="toolTip">
-    <string>Sort by State</string>
    </property>
   </action>
   <action name="actionShowState">
