@@ -587,7 +587,8 @@ RsGRouterAbstractMsgItem *GRouterDataInfo::addDataChunk(RsGRouterTransactionChun
             std::cerr << "  ERROR: chunk numbering is wrong. Dropping." << std::endl;
             delete chunk ;
             delete incoming_data_buffer ;
-        return NULL;
+            incoming_data_buffer = NULL ;
+	    return NULL;
         }
         incoming_data_buffer->chunk_data = (uint8_t*)realloc((uint8_t*)incoming_data_buffer->chunk_data,incoming_data_buffer->chunk_size + chunk->chunk_size) ;
         memcpy(&incoming_data_buffer->chunk_data[incoming_data_buffer->chunk_size],chunk->chunk_data,chunk->chunk_size) ;

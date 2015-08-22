@@ -97,7 +97,6 @@ protected:
 private slots:
     /* toggle Contacts DockWidget */
     void contextMenuFileList(QPoint);
-    void contextMenuMsgSendList(QPoint);
     void pasteRecommended();
     void on_contactsdockWidget_visibilityChanged(bool visible);
     void toggleContacts();
@@ -153,10 +152,10 @@ private slots:
     void addBcc();
     void addRecommend();
     void editingRecipientFinished();
-    void friendDetails();
-    void identityDetails();
+    void contactDetails();
 
     void peerStatusChanged(const QString& peer_id, int status);
+    void friendSelectionChanged();
 
     void tagAboutToShow();
     void tagSet(int tagId, bool set);
@@ -179,6 +178,7 @@ private:
     void setupViewActions();
     void setupInsertActions();
     void setupFormatActions();
+    void setupContactActions();
 
     bool load(const QString &f);
     bool maybeSave();
@@ -222,6 +222,11 @@ private:
     *actionUpperRoman;
 
     QAction *contactSidebarAction;
+    QAction *mActionAddTo;
+    QAction *mActionAddCC;
+    QAction *mActionAddBCC;
+    QAction *mActionAddRecommend;
+    QAction *mActionContactDetails;
 
     QTreeView *channelstreeView;
 
