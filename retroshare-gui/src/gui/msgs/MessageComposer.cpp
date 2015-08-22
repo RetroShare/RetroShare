@@ -128,6 +128,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     setupEditActions();
     setupViewActions();
     setupInsertActions();
+    setupContactActions();
 
     m_compareRole = new RSTreeWidgetItemCompareRole;
     m_compareRole->setRole(COLUMN_CONTACT_NAME, ROLE_CONTACT_SORT);
@@ -210,8 +211,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
     connect(ui.friendSelectionWidget, SIGNAL(contentChanged()), this, SLOT(buildCompleter()));
-    connect(ui.friendSelectionWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuMsgSendList(QPoint)));
     connect(ui.friendSelectionWidget, SIGNAL(doubleClicked(int,QString)), this, SLOT(addTo()));
+    connect(ui.friendSelectionWidget, SIGNAL(itemSelectionChanged()), this, SLOT(friendSelectionChanged()));
 
     /* hide the Tree +/- */
     ui.msgFileList -> setRootIsDecorated( false );
@@ -695,35 +696,6 @@ void MessageComposer::contextMenuFileList(QPoint)
     QAction *action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteRecommended()));
     action->setDisabled(RSLinkClipboard::empty(RetroShareLink::TYPE_FILE));
 
-    contextMnu.exec(QCursor::pos());
-}
-
-void MessageComposer::contextMenuMsgSendList(QPoint)
-{
-    QMenu contextMnu(this);
-
-    int selectedCount = ui.friendSelectionWidget->selectedItemCount();
-
-    FriendSelectionWidget::IdType idType;
-    ui.friendSelectionWidget->selectedId(idType);
-
-    QAction *action = contextMnu.addAction(QIcon(), tr("Add to \"To\""), this, SLOT(addTo()));
-    action->setEnabled(selectedCount);
-    action = contextMnu.addAction(QIcon(), tr("Add to \"CC\""), this, SLOT(addCc()));
-    action->setEnabled(selectedCount);
-    action = contextMnu.addAction(QIcon(), tr("Add to \"BCC\""), this, SLOT(addBcc()));
-    action->setEnabled(selectedCount);
-    action = contextMnu.addAction(QIcon(), tr("Add as Recommend"), this, SLOT(addRecommend()));
-    action->setEnabled(selectedCount);
-
-    contextMnu.addSeparator();
-
-    action = contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(friendDetails()));
-    action->setEnabled(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_SSL);
-
-    action = contextMnu.addAction(QIcon(), tr("Person Details"), this, SLOT(identityDetails()));
-    action->setEnabled(selectedCount == 1 && idType == FriendSelectionWidget::IDTYPE_GXS);
-    
     contextMnu.exec(QCursor::pos());
 }
 
@@ -2009,6 +1981,31 @@ void MessageComposer::setupFormatActions()
 
 }
 
+void MessageComposer::setupContactActions()
+{
+    mActionAddTo = new QAction(tr("Add to \"To\""), this);
+    connect(mActionAddTo, SIGNAL(triggered(bool)), this, SLOT(addTo()));
+    mActionAddCC = new QAction(tr("Add to \"CC\""), this);
+    connect(mActionAddCC, SIGNAL(triggered(bool)), this, SLOT(addCc()));
+    mActionAddBCC = new QAction(tr("Add to \"BCC\""), this);
+    connect(mActionAddBCC, SIGNAL(triggered(bool)), this, SLOT(addBcc()));
+    mActionAddRecommend = new QAction(tr("Add as Recommend"), this);
+    connect(mActionAddRecommend, SIGNAL(triggered(bool)), this, SLOT(addRecommend()));
+    mActionContactDetails = new QAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this);
+    connect(mActionContactDetails, SIGNAL(triggered(bool)), this, SLOT(contactDetails()));
+
+    ui.friendSelectionWidget->addContextMenuAction(mActionAddTo);
+    ui.friendSelectionWidget->addContextMenuAction(mActionAddCC);
+    ui.friendSelectionWidget->addContextMenuAction(mActionAddBCC);
+    ui.friendSelectionWidget->addContextMenuAction(mActionAddRecommend);
+
+    QAction *action = new QAction(this);
+    action->setSeparator(true);
+    ui.friendSelectionWidget->addContextMenuAction(action);
+
+    ui.friendSelectionWidget->addContextMenuAction(mActionContactDetails);
+}
+
 void MessageComposer::textBold()
 {
     QTextCharFormat fmt;
@@ -2577,6 +2574,27 @@ void MessageComposer::filterComboBoxChanged(int i)
 
 }
 
+void MessageComposer::friendSelectionChanged()
+{
+	std::set<RsPeerId> peerIds;
+	ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peerIds, false);
+
+	std::set<RsGxsId> gxsIds;
+	ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(gxsIds, false);
+
+	int selectedCount = peerIds.size() + gxsIds.size();
+
+	mActionAddTo->setEnabled(selectedCount);
+	mActionAddCC->setEnabled(selectedCount);
+	mActionAddBCC->setEnabled(selectedCount);
+	mActionAddRecommend->setEnabled(selectedCount);
+
+	FriendSelectionWidget::IdType idType;
+	ui.friendSelectionWidget->selectedId(idType);
+
+	mActionContactDetails->setEnabled(selectedCount == 1 && (idType == FriendSelectionWidget::IDTYPE_SSL || idType == FriendSelectionWidget::IDTYPE_GXS));
+}
+
 void MessageComposer::addTo()
 {
     addContact(TO);
@@ -2613,35 +2631,37 @@ void MessageComposer::addRecommend()
 	ui.msgText->setFocus(Qt::OtherFocusReason);
 }
 
-void MessageComposer::friendDetails()
+void MessageComposer::contactDetails()
 {
     FriendSelectionWidget::IdType idType;
     std::string id = ui.friendSelectionWidget->selectedId(idType);
 
-    if (id.empty() || idType != FriendSelectionWidget::IDTYPE_SSL) {
+    if (id.empty()) {
         return;
     }
 
-    ConfCertDialog::showIt(RsPeerId(id), ConfCertDialog::PageDetails);
-}
+    switch (idType) {
+    case FriendSelectionWidget::IDTYPE_NONE:
+    case FriendSelectionWidget::IDTYPE_GROUP:
+    case FriendSelectionWidget::IDTYPE_GPG:
+        break;
+    case FriendSelectionWidget::IDTYPE_SSL:
+        ConfCertDialog::showIt(RsPeerId(id), ConfCertDialog::PageDetails);
+        break;
+    case FriendSelectionWidget::IDTYPE_GXS:
+        {
+            if (RsGxsGroupId(id).isNull()) {
+                return;
+            }
 
-void MessageComposer::identityDetails()
-{
-    FriendSelectionWidget::IdType idType;
-    std::string id = ui.friendSelectionWidget->selectedId(idType);
+            IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(id));
+            dialog->show();
 
-    if (id.empty() || idType != FriendSelectionWidget::IDTYPE_GXS) {
-        return;
+            /* Dialog will destroy itself */
+        }
+        break;
     }
 
-    if (RsGxsGroupId(id).isNull()) {
-        return;
-    }
-
-    IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(id));
-    dialog->show();
-
-    /* Dialog will destroy itself */ 
 }
 
 void MessageComposer::tagAboutToShow()
