@@ -119,10 +119,6 @@ HEADERS += $$PUBLIC_HEADERS
 
 ################################# Linux ##########################################
 linux-* {
-	isEmpty(PREFIX)  { PREFIX = /usr }
-	isEmpty(INC_DIR) { INC_DIR = $${PREFIX}/include/retroshare/ }
-	isEmpty(LIB_DIR) { LIB_DIR = $${PREFIX}/lib/ }
-
 	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
@@ -139,10 +135,6 @@ linux-* {
 	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
-	# where to put the shared library itself
-	target.path = $$LIB_DIR
-	INSTALLS *= target
-
         SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
         isEmpty(SQLCIPHER_OK) {
 # We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
@@ -154,11 +146,6 @@ linux-* {
 			INCLUDEPATH += ../../../lib/
 		}
 	}
-
-	# where to put the librarys interface
-	include_rsiface.path = $${INC_DIR}
-	include_rsiface.files = $$PUBLIC_HEADERS
-	INSTALLS += include_rsiface
 
 	#CONFIG += version_detail_bash_script
 
@@ -178,6 +165,22 @@ linux-* {
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
+}
+
+unix {
+	isEmpty(PREFIX)   { PREFIX = /usr }
+	isEmpty(INC_DIR)  { INC_DIR = "$${PREFIX}/include/retroshare06" }
+	isEmpty(LIB_DIR)  { LIB_DIR = "$${PREFIX}/lib" }
+	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
+
+	# where to put the librarys interface
+	include_rsiface.path = "$${INC_DIR}"
+	include_rsiface.files = $$PUBLIC_HEADERS
+	INSTALLS += include_rsiface
+
+	# where to put the shared library itself
+	target.path = "$$LIB_DIR"
+	INSTALLS *= target
 }
 
 linux-g++ {

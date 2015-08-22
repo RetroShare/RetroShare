@@ -55,6 +55,13 @@ linux-* {
 	}
 }
 
+unix {
+	isEmpty(PREFIX)  { PREFIX = /usr }
+
+	target.path = "$${PREFIX}/bin"
+	INSTALLS += target
+}
+
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
 }
