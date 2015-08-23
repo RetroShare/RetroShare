@@ -294,6 +294,22 @@ void GlobalRouterStatisticsWidget::updateContent()
     oy += celly ;
     oy += celly ;
 
+	//print friends in the same order their prob is shown
+	QString FO = tr("Friend Order  (");
+	RsPeerDetails peer_ssl_details;
+	for(uint32_t i=0;i<matrix_info.friend_ids.size();++i){
+		rsPeers->getPeerDetails(matrix_info.friend_ids[i], peer_ssl_details);
+		QString fn = QString::fromUtf8(peer_ssl_details.name.c_str());
+		FO+=fn;
+		FO+=" ";
+
+	}
+	FO+=")";
+
+	painter.drawText(ox+0*cellx,oy+fm_times.height(),FO) ;
+	oy += celly ;
+	oy += celly ;
+
     static const int MaxKeySize = 20*fact ;
     painter.setFont(monospace_f) ;
 
