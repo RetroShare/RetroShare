@@ -1778,7 +1778,9 @@ bool FriendList::exportFriendlist(QString &fileName)
             if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
                 continue;
 
-            std::string invite = rsPeers->GetRetroshareInvite(detailSSL.id, true);
+            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, true);
+            // remove \n from certificate
+            certificate.erase(std::remove(certificate.begin(), certificate.end(), '\n'), certificate.end());
 
             QDomElement sslID = doc.createElement("sslID");
             // these values aren't used and just stored for better human readability
@@ -1787,7 +1789,7 @@ bool FriendList::exportFriendlist(QString &fileName)
                 sslID.setAttribute("location", QString::fromUtf8(detailSSL.location.c_str()));
 
             // required values
-            sslID.setAttribute("certificate", QString::fromStdString(invite));
+            sslID.setAttribute("certificate", QString::fromStdString(certificate));
             sslID.setAttribute("service_perm_flags", detailSSL.service_perm_flags.toUInt32());
 
             pgpID.appendChild(sslID);
