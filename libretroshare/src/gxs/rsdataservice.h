@@ -29,15 +29,6 @@
 #include "gxs/rsgds.h"
 #include "util/retrodb.h"
 
-class MsgOffset
-{
-public:
-
-	MsgOffset() : msgOffset(0), msgLen(0) {}
-	RsGxsMessageId msgId;
-	uint32_t msgOffset, msgLen;
-};
-
 class MsgUpdate
 {
 public:
@@ -233,8 +224,9 @@ private:
     /*!
      * Creates an sql database and its associated file
      * also creates the message and groups table
+     * @param isNewDatabase is new database
      */
-    void initialise();
+    void initialise(bool isNewDatabase);
 
     /*!
      * Remove entries for data base
@@ -243,19 +235,21 @@ private:
     bool locked_removeMessageEntries(const GxsMsgReq& msgIds);
     bool locked_removeGroupEntries(const std::vector<RsGxsGroupId>& grpIds);
 
-    typedef std::map<RsGxsGroupId, std::vector<MsgUpdate> > MsgUpdates;
+private:
+    /*!
+     * Start release update
+     * @param release
+     * @return true/false
+     */
+    bool startReleaseUpdate(int release);
 
     /*!
-     * Update messages entries with new values
-     * @param msgIds
-     * @param cv contains values to update message entries with
+     * Finish release update
+     * @param release
+     * @param result
+     * @return true/false
      */
-    bool locked_updateMessageEntries(const MsgUpdates& updates);
-
-
-private:
-
-    void locked_getMessageOffsets(const RsGxsGroupId& grpId, std::vector<MsgOffset>& msgOffsets);
+    bool finishReleaseUpdate(int release, bool result);
 
 private:
 
@@ -263,7 +257,6 @@ private:
 
     std::list<std::string> msgColumns;
     std::list<std::string> msgMetaColumns;
-    std::list<std::string> mMsgOffSetColumns;
     std::list<std::string> mMsgIdColumn;
 
     std::list<std::string> grpColumns;
