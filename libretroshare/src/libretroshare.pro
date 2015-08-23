@@ -176,14 +176,14 @@ unix {
 	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
 
-	# where to put the librarys interface
-	include_rsiface.path = "$${INC_DIR}"
-	include_rsiface.files = $$PUBLIC_HEADERS
-	INSTALLS += include_rsiface
+	## where to put the librarys interface
+	#include_rsiface.path = "$${INC_DIR}"
+	#include_rsiface.files = $$PUBLIC_HEADERS
+	#INSTALLS += include_rsiface
 
-	# where to put the shared library itself
-	target.path = "$$LIB_DIR"
-	INSTALLS *= target
+	## where to put the shared library itself
+	#target.path = "$$LIB_DIR"
+	#INSTALLS *= target
 }
 
 linux-g++ {
