@@ -37,7 +37,7 @@ Compilation on Linux
 3. Compile
    ```bash
    cd trunk
-   qmake CONFIG=debug PREFIX=/usr
+   qmake CONFIG=debug
    make
    ```
 
@@ -47,8 +47,18 @@ Compilation on Linux
    ```
 
    The executables produced will be:
+
          /usr/bin/RetroShare06
          /usr/bin/RetroShare06-nogui
+
+For packagers
+-------------
+Packagers can use PREFIX and LIB\_DIR to customize the installation paths:
+```bash
+qmake PREFIX=/usr LIB_DIR=/usr/lib64
+make
+make INSTALL_ROOT=${PKGDIR} install
+```
 
 If libsqlcipher is not available as a package
 ---------------------------------------------
