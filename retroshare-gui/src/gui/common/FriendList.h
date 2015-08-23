@@ -56,12 +56,6 @@ public:
         COLUMN_IP           = 2
     };
 
-    enum SortMode
-    {
-        SORT_MODE_NAME  = 1,
-        SORT_MODE_STATE = 2
-    };
-
 public:
     explicit FriendList(QWidget *parent = 0);
     ~FriendList();
@@ -79,8 +73,8 @@ public:
     virtual void updateDisplay();
     void setColumnVisible(Column column, bool visible);
 
-    void setSortMode(SortMode sortMode);
-    SortMode sortMode();
+    void sortByColumn(Column column, Qt::SortOrder sortOrder);
+    bool isSortByState();
 
     QColor textColorGroup() const { return mTextColorGroup; }
     QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
@@ -98,8 +92,7 @@ public:
 
 public slots:
     void filterItems(const QString &text);
-    void setSortByName();
-    void setSortByState();
+    void sortByState(bool sort);
 
     void setShowGroups(bool show);
     void setHideUnconnected(bool hidden);
@@ -107,6 +100,7 @@ public slots:
 
 private slots:
     void peerTreeColumnVisibleChanged(int column, bool visible);
+    void peerTreeItemCollapsedExpanded(QTreeWidgetItem *item);
 
 protected:
     void changeEvent(QEvent *e);
@@ -115,6 +109,7 @@ protected:
 private:
     Ui::FriendList *ui;
     RSTreeWidgetItemCompareRole *mCompareRole;
+    QAction *mActionSortByState;
 
     // Settings for peer list display
     bool mShowGroups;

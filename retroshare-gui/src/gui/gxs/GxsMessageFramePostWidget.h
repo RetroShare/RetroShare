@@ -68,13 +68,13 @@ protected:
 	void loadGroupData(const uint32_t &token);
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData) = 0;
 
-	void requestPosts();
-	void loadPosts(const uint32_t &token);
-	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
+	void requestAllPosts();
+	void loadAllPosts(const uint32_t &token);
+	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
 
-	void requestRelatedPosts(const std::vector<RsGxsMessageId> &msgIds);
-	void loadRelatedPosts(const uint32_t &token);
-	virtual void insertRelatedPosts(const uint32_t &token) = 0;
+	void requestPosts(const std::vector<RsGxsMessageId> &msgIds);
+	void loadPosts(const uint32_t &token);
+	virtual void insertPosts(const uint32_t &token) = 0;
 
 private slots:
 	void fillThreadFinished();
@@ -82,8 +82,8 @@ private slots:
 
 protected:
 	uint32_t mTokenTypeGroupData;
+	uint32_t mTokenTypeAllPosts;
 	uint32_t mTokenTypePosts;
-	uint32_t mTokenTypeRelatedPosts;
 	RsGxsMessageId mNavigatePendingMsgId;
 
 private:

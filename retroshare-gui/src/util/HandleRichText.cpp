@@ -681,7 +681,8 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 						// remove Qt standard <p> or empty <p>
 						index += element.childNodes().length();
 						removeElement(currentElement, element);
-						addBR = true;
+						// do not add extra <br> after empty paragraph, the paragraph already contains one
+						addBR = ! style.startsWith("-qt-paragraph-type:empty");
 						continue;
 					}
 

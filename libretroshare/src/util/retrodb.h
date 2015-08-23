@@ -38,8 +38,6 @@
 
 #include "contentvalue.h"
 
-
-
 class RetroCursor;
 
 /*!
@@ -90,7 +88,23 @@ public:
     /* modifying db */
 public:
 
+    /*!
+     * Start transaction
+     * @return true/false
+     */
+    bool beginTransaction();
 
+    /*!
+     * Commit transaction
+     * @return true/false
+     */
+    bool commitTransaction();
+
+    /*!
+     * Rollback transaction
+     * @return true/false
+     */
+    bool rollbackTransaction();
 
     /*!
      * To a make query which do not return a result \n
@@ -153,22 +167,13 @@ public:
      */
     void vacuum();
 
-
     /*!
-     * Build the "VALUE" part of an insertiong sql query
-     * @param parameter contains place holder query
-     * @param paramBindings
+     * Check if table exist in database
+     * @param tableName table to check
+     * @return true/false
      */
-    void buildInsertQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
-    		std::string& parameter, std::list<RetroBind*>& paramBindings);
+    bool tableExists(const std::string& tableName);
 
-    /*!
-     * Build the "VALUE" part of an insertiong sql query
-     * @param parameter contains place holder query
-     * @param paramBindings
-     */
-    void buildUpdateQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
-    		std::string& parameter, std::list<RetroBind*>& paramBindings);
 public:
 
     static const int OPEN_READONLY;
@@ -178,6 +183,22 @@ public:
 private:
 
     bool execSQL_bind(const std::string &query, std::list<RetroBind*>& blobs);
+
+    /*!
+     * Build the "VALUE" part of an insertiong sql query
+     * @param parameter contains place holder query
+     * @param paramBindings
+     */
+    void buildInsertQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+            std::string& parameter, std::list<RetroBind*>& paramBindings);
+
+    /*!
+     * Build the "VALUE" part of an insertiong sql query
+     * @param parameter contains place holder query
+     * @param paramBindings
+     */
+    void buildUpdateQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+            std::string& parameter, std::list<RetroBind*>& paramBindings);
 
 private:
 
