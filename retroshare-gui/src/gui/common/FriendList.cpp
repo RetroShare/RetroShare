@@ -1783,10 +1783,11 @@ bool FriendList::exportFriendlist(QString &fileName)
             QDomElement sslID = doc.createElement("sslID");
             // these values aren't used and just stored for better human readability
             sslID.setAttribute("sslID", QString::fromStdString(detail2.id.toStdString()));
-            sslID.setAttribute("location", QString::fromUtf8(detail2.location.c_str()));
+            if(!detail2.location.empty())
+                sslID.setAttribute("location", QString::fromUtf8(detail2.location.c_str()));
 
             // required values
-            sslID.setAttribute("pubkey", QString::fromStdString(invite));
+            sslID.setAttribute("certificate", QString::fromStdString(invite));
             sslID.setAttribute("service_perm_flags", detail2.service_perm_flags.toUInt32());
 
             pgpID.appendChild(sslID);
@@ -1915,7 +1916,7 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
             rsPgpID.clear();
 
             // load everything needed from the pubkey string
-            std::string pubkey = sslIDElem.attribute("pubkey").toStdString();
+            std::string pubkey = sslIDElem.attribute("certificate").toStdString();
             if(rsPeers->loadDetailsFromStringCert(pubkey, rsPeerDetails, error_code)) {
                 if(rsPeers->loadCertificateFromString(pubkey, rsPeerID, rsPgpID, error_string)) {
                     ServicePermissionFlags service_perm_flags(sslIDElem.attribute("service_perm_flags").toInt());
