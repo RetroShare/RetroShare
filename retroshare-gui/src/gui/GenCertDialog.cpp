@@ -158,9 +158,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.entropy_bar->setValue(0) ;
 
 	// make sure that QVariant always takes an 'int' otherwise the program will crash!
-	ui.keylength_comboBox->addItem("default (2048 bits, recommended)", QVariant(2048));
-	ui.keylength_comboBox->addItem("high (3072 bits)", QVariant(3072));
-    ui.keylength_comboBox->addItem("insane (4096 bits)", QVariant(4096));
+	ui.keylength_comboBox->addItem("Low (2048 bits, NOT Recommended)", QVariant(2048));
+	ui.keylength_comboBox->addItem("Medium (3072 bits)", QVariant(3072));
+    	ui.keylength_comboBox->addItem("High (4096 bits, Recommended)", QVariant(4096));
+	ui.keylength_comboBox->setCurrentIndex(2);
 
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
