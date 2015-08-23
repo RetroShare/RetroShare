@@ -12,7 +12,7 @@ Compilation on Linux
        libqt4-dev libssl-dev libxss-dev libgnome-keyring-dev libbz2-dev \
        libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev \
        libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev \
-       libopencv-dev, tcl8.5, libmicrohttpd-dev
+       libopencv-dev tcl8.5 libmicrohttpd-dev
    ```
    * openSUSE
    ```bash
