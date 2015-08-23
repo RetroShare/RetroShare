@@ -1763,32 +1763,32 @@ bool FriendList::exportFriendlist(QString &fileName)
     rsPeers->getGroupInfoList(group_info_list);
 
     QDomElement pgpIDs = doc.createElement("pgpIDs");
-    RsPeerDetails details;
+    RsPeerDetails detailPGP;
     for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
-        rsPeers->getGPGDetails(*list_iter, details);
+        rsPeers->getGPGDetails(*list_iter, detailPGP);
         QDomElement pgpID = doc.createElement("pgpID");
         // these values aren't used and just stored for better human readability
-        pgpID.setAttribute("id", QString::fromStdString(details.gpg_id.toStdString()));
-        pgpID.setAttribute("name", QString::fromUtf8(details.name.c_str()));
+        pgpID.setAttribute("id", QString::fromStdString(detailPGP.gpg_id.toStdString()));
+        pgpID.setAttribute("name", QString::fromUtf8(detailPGP.name.c_str()));
 
         std::list<RsPeerId> ssl_ids;
         rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
         for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); list_iter++) {
-            RsPeerDetails detail2;
-            if (!rsPeers->getPeerDetails(*list_iter, detail2))
+            RsPeerDetails detailSSL;
+            if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
                 continue;
 
-            std::string invite = rsPeers->GetRetroshareInvite(detail2.id, true);
+            std::string invite = rsPeers->GetRetroshareInvite(detailSSL.id, true);
 
             QDomElement sslID = doc.createElement("sslID");
             // these values aren't used and just stored for better human readability
-            sslID.setAttribute("sslID", QString::fromStdString(detail2.id.toStdString()));
-            if(!detail2.location.empty())
-                sslID.setAttribute("location", QString::fromUtf8(detail2.location.c_str()));
+            sslID.setAttribute("sslID", QString::fromStdString(detailSSL.id.toStdString()));
+            if(!detailSSL.location.empty())
+                sslID.setAttribute("location", QString::fromUtf8(detailSSL.location.c_str()));
 
             // required values
             sslID.setAttribute("certificate", QString::fromStdString(invite));
-            sslID.setAttribute("service_perm_flags", detail2.service_perm_flags.toUInt32());
+            sslID.setAttribute("service_perm_flags", detailSSL.service_perm_flags.toUInt32());
 
             pgpID.appendChild(sslID);
         }
