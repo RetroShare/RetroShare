@@ -37,14 +37,18 @@ Compilation on Linux
 3. Compile
    ```bash
    cd trunk
-   qmake CONFIG=debug
+   qmake CONFIG=debug PREFIX=/usr
    make
    ```
 
-   The executables produced will be:
+4. Install
+   ```bash
+   sudo make install
+   ```
 
-         trunk/retroshare-gui/src/RetroShare
-         trunk/retroshare-nogui/src/retroshare-nogui
+   The executables produced will be:
+         /usr/bin/RetroShare06
+         /usr/bin/RetroShare06-nogui
 
 If libsqlcipher is not available as a package
 ---------------------------------------------

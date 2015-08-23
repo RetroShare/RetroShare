@@ -43,7 +43,7 @@ unfinished {
 #CONFIG += blogs
 
 TEMPLATE = app
-TARGET = RetroShare
+TARGET = RetroShare06
 
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc

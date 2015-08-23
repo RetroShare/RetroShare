@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = retroshare-nogui
+TARGET = RetroShare06-nogui
 CONFIG += bitdht
 #CONFIG += introserver
 #CONFIG += sshserver
