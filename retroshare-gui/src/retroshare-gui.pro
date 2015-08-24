@@ -1,4 +1,4 @@
-QT     += network xml
+QT     += network xml script
 CONFIG += qt gui uic qrc resources idle bitdht
 
 # Plz never commit the .pro with these flags enabled.
