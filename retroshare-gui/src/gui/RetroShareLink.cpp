@@ -43,6 +43,7 @@
 #include "util/misc.h"
 #include "common/PeerDefs.h"
 #include "common/RsCollectionFile.h"
+#include <gui/common/RsUrlHandler.h>
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/PGPKeyDialog.h"
@@ -986,7 +987,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 		}
 
 		QString content;
-		if (fileAdd.size()) {
+		if (!fileAdd.isEmpty()) {
 			processList(fileAdd, QObject::tr("Add file"), QObject::tr("Add files"), content);
 		}
 
@@ -1012,6 +1013,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	int countInvalid = 0;
 	int countUnknown = 0;
+	int countFileOpened = 0;
 	bool needNotifySuccess = false;
 
 	// file
@@ -1045,8 +1047,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QStringList messageReceipientUnknown;
 
 	// Certificate
-	QStringList GPGBase64Strings ;
-	QStringList SSLIds ;
+	//QStringList GPGBase64Strings ;
+	//QStringList SSLIds ;
 
 	// summary
 	QList<QStringList*> processedList;
@@ -1069,7 +1071,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 		{
 			case TYPE_UNKNOWN:
 				++countUnknown;
-				break;
+			break;
 
 			case TYPE_CERTIFICATE:
 				{
@@ -1086,7 +1088,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					connectFriendWizard.exec();
 					needNotifySuccess = false;
 				}
-				break ;
+			break ;
 
 			case TYPE_PUBLIC_MSG:
 				{
@@ -1104,7 +1106,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					//
 					//		 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
 				}
-				break ;
+			break ;
 
 			case TYPE_FILE:
 			case TYPE_EXTRAFILE:
@@ -1150,13 +1152,41 @@ static void processList(const QStringList &list, const QString &textSingular, co
 								flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
 							}
 
+					bool bFileOpened = false;
+					FileInfo fi;
+					if (rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi)) {
+						/* make path for downloaded file */
+						std::string path;
+						path = fi.path;//Shared files has path with filename included
+						if (fi.downloadStatus == FT_STATE_COMPLETE)
+							path = fi.path + "/" + fi.fname;
+
+						QFileInfo qinfo;
+						qinfo.setFile(QString::fromUtf8(path.c_str()));
+						if (qinfo.exists() && qinfo.isFile()) {
+							QString question = "<html><body>";
+							question += QObject::tr("This file already exists. Do you want to open it ?");
+							question += "<br><br>" + cleanname + "</body></html>";
+
+							QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
+							if (mb.exec() == QMessageBox::Yes) {
+								++countFileOpened;
+								bFileOpened = true;
+								/* open file with a suitable application */
+								if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+									std::cerr << "RetroShareLink::process(): can't open file " << path << std::endl;
+								}
+							}
+						}
+					}
+
 					if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 						fileAdded.append(link.name());
 					} else {
-						fileExist.append(link.name());
+						if (!bFileOpened) fileExist.append(link.name());
 					}
-					break;
 				}
+			break;
 
 			case TYPE_PERSON:
 				{
@@ -1170,7 +1200,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
                     else
                         personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
 
-            break;
 //					needNotifySuccess = true;
 
 //					RsPeerDetails detail;
@@ -1198,8 +1227,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 //					}
 //
 //					personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
-//					break;
 				}
+			break;
 
 
 			case TYPE_FORUM:
@@ -1227,8 +1256,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							forumMsgUnknown.append(link.name());
 						}
 					}
-					break;
 				}
+			break;
+
 			case TYPE_CHANNEL:
 				{
 #ifdef DEBUG_RSLINK
@@ -1254,8 +1284,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							channelMsgUnknown.append(link.name());
 						}
 					}
-					break;
 				}
+			break;
 
 			case TYPE_SEARCH:
 				{
@@ -1272,8 +1302,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					MainWindow::showWindow(MainWindow::Search);
 					searchDialog->searchKeywords(link.name());
 					searchStarted.append(link.name());
-					break;
 				}
+			break;
 
 			case TYPE_MESSAGE:
 				{
@@ -1322,7 +1352,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					}
 					messageReceipientUnknown.append(PeerDefs::rsidFromId(RsPeerId(link.hash().toStdString())));
 				}
-				break;
+			break;
 
 			default:
 				std::cerr << " RetroShareLink::process unknown type: " << link.type() << std::endl;
@@ -1358,60 +1388,60 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	// file
 	if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
-		if (fileAdded.size()) {
+		if (!fileAdded.isEmpty()) {
 			processList(fileAdded, QObject::tr("File added"), QObject::tr("Files added"), result);
 		}
 	}
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-		if (fileExist.size()) {
+		if (!fileExist.isEmpty()) {
 			processList(fileExist, QObject::tr("File exist"), QObject::tr("Files exist"), result);
 		}
 	}
 
 	// person
 	if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
-		if (personAdded.size()) {
+		if (!personAdded.isEmpty()) {
 			processList(personAdded, QObject::tr("Friend added"), QObject::tr("Friends added"), result);
 		}
 	}
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-		if (personExist.size()) {
+		if (!personExist.isEmpty()) {
 			processList(personExist, QObject::tr("Friend exist"), QObject::tr("Friends exist"), result);
 		}
-		if (personFailed.size()) {
+		if (!personFailed.isEmpty()) {
 			processList(personFailed, QObject::tr("Friend not added"), QObject::tr("Friends not added"), result);
 		}
-		if (personNotFound.size()) {
+		if (!personNotFound.isEmpty()) {
 			processList(personNotFound, QObject::tr("Friend not found"), QObject::tr("Friends not found"), result);
 		}
 	}
 
 	// forum
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-		if (forumUnknown.size()) {
+		if (!forumUnknown.isEmpty()) {
 			processList(forumUnknown, QObject::tr("Forum not found"), QObject::tr("Forums not found"), result);
 		}
-		if (forumMsgUnknown.size()) {
+		if (!forumMsgUnknown.isEmpty()) {
 			processList(forumMsgUnknown, QObject::tr("Forum message not found"), QObject::tr("Forum messages not found"), result);
 		}
 	}
 
 	// channel
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-		if (channelUnknown.size()) {
+		if (!channelUnknown.isEmpty()) {
 			processList(channelUnknown, QObject::tr("Channel not found"), QObject::tr("Channels not found"), result);
 		}
-		if (channelMsgUnknown.size()) {
+		if (!channelMsgUnknown.isEmpty()) {
 			processList(channelMsgUnknown, QObject::tr("Channel message not found"), QObject::tr("Channel messages not found"), result);
 		}
 	}
 
 	// message
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-		if (messageReceipientNotAccepted.size()) {
+		if (!messageReceipientNotAccepted.isEmpty()) {
 			processList(messageReceipientNotAccepted, QObject::tr("Recipient not accepted"), QObject::tr("Recipients not accepted"), result);
 		}
-		if (messageReceipientUnknown.size()) {
+		if (!messageReceipientUnknown.isEmpty()) {
 			processList(messageReceipientUnknown, QObject::tr("Unkown recipient"), QObject::tr("Unkown recipients"), result);
 		}
 	}
@@ -1427,7 +1457,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	if(flag & RSLINK_PROCESS_NOTIFY_BAD_CHARS)
 		result += QString("<br>%1").arg(QObject::tr("Warning: forbidden characters found in filenames. \nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.")) ;
 
-	if (result.isEmpty() == false) {
+	if ((result.isEmpty() == false) && (links.count() > countFileOpened)) { //Don't count files opened
 		QMessageBox mb(QObject::tr("Result"), "<html><body>" + result + "</body></html>", QMessageBox::Information, QMessageBox::Ok, 0, 0);
 		mb.exec();
 	}
