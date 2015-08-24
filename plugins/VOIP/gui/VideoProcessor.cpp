@@ -509,10 +509,10 @@ FFmpegVideo::FFmpegVideo()
     if (!encoding_context)  throw std::runtime_error("AV: Could not allocate video codec encoding context");
 
     /* put sample parameters */
-    encoding_context->bit_rate = 400000;
+    encoding_context->bit_rate = 200000;
     /* resolution must be a multiple of two */
-    encoding_context->width = 176;
-    encoding_context->height = 144;
+    encoding_context->width = 352;//176;
+    encoding_context->height = 288;//144;
     /* frames per second */
     encoding_context->time_base = (AVRational){1,25};
     /* emit one intra frame every ten frames
@@ -608,7 +608,9 @@ FFmpegVideo::~FFmpegVideo()
 
 bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataChunk& voip_chunk)
 {
+#ifdef DEBUG_MPEG_VIDEO 
 	std::cerr << "Encoding frame of size " << image.width() << "x" << image.height() << ", resized to " << encoding_frame_buffer->width << "x" << encoding_frame_buffer->height << " : "; 
+#endif
 	QImage input ;
 
 	if(image.width() != encoding_frame_buffer->width || image.height() != encoding_frame_buffer->height)
@@ -694,8 +696,8 @@ bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataCh
 		voip_chunk.size = pkt.size + HEADER_SIZE;
 		voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
 
-		std::cerr << "Output : " << pkt.size << " bytes." << std::endl;
 #ifdef DEBUG_MPEG_VIDEO 
+		std::cerr << "Output : " << pkt.size << " bytes." << std::endl;
 		fwrite(pkt.data,1,pkt.size,encoding_debug_file) ;
 		fflush(encoding_debug_file) ;
 #endif
@@ -716,13 +718,17 @@ bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataCh
 }
 bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 {
+#ifdef DEBUG_MPEG_VIDEO
 	std::cerr << "Decoding data of size " << chunk.size << std::endl;
+#endif
 	unsigned char *buff ;
 
 	if(decoding_buffer.data != NULL)
 	{
+#ifdef DEBUG_MPEG_VIDEO
 		std::cerr << "Completing buffer with size " << chunk.size - HEADER_SIZE + decoding_buffer.size << ": copying existing " 
                   << decoding_buffer.size << " bytes. Adding new " << chunk.size  - HEADER_SIZE<< " bytes " << std::endl;
+#endif
 
 		uint32_t s =  chunk.size - HEADER_SIZE + decoding_buffer.size ;
 		unsigned char *tmp = (unsigned char*)memalign(16,s + FF_INPUT_BUFFER_PADDING_SIZE) ;
@@ -738,7 +744,9 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 	}
 	else
 	{
+#ifdef DEBUG_MPEG_VIDEO
 		std::cerr << "Allocating new buffer of size " << chunk.size - HEADER_SIZE << std::endl;
+#endif
 
 		decoding_buffer.data = (unsigned char *)memalign(16,chunk.size - HEADER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE) ;
 		decoding_buffer.size = chunk.size - HEADER_SIZE ;
@@ -747,7 +755,7 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 		buff = decoding_buffer.data ;
 	}
 
-	memcpy(buff,chunk.data,chunk.size - HEADER_SIZE) ;
+	memcpy(buff,chunk.data+HEADER_SIZE,chunk.size - HEADER_SIZE) ;
 
 	int got_frame = 0 ;
 	int len = avcodec_decode_video2(decoding_context,decoding_frame_buffer,&got_frame,&decoding_buffer) ;
@@ -757,13 +765,17 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 		std::cerr << "Error decodign frame!" << std::endl;
 		return false ;
 	}
+#ifdef DEBUG_MPEG_VIDEO
 	std::cerr << "Used " << len << " bytes out of " << decoding_buffer.size << ". got_frame = " << got_frame << std::endl;
+#endif
 
 	if(got_frame)
 	{
 		image = QImage(QSize(decoding_frame_buffer->width,decoding_frame_buffer->height),QImage::Format_ARGB32) ;
 
+#ifdef DEBUG_MPEG_VIDEO
 		std::cerr << "Decoded frame. Size=" << image.width() << "x" << image.height() << std::endl;
+#endif
 
 		for (int y = 0; y < decoding_frame_buffer->height; y++) 
 			for (int x = 0; x < decoding_frame_buffer->width; x++) 
@@ -788,7 +800,9 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 	}
 	else if(len != 0)
 	{
+#ifdef DEBUG_MPEG_VIDEO
 		std::cerr << "Moving remaining data (" << decoding_buffer.size - len << " bytes) back to 0" << std::endl;
+#endif
 
 		memmove(decoding_buffer.data,decoding_buffer.data+len,decoding_buffer.size - len) ;
 		decoding_buffer.size -= len ;
