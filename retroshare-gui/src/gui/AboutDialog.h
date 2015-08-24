@@ -50,6 +50,8 @@ private slots:
     void sl_levelChanged(int);
     void on_help_button_clicked();
 
+    void on_copy_button_clicked();
+
 signals:
     void si_scoreChanged(QString);
     void si_maxScoreChanged(QString);

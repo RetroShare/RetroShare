@@ -255,13 +255,75 @@ private:
 
     RsMutex mDbMutex;
 
-    std::list<std::string> msgColumns;
-    std::list<std::string> msgMetaColumns;
+    std::list<std::string> mMsgColumns;
+    std::list<std::string> mMsgMetaColumns;
     std::list<std::string> mMsgIdColumn;
 
-    std::list<std::string> grpColumns;
-    std::list<std::string> grpMetaColumns;
-    std::list<std::string> grpIdColumn;
+    std::list<std::string> mGrpColumns;
+    std::list<std::string> mGrpMetaColumns;
+    std::list<std::string> mGrpIdColumn;
+
+    // Message meta column
+    int mColMsgMeta_GrpId;
+    int mColMsgMeta_TimeStamp;
+    int mColMsgMeta_NxsFlags;
+    int mColMsgMeta_SignSet;
+    int mColMsgMeta_NxsIdentity;
+    int mColMsgMeta_NxsHash;
+    int mColMsgMeta_MsgId;
+    int mColMsgMeta_OrigMsgId;
+    int mColMsgMeta_MsgStatus;
+    int mColMsgMeta_ChildTs;
+    int mColMsgMeta_MsgParentId;
+    int mColMsgMeta_MsgThreadId;
+    int mColMsgMeta_Name;
+    int mColMsgMeta_NxsServString;
+    int mColMsgMeta_RecvTs;
+    int mColMsgMeta_NxsDataLen;
+
+    // Message columns
+    int mColMsg_GrpId;
+    int mColMsg_NxsData;
+    int mColMsg_MetaData;
+    int mColMsg_MsgId;
+
+    // Group meta columns
+    int mColGrpMeta_GrpId;
+    int mColGrpMeta_TimeStamp;
+    int mColGrpMeta_NxsFlags;
+//    int mColGrpMeta_SignSet;
+    int mColGrpMeta_NxsIdentity;
+    int mColGrpMeta_NxsHash;
+    int mColGrpMeta_KeySet;
+    int mColGrpMeta_SubscrFlag;
+    int mColGrpMeta_Pop;
+    int mColGrpMeta_MsgCount;
+    int mColGrpMeta_Status;
+    int mColGrpMeta_Name;
+    int mColGrpMeta_LastPost;
+    int mColGrpMeta_OrigGrpId;
+    int mColGrpMeta_ServString;
+    int mColGrpMeta_SignFlags;
+    int mColGrpMeta_CircleId;
+    int mColGrpMeta_CircleType;
+    int mColGrpMeta_InternCircle;
+    int mColGrpMeta_Originator;
+    int mColGrpMeta_AuthenFlags;
+    int mColGrpMeta_ParentGrpId;
+    int mColGrpMeta_RecvTs;
+    int mColGrpMeta_RepCutoff;
+    int mColGrpMeta_NxsDataLen;
+
+    // Group columns
+    int mColGrp_GrpId;
+    int mColGrp_NxsData;
+    int mColGrp_MetaData;
+
+    // Group id columns
+    int mColGrpId_GrpId;
+
+    // Msg id columns
+    int mColMsgId_MsgId;
 
     std::string mServiceDir;
     std::string mDbName;

@@ -86,7 +86,6 @@
 #define KEY_GRP_LAST_POST std::string("lastPost")
 #define KEY_GRP_REP_CUTOFF std::string("rep_cutoff")
 
-
 // msg table columns
 #define KEY_MSG_ID std::string("msgId")
 #define KEY_ORIG_MSG_ID std::string("origMsgId")
@@ -103,62 +102,6 @@
 #define KEY_DATABASE_RELEASE_ID_VALUE 1
 #define KEY_DATABASE_RELEASE std::string("release")
 
-
-
-/*** actual data col numbers ***/
-
-// generic
-#define COL_ACT_GROUP_ID 0
-#define COL_NXS_DATA 1
-#define COL_NXS_DATA_LEN 2
-#define COL_META_DATA 3
-#define COL_ACT_MSG_ID 4
-
-/*** meta column numbers ***/
-
-// grp col numbers
-
-#define COL_KEY_SET 6
-#define COL_GRP_SUBCR_FLAG 7
-#define COL_GRP_POP 8
-#define COL_MSG_COUNT 9
-#define COL_GRP_STATUS 10
-#define COL_GRP_NAME 11
-#define COL_GRP_LAST_POST 12
-#define COL_ORIG_GRP_ID 13
-#define COL_GRP_SERV_STRING 14
-#define COL_GRP_SIGN_FLAGS 15
-#define COL_GRP_CIRCLE_ID 16
-#define COL_GRP_CIRCL_TYPE 17
-#define COL_GRP_INTERN_CIRCLE 18
-#define COL_GRP_ORIGINATOR 19
-#define COL_GRP_AUTHEN_FLAGS 20
-#define COL_PARENT_GRP_ID 21
-#define COL_GRP_RECV_TS 22
-#define COL_GRP_REP_CUTOFF 23
-#define COL_GRP_DATA_LEN 24
-
-
-// msg col numbers
-#define COL_MSG_ID 6
-#define COL_ORIG_MSG_ID 7
-#define COL_MSG_STATUS 8
-#define COL_CHILD_TS 9
-#define COL_PARENT_ID 10
-#define COL_THREAD_ID 11
-#define COL_MSG_NAME 12
-#define COL_MSG_SERV_STRING 13
-#define COL_MSG_RECV_TS 14
-#define COL_MSG_DATA_LEN 15
-
-// generic meta shared col numbers
-#define COL_GRP_ID 0
-#define COL_TIME_STAMP 1
-#define COL_NXS_FLAGS 2
-#define COL_SIGN_SET 3
-#define COL_IDENTITY 4
-#define COL_HASH 5
-
 const std::string RsGeneralDataService::GRP_META_SERV_STRING = KEY_NXS_SERV_STRING;
 const std::string RsGeneralDataService::GRP_META_STATUS = KEY_GRP_STATUS;
 const std::string RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG = KEY_GRP_SUBCR_FLAG;
@@ -168,6 +111,12 @@ const std::string RsGeneralDataService::MSG_META_SERV_STRING = KEY_NXS_SERV_STRI
 const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
 
 const uint32_t RsGeneralDataService::GXS_MAX_ITEM_SIZE = 1572864; // 1.5 Mbytes
+
+static int addColumn(std::list<std::string> &list, const std::string &attribute)
+{
+    list.push_back(attribute);
+    return list.size() - 1;
+}
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
                              RsGxsSearchModule * /* mod */, const std::string& key)
@@ -180,35 +129,66 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     initialise(isNewDatabase);
 
     // for retrieving msg meta
-    msgMetaColumns.push_back(KEY_GRP_ID); msgMetaColumns.push_back(KEY_TIME_STAMP); msgMetaColumns.push_back(KEY_NXS_FLAGS);
-    msgMetaColumns.push_back(KEY_SIGN_SET); msgMetaColumns.push_back(KEY_NXS_IDENTITY); msgMetaColumns.push_back(KEY_NXS_HASH);
-    msgMetaColumns.push_back(KEY_MSG_ID); msgMetaColumns.push_back(KEY_ORIG_MSG_ID); msgMetaColumns.push_back(KEY_MSG_STATUS);
-    msgMetaColumns.push_back(KEY_CHILD_TS); msgMetaColumns.push_back(KEY_MSG_PARENT_ID); msgMetaColumns.push_back(KEY_MSG_THREAD_ID);
-    msgMetaColumns.push_back(KEY_MSG_NAME); msgMetaColumns.push_back(KEY_NXS_SERV_STRING); msgMetaColumns.push_back(KEY_RECV_TS);
-    msgMetaColumns.push_back(KEY_NXS_DATA_LEN);
+    mColMsgMeta_GrpId = addColumn(mMsgMetaColumns, KEY_GRP_ID);
+    mColMsgMeta_TimeStamp = addColumn(mMsgMetaColumns, KEY_TIME_STAMP);
+    mColMsgMeta_NxsFlags = addColumn(mMsgMetaColumns, KEY_NXS_FLAGS);
+    mColMsgMeta_SignSet = addColumn(mMsgMetaColumns, KEY_SIGN_SET);
+    mColMsgMeta_NxsIdentity = addColumn(mMsgMetaColumns, KEY_NXS_IDENTITY);
+    mColMsgMeta_NxsHash = addColumn(mMsgMetaColumns, KEY_NXS_HASH);
+    mColMsgMeta_MsgId = addColumn(mMsgMetaColumns, KEY_MSG_ID);
+    mColMsgMeta_OrigMsgId = addColumn(mMsgMetaColumns, KEY_ORIG_MSG_ID);
+    mColMsgMeta_MsgStatus = addColumn(mMsgMetaColumns, KEY_MSG_STATUS);
+    mColMsgMeta_ChildTs = addColumn(mMsgMetaColumns, KEY_CHILD_TS);
+    mColMsgMeta_MsgParentId = addColumn(mMsgMetaColumns, KEY_MSG_PARENT_ID);
+    mColMsgMeta_MsgThreadId = addColumn(mMsgMetaColumns, KEY_MSG_THREAD_ID);
+    mColMsgMeta_Name = addColumn(mMsgMetaColumns, KEY_MSG_NAME);
+    mColMsgMeta_NxsServString = addColumn(mMsgMetaColumns, KEY_NXS_SERV_STRING);
+    mColMsgMeta_RecvTs = addColumn(mMsgMetaColumns, KEY_RECV_TS);
+    mColMsgMeta_NxsDataLen = addColumn(mMsgMetaColumns, KEY_NXS_DATA_LEN);
 
     // for retrieving actual data
-    msgColumns.push_back(KEY_GRP_ID);  msgColumns.push_back(KEY_NXS_DATA); msgColumns.push_back(KEY_NXS_DATA_LEN);
-    msgColumns.push_back(KEY_NXS_META); msgColumns.push_back(KEY_MSG_ID);
+    mColMsg_GrpId = addColumn(mMsgColumns, KEY_GRP_ID);
+    mColMsg_NxsData = addColumn(mMsgColumns, KEY_NXS_DATA);
+    mColMsg_MetaData = addColumn(mMsgColumns, KEY_NXS_META);
+    mColMsg_MsgId = addColumn(mMsgColumns, KEY_MSG_ID);
 
     // for retrieving grp meta data
-    grpMetaColumns.push_back(KEY_GRP_ID);  grpMetaColumns.push_back(KEY_TIME_STAMP); grpMetaColumns.push_back(KEY_NXS_FLAGS);
-    grpMetaColumns.push_back(KEY_SIGN_SET); grpMetaColumns.push_back(KEY_NXS_IDENTITY); grpMetaColumns.push_back(KEY_NXS_HASH);
-    grpMetaColumns.push_back(KEY_KEY_SET); grpMetaColumns.push_back(KEY_GRP_SUBCR_FLAG); grpMetaColumns.push_back(KEY_GRP_POP);
-    grpMetaColumns.push_back(KEY_MSG_COUNT); grpMetaColumns.push_back(KEY_GRP_STATUS); grpMetaColumns.push_back(KEY_GRP_NAME);
-    grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID); grpMetaColumns.push_back(KEY_NXS_SERV_STRING);
-    grpMetaColumns.push_back(KEY_GRP_SIGN_FLAGS); grpMetaColumns.push_back(KEY_GRP_CIRCLE_ID); grpMetaColumns.push_back(KEY_GRP_CIRCLE_TYPE);
-    grpMetaColumns.push_back(KEY_GRP_INTERNAL_CIRCLE); grpMetaColumns.push_back(KEY_GRP_ORIGINATOR);
-    grpMetaColumns.push_back(KEY_GRP_AUTHEN_FLAGS); grpMetaColumns.push_back(KEY_PARENT_GRP_ID); grpMetaColumns.push_back(KEY_RECV_TS);
-    grpMetaColumns.push_back(KEY_GRP_REP_CUTOFF); grpMetaColumns.push_back(KEY_NXS_DATA_LEN);
+    mColGrpMeta_GrpId = addColumn(mGrpMetaColumns, KEY_GRP_ID);
+    mColGrpMeta_TimeStamp = addColumn(mGrpMetaColumns, KEY_TIME_STAMP);
+    mColGrpMeta_NxsFlags = addColumn(mGrpMetaColumns, KEY_NXS_FLAGS);
+//    mColGrpMeta_SignSet = addColumn(mGrpMetaColumns, KEY_SIGN_SET);
+    mColGrpMeta_NxsIdentity = addColumn(mGrpMetaColumns, KEY_NXS_IDENTITY);
+    mColGrpMeta_NxsHash = addColumn(mGrpMetaColumns, KEY_NXS_HASH);
+    mColGrpMeta_KeySet = addColumn(mGrpMetaColumns, KEY_KEY_SET);
+    mColGrpMeta_SubscrFlag = addColumn(mGrpMetaColumns, KEY_GRP_SUBCR_FLAG);
+    mColGrpMeta_Pop = addColumn(mGrpMetaColumns, KEY_GRP_POP);
+    mColGrpMeta_MsgCount = addColumn(mGrpMetaColumns, KEY_MSG_COUNT);
+    mColGrpMeta_Status = addColumn(mGrpMetaColumns, KEY_GRP_STATUS);
+    mColGrpMeta_Name = addColumn(mGrpMetaColumns, KEY_GRP_NAME);
+    mColGrpMeta_LastPost = addColumn(mGrpMetaColumns, KEY_GRP_LAST_POST);
+    mColGrpMeta_OrigGrpId = addColumn(mGrpMetaColumns, KEY_ORIG_GRP_ID);
+    mColGrpMeta_ServString = addColumn(mGrpMetaColumns, KEY_NXS_SERV_STRING);
+    mColGrpMeta_SignFlags = addColumn(mGrpMetaColumns, KEY_GRP_SIGN_FLAGS);
+    mColGrpMeta_CircleId = addColumn(mGrpMetaColumns, KEY_GRP_CIRCLE_ID);
+    mColGrpMeta_CircleType = addColumn(mGrpMetaColumns, KEY_GRP_CIRCLE_TYPE);
+    mColGrpMeta_InternCircle = addColumn(mGrpMetaColumns, KEY_GRP_INTERNAL_CIRCLE);
+    mColGrpMeta_Originator = addColumn(mGrpMetaColumns, KEY_GRP_ORIGINATOR);
+    mColGrpMeta_AuthenFlags = addColumn(mGrpMetaColumns, KEY_GRP_AUTHEN_FLAGS);
+    mColGrpMeta_ParentGrpId = addColumn(mGrpMetaColumns, KEY_PARENT_GRP_ID);
+    mColGrpMeta_RecvTs = addColumn(mGrpMetaColumns, KEY_RECV_TS);
+    mColGrpMeta_RepCutoff = addColumn(mGrpMetaColumns, KEY_GRP_REP_CUTOFF);
+    mColGrpMeta_NxsDataLen = addColumn(mGrpMetaColumns, KEY_NXS_DATA_LEN);
 
     // for retrieving actual grp data
-    grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_NXS_DATA); grpColumns.push_back(KEY_NXS_DATA_LEN);
-    grpColumns.push_back(KEY_NXS_META);
+    mColGrp_GrpId = addColumn(mGrpColumns, KEY_GRP_ID);
+    mColGrp_NxsData = addColumn(mGrpColumns, KEY_NXS_DATA);
+    mColGrp_MetaData = addColumn(mGrpColumns, KEY_NXS_META);
 
-    grpIdColumn.push_back(KEY_GRP_ID);
+    // Group id columns
+    mColGrpId_GrpId = addColumn(mGrpIdColumn, KEY_GRP_ID);
 
-    mMsgIdColumn.push_back(KEY_MSG_ID);
+    // Msg id columns
+    mColMsgId_MsgId = addColumn(mMsgIdColumn, KEY_MSG_ID);
 }
 
 RsDataService::~RsDataService(){
@@ -512,30 +492,27 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
 
     // grpId
     std::string tempId;
-    c.getString(COL_GRP_ID, tempId);
+    c.getString(mColGrpMeta_GrpId, tempId);
     grpMeta->mGroupId = RsGxsGroupId(tempId);
-    c.getString(COL_IDENTITY, tempId);
+    c.getString(mColGrpMeta_NxsIdentity, tempId);
     grpMeta->mAuthorId = RsGxsId(tempId);
 
-    c.getString(COL_GRP_NAME, grpMeta->mGroupName);
-    c.getString(COL_ORIG_GRP_ID, tempId);
+    c.getString(mColGrpMeta_Name, grpMeta->mGroupName);
+    c.getString(mColGrpMeta_OrigGrpId, tempId);
     grpMeta->mOrigGrpId = RsGxsGroupId(tempId);
-    c.getString(COL_GRP_SERV_STRING, grpMeta->mServiceString);
+    c.getString(mColGrpMeta_ServString, grpMeta->mServiceString);
     std::string temp;
-    c.getString(COL_HASH, temp);
+    c.getString(mColGrpMeta_NxsHash, temp);
     grpMeta->mHash = RsFileHash(temp);
-    grpMeta->mReputationCutOff = c.getInt32(COL_GRP_REP_CUTOFF);
-    grpMeta->mSignFlags = c.getInt32(COL_GRP_SIGN_FLAGS);
+    grpMeta->mReputationCutOff = c.getInt32(mColGrpMeta_RepCutoff);
+    grpMeta->mSignFlags = c.getInt32(mColGrpMeta_SignFlags);
 
-    grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
-    grpMeta->mGroupFlags = c.getInt32(COL_NXS_FLAGS);
-    grpMeta->mGrpSize = c.getInt32(COL_GRP_DATA_LEN);
-
-    offset = 0;
-
+    grpMeta->mPublishTs = c.getInt32(mColGrpMeta_TimeStamp);
+    grpMeta->mGroupFlags = c.getInt32(mColGrpMeta_NxsFlags);
+    grpMeta->mGrpSize = c.getInt32(mColGrpMeta_NxsDataLen);
 
     offset = 0; data = NULL; data_len = 0;
-    data = (char*)c.getData(COL_KEY_SET, data_len);
+    data = (char*)c.getData(mColGrpMeta_KeySet, data_len);
 
     if(data)
         ok &= grpMeta->keys.GetTlv(data, data_len, &offset);
@@ -543,25 +520,25 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
 		 grpMeta->keys.TlvClear() ;
 
     // local meta
-    grpMeta->mSubscribeFlags = c.getInt32(COL_GRP_SUBCR_FLAG);
-    grpMeta->mPop = c.getInt32(COL_GRP_POP);
-    grpMeta->mVisibleMsgCount = c.getInt32(COL_MSG_COUNT);
-    grpMeta->mLastPost = c.getInt32(COL_GRP_LAST_POST);
-    grpMeta->mGroupStatus = c.getInt32(COL_GRP_STATUS);
+    grpMeta->mSubscribeFlags = c.getInt32(mColGrpMeta_SubscrFlag);
+    grpMeta->mPop = c.getInt32(mColGrpMeta_Pop);
+    grpMeta->mVisibleMsgCount = c.getInt32(mColGrpMeta_MsgCount);
+    grpMeta->mLastPost = c.getInt32(mColGrpMeta_LastPost);
+    grpMeta->mGroupStatus = c.getInt32(mColGrpMeta_Status);
 
-    c.getString(COL_GRP_CIRCLE_ID, tempId);
+    c.getString(mColGrpMeta_CircleId, tempId);
     grpMeta->mCircleId = RsGxsCircleId(tempId);
-    grpMeta->mCircleType = c.getInt32(COL_GRP_CIRCL_TYPE);
-    c.getString(COL_GRP_INTERN_CIRCLE, tempId);
+    grpMeta->mCircleType = c.getInt32(mColGrpMeta_CircleType);
+    c.getString(mColGrpMeta_InternCircle, tempId);
     grpMeta->mInternalCircle = RsGxsCircleId(tempId);
 
-    std::string s ; c.getString(COL_GRP_ORIGINATOR, s) ;
+    std::string s ; c.getString(mColGrpMeta_Originator, s) ;
     grpMeta->mOriginator = RsPeerId(s);
-    grpMeta->mAuthenFlags = c.getInt32(COL_GRP_AUTHEN_FLAGS);
-    grpMeta->mRecvTS = c.getInt32(COL_GRP_RECV_TS);
+    grpMeta->mAuthenFlags = c.getInt32(mColGrpMeta_AuthenFlags);
+    grpMeta->mRecvTS = c.getInt32(mColGrpMeta_RecvTs);
 
 
-    c.getString(COL_PARENT_GRP_ID, tempId);
+    c.getString(mColGrpMeta_ParentGrpId, tempId);
     grpMeta->mParentGrpId = RsGxsGroupId(tempId);
 
     if(ok)
@@ -587,13 +564,13 @@ RsNxsGrp* RsDataService::locked_getGroup(RetroCursor &c)
     uint32_t data_len = 0;
 
     // grpId
-    c.getStringT<RsGxsGroupId>(COL_ACT_GROUP_ID, grp->grpId);
+    c.getStringT<RsGxsGroupId>(mColGrp_GrpId, grp->grpId);
     ok &= !grp->grpId.isNull();
 
     offset = 0; data_len = 0;
     if(ok){
 
-        data = (char*)c.getData(COL_META_DATA, data_len);
+        data = (char*)c.getData(mColGrp_MetaData, data_len);
         if(data)
             grp->meta.GetTlv(data, data_len, &offset);
     }
@@ -601,7 +578,7 @@ RsNxsGrp* RsDataService::locked_getGroup(RetroCursor &c)
     /* now retrieve grp data */
     offset = 0; data_len = 0;
     if(ok){
-        data = (char*)c.getData(COL_NXS_DATA, data_len);
+        data = (char*)c.getData(mColGrp_NxsData, data_len);
         if(data)
             ok &= grp->grp.GetTlv(data, data_len, &offset);
     }
@@ -624,46 +601,45 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
     offset = 0;
     char* data = NULL;
 
-
     std::string gId;
-    c.getString(COL_GRP_ID, gId);
+    c.getString(mColMsgMeta_GrpId, gId);
     msgMeta->mGroupId = RsGxsGroupId(gId);
     std::string temp;
-    c.getString(COL_MSG_ID, temp);
+    c.getString(mColMsgMeta_MsgId, temp);
     msgMeta->mMsgId = RsGxsMessageId(temp);
     // without these, a msg is meaningless
     ok &= (!msgMeta->mGroupId.isNull()) && (!msgMeta->mMsgId.isNull());
 
-    c.getString(COL_ORIG_MSG_ID, temp);
+    c.getString(mColMsgMeta_OrigMsgId, temp);
     msgMeta->mOrigMsgId = RsGxsMessageId(temp);
-    c.getString(COL_IDENTITY, temp);
+    c.getString(mColMsgMeta_NxsIdentity, temp);
     msgMeta->mAuthorId = RsGxsId(temp);
-    c.getString(COL_MSG_NAME, msgMeta->mMsgName);
-    c.getString(COL_MSG_SERV_STRING, msgMeta->mServiceString);
+    c.getString(mColMsgMeta_Name, msgMeta->mMsgName);
+    c.getString(mColMsgMeta_NxsServString, msgMeta->mServiceString);
 
-    c.getString(COL_HASH, temp);
+    c.getString(mColMsgMeta_NxsHash, temp);
     msgMeta->mHash = RsFileHash(temp);
-    msgMeta->recvTS = c.getInt32(COL_MSG_RECV_TS);
+    msgMeta->recvTS = c.getInt32(mColMsgMeta_RecvTs);
 
     offset = 0;
-    data = (char*)c.getData(COL_SIGN_SET, data_len);
+    data = (char*)c.getData(mColMsgMeta_SignSet, data_len);
     msgMeta->signSet.GetTlv(data, data_len, &offset);
-    msgMeta->mMsgSize = c.getInt32(COL_MSG_DATA_LEN);
+    msgMeta->mMsgSize = c.getInt32(mColMsgMeta_NxsDataLen);
 
-    msgMeta->mMsgFlags = c.getInt32(COL_NXS_FLAGS);
-    msgMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
+    msgMeta->mMsgFlags = c.getInt32(mColMsgMeta_NxsFlags);
+    msgMeta->mPublishTs = c.getInt32(mColMsgMeta_TimeStamp);
 
     offset = 0; data_len = 0;
 
     // thread and parent id
-    c.getString(COL_THREAD_ID, temp);
+    c.getString(mColMsgMeta_MsgThreadId, temp);
     msgMeta->mThreadId = RsGxsMessageId(temp);
-    c.getString(COL_PARENT_ID, temp);
+    c.getString(mColMsgMeta_MsgParentId, temp);
     msgMeta->mParentId = RsGxsMessageId(temp);
 
     // local meta
-    msgMeta->mMsgStatus = c.getInt32(COL_MSG_STATUS);
-    msgMeta->mChildTs = c.getInt32(COL_CHILD_TS);
+    msgMeta->mMsgStatus = c.getInt32(mColMsgMeta_MsgStatus);
+    msgMeta->mChildTs = c.getInt32(mColMsgMeta_ChildTs);
 
     if(ok)
         return msgMeta;
@@ -684,9 +660,9 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
     uint32_t data_len = 0,
     offset = 0;
     char* data = NULL;
-    c.getStringT<RsGxsGroupId>(COL_ACT_GROUP_ID, msg->grpId);
+    c.getStringT<RsGxsGroupId>(mColMsg_GrpId, msg->grpId);
     std::string temp;
-    c.getString(COL_ACT_MSG_ID, temp);
+    c.getString(mColMsg_MsgId, temp);
     msg->msgId = RsGxsMessageId(temp);
 
     ok &= (!msg->grpId.isNull()) && (!msg->msgId.isNull());
@@ -694,7 +670,7 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
     offset = 0; data_len = 0;
     if(ok){
 
-        data = (char*)c.getData(COL_META_DATA, data_len);
+        data = (char*)c.getData(mColMsg_MetaData, data_len);
         if(data)
             msg->meta.GetTlv(data, data_len, &offset);
     }
@@ -702,7 +678,7 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
     /* now retrieve msg data */
     offset = 0; data_len = 0;
     if(ok){
-        data = (char*)c.getData(COL_NXS_DATA, data_len);
+        data = (char*)c.getData(mColMsg_NxsData, data_len);
         if(data)
             ok &= msg->msg.GetTlv(data, data_len, &offset);
     }
@@ -1044,7 +1020,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
     if(grp.empty()){
 
         RsStackMutex stack(mDbMutex);
-        RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "", "");
+        RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpColumns, "", "");
 
         if(c)
         {
@@ -1075,7 +1051,7 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
         for(; mit != grp.end(); ++mit)
         {
             const RsGxsGroupId& grpId = mit->first;
-            RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpColumns, "grpId='" + grpId.toStdString() + "'", "");
+            RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpColumns, "grpId='" + grpId.toStdString() + "'", "");
 
             if(c)
             {
@@ -1182,7 +1158,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
             RsStackMutex stack(mDbMutex);
 
-            RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
+            RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
             if(c)
             {
@@ -1204,7 +1180,7 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
 
                 RsStackMutex stack(mDbMutex);
 
-                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
+                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
 
                 if(c)
@@ -1337,7 +1313,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
         std::vector<RsGxsMsgMetaData*> metaSet;
 
         if(msgIdV.empty()){
-            RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
+            RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
             if (c)
             {
@@ -1354,7 +1330,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
 
             for(; sit!=msgIdV.end(); ++sit){
                 const RsGxsMessageId& msgId = *sit;
-                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, msgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
+                RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgMetaColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
 
                 if (c)
@@ -1416,7 +1392,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 	std::cerr << std::endl;
 #endif
 
-        RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpMetaColumns, "", "");
+        RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "", "");
 
         if(c)
         {
@@ -1441,7 +1417,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
           for(; mit != grp.end(); ++mit)
           {
               const RsGxsGroupId& grpId = mit->first;
-              RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
+              RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpMetaColumns, "grpId='" + grpId.toStdString() + "'", "");
 
               if(c)
               {
@@ -1564,7 +1540,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 	int resultCount = 0;
 #endif
 
-	RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpIdColumn, "", "");
+	RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, mGrpIdColumn, "", "");
 
 	if(c)
 	{
@@ -1573,7 +1549,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 		while(valid)
 		{
 			std::string grpId;
-			c->getString(0, grpId);
+			c->getString(mColGrpId_GrpId, grpId);
 			grpIds.push_back(RsGxsGroupId(grpId));
 			valid = c->moveToNext();
 
@@ -1610,7 +1586,7 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std
 		while(valid)
 		{
 			std::string msgId;
-            c->getString(0, msgId);
+            c->getString(mColMsgId_MsgId, msgId);
 
             if(c->columnCount() != 1)
             std::cerr << "(EE) ********* not retrieving all columns!!" << std::endl;
