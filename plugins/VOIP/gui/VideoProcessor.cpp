@@ -577,6 +577,10 @@ FFmpegVideo::FFmpegVideo()
     
     decoding_frame_buffer = avcodec_alloc_frame() ;//(AVFrame*)malloc(sizeof(AVFrame)) ;
     
+    av_init_packet(&decoding_buffer);
+    decoding_buffer.data = NULL ;
+    decoding_buffer.size = 0 ;
+
     //ret = av_image_alloc(decoding_frame_buffer->data, decoding_frame_buffer->linesize, decoding_context->width, decoding_context->height, decoding_context->pix_fmt, 32);
     
     //if (ret < 0) 
@@ -604,7 +608,7 @@ FFmpegVideo::~FFmpegVideo()
 
 bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataChunk& voip_chunk)
 {
-	std::cerr << "Encoding frame of size " << image.width() << "x" << image.height() << ", resized to " << encoding_frame_buffer->width << "x" << encoding_frame_buffer->height << std::endl;
+	std::cerr << "Encoding frame of size " << image.width() << "x" << image.height() << ", resized to " << encoding_frame_buffer->width << "x" << encoding_frame_buffer->height << " : "; 
 	QImage input ;
 
 	if(image.width() != encoding_frame_buffer->width || image.height() != encoding_frame_buffer->height)
@@ -712,53 +716,84 @@ bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataCh
 }
 bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 {
-    std::cerr << "Decoding data of size " << chunk.size << std::endl;
+	std::cerr << "Decoding data of size " << chunk.size << std::endl;
+	unsigned char *buff ;
 
-    AVPacket pkt ;
-    av_init_packet(&pkt);
+	if(decoding_buffer.data != NULL)
+	{
+		std::cerr << "Completing buffer with size " << chunk.size - HEADER_SIZE + decoding_buffer.size << ": copying existing " 
+                  << decoding_buffer.size << " bytes. Adding new " << chunk.size  - HEADER_SIZE<< " bytes " << std::endl;
 
-    pkt.data = (unsigned char *)memalign(16,chunk.size - HEADER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE) ;
-    memset(pkt.data,0,chunk.size - HEADER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE) ;
-    memcpy(pkt.data,&static_cast<unsigned char*>(chunk.data)[HEADER_SIZE],chunk.size - HEADER_SIZE) ;
+		uint32_t s =  chunk.size - HEADER_SIZE + decoding_buffer.size ;
+		unsigned char *tmp = (unsigned char*)memalign(16,s + FF_INPUT_BUFFER_PADDING_SIZE) ;
+		memset(tmp,0,s+FF_INPUT_BUFFER_PADDING_SIZE) ;
 
-    pkt.size = chunk.size - HEADER_SIZE;
-    pkt.pts = AV_NOPTS_VALUE ;
-    pkt.dts = AV_NOPTS_VALUE ;
+		memcpy(tmp,decoding_buffer.data,decoding_buffer.size) ;
 
-    int got_frame = 0 ;
-    int len = avcodec_decode_video2(decoding_context,decoding_frame_buffer,&got_frame,&pkt) ;
+		free(decoding_buffer.data) ;
 
-    if(len < 0)
-    {
-	    std::cerr << "Error decodign frame!" << std::endl;
-	    return false ;
-    }
-    std::cerr << "Used " << len << " bytes out of " << pkt.size << ". got_frame = " << got_frame << std::endl;
-    if(!got_frame)
-	    return false;
+		buff = &tmp[decoding_buffer.size] ;
+		decoding_buffer.size = s ;
+		decoding_buffer.data = tmp ;
+	}
+	else
+	{
+		std::cerr << "Allocating new buffer of size " << chunk.size - HEADER_SIZE << std::endl;
 
-    assert(pkt.size > 0) ;
+		decoding_buffer.data = (unsigned char *)memalign(16,chunk.size - HEADER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE) ;
+		decoding_buffer.size = chunk.size - HEADER_SIZE ;
+		memset(decoding_buffer.data,0,decoding_buffer.size + FF_INPUT_BUFFER_PADDING_SIZE) ;
 
-    av_free_packet(&pkt) ;
+		buff = decoding_buffer.data ;
+	}
 
-    image = QImage(QSize(decoding_frame_buffer->width,decoding_frame_buffer->height),QImage::Format_ARGB32) ;
+	memcpy(buff,chunk.data,chunk.size - HEADER_SIZE) ;
 
-    std::cerr << "Decoded frame. Size=" << image.width() << "x" << image.height() << std::endl;
+	int got_frame = 0 ;
+	int len = avcodec_decode_video2(decoding_context,decoding_frame_buffer,&got_frame,&decoding_buffer) ;
 
-    for (int y = 0; y < decoding_frame_buffer->height; y++) 
-	    for (int x = 0; x < decoding_frame_buffer->width; x++) 
-	    {
-		    int Y  = decoding_frame_buffer->data[0][y * decoding_frame_buffer->linesize[0] + x] ;
-		    int U  = decoding_frame_buffer->data[1][y * decoding_frame_buffer->linesize[1] + x] ;
-		    int V  = decoding_frame_buffer->data[2][y * decoding_frame_buffer->linesize[2] + x] ;
+	if(len < 0)
+	{
+		std::cerr << "Error decodign frame!" << std::endl;
+		return false ;
+	}
+	std::cerr << "Used " << len << " bytes out of " << decoding_buffer.size << ". got_frame = " << got_frame << std::endl;
 
-		    int R = std::min(255,std::max(0,(int)(1.164*(Y - 16) + 1.596*(V - 128)))) ;
-		    int G = std::min(255,std::max(0,(int)(1.164*(Y - 16) - 0.813*(V - 128) - 0.391*(U - 128)))) ;
-		    int B = std::min(255,std::max(0,(int)(1.164*(Y - 16)                   + 2.018*(U - 128)))) ;
+	if(got_frame)
+	{
+		image = QImage(QSize(decoding_frame_buffer->width,decoding_frame_buffer->height),QImage::Format_ARGB32) ;
 
-		    image.setPixel(QPoint(x,y),QRgb( 0xff000000 + (R << 16) + (G << 8) + B)) ;
-	    }
+		std::cerr << "Decoded frame. Size=" << image.width() << "x" << image.height() << std::endl;
 
-    return true ;
+		for (int y = 0; y < decoding_frame_buffer->height; y++) 
+			for (int x = 0; x < decoding_frame_buffer->width; x++) 
+			{
+				int Y  = decoding_frame_buffer->data[0][y * decoding_frame_buffer->linesize[0] + x] ;
+				int U  = decoding_frame_buffer->data[1][(y/2) * decoding_frame_buffer->linesize[1] + x/2] ;
+				int V  = decoding_frame_buffer->data[2][(y/2) * decoding_frame_buffer->linesize[2] + x/2] ;
+
+				int R = std::min(255,std::max(0,(int)(1.164*(Y - 16) + 1.596*(V - 128)))) ;
+				int G = std::min(255,std::max(0,(int)(1.164*(Y - 16) - 0.813*(V - 128) - 0.391*(U - 128)))) ;
+				int B = std::min(255,std::max(0,(int)(1.164*(Y - 16)                   + 2.018*(U - 128)))) ;
+
+				image.setPixel(QPoint(x,y),QRgb( 0xff000000 + (R << 16) + (G << 8) + B)) ;
+			}
+	}
+
+	if(len == decoding_buffer.size)
+	{
+		free(decoding_buffer.data) ;
+		decoding_buffer.data  = NULL;
+		decoding_buffer.size  = 0;
+	}
+	else if(len != 0)
+	{
+		std::cerr << "Moving remaining data (" << decoding_buffer.size - len << " bytes) back to 0" << std::endl;
+
+		memmove(decoding_buffer.data,decoding_buffer.data+len,decoding_buffer.size - len) ;
+		decoding_buffer.size -= len ;
+	}
+
+	return true ;
 }
 

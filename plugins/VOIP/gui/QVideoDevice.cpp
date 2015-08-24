@@ -83,8 +83,9 @@ void QVideoInputDevice::grabFrame()
 	    uint32_t encoded_size ;
 
 	    _video_processor->processImage(image,0,encoded_size) ;
-
+#ifdef DEBUG_VIDEO_OUTPUT_DEVICE
         std::cerr << "Encoded size = " << encoded_size << std::endl;
+#endif
 	    _total_encoded_size += encoded_size ;
 
 	    time_t now = time(NULL) ;
@@ -96,7 +97,9 @@ void QVideoInputDevice::grabFrame()
 		    _total_encoded_size = 0 ;
 		    _last_bw_estimate_TS = now ;
             
+#ifdef DEBUG_VIDEO_OUTPUT_DEVICE
             std::cerr << "new bw estimate: " << _estimated_bw << std::endl;
+#endif
 	    }
 
 	    emit networkPacketReady() ;

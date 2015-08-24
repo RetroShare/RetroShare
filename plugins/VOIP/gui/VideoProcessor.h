@@ -4,6 +4,10 @@
 #include <QImage>
 #include "interface/rsVOIP.h"
 
+extern "C" {
+#include <libavcodec/avcodec.h>
+}
+
 class QVideoOutputDevice ;
 
 class VideoCodec
@@ -60,6 +64,7 @@ private:
 struct AVCodec ;
 struct AVCodecContext ;
 struct AVFrame ;
+struct AVPacket ;
 
 class FFmpegVideo: public VideoCodec
 {
@@ -78,6 +83,7 @@ private:
     AVCodecContext *decoding_context;
     AVFrame *encoding_frame_buffer ;
     AVFrame *decoding_frame_buffer ;
+    AVPacket decoding_buffer;
     uint64_t encoding_frame_count ;
     
     FILE *encoding_debug_file ;
