@@ -19,18 +19,18 @@ unix {
 	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
 
 	icon_files.path = "$${PREFIX}/share/icons/hicolor"
-	icon_files.files = build_scripts/Debian+Ubuntu/data/24x24
-	icon_files.files += build_scripts/Debian+Ubuntu/data/48x48
-	icon_files.files += build_scripts/Debian+Ubuntu/data/64x64
-	icon_files.files += build_scripts/Debian+Ubuntu/data/128x128
+	icon_files.files = data/24x24
+	icon_files.files += data/48x48
+	icon_files.files += data/64x64
+	icon_files.files += data/128x128
 	INSTALLS += icon_files
 
 	desktop_files.path = "$${PREFIX}/share/applications"
-	desktop_files.files = build_scripts/Debian+Ubuntu/retroshare06.desktop
+	desktop_files.files = data/retroshare06.desktop
 	INSTALLS += desktop_files
 
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
-	pixmap_files.files = build_scripts/Debian+Ubuntu/retroshare06.xpm
+	pixmap_files.files = data/retroshare06.xpm
 	INSTALLS += pixmap_files
 
 	data_files.path = "$${DATA_DIR}"
