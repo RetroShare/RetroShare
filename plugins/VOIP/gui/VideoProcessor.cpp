@@ -23,12 +23,13 @@ extern "C" {
 #include <libavutil/mathematics.h>
 #include <libavutil/samplefmt.h>
 }
-#define DEBUG_MPEG_VIDEO 1
+//#define DEBUG_MPEG_VIDEO 1
 
 VideoProcessor::VideoProcessor()
-    :_encoded_frame_size(176,144) 
+    :_encoded_frame_size(176,144) , vpMtx("VideoProcessor")
 {
-	_decoded_output_device = NULL ;
+    _decoded_output_device = NULL ;
+    
   //_encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO;
   //_encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO;
     _encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO;
@@ -42,6 +43,19 @@ VideoProcessor::VideoProcessor()
     
     _last_bw_estimate_in_TS = time(NULL) ;
     _last_bw_estimate_out_TS = time(NULL) ;
+}
+
+VideoProcessor::~VideoProcessor()
+{
+    // clear encoding queue
+    
+    RS_STACK_MUTEX(vpMtx) ;
+    
+    while(!_encoded_out_queue.empty())
+    {
+        _encoded_out_queue.back().clear() ;
+        _encoded_out_queue.pop_back() ;
+    }
 }
 
 bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint)
@@ -68,8 +82,8 @@ bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint)
 
 	    if(codec->encodeData(img.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),size_hint,chunk) && chunk.size > 0)
 	    {
+		    RS_STACK_MUTEX(vpMtx) ;
 		    _encoded_out_queue.push_back(chunk) ;
-
 		    _total_encoded_size_out += chunk.size ;
 	    }
 
@@ -77,6 +91,8 @@ bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint)
 
 	    if(now > _last_bw_estimate_out_TS)
 	    {
+		    RS_STACK_MUTEX(vpMtx) ;
+            
 		    _estimated_bandwidth_out = uint32_t(0.75*_estimated_bandwidth_out + 0.25 * (_total_encoded_size_out / (float)(now - _last_bw_estimate_out_TS))) ;
 
 		    _total_encoded_size_out = 0 ;
@@ -98,6 +114,7 @@ bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint)
 
 bool VideoProcessor::nextEncodedPacket(RsVOIPDataChunk& chunk)
 {
+		    RS_STACK_MUTEX(vpMtx) ;
 	if(_encoded_out_queue.empty())
 		return false ;
 
@@ -157,21 +174,24 @@ void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
         return ;
     }
     
-    _total_encoded_size_in += chunk.size ;
-    
-    time_t now = time(NULL) ;
-
-    if(now > _last_bw_estimate_in_TS)
     {
-	    _estimated_bandwidth_in = uint32_t(0.75*_estimated_bandwidth_in + 0.25 * (_total_encoded_size_in / (float)(now - _last_bw_estimate_in_TS))) ;
+	    RS_STACK_MUTEX(vpMtx) ;
+	    _total_encoded_size_in += chunk.size ;
 
-	    _total_encoded_size_in = 0 ;
-	    _last_bw_estimate_in_TS = now ;
+	    time_t now = time(NULL) ;
+
+	    if(now > _last_bw_estimate_in_TS)
+	    {
+		    _estimated_bandwidth_in = uint32_t(0.75*_estimated_bandwidth_in + 0.25 * (_total_encoded_size_in / (float)(now - _last_bw_estimate_in_TS))) ;
+
+		    _total_encoded_size_in = 0 ;
+		    _last_bw_estimate_in_TS = now ;
 
 #ifdef DEBUG_VIDEO_OUTPUT_DEVICE
-	    std::cerr << "new bw estimate (in): " << _estimated_bandwidth_in << std::endl;
+		    std::cerr << "new bw estimate (in): " << _estimated_bandwidth_in << std::endl;
 #endif
-    }   
+	    }   
+    }
     if(!codec->decodeData(chunk,img)) 
     {
         std::cerr << "No image decoded. Probably in the middle of something..." << std::endl;
@@ -794,7 +814,7 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 		buff = decoding_buffer.data ;
 	}
 
-	memcpy(buff,chunk.data+HEADER_SIZE,chunk.size - HEADER_SIZE) ;
+	memcpy(buff,&((unsigned char*)chunk.data)[HEADER_SIZE],chunk.size - HEADER_SIZE) ;
 
 	int got_frame = 0 ;
 	int len = avcodec_decode_video2(decoding_context,decoding_frame_buffer,&got_frame,&decoding_buffer) ;

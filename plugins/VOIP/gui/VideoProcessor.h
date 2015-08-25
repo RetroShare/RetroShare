@@ -96,7 +96,7 @@ class VideoProcessor
 {
 	public:
 		VideoProcessor() ;
-		virtual ~VideoProcessor() {}
+		virtual ~VideoProcessor() ;
 
         	enum CodecId {
                 		VIDEO_PROCESSOR_CODEC_ID_UNKNOWN    = 0x0000,
@@ -167,5 +167,7 @@ class VideoProcessor
             float _estimated_bandwidth_out ;
             
             float _target_bandwidth_out ;
+            
+            RsMutex vpMtx ;
 };
 
