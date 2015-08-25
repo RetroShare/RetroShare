@@ -14,7 +14,16 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -29,7 +38,16 @@
       <property name="spacing">
        <number>3</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -95,7 +113,7 @@
        <string>Friend nodes</string>
       </property>
       <property name="textAlignment">
-       <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+       <set>AlignCenter</set>
       </property>
      </column>
      <column>
@@ -139,6 +157,22 @@
    </property>
    <property name="toolTip">
     <string>Show Groups</string>
+   </property>
+  </action>
+  <action name="actionExportFriendlist">
+   <property name="text">
+    <string>export friendlist</string>
+   </property>
+   <property name="toolTip">
+    <string>export your friendlist including groups</string>
+   </property>
+  </action>
+  <action name="actionImportFriendlist">
+   <property name="text">
+    <string>import friendlist</string>
+   </property>
+   <property name="toolTip">
+    <string>import your friendlist including groups</string>
    </property>
   </action>
  </widget>
