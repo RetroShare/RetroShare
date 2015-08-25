@@ -365,7 +365,7 @@ void VOIPChatWidgetHolder::botMouseLeave()
 
 void VOIPChatWidgetHolder::setAcceptedBandwidth(uint32_t bytes_per_sec)
 {
-	videoProcessor->setMaximumFrameRate(bytes_per_sec) ;
+	videoProcessor->setMaximumBandwidth(bytes_per_sec) ;
 }
 
 void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* array)

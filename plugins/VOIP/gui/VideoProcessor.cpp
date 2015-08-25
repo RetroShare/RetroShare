@@ -32,9 +32,19 @@ VideoProcessor::VideoProcessor()
   //_encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO;
   //_encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO;
     _encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO;
+    
+    _estimated_bandwidth_in = 0 ;
+    _estimated_bandwidth_out = 0 ;
+    _target_bandwidth_out = 0 ;
+    
+    _total_encoded_size_in = 0 ;
+    _total_encoded_size_out = 0 ;
+    
+    _last_bw_estimate_in_TS = time(NULL) ;
+    _last_bw_estimate_out_TS = time(NULL) ;
 }
 
-bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint,uint32_t& encoded_size)
+bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint)
 {
     VideoCodec *codec ;
 
@@ -52,17 +62,30 @@ bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint,uint32_t&
 
     //    std::cerr << "reducing to " << _frame_size.width() << " x " << _frame_size.height() << std::endl;
 
-    encoded_size = 0 ;
-
     if(codec)
     {
 	    RsVOIPDataChunk chunk ;
 
 	    if(codec->encodeData(img.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),size_hint,chunk) && chunk.size > 0)
-	{
-		encoded_size = chunk.size ;
-		_encoded_out_queue.push_back(chunk) ;
-	}
+	    {
+		    _encoded_out_queue.push_back(chunk) ;
+
+		    _total_encoded_size_out += chunk.size ;
+	    }
+
+	    time_t now = time(NULL) ;
+
+	    if(now > _last_bw_estimate_out_TS)
+	    {
+		    _estimated_bandwidth_out = uint32_t(0.75*_estimated_bandwidth_out + 0.25 * (_total_encoded_size_out / (float)(now - _last_bw_estimate_out_TS))) ;
+
+		    _total_encoded_size_out = 0 ;
+		    _last_bw_estimate_out_TS = now ;
+
+#ifdef DEBUG_VIDEO_OUTPUT_DEVICE
+		    std::cerr << "new bw estimate: " << _estimated_bw << std::endl;
+#endif
+	    }
 
 	    return true ;
     }
@@ -134,6 +157,21 @@ void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
         return ;
     }
     
+    _total_encoded_size_in += chunk.size ;
+    
+    time_t now = time(NULL) ;
+
+    if(now > _last_bw_estimate_in_TS)
+    {
+	    _estimated_bandwidth_in = uint32_t(0.75*_estimated_bandwidth_in + 0.25 * (_total_encoded_size_in / (float)(now - _last_bw_estimate_in_TS))) ;
+
+	    _total_encoded_size_in = 0 ;
+	    _last_bw_estimate_in_TS = now ;
+
+#ifdef DEBUG_VIDEO_OUTPUT_DEVICE
+	    std::cerr << "new bw estimate (in): " << _estimated_bandwidth_in << std::endl;
+#endif
+    }   
     if(!codec->decodeData(chunk,img)) 
     {
         std::cerr << "No image decoded. Probably in the middle of something..." << std::endl;
@@ -144,9 +182,10 @@ void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
 	    _decoded_output_device->showFrame(img) ;
 }
 
-void VideoProcessor::setMaximumFrameRate(uint32_t bytes_per_sec)
+void VideoProcessor::setMaximumBandwidth(uint32_t bytes_per_sec)
 {
     std::cerr << "Video Encoder: maximum frame rate is set to " << bytes_per_sec << " Bps" << std::endl;
+    _target_bandwidth_out = bytes_per_sec ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

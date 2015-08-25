@@ -93,8 +93,9 @@ class AudioInputConfig : public ConfigPage
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/talking_on.svg") ; }
 		virtual QString pageName() const { return tr("VOIP") ; }
 		virtual QString helpText() const { return ""; }
-
-	private slots:
+        
+private slots:
+	void updateAvailableBW(double r);
 		void loadSettings();
 		void emptyBuffer();
 		void togglePreview(bool) ;

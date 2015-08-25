@@ -117,7 +117,7 @@ class VideoProcessor
 
 		// returns the current (measured) frame rate in bytes per second.
 		//
-		uint32_t currentDecodingFrameRate() const; 
+		uint32_t currentBandwidthIn() const { return _estimated_bandwidth_in ;  }
 
 	private:
 		QVideoOutputDevice *_decoded_output_device ;
@@ -130,14 +130,18 @@ class VideoProcessor
 	public:
 		// Takes the next image to be encoded. 
 		//
-		bool processImage(const QImage& Image, uint32_t size_hint, uint32_t &encoded_size) ;
+		bool processImage(const QImage& Image, uint32_t size_hint) ;
 		bool encodedPacketReady() const { return !_encoded_out_queue.empty() ; }
 		bool nextEncodedPacket(RsVOIPDataChunk& ) ;
 
 		// Used to tweak the compression ratio so that the video can stream ok.
 		//
-		void setMaximumFrameRate(uint32_t bytes_per_second) ;
+		void setMaximumBandwidth(uint32_t bytes_per_second) ;
         	void setInternalFrameSize(QSize) ;
+            
+        	// returns the current encoding frame rate in bytes per second.
+        	//
+        	uint32_t currentBandwidthOut() const { return _estimated_bandwidth_out ; }
             
 	protected:
 		std::list<RsVOIPDataChunk> _encoded_out_queue ;
@@ -152,5 +156,16 @@ class VideoProcessor
             FFmpegVideo  _mpeg_video_codec ;
             
             uint16_t _encoding_current_codec ;
+            
+	    time_t _last_bw_estimate_in_TS;
+	    time_t _last_bw_estimate_out_TS;
+        
+	    uint32_t _total_encoded_size_in ;
+	    uint32_t _total_encoded_size_out ;
+        
+            float _estimated_bandwidth_in ;
+            float _estimated_bandwidth_out ;
+            
+            float _target_bandwidth_out ;
 };
 

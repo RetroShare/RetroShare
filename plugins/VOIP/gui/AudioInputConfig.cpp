@@ -120,6 +120,8 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     videoProcessor = new VideoProcessor() ;
     videoProcessor->setDisplayTarget(NULL) ;
 
+    videoProcessor->setMaximumBandwidth(ui.availableBW_SB->value()) ;
+                                        
     videoInput->setVideoProcessor(videoProcessor) ;
 
     graph_source = new voipGraphSource ;
@@ -130,8 +132,15 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     graph_source->start() ;
 
     QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
+    QObject::connect(ui.availableBW_SB,SIGNAL(valueChanged(double)),this,SLOT(updateAvailableBW(double))) ;
 }
 
+void AudioInputConfig::updateAvailableBW(double r)
+{
+    std::cerr << "Setting max bandwidth to " << r << " KB/s" << std::endl;
+    videoProcessor->setMaximumBandwidth((uint32_t)(r*1024)) ;
+}
+    
 void AudioInputConfig::togglePreview(bool b)
 {
     if(b)

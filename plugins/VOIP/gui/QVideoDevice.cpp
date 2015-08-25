@@ -13,9 +13,6 @@ QVideoInputDevice::QVideoInputDevice(QWidget *parent)
 	_capture_device = NULL ;
 	_video_processor = NULL ;
 	_echo_output_device = NULL ;
-    	_estimated_bw = 0 ;
-        _total_encoded_size = 0 ;
-        _last_bw_estimate_TS = time(NULL) ;
 }
 
 void QVideoInputDevice::stop()
@@ -80,27 +77,7 @@ void QVideoInputDevice::grabFrame()
 
     if(_video_processor != NULL) 
     {
-	    uint32_t encoded_size ;
-
-	    _video_processor->processImage(image,0,encoded_size) ;
-#ifdef DEBUG_VIDEO_OUTPUT_DEVICE
-        std::cerr << "Encoded size = " << encoded_size << std::endl;
-#endif
-	    _total_encoded_size += encoded_size ;
-
-	    time_t now = time(NULL) ;
-
-	    if(now > _last_bw_estimate_TS)
-	    {
-		    _estimated_bw = uint32_t(0.75*_estimated_bw + 0.25 * (_total_encoded_size / (float)(now - _last_bw_estimate_TS))) ;
-            
-		    _total_encoded_size = 0 ;
-		    _last_bw_estimate_TS = now ;
-            
-#ifdef DEBUG_VIDEO_OUTPUT_DEVICE
-            std::cerr << "new bw estimate: " << _estimated_bw << std::endl;
-#endif
-	    }
+	    _video_processor->processImage(image,0) ;
 
 	    emit networkPacketReady() ;
     }
@@ -113,7 +90,12 @@ bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
     if(_video_processor)
 	    return _video_processor->nextEncodedPacket(chunk) ;
     else 
-	    return false ;
+        return false ;
+}
+
+uint32_t QVideoInputDevice::currentBandwidth() const
+{
+  return _video_processor->currentBandwidthOut() ;  
 }
 
 QVideoInputDevice::~QVideoInputDevice()
