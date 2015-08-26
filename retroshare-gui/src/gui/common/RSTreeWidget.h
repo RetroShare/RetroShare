@@ -35,7 +35,7 @@ public:
 	QString placeholderText() { return mPlaceholderText; }
 	void setPlaceholderText(const QString &text);
 
-	void filterItems(int filterColumn, const QString &text);
+	void filterItems(int filterColumn, const QString &text, int role = Qt::DisplayRole);
 
 	void setSettingsVersion(qint32 version);
 	void processSettings(bool load);
@@ -53,7 +53,7 @@ signals:
 	void columnVisibleChanged(int column, bool visible);
 
 private:
-	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text);
+	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role);
 
 private slots:
 	void headerContextMenuRequested(const QPoint &pos);
