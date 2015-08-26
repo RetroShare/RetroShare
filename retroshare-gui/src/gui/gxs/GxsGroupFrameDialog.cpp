@@ -73,6 +73,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	ui->setupUi(this);
 
 	mInitialized = false;
+	mInFill = false;
 	mCountChildMsgs = false;
 	mYourGroups = NULL;
 	mSubscribedGroups = NULL;
@@ -555,6 +556,10 @@ GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId &msgId
 
 void GxsGroupFrameDialog::changedGroup(const QString &groupId)
 {
+	if (mInFill) {
+		return;
+	}
+
 	mGroupId = RsGxsGroupId(groupId.toStdString());
 	if (mGroupId.isNull()) {
 		return;
@@ -689,6 +694,8 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 		return;
 	}
 
+	mInFill = true;
+
 	std::list<RsGroupMetaData>::const_iterator it;
 
 	QList<GroupItemInfo> adminList;
@@ -751,6 +758,8 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGroupMetaData> &gro
 	ui->groupTreeWidget->fillGroupItems(mSubscribedGroups, subList);
 	ui->groupTreeWidget->fillGroupItems(mPopularGroups, popList);
 	ui->groupTreeWidget->fillGroupItems(mOtherGroups, otherList);
+
+	mInFill = false;
 
 	/* Re-fill group */
 	if (!ui->groupTreeWidget->activateId(QString::fromStdString(mGroupId.toStdString()), true)) {

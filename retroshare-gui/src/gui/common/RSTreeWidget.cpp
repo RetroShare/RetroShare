@@ -81,11 +81,11 @@ void RSTreeWidget::mousePressEvent(QMouseEvent *event)
 	QTreeWidget::mousePressEvent(event);
 }
 
-void RSTreeWidget::filterItems(int filterColumn, const QString &text)
+void RSTreeWidget::filterItems(int filterColumn, const QString &text, int role)
 {
 	int count = topLevelItemCount();
 	for (int index = 0; index < count; ++index) {
-		filterItem(topLevelItem(index), filterColumn, text);
+		filterItem(topLevelItem(index), filterColumn, text, role);
 	}
 
 	QTreeWidgetItem *item = currentItem();
@@ -95,12 +95,12 @@ void RSTreeWidget::filterItems(int filterColumn, const QString &text)
 	}
 }
 
-bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text)
+bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role)
 {
 	bool itemVisible = true;
 
 	if (!text.isEmpty()) {
-		if (!item->text(filterColumn).contains(text, Qt::CaseInsensitive)) {
+		if (!item->data(filterColumn, role).toString().contains(text, Qt::CaseInsensitive)) {
 			itemVisible = false;
 		}
 	}
@@ -108,7 +108,7 @@ bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QSt
 	int visibleChildCount = 0;
 	int count = item->childCount();
 	for (int index = 0; index < count; ++index) {
-		if (filterItem(item->child(index), filterColumn, text)) {
+		if (filterItem(item->child(index), filterColumn, text, role)) {
 			++visibleChildCount;
 		}
 	}

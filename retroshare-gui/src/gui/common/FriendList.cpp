@@ -88,6 +88,7 @@
 #define ROLE_SORT_STANDARD_GROUP Qt::UserRole + 3
 #define ROLE_SORT_NAME           Qt::UserRole + 4
 #define ROLE_SORT_STATE          Qt::UserRole + 5
+#define ROLE_FILTER              Qt::UserRole + 6
 
 #define TYPE_GPG   0
 #define TYPE_SSL   1
@@ -1049,6 +1050,9 @@ void FriendList::insertPeers()
                     sslTextLabel->setVisible(!sslText.isEmpty());
                 }
 
+                // Filter
+                sslItem->setData(COLUMN_NAME, ROLE_FILTER, sslName);
+
                 if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
                     // private chat is available
                     sslOverlayIcon = QPixmap(":/images/chat.png");
@@ -1160,6 +1164,9 @@ void FriendList::insertPeers()
                 gpgTextLabel->setVisible(!gpgText.isEmpty());
             }
 
+            // Filter
+            gpgItem->setData(COLUMN_NAME, ROLE_FILTER, gpgName);
+
             gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
             gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
             gpgItem->setText(COLUMN_IP, showInfoAtGpgItem ? bestIP : "");
@@ -1188,6 +1195,9 @@ void FriendList::insertPeers()
                 groupItem->setHidden(false);
                 QString groupName = GroupDefs::name(*groupInfo);
                 groupItem->setText(COLUMN_NAME, QString("%1 (%2/%3)").arg(groupName).arg(onlineCount).arg(availableCount));
+
+                // Filter
+                groupItem->setData(COLUMN_NAME, ROLE_FILTER, groupName);
 
                 /* Sort data */
                 groupItem->setData(COLUMN_NAME, ROLE_SORT_NAME, groupName);
@@ -2254,7 +2264,7 @@ void FriendList::setShowGroups(bool show)
 void FriendList::filterItems(const QString &text)
 {
     mFilterText = text;
-    ui->peerTreeWidget->filterItems(COLUMN_NAME, mFilterText);
+    ui->peerTreeWidget->filterItems(COLUMN_NAME, mFilterText, ROLE_FILTER);
 }
 
 /**
