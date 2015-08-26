@@ -53,6 +53,14 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+// for realpath()
+#include <limits.h>
+#include <stdlib.h>
+
+// for strcmp()
+#include <string.h>
+
 #include <openssl/rand.h>
 #include <fcntl.h>
 
@@ -1251,6 +1259,27 @@ int RsServer::StartupRetroShare()
 	std::vector<std::string> plugins_directories ;
 
 #ifndef WINDOWS_SYS
+
+    /* add /usr/lib64 to the plugin directories, but only if it exists
+     * (it does not on 32bit systems) and if it is not linked with /usr/lib */
+    struct stat sb;
+    char *abs_usr_lib;
+    char *abs_usr_lib64;
+    if (stat("/usr/lib64", &sb) == 0) {
+        abs_usr_lib = realpath("/usr/lib", NULL);
+        abs_usr_lib64 = realpath("/usr/lib64", NULL);
+        if (abs_usr_lib &&
+            abs_usr_lib64 &&
+            !((strcmp(abs_usr_lib, "/usr/lib64") == 0) ||
+              (strcmp(abs_usr_lib64, "/usr/lib") == 0)
+             )
+           ) {
+            plugins_directories.push_back(std::string("/usr/lib64/retroshare/extensions6/"));
+        }
+        free(abs_usr_lib);
+        free(abs_usr_lib64);
+    }
+
 	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions6/")) ;
 #endif
 	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
