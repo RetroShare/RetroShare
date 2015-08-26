@@ -1164,7 +1164,7 @@ void RsGxsNetService::data_tick()
         //Start waiting as nothing to do in runup
         usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
 
-        if(mUpdateCounter >= 20)
+        if(mUpdateCounter >= 120) // 60 seconds
         {
             updateServerSyncTS();
             mUpdateCounter = 0;
