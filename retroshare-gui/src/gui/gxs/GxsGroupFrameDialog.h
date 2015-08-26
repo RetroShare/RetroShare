@@ -175,6 +175,7 @@ protected:
 
 private:
 	bool mInitialized;
+	bool mInFill;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
