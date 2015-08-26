@@ -782,6 +782,9 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 
   #else
 	/* For Linux, the data directory is set in libretroshare.pro  */
+	#ifndef DATA_DIR
+		#error DATA_DIR variable not set. Cannot compile.
+	#endif
 	dataDirectory = DATA_DIR;
 	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory << std::endl;
 
