@@ -298,6 +298,9 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 		// initialize first custom state string
         QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
         updatePeersCustomStateString(QString::fromStdString(chatId.toPeerId().toStdString()), customStateString);
+    } else if (chatType() == CHATTYPE_DISTANT){
+        hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
+        messageCount = Settings->getPrivateChatHistoryCount();
     } else if(chatId.isBroadcast()){
         hist_chat_type = RS_HISTORY_TYPE_PUBLIC;
         messageCount = Settings->getPublicChatHistoryCount();
@@ -325,7 +328,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                     continue;
 
                 QString name;
-                if (chatId.isLobbyId()) {
+                if (chatId.isLobbyId() || chatId.isGxsId()) {
                     RsIdentityDetails details;
                     if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
                         name = QString::fromUtf8(details.mNickname.c_str());

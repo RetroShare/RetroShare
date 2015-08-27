@@ -275,7 +275,7 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     QString messageText = RsHtml().formatText(NULL, QString::fromUtf8(msg.message.c_str()), formatTextFlag);
 
     QString name;
-    if (m_chatId.isLobbyId()) {
+    if (m_chatId.isLobbyId() || m_chatId.isGxsId()) {
         RsIdentityDetails details;
         if (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
             name = QString::fromUtf8(details.mNickname.c_str());
