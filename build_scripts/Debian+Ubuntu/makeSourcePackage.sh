@@ -88,7 +88,7 @@ if ! test -d ${workdir}/src/libretroshare/; then
 	exit
 fi
 
-cp -r data   ${workdir}/src/
+#cp -r data   ${workdir}/src/
 cp -r debian ${workdir}/debian
 
 #svn co -r${rev} ${svnpath}/trunk/ . 

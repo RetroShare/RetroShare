@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = retroshare-nogui
+TARGET = RetroShare06-nogui
 CONFIG += bitdht
 #CONFIG += introserver
 #CONFIG += sshserver
@@ -53,6 +53,13 @@ linux-* {
 				LIBS *= -lsqlcipher
 			}
 	}
+}
+
+unix {
+	isEmpty(PREFIX)  { PREFIX = /usr }
+
+	target.path = "$${PREFIX}/bin"
+	INSTALLS += target
 }
 
 linux-g++ {

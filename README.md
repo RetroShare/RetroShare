@@ -41,10 +41,24 @@ Compilation on Linux
    make
    ```
 
+4. Install
+   ```bash
+   sudo make install
+   ```
+
    The executables produced will be:
 
-         trunk/retroshare-gui/src/RetroShare
-         trunk/retroshare-nogui/src/retroshare-nogui
+         /usr/bin/RetroShare06
+         /usr/bin/RetroShare06-nogui
+
+For packagers
+-------------
+Packagers can use PREFIX and LIB\_DIR to customize the installation paths:
+```bash
+qmake PREFIX=/usr LIB_DIR=/usr/lib64
+make
+make INSTALL_ROOT=${PKGDIR} install
+```
 
 If libsqlcipher is not available as a package
 ---------------------------------------------

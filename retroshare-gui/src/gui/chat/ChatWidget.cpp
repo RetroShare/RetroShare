@@ -586,14 +586,14 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 			if (keyEvent) {
 				QString qsTextToFind=ui->leSearch->text();
-				if (((qsTextToFind.length()>iCharToStartSearch) || (keyEvent->key()==Qt::Key_Return)) && (keyEvent->text().length()>0))
+				if (keyEvent->key()==Qt::Key_Backspace) {
+					qsTextToFind=qsTextToFind.left(qsTextToFind.length()-1);// "\010"
+				} else if (keyEvent->key()==Qt::Key_Tab) { // "\011"
+				} else if (keyEvent->key()==Qt::Key_Return) { // "\015"
+				} else if (keyEvent->text().length()==1)
+					qsTextToFind+=keyEvent->text();
+				if (((qsTextToFind.length()>=iCharToStartSearch) || (keyEvent->key()==Qt::Key_Return)) && (keyEvent->text().length()>0))
 				{
-					if (keyEvent->key()==Qt::Key_Backspace) {
-						qsTextToFind=qsTextToFind.left(qsTextToFind.length()-1);// "\010"
-					} else if (keyEvent->key()==Qt::Key_Tab) { // "\011"
-					} else if (keyEvent->key()==Qt::Key_Return) { // "\015"
-					} else if (keyEvent->text().length()==1)
-						qsTextToFind+=keyEvent->text();
 
 					findText(qsTextToFind);
 				} else {
@@ -888,7 +888,9 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 
 	formatMsg.prepend(QString("<a name=\"%1_%2\"/>").arg(timeStamp).arg(name));
 	//To call this anchor do:    ui->textBrowser->scrollToAnchor(QString("%1_%2").arg(timeStamp).arg(name));
-    ui->textBrowser->textCursor().setBlockFormat(QTextBlockFormat ());
+	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
+	textCursor.movePosition(QTextCursor::End);
+	textCursor.setBlockFormat(QTextBlockFormat ());
 	ui->textBrowser->append(formatMsg);
 
 	if (ui->leSearch->isVisible()) {
