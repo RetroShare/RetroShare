@@ -321,8 +321,21 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                 // it can happen that a message is first added to the message history
                 // and later the gui receives the message through notify
                 // avoid this by not adding history entries if their age is < 2secs
-                if((time(NULL)-2) > historyIt->recvTime)
-                    addChatMsg(historyIt->incoming, QString::fromUtf8(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+                if ((time(NULL)-2) <= historyIt->recvTime)
+                    continue;
+
+                QString name;
+                if (chatId.isLobbyId()) {
+                    RsIdentityDetails details;
+                    if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
+                        name = QString::fromUtf8(details.mNickname.c_str());
+                    else
+                        name = QString::fromUtf8(historyIt->peerName.c_str());
+                } else {
+                    name = QString::fromUtf8(historyIt->peerName.c_str());
+                }
+
+                addChatMsg(historyIt->incoming, name, QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
             }
 		}
 	}

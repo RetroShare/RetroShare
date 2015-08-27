@@ -36,6 +36,7 @@
 
 #include "rshare.h"
 #include <retroshare/rshistory.h>
+#include <retroshare/rsidentity.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 
@@ -272,7 +273,19 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     }
 
     QString messageText = RsHtml().formatText(NULL, QString::fromUtf8(msg.message.c_str()), formatTextFlag);
-    QString formatMsg = style.formatMessage(type, QString::fromUtf8(msg.peerName.c_str()), QDateTime::fromTime_t(msg.sendTime), messageText);
+
+    QString name;
+    if (m_chatId.isLobbyId()) {
+        RsIdentityDetails details;
+        if (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
+            name = QString::fromUtf8(details.mNickname.c_str());
+        else
+            name = QString::fromUtf8(msg.peerName.c_str());
+    } else {
+        name = QString::fromUtf8(msg.peerName.c_str());
+    }
+
+    QString formatMsg = style.formatMessage(type, name, QDateTime::fromTime_t(msg.sendTime), messageText);
 
     itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_MSGID, msg.msgId);
