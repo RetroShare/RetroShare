@@ -416,7 +416,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
 
 	if (flag & RSHTML_OPTIMIZEHTML_MASK) {
-		optimizeHtml(formattedText, flag & RSHTML_OPTIMIZEHTML_MASK, backgroundColor, desiredContrast);
+		optimizeHtml(formattedText, flag, backgroundColor, desiredContrast);
 	}
 
 	return formattedText;
