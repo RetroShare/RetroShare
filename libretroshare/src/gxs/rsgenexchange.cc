@@ -2096,7 +2096,7 @@ void RsGenExchange::processGroupDelete()
 		gprIds.push_back(groupId);
 		mDataStore->removeGroups(gprIds);
 		toNotify.insert(std::make_pair(
-		                  token, GrpNote(true, RsGxsGroupId())));
+		                  token, GrpNote(true, groupId)));
 	}
 
 
