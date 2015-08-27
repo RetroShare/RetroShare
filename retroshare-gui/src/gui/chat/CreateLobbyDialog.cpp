@@ -128,6 +128,7 @@ void CreateLobbyDialog::createLobby()
     case GxsIdChooser::NoId:
     case GxsIdChooser::None:
         return ;
+    default: break ;
     }
     // add to group
 
@@ -136,6 +137,9 @@ void CreateLobbyDialog::createLobby()
     if(ui->security_CB->currentIndex() == 0)
         lobby_flags |= RS_CHAT_LOBBY_FLAGS_PUBLIC ;
 
+    if(ui->pgp_signed_CB->isChecked())
+        lobby_flags |= RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ;
+    
     ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
 
     std::cerr << "gui: Created chat lobby " << std::hex << id << std::dec << std::endl ;
