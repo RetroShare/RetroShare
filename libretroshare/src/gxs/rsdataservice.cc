@@ -1383,6 +1383,8 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     RsScopeTimer timer("");
+    int resultCount = 0;
+    int requestedGroups = grp.size();
 #endif
 
     if(grp.empty()){
@@ -1406,6 +1408,10 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
                     grp[g->mGroupId] = g;
                 }
                 valid = c->moveToNext();
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                ++resultCount;
+#endif
             }
             delete c;
         }
@@ -1432,6 +1438,10 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
                           grp[g->mGroupId] = g;
                       }
                       valid = c->moveToNext();
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                      ++resultCount;
+#endif
                   }
                   delete c;
               }
@@ -1441,7 +1451,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
       }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    std::cerr << "RsDataService::retrieveGxsGrpMetaData() " << mDbName << ", Time: " << timer.duration() << std::endl;
+    std::cerr << "RsDataService::retrieveGxsGrpMetaData() " << mDbName << ", Requests: " << requestedGroups << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
     return 1;
