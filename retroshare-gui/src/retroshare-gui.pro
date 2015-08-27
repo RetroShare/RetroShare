@@ -43,7 +43,7 @@ unfinished {
 #CONFIG += blogs
 
 TEMPLATE = app
-TARGET = RetroShare
+TARGET = RetroShare06
 
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
@@ -109,6 +109,18 @@ linux-* {
 	DEFINES *= UBUNTU
 }
 
+unix {
+	isEmpty(PREFIX)  { PREFIX = /usr }
+	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
+
+	target.path = "$${PREFIX}/bin"
+	INSTALLS += target
+
+	sound_files.path="$${DATA_DIR}/sounds"
+	sound_files.files=sounds/*
+	INSTALLS += sound_files
+}
+
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
 }
@@ -129,12 +141,6 @@ version_detail_bash_script {
 		PRE_TARGETDEPS = write_version_detail
 		write_version_detail.commands = $$PWD/version_detail.bat
 	}
-}
-
-install_rs {
-	INSTALLS += binary_rs
-	binary_rs.path = $$(PREFIX)/usr/bin
-	binary_rs.files = ./RetroShare
 }
 
 #################### Cross compilation for windows under Linux ###################

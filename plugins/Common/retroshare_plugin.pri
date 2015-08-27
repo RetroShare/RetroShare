@@ -3,6 +3,14 @@ TEMPLATE = lib
 DEPENDPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 
+unix {
+	isEmpty(PREFIX)  { PREFIX = /usr }
+	isEmpty(LIB_DIR) { LIB_DIR = "$${PREFIX}/lib" }
+
+	target.path = "$${LIB_DIR}/retroshare/extensions6"
+	INSTALLS += target
+}
+
 linux-g++ {
 	LIBS *= -ldl
 }
