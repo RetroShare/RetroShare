@@ -6,21 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>426</height>
+    <width>803</width>
+    <height>517</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -99,7 +90,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QFrame" name="toolBarFrame">
@@ -201,9 +192,6 @@
         </property>
         <item row="0" column="0">
          <widget class="QGroupBox" name="lobbyinfo_groupBox">
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
           <property name="title">
            <string>Selected lobby info</string>
           </property>
@@ -261,6 +249,19 @@
                  </property>
                  <property name="text">
                   <string>Type:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Security:</string>
                  </property>
                 </widget>
                </item>
@@ -331,6 +332,13 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="text">
+                  <string>TextLabel</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lobbysec_lineEdit">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>

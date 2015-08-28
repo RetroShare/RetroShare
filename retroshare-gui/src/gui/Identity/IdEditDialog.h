@@ -47,6 +47,7 @@ public:
 
 	void setupNewId(bool pseudo);
 	void setupExistingId(const RsGxsGroupId &keyId);
+    	void enforceNoAnonIds() ;
 
 	RsGxsGroupId groupId() { return mGroupId; }
 
