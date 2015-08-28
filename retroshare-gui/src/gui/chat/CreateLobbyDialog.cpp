@@ -57,7 +57,8 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->lobbyTopic_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
-    connect( ui->idChooser_CB, SIGNAL( currentChanged ( int ) ), this, SLOT( checkTextFields( ) ) );
+    connect( ui->idChooser_CB, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( checkTextFields( ) ) );
+    connect( ui->pgp_signed_CB, SIGNAL( toggled ( bool ) ), this, SLOT( checkTextFields( ) ) );
 
 	/* initialize key share list */
 	ui->keyShareList->setHeaderText(tr("Contacts:"));
@@ -105,6 +106,13 @@ void CreateLobbyDialog::checkTextFields()
                     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true) ;
                     break ;
     }
+    
+    RsIdentityDetails(idd) ;
+    
+    rsIdentity->getIdDetails(id,idd) ;
+    
+    if( (!idd.mPgpKnown) && ui->pgp_signed_CB->isChecked())
+                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
 }
 
 void CreateLobbyDialog::createLobby()
