@@ -1,10 +1,6 @@
-usr/share/applications/retroshare.desktop
-usr/share/pixmaps/retroshare.xpm
-usr/share/RetroShare/bdboot.txt
-usr/share/icons/hicolor/48x48/apps/retroshare.png
-usr/share/icons/hicolor/24x24/apps/retroshare.png
-usr/share/icons/hicolor/64x64/apps/retroshare.png
-usr/bin
-usr/bin/RetroShare
-usr/bin/RetroShare-nogui
-
+debian/tmp/usr/bin/RetroShare06
+debian/tmp/usr/bin/RetroShare06-nogui
+debian/tmp/usr/share/applications/retroshare06.desktop
+debian/tmp/usr/share/icons/hicolor/*
+debian/tmp/usr/share/pixmaps/retroshare06.xpm
+debian/tmp/usr/share/RetroShare06/*
