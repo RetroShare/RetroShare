@@ -77,7 +77,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	mTitleFontWeight = 0; // Standard
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
 	setWizardStyle(ModernStyle);
 #endif
 
@@ -568,7 +568,7 @@ void ConnectFriendWizard::initializePage(int id)
 
 static void sendMail(QString sAddress, QString sSubject, QString sBody)
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 	/* search and replace the end of lines with: "%0D%0A" */
 	sBody.replace("\n", "%0D%0A");
 #endif

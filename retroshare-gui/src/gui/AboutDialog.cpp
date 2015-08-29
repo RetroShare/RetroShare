@@ -761,13 +761,13 @@ void AboutDialog::on_copy_button_clicked()
 		verInfo+=QSysInfo::prettyProductName();
 	#endif
 #else
-	#ifdef Q_WS_X11
+	#ifdef Q_OS_LINUX
 	verInfo+="Linux";
 	#endif
-	#ifdef Q_WS_WIN
+	#ifdef Q_OS_WIN
 	verInfo+="Windows";
 	#endif
-	#ifdef Q_WS_MACX
+	#ifdef Q_OS_MAC
 	verInfo+="Mac";
 	#endif
 #endif
