@@ -25,6 +25,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QMenu>
+#include <QWidgetAction>
 
 #include "ChatLobbyDialog.h"
 #include "gui/ChatLobbyWidget.h"
@@ -81,8 +82,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	// Add a button to invite friends.
 	//
 	inviteFriendsButton = new QToolButton ;
-    inviteFriendsButton->setMinimumSize(QSize(2*S,2*S)) ;
-    inviteFriendsButton->setMaximumSize(QSize(2*S,2*S)) ;
+  inviteFriendsButton->setMinimumSize(QSize(2*S,2*S)) ;
+  inviteFriendsButton->setMaximumSize(QSize(2*S,2*S)) ;
 	inviteFriendsButton->setText(QString()) ;
 	inviteFriendsButton->setAutoRaise(true) ;
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
@@ -106,8 +107,14 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
     ownIdChooser = new GxsIdChooser() ;
     ownIdChooser->loadIds(IDCHOOSER_ID_REQUIRED,current_id) ;
+    
+    QWidgetAction *checkableAction = new QWidgetAction(this);
+    checkableAction->setDefaultWidget(ownIdChooser);
 
-    getChatWidget()->addChatBarWidget(ownIdChooser) ;
+    ui.chatWidget->addToolsAction(checkableAction);
+    //getChatWidget()->addChatBarWidget(ownIdChooser);
+    
+
 
     connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
 

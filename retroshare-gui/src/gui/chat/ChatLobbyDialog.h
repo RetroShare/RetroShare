@@ -29,6 +29,7 @@
 
 class GxsIdChooser ;
 class QToolButton;
+class QWidgetAction;
 
 class ChatLobbyDialog: public ChatDialog
 {
@@ -102,6 +103,7 @@ private:
 
 	QAction *muteAct;
     QAction *distantChatAct;
+    QWidgetAction *checkableAction;
 
     GxsIdChooser *ownIdChooser ;
 };
