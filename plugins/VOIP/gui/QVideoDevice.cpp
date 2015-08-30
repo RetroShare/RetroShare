@@ -77,7 +77,7 @@ void QVideoInputDevice::grabFrame()
 
     if(_video_processor != NULL) 
     {
-	    _video_processor->processImage(image,0) ;
+	    _video_processor->processImage(image) ;
 
 	    emit networkPacketReady() ;
     }

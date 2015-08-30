@@ -29,7 +29,7 @@ public:
     JPEGVideo() ;
     
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) ;
+    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& chunk) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
 
     static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
@@ -47,7 +47,7 @@ public:
     WaveletVideo() {}
 
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) ;
+    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& chunk) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
 private:
 
@@ -73,7 +73,7 @@ public:
     ~FFmpegVideo() ;
 
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) ;
+    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& chunk) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
     
 private:
@@ -130,7 +130,7 @@ class VideoProcessor
 	public:
 		// Takes the next image to be encoded. 
 		//
-		bool processImage(const QImage& Image, uint32_t size_hint) ;
+		bool processImage(const QImage& Image) ;
 		bool encodedPacketReady() const { return !_encoded_out_queue.empty() ; }
 		bool nextEncodedPacket(RsVOIPDataChunk& ) ;
 

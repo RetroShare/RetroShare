@@ -36,7 +36,7 @@ VideoProcessor::VideoProcessor()
     
     _estimated_bandwidth_in = 0 ;
     _estimated_bandwidth_out = 0 ;
-    _target_bandwidth_out = 0 ;
+    _target_bandwidth_out = 30*1024 ;	// 30 KB/s
     
     _total_encoded_size_in = 0 ;
     _total_encoded_size_out = 0 ;
@@ -58,7 +58,7 @@ VideoProcessor::~VideoProcessor()
     }
 }
 
-bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint)
+bool VideoProcessor::processImage(const QImage& img)
 {
     VideoCodec *codec ;
 
@@ -80,7 +80,7 @@ bool VideoProcessor::processImage(const QImage& img,uint32_t size_hint)
     {
 	    RsVOIPDataChunk chunk ;
 
-	    if(codec->encodeData(img.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),size_hint,chunk) && chunk.size > 0)
+	    if(codec->encodeData(img.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),_target_bandwidth_out,chunk) && chunk.size > 0)
 	    {
 		    RS_STACK_MUTEX(vpMtx) ;
 		    _encoded_out_queue.push_back(chunk) ;
@@ -318,7 +318,7 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
 }
 
 
-bool WaveletVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataChunk& voip_chunk)
+bool WaveletVideo::encodeData(const QImage& image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& voip_chunk)
 {
     static const int   WAVELET_IMG_SIZE =  128 ;
     static const float W_THRESHOLD      = 0.005 ;	// low quality
@@ -568,7 +568,28 @@ FFmpegVideo::FFmpegVideo()
     if (!encoding_context)  throw std::runtime_error("AV: Could not allocate video codec encoding context");
 
     /* put sample parameters */
-    encoding_context->bit_rate = 200000;
+    encoding_context->bit_rate = 30*1024 ; // default bitrate is 30KB/s
+    encoding_context->bit_rate_tolerance = encoding_context->bit_rate ;
+    encoding_context->rc_min_rate = 0;
+    encoding_context->rc_max_rate = 81920;
+    encoding_context->rc_buffer_size = 1024*1024;
+    encoding_context->flags |= CODEC_FLAG_PSNR;
+    //encoding_context->partitions = X264_PART_I4X4 | X264_PART_I8X8 | X264_PART_P8X8 | X264_PART_P4X4 | X264_PART_B8X8;
+    //encoding_context->crf = 0.0f;
+    //encoding_context->cqp = 26;
+    encoding_context->i_quant_factor = 0.769f;
+    encoding_context->b_quant_factor = 1.4f;
+    encoding_context->rc_initial_buffer_occupancy = (int) ( 0.9 * encoding_context->rc_buffer_size);
+    encoding_context->rc_max_available_vbv_use = 0.9;
+    encoding_context->rc_min_vbv_overflow_use = 0.1;
+    encoding_context->time_base.num = 1;
+    encoding_context->time_base.den = 15;//framesPerSecond;
+    //encoding_context->me_method = ME_HEX;
+    encoding_context->qmin = 10;
+    encoding_context->qmax = 51;
+    encoding_context->max_qdiff = 4;
+    encoding_context->max_b_frames = 4; 
+    
     /* resolution must be a multiple of two */
     encoding_context->width = 352;//176;
     encoding_context->height = 288;//144;
@@ -580,10 +601,9 @@ FFmpegVideo::FFmpegVideo()
      * then gop_size is ignored and the output of encoder
      * will always be I frame irrespective to gop_size
      */
-    encoding_context->gop_size = 10;
+    encoding_context->gop_size = 250;
     encoding_context->max_b_frames = 1;
-    //context->pix_fmt = AV_PIX_FMT_RGB24;
-    encoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
+    encoding_context->pix_fmt = AV_PIX_FMT_YUV420P; //context->pix_fmt = AV_PIX_FMT_RGB24;
 
     if (codec_id == AV_CODEC_ID_H264)
         av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
@@ -664,13 +684,22 @@ FFmpegVideo::~FFmpegVideo()
     free(decoding_frame_buffer);
 }
 
+#define MAX_FFMPEG_ENCODING_BITRATE 81920
 
-bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataChunk& voip_chunk)
+bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& voip_chunk)
 {
 #ifdef DEBUG_MPEG_VIDEO 
 	std::cerr << "Encoding frame of size " << image.width() << "x" << image.height() << ", resized to " << encoding_frame_buffer->width << "x" << encoding_frame_buffer->height << " : "; 
 #endif
 	QImage input ;
+    
+    	if(target_encoding_bitrate > MAX_FFMPEG_ENCODING_BITRATE)
+        {
+            std::cerr << "Max encodign bitrate eexceeded. Capping to " << MAX_FFMPEG_ENCODING_BITRATE << std::endl;
+            target_encoding_bitrate = MAX_FFMPEG_ENCODING_BITRATE ;
+        }
+	encoding_context->bit_rate = target_encoding_bitrate;
+	encoding_context->bit_rate_tolerance = target_encoding_bitrate;
 
 	if(image.width() != encoding_frame_buffer->width || image.height() != encoding_frame_buffer->height)
 		input = image.scaled(QSize(encoding_frame_buffer->width,encoding_frame_buffer->height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
@@ -775,6 +804,7 @@ bool FFmpegVideo::encodeData(const QImage& image,uint32_t size_hint,RsVOIPDataCh
 	}
 
 }
+
 bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 {
 #ifdef DEBUG_MPEG_VIDEO
@@ -843,9 +873,9 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 				int U  = decoding_frame_buffer->data[1][(y/2) * decoding_frame_buffer->linesize[1] + x/2] ;
 				int V  = decoding_frame_buffer->data[2][(y/2) * decoding_frame_buffer->linesize[2] + x/2] ;
 
-				int R = std::min(255,std::max(0,(int)(1.164*(Y - 16) + 1.596*(V - 128)))) ;
+				int B = std::min(255,std::max(0,(int)(1.164*(Y - 16) + 1.596*(V - 128)))) ;
 				int G = std::min(255,std::max(0,(int)(1.164*(Y - 16) - 0.813*(V - 128) - 0.391*(U - 128)))) ;
-				int B = std::min(255,std::max(0,(int)(1.164*(Y - 16)                   + 2.018*(U - 128)))) ;
+				int R = std::min(255,std::max(0,(int)(1.164*(Y - 16)                   + 2.018*(U - 128)))) ;
 
 				image.setPixel(QPoint(x,y),QRgb( 0xff000000 + (R << 16) + (G << 8) + B)) ;
 			}
