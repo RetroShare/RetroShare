@@ -257,9 +257,8 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 
 	if ((bGetNickName || bFoundTextToNotify || _bCountUnRead)){
 		QString strAnchor = time.toString(Qt::ISODate);
-		strAnchor.append("_").append(senderName);
 		MsgData msgData;
-		msgData.text=msg;
+		msgData.text=senderName + ": " + msg;
 		msgData.unread=!(bGetNickName || bFoundTextToNotify);
 
 		_listMsg[lobby_id][strAnchor]=msgData;

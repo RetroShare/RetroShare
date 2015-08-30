@@ -902,7 +902,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
 
-	formatMsg.prepend(QString("<a name=\"%1_%2\"/>").arg(timeStamp).arg(name));
+	formatMsg.prepend(QString("<a name=\"%1\"/>").arg(timeStamp));
 	//To call this anchor do:    ui->textBrowser->scrollToAnchor(QString("%1_%2").arg(timeStamp).arg(name));
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
