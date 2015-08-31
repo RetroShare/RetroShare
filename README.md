@@ -37,7 +37,7 @@ Compilation on Linux
 3. Compile
    ```bash
    cd trunk
-   qmake CONFIG=debug
+   qmake CONFIG+=debug
    make
    ```
 
@@ -55,7 +55,7 @@ For packagers
 -------------
 Packagers can use PREFIX and LIB\_DIR to customize the installation paths:
 ```bash
-qmake PREFIX=/usr LIB_DIR=/usr/lib64
+qmake PREFIX=/usr LIB_DIR=/usr/lib64 "CONFIG-=debug" "CONFIG+=release"
 make
 make INSTALL_ROOT=${PKGDIR} install
 ```
