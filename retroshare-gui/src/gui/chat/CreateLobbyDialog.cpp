@@ -47,11 +47,10 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 
     ui->idChooser_CB->loadIds(IDCHOOSER_ID_REQUIRED, default_identity);
 
-//#if QT_VERSION >= 0x040700
-//	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
-//	ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
-//#endif
-//	ui->nickName_LE->setText(QString::fromUtf8(default_nick.c_str())) ;
+#if QT_VERSION >= 0x040700
+	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here"));
+	ui->lobbyTopic_LE->setPlaceholderText(tr("Set a descriptive topic here"));
+#endif
 
 	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(createLobby()));
 	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
