@@ -177,8 +177,6 @@ linux-* {
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
-	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 	LIBS *= -lssl -lupnp -lixml
 	LIBS *= -lcrypto -lz -lpthread
 }
@@ -340,6 +338,10 @@ openbsd-* {
 }
 
 ################################### COMMON stuff ##################################
+
+# openpgpsdk
+PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 
 HEADERS +=	dbase/cachestrapper.h \
 			dbase/fimonitor.h \
