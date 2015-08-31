@@ -448,7 +448,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			}
 		}
 
-		if (chatType() == CHATTYPE_LOBBY) {
+		if (notify && chatType() == CHATTYPE_LOBBY) {
 			if ((event->type() == QEvent::KeyPress)
 			    || (event->type() == QEvent::MouseMove)
 			    || (event->type() == QEvent::Enter)
@@ -460,9 +460,11 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				QPoint bottom_right(ui->textBrowser->viewport()->width() - 1, ui->textBrowser->viewport()->height() - 1);
 				int end_pos = ui->textBrowser->cursorForPosition(bottom_right).position();
 				cursor.setPosition(end_pos, QTextCursor::KeepAnchor);
-
-				if (!cursor.selectedText().isEmpty()){
-					QRegExp rx("<a\\s+name\\s*=\\s*\"(.*)\"",Qt::CaseInsensitive, QRegExp::RegExp2);
+				if ((cursor.position() != lastUpdateCursorPos || cursor.selectionEnd() != lastUpdateCursorEnd) &&
+				   !cursor.selectedText().isEmpty()) {
+					lastUpdateCursorPos = cursor.position();
+					lastUpdateCursorEnd = cursor.selectionEnd();
+					QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
 					rx.setMinimal(true);
 					QString sel=cursor.selection().toHtml();
 					QStringList anchors;
@@ -473,13 +475,9 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					}
 					if (!anchors.isEmpty()){
 						for (QStringList::iterator it=anchors.begin();it!=anchors.end();++it) {
-							QByteArray bytArray=it->toUtf8();
-							std::string stdString=std::string(bytArray.begin(),bytArray.end());
-							if (notify) notify->chatLobbyCleared(chatId.toLobbyId()
-							                                     ,QString::fromUtf8(stdString.c_str())
-							                                     ,obj != ui->textBrowser && obj != ui->textBrowser->viewport());//, true);
+							notify->chatLobbyCleared(chatId.toLobbyId(), *it);
 						}
-	}
+					}
 				}
 			}
 		}
@@ -490,11 +488,11 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent) {
-                if (keyEvent->key() == Qt::Key_Delete ) {
+                if (notify && keyEvent->key() == Qt::Key_Delete) {
 					// Delete key pressed
 					if (ui->textBrowser->textCursor().selectedText().length() > 0) {
 						if (chatType() == CHATTYPE_LOBBY) {
-							QRegExp rx("<a\\s+name\\s*=\\s*\"(.*)\"",Qt::CaseInsensitive, QRegExp::RegExp2);
+							QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
 							rx.setMinimal(true);
 							QString sel=ui->textBrowser->textCursor().selection().toHtml();
 							QStringList anchors;
@@ -505,9 +503,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 							}
 
 							for (QStringList::iterator it=anchors.begin();it!=anchors.end();++it) {
-								QByteArray bytArray=it->toUtf8();
-								std::string stdString=std::string(bytArray.begin(),bytArray.end());
-								if (notify) notify->chatLobbyCleared(chatId.toLobbyId(), QString::fromUtf8(stdString.c_str()));
+								notify->chatLobbyCleared(chatId.toLobbyId(), *it);
 							}
 
 						}
@@ -529,7 +525,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			cursor.select(QTextCursor::WordUnderCursor);
 			QString toolTipText = "";
 			if (!cursor.selectedText().isEmpty()){
-				QRegExp rx("<a\\s+name\\s*=\\s*\"(.*)\"",Qt::CaseInsensitive, QRegExp::RegExp2);
+				QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
 				rx.setMinimal(true);
 				QString sel=cursor.selection().toHtml();
 				QStringList anchors;
@@ -902,7 +898,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
 
-	formatMsg.prepend(QString("<a name=\"%1_%2\"/>").arg(timeStamp).arg(name));
+	formatMsg.prepend(QString("<a name=\"%1\"/>").arg(timeStamp));
 	//To call this anchor do:    ui->textBrowser->scrollToAnchor(QString("%1_%2").arg(timeStamp).arg(name));
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
