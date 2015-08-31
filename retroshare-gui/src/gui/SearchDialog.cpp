@@ -213,10 +213,6 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     checkText(ui.lineEdit->text());
 
-/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 SearchDialog::~SearchDialog()

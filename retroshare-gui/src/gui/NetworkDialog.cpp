@@ -169,10 +169,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     //updateNetworkStatus();
     //loadtabsettings();
     
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 void NetworkDialog::changeEvent(QEvent *e)
