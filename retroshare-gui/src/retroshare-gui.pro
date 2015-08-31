@@ -2,6 +2,7 @@
 
 QT     += network xml script
 CONFIG += qt gui uic qrc resources idle bitdht
+CONFIG += link_prl
 
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.

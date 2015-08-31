@@ -8,6 +8,7 @@ CONFIG += bitdht
 # webinterface, requires libmicrohttpd
 CONFIG += webui
 CONFIG -= qt xml gui
+CONFIG += link_prl
 
 # if you are linking against the libretroshare with gxs.
 # this option links against the required sqlite library.

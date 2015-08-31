@@ -2,6 +2,7 @@
 
 TEMPLATE = lib
 CONFIG += staticlib bitdht
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
 
