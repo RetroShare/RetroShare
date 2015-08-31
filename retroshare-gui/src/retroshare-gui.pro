@@ -85,27 +85,6 @@ linux-* {
 
 	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-	SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-	isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-
-		exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-
-			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-			DEPENDPATH += ../../../lib/sqlcipher/src/
-			INCLUDEPATH += ../../../lib/sqlcipher/src/
-			DEPENDPATH += ../../../lib/sqlcipher/tsrc/
-			INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
-		} else {
-			message(libsqlcipher.a not found. Compilation will not use SQLCIPHER. Database will be unencrypted.)
-			DEFINES *= NO_SQLCIPHER
-			LIBS *= -lsqlite3
-		}
-
-	} else {
-		LIBS += -lsqlcipher
-	}
-
 	LIBS *= -lglib-2.0
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions

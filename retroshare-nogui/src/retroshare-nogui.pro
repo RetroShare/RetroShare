@@ -35,27 +35,6 @@ linux-* {
 	LIBS += -lssl -lupnp -lixml -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lz -lpthread
 	LIBS *= -rdynamic
-
-	gxs {
-		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-			isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-
-				exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-
-					LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-						DEPENDPATH += ../../../lib/sqlcipher/src/
-						INCLUDEPATH += ../../../lib/sqlcipher/src/
-				} else {
-					message(libsqlcipher.a not found. Compilation will not use SQLCIPHER. Database will be unencrypted.)
-						DEFINES *= NO_SQLCIPHER
-						LIBS *= -lsqlite3
-				}
-
-			} else {
-				LIBS *= -lsqlcipher
-			}
-	}
 }
 
 unix {

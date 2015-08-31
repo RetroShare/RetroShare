@@ -138,15 +138,22 @@ linux-* {
 	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
-        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-        isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-		!exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-			message(libsqlcipher.a not found. Compilation will not use SQLCIPER. Database will be unencrypted.)
-				DEFINES *= NO_SQLCIPHER
+	contains(CONFIG, NO_SQLCIPHER) {
+		DEFINES *= NO_SQLCIPHER
+		LIBS *= -lsqlite3
+	} else {
+	        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+	        isEmpty(SQLCIPHER_OK) {
+			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+			exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+				LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+				DEPENDPATH += ../../../lib/
+				INCLUDEPATH += ../../../lib/
+			} else {
+				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
+			}
 		} else {
-			DEPENDPATH += ../../../lib/
-			INCLUDEPATH += ../../../lib/
+			LIBS *= -lsqlcipher
 		}
 	}
 
