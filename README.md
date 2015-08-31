@@ -51,6 +51,17 @@ Compilation on Linux
          /usr/bin/RetroShare06
          /usr/bin/RetroShare06-nogui
 
+Compile only retroshare-nogui
+-----------------------------
+If you want to run RetroShare on a server and don’t need the gui and plugins,
+you can run the following commands to only compile/install the nogui version:
+
+```bash
+qmake
+make retroshare-nogui
+sudo make retroshare-nogui-install_subtargets
+```
+
 For packagers
 -------------
 Packagers can use PREFIX and LIB\_DIR to customize the installation paths:
