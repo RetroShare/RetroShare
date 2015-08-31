@@ -31,10 +31,7 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lupnp -lixml -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lz -lpthread
-	LIBS *= -rdynamic
+	LIBS *= -rdynamic -ldl
 }
 
 unix {
@@ -165,11 +162,6 @@ openbsd-* {
 
 
 ############################## Common stuff ######################################
-
-# bitdht config
-bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-}
 
 DEPENDPATH += . ../../libretroshare/src
 INCLUDEPATH += . ../../libretroshare/src

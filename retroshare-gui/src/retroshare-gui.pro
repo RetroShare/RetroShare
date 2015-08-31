@@ -76,17 +76,14 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lX11 -lz
+	LIBS *= -lX11 -lXss
 
 	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-	LIBS *= -lglib-2.0
-	LIBS *= -rdynamic
+	#LIBS *= -lglib-2.0
+	LIBS *= -rdynamic -ldl
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
 }
@@ -305,11 +302,6 @@ openbsd-* {
 # to rename the patched version of SSL to something like libsslxpgp.a and libcryptoxpg.a
 
 # ###########################################
-
-bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
-}
 
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/

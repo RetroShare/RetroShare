@@ -83,6 +83,8 @@ SOURCES +=	tcponudp/udppeer.cc \
 	# The next line is for compliance with debian packages. Keep it!
 	INCLUDEPATH += ../libbitdht
 	DEFINES *= RS_USE_BITDHT
+	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+	LIBS += ../../libbitdht/src/lib/libbitdht.a
 }
 
 
@@ -175,6 +177,10 @@ linux-* {
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
+	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	LIBS *= -lssl -lupnp -lixml
+	LIBS *= -lcrypto -lz -lpthread
 }
 
 unix {
