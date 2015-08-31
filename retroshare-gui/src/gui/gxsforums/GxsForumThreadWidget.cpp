@@ -206,6 +206,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->subscribeToolButton->setToolTip(tr("<p>Subscribing to the forum will gather \
                                            available posts from your subscribed friends, and make the \
                                            forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
+    ui->threadTreeWidget->enableColumnCustomize(true);
 }
 
 GxsForumThreadWidget::~GxsForumThreadWidget()

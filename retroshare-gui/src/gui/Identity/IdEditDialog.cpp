@@ -207,7 +207,13 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId &keyId)
 	groupIds.push_back(keyId);
 
 	uint32_t token;
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
+    mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
+}
+
+void IdEditDialog::enforceNoAnonIds()
+{
+    ui->radioButton_GpgId->setChecked(true);
+    ui->radioButton_GpgId->setEnabled(false);
 }
 
 void IdEditDialog::loadExistingId(uint32_t token)

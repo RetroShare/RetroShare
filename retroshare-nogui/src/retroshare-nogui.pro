@@ -122,7 +122,6 @@ win32 {
 	INCLUDEPATH += $$LIBS_DIR/include
 
 	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 		LIBS += -lsqlcipher
 	}
 }

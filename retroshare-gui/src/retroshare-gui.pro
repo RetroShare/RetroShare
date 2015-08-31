@@ -116,9 +116,13 @@ unix {
 	target.path = "$${PREFIX}/bin"
 	INSTALLS += target
 
-	sound_files.path="$${DATA_DIR}/sounds"
-	sound_files.files=sounds/*
-	INSTALLS += sound_files
+	data_files.path="$${DATA_DIR}/"
+	data_files.files=sounds qss
+	INSTALLS += data_files
+
+	style_files.path="$${DATA_DIR}/stylesheets"
+	style_files.files=gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
+	INSTALLS += style_files
 }
 
 linux-g++ {

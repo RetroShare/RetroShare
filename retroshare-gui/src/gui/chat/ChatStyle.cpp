@@ -144,35 +144,30 @@ void ChatStyle::styleChanged(int styleType)
     }
 }
 
-static QString getBaseDir()
+static QStringList getBaseDirList()
 {
-    // application path
-    QString baseDir = QString::fromUtf8(RsAccounts::ConfigDirectory().c_str());
+    // Search chat styles in config dir and data dir (is application dir for portable)
+    QStringList baseDirs;
+    baseDirs.append(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+    baseDirs.append(QString::fromUtf8(RsAccounts::DataDirectory().c_str()));
 
-#ifdef WIN32
-    if (RsInit::isPortable ()) {
-        // application dir for portable version
-        baseDir = QApplication::applicationDirPath();
-    }
-#endif
-
-    return baseDir;
+    return baseDirs;
 }
 
 bool ChatStyle::setStylePath(const QString &stylePath, const QString &styleVariant)
 {
     m_styleType = TYPE_UNKNOWN;
 
-    m_styleDir.setPath(getBaseDir());
-    if (m_styleDir.cd(stylePath) == false) {
-        m_styleDir = QDir("");
-        m_styleVariant.clear();
-        return false;
+    foreach (QString dir, getBaseDirList()) {
+        m_styleDir.setPath(dir);
+        if (m_styleDir.cd(stylePath)) {
+            m_styleVariant = styleVariant;
+            return true;
+        }
     }
-
-    m_styleVariant = styleVariant;
-
-    return true;
+    m_styleDir.setPath("");
+    m_styleVariant.clear();
+    return false;
 }
 
 bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
@@ -471,9 +466,6 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
 {
     styles.clear();
 
-    // base dir
-    QDir baseDir(getBaseDir());
-
     ChatStyleInfo standardInfo;
     QString stylePath;
 
@@ -516,25 +508,27 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
         return false;
     }
 
-    QDir dir(baseDir);
-    if (dir.cd("stylesheets") == false) {
-        // no user styles available
-        return true;
-    }
-
-    // get all style directories
-    QFileInfoList dirList = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot, QDir::Name);
-
-    // iterate style directories and get info
-    for (QFileInfoList::iterator it = dirList.begin(); it != dirList.end(); ++it) {
-        QDir styleDir = QDir(it->absoluteFilePath());
-        if (styleDir.cd(stylePath) == false) {
-            // no user styles available
+    foreach (QDir baseDir, getBaseDirList()) {
+        QDir dir(baseDir);
+        if (dir.cd("stylesheets") == false) {
+            // no user styles available here
             continue;
         }
-        ChatStyleInfo info;
-        if (getStyleInfo(styleDir.absolutePath(), baseDir.relativeFilePath(styleDir.absolutePath()), info)) {
-            styles.append(info);
+
+        // get all style directories
+        QFileInfoList dirList = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot, QDir::Name);
+
+        // iterate style directories and get info
+        for (QFileInfoList::iterator it = dirList.begin(); it != dirList.end(); ++it) {
+            QDir styleDir = QDir(it->absoluteFilePath());
+            if (styleDir.cd(stylePath) == false) {
+                // no user styles available
+                continue;
+            }
+            ChatStyleInfo info;
+            if (getStyleInfo(styleDir.absolutePath(), baseDir.relativeFilePath(styleDir.absolutePath()), info)) {
+                styles.append(info);
+            }
         }
     }
 

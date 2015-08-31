@@ -5,4 +5,4 @@ qrc_*.cpp
 ui_*.h
 Makefile.*
 *~
-
+Thumbs.db

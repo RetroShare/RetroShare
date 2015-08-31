@@ -1,4 +1,5 @@
 TEMPLATE = lib
+CONFIG *= plugin
 
 DEPENDPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/

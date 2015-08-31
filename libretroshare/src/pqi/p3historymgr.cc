@@ -99,7 +99,17 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
             enabled = true;
         }
 
-        // not handled: private distant chat
+        if (cm.chat_id.isGxsId() && mPrivateEnable == true) {
+            if (cm.incoming) {
+                peerName = cm.chat_id.toGxsId().toStdString();
+            } else {
+                uint32_t status;
+                RsGxsId from_gxs_id;
+                if (rsMsgs->getDistantChatStatus(cm.chat_id.toGxsId(), status, &from_gxs_id))
+                    peerName = from_gxs_id.toStdString();
+            }
+            enabled = true;
+        }
 
         if(enabled == false)
             return;
@@ -387,7 +397,10 @@ bool p3HistoryMgr::chatIdToVirtualPeerId(ChatId chat_id, RsPeerId &peer_id)
         return true;
     }
 
-    // not handled: private distant chat
+    if (chat_id.isGxsId()) {
+        peer_id = RsPeerId(chat_id.toGxsId());
+        return true;
+    }
 
     return false;
 }
@@ -421,6 +434,9 @@ bool p3HistoryMgr::getMessages(const ChatId &chatId, std::list<HistoryMsg> &msgs
         enabled = true;
     }
     if (chatId.isLobbyId() && mLobbyEnable == true) {
+        enabled = true;
+    }
+    if (chatId.isGxsId() && mPrivateEnable == true) {
         enabled = true;
     }
 

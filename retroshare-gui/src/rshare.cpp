@@ -613,7 +613,7 @@ Rshare::dataDirectory()
 QString
 Rshare::defaultDataDirectory()
 {
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
   return (win32_app_data_folder() + "\\RetroShare");
 #else
   return (QDir::homePath() + "/.RetroShare");

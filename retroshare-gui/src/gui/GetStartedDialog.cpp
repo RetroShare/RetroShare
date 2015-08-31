@@ -189,7 +189,7 @@ void GetStartedDialog::tickFirewallChanged()
 static void sendMail(const QString &address, const QString &subject, QString body)
 {
 	/* Only under windows do we need to do this! */
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 	/* search and replace the end of lines with: "%0D%0A" */
 	body.replace("\n", "%0D%0A");
 #endif
@@ -343,7 +343,7 @@ void GetStartedDialog::emailSupport()
 
 #ifdef __APPLE__
 
-  #ifdef Q_WS_MAC
+  #ifdef Q_OS_MAC
 	switch(QSysInfo::MacintoshVersion)
 	{
 		case QSysInfo::MV_9: 
@@ -383,7 +383,7 @@ void GetStartedDialog::emailSupport()
 #else
   #if defined(_WIN32) || defined(__MINGW32__)
 	// Windows
-	#ifdef Q_WS_WIN
+	#ifdef Q_OS_WIN
 	switch(QSysInfo::windowsVersion())
 	{
 		case QSysInfo::WV_32s: 

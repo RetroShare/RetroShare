@@ -28,6 +28,7 @@ template<int n> class t_RsFlags32
 
 		inline t_RsFlags32<n> operator| (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits | f._bits) ; }
 		inline t_RsFlags32<n> operator^ (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits ^ f._bits) ; }
+		inline t_RsFlags32<n> operator* (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits & f._bits) ; }
 
 		inline bool operator!=(const t_RsFlags32<n>& f) const { return _bits != f._bits ; }
 		inline bool operator==(const t_RsFlags32<n>& f) const { return _bits == f._bits ; }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
+    <width>800</width>
     <height>486</height>
    </rect>
   </property>
@@ -71,7 +71,11 @@
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLineEdit" name="lobbyTopic_LE"/>
+              <widget class="QLineEdit" name="lobbyTopic_LE">
+               <property name="placeholderText">
+                <string>Set a descriptive topic here</string>
+               </property>
+              </widget>
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_4">
@@ -86,7 +90,7 @@
              <item row="3" column="0">
               <widget class="QLabel" name="label_6">
                <property name="text">
-                <string>Security policy:</string>
+                <string>Visibility:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -109,6 +113,29 @@
              </item>
              <item row="2" column="2">
               <widget class="GxsIdChooser" name="idChooser_CB"/>
+             </item>
+             <item row="4" column="2">
+              <widget class="QCheckBox" name="pgp_signed_CB">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you check this, only PGP-signed ids can be used to join and talk in this lobby. This limitation prevents anonymous spamming as it becomes possible for at least some people in the lobby to locate the spammer's node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>require PGP-signed identities</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label">
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Security:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
