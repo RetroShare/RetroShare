@@ -1,3 +1,5 @@
+!include("retroshare.pri"): error("Could not include file retroshare.pri")
+
 TEMPLATE = subdirs
 
 SUBDIRS += \
@@ -32,11 +34,6 @@ plugins.file = plugins/plugins.pro
 plugins.depends = retroshare_gui
 
 unix {
-	isEmpty(PREFIX)   { PREFIX = /usr }
-	isEmpty(INC_DIR)  { INC_DIR = "$${PREFIX}/include/retroshare06" }
-	isEmpty(LIB_DIR)  { LIB_DIR = "$${PREFIX}/lib" }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
-
 	icon_files.path = "$${PREFIX}/share/icons/hicolor"
 	icon_files.files = data/24x24
 	icon_files.files += data/48x48

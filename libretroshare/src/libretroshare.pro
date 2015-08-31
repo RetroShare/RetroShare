@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib bitdht
 CONFIG -= qt
@@ -168,11 +170,6 @@ linux-* {
 }
 
 unix {
-	isEmpty(PREFIX)   { PREFIX = /usr }
-	isEmpty(INC_DIR)  { INC_DIR = "$${PREFIX}/include/retroshare06" }
-	isEmpty(LIB_DIR)  { LIB_DIR = "$${PREFIX}/lib" }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
-
 	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
 

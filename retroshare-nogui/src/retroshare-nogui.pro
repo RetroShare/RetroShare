@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = app
 TARGET = RetroShare06-nogui
 CONFIG += bitdht
@@ -56,8 +58,6 @@ linux-* {
 }
 
 unix {
-	isEmpty(PREFIX)  { PREFIX = /usr }
-
 	target.path = "$${PREFIX}/bin"
 	INSTALLS += target
 }

@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 QT     += network xml script
 CONFIG += qt gui uic qrc resources idle bitdht
 
@@ -110,9 +112,6 @@ linux-* {
 }
 
 unix {
-	isEmpty(PREFIX)  { PREFIX = /usr }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
-
 	target.path = "$${PREFIX}/bin"
 	INSTALLS += target
 
