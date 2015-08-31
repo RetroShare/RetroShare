@@ -28,6 +28,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/DateTime.h"
 #include <retroshare/rsidentity.h>
+#include <util/HandleRichText.h>
 
 ChatLobbyUserNotify::ChatLobbyUserNotify(QObject *parent) :
     UserNotify(parent)
@@ -258,7 +259,7 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 	if ((bGetNickName || bFoundTextToNotify || _bCountUnRead)){
 		QString strAnchor = time.toString(Qt::ISODate);
 		MsgData msgData;
-		msgData.text=senderName + ": " + msg;
+		msgData.text=RsHtml::plainText(senderName) + ": " + msg;
 		msgData.unread=!(bGetNickName || bFoundTextToNotify);
 
 		_listMsg[lobby_id][strAnchor]=msgData;

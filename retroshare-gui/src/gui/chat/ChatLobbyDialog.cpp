@@ -671,7 +671,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
 
         ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(),
                                   QDateTime::currentDateTime(),
-                                  tr("%1 changed his name to: %2").arg(name).arg(newname),
+                                  tr("%1 changed his name to: %2").arg(RsHtml::plainText(name)).arg(RsHtml::plainText(newname)),
                                   ChatWidget::MSGTYPE_SYSTEM);
 
         // TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
