@@ -112,7 +112,7 @@ linux-* {
 }
 
 unix {
-	target.path = "$${PREFIX}/bin"
+	target.path = "$${BIN_DIR}"
 	INSTALLS += target
 
 	data_files.path="$${DATA_DIR}/"
