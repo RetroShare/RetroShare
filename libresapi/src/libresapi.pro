@@ -10,6 +10,16 @@ CONFIG += libmicrohttpd
 
 INCLUDEPATH += ../../libretroshare/src
 
+unix {
+	webui_files.path = "$${DATA_DIR}/webui"
+	webui_files.files = webfiles/*
+	INSTALLS += webui_files
+
+	webui_img_files.path = "$${DATA_DIR}/webui/img"
+	webui_img_files.files = ../../retroshare-gui/src/gui/images/logo/logo_splash.png
+	INSTALLS += webui_img_files
+}
+
 win32{
 	DEFINES *= WINDOWS_SYS
 	INCLUDEPATH += $$PWD/../../../libs/include

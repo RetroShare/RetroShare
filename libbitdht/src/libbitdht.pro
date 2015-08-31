@@ -39,6 +39,13 @@ linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 }
 
+unix {
+	data_files.path = "$${DATA_DIR}"
+	data_files.files = bitdht/bdboot.txt
+	INSTALLS += data_files
+}
+
+
 #################### Cross compilation for windows under Linux ####################
 
 win32-x-g++ {	

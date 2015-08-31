@@ -122,6 +122,22 @@ unix {
 	style_files.path="$${DATA_DIR}/stylesheets"
 	style_files.files=gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
 	INSTALLS += style_files
+
+	icon_files.path = "$${PREFIX}/share/icons/hicolor"
+	icon_files.files =  ../../data/24x24
+	icon_files.files += ../../data/48x48
+	icon_files.files += ../../data/64x64
+	icon_files.files += ../../data/128x128
+	INSTALLS += icon_files
+
+	desktop_files.path = "$${PREFIX}/share/applications"
+	desktop_files.files = ../../data/retroshare06.desktop
+	INSTALLS += desktop_files
+
+	pixmap_files.path = "$${PREFIX}/share/pixmaps"
+	pixmap_files.files = ../../data/retroshare06.xpm
+	INSTALLS += pixmap_files
+
 }
 
 linux-g++ {
