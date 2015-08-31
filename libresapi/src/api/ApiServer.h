@@ -5,6 +5,7 @@
 #include "ApiTypes.h"
 #include "PeersHandler.h"
 #include "IdentityHandler.h"
+#include "ForumHandler.h"
 #include "ServiceControlHandler.h"
 #include "StateTokenServer.h"
 #include "FileSearchHandler.h"
