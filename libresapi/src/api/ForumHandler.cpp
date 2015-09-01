@@ -8,6 +8,9 @@
 #include "GxsResponseTask.h"
 #ifndef WINDOWS_SYS
 #include "unistd.h"
+#else
+#include "stdint.h"
+typedef uint32_t u_int32_t;
 #endif
 
 namespace resource_api
