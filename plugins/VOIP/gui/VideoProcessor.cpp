@@ -26,7 +26,7 @@ extern "C" {
 //#define DEBUG_MPEG_VIDEO 1
 
 VideoProcessor::VideoProcessor()
-    :_encoded_frame_size(176,144) , vpMtx("VideoProcessor")
+    :_encoded_frame_size(640,480) , vpMtx("VideoProcessor")
 {
     _decoded_output_device = NULL ;
     
@@ -554,7 +554,8 @@ FFmpegVideo::FFmpegVideo()
     encoding_context = NULL ;
     
     //AVCodecID codec_id = AV_CODEC_ID_H264 ; 
-    AVCodecID codec_id = AV_CODEC_ID_MPEG1VIDEO;
+    //AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
+    AVCodecID codec_id = AV_CODEC_ID_MPEG4;
     
     uint8_t endcode[] = { 0, 0, 1, 0xb7 };
 
@@ -568,31 +569,42 @@ FFmpegVideo::FFmpegVideo()
     if (!encoding_context)  throw std::runtime_error("AV: Could not allocate video codec encoding context");
 
     /* put sample parameters */
-    encoding_context->bit_rate = 30*1024 ; // default bitrate is 30KB/s
+    encoding_context->bit_rate = 10*1024 ; // default bitrate is 30KB/s
     encoding_context->bit_rate_tolerance = encoding_context->bit_rate ;
+    
+#ifdef USE_VARIABLE_BITRATE
     encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = 81920;
-    encoding_context->rc_buffer_size = 1024*1024;
+    encoding_context->rc_max_rate = 10*1024;//encoding_context->bit_rate;
+    encoding_context->rc_buffer_size = 10*1024*1024;
+    encoding_context->rc_initial_buffer_occupancy = (int) ( 0.9 * encoding_context->rc_buffer_size);
+    encoding_context->rc_max_available_vbv_use = 1.0;
+    encoding_context->rc_min_vbv_overflow_use = 0.0;
+#else
+    encoding_context->rc_min_rate = 0;
+    encoding_context->rc_max_rate = 0;
+    encoding_context->rc_buffer_size = 0;
+#endif
     encoding_context->flags |= CODEC_FLAG_PSNR;
+    encoding_context->flags |= CODEC_FLAG_TRUNCATED;
+    encoding_context->flags |= CODEC_CAP_PARAM_CHANGE;
+    encoding_context->i_quant_factor = 0.769f;
+    encoding_context->b_quant_factor = 1.4f;
+    encoding_context->time_base.num = 1;
+    encoding_context->time_base.den = 15;//framesPerSecond;
+    encoding_context->qmin =  1;
+    encoding_context->qmax = 51;
+    encoding_context->max_qdiff = 4;
+    
+    //encoding_context->me_method = ME_HEX;
+    //encoding_context->max_b_frames = 4; 
+    //encoding_context->flags |= CODEC_FLAG_LOW_DELAY;	// MPEG2 only
     //encoding_context->partitions = X264_PART_I4X4 | X264_PART_I8X8 | X264_PART_P8X8 | X264_PART_P4X4 | X264_PART_B8X8;
     //encoding_context->crf = 0.0f;
     //encoding_context->cqp = 26;
-    encoding_context->i_quant_factor = 0.769f;
-    encoding_context->b_quant_factor = 1.4f;
-    encoding_context->rc_initial_buffer_occupancy = (int) ( 0.9 * encoding_context->rc_buffer_size);
-    encoding_context->rc_max_available_vbv_use = 0.9;
-    encoding_context->rc_min_vbv_overflow_use = 0.1;
-    encoding_context->time_base.num = 1;
-    encoding_context->time_base.den = 15;//framesPerSecond;
-    //encoding_context->me_method = ME_HEX;
-    encoding_context->qmin = 10;
-    encoding_context->qmax = 51;
-    encoding_context->max_qdiff = 4;
-    encoding_context->max_b_frames = 4; 
-    
+   
     /* resolution must be a multiple of two */
-    encoding_context->width = 352;//176;
-    encoding_context->height = 288;//144;
+    encoding_context->width = 640;//176;
+    encoding_context->height = 480;//144;
     /* frames per second */
     encoding_context->time_base = (AVRational){1,25};
     /* emit one intra frame every ten frames
@@ -601,8 +613,8 @@ FFmpegVideo::FFmpegVideo()
      * then gop_size is ignored and the output of encoder
      * will always be I frame irrespective to gop_size
      */
-    encoding_context->gop_size = 250;
-    encoding_context->max_b_frames = 1;
+    encoding_context->gop_size = 100;
+    //encoding_context->max_b_frames = 1;
     encoding_context->pix_fmt = AV_PIX_FMT_YUV420P; //context->pix_fmt = AV_PIX_FMT_RGB24;
 
     if (codec_id == AV_CODEC_ID_H264)
@@ -698,8 +710,9 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
             std::cerr << "Max encodign bitrate eexceeded. Capping to " << MAX_FFMPEG_ENCODING_BITRATE << std::endl;
             target_encoding_bitrate = MAX_FFMPEG_ENCODING_BITRATE ;
         }
-	encoding_context->bit_rate = target_encoding_bitrate;
-	encoding_context->bit_rate_tolerance = target_encoding_bitrate;
+	//encoding_context->bit_rate = target_encoding_bitrate;
+	encoding_context->rc_max_rate = target_encoding_bitrate;
+	//encoding_context->bit_rate_tolerance = target_encoding_bitrate;
 
 	if(image.width() != encoding_frame_buffer->width || image.height() != encoding_frame_buffer->height)
 		input = image.scaled(QSize(encoding_frame_buffer->width,encoding_frame_buffer->height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
