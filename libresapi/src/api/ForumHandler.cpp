@@ -105,7 +105,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
             {
                 RsGxsForumGroup& grp = *vit;
                 KeyValueReference<RsGxsGroupId> id("id", grp.mMeta.mGroupId);
-                KeyValueReference<u_int32_t> vis_msg("visible_msg_count", grp.mMeta.mVisibleMsgCount);
+                KeyValueReference<uint32_t> vis_msg("visible_msg_count", grp.mMeta.mVisibleMsgCount);
                 //KeyValueReference<RsPgpId> pgp_id("pgp_id",grp.mPgpId );
                 // not very happy about this, i think the flags should stay hidden in rsidentities
                 bool own = (grp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
