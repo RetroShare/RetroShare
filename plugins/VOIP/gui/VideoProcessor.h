@@ -41,26 +41,6 @@ private:
     uint32_t _encoded_ref_frame_count ;
 };
 
-class WaveletVideo: public VideoCodec
-{
-public:
-    WaveletVideo() {}
-
-protected:
-    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& chunk) ;
-    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
-private:
-
-    static const int MANTISSE_BITS =  9 ;
-    static const int EXPONENT_BITS =  6 ;
-    
-    static void serialise_ufloat(unsigned char *mem, float f);
-    static float deserialise_ufloat(const unsigned char *mem);
-    
-    static float from_quantized_16b(uint16_t n, float M);
-    static uint16_t quantize_16b(float x, float M);
-};
-
 struct AVCodec ;
 struct AVCodecContext ;
 struct AVFrame ;
@@ -152,7 +132,6 @@ class VideoProcessor
 // =====================================================================================
         
 	    JPEGVideo    _jpeg_video_codec ;
-            WaveletVideo _ddwt_video_codec ;
             FFmpegVideo  _mpeg_video_codec ;
             
             uint16_t _encoding_current_codec ;
