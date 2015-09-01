@@ -238,6 +238,9 @@ private:
 
 	QTextCursor qtcMark;
 
+	int lastUpdateCursorPos;
+	int lastUpdateCursorEnd;
+
 	TransferRequestFlags mDefaultExtraFileFlags ; // flags for extra files shared in this chat. Will be 0 by default, but might be ANONYMOUS for chat lobbies.
 	QDate lastMsgDate ;
 
