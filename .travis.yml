@@ -27,6 +27,7 @@ addons:
     project:
       name: "RetroShare/RetroShare"
       description: "RetroShare Build submitted via Travis CI"
+    notification_email: cave@cavebeat.org
     build_command_prepend: "qmake CONFIG+=NO_SQLCIPHER; make clean"
     build_command:   "make -j 4"
     branch_pattern: coverity_scan
