@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = app
 TARGET = RetroShare06-nogui
 CONFIG += bitdht
@@ -6,6 +8,7 @@ CONFIG += bitdht
 # webinterface, requires libmicrohttpd
 CONFIG += webui
 CONFIG -= qt xml gui
+CONFIG += link_prl
 
 # if you are linking against the libretroshare with gxs.
 # this option links against the required sqlite library.
@@ -28,37 +31,11 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lupnp -lixml -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lz -lpthread
-	LIBS *= -rdynamic
-
-	gxs {
-		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-			isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-
-				exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-
-					LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-						DEPENDPATH += ../../../lib/sqlcipher/src/
-						INCLUDEPATH += ../../../lib/sqlcipher/src/
-				} else {
-					message(libsqlcipher.a not found. Compilation will not use SQLCIPHER. Database will be unencrypted.)
-						DEFINES *= NO_SQLCIPHER
-						LIBS *= -lsqlite3
-				}
-
-			} else {
-				LIBS *= -lsqlcipher
-			}
-	}
+	LIBS *= -rdynamic -ldl
 }
 
 unix {
-	isEmpty(PREFIX)  { PREFIX = /usr }
-
-	target.path = "$${PREFIX}/bin"
+	target.path = "$${BIN_DIR}"
 	INSTALLS += target
 }
 
@@ -99,12 +76,10 @@ win32 {
 	MOC_DIR = temp/moc
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS_DIR = $$PWD/../../../libs
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"$$LIBS_DIR/lib"
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 # added after bitdht
@@ -134,7 +109,6 @@ macx {
 
 	LIBS += -Wl,-search_paths_first
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
         LIBS += -lssl -lcrypto -lz 
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 	LIBS += -framework CoreFoundation
@@ -173,23 +147,16 @@ openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
 	LIBS *= ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 	LIBS *= -rdynamic
 }
 
 
 ############################## Common stuff ######################################
-
-# bitdht config
-bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-}
 
 DEPENDPATH += . ../../libretroshare/src
 INCLUDEPATH += . ../../libretroshare/src

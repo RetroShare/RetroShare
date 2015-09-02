@@ -1,5 +1,8 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib bitdht
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
 
@@ -80,6 +83,8 @@ SOURCES +=	tcponudp/udppeer.cc \
 	# The next line is for compliance with debian packages. Keep it!
 	INCLUDEPATH += ../libbitdht
 	DEFINES *= RS_USE_BITDHT
+	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+	LIBS += ../../libbitdht/src/lib/libbitdht.a
 }
 
 
@@ -135,15 +140,22 @@ linux-* {
 	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
-        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-        isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-		!exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-			message(libsqlcipher.a not found. Compilation will not use SQLCIPER. Database will be unencrypted.)
-				DEFINES *= NO_SQLCIPHER
+	contains(CONFIG, NO_SQLCIPHER) {
+		DEFINES *= NO_SQLCIPHER
+		LIBS *= -lsqlite3
+	} else {
+	        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+	        isEmpty(SQLCIPHER_OK) {
+			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+			exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+				LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+				DEPENDPATH += ../../../lib/
+				INCLUDEPATH += ../../../lib/
+			} else {
+				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
+			}
 		} else {
-			DEPENDPATH += ../../../lib/
-			INCLUDEPATH += ../../../lib/
+			LIBS *= -lsqlcipher
 		}
 	}
 
@@ -165,14 +177,11 @@ linux-* {
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
+	LIBS *= -lssl -lupnp -lixml
+	LIBS *= -lcrypto -lz -lpthread
 }
 
 unix {
-	isEmpty(PREFIX)   { PREFIX = /usr }
-	isEmpty(INC_DIR)  { INC_DIR = "$${PREFIX}/include/retroshare06" }
-	isEmpty(LIB_DIR)  { LIB_DIR = "$${PREFIX}/lib" }
-	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
-
 	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
 
@@ -329,6 +338,10 @@ openbsd-* {
 }
 
 ################################### COMMON stuff ##################################
+
+# openpgpsdk
+PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 
 HEADERS +=	dbase/cachestrapper.h \
 			dbase/fimonitor.h \

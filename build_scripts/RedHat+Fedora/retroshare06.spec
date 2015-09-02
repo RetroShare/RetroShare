@@ -56,7 +56,7 @@ cd lib/sqlcipher
 make
 cd -
 cd src
-qmake-qt4 CONFIG=release PREFIX=%{_prefix} LIB_DIR=%{_libdir} RetroShare.pro
+qmake-qt4 "CONFIG-=debug" "CONFIG+=release" PREFIX=%{_prefix} LIB_DIR=%{_libdir} RetroShare.pro
 make
 cd -
 
