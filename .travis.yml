@@ -53,6 +53,8 @@ notifications:
       - "chat.freenode.net#retroshare"
     template:
       - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
+      - "Message: %{commit_message}"
+      - "Commit details: %{compare_url}"
 #  webhooks:
 #    urls:
 #      - https://webhooks.gitter.im/e/9502afd22ca6c8e85fb3
