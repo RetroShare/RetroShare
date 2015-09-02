@@ -7,3 +7,6 @@
 [submodule "plugins/RsSocialCompass"]
 	path = plugins/RsSocialCompass
 	url = git@github.com:chozabu/RsSocialCompass.git
+[submodule "plugins/FriendMap"]
+	path = plugins/FriendMap
+	url = git@github.com:chozabu/FriendMap.git
