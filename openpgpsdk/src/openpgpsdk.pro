@@ -1,8 +1,10 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
-win32 {
-	CONFIG += staticlib
-} else {
+macx {
 	CONFIG = staticlib 
+} else {
+	CONFIG += staticlib
 }
 
 DEFINES *= OPENSSL_NO_IDEA 

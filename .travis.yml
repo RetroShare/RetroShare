@@ -27,12 +27,12 @@ addons:
     project:
       name: "RetroShare/RetroShare"
       description: "RetroShare Build submitted via Travis CI"
-    build_command_prepend: "qmake; make clean"
+    build_command_prepend: "qmake CONFIG+=NO_SQLCIPHER; make clean"
     build_command:   "make -j 4"
     branch_pattern: coverity_scan
 
 before_script:
-  - qmake
+  - qmake CONFIG+=NO_SQLCIPHER
 
 #script: make
 script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
