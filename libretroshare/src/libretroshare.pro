@@ -5,6 +5,7 @@ CONFIG += staticlib bitdht
 CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
+TARGET_PRL = libretroshare
 
 
 #GXS Stuff.

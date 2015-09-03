@@ -75,6 +75,9 @@ win32 {
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
 
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
+
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS_DIR = $$PWD/../../../libs
@@ -82,8 +85,7 @@ win32 {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -L"$$LIBS_DIR/lib"
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-#	LIBS += -lcrypto -lws2_32 -lgdi32
+	LIBS += -lcrypto -lws2_32 -lgdi32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32
 	LIBS += -lole32 -lwinmm
 
@@ -352,8 +354,4 @@ protorpc {
 		PROTOPATH = ../../../protobuf-2.4.1
 		INCLUDEPATH += $${PROTOPATH}/src
 	}
-}
-win32 {
-# must be added after ssh
-	LIBS += -lcrypto -lws2_32 -lgdi32
 }

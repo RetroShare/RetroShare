@@ -175,6 +175,9 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
+
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
 	QMAKE_CXXFLAGS_RELEASE += -O0
@@ -199,9 +202,7 @@ win32 {
 	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlcipher
 
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-#	LIBS += -lws2_32
+	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
@@ -306,11 +307,6 @@ DEPENDPATH += ../../libresapi/src
 INCLUDEPATH += ../../libresapi/src
 PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
 LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
-
-win32 {
-# must be added after bitdht
-    LIBS += -lws2_32
-}
 
 # Input
 HEADERS +=  rshare.h \
