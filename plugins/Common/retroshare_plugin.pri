@@ -28,6 +28,9 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
+
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
 	RCC_DIR = temp/qrc
