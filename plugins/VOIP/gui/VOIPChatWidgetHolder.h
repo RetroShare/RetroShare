@@ -34,8 +34,7 @@ class QAudioInput;
 class QAudioOutput;
 class QVideoInputDevice ;
 class QVideoOutputDevice ;
-class VideoEncoder ;
-class VideoDecoder ;
+class VideoProcessor ;
 
 #define VOIP_SOUND_INCOMING_CALL "VOIP_incoming_call"
 
@@ -82,8 +81,7 @@ protected:
 
 	QWidget *videoWidget ;	// pointer to call show/hide
 
-	VideoEncoder *inputVideoProcessor;
-	VideoDecoder *outputVideoProcessor;
+	VideoProcessor *videoProcessor;
 
 	// Additional buttons to the chat bar
 	QToolButton *audioListenToggleButton ;

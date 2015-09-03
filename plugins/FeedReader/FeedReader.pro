@@ -92,8 +92,7 @@ linux-* {
 win32 {
 	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
 
-	# Change order of the libraries
-	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 -lwsock32 $${LIBS}
+	LIBS += -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto
 }
 
 openbsd-* {
