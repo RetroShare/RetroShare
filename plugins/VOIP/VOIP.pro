@@ -24,6 +24,9 @@ linux-* {
 }
 
 win32 {
+	# ffmpeg
+	QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
+
 	LIBS_DIR = $$PWD/../../../libs
 	LIBS += -L"$$LIBS_DIR/lib/opencv"
 

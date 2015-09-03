@@ -10,7 +10,11 @@
 #include "QVideoDevice.h"
 
 #include <math.h>
+#include <time.h>
 
+#if defined(__MINGW32__)
+#define memalign _aligned_malloc
+#endif //MINGW
 
 extern "C" {
 #include <libavcodec/avcodec.h>
