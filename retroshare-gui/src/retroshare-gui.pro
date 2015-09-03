@@ -177,6 +177,7 @@ win32 {
 	LIBS_DIR = $$PWD/../../../libs
 
 	LIBS += -L"$$LIBS_DIR/lib"
+	LIBS += -L"$$LIBS_DIR/bin"
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
