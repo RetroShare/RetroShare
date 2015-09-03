@@ -15,6 +15,11 @@ QVideoInputDevice::QVideoInputDevice(QWidget *parent)
 	_echo_output_device = NULL ;
 }
 
+bool QVideoInputDevice::stopped()
+{
+    return _timer == NULL ;
+}
+
 void QVideoInputDevice::stop()
 {
 	if(_timer != NULL)
@@ -54,6 +59,9 @@ void QVideoInputDevice::start()
 
 void QVideoInputDevice::grabFrame()
 {
+    if(!_timer)
+        return ;
+    
     IplImage *img=cvQueryFrame(_capture_device);    
 
     if(img == NULL)
@@ -87,6 +95,9 @@ void QVideoInputDevice::grabFrame()
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
+    if(!_timer)
+        return false ;
+    
     if(_video_processor)
 	    return _video_processor->nextEncodedPacket(chunk) ;
     else 
@@ -100,7 +111,8 @@ uint32_t QVideoInputDevice::currentBandwidth() const
 
 QVideoInputDevice::~QVideoInputDevice()
 {
-	stop() ;
+    stop() ;
+    _video_processor = NULL ;
 }
 
 

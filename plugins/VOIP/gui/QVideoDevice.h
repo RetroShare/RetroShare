@@ -51,8 +51,8 @@ class QVideoInputDevice: public QObject
         
 		void start() ;
 		void stop() ;
-
-	protected slots:
+		bool stopped();
+protected slots:
 		void grabFrame() ;
 
 	signals:

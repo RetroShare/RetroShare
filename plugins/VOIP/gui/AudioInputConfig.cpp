@@ -157,6 +157,8 @@ void AudioInputConfig::togglePreview(bool b)
 
 AudioInputConfig::~AudioInputConfig()
 {
+    disconnect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
+    
         graph_source->stop() ;
         graph_source->setVideoInput(NULL) ;
         
@@ -350,8 +352,10 @@ void AudioInputConfig::on_qcbTransmit_currentIndexChanged(int v) {
 }
 
 
-void AudioInputConfig::on_Tick_timeout() {
-        if (!inputAudioProcessor) {
+void AudioInputConfig::on_Tick_timeout() 
+{
+        if (!inputAudioProcessor) 
+        {
             inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
             inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
 
@@ -376,7 +380,7 @@ void AudioInputConfig::on_Tick_timeout() {
         // also transmit encoded video
     RsVOIPDataChunk chunk ;
     
-    while(videoInput->getNextEncodedPacket(chunk))
+    while((!videoInput->stopped()) && videoInput->getNextEncodedPacket(chunk))
     {
         videoProcessor->receiveEncodedData(chunk) ;
         chunk.clear() ;
