@@ -29,17 +29,15 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <QTimer>
 
-//#include "AudioInput.h"
-//#include "AudioOutput.h"
 #include "AudioStats.h"
 #include "AudioInputConfig.h"
-//#include "Global.h"
-//#include "NetworkConfig.h"
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
+#include "gui/VideoProcessor.h"
 #include "gui/common/RSGraphWidget.h"
+#include "util/RsProtectedTimer.h"
+
 #include <interface/rsVOIP.h>
 
 #define iroundf(x) ( static_cast<int>(x) )
@@ -55,9 +53,9 @@ void AudioInputDialog::showEvent(QShowEvent *) {
 class voipGraphSource: public RSGraphSource
 {
 public:
-    voipGraphSource() {}
+    voipGraphSource() : video_input(NULL) {}
     
-    void setVideoInput(QVideoInputDevice *vid) { video_input = vid ; }
+    void setVideoInput(const QVideoInputDevice *vid) { video_input = vid ; }
     
      virtual QString displayName(int) const { return tr("Required bandwidth") ;}
     
@@ -72,22 +70,15 @@ public:
     }
     
     virtual void getValues(std::map<std::string,float>& vals) const
-    {
-        RsVOIPDataChunk chunk ;
-        uint32_t total_size = 0 ;
+	 {
         vals.clear() ;
         
-	while(video_input && video_input->getNextEncodedPacket(chunk))
-	{
-                total_size += chunk.size ;
-              chunk.clear() ;  
-	}
-    
-    	vals[std::string("bw")] = (float)total_size ;
+	if(video_input)
+		vals[std::string("bw")] = video_input->currentBandwidth() ;
     }
     
 private:
-    QVideoInputDevice *video_input ;
+    const QVideoInputDevice *video_input ;
 };
 
 void voipGraph::setVoipSource(voipGraphSource *gs) 
@@ -109,7 +100,7 @@ voipGraph::voipGraph(QWidget *parent)
 AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
-	std::cerr << "Creating audioInputConfig object" << std::endl;
+    std::cerr << "Creating audioInputConfig object" << std::endl;
 
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -121,22 +112,53 @@ AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     abSpeech = NULL;
     qtTick = NULL;
 
-	 // Create the video pipeline.
-	 //
-	 videoInput = new QVideoInputDevice(this) ;
-	 videoInput->setEchoVideoTarget(ui.videoDisplay) ;
-	 videoInput->setVideoEncoder(new JPEGVideoEncoder()) ;
-     
-     graph_source = new voipGraphSource ;
-     ui.voipBwGraph->setSource(graph_source);
-     
-     graph_source->setVideoInput(videoInput) ;
-     graph_source->setCollectionTimeLimit(1000*300) ;
-     graph_source->start() ;
+    // Create the video pipeline.
+    //
+    videoInput = new QVideoInputDevice(this) ;
+    videoInput->setEchoVideoTarget(ui.videoDisplay) ;
+
+    videoProcessor = new VideoProcessor() ;
+    videoProcessor->setDisplayTarget(NULL) ;
+
+    videoProcessor->setMaximumBandwidth(ui.availableBW_SB->value()) ;
+                                        
+    videoInput->setVideoProcessor(videoProcessor) ;
+
+    graph_source = new voipGraphSource ;
+    ui.voipBwGraph->setSource(graph_source);
+
+    graph_source->setVideoInput(videoInput) ;
+    graph_source->setCollectionTimeLimit(1000*300) ;
+    graph_source->start() ;
+
+    QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
+    QObject::connect(ui.availableBW_SB,SIGNAL(valueChanged(double)),this,SLOT(updateAvailableBW(double))) ;
+}
+
+void AudioInputConfig::updateAvailableBW(double r)
+{
+    std::cerr << "Setting max bandwidth to " << r << " KB/s" << std::endl;
+    videoProcessor->setMaximumBandwidth((uint32_t)(r*1024)) ;
+}
+    
+void AudioInputConfig::togglePreview(bool b)
+{
+    if(b)
+    {
+        videoInput->setEchoVideoTarget(NULL) ;
+	videoProcessor->setDisplayTarget(ui.videoDisplay) ;
+    }
+    else
+    {
+        videoInput->setEchoVideoTarget(ui.videoDisplay) ;
+	videoProcessor->setDisplayTarget(NULL) ;
+    }
 }
 
 AudioInputConfig::~AudioInputConfig()
 {
+    disconnect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
+    
         graph_source->stop() ;
         graph_source->setVideoInput(NULL) ;
         
@@ -166,7 +188,7 @@ void AudioInputConfig::load()
     //connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
     //connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
 
-    qtTick = new QTimer(this);
+    qtTick = new RsProtectedTimer(this);
     connect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
     qtTick->start(20);
     /*if (AudioInputRegistrar::qmNew) {
@@ -330,8 +352,10 @@ void AudioInputConfig::on_qcbTransmit_currentIndexChanged(int v) {
 }
 
 
-void AudioInputConfig::on_Tick_timeout() {
-        if (!inputAudioProcessor) {
+void AudioInputConfig::on_Tick_timeout() 
+{
+        if (!inputAudioProcessor) 
+        {
             inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
             inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
 
@@ -352,6 +376,15 @@ void AudioInputConfig::on_Tick_timeout() {
         abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
 
         abSpeech->update();
+        
+        // also transmit encoded video
+    RsVOIPDataChunk chunk ;
+    
+    while((!videoInput->stopped()) && videoInput->getNextEncodedPacket(chunk))
+    {
+        videoProcessor->receiveEncodedData(chunk) ;
+        chunk.clear() ;
+    }
 }
 
 void AudioInputConfig::emptyBuffer() {
