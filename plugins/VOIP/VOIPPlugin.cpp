@@ -98,6 +98,8 @@ VOIPPlugin::VOIPPlugin()
 
 	Q_INIT_RESOURCE(VOIP_images);
 	Q_INIT_RESOURCE(VOIP_qss);
+
+	avcodec_register_all();
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
