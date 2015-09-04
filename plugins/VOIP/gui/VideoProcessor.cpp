@@ -325,8 +325,11 @@ FFmpegVideo::FFmpegVideo()
     
     //AVCodecID codec_id = AV_CODEC_ID_H264 ; 
     //AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
+#if LIBAVCODEC_VERSION_MAJOR < 55
+    CodecID codec_id = CODEC_ID_MPEG4;
+#else
     AVCodecID codec_id = AV_CODEC_ID_MPEG4;
-    
+#endif
     uint8_t endcode[] = { 0, 0, 1, 0xb7 };
 
     /* find the mpeg1 video encoder */
@@ -385,10 +388,15 @@ FFmpegVideo::FFmpegVideo()
      */
     encoding_context->gop_size = 100;
     //encoding_context->max_b_frames = 1;
+#if LIBAVCODEC_VERSION_MAJOR < 55
+    encoding_context->pix_fmt = PIX_FMT_YUV420P; //context->pix_fmt = PIX_FMT_RGB24;
+    if (codec_id == CODEC_ID_H264) {
+#else
     encoding_context->pix_fmt = AV_PIX_FMT_YUV420P; //context->pix_fmt = AV_PIX_FMT_RGB24;
-
-    if (codec_id == AV_CODEC_ID_H264)
+    if (codec_id == AV_CODEC_ID_H264) {
+#endif
         av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
+    }
 
     /* open it */
     if (avcodec_open2(encoding_context, encoding_codec, NULL) < 0) 
@@ -428,7 +436,11 @@ FFmpegVideo::FFmpegVideo()
     
     decoding_context->width = encoding_context->width;
     decoding_context->height = encoding_context->height;
+#if LIBAVCODEC_VERSION_MAJOR < 55
+    decoding_context->pix_fmt = PIX_FMT_YUV420P;
+#else
     decoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
+#endif
     
     if(decoding_codec->capabilities & CODEC_CAP_TRUNCATED)
          decoding_context->flags |= CODEC_FLAG_TRUNCATED; // we do not send complete frames
@@ -694,4 +706,3 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 
 	return true ;
 }
-
