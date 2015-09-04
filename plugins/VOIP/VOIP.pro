@@ -24,8 +24,6 @@ linux-* {
 }
 
 win32 {
-	# ffmpeg
-	QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 	LIBS_DIR = $$PWD/../../../libs
 	LIBS += -L"$$LIBS_DIR/lib/opencv"
@@ -33,6 +31,9 @@ win32 {
 	OPENCV_VERSION = 249
 	LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32 -lz
 }
+
+# ffmpeg (and libavutil: https://github.com/ffms/ffms2/issues/11)
+QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 QMAKE_CXXFLAGS *= -Wall
 
