@@ -536,12 +536,24 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 	AVPacket pkt ;
 	av_init_packet(&pkt);
+#if LIBAVCODEC_VERSION_MAJOR < 55
+	pkt.size = avpicture_get_size(encoding_context->pix_fmt, encoding_context->width, encoding_context->height);
+	pkt.data = (uint8_t*)av_malloc(pkt.size);
+
+	//    do
+	//    {
+	int ret = avcodec_encode_video(encoding_context, pkt.data, pkt.size, frame) ;
+	if (ret > 0) {
+		got_output = ret;
+	}
+#else
 	pkt.data = NULL;    // packet data will be allocated by the encoder
 	pkt.size = 0;
 
 	//    do
 	//    {
 	int ret = avcodec_encode_video2(encoding_context, &pkt, frame, &got_output) ;
+#endif
 
 	if (ret < 0) 
 	{
