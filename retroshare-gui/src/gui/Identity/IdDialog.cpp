@@ -23,6 +23,7 @@
 
 #include <QMessageBox>
 #include <QMenu>
+#include <QSignalMapper>
 
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
@@ -32,6 +33,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/People/PeopleWidget.h"
 
 #include <retroshare/rspeers.h>
 #include "retroshare/rsgxsflags.h"
@@ -69,6 +71,10 @@
 #define RSID_FILTER_ALL          0xffff
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
+
+/* View mode */
+#define VIEW_MODE_LIST  1
+#define VIEW_MODE_THUMBNAIL  2
 
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent) :
@@ -150,6 +156,20 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
 	
 	connect(ui->messageButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
+	
+	PeopleWidget *peopleWidget = NULL;
+	ui->stackedWidget->addWidget(peopleWidget = new PeopleWidget());
+	
+	/* Initialize view button */
+	//setViewMode(VIEW_MODE_FEEDS); see processSettings
+
+	QSignalMapper *signalMapper = new QSignalMapper(this);
+	connect(ui->listViewButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->thumbedViewButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(ui->listViewButton, VIEW_MODE_LIST);
+	signalMapper->setMapping(ui->thumbedViewButton, VIEW_MODE_THUMBNAIL);
+	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setViewMode(int)));
+	
 
 	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
 	ui->headerTextLabel->setText(tr("People"));
@@ -177,7 +197,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
 	headerText = headerItem->text(RSID_COL_KEYID);
 	ui->filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
-
+	
 	/* Setup tree */
 	ui->idTreeWidget->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
 
@@ -261,6 +281,9 @@ void IdDialog::processSettings(bool load)
 
 		// state of splitter
 		ui->splitter->restoreState(Settings->value("splitter").toByteArray());
+		
+		/* View mode */
+		setViewMode(Settings->value("viewMode", VIEW_MODE_LIST).toInt());
 	} else {
 		// save settings
 
@@ -1041,3 +1064,39 @@ void IdDialog::sendMsg()
     /* window will destroy itself! */
 
 }
+
+int IdDialog::viewMode()
+{
+	if (ui->listViewButton->isChecked()) {
+		return VIEW_MODE_LIST;
+	} else if (ui->thumbedViewButton->isChecked()) {
+		return VIEW_MODE_THUMBNAIL;
+	}
+
+	/* Default */
+	return VIEW_MODE_LIST;
+}
+
+void IdDialog::setViewMode(int viewMode)
+{
+	switch (viewMode) {
+	case VIEW_MODE_LIST:
+    ui->stackedWidget->setCurrentIndex(0);
+
+    ui->listViewButton->setChecked(true);
+    ui->thumbedViewButton->setChecked(false);
+
+		break;
+	case VIEW_MODE_THUMBNAIL:
+    ui->stackedWidget->setCurrentIndex(1);
+
+    ui->thumbedViewButton->setChecked(true);
+    ui->listViewButton->setChecked(false);;
+
+		break;
+	default:
+		setViewMode(VIEW_MODE_LIST);
+		return;
+	}
+}
+
