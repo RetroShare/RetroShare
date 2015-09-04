@@ -104,4 +104,4 @@ TRANSLATIONS +=  \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
 
-LIBS += -lspeex -lspeexdsp -lavformat -lavcodec -lavutil
+LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
