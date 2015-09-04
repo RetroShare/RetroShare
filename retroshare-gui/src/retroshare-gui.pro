@@ -34,13 +34,6 @@ CONFIG += gxsgui
 
 DEFINES += RS_ENABLE_GXS
 
-unfinished {
-	CONFIG += gxscircles
-	CONFIG += gxsthewire
-	CONFIG += gxsphotoshare
-	CONFIG += wikipoos
-}
-
 # Other Disabled Bits.
 #CONFIG += framecatcher
 #CONFIG += blogs
@@ -79,8 +72,6 @@ linux-* {
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lX11 -lXss
-
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
 	#LIBS *= -lglib-2.0
 	LIBS *= -rdynamic -ldl
@@ -199,7 +190,6 @@ win32 {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -L"$$LIBS_DIR/lib"
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlcipher
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
@@ -245,8 +235,6 @@ macx {
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-
 	LIBS += ../../../lib/libsqlcipher.a
 	#LIBS += -lsqlite3
 
@@ -266,7 +254,6 @@ freebsd-* {
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
 }
 
@@ -284,7 +271,6 @@ openbsd-* {
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
 
 	LIBS *= -rdynamic
@@ -301,6 +287,10 @@ openbsd-* {
 
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
+
+wikipoos {
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+}
 
 # webinterface
 DEPENDPATH += ../../libresapi/src

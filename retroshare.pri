@@ -5,3 +5,10 @@ unix {
 	isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
 	isEmpty(DATA_DIR) { DATA_DIR = "$${PREFIX}/share/RetroShare06" }
 }
+
+unfinished {
+	CONFIG += gxscircles
+	CONFIG += gxsthewire
+	CONFIG += gxsphotoshare
+	CONFIG += wikipoos
+}
