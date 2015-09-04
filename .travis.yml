@@ -32,6 +32,7 @@ addons:
     branch_pattern: coverity_scan
 
 before_script:
+  - sed -i '/VOIP/d' ./plugins/plugins.pro
   - qmake CONFIG+=NO_SQLCIPHER
 
 #script: make
