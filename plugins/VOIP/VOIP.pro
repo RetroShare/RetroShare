@@ -19,8 +19,12 @@ INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 #################################### Windows #####################################
 
 linux-* {
-	INCLUDEPATH += /usr/include
-	LIBS += $$system(pkg-config --libs opencv)
+	CONFIG += link_pkgconfig
+
+	# Necessary for openSUSE
+	PKGCONFIG += libavcodec libavutil
+
+	PKGCONFIG += opencv
 }
 
 win32 {
@@ -100,4 +104,4 @@ TRANSLATIONS +=  \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
 
-LIBS += -lspeex -lspeexdsp -lavformat -lavcodec -lavutil
+LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
