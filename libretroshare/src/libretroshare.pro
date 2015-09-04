@@ -778,21 +778,25 @@ SOURCES += services/p3gxschannels.cc \
 	serialiser/rsgxscommentitems.cc \
 	serialiser/rsgxschannelitems.cc \
 
-# Wiki Service
-HEADERS += retroshare/rswiki.h \
-	services/p3wiki.h \
-	serialiser/rswikiitems.h
+wikipoos {
+	# Wiki Service
+	HEADERS += retroshare/rswiki.h \
+		services/p3wiki.h \
+		serialiser/rswikiitems.h
 
-SOURCES += services/p3wiki.cc \
-	serialiser/rswikiitems.cc \
+	SOURCES += services/p3wiki.cc \
+		serialiser/rswikiitems.cc \
+}
 
-# Wire Service
-HEADERS += retroshare/rswire.h \
-	services/p3wire.h \
-	serialiser/rswireitems.h
+gxsthewire {
+	# Wire Service
+	HEADERS += retroshare/rswire.h \
+		services/p3wire.h \
+		serialiser/rswireitems.h
 
-SOURCES += services/p3wire.cc \
-	serialiser/rswireitems.cc \
+	SOURCES += services/p3wire.cc \
+		serialiser/rswireitems.cc \
+}
 
 # Posted Service
 HEADERS += services/p3postbase.h \
@@ -804,13 +808,15 @@ SOURCES +=  services/p3postbase.cc \
 	services/p3posted.cc \
 	serialiser/rsposteditems.cc
 
-#Photo Service
-HEADERS += services/p3photoservice.h \
-	retroshare/rsphoto.h \
-	serialiser/rsphotoitems.h \
+gxsphotoshare {
+	#Photo Service
+	HEADERS += services/p3photoservice.h \
+		retroshare/rsphoto.h \
+		serialiser/rsphotoitems.h \
 
-SOURCES += services/p3photoservice.cc \
-	serialiser/rsphotoitems.cc \
+	SOURCES += services/p3photoservice.cc \
+		serialiser/rsphotoitems.cc \
+}
 
 
 

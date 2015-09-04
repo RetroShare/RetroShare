@@ -1108,7 +1108,8 @@ wikipoos {
 	HEADERS += gui/WikiPoos/WikiDialog.h \
 		gui/WikiPoos/WikiAddDialog.h \
 		gui/WikiPoos/WikiEditDialog.h \
-	
+		gui/gxs/WikiGroupDialog.h \
+
 	FORMS += gui/WikiPoos/WikiDialog.ui \
 		gui/WikiPoos/WikiAddDialog.ui \
 		gui/WikiPoos/WikiEditDialog.ui \
@@ -1116,10 +1117,10 @@ wikipoos {
 	SOURCES += gui/WikiPoos/WikiDialog.cpp \
 		gui/WikiPoos/WikiAddDialog.cpp \
 		gui/WikiPoos/WikiEditDialog.cpp \
-	
+		gui/gxs/WikiGroupDialog.cpp \
+
 	RESOURCES += gui/WikiPoos/Wiki_images.qrc
 
-	DEFINES *= RS_USE_WIKI
 }
 	
 	
@@ -1293,7 +1294,6 @@ posted {
 gxsgui {
 	
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-		gui/gxs/WikiGroupDialog.h \
 		gui/gxs/GxsIdDetails.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
@@ -1330,7 +1330,6 @@ gxsgui {
 #		gui/gxs/GxsCommentTreeWidget.ui 
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
-		gui/gxs/WikiGroupDialog.cpp \
 		gui/gxs/GxsIdDetails.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \

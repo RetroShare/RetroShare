@@ -15,3 +15,5 @@ unfinished {
 	CONFIG += gxsphotoshare
 	CONFIG += wikipoos
 }
+
+wikipoos:DEFINES *= RS_USE_WIKI
