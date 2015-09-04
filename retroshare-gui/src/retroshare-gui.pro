@@ -69,7 +69,6 @@ linux-* {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lX11 -lXss
 
-	#LIBS *= -lglib-2.0
 	LIBS *= -rdynamic -ldl
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
