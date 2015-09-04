@@ -1,3 +1,6 @@
+# Gxs is always enabled now.
+DEFINES *= RS_ENABLE_GXS
+
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }

@@ -30,10 +30,6 @@ CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
 
-# Gxs is always enabled now.
-
-DEFINES += RS_ENABLE_GXS
-
 # Other Disabled Bits.
 #CONFIG += framecatcher
 #CONFIG += blogs
