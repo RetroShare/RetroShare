@@ -93,10 +93,6 @@ win32 {
 
 	DEPENDPATH += $$LIBS_DIR/include
 	INCLUDEPATH += $$LIBS_DIR/include
-
-	gxs {
-		LIBS += -lsqlcipher
-	}
 }
 
 ##################################### MacOS ######################################

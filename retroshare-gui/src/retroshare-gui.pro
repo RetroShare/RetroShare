@@ -185,8 +185,6 @@ win32 {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -L"$$LIBS_DIR/lib"
 
-	LIBS += -lsqlcipher
-
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
 	LIBS += -lole32 -lwinmm

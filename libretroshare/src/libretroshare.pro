@@ -263,6 +263,8 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
+	LIBS += -lsqlcipher
+
 	LIBS_DIR = $$PWD/../../../libs
 	OPENPGPSDK_DIR = $$PWD/../../openpgpsdk/src
 
