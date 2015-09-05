@@ -6,6 +6,7 @@ CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
+DESTDIR = lib
 
 #CONFIG += dsdv
 
@@ -72,15 +73,13 @@ SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/udpstunner.cc \
 		tcponudp/udprelay.cc \
 
+	DEFINES *= RS_USE_BITDHT
 
-        BITDHT_DIR = ../../libbitdht/src
+	BITDHT_DIR = ../../libbitdht/src
 	DEPENDPATH += . $${BITDHT_DIR}
 	INCLUDEPATH += . $${BITDHT_DIR}
-	# The next line is for compliance with debian packages. Keep it!
-	INCLUDEPATH += ../libbitdht
-	DEFINES *= RS_USE_BITDHT
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
+	PRE_TARGETDEPS *= $${BITDHT_DIR}/lib/libbitdht.a
+	LIBS *= $${BITDHT_DIR}/lib/libbitdht.a
 }
 
 
@@ -122,11 +121,6 @@ HEADERS += $$PUBLIC_HEADERS
 linux-* {
 	CONFIG += link_pkgconfig
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	DEPENDPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
-	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
-
-	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = g++
 
@@ -150,7 +144,6 @@ linux-* {
 	}
 
 	#CONFIG += version_detail_bash_script
-
 
 	# linux/bsd can use either - libupnp is more complete and packaged.
 	#CONFIG += upnp_miniupnpc 
@@ -210,7 +203,6 @@ version_detail_bash_script {
 
 win32-x-g++ {	
 	OBJECTS_DIR = temp/win32xgcc/obj
-	DESTDIR = lib.win32xgcc
 	DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
 	QMAKE_CC = i586-mingw32msvc-g++
@@ -237,7 +229,6 @@ win32 {
 	DEFINES *= MINIUPNPC_VERSION=13
 	# This defines the platform to be WinXP or later and is needed for getaddrinfo (_WIN32_WINNT_WINXP)
 	DEFINES *= WINVER=0x0501
-	DESTDIR = lib
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -260,10 +251,9 @@ win32 {
 	LIBS += -lsqlcipher
 
 	LIBS_DIR = $$PWD/../../../libs
-	OPENPGPSDK_DIR = $$PWD/../../openpgpsdk/src
 
-	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
-	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
+	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
+	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
 }
 
 ################################# MacOSX ##########################################
@@ -274,7 +264,6 @@ mac {
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
                 #DEFINES *= MINIUPNPC_VERSION=13
-		DESTDIR = lib
 
 		CONFIG += upnp_miniupnpc
 
@@ -289,12 +278,8 @@ mac {
 		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
-		OPENPGPSDK_DIR = ../../openpgpsdk/src
-
 		INCLUDEPATH += . $${UPNPC_DIR} 
-		INCLUDEPATH += $${OPENPGPSDK_DIR} 
 
-		#../openpgpsdk
 		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
@@ -309,8 +294,6 @@ freebsd-* {
 	# linux/bsd can use either - libupnp is more complete and packaged.
 	#CONFIG += upnp_miniupnpc 
 	CONFIG += upnp_libupnp
-
-	DESTDIR = lib
 }
 
 ################################# OpenBSD ##########################################
@@ -319,21 +302,19 @@ openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
-
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
 
 	CONFIG += upnp_libupnp
-
-	DESTDIR = lib
 }
 
 ################################### COMMON stuff ##################################
 
 # openpgpsdk
-PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
-LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
+OPENPGPSDK_DIR = ../../openpgpsdk/src
+DEPENDPATH *= $${OPENPGPSDK_DIR}
+INCLUDEPATH *= $${OPENPGPSDK_DIR}
+PRE_TARGETDEPS *= $${OPENPGPSDK_DIR}/lib/libops.a
+LIBS *= $${OPENPGPSDK_DIR}/lib/libops.a -lbz2
 
 HEADERS +=	dbase/cachestrapper.h \
 			dbase/fimonitor.h \

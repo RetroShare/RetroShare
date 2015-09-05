@@ -64,9 +64,6 @@ linux-* {
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	PKGCONFIG *= x11 xscrnsaver
 
 	LIBS *= -rdynamic
@@ -130,7 +127,6 @@ version_detail_bash_script {
 win32-x-g++ {
 		OBJECTS_DIR = temp/win32-x-g++/obj
 
-		LIBS += ../../libretroshare/src/lib.win32xgcc/libretroshare.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a
@@ -178,11 +174,8 @@ win32 {
 	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
 	#QTPLUGIN += qjpeg
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
 	LIBS_DIR = $$PWD/../../../libs
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -L"$$LIBS_DIR/lib"
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
@@ -221,7 +214,6 @@ macx {
 	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 
 	CONFIG += version_detail_bash_script
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
@@ -240,12 +232,10 @@ macx {
 
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += -lsqlite3
 }
@@ -255,17 +245,11 @@ freebsd-* {
 openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
 	LIBS += -lsqlite3
-
 	LIBS *= -rdynamic
 }
 
@@ -281,8 +265,12 @@ openbsd-* {
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
 
+PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+LIBS *= ../../libretroshare/src/lib/libretroshare.a
+
 wikipoos {
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	PRE_TARGETDEPS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
 
 # webinterface
