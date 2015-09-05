@@ -1,8 +1,10 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
+TEMPLATE = app
 QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
+TARGET = RetroShare06
 
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.
@@ -34,9 +36,6 @@ CONFIG += gxsgui
 #CONFIG += framecatcher
 #CONFIG += blogs
 
-TEMPLATE = app
-TARGET = RetroShare06
-
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
@@ -61,15 +60,16 @@ INCLUDEPATH *= retroshare-gui
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
+	CONFIG += link_pkgconfig
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= -lX11 -lXss
+	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS *= -rdynamic -ldl
+	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
 }
@@ -289,7 +289,7 @@ wikipoos {
 DEPENDPATH += ../../libresapi/src
 INCLUDEPATH += ../../libresapi/src
 PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+LIBS += ../../libresapi/src/lib/libresapi.a
 
 # Input
 HEADERS +=  rshare.h \

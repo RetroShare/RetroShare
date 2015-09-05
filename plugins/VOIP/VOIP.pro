@@ -21,10 +21,11 @@ INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 linux-* {
 	CONFIG += link_pkgconfig
 
-	# Necessary for openSUSE
 	PKGCONFIG += libavcodec libavutil
-
+	PKGCONFIG += speex speexdsp
 	PKGCONFIG += opencv
+} else {
+	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
 }
 
 win32 {
@@ -103,5 +104,3 @@ TRANSLATIONS +=  \
             lang/VOIP_sv.ts \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
-
-LIBS += -lspeex -lspeexdsp -lavcodec -lavutil

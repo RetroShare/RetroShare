@@ -27,7 +27,7 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= -rdynamic -ldl
+	LIBS *= -rdynamic
 }
 
 unix {
@@ -169,7 +169,7 @@ introserver {
 webui {
 	DEFINES *= ENABLE_WEBUI
         PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-	LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+	LIBS += ../../libresapi/src/lib/libresapi.a
         DEPENDPATH += ../../libresapi/src
 	INCLUDEPATH += ../../libresapi/src
         HEADERS += \

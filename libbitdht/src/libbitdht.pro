@@ -168,5 +168,3 @@ SOURCES += \
 	bitdht/bdquerymgr.cc	\
 	util/bdbloom.cc		\
 	bitdht/bdfriendlist.cc	\
-
-

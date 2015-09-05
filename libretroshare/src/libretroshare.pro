@@ -120,8 +120,7 @@ HEADERS += $$PUBLIC_HEADERS
 
 ################################# Linux ##########################################
 linux-* {
-	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
-	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
+	CONFIG += link_pkgconfig
 
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
 	DEPENDPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
@@ -131,17 +130,12 @@ linux-* {
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = g++
 
-	SSL_DIR = /usr/include/openssl
-	UPNP_DIR = /usr/include/upnp
-	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
-	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
-
 	contains(CONFIG, NO_SQLCIPHER) {
 		DEFINES *= NO_SQLCIPHER
-		LIBS *= -lsqlite3
+		PKGCONFIG *= sqlite3
 	} else {
-	        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-	        isEmpty(SQLCIPHER_OK) {
+		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+		isEmpty(SQLCIPHER_OK) {
 			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 			exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
 				LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
@@ -151,7 +145,7 @@ linux-* {
 				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
 			}
 		} else {
-			LIBS *= -lsqlcipher
+			PKGCONFIG *= sqlcipher
 		}
 	}
 
@@ -163,7 +157,7 @@ linux-* {
 	CONFIG += upnp_libupnp
 
 	# Check if the systems libupnp has been Debian-patched
-	system(grep -E 'char[[:space:]]+PublisherUrl' $${UPNP_DIR}/upnp.h >/dev/null 2>&1) {
+	system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
 		# Normal libupnp
 	} else {
 		# Patched libupnp or new unreleased version
@@ -171,10 +165,10 @@ linux-* {
 	}
 
 	DEFINES *= UBUNTU
-	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
-	LIBS *= -lgnome-keyring
-	LIBS *= -lssl -lupnp -lixml
-	LIBS *= -lcrypto -lz -lpthread
+	PKGCONFIG *= gnome-keyring-1
+	PKGCONFIG *= libssl libupnp
+	PKGCONFIG *= libcrypto zlib
+	LIBS *= -lpthread -ldl
 }
 
 unix {

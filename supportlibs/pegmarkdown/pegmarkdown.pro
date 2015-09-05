@@ -15,8 +15,9 @@ debug {
 
 ################################# Linux ##########################################
 linux-* {
-	DESTDIR = lib
-	LIBS *= -lglib-2.0
+	CONFIG += link_pkgconfig
+
+	PKGCONFIG *= glib-2.0
 }
 
 linux-g++ {
