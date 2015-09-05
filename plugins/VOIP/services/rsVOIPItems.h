@@ -55,11 +55,12 @@
 
 const uint16_t RS_SERVICE_TYPE_VOIP_PLUGIN = 0xa021;
 
-const uint8_t RS_PKT_SUBTYPE_VOIP_PING 	   = 0x01;
-const uint8_t RS_PKT_SUBTYPE_VOIP_PONG 	   = 0x02;
-const uint8_t RS_PKT_SUBTYPE_VOIP_PROTOCOL   = 0x03 ;
-													     // 0x04 is unused because of a change in the protocol
-const uint8_t RS_PKT_SUBTYPE_VOIP_DATA      	= 0x05 ;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PING 	= 0x01;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PONG 	= 0x02;
+const uint8_t RS_PKT_SUBTYPE_VOIP_PROTOCOL    	= 0x03 ;
+													     // 0x04,0x05 is unused because of a change in the protocol
+const uint8_t RS_PKT_SUBTYPE_VOIP_BANDWIDTH 	= 0x06 ;
+const uint8_t RS_PKT_SUBTYPE_VOIP_DATA      	= 0x07 ;
 
 const uint8_t QOS_PRIORITY_RS_VOIP = 9 ;
 
@@ -117,8 +118,26 @@ class RsVOIPDataItem: public RsVOIPItem
 
 		uint32_t flags ;
 		uint32_t data_size ;
+        
 		void *voip_data ;
 };
+
+class RsVOIPBandwidthItem: public RsVOIPItem
+{
+	public:
+		RsVOIPBandwidthItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_BANDWIDTH) {}
+		RsVOIPBandwidthItem(void *data,uint32_t size) ; // de-serialization
+
+		virtual bool serialise(void *data,uint32_t& size) ;
+		virtual uint32_t serial_size() const ; 							
+
+		virtual ~RsVOIPBandwidthItem()  {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		uint32_t flags ;			// is that incoming or expected bandwidth?
+		uint32_t bytes_per_sec ;		// bandwidth in bytes per sec.
+};
+
 
 class RsVOIPProtocolItem: public RsVOIPItem
 {

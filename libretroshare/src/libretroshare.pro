@@ -1,12 +1,11 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib bitdht
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
-
-
-#GXS Stuff.
-# This should be disabled for releases until further notice.
-CONFIG += gxs 
+TARGET_PRL = libretroshare
 
 #CONFIG += dsdv
 
@@ -80,6 +79,8 @@ SOURCES +=	tcponudp/udppeer.cc \
 	# The next line is for compliance with debian packages. Keep it!
 	INCLUDEPATH += ../libbitdht
 	DEFINES *= RS_USE_BITDHT
+	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+	LIBS += ../../libbitdht/src/lib/libbitdht.a
 }
 
 
@@ -119,10 +120,6 @@ HEADERS += $$PUBLIC_HEADERS
 
 ################################# Linux ##########################################
 linux-* {
-	isEmpty(PREFIX)  { PREFIX = /usr }
-	isEmpty(INC_DIR) { INC_DIR = $${PREFIX}/include/retroshare/ }
-	isEmpty(LIB_DIR) { LIB_DIR = $${PREFIX}/lib/ }
-
 	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
@@ -139,26 +136,24 @@ linux-* {
 	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
-	# where to put the shared library itself
-	target.path = $$LIB_DIR
-	INSTALLS *= target
-
-        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-        isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-		!exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-			message(libsqlcipher.a not found. Compilation will not use SQLCIPER. Database will be unencrypted.)
-				DEFINES *= NO_SQLCIPHER
+	contains(CONFIG, NO_SQLCIPHER) {
+		DEFINES *= NO_SQLCIPHER
+		LIBS *= -lsqlite3
+	} else {
+	        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+	        isEmpty(SQLCIPHER_OK) {
+			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+			exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+				LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+				DEPENDPATH += ../../../lib/
+				INCLUDEPATH += ../../../lib/
+			} else {
+				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
+			}
 		} else {
-			DEPENDPATH += ../../../lib/
-			INCLUDEPATH += ../../../lib/
+			LIBS *= -lsqlcipher
 		}
 	}
-
-	# where to put the librarys interface
-	include_rsiface.path = $${INC_DIR}
-	include_rsiface.files = $$PUBLIC_HEADERS
-	INSTALLS += include_rsiface
 
 	#CONFIG += version_detail_bash_script
 
@@ -178,6 +173,22 @@ linux-* {
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
+	LIBS *= -lssl -lupnp -lixml
+	LIBS *= -lcrypto -lz -lpthread
+}
+
+unix {
+	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
+	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+
+	## where to put the librarys interface
+	#include_rsiface.path = "$${INC_DIR}"
+	#include_rsiface.files = $$PUBLIC_HEADERS
+	#INSTALLS += include_rsiface
+
+	## where to put the shared library itself
+	#target.path = "$$LIB_DIR"
+	#INSTALLS *= target
 }
 
 linux-g++ {
@@ -324,6 +335,10 @@ openbsd-* {
 
 ################################### COMMON stuff ##################################
 
+# openpgpsdk
+PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
+
 HEADERS +=	dbase/cachestrapper.h \
 			dbase/fimonitor.h \
 			dbase/findex.h \
@@ -444,8 +459,8 @@ HEADERS +=	serialiser/itempriorities.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
 			serialiser/rsgxsrecognitems.h \
-                        serialiser/rsgxsupdateitems.h \
-                        serialiser/rsserviceinfoitems.h \
+			serialiser/rsgxsupdateitems.h \
+			serialiser/rsserviceinfoitems.h \
 
 HEADERS +=	services/p3msgservice.h \
 			services/p3service.h \
@@ -594,8 +609,8 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \
 			serialiser/rsgxsrecognitems.cc \
-                        serialiser/rsgxsupdateitems.cc \
-                        serialiser/rsserviceinfoitems.cc \
+			serialiser/rsgxsupdateitems.cc \
+			serialiser/rsserviceinfoitems.cc \
 
 SOURCES +=	services/p3msgservice.cc \
 			services/p3service.cc \
@@ -676,95 +691,94 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 
 # new gxs cache system
 # this should be disabled for releases until further notice.
-gxs {
-	DEFINES *= RS_ENABLE_GXS
-	DEFINES *= SQLITE_HAS_CODEC
-	DEFINES *= GXS_ENABLE_SYNC_MSGS
+DEFINES *= SQLITE_HAS_CODEC
+DEFINES *= GXS_ENABLE_SYNC_MSGS
 
-	HEADERS += serialiser/rsnxsitems.h \
-		gxs/rsgds.h \
-		gxs/rsgxs.h \
-		gxs/rsdataservice.h \
-		gxs/rsgxsnetservice.h \
-		retroshare/rsgxsflags.h \
-		retroshare/rsgxsifacetypes.h \
-		gxs/rsgenexchange.h \
-		gxs/rsnxsobserver.h \
-		gxs/rsgxsdata.h \
-		retroshare/rstokenservice.h \
-		gxs/rsgxsdataaccess.h \
-		retroshare/rsgxsservice.h \
-		serialiser/rsgxsitems.h \
-		util/retrodb.h \
-		util/rsdbbind.h \
-		gxs/rsgxsutil.h \
-		util/contentvalue.h \
-		gxs/gxssecurity.h \
-		gxs/rsgxsifacehelper.h \
-		gxs/gxstokenqueue.h \
-		gxs/rsgxsnetutils.h \
-		gxs/rsgxsiface.h \
-		gxs/rsgxsrequesttypes.h
+HEADERS += serialiser/rsnxsitems.h \
+	gxs/rsgds.h \
+	gxs/rsgxs.h \
+	gxs/rsdataservice.h \
+	gxs/rsgxsnetservice.h \
+	retroshare/rsgxsflags.h \
+	retroshare/rsgxsifacetypes.h \
+	gxs/rsgenexchange.h \
+	gxs/rsnxsobserver.h \
+	gxs/rsgxsdata.h \
+	retroshare/rstokenservice.h \
+	gxs/rsgxsdataaccess.h \
+	retroshare/rsgxsservice.h \
+	serialiser/rsgxsitems.h \
+	util/retrodb.h \
+	util/rsdbbind.h \
+	gxs/rsgxsutil.h \
+	util/contentvalue.h \
+	gxs/gxssecurity.h \
+	gxs/rsgxsifacehelper.h \
+	gxs/gxstokenqueue.h \
+	gxs/rsgxsnetutils.h \
+	gxs/rsgxsiface.h \
+	gxs/rsgxsrequesttypes.h
 
 
-	SOURCES += serialiser/rsnxsitems.cc \
-		gxs/rsdataservice.cc \
-		gxs/rsgenexchange.cc \
-		gxs/rsgxsnetservice.cc \
-		gxs/rsgxsdata.cc \
-		serialiser/rsgxsitems.cc \
-		gxs/rsgxsdataaccess.cc \
-		util/retrodb.cc \
-		util/contentvalue.cc \
-		util/rsdbbind.cc \
-		gxs/gxssecurity.cc \
-		gxs/gxstokenqueue.cc \
-		gxs/rsgxsnetutils.cc \
-		gxs/rsgxsutil.cc \
-		gxs/rsgxsrequesttypes.cc
+SOURCES += serialiser/rsnxsitems.cc \
+	gxs/rsdataservice.cc \
+	gxs/rsgenexchange.cc \
+	gxs/rsgxsnetservice.cc \
+	gxs/rsgxsdata.cc \
+	serialiser/rsgxsitems.cc \
+	gxs/rsgxsdataaccess.cc \
+	util/retrodb.cc \
+	util/contentvalue.cc \
+	util/rsdbbind.cc \
+	gxs/gxssecurity.cc \
+	gxs/gxstokenqueue.cc \
+	gxs/rsgxsnetutils.cc \
+	gxs/rsgxsutil.cc \
+	gxs/rsgxsrequesttypes.cc
 
 
-	# Identity Service
-	HEADERS += retroshare/rsidentity.h \
-		gxs/rsgixs.h \
-		services/p3idservice.h \
-		serialiser/rsgxsiditems.h \
-		services/p3gxsreputation.h \
-		serialiser/rsgxsreputationitems.h \
+# Identity Service
+HEADERS += retroshare/rsidentity.h \
+	gxs/rsgixs.h \
+	services/p3idservice.h \
+	serialiser/rsgxsiditems.h \
+	services/p3gxsreputation.h \
+	serialiser/rsgxsreputationitems.h \
 
-	SOURCES += services/p3idservice.cc \
-		serialiser/rsgxsiditems.cc \
-		services/p3gxsreputation.cc \
-		serialiser/rsgxsreputationitems.cc \
+SOURCES += services/p3idservice.cc \
+	serialiser/rsgxsiditems.cc \
+	services/p3gxsreputation.cc \
+	serialiser/rsgxsreputationitems.cc \
 
-	# GxsCircles Service
-	HEADERS += services/p3gxscircles.h \
-		serialiser/rsgxscircleitems.h \
-		retroshare/rsgxscircles.h \
+# GxsCircles Service
+HEADERS += services/p3gxscircles.h \
+	serialiser/rsgxscircleitems.h \
+	retroshare/rsgxscircles.h \
 
-	SOURCES += services/p3gxscircles.cc \
-		serialiser/rsgxscircleitems.cc \
+SOURCES += services/p3gxscircles.cc \
+	serialiser/rsgxscircleitems.cc \
 
-	# GxsForums Service
-	HEADERS += retroshare/rsgxsforums.h \
-		services/p3gxsforums.h \
-		serialiser/rsgxsforumitems.h
+# GxsForums Service
+HEADERS += retroshare/rsgxsforums.h \
+	services/p3gxsforums.h \
+	serialiser/rsgxsforumitems.h
 
-	SOURCES += services/p3gxsforums.cc \
-		serialiser/rsgxsforumitems.cc \
+SOURCES += services/p3gxsforums.cc \
+	serialiser/rsgxsforumitems.cc \
 
-	# GxsChannels Service
-	HEADERS += retroshare/rsgxschannels.h \
-		services/p3gxschannels.h \
-		services/p3gxscommon.h \
-		serialiser/rsgxscommentitems.h \
-		serialiser/rsgxschannelitems.h \
+# GxsChannels Service
+HEADERS += retroshare/rsgxschannels.h \
+	services/p3gxschannels.h \
+	services/p3gxscommon.h \
+	serialiser/rsgxscommentitems.h \
+	serialiser/rsgxschannelitems.h \
 
-	SOURCES += services/p3gxschannels.cc \
-		services/p3gxscommon.cc \
-		serialiser/rsgxscommentitems.cc \
-		serialiser/rsgxschannelitems.cc \
+SOURCES += services/p3gxschannels.cc \
+	services/p3gxscommon.cc \
+	serialiser/rsgxscommentitems.cc \
+	serialiser/rsgxschannelitems.cc \
 
+wikipoos {
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
@@ -772,7 +786,9 @@ gxs {
 
 	SOURCES += services/p3wiki.cc \
 		serialiser/rswikiitems.cc \
+}
 
+gxsthewire {
 	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
@@ -780,17 +796,19 @@ gxs {
 
 	SOURCES += services/p3wire.cc \
 		serialiser/rswireitems.cc \
+}
 
-	# Posted Service
-	HEADERS += services/p3postbase.h \
-		services/p3posted.h \
-		retroshare/rsposted.h \
-		serialiser/rsposteditems.h
+# Posted Service
+HEADERS += services/p3postbase.h \
+	services/p3posted.h \
+	retroshare/rsposted.h \
+	serialiser/rsposteditems.h
 
-	SOURCES +=  services/p3postbase.cc \ 
-		services/p3posted.cc \
-		serialiser/rsposteditems.cc
+SOURCES +=  services/p3postbase.cc \
+	services/p3posted.cc \
+	serialiser/rsposteditems.cc
 
+gxsphotoshare {
 	#Photo Service
 	HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \
@@ -838,6 +856,3 @@ test_bitdht {
 
 	# ENABLED UDP NOW.
 }
-
-
-

@@ -33,7 +33,7 @@
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 #include <util/win32.h>
 #endif
 
@@ -60,7 +60,7 @@
 /* Default Retroshare Settings */
 #define DEFAULT_OPACITY             100
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
 #define STARTUP_REG_KEY        "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
 #define RETROSHARE_REG_KEY         "RetroShare" 
 #endif
@@ -104,11 +104,11 @@ void RshareSettings::initSettings()
 	// use GTK as default style on ubuntu
 	setDefault(SETTING_STYLE, "GTK+");
 #else
-#if defined(Q_WS_MAC)
+#if defined(Q_OS_MAC)
 	setDefault(SETTING_STYLE, "macintosh (aqua)");
 #else
 	static QStringList styles = QStyleFactory::keys();
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	if (styles.contains("windowsvista", Qt::CaseInsensitive))
 		setDefault(SETTING_STYLE, "windowsvista");
 	else if (styles.contains("windowsxp", Qt::CaseInsensitive))
@@ -710,7 +710,7 @@ RshareSettings::runRetroshareOnBoot(bool &minimized)
 {
 	minimized = false;
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	QString value = win32_registry_get_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
 
 	if (!value.isEmpty()) {
@@ -729,9 +729,9 @@ RshareSettings::runRetroshareOnBoot(bool &minimized)
 void
 RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 {
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	if (run) {
-		QString value = "\"" + QDir::convertSeparators(QCoreApplication::applicationFilePath()) + "\"";
+		QString value = "\"" + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + "\"";
 
 		if (minimized) {
 			value += " -m";
@@ -748,17 +748,17 @@ RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 #endif
 }
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 static QString getAppPathForProtocol()
 {
-	return "\"" + QDir::convertSeparators(QCoreApplication::applicationFilePath()) + "\" -r \"%1\"";
+	return "\"" + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + "\" -r \"%1\"";
 }
 #endif
 
 /** Returns true if retroshare:// is registered as protocol */
 bool RshareSettings::getRetroShareProtocol()
 {
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	/* Check key */
 	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
 	if (retroshare.contains("Default")) {
@@ -780,7 +780,7 @@ bool RshareSettings::getRetroShareProtocol()
 /** Returns true if the user can set retroshare as protocol */
 bool RshareSettings::canSetRetroShareProtocol()
 {
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
 	return retroshare.isWritable();
 #else
@@ -791,7 +791,7 @@ bool RshareSettings::canSetRetroShareProtocol()
 /** Register retroshare:// as protocol */
 bool RshareSettings::setRetroShareProtocol(bool value)
 {
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	if (value) {
 		QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
 		retroshare.setValue("Default", "URL: RetroShare protocol");

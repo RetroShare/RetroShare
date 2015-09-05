@@ -299,7 +299,7 @@ void PhotoSlideShow::setFullScreen()
   if (!isFullScreen()) {
     // hide menu & toolbars
 
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
     show();
     raise();
     setWindowState( windowState() | Qt::WindowFullScreen );

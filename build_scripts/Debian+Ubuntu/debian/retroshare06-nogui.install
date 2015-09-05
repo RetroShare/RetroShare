@@ -1,6 +1,3 @@
-usr/bin
-usr/bin/RetroShare-nogui
-usr/share
-usr/share/RetroShare
-usr/share/RetroShare/bdboot.txt
-
+debian/tmp/usr/bin/RetroShare06-nogui
+debian/tmp/usr/share/RetroShare06/bdboot.txt
+debian/tmp/usr/share/RetroShare06/webui/*

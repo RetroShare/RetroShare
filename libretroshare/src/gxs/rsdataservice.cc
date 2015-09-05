@@ -1383,6 +1383,8 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     RsScopeTimer timer("");
+    int resultCount = 0;
+    int requestedGroups = grp.size();
 #endif
 
     if(grp.empty()){
@@ -1406,6 +1408,10 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
                     grp[g->mGroupId] = g;
                 }
                 valid = c->moveToNext();
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                ++resultCount;
+#endif
             }
             delete c;
         }
@@ -1432,6 +1438,10 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
                           grp[g->mGroupId] = g;
                       }
                       valid = c->moveToNext();
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+                      ++resultCount;
+#endif
                   }
                   delete c;
               }
@@ -1441,7 +1451,7 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
       }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
-    std::cerr << "RsDataService::retrieveGxsGrpMetaData() " << mDbName << ", Time: " << timer.duration() << std::endl;
+    std::cerr << "RsDataService::retrieveGxsGrpMetaData() " << mDbName << ", Requests: " << requestedGroups << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
     return 1;
@@ -1454,23 +1464,8 @@ int RsDataService::resetDataStore()
     std::cerr << "resetDataStore() " << std::endl;
 #endif
 
-    std::map<RsGxsGroupId, RsNxsGrp*> grps;
-
-    retrieveNxsGrps(grps, false, false);
-    std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit
-            = grps.begin();
-
     {
         RsStackMutex stack(mDbMutex);
-
-        // remove all grp msgs files from service dir
-        for(; mit != grps.end(); ++mit){
-            std::string file = mServiceDir + "/" + mit->first.toStdString();
-            std::string msgFile = file + "-msgs";
-            remove(file.c_str()); // remove group file
-            remove(msgFile.c_str()); // and remove messages file
-            delete mit->second;
-        }
 
         mDb->execSQL("DROP INDEX " + MSG_INDEX_GRPID);
         mDb->execSQL("DROP TABLE " + DATABASE_RELEASE_TABLE_NAME);

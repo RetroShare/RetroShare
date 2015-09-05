@@ -649,7 +649,6 @@ bool RsTlvKeySignatureSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 
             /* get the next type */
             uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
-            SignType currType;
 
             switch(tlvsubtype)
             {
@@ -659,16 +658,13 @@ bool RsTlvKeySignatureSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
                             ok &= sign.GetTlv(data, size, offset);
                             if (ok)
                             {
-                                keySignSet[currType] = sign;
+                                keySignSet[sign_type] = sign;
                             }
                     }
                     break;
                     case TLV_TYPE_KEYSIGNATURETYPE:
                     {
                         ok = GetTlvUInt32(data, size, offset, TLV_TYPE_KEYSIGNATURETYPE, &sign_type);
-
-                        if(ok)
-                            currType = sign_type;
                     }
                     break;
                     default:

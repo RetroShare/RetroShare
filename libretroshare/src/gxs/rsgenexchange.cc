@@ -1718,7 +1718,7 @@ void RsGenExchange::processGrpMetaChanges()
         // process mask
         bool ok = processGrpMask(g.grpId, g.val);
 
-        ok &= mDataStore->updateGroupMetaData(g) == 1;
+        ok = ok && (mDataStore->updateGroupMetaData(g) == 1);
 
         if(ok)
         {
@@ -1761,6 +1761,12 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     if((mit = grpMetaMap.find(grpId)) != grpMetaMap.end())
     {
         grpMeta = mit->second;
+        if (!grpMeta)
+        {
+            std::cerr << "RsGenExchange::processGrpMask() Ignore update for not existing grp id " << grpId.toStdString();
+            std::cerr << std::endl;
+            return false;
+        }
         ok = true;
     }
 
@@ -2090,7 +2096,7 @@ void RsGenExchange::processGroupDelete()
 		gprIds.push_back(groupId);
 		mDataStore->removeGroups(gprIds);
 		toNotify.insert(std::make_pair(
-		                  token, GrpNote(true, RsGxsGroupId())));
+		                  token, GrpNote(true, groupId)));
 	}
 
 

@@ -1,5 +1,8 @@
-QT     += network xml script
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
+QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
+CONFIG += link_prl
 
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.
@@ -27,23 +30,12 @@ CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
 
-# Gxs is always enabled now.
-
-DEFINES += RS_ENABLE_GXS
-
-unfinished {
-	CONFIG += gxscircles
-	CONFIG += gxsthewire
-	CONFIG += gxsphotoshare
-	CONFIG += wikipoos
-}
-
 # Other Disabled Bits.
 #CONFIG += framecatcher
 #CONFIG += blogs
 
 TEMPLATE = app
-TARGET = RetroShare
+TARGET = RetroShare06
 
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
@@ -73,40 +65,42 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lX11 -lz
+	LIBS *= -lX11 -lXss
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-
-	SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-	isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-
-		exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-
-			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-			DEPENDPATH += ../../../lib/sqlcipher/src/
-			INCLUDEPATH += ../../../lib/sqlcipher/src/
-			DEPENDPATH += ../../../lib/sqlcipher/tsrc/
-			INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
-		} else {
-			message(libsqlcipher.a not found. Compilation will not use SQLCIPHER. Database will be unencrypted.)
-			DEFINES *= NO_SQLCIPHER
-			LIBS *= -lsqlite3
-		}
-
-	} else {
-		LIBS += -lsqlcipher
-	}
-
-	LIBS *= -lglib-2.0
-	LIBS *= -rdynamic
+	LIBS *= -rdynamic -ldl
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
+}
+
+unix {
+	target.path = "$${BIN_DIR}"
+	INSTALLS += target
+
+	data_files.path="$${DATA_DIR}/"
+	data_files.files=sounds qss
+	INSTALLS += data_files
+
+	style_files.path="$${DATA_DIR}/stylesheets"
+	style_files.files=gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
+	INSTALLS += style_files
+
+	icon_files.path = "$${PREFIX}/share/icons/hicolor"
+	icon_files.files =  ../../data/24x24
+	icon_files.files += ../../data/48x48
+	icon_files.files += ../../data/64x64
+	icon_files.files += ../../data/128x128
+	INSTALLS += icon_files
+
+	desktop_files.path = "$${PREFIX}/share/applications"
+	desktop_files.files = ../../data/retroshare06.desktop
+	INSTALLS += desktop_files
+
+	pixmap_files.path = "$${PREFIX}/share/pixmaps"
+	pixmap_files.files = ../../data/retroshare06.xpm
+	INSTALLS += pixmap_files
+
 }
 
 linux-g++ {
@@ -129,12 +123,6 @@ version_detail_bash_script {
 		PRE_TARGETDEPS = write_version_detail
 		write_version_detail.commands = $$PWD/version_detail.bat
 	}
-}
-
-install_rs {
-	INSTALLS += binary_rs
-	binary_rs.path = $$(PREFIX)/usr/bin
-	binary_rs.files = ./RetroShare
 }
 
 #################### Cross compilation for windows under Linux ###################
@@ -173,6 +161,9 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
+
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
 	QMAKE_CXXFLAGS_RELEASE += -O0
@@ -188,20 +179,15 @@ win32 {
 	#QTPLUGIN += qjpeg
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS_DIR = $$PWD/../../../libs
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"$$LIBS_DIR/lib"
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlcipher
 
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-#	LIBS += -lws2_32
+	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
@@ -238,14 +224,11 @@ macx {
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
-
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
 	LIBS += ../../../lib/libsqlcipher.a
 	#LIBS += -lsqlite3
@@ -266,7 +249,6 @@ freebsd-* {
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
 }
 
@@ -276,17 +258,14 @@ openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS *= ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
 
 	LIBS *= -rdynamic
@@ -301,24 +280,18 @@ openbsd-* {
 
 # ###########################################
 
-bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
-}
-
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
+
+wikipoos {
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+}
 
 # webinterface
 DEPENDPATH += ../../libresapi/src
 INCLUDEPATH += ../../libresapi/src
 PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
 LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
-
-win32 {
-# must be added after bitdht
-    LIBS += -lws2_32
-}
 
 # Input
 HEADERS +=  rshare.h \
@@ -1134,7 +1107,8 @@ wikipoos {
 	HEADERS += gui/WikiPoos/WikiDialog.h \
 		gui/WikiPoos/WikiAddDialog.h \
 		gui/WikiPoos/WikiEditDialog.h \
-	
+		gui/gxs/WikiGroupDialog.h \
+
 	FORMS += gui/WikiPoos/WikiDialog.ui \
 		gui/WikiPoos/WikiAddDialog.ui \
 		gui/WikiPoos/WikiEditDialog.ui \
@@ -1142,10 +1116,10 @@ wikipoos {
 	SOURCES += gui/WikiPoos/WikiDialog.cpp \
 		gui/WikiPoos/WikiAddDialog.cpp \
 		gui/WikiPoos/WikiEditDialog.cpp \
-	
+		gui/gxs/WikiGroupDialog.cpp \
+
 	RESOURCES += gui/WikiPoos/Wiki_images.qrc
 
-	DEFINES *= RS_USE_WIKI
 }
 	
 	
@@ -1319,7 +1293,6 @@ posted {
 gxsgui {
 	
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-		gui/gxs/WikiGroupDialog.h \
 		gui/gxs/GxsIdDetails.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
@@ -1356,7 +1329,6 @@ gxsgui {
 #		gui/gxs/GxsCommentTreeWidget.ui 
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
-		gui/gxs/WikiGroupDialog.cpp \
 		gui/gxs/GxsIdDetails.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \

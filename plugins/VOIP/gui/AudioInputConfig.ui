@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1155</width>
-    <height>713</height>
+    <height>832</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -389,6 +389,49 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Available bandwidth:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="availableBW_SB">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to simulate the maximum bandwidth available so as to preview what the encoded video will look like with the corresponding compression rate.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="suffix">
+        <string>KB/s</string>
+       </property>
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>2.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>200.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>30.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="showEncoded_CB">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec's quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="text">
+      <string>preview</string>
+     </property>
     </widget>
    </item>
    <item>

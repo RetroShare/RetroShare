@@ -1164,7 +1164,7 @@ void RsGxsNetService::data_tick()
         //Start waiting as nothing to do in runup
         usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
 
-        if(mUpdateCounter >= 20)
+        if(mUpdateCounter >= 120) // 60 seconds
         {
             updateServerSyncTS();
             mUpdateCounter = 0;
@@ -2159,6 +2159,9 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     std::cerr << "locked_genReqGrpTransaction(): " << std::endl;
 #endif
 
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaMap;
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter;
+
     std::list<RsNxsSyncGrpItem*> grpItemL;
     std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
@@ -2168,6 +2171,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         if(item)
         {
             grpItemL.push_back(item);
+            grpMetaMap[item->grpId] = NULL;
         }else
         {
 #ifdef NXS_NET_DEBUG
@@ -2177,8 +2181,11 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         }
     }
 
-    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaMap;
-    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter;
+    if (grpItemL.empty())
+    {
+        return;
+    }
+
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
     // now do compare and add loop
@@ -2198,7 +2205,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         metaIter = grpMetaMap.find(grpId);
         bool haveItem = false;
         bool latestVersion = false;
-        if (metaIter != grpMetaMap.end())
+        if (metaIter != grpMetaMap.end() && metaIter->second)
         {
             haveItem = true;
             latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;

@@ -41,6 +41,10 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	//ui->postFrame->setVisible(false);
 
 	ui->treeWidget->setup(token_service, comment_service);
+	
+	/* Set header resize modes and initial section sizes */
+	QHeaderView * ttheader = ui->treeWidget->header () ;
+	ttheader->resizeSection (0, 440);
 
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());

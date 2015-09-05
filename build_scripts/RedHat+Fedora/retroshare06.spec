@@ -48,7 +48,7 @@ Requires: %name = %{version}
 This package provides a plugin for RetroShare, a secured Friend-to-Friend communication platform. The plugin adds a RSS feed reader tab to retroshare.
 
 %prep
-%setup -q -a 0
+%setup -q
 
 %build
 cd lib/sqlcipher
@@ -56,33 +56,14 @@ cd lib/sqlcipher
 make
 cd -
 cd src
-qmake-qt4 CONFIG=release RetroShare.pro
+qmake-qt4 "CONFIG-=debug" "CONFIG+=release" PREFIX=%{_prefix} LIB_DIR=%{_libdir} RetroShare.pro
 make
 cd -
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_bindir}
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/24x24/apps
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/48x48/apps
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/64x64/apps
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/RetroShare06
-mkdir -p $RPM_BUILD_ROOT/usr/lib/retroshare/extensions6
-#bin
-install -m 755 src/retroshare-gui/src/RetroShare $RPM_BUILD_ROOT%{_bindir}/RetroShare06
-install -m 755 src/retroshare-nogui/src/retroshare-nogui $RPM_BUILD_ROOT%{_bindir}/RetroShare06-nogui
-#icons
-install -m 644 src/data/retroshare.xpm $RPM_BUILD_ROOT%{_datadir}/pixmaps/retroshare06.xpm
-install -m 644 src/data/24x24/retroshare.png $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/24x24/apps/retroshare06.png
-install -m 644 src/data/48x48/retroshare.png $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/48x48/apps/retroshare06.png
-install -m 644 src/data/64x64/retroshare.png $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/64x64/apps/retroshare06.png
-install -m 644 src/data/retroshare.desktop $RPM_BUILD_ROOT%{_datadir}/applications/retroshare06.desktop
-install -m 644 src/libbitdht/src/bitdht/bdboot.txt $RPM_BUILD_ROOT%{_datadir}/RetroShare06/
-#plugins
-install -m 755 src/plugins/VOIP/libVOIP.so $RPM_BUILD_ROOT/usr/lib/retroshare/extensions6/
-install -m 755 src/plugins/FeedReader/libFeedReader.so $RPM_BUILD_ROOT/usr/lib/retroshare/extensions6/
+cd src
+make INSTALL_ROOT=$RPM_BUILD_ROOT install
 #menu
 desktop-file-validate $RPM_BUILD_ROOT%{_datadir}/applications/retroshare06.desktop
 
@@ -106,11 +87,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %files voip-plugin
 %defattr(-, root, root)
-/usr/lib/retroshare/extensions6/libVOIP.so
+%{_libdir}/retroshare/extensions6/libVOIP.so*
 
 %files feedreader-plugin
 %defattr(-, root, root)
-/usr/lib/retroshare/extensions6/libFeedReader.so
+%{_libdir}/retroshare/extensions6/libFeedReader.so*
 
 %changelog
 * Sat Apr  4 2015 Heini <noreply@nowhere.net> - 

@@ -37,14 +37,39 @@ Compilation on Linux
 3. Compile
    ```bash
    cd trunk
-   qmake CONFIG=debug
+   qmake CONFIG+=debug
    make
+   ```
+
+4. Install
+   ```bash
+   sudo make install
    ```
 
    The executables produced will be:
 
-         trunk/retroshare-gui/src/RetroShare
-         trunk/retroshare-nogui/src/retroshare-nogui
+         /usr/bin/RetroShare06
+         /usr/bin/RetroShare06-nogui
+
+Compile only retroshare-nogui
+-----------------------------
+If you want to run RetroShare on a server and don’t need the gui and plugins,
+you can run the following commands to only compile/install the nogui version:
+
+```bash
+qmake
+make retroshare-nogui
+sudo make retroshare-nogui-install_subtargets
+```
+
+For packagers
+-------------
+Packagers can use PREFIX and LIB\_DIR to customize the installation paths:
+```bash
+qmake PREFIX=/usr LIB_DIR=/usr/lib64 "CONFIG-=debug" "CONFIG+=release"
+make
+make INSTALL_ROOT=${PKGDIR} install
+```
 
 If libsqlcipher is not available as a package
 ---------------------------------------------

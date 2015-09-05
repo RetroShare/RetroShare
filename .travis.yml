@@ -7,7 +7,7 @@ before_install:
   - echo $LANG
   - echo $LC_ALL
   - sudo apt-get update
-  - sudo apt-get install build-essential checkinstall cmake g++ git libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libdc1394-22-dev libglib2.0-dev libcv-dev libopencv-highgui-dev libhighgui-dev
+  - sudo apt-get install build-essential checkinstall cmake g++ git libavutil-dev libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libdc1394-22-dev libglib2.0-dev libcv-dev libopencv-highgui-dev libhighgui-dev
   - sudo apt-get install libgnome-keyring-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev libjasper-dev libjpeg-dev libmicrohttpd-dev libopencv-dev libprotobuf-dev libqt4-dev
   - sudo apt-get install libspeex-dev libspeexdsp-dev libsqlite3-dev libssl-dev libswscale-dev
   - sudo apt-get install libtbb-dev libtiff4-dev libupnp-dev libv4l-dev libxine-dev libxslt1-dev libxss-dev make pkg-config protobuf-compiler python-dev python-numpy subversion git yasm qtmobility-dev
@@ -16,10 +16,27 @@ before_install:
 #  - gem update --system
 #  - gem --version
 
-before_script:
-  - qmake
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "auwuhxelaMriNaXzT8I03xrh1s+STicNyNToOWFCAYKxkWWQ4WeaCO6kRDmQrejhizMUILGU+s4FrWTEhDsviftGAF86EgzxxbSBfsHHAP4t2C0pcXX8/WxEoh1IrUs7iGCIpl7O2cvWqGidc20ROeptSEd1uQgkHnn14D9A2YmXf8g52PzqivKkb6HKfkVTPdmNJkMBT5eDtEw6DIk+DvnvRo6b6uanvVAKS9CBwXOdA3rLzaD9bz0LrdL9X1CNoTkGROyez0Lsc4zTr70id2Xfp1MMmJAV6hgQy+iwE37wRyrxJf3dkh5SUAAMUC9Xnvh/iBKNQKdQGhj2WGcV7GZV9k6u9DA1w2H0kcrwt9KHUXdhEQ67yr6Boa9ZFwdDb5VIOtC6iHAoDZXharHhiuxi0K/bCtwNAajrMjBCm9mWhEKvtoxUUYxAJajhJkkO3ERaOU3zHE+06esDzGozd2YOEH8a74HhYy4xvhR05Yj00hAWLS2kIaUITiqmBf6Yuh5XwH7KCDcapxF59ROWqyicdwtbfWpvN8IvFuGKyxYuEfoT8WxZ4lZpo4Q9CrTB7gedJYJxYNfZE/okWoFBb4cpPI94PHo3DZPR7lVyQ60RNyeR0nOeqf8NW8cBT1G4jw3u1LEyAdyvup+54aALw0DCVyoDojSXB8s+AlQG2JE="
 
-script: make
+addons:
+  coverity_scan:
+    project:
+      name: "RetroShare/RetroShare"
+      description: "RetroShare Build submitted via Travis CI"
+    build_command_prepend: "qmake CONFIG+=NO_SQLCIPHER; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
+
+before_script:
+  - qmake CONFIG+=NO_SQLCIPHER
+
+#script: make
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
+
 
 #after_success:
 #  - if [ $TRAVIS_BRANCH == $TRAVIS_TAG ]; then rake deploy; fi
@@ -36,6 +53,8 @@ notifications:
       - "chat.freenode.net#retroshare"
     template:
       - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
+      - "Message: %{commit_message}"
+      - "Commit details: %{compare_url}"
 #  webhooks:
 #    urls:
 #      - https://webhooks.gitter.im/e/9502afd22ca6c8e85fb3

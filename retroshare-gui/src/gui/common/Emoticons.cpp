@@ -40,7 +40,7 @@ void Emoticons::load()
     QString sm_codes;
     bool internalEmoticons = true;
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
     // first try external emoticons
     QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
     if(sm_file.open(QIODevice::ReadOnly))

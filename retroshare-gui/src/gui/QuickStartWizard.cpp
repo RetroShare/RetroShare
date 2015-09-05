@@ -66,7 +66,7 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
     ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
 	  
   /* Hide platform specific features */
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
   ui.checkBoxRunRetroshareAtSystemStartup->setVisible(false);
   ui.chkRunRetroshareAtSystemStartupMinimized->setVisible(false);
 #endif
@@ -192,7 +192,7 @@ void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 {
   Settings->setStartMinimized(ui.checkBoxStartMinimized->isChecked());
   Settings->setValue("doQuit", ui.checkBoxQuit->isChecked());
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   Settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
 #endif
 
@@ -381,7 +381,7 @@ bool QuickStartWizard::messageBoxOk(QString msg)
 void
 QuickStartWizard::loadGeneral()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   bool minimized;
   ui.checkBoxRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
   ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);

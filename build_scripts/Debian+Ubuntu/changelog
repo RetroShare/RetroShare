@@ -1,5 +1,107 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   a276986 (              ) Merge pull request #60 from PhenomRetroShare/Fix_AllowChatTextFormatOption
+   88a6931 (GUI           ) Allow Chat Text Format Option working.
+   0b5b20d (              ) Merge pull request #59 from AsamK/qmake_improvements
+   0409dd8 (              ) Merge pull request #58 from AsamK/debian_make_install
+   21e99cf (Packaging     ) Use explicit dependencies instead of CONFIG += ordered
+   f002310 (Packaging     ) Remove libpegmarkdown from win32 retroshare-nogui build
+   2337b46 (Packaging     ) Specify plugins as plugins to qmake
+   ecb5d93 (GUI           ) changed default color for the system chat bubble
+   d51b4b2 (Packaging     ) Adapt debian/ubuntu package files to use "make install"
+   c07bef3 (GUI           ) Fixed Create Lobby Dialog's window size
+   a45de1d (Chat          ) Merge pull request #57 from csoler/v0.6-SignedLobbies
+   40bffc3 (Chat          ) fixed last GUI bugs for authed lobbies
+   6d01461 (Chat          ) fixed a few GUI bits for non anonymous chat lobbies
+   627dcc0 (Forums        ) Merge pull request #50 from chozabu/forum_additions
+   7270ba9 (Chat          ) Merge pull request #56 from AsamK/distant_chat_history
+   5dad168 (Chat          ) Implement history for distant chat
+   d7531b3 (              ) Merge pull request #54 from cavebeat/coverity
+   9240512 (              ) Merge pull request #55 from AsamK/install_stylesheets
+   622e942 (GUI           ) Remove Thumbs.db files and add to .gitignore
+   699213a (Packaging     ) Load chat styles also from DATA_DIR/stylesheets
+   66ba687 (Packaging     ) Install qss and chat styles
+   4d7f92e (GXS/NXS       ) Removed unnecessary select of groups in RsGxsNetService::locked_genReqGrpTransaction.
+   753846b (GXS/SQL       ) Added count of requests and results to debug output in RsDataService::retrieveGxsGrpMetaData
+   d118a13 (GXS/NXS       ) Fixed adding of empty group id to notify when removing a group.
+   4cc1df3 (GXS/NXS       ) Ignore updates of not existing groups in RsGenExchange::processGrpMask. Solves: "Error code: no such column: su
+   d8aa712 (Packaging     ) travis/coverity tokens updated
+   6e1a8fa (              ) Merge pull request #21 from AsamK/lobby_history
+   040b4fb (Chat          ) implemented gp-authed lobbies. Still needs some GUI
+   b8459b3 (              ) Merge pull request #44 from AsamK/improve_qmake
+   c622ca0 (Packaging     ) Issue compile error if DATA_DIR is not set
+   ef499cd (              ) Merge pull request #46 from PhenomRetroShare/Fix_ChatWidgetSearchTextThreshold
+   668394d (              ) Merge pull request #47 from PhenomRetroShare/AddHTML_TextOptimization_0.6
+   6ba2f68 (              ) Merge pull request #45 from PhenomRetroShare/Fix_ChatWidgetLastCursorFormatting
+   1736ad8 (              ) Merge pull request #11 from cavebeat/coverity_scan
+   a39663d (              ) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   17af892 (GUI           ) set a default minimum column header size for comments.
+   c29ae55 (Code cleaning ) Merge pull request #38 from cavebeat/rm_linkscloud
+   1a1a2aa (GXS/NXS       ) Lowered update of server sync TS from 10 seconds to 60 seconds.
+   641a433 (GUI           ) Fixed filter in FriendList.
+   217c9b9 (              ) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   9d65b08 (GUI           ) set default background color for system messages at private chat window
+   da66ac5 (GXS           ) GxsGroupFrameDialog: Fixed restore of active group tree item when subscrube/unsubscribe a group.
+   185220b (GUI           ) enable customisation of columns in forum thread widget
+   389f2f0 (GXS/SQL       ) Removed delete of message files in RsDataService::resetDataStore.
+   836b866 (              ) Merge pull request #37 from sehraf/pr-friendlist_import_export-V2
+   5aaf3e6 (Packaging     ) Move data dir from build_scripts/ to root and adapt RedHat build files
+   4dbffe0 (              ) Merge pull request #48 from PhenomRetroShare/AddRetroShareLinkOpenFileWhenExists
+   5c67941 (              ) Update README.md
+   5ae5d76 (Packaging     ) Make file names consistent with packaging
+   91e19fc (Packaging     ) Disable installing of headers and libretroshare.a
+   d4a36ed (Packaging     ) Make data and plugin directory configurable at compile time
+   6b7a6e2 (Packaging     ) Make RS installable with "make install"
+   fa54fce (              ) Merge pull request #49 from heini/redhat_build
+   1fcae61 (GXS/SQL       ) Removed static defines for column numbers in RsDataService and replaced it with members. Initialized members wh
+   531ce34 (              ) Merge branch 'master' into AddRetroShareLinkOpenFileWhenExists
+   860292d (              ) Merge branch 'master' into AddHTML_TextOptimization_0.6
+   70b9c45 (              ) Merge branch 'master' into Fix_ChatWidgetSearchTextThreshold
+   79fb8df (              ) Merge branch 'master' into Fix_ChatWidgetLastCursorFormatting
+   e9aa4ff (              ) Merge pull request #3 from chozabu/copy_version_info_button
+   d1deef0 (GUI           ) fixed new lines in certificate string
+   7bd41e9 (              ) Merge pull request #4 from chozabu/grouter_stats_basic_names
+   7fe46ed (Packaging     ) Provide RedHat family packaging script.
+   f30ed24 (GXS/SQL       ) Moved gxs data from files into database - Added update to RsDataService - Added new table "DATABASE_RELEASE" to
+   b1aae2d (              ) Merge branch 'master' into AddRetroShareLinkOpenFileWhenExists
+   0234734 (GUI           ) When the file in the link already exists, RS open it.
+   791fb78 (GUI           ) renaming details and details2 for better clarification
+   ad499e6 (GUI           ) renamed 'pubkey' to 'certificate' and removed empty location names
+   6893c58 (              ) Merge pull request #42 from cavebeat/comma
+   c66de1c (Packaging     ) fixed comma in README for debian
+   f58e347 (              ) Merge pull request #23 from AsamK/patch-1
+   326a330 (GUI           ) Fix ChatWidget last cursor formatting. To test it, search a text that will be colored a end. New messages lose 
+   c44afc0 (              ) Merge branch 'master' into Fix_ChatWidgetSearchTextThreshold
+   b1fd290 (              ) Merge branch 'master' into AddHTML_TextOptimization_0.6
+   eb4313f (              ) merge before commit
+   58d29c3 (Bug fix       ) fixed error message in pqissl::cansend()
+   5c97010 (GUI           ) Fix ChatWidget search text label threshold.
+   5a32cca (Packaging     ) README: Fix executable name
+   339558f (Packaging     ) Update and rename README.txt to README.md
+   6ac107a (GXS/SQL       ) Added method "tableExist" to RetroDb.
+   3665238 (GXS/SQL       ) Added new methods for transaction to RetroDb.
+   4309642 (              ) merging before commit
+   58c70ca (              ) moved [not] operator inside parenthesis. Does not change anything except improving readability
+   dea7c77 (Global router ) fixed missing removal of deleted data causing a crash when large messages cause an error in Global Router
+   334ddf8 (GUI           ) Enabled sort by columns other than name combined with sort by state in FriendList.
+   176c3ab (GUI           ) FriendSelectionWidget: - Added sort by state - Moved buttons "All"/"None" into context menu
+   4923c47 (GUI           ) RSTreeWidget: - Added possibility to add own actions to header context menu - Added resort of items
+   02775c6 (GUI           ) Add HTML Text Optimization by exporting styles.
+   1d9e398 (Code cleaning ) removed LinksCloud LinksCloud has been replaced by Posted and is hosted for archiving reasons in https://github
+   04a1c10 (GUI           ) fixed UTF-8 group names
+   941959c (GUI           ) conversion from QSettings to XML
+   48c3eed (Packaging     ) Removed "CONFIG += console" for Windows release build.
+   3b40f0e (GUI           ) FriendList: - Show information of the "best" ssl item on the gpg item only when the gpg item is not expanded. -
+   42bbf76 (GUI           ) fixed display of software revision in main window (patch from ASmith)
+   80d765e (GUI           ) small fix
+   3634981 (GUI           ) added import/export friendlist
+   4d7f733 (Packaging     ) fixed bug in git parameter in packaging script
+   9734f32 (Packaging     ) updated ubuntu changelog. improved ubuntu packaging script
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 16 Aug 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20150816~9734f32a) trusty; urgency=low
+
    f6b830d (branch merging) Merge pull request #35 from hunbernd/chat-fix
    16859a1 (GUI           ) Fix: chatlobby toaster not working
    2e08dde (Bug fix       ) additional check for pqissl::sockfd before using it (patch from Jenster)

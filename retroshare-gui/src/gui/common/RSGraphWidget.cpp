@@ -518,7 +518,7 @@ void RSGraphWidget::paintTotals()
   int x = SCALE_WIDTH*fact + FS, y = 0;
   int rowHeight = FS;
 
-#if !defined(Q_WS_MAC)
+#if !defined(Q_OS_MAC)
   /* On Mac, we don't need vertical spacing between the text rows. */
   rowHeight += 5;
 #endif
