@@ -21,7 +21,7 @@ extern "C" {
 
 #include <libavutil/opt.h>
 //#include <libavutil/channel_layout.h>
-//#include <libavutil/common.h>
+#include <libavutil/mem.h>
 #include <libavutil/imgutils.h>
 //#include <libavutil/mathematics.h>
 //#include <libavutil/samplefmt.h>
@@ -330,7 +330,6 @@ FFmpegVideo::FFmpegVideo()
 #else
     AVCodecID codec_id = AV_CODEC_ID_MPEG4;
 #endif
-    uint8_t endcode[] = { 0, 0, 1, 0xb7 };
 
     /* find the mpeg1 video encoder */
     encoding_codec = avcodec_find_encoder(codec_id);
@@ -548,7 +547,7 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 	AVPacket pkt ;
 	av_init_packet(&pkt);
-#if LIBAVCODEC_VERSION_MAJOR < 55
+#if LIBAVCODEC_VERSION_MAJOR < 54
 	pkt.size = avpicture_get_size(encoding_context->pix_fmt, encoding_context->width, encoding_context->height);
 	pkt.data = (uint8_t*)av_malloc(pkt.size);
 
