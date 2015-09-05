@@ -84,8 +84,14 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 			ui->labelKeyId->setToolTip(tr("GXS id:").append(" "+_keyId));
 	ui->labelKeyId->setVisible(false);
 
-	/// (TODO) Get real ident icon
-			QImage image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
+    /// (TODO) Get real ident icon
+		QImage image;
+		
+		if(_group_info.mImage.mSize > 0 && image.loadFromData(_group_info.mImage.mData, _group_info.mImage.mSize, "PNG"))
+       image = image;
+    else
+			 image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
+			
 			if (_avatar != image) {
 				_avatar = image;
 				_scene->clear();
@@ -122,13 +128,13 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 		ui->labelKeyId->setToolTip(tr("PGP id:").append(" "+_keyId));
 
 		QPixmap avatar;
-		AvatarDefs::getAvatarFromGpgId(_details.gpg_id.toStdString(), avatar);
+		/*AvatarDefs::getAvatarFromGpgId(_details.gpg_id, avatar);
 		if (_avatar != avatar.toImage()) {
 			_avatar = avatar.toImage();
 			_scene->clear();
 			_scene->addPixmap(avatar.scaled(ui->graphicsView->width(),ui->graphicsView->height()));
 			emit imageUpdated();
-		}//if (_avatar != avatar.toImage())
+		}*///if (_avatar != avatar.toImage())
 
 	//}//if (_details != gpg_details)
 }

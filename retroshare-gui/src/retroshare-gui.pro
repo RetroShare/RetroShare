@@ -525,25 +525,11 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
             gui/GetStartedDialog.h \
-    gui/settings/WebuiPage.h \
-    gui/statistics/BWGraph.h
+            gui/settings/WebuiPage.h \
+            gui/statistics/BWGraph.h \
+            gui/People/PeopleWidget.h \
+            gui/People/IdentityWidget.h
 
-#            gui/ForumsDialog.h \
-#            gui/forums/ForumDetails.h \
-#            gui/forums/EditForumDetails.h \
-#            gui/forums/CreateForum.h \
-#            gui/forums/CreateForumMsg.h \
-#            gui/forums/ForumUserNotify.h \
-#            gui/feeds/ForumNewItem.h \
-#            gui/feeds/ForumMsgItem.h \
-#            gui/ChannelFeed.h \
-#            gui/feeds/ChanNewItem.h \
-#            gui/feeds/ChanMsgItem.h \
-#            gui/channels/CreateChannel.h \
-#            gui/channels/ChannelDetails.h \
-#            gui/channels/CreateChannelMsg.h \
-#            gui/channels/EditChanDetails.h \
-#            gui/channels/ChannelUserNotify.h \
 
 FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
@@ -642,22 +628,10 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
             gui/GetStartedDialog.ui \
-    gui/settings/WebuiPage.ui
+            gui/settings/WebuiPage.ui \
+            gui/People/PeopleWidget.ui \
+            gui/People/IdentityWidget.ui
 
-#            gui/ForumsDialog.ui \
-#            gui/forums/CreateForum.ui \
-#            gui/forums/CreateForumMsg.ui \
-#            gui/forums/ForumDetails.ui \
-#            gui/forums/EditForumDetails.ui \
-#            gui/feeds/ForumNewItem.ui \
-#            gui/feeds/ForumMsgItem.ui \
-#            gui/ChannelFeed.ui \
-#            gui/channels/CreateChannel.ui \
-#            gui/channels/CreateChannelMsg.ui \
-#            gui/channels/ChannelDetails.ui \
-#            gui/channels/EditChanDetails.ui \
-#            gui/feeds/ChanNewItem.ui \
-#            gui/feeds/ChanMsgItem.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -874,24 +848,10 @@ SOURCES +=  main.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \
-            gui/statistics/BWGraph.cpp
+            gui/statistics/BWGraph.cpp \
+            gui/People/PeopleWidget.cpp \
+            gui/People/IdentityWidget.cpp
 
-#            gui/ForumsDialog.cpp \
-#            gui/forums/ForumDetails.cpp \
-#            gui/forums/EditForumDetails.cpp \
-#            gui/forums/CreateForum.cpp \
-#            gui/forums/CreateForumMsg.cpp \
-#            gui/forums/ForumUserNotify.cpp \
-#            gui/feeds/ForumNewItem.cpp \
-#            gui/feeds/ForumMsgItem.cpp \
-#            gui/ChannelFeed.cpp \
-#            gui/channels/CreateChannel.cpp \
-#            gui/channels/CreateChannelMsg.cpp \
-#            gui/channels/ChannelDetails.cpp \
-#            gui/channels/EditChanDetails.cpp \
-#            gui/channels/ChannelUserNotify.cpp \
-#            gui/feeds/ChanNewItem.cpp \
-#            gui/feeds/ChanMsgItem.cpp \
 
 RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc
 

@@ -38,6 +38,7 @@ class IdDialog;
 
 class UIStateHelper;
 class QTreeWidgetItem;
+class PeopleWidget;
 
 class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
@@ -65,7 +66,7 @@ private slots:
 	void editIdentity();
 	void chatIdentity();
 	void sendMsg();
-
+	void setViewMode(int viewMode);
 
 	void updateSelection();
 
@@ -92,12 +93,16 @@ private:
 
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
+	
+	int viewMode();
 
 private:
 	TokenQueue *mIdQueue;
 	UIStateHelper *mStateHelper;
 
 	RsGxsGroupId mId;
+	
+	
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;
