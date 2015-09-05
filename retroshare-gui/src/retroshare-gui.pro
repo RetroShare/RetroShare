@@ -220,9 +220,6 @@ macx {
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 
-	LIBS += ../../../lib/libsqlcipher.a
-	#LIBS += -lsqlite3
-
 	INCLUDEPATH += .
 	#DEFINES* = MAC_IDLE # for idle feature
 	CONFIG -= uitools

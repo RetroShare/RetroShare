@@ -281,6 +281,10 @@ mac {
 		INCLUDEPATH += . $${UPNPC_DIR} 
 
 		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+
+		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+		LIBS += ../../../lib/libsqlcipher.a
+		#LIBS += -lsqlite3
 }
 
 ################################# FreeBSD ##########################################
