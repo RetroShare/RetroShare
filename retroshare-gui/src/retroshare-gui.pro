@@ -30,17 +30,6 @@ CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
 
-# Gxs is always enabled now.
-
-DEFINES += RS_ENABLE_GXS
-
-unfinished {
-	CONFIG += gxscircles
-	CONFIG += gxsthewire
-	CONFIG += gxsphotoshare
-	CONFIG += wikipoos
-}
-
 # Other Disabled Bits.
 #CONFIG += framecatcher
 #CONFIG += blogs
@@ -80,9 +69,6 @@ linux-* {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lX11 -lXss
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-
-	#LIBS *= -lglib-2.0
 	LIBS *= -rdynamic -ldl
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
@@ -199,7 +185,6 @@ win32 {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -L"$$LIBS_DIR/lib"
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlcipher
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
@@ -245,8 +230,6 @@ macx {
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-
 	LIBS += ../../../lib/libsqlcipher.a
 	#LIBS += -lsqlite3
 
@@ -266,7 +249,6 @@ freebsd-* {
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
 }
 
@@ -284,7 +266,6 @@ openbsd-* {
 	LIBS *= -lgnome-keyring
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
 
 	LIBS *= -rdynamic
@@ -301,6 +282,10 @@ openbsd-* {
 
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
+
+wikipoos {
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+}
 
 # webinterface
 DEPENDPATH += ../../libresapi/src
@@ -1122,7 +1107,8 @@ wikipoos {
 	HEADERS += gui/WikiPoos/WikiDialog.h \
 		gui/WikiPoos/WikiAddDialog.h \
 		gui/WikiPoos/WikiEditDialog.h \
-	
+		gui/gxs/WikiGroupDialog.h \
+
 	FORMS += gui/WikiPoos/WikiDialog.ui \
 		gui/WikiPoos/WikiAddDialog.ui \
 		gui/WikiPoos/WikiEditDialog.ui \
@@ -1130,10 +1116,10 @@ wikipoos {
 	SOURCES += gui/WikiPoos/WikiDialog.cpp \
 		gui/WikiPoos/WikiAddDialog.cpp \
 		gui/WikiPoos/WikiEditDialog.cpp \
-	
+		gui/gxs/WikiGroupDialog.cpp \
+
 	RESOURCES += gui/WikiPoos/Wiki_images.qrc
 
-	DEFINES *= RS_USE_WIKI
 }
 	
 	
@@ -1307,7 +1293,6 @@ posted {
 gxsgui {
 	
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-		gui/gxs/WikiGroupDialog.h \
 		gui/gxs/GxsIdDetails.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
@@ -1344,7 +1329,6 @@ gxsgui {
 #		gui/gxs/GxsCommentTreeWidget.ui 
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
-		gui/gxs/WikiGroupDialog.cpp \
 		gui/gxs/GxsIdDetails.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \
