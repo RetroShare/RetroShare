@@ -325,7 +325,7 @@ FFmpegVideo::FFmpegVideo()
     
     //AVCodecID codec_id = AV_CODEC_ID_H264 ; 
     //AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
-#if LIBAVCODEC_VERSION_MAJOR < 55
+#if LIBAVCODEC_VERSION_MAJOR < 54
     CodecID codec_id = CODEC_ID_MPEG4;
 #else
     AVCodecID codec_id = AV_CODEC_ID_MPEG4;
@@ -388,7 +388,7 @@ FFmpegVideo::FFmpegVideo()
      */
     encoding_context->gop_size = 100;
     //encoding_context->max_b_frames = 1;
-#if LIBAVCODEC_VERSION_MAJOR < 55
+#if LIBAVCODEC_VERSION_MAJOR < 54
     encoding_context->pix_fmt = PIX_FMT_YUV420P; //context->pix_fmt = PIX_FMT_RGB24;
     if (codec_id == CODEC_ID_H264) {
 #else
@@ -436,7 +436,7 @@ FFmpegVideo::FFmpegVideo()
     
     decoding_context->width = encoding_context->width;
     decoding_context->height = encoding_context->height;
-#if LIBAVCODEC_VERSION_MAJOR < 55
+#if LIBAVCODEC_VERSION_MAJOR < 54
     decoding_context->pix_fmt = PIX_FMT_YUV420P;
 #else
     decoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
@@ -548,7 +548,7 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 	AVPacket pkt ;
 	av_init_packet(&pkt);
-#if LIBAVCODEC_VERSION_MAJOR < 55
+#if LIBAVCODEC_VERSION_MAJOR < 54
 	pkt.size = avpicture_get_size(encoding_context->pix_fmt, encoding_context->width, encoding_context->height);
 	pkt.data = (uint8_t*)av_malloc(pkt.size);
 
