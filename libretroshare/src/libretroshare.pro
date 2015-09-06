@@ -165,7 +165,7 @@ linux-* {
 }
 
 unix {
-	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
+	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
 
 	## where to put the librarys interface
