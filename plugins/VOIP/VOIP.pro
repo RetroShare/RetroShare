@@ -24,6 +24,9 @@ linux-* {
 }
 
 win32 {
+	# ffmpeg
+	QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
+
 	LIBS_DIR = $$PWD/../../../libs
 	LIBS += -L"$$LIBS_DIR/lib/opencv"
 
@@ -96,4 +99,4 @@ TRANSLATIONS +=  \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
 
-LIBS += -lspeex -lspeexdsp
+LIBS += -lspeex -lspeexdsp -lavformat -lavcodec -lavutil

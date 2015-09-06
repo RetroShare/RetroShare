@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG -= qt
@@ -36,6 +38,13 @@ linux-g++ {
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 }
+
+unix {
+	data_files.path = "$${DATA_DIR}"
+	data_files.files = bitdht/bdboot.txt
+	INSTALLS += data_files
+}
+
 
 #################### Cross compilation for windows under Linux ####################
 

@@ -178,7 +178,7 @@ QString Rshare::retroshareVersion(bool withRevision)
 {
 	QString version = QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
 	if (withRevision) {
-		version += QString(" %1 %2").arg(tr("Revision")).arg(RS_REVISION_NUMBER);
+		version += QString(" %1 %2").arg(tr("Revision")).arg(QString::number(RS_REVISION_NUMBER,16));
 	}
 
 	return version;
@@ -613,7 +613,7 @@ Rshare::dataDirectory()
 QString
 Rshare::defaultDataDirectory()
 {
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
   return (win32_app_data_folder() + "\\RetroShare");
 #else
   return (QDir::homePath() + "/.RetroShare");

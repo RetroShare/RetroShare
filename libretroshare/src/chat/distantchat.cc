@@ -1019,8 +1019,8 @@ bool DistantChatService::getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& st
     {
         status = it->second.status ;
 
-    if(from_gxs_id != NULL)
-        *from_gxs_id = it->second.own_gxs_id ;
+        if(from_gxs_id != NULL)
+            *from_gxs_id = it->second.own_gxs_id ;
 
         return true ;
     }

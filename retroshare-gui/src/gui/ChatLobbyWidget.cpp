@@ -22,18 +22,21 @@
 #include "retroshare/rsnotify.h"
 #include "retroshare/rsidentity.h"
 
+//#define CHAT_LOBBY_GUI_DEBUG 1
+
 #define COLUMN_NAME       0
 #define COLUMN_USER_COUNT 1
 #define COLUMN_TOPIC      2
 #define COLUMN_SUBSCRIBED 3
 #define COLUMN_COUNT      4
-
 #define COLUMN_DATA       0
-#define ROLE_SORT         Qt::UserRole
-#define ROLE_ID           Qt::UserRole + 1
-#define ROLE_SUBSCRIBED   Qt::UserRole + 2
-#define ROLE_PRIVACYLEVEL Qt::UserRole + 3
+
+#define ROLE_SORT          Qt::UserRole
+#define ROLE_ID            Qt::UserRole + 1
+#define ROLE_SUBSCRIBED    Qt::UserRole + 2
+#define ROLE_PRIVACYLEVEL  Qt::UserRole + 3
 #define ROLE_AUTOSUBSCRIBE Qt::UserRole + 4
+#define ROLE_FLAGS         Qt::UserRole + 5
 
 
 #define TYPE_FOLDER       0
@@ -129,10 +132,12 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED,true) ;
 	ui.lobbyTreeWidget->setSortingEnabled(true) ;
 
+    	float fact = QFontMetricsF(font()).height()/14.0f;
+        
 	ui.lobbyTreeWidget->adjustSize();
-	ui.lobbyTreeWidget->setColumnWidth(COLUMN_NAME,100);
-	ui.lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50);
-	ui.lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_NAME,100*fact);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50*fact);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50*fact);
 
 	/** Setup the actions for the header context menu */
 	showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
@@ -150,7 +155,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.splitter->setStretchFactor(1, 1);
 
 	QList<int> sizes;
-	sizes << 200 << width(); // Qt calculates the right sizes
+	sizes << 200*fact << width(); // Qt calculates the right sizes
 	ui.splitter->setSizes(sizes);
 
 	lobbyChanged();
@@ -222,6 +227,25 @@ void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
 	}
 }
 
+static bool trimAnonIds(std::list<RsGxsId>& lst)
+{
+    // trim down identities that are unsigned, because the lobby requires it.
+    bool removed = false ;
+
+    RsIdentityDetails idd ;
+
+    for(std::list<RsGxsId>::iterator it = lst.begin();it!=lst.end();)
+	    if(!rsIdentity->getIdDetails(*it,idd) || !idd.mPgpLinked)
+	    {
+		    it = lst.erase(it) ;
+		    removed= true ;
+	    }
+	    else
+		    ++it ;
+
+    return removed ;
+}
+
 void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 {
 	std::cerr << "Creating customPopupMennu" << std::endl;
@@ -244,10 +268,19 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
         else
         {
             QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
-            uint32_t item_flags = item->data(COLUMN_DATA,ROLE_ID).toUInt() ;
 
+	    ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+        ChatLobbyFlags flags(item->data(COLUMN_DATA, ROLE_FLAGS).toUInt());
+
+            bool removed = false ;
+            if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+                removed = trimAnonIds(own_identities) ;
+                        
             if(own_identities.empty())
             {
+                if(removed)
+                contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create a non anonymous identity and enter this lobby"), this, SLOT(createIdentityAndSubscribe()));
+                    else
                 contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Create an identity and enter this lobby"), this, SLOT(createIdentityAndSubscribe()));
             }
             else if(own_identities.size() == 1)
@@ -300,7 +333,7 @@ void ChatLobbyWidget::lobbyChanged()
 	updateDisplay();
 }
 
-static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed, bool autoSubscribe)
+static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed, bool autoSubscribe,ChatLobbyFlags lobby_flags)
 {
 	item->setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
 	item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(name.c_str()));
@@ -323,9 +356,11 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 
 	item->setData(COLUMN_DATA, ROLE_ID, (qulonglong)id);
 	item->setData(COLUMN_DATA, ROLE_SUBSCRIBED, subscribed);
+	item->setData(COLUMN_DATA, ROLE_FLAGS, lobby_flags.toUInt32());
     item->setData(COLUMN_DATA, ROLE_AUTOSUBSCRIBE, autoSubscribe);
 
 	QColor color = treeWidget->palette().color(QPalette::Active, QPalette::Text);
+    
 	if (!subscribed) {
 		// Average between Base and Text colors
 		QColor color2 = treeWidget->palette().color(QPalette::Active, QPalette::Base);
@@ -335,10 +370,15 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
 		item->setTextColor(column, color);
 	}
-    item->setToolTip(0,QObject::tr("Subject:")+" "+item->text(COLUMN_TOPIC)+"\n"
+    QString tooltipstr = QObject::tr("Subject:")+" "+item->text(COLUMN_TOPIC)+"\n"
                      +QObject::tr("Participants:")+" "+QString::number(count)+"\n"
                      +QObject::tr("Auto Subscribe:")+" "+(autoSubscribe? QObject::tr("enabled"): QObject::tr("disabled"))+"\n"
-                     +QObject::tr("Id:")+" "+QString::number(id,16)) ;
+                     +QObject::tr("Id:")+" "+QString::number(id,16) ;
+    
+    if(lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+        tooltipstr += QObject::tr("\nSecurity: no anonymous ids") ;
+    
+    item->setToolTip(0,tooltipstr) ;
 }
 
 void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
@@ -380,7 +420,6 @@ void ChatLobbyWidget::setCurrentChatPage(ChatLobbyDialog *d)
 	}
 }
 
-//#define CHAT_LOBBY_GUI_DEBUG
 void ChatLobbyWidget::updateDisplay()
 {
 #ifdef CHAT_LOBBY_GUI_DEBUG
@@ -521,12 +560,15 @@ void ChatLobbyWidget::updateDisplay()
 			}
 		}
 
+	ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
+    
 		QIcon icon;
 		if (item == NULL) 
 		{
 			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
             icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
 			lobby_item->addChild(item);
+            
 		} 
 		else
 		{
@@ -554,7 +596,7 @@ void ChatLobbyWidget::updateDisplay()
 			}
 		}
 
-		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe);
+		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe,lobby_flags);
 	}
 
 	//	time_t now = time(NULL) ;
@@ -589,7 +631,11 @@ void ChatLobbyWidget::updateDisplay()
 		}
 
 		QIcon icon;
-        if (item == NULL) {
+        
+        ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
+        
+        if (item == NULL) 
+        {
             item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
             icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
             itemParent->addChild(item);
@@ -605,7 +651,7 @@ void ChatLobbyWidget::updateDisplay()
 
 		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-        updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.gxs_ids.size(), true, autoSubscribe);
+        updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.gxs_ids.size(), true, autoSubscribe,lobby_flags);
 	}
 	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
 	privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
@@ -647,9 +693,14 @@ void ChatLobbyWidget::createIdentityAndSubscribe()
         return ;
 
     ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+    ChatLobbyFlags flags(item->data(COLUMN_DATA, ROLE_FLAGS).toUInt());
 
     IdEditDialog dlg(this);
     dlg.setupNewId(false);
+    
+    if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) //
+	    dlg.enforceNoAnonIds() ;
+    
     dlg.exec();
     // fetch new id
     std::list<RsGxsId> own_ids;
@@ -711,6 +762,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     }
 
     ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+    ChatLobbyFlags flags ( item->data(COLUMN_DATA, ROLE_FLAGS).toUInt());
     RsGxsId gxs_id ;
 
     std::list<RsGxsId> own_ids;
@@ -726,6 +778,9 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     {
         IdEditDialog dlg(this);
         dlg.setupNewId(false);
+        
+        if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) //
+		dlg.enforceNoAnonIds() ;
         dlg.exec();
         // fetch new id
         if(!rsIdentity->getOwnIds(own_ids) || own_ids.empty())
@@ -733,7 +788,19 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
         gxs_id = own_ids.front();
     }
     else
+    {
         rsMsgs->getDefaultIdentityForChatLobby(gxs_id);
+        
+        RsIdentityDetails idd ;
+        if(!rsIdentity->getIdDetails(gxs_id,idd))
+            return ;
+        
+        if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+        {
+            QMessageBox::warning(NULL,tr("Default identity is anonymous"),tr("You cannot join this lobby with your default identity, since it is anonymous and the lobby forbids it.")) ;
+            return ;
+        }
+    }
 
     if(rsMsgs->joinVisibleChatLobby(id,gxs_id))
         ChatDialog::chatFriend(ChatId(id),true) ;
@@ -763,18 +830,25 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
     std::list<RsGxsId> my_ids ;
     rsIdentity->getOwnIds(my_ids) ;
 
+                trimAnonIds(my_ids) ;
+                
 	for(std::vector<VisibleChatLobbyRecord>::const_iterator it(lobbies.begin());it!=lobbies.end();++it)
 		if( (*it).lobby_id == id)
 		{
 			ui.lobbyname_lineEdit->setText( RsHtml::plainText(it->lobby_name) );
 			ui.lobbyid_lineEdit->setText( QString::number((*it).lobby_id,16) );
 			ui.lobbytopic_lineEdit->setText( RsHtml::plainText(it->lobby_topic) );
-            ui.lobbytype_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)?tr("Public"):tr("Private")) );
+			ui.lobbytype_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)?tr("Public"):tr("Private")) );
+			ui.lobbysec_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)?tr("No anonymous IDs"):tr("Anonymous ids accepted")) );
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
             QString text = tr("You're not subscribed to this lobby; Double click-it to enter and chat.") ;
+            
             if(my_ids.empty())
-                text += "\n\n"+tr("You will need to create an identity in order to join chat lobbies.") ;
+               if( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+		       text += "\n\n"+tr("You will need to create a non anonymous identity in order to join this chat lobby.") ;
+            else
+		       text += "\n\n"+tr("You will need to create an identity in order to join chat lobbies.") ;
 
             ui.lobbyInfoLabel->setText(text);
 			return ;
@@ -785,6 +859,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 	ui.lobbytopic_lineEdit->clear();
 	ui.lobbytype_lineEdit->clear();
 	ui.lobbypeers_lineEdit->clear();
+	ui.lobbysec_lineEdit->clear();
 
 	QString text = tr("No lobby selected. \nSelect lobbies at left to show details.\nDouble click lobbies to enter and chat.") ;
 	ui.lobbyInfoLabel->setText(text) ;

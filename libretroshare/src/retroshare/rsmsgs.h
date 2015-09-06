@@ -90,9 +90,10 @@
 #define RS_CHAT_TYPE_DISTANT 4
 
 const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE( 0x00000001 ) ;
-const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_ANONYMOUS     ( 0x00000002 ) ;
+const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_deprecated    ( 0x00000002 ) ;
 const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_PUBLIC        ( 0x00000004 ) ;
 const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_CHALLENGE     ( 0x00000008 ) ;
+const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_PGP_SIGNED    ( 0x00000010 ) ; // requires the signing ID to be PGP-linked. Avoids anonymous crap.
 
 typedef uint64_t	ChatLobbyId ;
 typedef uint64_t	ChatLobbyMsgId ;

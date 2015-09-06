@@ -57,7 +57,7 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
   setShortcut("Esc", SLOT(close()));
 #else
   setShortcut("Ctrl+W", SLOT(close()));
@@ -78,13 +78,13 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
   loadSettings();
 
    /* Turn off opacity group on unsupported platforms */
- #if defined(Q_WS_WIN)
-   if(!(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion && QSysInfo::WindowsVersion <= QSysInfo::WV_2003)) {
+ #if defined(Q_OS_WIN)
+   if(!(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion)) {
      ui.frmOpacity->setVisible(false);
    }
  #endif
 
- #if defined(Q_WS_X11)
+ #if defined(Q_OS_LINUX)
    ui.frmOpacity->setVisible(false);
  #endif
 }
@@ -236,11 +236,11 @@ void BandwidthGraph::setOpacity(int value)
   qreal newValue = value / 100.0;
   
   /* Opacity only supported by Mac and Win32 */
-#if defined(Q_WS_MAC)
+#if defined(Q_OS_MAC)
   this->setWindowOpacity(newValue);
   ui.lblPercentOpacity->setText(QString::number(value));
-#elif defined(Q_WS_WIN)
-  if(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion && QSysInfo::WindowsVersion <= QSysInfo::WV_2003) {
+#elif defined(Q_OS_WIN)
+  if(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion) {
     this->setWindowOpacity(newValue);
     ui.lblPercentOpacity->setText(QString::number(value));
   }

@@ -80,6 +80,8 @@ public:
 	int addColumn(const QString &title);
 	void start();
 
+	bool isSortByState();
+
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
 
@@ -109,6 +111,9 @@ public:
 
 	void setTextColorOnline(QColor color) { mTextColorOnline = color; }
 
+	// Add QAction to context menu (action won't be deleted)
+	void addContextMenuAction(QAction *action);
+
 protected:
 	void changeEvent(QEvent *e);
 
@@ -118,9 +123,12 @@ protected:
 signals:
 	void itemAdded(int idType, const QString &id, QTreeWidgetItem *item);
 	void contentChanged();
-	void customContextMenuRequested(const QPoint &pos);
 	void doubleClicked(int idType, const QString &id);
 	void itemChanged(int idType, const QString &id, QTreeWidgetItem *item, int column);
+	void itemSelectionChanged();
+
+public slots:
+	void sortByState(bool sort);
 
 private slots:
 	void groupsChanged(int type);
@@ -142,6 +150,7 @@ private:
 
 	void requestGXSIdList() ;
 
+private:
 	bool mStarted;
 	RSTreeWidgetItemCompareRole *mCompareRole;
 	Modus mListModus;
@@ -150,6 +159,7 @@ private:
 	bool mInGpgItemChanged;
 	bool mInSslItemChanged;
 	bool mInFillList;
+	QAction *mActionSortByState;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorOnline;
@@ -160,6 +170,7 @@ private:
 
 	std::vector<RsGxsGroupId> gxsIds ;
 	TokenQueue *mIdQueue ;
+	QList<QAction*> mContextMenuActions;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

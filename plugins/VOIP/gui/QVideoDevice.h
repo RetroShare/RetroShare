@@ -2,6 +2,7 @@
 
 #include <QLabel>
 #include "interface/rsVOIP.h"
+#include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
 class CvCapture ;
@@ -31,7 +32,7 @@ class QVideoInputDevice: public QObject
 
 		// Captured images are sent to this encoder. Can be NULL.
 		//
-		void setVideoEncoder(VideoEncoder *venc) { _video_encoder = venc ; }
+		void setVideoProcessor(VideoProcessor *venc) { _video_processor = venc ; }
 
 		// All images received will be echoed to this target. We could use signal/slots, but it's
 		// probably faster this way. Can be NULL.
@@ -42,17 +43,23 @@ class QVideoInputDevice: public QObject
 		//
 		bool getNextEncodedPacket(RsVOIPDataChunk&) ;
 
+        	// gets the estimated current bandwidth required to transmit the encoded data, in B/s
+        	//
+        	uint32_t currentBandwidth() const ;
+        
+        	// control
+        
 		void start() ;
 		void stop() ;
-
-	protected slots:
+		bool stopped();
+protected slots:
 		void grabFrame() ;
 
 	signals:
 		void networkPacketReady() ;
 
 	private:
-		VideoEncoder *_video_encoder ;
+		VideoProcessor *_video_processor ;
 		QTimer *_timer ;
 		CvCapture *_capture_device ;
 

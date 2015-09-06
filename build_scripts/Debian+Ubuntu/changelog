@@ -1,4 +1,232 @@
-retroshare06 (0.6.0-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+   a276986 (              ) Merge pull request #60 from PhenomRetroShare/Fix_AllowChatTextFormatOption
+   88a6931 (GUI           ) Allow Chat Text Format Option working.
+   0b5b20d (              ) Merge pull request #59 from AsamK/qmake_improvements
+   0409dd8 (              ) Merge pull request #58 from AsamK/debian_make_install
+   21e99cf (Packaging     ) Use explicit dependencies instead of CONFIG += ordered
+   f002310 (Packaging     ) Remove libpegmarkdown from win32 retroshare-nogui build
+   2337b46 (Packaging     ) Specify plugins as plugins to qmake
+   ecb5d93 (GUI           ) changed default color for the system chat bubble
+   d51b4b2 (Packaging     ) Adapt debian/ubuntu package files to use "make install"
+   c07bef3 (GUI           ) Fixed Create Lobby Dialog's window size
+   a45de1d (Chat          ) Merge pull request #57 from csoler/v0.6-SignedLobbies
+   40bffc3 (Chat          ) fixed last GUI bugs for authed lobbies
+   6d01461 (Chat          ) fixed a few GUI bits for non anonymous chat lobbies
+   627dcc0 (Forums        ) Merge pull request #50 from chozabu/forum_additions
+   7270ba9 (Chat          ) Merge pull request #56 from AsamK/distant_chat_history
+   5dad168 (Chat          ) Implement history for distant chat
+   d7531b3 (              ) Merge pull request #54 from cavebeat/coverity
+   9240512 (              ) Merge pull request #55 from AsamK/install_stylesheets
+   622e942 (GUI           ) Remove Thumbs.db files and add to .gitignore
+   699213a (Packaging     ) Load chat styles also from DATA_DIR/stylesheets
+   66ba687 (Packaging     ) Install qss and chat styles
+   4d7f92e (GXS/NXS       ) Removed unnecessary select of groups in RsGxsNetService::locked_genReqGrpTransaction.
+   753846b (GXS/SQL       ) Added count of requests and results to debug output in RsDataService::retrieveGxsGrpMetaData
+   d118a13 (GXS/NXS       ) Fixed adding of empty group id to notify when removing a group.
+   4cc1df3 (GXS/NXS       ) Ignore updates of not existing groups in RsGenExchange::processGrpMask. Solves: "Error code: no such column: su
+   d8aa712 (Packaging     ) travis/coverity tokens updated
+   6e1a8fa (              ) Merge pull request #21 from AsamK/lobby_history
+   040b4fb (Chat          ) implemented gp-authed lobbies. Still needs some GUI
+   b8459b3 (              ) Merge pull request #44 from AsamK/improve_qmake
+   c622ca0 (Packaging     ) Issue compile error if DATA_DIR is not set
+   ef499cd (              ) Merge pull request #46 from PhenomRetroShare/Fix_ChatWidgetSearchTextThreshold
+   668394d (              ) Merge pull request #47 from PhenomRetroShare/AddHTML_TextOptimization_0.6
+   6ba2f68 (              ) Merge pull request #45 from PhenomRetroShare/Fix_ChatWidgetLastCursorFormatting
+   1736ad8 (              ) Merge pull request #11 from cavebeat/coverity_scan
+   a39663d (              ) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   17af892 (GUI           ) set a default minimum column header size for comments.
+   c29ae55 (Code cleaning ) Merge pull request #38 from cavebeat/rm_linkscloud
+   1a1a2aa (GXS/NXS       ) Lowered update of server sync TS from 10 seconds to 60 seconds.
+   641a433 (GUI           ) Fixed filter in FriendList.
+   217c9b9 (              ) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   9d65b08 (GUI           ) set default background color for system messages at private chat window
+   da66ac5 (GXS           ) GxsGroupFrameDialog: Fixed restore of active group tree item when subscrube/unsubscribe a group.
+   185220b (GUI           ) enable customisation of columns in forum thread widget
+   389f2f0 (GXS/SQL       ) Removed delete of message files in RsDataService::resetDataStore.
+   836b866 (              ) Merge pull request #37 from sehraf/pr-friendlist_import_export-V2
+   5aaf3e6 (Packaging     ) Move data dir from build_scripts/ to root and adapt RedHat build files
+   4dbffe0 (              ) Merge pull request #48 from PhenomRetroShare/AddRetroShareLinkOpenFileWhenExists
+   5c67941 (              ) Update README.md
+   5ae5d76 (Packaging     ) Make file names consistent with packaging
+   91e19fc (Packaging     ) Disable installing of headers and libretroshare.a
+   d4a36ed (Packaging     ) Make data and plugin directory configurable at compile time
+   6b7a6e2 (Packaging     ) Make RS installable with "make install"
+   fa54fce (              ) Merge pull request #49 from heini/redhat_build
+   1fcae61 (GXS/SQL       ) Removed static defines for column numbers in RsDataService and replaced it with members. Initialized members wh
+   531ce34 (              ) Merge branch 'master' into AddRetroShareLinkOpenFileWhenExists
+   860292d (              ) Merge branch 'master' into AddHTML_TextOptimization_0.6
+   70b9c45 (              ) Merge branch 'master' into Fix_ChatWidgetSearchTextThreshold
+   79fb8df (              ) Merge branch 'master' into Fix_ChatWidgetLastCursorFormatting
+   e9aa4ff (              ) Merge pull request #3 from chozabu/copy_version_info_button
+   d1deef0 (GUI           ) fixed new lines in certificate string
+   7bd41e9 (              ) Merge pull request #4 from chozabu/grouter_stats_basic_names
+   7fe46ed (Packaging     ) Provide RedHat family packaging script.
+   f30ed24 (GXS/SQL       ) Moved gxs data from files into database - Added update to RsDataService - Added new table "DATABASE_RELEASE" to
+   b1aae2d (              ) Merge branch 'master' into AddRetroShareLinkOpenFileWhenExists
+   0234734 (GUI           ) When the file in the link already exists, RS open it.
+   791fb78 (GUI           ) renaming details and details2 for better clarification
+   ad499e6 (GUI           ) renamed 'pubkey' to 'certificate' and removed empty location names
+   6893c58 (              ) Merge pull request #42 from cavebeat/comma
+   c66de1c (Packaging     ) fixed comma in README for debian
+   f58e347 (              ) Merge pull request #23 from AsamK/patch-1
+   326a330 (GUI           ) Fix ChatWidget last cursor formatting. To test it, search a text that will be colored a end. New messages lose 
+   c44afc0 (              ) Merge branch 'master' into Fix_ChatWidgetSearchTextThreshold
+   b1fd290 (              ) Merge branch 'master' into AddHTML_TextOptimization_0.6
+   eb4313f (              ) merge before commit
+   58d29c3 (Bug fix       ) fixed error message in pqissl::cansend()
+   5c97010 (GUI           ) Fix ChatWidget search text label threshold.
+   5a32cca (Packaging     ) README: Fix executable name
+   339558f (Packaging     ) Update and rename README.txt to README.md
+   6ac107a (GXS/SQL       ) Added method "tableExist" to RetroDb.
+   3665238 (GXS/SQL       ) Added new methods for transaction to RetroDb.
+   4309642 (              ) merging before commit
+   58c70ca (              ) moved [not] operator inside parenthesis. Does not change anything except improving readability
+   dea7c77 (Global router ) fixed missing removal of deleted data causing a crash when large messages cause an error in Global Router
+   334ddf8 (GUI           ) Enabled sort by columns other than name combined with sort by state in FriendList.
+   176c3ab (GUI           ) FriendSelectionWidget: - Added sort by state - Moved buttons "All"/"None" into context menu
+   4923c47 (GUI           ) RSTreeWidget: - Added possibility to add own actions to header context menu - Added resort of items
+   02775c6 (GUI           ) Add HTML Text Optimization by exporting styles.
+   1d9e398 (Code cleaning ) removed LinksCloud LinksCloud has been replaced by Posted and is hosted for archiving reasons in https://github
+   04a1c10 (GUI           ) fixed UTF-8 group names
+   941959c (GUI           ) conversion from QSettings to XML
+   48c3eed (Packaging     ) Removed "CONFIG += console" for Windows release build.
+   3b40f0e (GUI           ) FriendList: - Show information of the "best" ssl item on the gpg item only when the gpg item is not expanded. -
+   42bbf76 (GUI           ) fixed display of software revision in main window (patch from ASmith)
+   80d765e (GUI           ) small fix
+   3634981 (GUI           ) added import/export friendlist
+   4d7f733 (Packaging     ) fixed bug in git parameter in packaging script
+   9734f32 (Packaging     ) updated ubuntu changelog. improved ubuntu packaging script
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 16 Aug 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20150816~9734f32a) trusty; urgency=low
+
+   f6b830d (branch merging) Merge pull request #35 from hunbernd/chat-fix
+   16859a1 (GUI           ) Fix: chatlobby toaster not working
+   2e08dde (Bug fix       ) additional check for pqissl::sockfd before using it (patch from Jenster)
+   384e7ba (GXS           ) Reworked processing of requests in RsGxsDataAccess to prevent freezes of the gui.
+   4a50a62 (Git management) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   6eccd57 (Git management) merging before commit
+   3084d2a (Debug info    ) improved security message in console for whitelisted peers
+   0402e53 (GUI           ) Fix: empty line duplication bug
+   4095d9d (GXS           ) Switched retrieve of posts in GxsMessageFramePostWidget from "requestMsgRelatedInfo" to "requestMsgInfo".
+   b1101ed (GXS           ) Prevent selecting data from the database in RsGxsNetService::syncWithPeers without online friends.
+   3731617 (Debug info    ) Fixed typo in debug output.
+   e667071 (GUI           ) Moved IP Filter Widgets into Tabs
+   caa97cc (GXS           ) Added database name to the debug output in RsDataService.
+   2a6b623 (GXS           ) Added extended debug outputs of times in RsDataService.
+   7472f81 (Git management) Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   9d291aa (GUI           ) update windows build scripts changed gxs id icon for linked with profile.
+   a765016 (GUI           ) Moved column show/hide from context menu of the tree to the context menu of the header in IdDialog.
+   e73e68d (GUI           ) Reduced the size of the status icon on the avatar image in FriendList.
+   442ec23 (GXS           ) Added index in database for column grpId in table MESSAGES.
+   b8edb75 (GXS           ) Optimized SELECT creation in RetroDb::sqlQuery
+   ab538c6 (GXS           ) Avoid error messages "table already exists" in RsDataService::initialise by using "IF NOT EXISTS"
+   783465b (GUI           ) forget to commit this, for the Search Filter DHT IPs
+   13e77fb (Bugs          ) Merge pull request #19 from sehraf/pr-fix_crash_on_shutdown
+   9d0b066 (Bugs          ) Fixed hide offline friends in ServicePermissionsPage
+   c919786 (GUI           ) Fixed typo. Updated english translation.
+   d5c95c4 (GUI           ) Fixed layout of the ServicePermissionsPage
+   9265145 (GUI           ) Updated english translation
+   87f2e6d (GUI           ) FriendList: - Removed avatar column, state column. Added combined avatar and status icon 
+   ec67ee0 (VOIP          ) added graph display of instantly required bandwidth for VOIP, in preparation to chosing new 
+                            video codec. GUI layout 
+   d5c33f5 (Packaging     ) fixed windows build script
+   c168765 (GUI           ) Added tab for the DHT TreeWidgets for better view Added a search Filter for DHT IP addresses
+   48bb8b4 (Git management) sequel to 6b2ed2fb2d84d7e48b15fa917aa4eb8015922d15
+   fabc3a3 (Git management) added some rules to .gitignore
+   168eb45 (Debug info    ) removed debug info about missing keys; added debug info about deserialization checking of string
+   311358b (Git management) merged changes from master
+   a87adb8 (Debug info    ) improved README file
+   51ab1fc (Debug info    ) updated readme file
+   43db562 (Packaging     ) Fixed build script for Windows installer
+   789df68 (Packaging     ) Added update of version information for Windows build - Added template file version.html.in - Removed RS_BUILD_NUM
+   1412dc6 (Packaging     ) Removed utopic, added new ppa name
+   
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 16 Aug 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20150802.34ec6dfd~precise) precise; urgency=low
+
+   GUI
+      - improved filtering method against lol bombs. Thx to ConcernedCitizen for pointing this out
+      - fix #21 typo "defaut" instead of "default" in switch statement in RSGraphWidget (patch from Chozabu)
+      - moved all bw graph files in statistics. Removed outqueue info widget. Created new cpp files to host the bw graph code. 
+        Started minimal UI to display bw information. The goal is t
+      - fixed position of scaled/highlighted nodes in node graph (patch from Chozabu)
+      - fixed a few bugs in statistics GUI. Still misses names and proper curve display
+      - Enabled Messenger Window in system tray icon.
+      - Fixed overlay icon (star) for tray icon.
+      - fixed up various places in the GUI for high DPI screens (new icons and icon qrc file generation script, font-size based widgets, etc)
+      - disable update of group messages for IdService since it is unused and takes some bandwidth
+      - fixed typo in server page "127.0.01"
+      - Added stylesheet to plugins.
+      - Moved fix font from GenCertDialog to qss (Modified patch from Henry). Added defaults to ui without style sheet
+      - Fixed typo in string (Patch from Henry).
+      - Added customize of columns to RSTreeWidget.
+      - added back functionality to choose DL directory for each channel
+      - Removed generate of channel messages.
+      - FriendList: - Added customize of columns with RSTreeWidget. - Reduced display menu.
+      - Optimized fill of forums when modifying the read state.
+      - Fixed compile with Qt 5
+      - Added disable/enable of GxsIdDetails process. Disabled GxsIdDetails process when filling gxs id's in forums.
+      - Optimized load of forums by moving the avatar handling for the tooltip to the tooltip creation.
+
+
+    added correct image file for finished transfers
+
+      - added correct image file for finished transfers
+
+   Backend / Coverity bug fixes
+      - removed old function entry to collect outqueue stats.
+      - removed unused method for OutQueue statistics; improved BW curve display; fixed a few display bugs
+      - Added missing initialization in - pqissl - pqissludp - PeerConnectStateBox - RsTlvBanListEntry - RsServer 
+        TcpStream - PGPCertificateInfo - peerConnectAddress - AudioInputConfig
+      - Fixed usage of member _thread_id in RsMutex
+      - Removed unused member from ProfileManager.
+      - Added missing restore of ostream format (std::dec) in rschatitems.cc.
+      - Added missing restore of ostream format (std::dec) in CreateLobbyDialog::createLobby.
+      - Fixed crash in ChatMsgItem::removeItem when "mParent == NULL".
+      - Added missing restore of ostream format (std::dec) in p3ServiceServer::sendItem.
+      - Fixed crash in ChatLobbyUserNotify::subMenuClicked when using "Remove All" of the chat lobby notifier.
+      - Fixed possible crash in DetailsDialog::setFileHash by checking return value of dynamic_cast.
+      - Fixed possible crash in ftServer::receiveTurtleData by checking return value of dynamic_cast.
+      - Fixed possible crash in ftServer::handleIncoming by checking return value of dynamic_cast.
+      - Fixed possible crash in ServiceControlSerialiser by checking return value of dynamic_cast.
+      - Fixed possible crash in RsFileTransferSerialiser by checking return value of dynamic_cast.
+      - Fixed possible crash in ChatLobbyDialog::init by checking return value of dynamic_cast.
+      - Fixed possible crash in RsGRouterSerialiser by checking return value of dynamic_cast.
+      - added basic functions to collect bandwidth info in pqistreamer both ways; added a sorting method in BWGraphSource 
+        to create curves from extracted BW info. Still not yet functiona
+      - Fixed possible crash in RsGxsIdSerialiser by checking return value of dynamic_cast.
+      - Fixed possible crash in p3GRouter by checking return value of dynamic_cast.
+      - Removed dead code from ImHistoryBrowser::fillItem.
+      - Removed potentially unintentional integer overflow in NxsBandwidthRecorder::recordEvent.
+      - Added initialize of RsGxsChannelPost members.
+      - fixed potential integer problem in image de-serialization (reported by HM)
+      - Added initialize of RsVOIPPingItem members
+      - fixed potential integer problems in de-serialization of different TLV items (patch from Henry)
+
+   Plugins
+      - fix #20 crash on shutdown with plugins enabled. Settings window did leak plugin config pages (patch from hunbernd)
+
+   WebUI
+      - allow only whitelisted link protocols to prevent javascript in links
+      - improved error message in webui: show full path of file if read failed
+      - make link detection work if the message ends with </a>
+      - added chat
+      - fix serialisation of floating point numbers in SuperEasyJSON for german locale. JSON expects decimal points, but german locale used comma.
+
+   GXS IDs
+      - added additional key checking for IDs received during distant chat DH handshake
+      - added methods to check public/private keys for consistent fingerprint and content. Should be later used to check GXS keys when they arrive from neighbor nodes.
+
+   Distant chat
+      - Added check of function parameter to DistantChatService::handleRecvDHPublicKey.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 02 Aug 2015 16:00:00 +0100
+
+retroshare06 (0.6.0-0.8551~precise) precise; urgency=low
 
    GUI
 

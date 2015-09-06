@@ -42,7 +42,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags)
     connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 
     /* Hide platform specific features */
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 
 #ifdef QT_DEBUG
     ui.chkRunRetroshareAtSystemStartup->setEnabled(false);
@@ -79,7 +79,7 @@ bool GeneralPage::save(QString &/*errmsg*/)
   Settings->setValue("doQuit", ui.checkQuit->isChecked());
   Settings->setCloseToTray(ui.checkCloseToTray->isChecked());
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 
 #ifndef QT_DEBUG
   Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
@@ -117,7 +117,7 @@ bool GeneralPage::save(QString &/*errmsg*/)
 /** Loads the settings for this page */
 void GeneralPage::load()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   bool minimized;
   ui.chkRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
   ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);

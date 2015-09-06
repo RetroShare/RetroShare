@@ -416,7 +416,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
 
 	if (flag & RSHTML_OPTIMIZEHTML_MASK) {
-		optimizeHtml(formattedText, flag & RSHTML_OPTIMIZEHTML_MASK, backgroundColor, desiredContrast);
+		optimizeHtml(formattedText, flag, backgroundColor, desiredContrast);
 	}
 
 	return formattedText;
@@ -556,8 +556,49 @@ static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 #endif // QT_VERSION < 0x040600
 }
 
-static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigned int flag, qreal bglum, qreal desiredContrast)
+/**
+ * @brief optimizeHtml: Optimize HTML Text in DomDocument to reduce size
+ * @param doc: QDomDocument containing Text to optimize
+ * @param currentElement: Current element optimized
+ * @param stylesList: List where to save all differents styles used in text
+ * @param knownStyle: List of known styles
+ */
+static void optimizeHtml(QDomDocument& doc
+                       , QDomElement& currentElement
+                       , QHash<QString, QStringList*> &stylesList
+                       , QHash<QString, QString> &knownStyle)
 {
+	bool bFirstP=true;
+	if (doc.documentElement().namedItem("style").toElement().attributeNode("RSOptimized").isAttr()) {
+		//Already optimized only get StyleList
+		QDomElement styleElem = doc.documentElement().namedItem("style").toElement();
+		if (!styleElem.isElement()) return; //Not an element so a bad message.
+		QDomAttr styleAttr = styleElem.attributeNode("RSOptimized");
+		if (!styleAttr.isAttr()) return;  //Not an attribute so a bad message.
+		QString version = styleAttr.value();
+		if (version == "v2") {
+
+			QStringList allStyles = styleElem.text().split('}');
+			foreach (QString style, allStyles){
+				QStringList pair = style.split('{');
+				if (pair.length()!=2) return; //Malformed style list so a bad message or last item.
+				QString keyvalue = pair.at(1);
+				keyvalue.replace(";","");
+				QStringList* classUsingIt = new QStringList(pair.at(0).split(','));
+				QStringList* exported = new QStringList();
+				foreach (QString keyVal, *classUsingIt) {
+					if(!keyVal.trimmed().isEmpty()) {
+						exported->append(keyVal.trimmed().replace(".",""));
+					}
+				}
+
+				stylesList.insert(keyvalue, exported);
+			}
+		}
+
+		return;
+	}
+
 	if (currentElement.tagName().toLower() == "html") {
 		// change <html> to <span>
 		currentElement.setTagName("span");
@@ -570,62 +611,45 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 	for (uint index = 0; index < children.length(); ) {
 		QDomNode node = children.item(index);
 
-		// compress style attribute
+		// Compress style attribute
 		styleNode = node.attributes().namedItem("style");
 		if (styleNode.isAttr()) {
 			QDomAttr styleAttr = styleNode.toAttr();
-			QString style = styleAttr.value().simplified();
+			QString style = styleAttr.value().simplified().trimmed();
 			style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
 			style.replace("; ", ";");
 
-			if (flag) {
+			QString className = knownStyle.value(style);
+			if (className.isEmpty()) {
+				// Create a new class
+				className = QString("S%1").arg(knownStyle.count());
+				knownStyle.insert(style, className);
+
+				// Now add this for each attribute values
 				QStringList styles = style.split(';');
-				style.clear();
 				foreach (QString pair, styles) {
-					if (!pair.trimmed().isEmpty()) {
-						QStringList keyvalue = pair.split(':');
-						if (keyvalue.length() == 2) {
-							QString key = keyvalue.at(0).trimmed();
-							QString val = keyvalue.at(1).trimmed();
+					pair.replace(" ","");
+					if (!pair.isEmpty()) {
+						QStringList* stylesListItem = stylesList.value(pair);
+						if(!stylesListItem){
+							// If value doesn't exist create it
+							stylesListItem = new QStringList();
+							stylesList.insert(pair, stylesListItem);
+							}
+						//Add the new class to this value
+						stylesListItem->push_back(className);
+								}
+							}
+								}
+			style.clear();
 
-							if ((flag & RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY && key == "font-family") ||
-								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
-								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
-								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_STYLE && key == "font-style")) {
-								continue;
-							}
-							if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
-								if (key == "color") {
-									continue;
-								}
-							}
-							else if (flag & RSHTML_FORMATTEXT_FIX_COLORS) {
-								if (key == "color") {
-									findBestColor(val, bglum, desiredContrast);
-								}
-							}
-							if (flag & (RSHTML_FORMATTEXT_REMOVE_COLOR | RSHTML_FORMATTEXT_FIX_COLORS)) {
-								if (key == "background" || key == "background-color") {
-									// Remove background color because if we change the text color,
-									// it can become unreadable on the original background.
-									// Also, FIX_COLORS is intended to display text on the default
-									// background color of the operating system.
-									continue;
-								}
-							}
-
-							style += key + ":" + val + ";";
-						} else {
-							style += pair + ";";
-						}
-					}
-				}
-			}
-			if (style.isEmpty()) {
 				node.attributes().removeNamedItem("style");
 				styleNode.clear();
-			} else {
-				styleAttr.setValue(style);
+
+			if (!className.isEmpty()) {
+				QDomNode classNode = doc.createAttribute("class");
+				classNode.setNodeValue(className);
+				node.attributes().setNamedItem(classNode);
 			}
 		}
 
@@ -662,18 +686,23 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 			}
 
 			// iterate children
-			optimizeHtml(doc, element, flag, bglum, desiredContrast);
+			optimizeHtml(doc, element, stylesList, knownStyle);
 
 			// <p>
 			if (element.tagName().toLower() == "p") {
+				//If it's the first <p>, replace it as <span> otherwise make "\n" before first line
+				if (bFirstP) {
+					element.setTagName("span");
+					bFirstP = false;
+				}
 				// <p style="...">
 				if (element.attributes().size() == 1 && styleNode.isAttr()) {
 					QString style = styleNode.toAttr().value().simplified();
-					if (style == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;" ||
-						style.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
+					if (style == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;"
+					    || style.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
 
 						if (addBR) {
-							// add <br> after a removed <p> before a removed <p>
+							// add <br> after a removed <p> but not before a removed <p>
 							QDomElement elementBr = doc.createElement("br");
 							currentElement.insertBefore(elementBr, element);
 							++index;
@@ -681,51 +710,11 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 						// remove Qt standard <p> or empty <p>
 						index += element.childNodes().length();
 						removeElement(currentElement, element);
-						addBR = true;
+						// do not add extra <br> after empty paragraph, the paragraph already contains one
+						addBR = ! style.startsWith("-qt-paragraph-type:empty");
 						continue;
 					}
 
-					// check for blockquote (not ready)
-					// style="margin-top:12px;margin-bottom:12px;margin-left:40px;margin-right:40px;-qt-block-indent:0;text-indent:0px;"
-//					int count = 0; // should be 6
-//					QStringList styles = style.split(';');
-//					foreach (QString pair, styles) {
-//						if (!pair.trimmed().isEmpty()) {
-//							QStringList keyvalue = pair.split(':');
-//							if (keyvalue.length() == 2) {
-//								QString key = keyvalue.at(0).trimmed();
-//								QString value = keyvalue.at(1).trimmed();
-
-//								if ((key == "margin-top" || key == "margin-bottom") && value == "12px") {
-//									++count;
-//									continue;
-//								}
-//								if (key == "margin-left" || key == "margin-right") {
-//									++count;
-//									continue;
-//								}
-//								if (key == "-qt-block-indent" && value == "0") {
-//									++count;
-//									continue;
-//								}
-//								if (key == "text-indent" && value == "0px") {
-//									++count;
-//									continue;
-//								}
-//								count = 0;
-//								break;
-//							} else {
-//								count = 0;
-//								break;
-//							}
-//						}
-//					}
-//					if (count == 6) {
-//						// change to "blockquote"
-//						element.setTagName("blockquote");
-//						element.attributes().removeNamedItem("style");
-//						element.setAttribute("type", "cite");
-//					}
 				}
 				addBR = false;
 			}
@@ -734,7 +723,124 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 	}
 }
 
-void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
+/**
+ * @brief styleCreate: Add styles filtered in QDomDocument.
+ * @param doc: QDomDocument containing all text formatted
+ * @param stylesList: List of all styles recognized
+ * @param flag: Bitfield of RSHTML_FORMATTEXT_* constants (they must be part of
+ *             RSHTML_OPTIMIZEHTML_MASK).
+ * @param bglum: Luminance background color of the widget where the text will be
+ *                        displayed. Needed only if RSHTML_FORMATTEXT_FIX_COLORS
+ *                        is passed inside flag.
+ * @param desiredContrast: Minimum contrast between text and background color,
+ *                        between 1 and 21.
+ */
+static void styleCreate(QDomDocument& doc
+                        , QHash<QString, QStringList*> stylesList
+                        , unsigned int flag
+                        , qreal bglum
+                        , qreal desiredContrast)
+{
+	QDomElement styleElem;
+	do{
+		if (doc.documentElement().namedItem("style").toElement().attributeNode("RSOptimized").isAttr()) {
+			QDomElement ele = doc.documentElement().namedItem("style").toElement();
+			//Remove child before filter
+			if (!ele.isElement()) break; //Not an element so a bad message.
+			QDomAttr styleAttr = ele.attributeNode("RSOptimized");
+			if (!styleAttr.isAttr()) break; //Not an attribute so a bad message.
+			QString version = styleAttr.value();
+			if (version == "v2") {
+				styleElem = ele;
+			}
+		}
+	}while (false); //for break
+
+	if(!styleElem.isElement()) {
+		styleElem = doc.createElement("style");
+		// Creation of Style class list: <style type="text/css">
+		QDomAttr styleAttr;
+		styleAttr = doc.createAttribute("type");
+		styleAttr.setValue("text/css");
+		styleElem.attributes().setNamedItem(styleAttr);
+		QDomAttr optAttr;
+		optAttr = doc.createAttribute("RSOptimized");
+		optAttr.setValue("v2");
+		styleElem.attributes().setNamedItem(optAttr);
+	}
+
+	while(styleElem.childNodes().count()>0) {
+		styleElem.removeChild(styleElem.firstChild());
+	}
+
+	QString style = "";
+
+	QHashIterator<QString, QStringList*> it(stylesList);
+	while(it.hasNext()) {
+		it.next();
+		QStringList* classUsingIt = it.value();
+		bool first = true;
+		foreach(QString className, *classUsingIt) {
+			if (!className.trimmed().isEmpty()) {
+				style += QString(first?".":",.") + className;// + " ";
+				first = false;
+			}
+		}
+
+		QStringList keyvalue = it.key().split(':');
+		if (keyvalue.length() == 2) {
+			QString key = keyvalue.at(0).trimmed();
+			QString val = keyvalue.at(1).trimmed();
+
+			if ((flag & RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY && key == "font-family") ||
+				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
+				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
+				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_STYLE && key == "font-style")) {
+				continue;
+			}
+
+			if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
+				if (key == "color") {
+					continue;
+				}
+			} else if (flag & RSHTML_FORMATTEXT_FIX_COLORS) {
+				if (key == "color") {
+					findBestColor(val, bglum, desiredContrast);
+				}
+			}
+
+			if (flag & (RSHTML_FORMATTEXT_REMOVE_COLOR | RSHTML_FORMATTEXT_FIX_COLORS)) {
+				if (key == "background" || key == "background-color") {
+					// Remove background color because if we change the text color,
+					// it can become unreadable on the original background.
+					// Also, FIX_COLORS is intended to display text on the default
+					// background color of the operating system.
+					continue;
+				}
+			}
+
+			//.S1 .S2 .S4 {font-family:'Sans';}
+			style += "{" + key + ":" + val + ";}";
+		} else {
+			style += "{" + it.key() + ";}\n";
+		}
+	}
+
+	QDomText styleText = doc.createTextNode(style);
+	styleElem.appendChild(styleText);
+
+	//Create a Body element to be trunk, and doc could open it.
+	QDomElement trunk = doc.createElement("body");
+	trunk.appendChild(styleElem);
+	while (!doc.firstChild().isNull()){
+		trunk.appendChild(doc.firstChild().cloneNode());
+		doc.removeChild(doc.firstChild());
+	}
+	doc.appendChild(trunk);
+
+}
+
+void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag /*= 0*/)
 {
 	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
 		text = textEdit->toPlainText();
@@ -759,9 +865,10 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
  * @param desiredContrast Minimum contrast between text and background color,
  *                        between 1 and 21.
  */
-void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgroundColor, qreal desiredContrast)
+void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
+                          , const QColor &backgroundColor /*= Qt::white*/, qreal desiredContrast /*= 1.0*/
+                          )
 {
-//	int originalLength = text.length();
 
 	// remove doctype
 	text.remove(QRegExp("<!DOCTYPE[^>]*>"));
@@ -777,7 +884,11 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgr
 	}
 
 	QDomElement body = doc.documentElement();
-	::optimizeHtml(doc, body, flag, ::getRelativeLuminance(backgroundColor), desiredContrast);
+	QHash<QString, QStringList*> stylesList;
+	QHash<QString, QString> knownStyle;
+
+	::optimizeHtml(doc, body, stylesList, knownStyle);
+	::styleCreate(doc, stylesList, flag, ::getRelativeLuminance(backgroundColor), desiredContrast);
 	text = doc.toString(-1);
 
 //	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;

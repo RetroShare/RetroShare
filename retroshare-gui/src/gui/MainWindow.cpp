@@ -202,7 +202,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(false)) + " - " + nameAndLocation);
+    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
 
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
@@ -391,17 +391,17 @@ void MainWindow::initStackedPage()
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)
  {
-	 QIcon icon ;
+	 MainPage *pluginPage = NULL;
+	 QIcon icon, *pIcon = NULL;
 
-	 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_page() != NULL)
+	 if(rsPlugins->plugin(i) != NULL && (pluginPage = rsPlugins->plugin(i)->qt_page()) != NULL)
 	 {
-		 if(rsPlugins->plugin(i)->qt_icon() != NULL)
-			 icon = *rsPlugins->plugin(i)->qt_icon() ;
+		 if((pIcon = rsPlugins->plugin(i)->qt_icon()) != NULL)
+			 icon = *pIcon ;
 		 else
 			 icon = QIcon(":images/extension_48.png") ;
 
 		 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
-		 MainPage *pluginPage = rsPlugins->plugin(i)->qt_page();
 		 pluginPage->setIconPixmap(icon);
 		 pluginPage->setPageName(QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()));
 		 addPage(pluginPage, grp, &notify);

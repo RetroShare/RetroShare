@@ -602,6 +602,11 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
         in = std::string(strdata, strsize);
     }
 
+#ifdef TLV_BASE_DEBUG
+    if(type == TLV_TYPE_STR_MSG)
+	    std::cerr << "Checking string \"" << in << "\"" << std::endl;
+#endif
+    
     // Check for string content. We want to avoid possible lol bombs as soon as possible.
 
     static const int number_of_suspiscious_strings = 4 ;

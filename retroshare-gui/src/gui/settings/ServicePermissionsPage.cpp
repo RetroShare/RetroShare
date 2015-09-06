@@ -28,16 +28,19 @@
 #include <iostream>
 #include <QTimer>
 
-#define PermissionStateUserRole		(Qt::UserRole)
-#define ServiceIdUserRole		(Qt::UserRole + 1)
-#define PeerIdUserRole			(Qt::UserRole + 2)
-
-ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags /*flags*/)
+ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags flags) :
+    ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
+    connect(ui.cb_hideOffline, SIGNAL(toggled(bool)), ui.frame, SLOT(setHideOffline(bool)));
     //QObject::connect(ui.tableWidget,SIGNAL(itemChanged(QTableWidgetItem *)),  this, SLOT(tableItemChanged(QTableWidgetItem *)));
+
+    ui.frame->setHideOffline(ui.cb_hideOffline->isChecked());
+
+    // Not implemented?
+    ui.pushButton->hide();
 }
 
 QString ServicePermissionsPage::helpText() const
@@ -52,10 +55,3 @@ QString ServicePermissionsPage::helpText() const
                    <p>Be very careful: Some services depend on each other. For instance turning turtle OFF will also\
                    stop all anonymous transfer, distant chat and distant messaging.</p>");
 }
-
-bool ServicePermissionsPage::isHideOfflineChecked()
-{
-    return ui.cb_hideOffline->checkState() == Qt::Checked;
-}
-
-

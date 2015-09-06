@@ -19,6 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QApplication>
+#include <QClipboard>
 #include <QMimeData>
 #include <QTextDocumentFragment>
 #include <QCompleter>
@@ -228,6 +230,7 @@ void MimeTextEdit::contextMenuEvent(QContextMenuEvent *e)
 	QMenu *contextMenu = createStandardContextMenu(e->pos());
 
 	/* Add actions for pasting links */
+	contextMenu->addAction( tr("Paste as plain text"), this, SLOT(pastePlainText()));
 	contextMenu->addSeparator();
 	QAction *pasteLinkAction = contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 	contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
@@ -259,4 +262,9 @@ void MimeTextEdit::pasteOwnCertificateLink()
 	if (link.createCertificate(ownId)) {
 		insertHtml(link.toHtml() + " ");
 	}
+}
+
+void MimeTextEdit::pastePlainText()
+{
+	insertPlainText(QApplication::clipboard()->text());
 }

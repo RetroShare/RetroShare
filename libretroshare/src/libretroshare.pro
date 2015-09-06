@@ -1,12 +1,16 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib bitdht
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
+TARGET_PRL = libretroshare
 
 
 #GXS Stuff.
 # This should be disabled for releases until further notice.
-CONFIG += gxs debug
+CONFIG += gxs 
 
 #CONFIG += dsdv
 
@@ -19,7 +23,6 @@ profiling {
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
 
-CONFIG += debug
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -81,6 +84,8 @@ SOURCES +=	tcponudp/udppeer.cc \
 	# The next line is for compliance with debian packages. Keep it!
 	INCLUDEPATH += ../libbitdht
 	DEFINES *= RS_USE_BITDHT
+	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+	LIBS += ../../libbitdht/src/lib/libbitdht.a
 }
 
 
@@ -120,10 +125,6 @@ HEADERS += $$PUBLIC_HEADERS
 
 ################################# Linux ##########################################
 linux-* {
-	isEmpty(PREFIX)  { PREFIX = /usr }
-	isEmpty(INC_DIR) { INC_DIR = $${PREFIX}/include/retroshare/ }
-	isEmpty(LIB_DIR) { LIB_DIR = $${PREFIX}/lib/ }
-
 	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
@@ -140,26 +141,24 @@ linux-* {
 	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
-	# where to put the shared library itself
-	target.path = $$LIB_DIR
-	INSTALLS *= target
-
-        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-        isEmpty(SQLCIPHER_OK) {
-# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-		!exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-			message(libsqlcipher.a not found. Compilation will not use SQLCIPER. Database will be unencrypted.)
-				DEFINES *= NO_SQLCIPHER
+	contains(CONFIG, NO_SQLCIPHER) {
+		DEFINES *= NO_SQLCIPHER
+		LIBS *= -lsqlite3
+	} else {
+	        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+	        isEmpty(SQLCIPHER_OK) {
+			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+			exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+				LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+				DEPENDPATH += ../../../lib/
+				INCLUDEPATH += ../../../lib/
+			} else {
+				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
+			}
 		} else {
-			DEPENDPATH += ../../../lib/
-			INCLUDEPATH += ../../../lib/
+			LIBS *= -lsqlcipher
 		}
 	}
-
-	# where to put the librarys interface
-	include_rsiface.path = $${INC_DIR}
-	include_rsiface.files = $$PUBLIC_HEADERS
-	INSTALLS += include_rsiface
 
 	#CONFIG += version_detail_bash_script
 
@@ -179,6 +178,22 @@ linux-* {
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
+	LIBS *= -lssl -lupnp -lixml
+	LIBS *= -lcrypto -lz -lpthread
+}
+
+unix {
+	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
+	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
+
+	## where to put the librarys interface
+	#include_rsiface.path = "$${INC_DIR}"
+	#include_rsiface.files = $$PUBLIC_HEADERS
+	#INSTALLS += include_rsiface
+
+	## where to put the shared library itself
+	#target.path = "$$LIB_DIR"
+	#INSTALLS *= target
 }
 
 linux-g++ {
@@ -190,9 +205,16 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-    QMAKE_EXTRA_TARGETS += write_version_detail
-    PRE_TARGETDEPS = write_version_detail
-    write_version_detail.commands = ./version_detail.sh
+    linux-* {
+        QMAKE_EXTRA_TARGETS += write_version_detail
+        PRE_TARGETDEPS = write_version_detail
+        write_version_detail.commands = ./version_detail.sh
+    }
+    win32 {
+        QMAKE_EXTRA_TARGETS += write_version_detail
+        PRE_TARGETDEPS = write_version_detail
+        write_version_detail.commands = $$PWD/version_detail.bat
+    }
 }
 
 #################### Cross compilation for windows under Linux ####################
@@ -317,6 +339,10 @@ openbsd-* {
 }
 
 ################################### COMMON stuff ##################################
+
+# openpgpsdk
+PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 
 HEADERS +=	dbase/cachestrapper.h \
 			dbase/fimonitor.h \
@@ -477,6 +503,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
+			util/rsscopetimer.h
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -626,6 +653,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
+			util/rsscopetimer.cc
 
 
 upnp_miniupnpc {

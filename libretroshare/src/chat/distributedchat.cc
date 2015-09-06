@@ -46,7 +46,7 @@ static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age o
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connection at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
 
-static const time_t 	MAX_KEEP_MSG_RECORD 		   = 1200 ; // keep msg record for 1200 secs max.
+static const time_t 	MAX_KEEP_MSG_RECORD 		    = 1200 ; // keep msg record for 1200 secs max.
 static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
 static const time_t  	MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
 static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
@@ -57,11 +57,11 @@ static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
 static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
 
-#define        IS_PUBLIC_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC   )
-#define     IS_ANONYMOUS_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_ANONYMOUS)
-#define IS_CONNEXION_CHALLENGE(flags) (flags & RS_CHAT_LOBBY_FLAGS_CHALLENGE)
+#define        IS_PUBLIC_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC    )
+#define    IS_PGP_SIGNED_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+#define IS_CONNEXION_CHALLENGE(flags) (flags & RS_CHAT_LOBBY_FLAGS_CHALLENGE )
 
-#define  EXTRACT_PRIVACY_FLAGS(flags) (ChatLobbyFlags(flags.toUInt32()) & RS_CHAT_LOBBY_FLAGS_PUBLIC)
+#define  EXTRACT_PRIVACY_FLAGS(flags) (ChatLobbyFlags(flags.toUInt32()) * (RS_CHAT_LOBBY_FLAGS_PUBLIC | RS_CHAT_LOBBY_FLAGS_PGP_SIGNED))
 
 DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceControl *sc,p3HistoryMgr *hm, RsGixs *is)
     : mServType(serv_type),mDistributedChatMtx("Distributed Chat"), mServControl(sc), mHistMgr(hm),mGixs(is)
@@ -144,7 +144,37 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         std::cerr << std::endl;
         return false;
     }
+    
+    ChatLobbyFlags fl ;
+    
+    // delete items that are not for us, as early as possible.
+    {
+        RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
+        // send upward for display
+
+        std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it =  _chat_lobbys.find(cli->lobby_id) ;
+        
+        if(it == _chat_lobbys.end())
+        {
+#ifdef DEBUG_CHAT_LOBBIES
+            std::cerr << "Chatlobby for id " << std::hex << item->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
+#endif
+            return false;
+        }
+        fl = it->second.lobby_flags ;
+    }
+    if(IS_PGP_SIGNED_LOBBY(fl))
+    {
+	    RsIdentityDetails details;
+
+	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details) || !details.mPgpKnown)
+	    {
+		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (id=" << cli->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
+
+		    return false ;
+	    }
+    }
     if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
         return false;
 
@@ -157,7 +187,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     //name = cli->nick;
     //popupChatFlag = RS_POPUP_CHATLOBBY;
 
-    RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, cli->signature.keyId.toStdString(), cli->nick, cli->message); /* notify private chat message */
+	RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, virtual_peer_id.toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
 
     return true ;
 }
@@ -181,33 +211,34 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     std::cerr << "   signature id: " << obj->signature.keyId << std::endl;
 #endif
 
-        if(!obj->serialise_signed_part(memory,size))
-        {
-            std::cerr << "  (EE) Cannot serialise message item. " << std::endl;
-            return false ;
-        }
+    if(!obj->serialise_signed_part(memory,size))
+    {
+	    std::cerr << "  (EE) Cannot serialise message item. " << std::endl;
+	    return false ;
+    }
 
-        uint32_t error_status ;
+    uint32_t error_status ;
 
-        if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,error_status))
-        {
-        bool res = false ;
+    if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,error_status))
+    {
+	    bool res = false ;
 
-            switch(error_status)
-            {
-                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE:
+	    switch(error_status)
+	    {
+	    case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE:
 #ifdef DEBUG_CHAT_LOBBIES
-            std::cerr << "(WW) Key is not is cache. Cannot verify." << std::endl;
+		    std::cerr << "(WW) Key is not is cache. Cannot verify." << std::endl;
 #endif
-                    res =true ;
-                                        break ;
-                case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/MITM?." << std::endl;
-                    res =false ;
-                                        break ;
-            default: break ;
-            }
-            return res;
-        }
+		    res =true ;
+		    break ;
+	    case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/MITM?." << std::endl;
+		    res =false ;
+		    break ;
+	    default: break ;
+	    }
+	    return res;
+    }
+
 
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature: CHECKS" << std::endl;
@@ -249,11 +280,11 @@ void DistributedChatService::locked_printDebugInfo() const
 	{
 		std::cerr << "   Lobby id\t\t: " << std::hex << it->first << std::dec << std::endl;
 		std::cerr << "   Lobby name\t\t: " << it->second.lobby_name << std::endl;
-    std::cerr << "   Lobby topic\t\t: " << it->second.lobby_topic << std::endl;
-        std::cerr << "   nick name\t\t: " << it->second.gxs_id << std::endl;
-        std::cerr << "   Lobby type\t\t: " << ((IS_PUBLIC_LOBBY(it->second.lobby_flags))?"Public":"Private") << std::endl;
-        std::cerr << "   Lobby policy\t\t: " << ((IS_ANONYMOUS_LOBBY(it->second.lobby_flags))?"Unsigned":"Signature required") << std::endl;
-        std::cerr << "   Lobby peer id\t: " << it->second.virtual_peer_id << std::endl;
+		std::cerr << "   Lobby topic\t\t: " << it->second.lobby_topic << std::endl;
+		std::cerr << "   nick name\t\t: " << it->second.gxs_id << std::endl;
+		std::cerr << "   Lobby type\t\t: " << ((IS_PUBLIC_LOBBY(it->second.lobby_flags))?"Public":"Private") << std::endl;
+		std::cerr << "   Lobby security\t\t: " << ((IS_PGP_SIGNED_LOBBY(it->second.lobby_flags))?"PGP-signed IDs required":"Anon IDs accepted") << std::endl;
+		std::cerr << "   Lobby peer id\t: " << it->second.virtual_peer_id << std::endl;
 		std::cerr << "   Challenge count\t: " << it->second.connexion_challenge_count << std::endl;
 		std::cerr << "   Last activity\t: " << now - it->second.last_activity << " seconds ago." << std::endl;
 		std::cerr << "   Cached messages\t: " << it->second.msg_cache.size() << std::endl;
@@ -268,7 +299,7 @@ void DistributedChatService::locked_printDebugInfo() const
 
 		std::cerr << "   Participating nick names: " << std::endl;
 
-        for(std::map<RsGxsId,time_t>::const_iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();++it2)
+		for(std::map<RsGxsId,time_t>::const_iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();++it2)
 			std::cerr << "       " << it2->first << ": " << now - it2->second << " secs ago" << std::endl;
 
 	}
@@ -446,7 +477,7 @@ void DistributedChatService::handleRecvChatLobbyListRequest(RsChatLobbyListReque
                 info.name  = it->second.lobby_name ;
                 info.topic = it->second.lobby_topic ;
                 info.count = it->second.gxs_ids.size() ;
-                info.flags = it->second.lobby_flags ;
+                info.flags = ChatLobbyFlags(EXTRACT_PRIVACY_FLAGS(it->second.lobby_flags)) ;
 
                 item->lobbies.push_back(info) ;
 			}
@@ -496,7 +527,7 @@ void DistributedChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
                 rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobbies[i].count) ;
 
 			rec.last_report_time = now ;
-            rec.lobby_flags = item->lobbies[i].flags ;
+            rec.lobby_flags = EXTRACT_PRIVACY_FLAGS(item->lobbies[i].flags) ;
 
             std::map<ChatLobbyId,ChatLobbyFlags>::const_iterator it(_known_lobbies_flags.find(item->lobbies[i].id)) ;
 
@@ -596,19 +627,24 @@ void DistributedChatService::addTimeShiftStatistics(int D)
 
 void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 {
+    ChatLobbyFlags fl ;
+    
     // delete items that are not for us, as early as possible.
     {
         RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
         // send upward for display
 
-        if(_chat_lobbys.find(item->lobby_id) == _chat_lobbys.end())
+        std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it =  _chat_lobbys.find(item->lobby_id) ;
+        
+        if(it == _chat_lobbys.end())
         {
 #ifdef DEBUG_CHAT_LOBBIES
             std::cerr << "Chatlobby for id " << std::hex << item->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
 #endif
             return ;
         }
+        fl = it->second.lobby_flags ;
     }
 
 
@@ -624,7 +660,18 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
         std::cerr << std::endl;
         return ;
     }
+        
+    if(IS_PGP_SIGNED_LOBBY(fl))
+    {
+	    RsIdentityDetails details;
 
+	    if(!rsIdentity->getIdDetails(item->signature.keyId,details) || !details.mPgpKnown)
+	    {
+		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
+
+		    return ;
+	    }
+    }
     addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 
 	if(now+100 > (time_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
@@ -912,10 +959,8 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 
     // now sign the object, if the lobby expects it
 
-    if(!IS_ANONYMOUS_LOBBY(lobby.lobby_flags))
-    {
         uint32_t size = item.signed_serial_size() ;
-        unsigned char *memory = (unsigned char *)malloc(size) ;
+        RsTemporaryMemory memory(size) ;
 
         if(!item.serialise_signed_part(memory,size))
         {
@@ -934,11 +979,8 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
             default: std::cerr << "(EE) Cannot sign item: unknown error" << std::endl;
                                         break ;
         }
-        free(memory) ;
         return false ;
     }
-
-
 
 #ifdef DEBUG_CHAT_LOBBIES
     std::cerr << "  signature done." << std::endl;
@@ -953,8 +995,6 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
     std::cerr << "  Item dump:" << std::endl;
     item.print(std::cerr,2) ;
 #endif
-    free(memory) ;
-    }
 
     return true ;
 }

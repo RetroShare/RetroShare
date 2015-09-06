@@ -55,5 +55,10 @@
 		<file>icons/tile_downloaded_48.png</file>
 		<file>icons/tile_downloading_48.png</file>
 		<file>icons/tile_inactive_48.png</file>
+		<file>icons/user-away_64.png</file>
+		<file>icons/user-away-extended_64.png</file>
+		<file>icons/user-busy_64.png</file>
+		<file>icons/user-offline_64.png</file>
+		<file>icons/user-online_64.png</file>
 	</qresource>
 </RCC>

@@ -35,18 +35,25 @@ public:
 	QString placeholderText() { return mPlaceholderText; }
 	void setPlaceholderText(const QString &text);
 
-	void filterItems(int filterColumn, const QString &text);
+	void filterItems(int filterColumn, const QString &text, int role = Qt::DisplayRole);
 
+	void setSettingsVersion(qint32 version);
 	void processSettings(bool load);
 
-	void setColumnCustomizable(bool customizable);
+	void enableColumnCustomize(bool customizable);
+	void setColumnCustomizable(int column, bool customizable);
+
+	void resort();
+
+	// Add QAction to context menu (action won't be deleted)
+	void addHeaderContextMenuAction(QAction *action);
 
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
 	void columnVisibleChanged(int column, bool visible);
 
 private:
-	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text);
+	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role);
 
 private slots:
 	void headerContextMenuRequested(const QPoint &pos);
@@ -58,7 +65,10 @@ protected:
 
 private:
 	QString mPlaceholderText;
-	bool mColumnCustomizable;
+	bool mEnableColumnCustomize;
+	quint32 mSettingsVersion;
+	QMap<int, bool> mColumnCustomizable;
+	QList<QAction*> mHeaderContextMenuActions;
 };
 
 #endif

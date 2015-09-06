@@ -47,17 +47,17 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 
     ui->idChooser_CB->loadIds(IDCHOOSER_ID_REQUIRED, default_identity);
 
-//#if QT_VERSION >= 0x040700
-//	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here")) ;
-//	ui->nickName_LE->setPlaceholderText(tr("Your nickname for this lobby (Change default name in options->chat)")) ;
-//#endif
-//	ui->nickName_LE->setText(QString::fromUtf8(default_nick.c_str())) ;
+#if QT_VERSION >= 0x040700
+	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here"));
+	ui->lobbyTopic_LE->setPlaceholderText(tr("Set a descriptive topic here"));
+#endif
 
 	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(createLobby()));
 	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect( ui->lobbyName_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
 	connect( ui->lobbyTopic_LE, SIGNAL( textChanged ( QString ) ), this, SLOT( checkTextFields( ) ) );
-    connect( ui->idChooser_CB, SIGNAL( currentChanged ( int ) ), this, SLOT( checkTextFields( ) ) );
+    connect( ui->idChooser_CB, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( checkTextFields( ) ) );
+    connect( ui->pgp_signed_CB, SIGNAL( toggled ( bool ) ), this, SLOT( checkTextFields( ) ) );
 
 	/* initialize key share list */
 	ui->keyShareList->setHeaderText(tr("Contacts:"));
@@ -105,6 +105,13 @@ void CreateLobbyDialog::checkTextFields()
                     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true) ;
                     break ;
     }
+    
+    RsIdentityDetails(idd) ;
+    
+    rsIdentity->getIdDetails(id,idd) ;
+    
+    if( (!idd.mPgpKnown) && ui->pgp_signed_CB->isChecked())
+                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
 }
 
 void CreateLobbyDialog::createLobby()
@@ -128,6 +135,7 @@ void CreateLobbyDialog::createLobby()
     case GxsIdChooser::NoId:
     case GxsIdChooser::None:
         return ;
+    default: break ;
     }
     // add to group
 
@@ -136,6 +144,9 @@ void CreateLobbyDialog::createLobby()
     if(ui->security_CB->currentIndex() == 0)
         lobby_flags |= RS_CHAT_LOBBY_FLAGS_PUBLIC ;
 
+    if(ui->pgp_signed_CB->isChecked())
+        lobby_flags |= RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ;
+    
     ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
 
     std::cerr << "gui: Created chat lobby " << std::hex << id << std::dec << std::endl ;

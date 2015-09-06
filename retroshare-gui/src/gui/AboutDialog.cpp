@@ -24,10 +24,15 @@
 #include "HelpDialog.h"
 #include "rshare.h"
 
+#include <retroshare/rsiface.h>
+#include <retroshare/rsplugin.h>
 #include <retroshare/rsdisc.h>
 #include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
+#include <microhttpd.h>
 
+#include <QClipboard>
+#include <QSysInfo>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QBrush>
@@ -720,4 +725,80 @@ NextPieceLabel::NextPieceLabel( QWidget* parent /* = 0*/ ) : QLabel(parent)
     setFrameShape(QFrame::Box);
     setAlignment(Qt::AlignCenter);
     setAutoFillBackground(true);
+}
+
+static QString addLibraries(const std::string &name, const std::list<RsLibraryInfo> &libraries)
+{
+    QString mTextEdit;
+    mTextEdit+=QString::fromUtf8(name.c_str());
+    mTextEdit+="\n";
+
+    std::list<RsLibraryInfo>::const_iterator libraryIt;
+    for (libraryIt = libraries.begin(); libraryIt != libraries.end(); ++libraryIt) {
+
+        mTextEdit+=" - ";
+        mTextEdit+=QString::fromUtf8(libraryIt->mName.c_str());
+        mTextEdit+=": ";
+        mTextEdit+=QString::fromUtf8(libraryIt->mVersion.c_str());
+        mTextEdit+="\n";
+    }
+    mTextEdit+="\n";
+    return mTextEdit;
+}
+
+
+void AboutDialog::on_copy_button_clicked()
+{
+    QString verInfo;
+    QString rsVerString = "RetroShare Version: ";
+    rsVerString+=Rshare::retroshareVersion(true);
+    verInfo+=rsVerString;
+    verInfo+="\n";
+
+
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+	#if QT_VERSION >= QT_VERSION_CHECK (5, 4, 0)
+		verInfo+=QSysInfo::prettyProductName();
+	#endif
+#else
+	#ifdef Q_OS_LINUX
+	verInfo+="Linux";
+	#endif
+	#ifdef Q_OS_WIN
+	verInfo+="Windows";
+	#endif
+	#ifdef Q_OS_MAC
+	verInfo+="Mac";
+	#endif
+#endif
+	verInfo+=" ";
+    QString qtver = QString("QT ")+QT_VERSION_STR;
+    verInfo+=qtver;
+    verInfo+="\n\n";
+
+    /* Add version numbers of libretroshare */
+    std::list<RsLibraryInfo> libraries;
+    RsControl::instance()->getLibraries(libraries);
+    verInfo+=addLibraries("libretroshare", libraries);
+
+    /* Add version numbers of RetroShare */
+    // Add versions here. Find a better place.
+    libraries.clear();
+    libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
+    verInfo+=addLibraries("RetroShare", libraries);
+
+    /* Add version numbers of plugins */
+    if (rsPlugins) {
+        for (int i = 0; i < rsPlugins->nbPlugins(); ++i) {
+            RsPlugin *plugin = rsPlugins->plugin(i);
+            if (plugin) {
+                libraries.clear();
+                plugin->getLibraries(libraries);
+                verInfo+=addLibraries(plugin->getPluginName(), libraries);
+            }
+        }
+    }
+
+
+    QApplication::clipboard()->setText(verInfo);
 }

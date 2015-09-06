@@ -12,7 +12,7 @@
 std::string RsUtil::retroshareVersion()
 {
 	std::string version;
-	rs_sprintf(version, "%d.%d.%d%s Revision %d", RS_MAJOR_VERSION, RS_MINOR_VERSION, RS_BUILD_NUMBER, RS_BUILD_NUMBER_ADD, RS_REVISION_NUMBER);
+	rs_sprintf(version, "%d.%d.%d%s Revision %08x", RS_MAJOR_VERSION, RS_MINOR_VERSION, RS_BUILD_NUMBER, RS_BUILD_NUMBER_ADD, RS_REVISION_NUMBER);
 
 	return version;
 }

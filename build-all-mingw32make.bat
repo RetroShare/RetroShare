@@ -1,10 +1,8 @@
 set QTDIR=C:\Qt\4.8.6
 set MINGW=C:\MinGW
+set GIT=C:\Program Files\Git
 
-set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
-
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\retroshare\rsversion.in libretroshare\src\retroshare\rsversion.h
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\retroshare.in retroshare-gui\src\retroshare.nsi
+set PATH=%QTDIR%\bin;%MINGW%\bin;%GIT%\bin;%PATH% 
 
 
 @echo off
@@ -65,12 +63,19 @@ qmake openpgpsdk.pro
 
 mingw32-make
 
+cd ..\..\libresapi\src
+
+if not %clean%x==x mingw32-make clean 
+
+qmake libresapi.pro
+
+mingw32-make %%a
 
 cd ..\..\libretroshare\src
 
 if not %clean%x==x mingw32-make clean 
 
-qmake libretroshare.pro
+qmake libretroshare.pro  "CONFIG+=version_detail_bash_script"
 
 mingw32-make %%a
 
@@ -97,7 +102,7 @@ cd ..\..\retroshare-gui\src
 
 if not %clean%x==x mingw32-make clean
 
-qmake retroshare-gui.pro
+qmake retroshare-gui.pro  "CONFIG+=version_detail_bash_script"
 
 mingw32-make %%a
 

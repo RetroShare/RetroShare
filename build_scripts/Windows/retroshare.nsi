@@ -39,10 +39,10 @@
 !endif
 
 # Get version from executable
-!GetDllVersion "${RELEASEDIR}\retroshare-gui\src\release\RetroShare.exe" VERSION_
+!GetDllVersion "${RELEASEDIR}\retroshare-gui\src\release\RetroShare06.exe" VERSION_
 
 !define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}${BUILDADD}
-!define REVISION ${VERSION_4}
+;!define REVISION ${VERSION_4}
 
 # Check version
 !ifndef REVISION
@@ -52,6 +52,9 @@
 !ifndef REVISION
 !error "REVISION is not defined"
 !endif
+
+# Date
+!define /date Date "%Y%m%d"
 
 # Application name and version
 !define APPNAME "RetroShare"
@@ -68,7 +71,7 @@
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare_${VERSION}_${REVISION}_setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -172,8 +175,8 @@ Section $(Section_Main) Section_Main
 
   ; Main binaries
   SetOutPath "$INSTDIR"
-  File "${RELEASEDIR}\retroshare-gui\src\release\RetroShare.exe"
-  File "${RELEASEDIR}\retroshare-nogui\src\release\retroshare-nogui.exe"
+  File /oname=RetroShare.exe "${RELEASEDIR}\retroshare-gui\src\release\RetroShare06.exe"
+  File /oname=retroshare-nogui.exe "${RELEASEDIR}\retroshare-nogui\src\release\RetroShare06-nogui.exe"
 
   ; Qt binaries
   File "${QTDIR}\bin\QtCore4.dll"

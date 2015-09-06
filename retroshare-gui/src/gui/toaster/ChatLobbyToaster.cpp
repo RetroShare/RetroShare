@@ -22,10 +22,11 @@
 #include "ChatLobbyToaster.h"
 #include "gui/chat/ChatDialog.h"
 #include "util/HandleRichText.h"
+#include <retroshare/rsidentity.h>
 
 #include <retroshare/rsmsgs.h>
 
-ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const QString &name, const QString &message):
+ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const RsGxsId &sender_id, const QString &message):
     QWidget(NULL), mLobbyId(lobby_id)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -39,7 +40,14 @@ ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const QString &n
 	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":images/chat_64.png");
 
-	QString lobbyName = RsHtml::plainText(name);
+	/* Get sender info */
+	RsIdentityDetails idd;
+	if(!rsIdentity->getIdDetails(sender_id, idd))
+		return;
+
+	ui.avatarWidget->setId(ChatId(sender_id));
+
+	QString lobbyName = RsHtml::plainText(idd.mNickname);
 
     ChatLobbyInfo clinfo ;
     if(rsMsgs->getChatLobbyInfo(mLobbyId,clinfo))

@@ -29,7 +29,12 @@
 
 RSTreeWidget::RSTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
-	mColumnCustomizable = false;
+	mEnableColumnCustomize = false;
+	mSettingsVersion = 0; // disabled
+
+	QHeaderView *h = header();
+	h->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 }
 
 void RSTreeWidget::setPlaceholderText(const QString &text)
@@ -76,11 +81,11 @@ void RSTreeWidget::mousePressEvent(QMouseEvent *event)
 	QTreeWidget::mousePressEvent(event);
 }
 
-void RSTreeWidget::filterItems(int filterColumn, const QString &text)
+void RSTreeWidget::filterItems(int filterColumn, const QString &text, int role)
 {
 	int count = topLevelItemCount();
 	for (int index = 0; index < count; ++index) {
-		filterItem(topLevelItem(index), filterColumn, text);
+		filterItem(topLevelItem(index), filterColumn, text, role);
 	}
 
 	QTreeWidgetItem *item = currentItem();
@@ -90,12 +95,12 @@ void RSTreeWidget::filterItems(int filterColumn, const QString &text)
 	}
 }
 
-bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text)
+bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role)
 {
 	bool itemVisible = true;
 
 	if (!text.isEmpty()) {
-		if (!item->text(filterColumn).contains(text, Qt::CaseInsensitive)) {
+		if (!item->data(filterColumn, role).toString().contains(text, Qt::CaseInsensitive)) {
 			itemVisible = false;
 		}
 	}
@@ -103,7 +108,7 @@ bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QSt
 	int visibleChildCount = 0;
 	int count = item->childCount();
 	for (int index = 0; index < count; ++index) {
-		if (filterItem(item->child(index), filterColumn, text)) {
+		if (filterItem(item->child(index), filterColumn, text, role)) {
 			++visibleChildCount;
 		}
 	}
@@ -117,55 +122,93 @@ bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QSt
 	return (itemVisible || visibleChildCount);
 }
 
+void RSTreeWidget::setSettingsVersion(qint32 version)
+{
+	mSettingsVersion = version;
+}
+
 void RSTreeWidget::processSettings(bool load)
 {
 	if (load) {
-		// load settings
+		// Load settings
 
-		// state of tree widget
-		header()->restoreState(Settings->value(objectName()).toByteArray());
+		// State of tree widget
+		if (mSettingsVersion == 0 || Settings->value(QString("%1Version").arg(objectName())) == mSettingsVersion) {
+			// Compare version, because Qt can crash in restoreState after column changes
+			header()->restoreState(Settings->value(objectName()).toByteArray());
+		}
 	} else {
-		// save settings
+		// Save settings
 
 		// state of tree widget
 		Settings->setValue(objectName(), header()->saveState());
+
+		// Save version
+		if (mSettingsVersion) {
+			Settings->setValue(QString("%1Version").arg(objectName()), mSettingsVersion);
+		}
 	}
 }
 
-void RSTreeWidget::setColumnCustomizable(bool customizable)
+void RSTreeWidget::enableColumnCustomize(bool customizable)
 {
-	if (customizable == mColumnCustomizable) {
+	if (customizable == mEnableColumnCustomize) {
 		return;
 	}
 
-	mColumnCustomizable = customizable;
+	mEnableColumnCustomize = customizable;
+}
 
-	QHeaderView *h = header();
+void RSTreeWidget::setColumnCustomizable(int column, bool customizable)
+{
+	mColumnCustomizable[column] = customizable;
+}
 
-	if (mColumnCustomizable) {
-		h->setContextMenuPolicy(Qt::CustomContextMenu);
-		connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
-	} else {
-		h->setContextMenuPolicy(Qt::DefaultContextMenu);
-		disconnect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
-	}
+void RSTreeWidget::addHeaderContextMenuAction(QAction *action)
+{
+	mHeaderContextMenuActions.push_back(action);
 }
 
 void RSTreeWidget::headerContextMenuRequested(const QPoint &pos)
 {
-	if (!mColumnCustomizable) {
-		return;
-	}
-
 	QMenu contextMenu(this);
 
-	QTreeWidgetItem *item = headerItem();
-	int columnCount = item->columnCount();
-	for (int column = 0; column < columnCount; ++column) {
-		QAction *action = contextMenu.addAction(QIcon(), item->text(column), this, SLOT(columnVisible()));
-		action->setCheckable(true);
-		action->setData(column);
-		action->setChecked(!isColumnHidden(column));
+	if (mEnableColumnCustomize) {
+		QTreeWidgetItem *item = headerItem();
+		int columnCount = item->columnCount();
+		for (int column = 0; column < columnCount; ++column) {
+			QMap<int, bool>::const_iterator it = mColumnCustomizable.find(column);
+			if (it != mColumnCustomizable.end() && *it == false) {
+				continue;
+			}
+			QAction *action = contextMenu.addAction(QIcon(), item->text(column), this, SLOT(columnVisible()));
+			action->setCheckable(true);
+			action->setData(column);
+			action->setChecked(!isColumnHidden(column));
+		}
+	}
+
+	if (!mHeaderContextMenuActions.isEmpty()) {
+		bool addSeparator = false;
+		if (!contextMenu.isEmpty()) {
+			// Check for visible action
+			foreach (QAction *action, mHeaderContextMenuActions) {
+				if (action->isVisible()) {
+					addSeparator = true;
+					break;
+				}
+			}
+		}
+
+		if (addSeparator) {
+			contextMenu.addSeparator();
+		}
+
+		contextMenu.addActions(mHeaderContextMenuActions);
+	}
+
+	if (contextMenu.isEmpty()) {
+		return;
 	}
 
 	contextMenu.exec(mapToGlobal(pos));
@@ -183,4 +226,11 @@ void RSTreeWidget::columnVisible()
 	setColumnHidden(column, !visible);
 
 	emit columnVisibleChanged(column, visible);
+}
+
+void RSTreeWidget::resort()
+{
+	if (isSortingEnabled()) {
+		sortByColumn(header()->sortIndicatorSection(), header()->sortIndicatorOrder());
+	}
 }

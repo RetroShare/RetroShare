@@ -11,8 +11,13 @@ QVideoInputDevice::QVideoInputDevice(QWidget *parent)
 {
 	_timer = NULL ;
 	_capture_device = NULL ;
-	_video_encoder = NULL ;
+	_video_processor = NULL ;
 	_echo_output_device = NULL ;
+}
+
+bool QVideoInputDevice::stopped()
+{
+    return _timer == NULL ;
 }
 
 void QVideoInputDevice::stop()
@@ -54,46 +59,60 @@ void QVideoInputDevice::start()
 
 void QVideoInputDevice::grabFrame()
 {
-	IplImage *img=cvQueryFrame(_capture_device);    
+    if(!_timer)
+        return ;
+    
+    IplImage *img=cvQueryFrame(_capture_device);    
 
-	if(img == NULL)
-	{
-		std::cerr << "(EE) Cannot capture image from camera. Something's wrong." << std::endl;
-		return ;
-	}
-	// get the image data
+    if(img == NULL)
+    {
+	    std::cerr << "(EE) Cannot capture image from camera. Something's wrong." << std::endl;
+	    return ;
+    }
+    // get the image data
 
-	if(img->nChannels != 3)
-	{
-		std::cerr << "(EE) expected 3 channels. Got " << img->nChannels << std::endl;
-		return ;
-	}
+    if(img->nChannels != 3)
+    {
+	    std::cerr << "(EE) expected 3 channels. Got " << img->nChannels << std::endl;
+	    return ;
+    }
 
     // convert to RGB and copy to new buffer, because cvQueryFrame tells us to not modify the buffer
     cv::Mat img_rgb;
     cv::cvtColor(cv::Mat(img), img_rgb, CV_BGR2RGB);
 
-	static const int _encoded_width = 128 ;
-	static const int _encoded_height = 128 ;
+    QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888);
 
-    QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888).scaled(QSize(_encoded_width,_encoded_height),Qt::IgnoreAspectRatio,Qt::SmoothTransformation) ;
+    if(_video_processor != NULL) 
+    {
+	    _video_processor->processImage(image) ;
 
-	if(_video_encoder != NULL) 
-	{
-		_video_encoder->addImage(image) ;
-		emit networkPacketReady() ;
-	}
-	if(_echo_output_device != NULL) _echo_output_device->showFrame(image) ;
+	    emit networkPacketReady() ;
+    }
+    if(_echo_output_device != NULL) 
+	    _echo_output_device->showFrame(image) ;
 }
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
-	return _video_encoder->nextPacket(chunk) ;
+    if(!_timer)
+        return false ;
+    
+    if(_video_processor)
+	    return _video_processor->nextEncodedPacket(chunk) ;
+    else 
+        return false ;
+}
+
+uint32_t QVideoInputDevice::currentBandwidth() const
+{
+  return _video_processor->currentBandwidthOut() ;  
 }
 
 QVideoInputDevice::~QVideoInputDevice()
 {
-	stop() ;
+    stop() ;
+    _video_processor = NULL ;
 }
 
 
@@ -110,6 +129,7 @@ void QVideoOutputDevice::showFrameOff()
 
 void QVideoOutputDevice::showFrame(const QImage& img)
 {
-	setPixmap(QPixmap::fromImage(img).scaled(minimumSize(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
+    std::cerr << "img.size = " << img.width() << " x " << img.height() << std::endl;
+	setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*640/480,height()),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
 }
 
