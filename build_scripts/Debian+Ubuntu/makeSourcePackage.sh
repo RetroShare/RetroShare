@@ -103,9 +103,6 @@ cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/
 #   [ -f libssh-${LIBSSH_VERSION}.tar.gz ] || wget --no-check-certificate -O libssh-${LIBSSH_VERSION}.tar.gz $LIBSSH_LOCATION 
 #   tar zxvf ../libssh-${LIBSSH_VERSION}.tar.gz
 
-# Cloning sqlcipher
-# git clone https://github.com/sqlcipher/sqlcipher.git
-
 # cleaning up protobof generated files
 # rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
 # rm -f src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
@@ -127,12 +124,25 @@ for i in ${dist}; do
     echo copying changelog for ${i}
     sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g ../changelog > debian/changelog
 
+    [ -d sqlcipher ] && rm -rf sqlcipher
+    cp ../rules debian/rules
+
     if test "${i}" = "lucid" ; then
         cp ../control.ubuntu_lucid debian/control
     elif test "${i}" = "squeeze" ; then
         cp ../control.squeeze_bubba3 debian/control
     elif test "${i}" = "precise" ; then
-        cp ../control.precise debian/control
+        cp ../control.${i} debian/control
+    elif test "${i}" = "wheezy" -o "${i}" = "jessie" ; then
+        # Cloning sqlcipher
+        git clone https://github.com/sqlcipher/sqlcipher.git
+        cd sqlcipher
+        git checkout v3.3.1
+        rm -rf .git
+        cd -
+
+        cp ../control.${i} debian/control
+        cp ../rules.${i} debian/rules
     else
         cp ../debian/control debian/control
     fi
