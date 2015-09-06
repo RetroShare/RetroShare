@@ -12,8 +12,9 @@ PROTOBUF_VERSION=2.4.1
 TCL_VERSION=8.6.2
 SQLCIPHER_VERSION=2.2.1
 LIBMICROHTTPD_VERSION=0.9.42
+FFMPEG_VERSION=2.7.2
 
-all: dirs zlib bzip2 miniupnpc openssl speex opencv libxml2 libxslt curl libssh protobuf sqlcipher libmicrohttpd copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex opencv libxml2 libxslt curl libssh protobuf sqlcipher libmicrohttpd ffmpeg copylibs
 
 dirs:
 	mkdir -p libs/include
@@ -216,8 +217,26 @@ libmicrohttpd: libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
 	rm -r -f libmicrohttpd-$(LIBMICROHTTPD_VERSION)
 	touch libmicrohttpd
 
+ffmpeg-$(FFMPEG_VERSION).tar.gz:
+	curl.exe -L -k http://ffmpeg.org/releases/ffmpeg-$(FFMPEG_VERSION).tar.gz -o ffmpeg-$(FFMPEG_VERSION).tar.gz
+
+ffmpeg: ffmpeg-$(FFMPEG_VERSION).tar.gz
+	tar xvf ffmpeg-$(FFMPEG_VERSION).tar.gz
+	cd ffmpeg-$(FFMPEG_VERSION) && ./configure --enable-shared --disable-yasm
+	cd ffmpeg-$(FFMPEG_VERSION) && make
+	mkdir -p libs/include/libavcodec && cp -r ffmpeg-$(FFMPEG_VERSION)/libavcodec/*.h libs/include/libavcodec/
+	cp -r ffmpeg-$(FFMPEG_VERSION)/libavcodec/*.a libs/lib/
+	cp -r ffmpeg-$(FFMPEG_VERSION)/libavcodec/*.dll libs/bin/
+	mkdir -p libs/include/libavutil && cp -r ffmpeg-$(FFMPEG_VERSION)/libavutil/*.h libs/include/libavutil/
+	cp -r ffmpeg-$(FFMPEG_VERSION)/libavutil/*.a libs/lib/
+	cp -r ffmpeg-$(FFMPEG_VERSION)/libavutil/*.dll libs/bin/
+	rm -r -f ffmpeg-$(FFMPEG_VERSION)
+	touch ffmpeg
+
+
 copylibs: 
 	read -p "Do you want to copy libs to retroshare? (yes|no)" answer; \
 	if [ "$$answer" = "yes" ] ; then  \
-	  cp -r libs ../../libs ; \
+	  cp -r libs ../../ ; \
 	fi
+
