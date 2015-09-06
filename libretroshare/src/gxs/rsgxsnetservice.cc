@@ -1625,7 +1625,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             IndicateConfigChanged();
 
 
-        }else if(flag & RsNxsTransac::FLAG_TYPE_MSGS)
+        }
+        else if(flag & RsNxsTransac::FLAG_TYPE_MSGS)
         {
 
             std::vector<RsNxsMsg*> msgs;

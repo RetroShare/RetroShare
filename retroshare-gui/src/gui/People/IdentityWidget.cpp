@@ -99,38 +99,37 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 
 void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 {
-	//if (_details != pgp_details) {
-		_details = pgp_details;
-		_havePGPDetail = true;
+    //if (_details != pgp_details) {
+    _details = pgp_details;
+    _havePGPDetail = true;
 
-		_nickname = QString::fromUtf8(_details.name.c_str());
-		if (!_haveGXSId) m_myName = _nickname;
-		ui->labelName->setText(m_myName);
-		if (_haveGXSId) {
-			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName).append("\n")
-			                          .append(tr("PGP name:").append(" "+_nickname)));
-		} else {//if (m_myName != _nickname)
-			ui->labelName->setToolTip(tr("PGP name:").append(" "+_nickname));
-		}//else (m_myName != _nickname)
+    _nickname = QString::fromUtf8(_details.name.c_str());
+    if (!_haveGXSId) m_myName = _nickname;
+    ui->labelName->setText(m_myName);
+    if (_haveGXSId) {
+	    ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName).append("\n")
+	                              .append(tr("PGP name:").append(" "+_nickname)));
+    } else {//if (m_myName != _nickname)
+	    ui->labelName->setToolTip(tr("PGP name:").append(" "+_nickname));
+    }//else (m_myName != _nickname)
 
-		QFont font = ui->labelName->font();
-		font.setItalic(true);
-		ui->labelName->setFont(font);
+    QFont font = ui->labelName->font();
+    font.setItalic(true);
+    ui->labelName->setFont(font);
 
-		_keyId = QString::fromStdString(_details.gpg_id.toStdString());
-		ui->labelKeyId->setText(_keyId);
-		ui->labelKeyId->setToolTip(tr("PGP id:").append(" "+_keyId));
+    _keyId = QString::fromStdString(_details.gpg_id.toStdString());
+    ui->labelKeyId->setText(_keyId);
+    ui->labelKeyId->setToolTip(tr("PGP id:").append(" "+_keyId));
 
-		QPixmap avatar;
-		AvatarDefs::getAvatarFromGpgId(_details.gpg_id.toStdString(), avatar);
-		if (_avatar != avatar.toImage()) {
-			_avatar = avatar.toImage();
-			_scene->clear();
-			_scene->addPixmap(avatar.scaled(ui->graphicsView->width(),ui->graphicsView->height()));
-			emit imageUpdated();
-		}//if (_avatar != avatar.toImage())
-
-	//}//if (_details != gpg_details)
+    QPixmap avatar;
+    AvatarDefs::getAvatarFromGpgId(_details.gpg_id, avatar);
+    if (_avatar != avatar.toImage()) 
+    {
+	    _avatar = avatar.toImage();
+	    _scene->clear();
+	    _scene->addPixmap(avatar.scaled(ui->graphicsView->width(),ui->graphicsView->height()));
+	    emit imageUpdated();
+    }
 }
 
 void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info, const RsPeerDetails &pgp_details)

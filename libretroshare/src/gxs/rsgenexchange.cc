@@ -2636,52 +2636,52 @@ void RsGenExchange::processRecvdMessages()
 
 void RsGenExchange::processRecvdGroups()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 
-    if(mReceivedGrps.empty())
-        return;
+	if(mReceivedGrps.empty())
+		return;
 
-    NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
-    std::vector<RsGxsGroupId> existingGrpIds;
-    std::list<RsGxsGroupId> grpIds;
+	NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
+	std::vector<RsGxsGroupId> existingGrpIds;
+	std::list<RsGxsGroupId> grpIds;
 
-    std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
 
-    mDataStore->retrieveGroupIds(existingGrpIds);
+	mDataStore->retrieveGroupIds(existingGrpIds);
 
-    while( vit != mReceivedGrps.end())
-    {
-    	GxsPendingItem<RsNxsGrp*, RsGxsGroupId>& gpsi = *vit;
-        RsNxsGrp* grp = gpsi.mItem;
-        RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
-        bool deserialOk = false;
+	while( vit != mReceivedGrps.end())
+	{
+		GxsPendingItem<RsNxsGrp*, RsGxsGroupId>& gpsi = *vit;
+		RsNxsGrp* grp = gpsi.mItem;
+		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
+		bool deserialOk = false;
 
-        if(grp->meta.bin_len != 0)
-        	deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+		if(grp->meta.bin_len != 0)
+			deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
 
-        bool erase = true;
+		bool erase = true;
 
-        if(deserialOk)
-        {
-        	grp->metaData = meta;
-        	uint8_t ret = validateGrp(grp);
+		if(deserialOk)
+		{
+			grp->metaData = meta;
+			uint8_t ret = validateGrp(grp);
 
 
-        	if(ret == VALIDATE_SUCCESS)
-        	{
+			if(ret == VALIDATE_SUCCESS)
+			{
 				meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
 				meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
 
 				computeHash(grp->grp, meta->mHash);
 
-                // group has been validated. Let's notify the global router for the clue
+				// group has been validated. Let's notify the global router for the clue
 
 #ifdef GEN_EXCH_DEBUG
-                    std::cerr << "Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
+				std::cerr << "Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
 #endif
 
-            if(!meta->mAuthorId.isNull())
-                mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
+				if(!meta->mAuthorId.isNull())
+					mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
 
 				// now check if group already existss
 				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())
@@ -2700,55 +2700,55 @@ void RsGenExchange::processRecvdGroups()
 					mGroupUpdates.push_back(update);
 				}
 				erase = true;
-        	}
-        	else if(ret == VALIDATE_FAIL)
-        	{
+			}
+			else if(ret == VALIDATE_FAIL)
+			{
 #ifdef GEN_EXCH_DEBUG
 				std::cerr << "failed to deserialise incoming meta, grpId: "
-						<< grp->grpId << std::endl;
+				          << grp->grpId << std::endl;
 #endif
 				delete grp;
 				erase = true;
-        	}
-        	else  if(ret == VALIDATE_FAIL_TRY_LATER)
-        	{
+			}
+			else  if(ret == VALIDATE_FAIL_TRY_LATER)
+			{
 
 #ifdef GEN_EXCH_DEBUG
 				std::cerr << "failed to validate incoming grp, trying again. grpId: "
-                        << grp->grpId << std::endl;
+				          << grp->grpId << std::endl;
 #endif
 
-        		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
-        		{
-        			delete grp;
-        			erase = true;
-        		}
-        		else
-        		{
-        			erase = false;
-        		}
-        	}
-        }
-        else
-        {
-        	delete grp;
+				if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+				{
+					delete grp;
+					erase = true;
+				}
+				else
+				{
+					erase = false;
+				}
+			}
+		}
+		else
+		{
+			delete grp;
 			delete meta;
 			erase = true;
-        }
+		}
 
-        if(erase)
-        	vit = mReceivedGrps.erase(vit);
-        else
-        	++vit;
-    }
+		if(erase)
+			vit = mReceivedGrps.erase(vit);
+		else
+			++vit;
+	}
 
-    if(!grpIds.empty())
-    {
-        RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, false);
-        c->mGrpIdList = grpIds;
-        mNotifications.push_back(c);
-        mDataStore->storeGroup(grps);
-    }
+	if(!grpIds.empty())
+	{
+		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, false);
+		c->mGrpIdList = grpIds;
+		mNotifications.push_back(c);
+		mDataStore->storeGroup(grps);
+	}
 }
 
 void RsGenExchange::performUpdateValidation()

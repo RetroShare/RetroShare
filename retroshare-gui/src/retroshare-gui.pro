@@ -31,8 +31,9 @@ CONFIG += gxsgui
 
 DEFINES += RS_ENABLE_GXS
 
-unfinished {
 	CONFIG += gxscircles
+
+unfinished {
 	CONFIG += gxsthewire
 	CONFIG += gxsphotoshare
 	CONFIG += wikipoos

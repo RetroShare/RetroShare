@@ -309,31 +309,52 @@ void CreateCircleDialog::createCircle()
 	/* copy Ids from GUI */
 	QTreeWidget *tree = ui.treeWidget_membership;
 	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; ++i) {
-		QTreeWidgetItem *item = tree->topLevelItem(i);
-		QString keyId = item->text(RSCIRCLEID_COL_KEYID);
+	for(int i = 0; i < count; ++i)  
+    {
+	    QTreeWidgetItem *item = tree->topLevelItem(i);
+	    QString keyId = item->text(RSCIRCLEID_COL_KEYID);
 
-		/* insert into circle */
-		if (mIsExternalCircle) {
-            circle.mInvitedMembers.push_back(RsGxsId(keyId.toStdString()));
-			std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
-			std::cerr << std::endl;
-		} else {//if (mIsExternalCircle)
-			circle.mLocalFriends.push_back(RsPgpId(keyId.toStdString()));	
-			std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString();
-			std::cerr << std::endl;
-		}//else (mIsExternalCircle)
+	    /* insert into circle */
+	    if (mIsExternalCircle) 
+	    {
+		    RsGxsId key_id_gxs(keyId.toStdString()) ;
 
-	}//for(int i = 0; i < count; ++i)
+		    if(key_id_gxs.isNull())
+		    {
+			    std::cerr << "Error: Not a proper keyID: " << keyId.toStdString() << std::endl;
+			    continue ;
+		    } 
 
-	if (mIsExistingCircle) {
+		    circle.mInvitedMembers.insert(key_id_gxs) ;
+		    std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
+		    std::cerr << std::endl;
+	    } 
+	    else 
+	    {
+		    RsPgpId key_id_pgp(keyId.toStdString()) ;
+
+		    if(key_id_pgp.isNull())
+		    {
+			    std::cerr << "Error: Not a proper PGP keyID: " << keyId.toStdString() << std::endl;
+			    continue ;
+		    } 
+
+		    circle.mLocalFriends.insert(key_id_pgp) ;
+		    std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString();
+		    std::cerr << std::endl;
+	    }
+
+    }
+
+	if (mIsExistingCircle) 
+    {
 		std::cerr << "CreateCircleDialog::createCircle() Existing Circle TODO";
 		std::cerr << std::endl;
 
 		// cannot edit these yet.
 		QMessageBox::warning(this, tr("RetroShare"),tr("Cannot Edit Existing Circles Yet"), QMessageBox::Ok, QMessageBox::Ok);
 		return; 
-	}//if (mIsExistingCircle)
+	}
 
 	if (mIsExternalCircle) {
 		std::cerr << "CreateCircleDialog::createCircle() External Circle";
@@ -410,12 +431,14 @@ void CreateCircleDialog::updateCircleGUI()
 	std::cerr << std::endl;
 
 	switch(mCircleGroup.mMeta.mCircleType) {
+#ifdef RS_ALLOW_LOCAL_CIRCLES
 		case GXS_CIRCLE_TYPE_LOCAL:
 			std::cerr << "CreateCircleDialog::updateCircleGUI() : LOCAL CIRCLETYPE";
 			std::cerr << std::endl;
 
 			isExternal = false;
 			break;
+#endif
 
 		case GXS_CIRCLE_TYPE_PUBLIC:
 			std::cerr << "CreateCircleDialog::updateCircleGUI() : PUBLIC CIRCLETYPE";
@@ -527,16 +550,10 @@ void CreateCircleDialog::getPgpIdentities()
 		tree->addTopLevelItem(item);
 
 		// Local Circle.
-		if (mIsExistingCircle) {
-			// check if its in the circle.
-			std::list<RsPgpId>::const_iterator it;
-			it = std::find(mCircleGroup.mLocalFriends.begin(), mCircleGroup.mLocalFriends.end(), details.gpg_id);
-			if (it != mCircleGroup.mLocalFriends.end()) {
-				/* found it */
+		if (mIsExistingCircle) 
+			if ( mCircleGroup.mLocalFriends.find(details.gpg_id) != mCircleGroup.mLocalFriends.end())  // check if its in the circle.
 				addMember(keyId, idtype, nickname);
-			}//if (it != mCircleGroup.mLocalFriends.end())
-		}//if (mIsExistingCircle)
-	}//for(it = ids.begin(); it != ids.end(); ++it)
+	}
 	
 	filterIds();
 }
@@ -576,60 +593,58 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 		return;
 	}//if (!rsIdentity->getGroupData(token, datavector))
 
-	for(vit = datavector.begin(); vit != datavector.end(); ++vit) {
-		data = (*vit);
+    for(vit = datavector.begin(); vit != datavector.end(); ++vit) 
+    {
+	    data = (*vit);
 
-		/* do filtering */
-		bool ok = false;
-		if (acceptAnonymous) {
-				ok = true;
-		} else if (acceptAllPGP) {
-				ok = data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
-		} else if (data.mPgpKnown) {
-				ok = data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
-		}//else if (data.mPgpKnown)
+	    /* do filtering */
+	    bool ok = false;
+	    if (acceptAnonymous) {
+		    ok = true;
+	    } else if (acceptAllPGP) {
+		    ok = data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
+	    } else if (data.mPgpKnown) {
+		    ok = data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
+	    }//else if (data.mPgpKnown)
 
-		if (!ok) {
-			std::cerr << "CreateCircleDialog::insertIdentities() Skipping ID: " << data.mMeta.mGroupId;
-			std::cerr << std::endl;
-			continue;
-		}//if (!ok)
+	    if (!ok) {
+		    std::cerr << "CreateCircleDialog::insertIdentities() Skipping ID: " << data.mMeta.mGroupId;
+		    std::cerr << std::endl;
+		    continue;
+	    }//if (!ok)
 
-        QString  keyId = QString::fromStdString(data.mMeta.mGroupId.toStdString());
-		QString  nickname = QString::fromUtf8(data.mMeta.mGroupName.c_str());
-		QString  idtype = tr("Anon Id");
+	    QString  keyId = QString::fromStdString(data.mMeta.mGroupId.toStdString());
+	    QString  nickname = QString::fromUtf8(data.mMeta.mGroupName.c_str());
+	    QString  idtype = tr("Anon Id");
 
-		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) {
-			if (data.mPgpKnown) {
-				RsPeerDetails details;
-				rsPeers->getGPGDetails(data.mPgpId, details);
-				idtype = QString::fromUtf8(details.name.c_str());
-			} else {
-				idtype = tr("PGP Linked Id");
-			}//else (data.mPgpKnown)
-		}//if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
+	    if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) {
+		    if (data.mPgpKnown) {
+			    RsPeerDetails details;
+			    rsPeers->getGPGDetails(data.mPgpId, details);
+			    idtype = QString::fromUtf8(details.name.c_str());
+		    } else {
+			    idtype = tr("PGP Linked Id");
+		    }//else (data.mPgpKnown)
+	    }//if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 
-		QTreeWidgetItem *item = new QTreeWidgetItem();
-		item->setText(RSCIRCLEID_COL_NICKNAME, nickname);
-		item->setText(RSCIRCLEID_COL_KEYID, keyId);
-		item->setText(RSCIRCLEID_COL_IDTYPE, idtype);
-		tree->addTopLevelItem(item);
+	    QTreeWidgetItem *item = new QTreeWidgetItem();
+	    item->setText(RSCIRCLEID_COL_NICKNAME, nickname);
+	    item->setText(RSCIRCLEID_COL_KEYID, keyId);
+	    item->setText(RSCIRCLEID_COL_IDTYPE, idtype);
+	    tree->addTopLevelItem(item);
 
-		// External Circle.
-		if (mIsExistingCircle) {
-			// check if its in the circle.
-			std::list<RsGxsId>::const_iterator it;
+	    // External Circle.
+	    if (mIsExistingCircle) 
+	    {
+		    // check if its in the circle.
 
-			// We use an explicit cast
-			//
-			it = std::find(mCircleGroup.mInvitedMembers.begin(), mCircleGroup.mInvitedMembers.end(), RsGxsId(data.mMeta.mGroupId));
+		    // We use an explicit cast
+		    //
 
-			if (it != mCircleGroup.mInvitedMembers.end()) {
-				/* found it */
-				addMember(keyId, idtype, nickname);
-			}//if (it != mCircleGroup.mInvitedMembers.end())
-		}//if (mIsExistingCircle)
-	}//for(vit = datavector.begin(); vit != datavector.end(); ++vit)
+		    if ( mCircleGroup.mInvitedMembers.find(RsGxsId(data.mMeta.mGroupId)) != mCircleGroup.mInvitedMembers.end())  /* found it */
+			    addMember(keyId, idtype, nickname);
+	    }
+    }
 }
 
 void CreateCircleDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
@@ -683,5 +698,5 @@ void  CreateCircleDialog::createNewGxsId()
 	IdEditDialog dlg(this);
 	dlg.setupNewId(false);
 	dlg.exec();
-	ui.idChooser->setDefaultId(dlg.getLastIdName());
+	//ui.idChooser->setDefaultId(dlg.getLastIdName());
 }
