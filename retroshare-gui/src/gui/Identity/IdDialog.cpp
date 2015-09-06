@@ -136,7 +136,6 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Connect signals */
 	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
-	connect(ui->todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	connect(ui->removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
@@ -151,7 +150,9 @@ IdDialog::IdDialog(QWidget *parent) :
 	
 	connect(ui->messageButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 
+#ifdef UNFINISHED_CODE
 	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
+#endif
 	ui->headerTextLabel->setText(tr("People"));
 
 	/* Initialize splitter */
@@ -198,7 +199,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	// Hiding RepList until that part is finished.
 	//ui->treeWidget_RepList->setVisible(false);
 	ui->toolButton_Reputation->setVisible(false);
-#ifndef UNFINISHED
+#ifdef UNFINISHED_CODE
 	ui->todoPushButton->hide() ;
 #endif
 
@@ -595,7 +596,9 @@ void IdDialog::insertIdDetails(uint32_t token)
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
 #endif
+#ifdef UNFINISHED_CODE
     ui->avlabel->setPixmap(pixmap);
+#endif
     ui->avatarLabel->setPixmap(pixmap);
 
 	if (data.mPgpKnown)

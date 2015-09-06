@@ -91,10 +91,8 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 				_scene->clear();
 				_scene->addPixmap(QPixmap::fromImage(image.scaled(ui->graphicsView->width(),ui->graphicsView->height())));
 				emit imageUpdated();
-			}//if (_avatar != image)
-		}//if (!_havePGPDetail)
-
-	//}//if (_group_info != gxs_group_info)
+			}
+		}
 }
 
 void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
