@@ -73,6 +73,7 @@ private slots:
 	
 	void chatIdentity();
   void sendMessage();
+  void personDetails();
 
 private:
 	void reloadAll();

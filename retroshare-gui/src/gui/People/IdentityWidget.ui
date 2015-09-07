@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>102</width>
-    <height>158</height>
+    <height>170</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -125,13 +125,12 @@
    <item>
     <widget class="QPushButton" name="pbAdd">
      <property name="text">
-      <string>Add</string>
+      <string>More</string>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
  <customwidgets>
   <customwidget>
    <class>ElidedLabel</class>
@@ -140,5 +139,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <resources/>
  <connections/>
 </ui>

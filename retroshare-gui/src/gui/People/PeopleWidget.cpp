@@ -27,6 +27,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/Identity/IdDetailsDialog.h"
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
@@ -236,6 +237,11 @@ void PeopleWidget::iw_AddButtonClicked()
 			
 			QAction *actionsendmsg = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMessage()));
 			actionsendmsg->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
+			
+			contextMnu.addSeparator();
+			
+			QAction *actionDetails = contextMnu.addAction(QIcon(":/images/info16.png"), tr("Person details"), this, SLOT(personDetails()));
+			actionDetails->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 		
 			
       contextMnu.exec(QCursor::pos());
@@ -283,6 +289,28 @@ void PeopleWidget::sendMessage()
 
     /* window will destroy itself! */
     
+    }
+
+}
+
+void PeopleWidget::personDetails()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+		QString data = action->data().toString();
+
+   	RsGxsId gxs_id = RsGxsId(data.toStdString());
+   	
+    if (RsGxsGroupId(gxs_id).isNull()) {
+        return;
+    }
+
+    IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(gxs_id));
+    dialog->show();
+
+    /* Dialog will destroy itself */
+
     }
 
 }
