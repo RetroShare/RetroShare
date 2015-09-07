@@ -239,12 +239,6 @@ public:
      */
     bool moveToLast();
 
-    /*!
-     * gets current position of cursor
-     * @return current position of cursor
-     */
-    int32_t getPosition() const;
-
     /* data retrieval */
 
     /*!
@@ -260,11 +254,10 @@ public:
 
     /*!
      *
-     * @return -1 if cursor is in error, otherwise number of rows in result
+     * @return -1 if cursor is in error, otherwise number of columns in result
      */
-    int32_t getResultCount() const;
-
     int32_t columnCount() const ;
+
     /*!
      * Current statement is closed and discarded (finalised)
      * before actual opening occurs
@@ -274,8 +267,6 @@ public:
     bool open(sqlite3_stmt* stm);
 
 public:
-
-
     /*!
      * Returns the value of the requested column as a String.
      * @param columnIndex the zero-based index of the target column.
@@ -326,17 +317,8 @@ public:
     	getString(columnIndex, temp);
     	str = T(temp);
     }
-
-
 private:
-
     sqlite3_stmt* mStmt;
-    int mCount; /// number of results
-    int mPosCounter;
 };
-
-
-
-
 
 #endif // RSSQLITE_H
