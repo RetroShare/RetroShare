@@ -637,11 +637,16 @@ bool p3PeerMgrIMPL::getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_stor
 	domain_addr = it->second.hiddenDomain;
 	domain_port = it->second.hiddenPort;
 
-	if(it->second.hiddenType == RS_HIDDEN_TYPE_I2P)
+	switch (it->second.hiddenType) {
+	case RS_HIDDEN_TYPE_I2P:
 		proxy_addr = mProxyServerAddressI2P;
-	else
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+	default:
 		/* default tor */
 		proxy_addr = mProxyServerAddressTor;
+		break;
+	}
 	return true;
 }
 

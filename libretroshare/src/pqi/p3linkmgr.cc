@@ -2026,11 +2026,16 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	peerConnectAddress pca;
 	pca.addr = proxy_addr;
 
-	if (mPeerMgr->hiddenDomainToHiddenType(domain_addr) == RS_HIDDEN_TYPE_I2P)
+	switch (mPeerMgr->hiddenDomainToHiddenType(domain_addr)) {
+	case RS_HIDDEN_TYPE_I2P:
 		pca.type = RS_NET_CONN_TCP_HIDDEN_I2P;
-	else
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+	default:
 		/* default tor */
 		pca.type = RS_NET_CONN_TCP_HIDDEN_TOR;
+		break;
+	}
 
 	//for the delay, we add a random time and some more time when the friend list is big
 	pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
