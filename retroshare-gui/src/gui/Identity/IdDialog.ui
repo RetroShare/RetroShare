@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1226</width>
-    <height>919</height>
+    <height>1085</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -169,7 +169,7 @@
        <item>
         <widget class="RSTreeWidget" name="idTreeWidget">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -209,6 +209,12 @@
        </item>
        <item>
         <widget class="QGroupBox" name="detailsGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>Identity info</string>
          </property>
@@ -218,25 +224,22 @@
             <property name="margin">
              <number>6</number>
             </property>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEdit_KeyId">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label">
               <property name="text">
                <string>Identity name :</string>
               </property>
              </widget>
-            </item>
-            <item row="7" column="1">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
             <item row="2" column="0">
              <widget class="QLabel" name="label_4">
@@ -254,16 +257,6 @@
             </item>
             <item row="1" column="1">
              <widget class="QLineEdit" name="lineEdit_Nickname">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEdit_KeyId">
               <property name="enabled">
                <bool>true</bool>
               </property>
