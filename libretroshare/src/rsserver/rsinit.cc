@@ -1364,9 +1364,9 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_WIKI,
                         NULL, rsInitConfig->gxs_passwd);
 
+#ifdef RS_USE_WIKI
         p3Wiki *mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
-
-        // create GXS photo service
+        // create GXS wiki service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIKI, wiki_ds, nxsMgr, 
 			mWiki, mWiki->getServiceInfo(), 
@@ -1374,6 +1374,7 @@ int RsServer::StartupRetroShare()
 			pgpAuxUtils);
 
     mWiki->setNetworkExchangeService(wiki_ns) ;
+#endif
 
         /**** Forum GXS service ****/
 
@@ -1443,7 +1444,9 @@ int RsServer::StartupRetroShare()
         pqih->addService(gxsid_ns, true);
         pqih->addService(gxscircles_ns, true);
         pqih->addService(posted_ns, true);
+#ifdef RS_USE_WIKI
         pqih->addService(wiki_ns, true);
+#endif
         pqih->addService(gxsforums_ns, true);
         pqih->addService(gxschannels_ns, true);
         //pqih->addService(photo_ns, true);
@@ -1619,7 +1622,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
 	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
 	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
+#ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
+#endif
 	//mConfigMgr->addConfiguration("photo.cfg", photo_ns);
 	//mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 #endif
@@ -1728,7 +1733,9 @@ int RsServer::StartupRetroShare()
 	// Must Set the GXS pointers before starting threads.
     rsIdentity = mGxsIdService;
     rsGxsCircles = mGxsCircles;
+#if RS_USE_WIKI
     rsWiki = mWiki;
+#endif
     rsPosted = mPosted;
     rsGxsForums = mGxsForums;
     rsGxsChannels = mGxsChannels;
@@ -1739,7 +1746,9 @@ int RsServer::StartupRetroShare()
     startServiceThread(mGxsIdService);
     startServiceThread(mGxsCircles);
     startServiceThread(mPosted);
+#if RS_USE_WIKI
     startServiceThread(mWiki);
+#endif
     startServiceThread(mGxsForums);
     startServiceThread(mGxsChannels);
 
@@ -1750,7 +1759,9 @@ int RsServer::StartupRetroShare()
     startServiceThread(gxsid_ns);
     startServiceThread(gxscircles_ns);
     startServiceThread(posted_ns);
+#if RS_USE_WIKI
     startServiceThread(wiki_ns);
+#endif
     startServiceThread(gxsforums_ns);
     startServiceThread(gxschannels_ns);
 

@@ -1,5 +1,6 @@
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = pegmarkdown
 
@@ -15,6 +16,7 @@ debug {
 ################################# Linux ##########################################
 linux-* {
 	DESTDIR = lib
+	LIBS *= -lglib-2.0
 }
 
 linux-g++ {

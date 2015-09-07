@@ -21,7 +21,7 @@ extern "C" {
 
 #include <libavutil/opt.h>
 //#include <libavutil/channel_layout.h>
-//#include <libavutil/common.h>
+#include <libavutil/mem.h>
 #include <libavutil/imgutils.h>
 //#include <libavutil/mathematics.h>
 //#include <libavutil/samplefmt.h>
@@ -325,9 +325,11 @@ FFmpegVideo::FFmpegVideo()
     
     //AVCodecID codec_id = AV_CODEC_ID_H264 ; 
     //AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
+#if LIBAVCODEC_VERSION_MAJOR < 55
+    CodecID codec_id = CODEC_ID_MPEG4;
+#else
     AVCodecID codec_id = AV_CODEC_ID_MPEG4;
-    
-    uint8_t endcode[] = { 0, 0, 1, 0xb7 };
+#endif
 
     /* find the mpeg1 video encoder */
     encoding_codec = avcodec_find_encoder(codec_id);
@@ -385,10 +387,15 @@ FFmpegVideo::FFmpegVideo()
      */
     encoding_context->gop_size = 100;
     //encoding_context->max_b_frames = 1;
+#if LIBAVCODEC_VERSION_MAJOR < 55
+    encoding_context->pix_fmt = PIX_FMT_YUV420P; //context->pix_fmt = PIX_FMT_RGB24;
+    if (codec_id == CODEC_ID_H264) {
+#else
     encoding_context->pix_fmt = AV_PIX_FMT_YUV420P; //context->pix_fmt = AV_PIX_FMT_RGB24;
-
-    if (codec_id == AV_CODEC_ID_H264)
+    if (codec_id == AV_CODEC_ID_H264) {
+#endif
         av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
+    }
 
     /* open it */
     if (avcodec_open2(encoding_context, encoding_codec, NULL) < 0) 
@@ -428,7 +435,11 @@ FFmpegVideo::FFmpegVideo()
     
     decoding_context->width = encoding_context->width;
     decoding_context->height = encoding_context->height;
+#if LIBAVCODEC_VERSION_MAJOR < 55
+    decoding_context->pix_fmt = PIX_FMT_YUV420P;
+#else
     decoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
+#endif
     
     if(decoding_codec->capabilities & CODEC_CAP_TRUNCATED)
          decoding_context->flags |= CODEC_FLAG_TRUNCATED; // we do not send complete frames
@@ -536,12 +547,24 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 	AVPacket pkt ;
 	av_init_packet(&pkt);
+#if LIBAVCODEC_VERSION_MAJOR < 54
+	pkt.size = avpicture_get_size(encoding_context->pix_fmt, encoding_context->width, encoding_context->height);
+	pkt.data = (uint8_t*)av_malloc(pkt.size);
+
+	//    do
+	//    {
+	int ret = avcodec_encode_video(encoding_context, pkt.data, pkt.size, frame) ;
+	if (ret > 0) {
+		got_output = ret;
+	}
+#else
 	pkt.data = NULL;    // packet data will be allocated by the encoder
 	pkt.size = 0;
 
 	//    do
 	//    {
 	int ret = avcodec_encode_video2(encoding_context, &pkt, frame, &got_output) ;
+#endif
 
 	if (ret < 0) 
 	{
@@ -682,4 +705,3 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 
 	return true ;
 }
-
