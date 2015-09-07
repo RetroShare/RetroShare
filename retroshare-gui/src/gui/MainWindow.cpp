@@ -95,9 +95,9 @@
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/Identity/IdDialog.h"
-#ifdef RS_USE_CIRCLES
-#include "gui/Circles/CirclesDialog.h"
-#endif
+//#ifdef RS_USE_CIRCLES
+//#include "gui/Circles/CirclesDialog.h"
+//#endif
 #ifdef RS_USE_WIKI
 #include "gui/WikiPoos/WikiDialog.h"
 #endif
@@ -359,7 +359,7 @@ void MainWindow::initStackedPage()
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
-#ifdef RS_USE_CIRCLES
+#ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
 #endif
@@ -367,10 +367,10 @@ void MainWindow::initStackedPage()
   IdDialog *idDialog = NULL;
   addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
-#ifdef RS_USE_CIRCLES
-  CirclesDialog *circlesDialog = NULL;
-  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
-#endif
+//#ifdef RS_USE_CIRCLES
+//  CirclesDialog *circlesDialog = NULL;
+//  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
+//#endif
 
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);

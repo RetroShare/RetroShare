@@ -55,8 +55,12 @@ public:
 
 protected:
 	virtual void updateDisplay(bool complete);
-
+    
+    void loadCircleGroupMeta(const uint32_t &token);
+    void requestCircleGroupMeta();
 private slots:
+    void createExternalCircle();
+    void editExistingCircle();
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
 
@@ -74,7 +78,8 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
-
+    
+    void circle_selected();
 private:
 	void processSettings(bool load);
 
@@ -95,6 +100,7 @@ private:
 
 private:
 	TokenQueue *mIdQueue;
+	TokenQueue *mCircleQueue;
 	UIStateHelper *mStateHelper;
 
 	RsGxsGroupId mId;

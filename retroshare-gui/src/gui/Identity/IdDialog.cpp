@@ -32,6 +32,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/Circles/CreateCircleDialog.h"
 
 #include <retroshare/rspeers.h>
 #include "retroshare/rsgxsflags.h"
@@ -49,6 +50,19 @@
 #define IDDIALOG_REPLIST    3
 #define IDDIALOG_REFRESH    4
 
+#define CIRCLEGROUP_CIRCLE_COL_GROUPNAME 0
+#define CIRCLEGROUP_CIRCLE_COL_GROUPID   1
+
+#define CIRCLEGROUP_FRIEND_COL_NAME 0
+#define CIRCLEGROUP_FRIEND_COL_ID   1
+
+#define CLEAR_BACKGROUND 0
+#define GREEN_BACKGROUND 1
+#define BLUE_BACKGROUND  2
+#define RED_BACKGROUND   3
+#define GRAY_BACKGROUND  4
+
+#define CIRCLESDIALOG_GROUPMETA			1
 /****************************************************************
  */
 
@@ -205,20 +219,14 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	QString hlp_str = tr(
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
-			<p>In this tab you can create/edit pseudo-anonymous identities. \
-			</p>                                                   \
+			<p>In this tab you can create/edit pseudo-anonymous identities.</p>                \
 			<p>Identities are used to securely identify your data: sign forum and channel posts,\
 				and receive feedback using Retroshare built-in email system, post comments \
 				after channel posts, etc.</p> \
-			<p>  \
-			Identities can optionally be signed by your Retroshare node's certificate.   \
-			Signed identities are easier to trust but are easily linked to your node's IP address.  \
-			</p>  \
-			<p>  \
-			Anonymous identities allow you to anonymously interact with other users. They cannot be   \
-			spoofed, but noone can prove who really owns a given identity.  \
-			</p> \
-			") ;
+			<p>Identities can optionally be signed by your Retroshare node's certificate.   \
+			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
+			<p> Anonymous identities allow you to anonymously interact with other users. They cannot be   \
+			spoofed, but noone can prove who really owns a given identity.</p>") ;
 
 	registerHelpButton(ui->helpButton, hlp_str) ;
 
@@ -228,7 +236,246 @@ IdDialog::IdDialog(QWidget *parent) :
     // hide reputation sice it's currently unused
     ui->reputationGroupBox->hide();
     ui->tweakGroupBox->hide();
+    
+    // circles stuff
+    
+    connect(ui->pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
+    connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(editExistingCircle()));
+    connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
+    
+    /* Setup TokenQueue */
+    mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
+    
+    requestCircleGroupMeta();
+}	
+
+
+/************************** Request / Response *************************/
+/*** Loading Main Index ***/
+
+void IdDialog::requestCircleGroupMeta()
+{
+	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, true);
+
+	std::cerr << "CirclesDialog::requestGroupMeta()";
+	std::cerr << std::endl;
+
+	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPMETA);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+	uint32_t token;
+	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, CIRCLESDIALOG_GROUPMETA);
 }
+
+void IdDialog::loadCircleGroupMeta(const uint32_t &token)
+{
+	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
+
+	std::cerr << "CirclesDialog::loadCircleGroupMeta()";
+	std::cerr << std::endl;
+
+	ui->treeWidget_membership->clear();
+
+	std::list<RsGroupMetaData> groupInfo;
+	std::list<RsGroupMetaData>::iterator vit;
+
+	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
+	{
+		std::cerr << "CirclesDialog::loadCircleGroupMeta() Error getting GroupMeta";
+		std::cerr << std::endl;
+		mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
+		return;
+	}
+
+	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+
+	/* add the top level item */
+	QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
+	personalCirclesItem->setText(0, tr("Personal Circles"));
+	ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
+
+	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
+	externalAdminCirclesItem->setText(0, tr("External Circles (Admin)"));
+	ui->treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
+
+	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
+	externalSubCirclesItem->setText(0, tr("External Circles (Subscribed)"));
+	ui->treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
+
+	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
+	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
+	ui->treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
+
+	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
+	{
+		/* Add Widget, and request Pages */
+		std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId;
+		std::cerr << " Group: " << vit->mGroupName;
+		std::cerr << std::endl;
+
+		QTreeWidgetItem *groupItem = new QTreeWidgetItem();
+		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+        groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+
+		if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+		{
+			personalCirclesItem->addChild(groupItem);
+		}
+		else
+		{
+			if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			{
+				externalAdminCirclesItem->addChild(groupItem);
+			}
+			else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+			{
+				externalSubCirclesItem->addChild(groupItem);
+			}
+			else
+			{
+				externalOtherCirclesItem->addChild(groupItem);
+			}
+		}
+	}
+}
+
+
+void IdDialog::createExternalCircle()
+{
+	CreateCircleDialog dlg;
+	dlg.editNewId(true);
+	dlg.exec();
+}
+void IdDialog::editExistingCircle()
+{
+	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+	if ((!item) || (!item->parent()))
+	{
+		return;
+	}
+
+	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+    RsGxsGroupId id ( coltext.toStdString());
+
+	CreateCircleDialog dlg;
+	dlg.editExistingId(id);
+	dlg.exec();
+}
+
+static void set_item_background(QTreeWidgetItem *item, uint32_t type)
+{
+	QBrush brush;
+	switch(type)
+	{
+		default:
+		case CLEAR_BACKGROUND:
+			brush = QBrush(Qt::white);
+			break;
+		case GREEN_BACKGROUND:
+			brush = QBrush(Qt::green);
+			break;
+		case BLUE_BACKGROUND:
+			brush = QBrush(Qt::blue);
+			break;
+		case RED_BACKGROUND:
+			brush = QBrush(Qt::red);
+			break;
+		case GRAY_BACKGROUND:
+			brush = QBrush(Qt::gray);
+			break;
+	}
+	item->setBackground (0, brush);
+}
+
+static void update_children_background(QTreeWidgetItem *item, uint32_t type)
+{
+	int count = item->childCount();
+	for(int i = 0; i < count; ++i)
+	{
+		QTreeWidgetItem *child = item->child(i);
+
+		if (child->childCount() > 0)
+		{
+			update_children_background(child, type);
+		}
+		set_item_background(child, type);
+	}
+}
+
+static void set_tree_background(QTreeWidget *tree, uint32_t type)
+{
+	std::cerr << "CirclesDialog set_tree_background()";
+	std::cerr << std::endl;
+
+	/* grab all toplevel */
+	int count = tree->topLevelItemCount();
+	for(int i = 0; i < count; ++i)
+	{
+		QTreeWidgetItem *item = tree->topLevelItem(i);
+		/* resursively clear child backgrounds */
+		update_children_background(item, type);
+		set_item_background(item, type);
+	}
+}
+
+static void check_mark_item(QTreeWidgetItem *item, const std::set<RsPgpId> &names, uint32_t col, uint32_t type)
+{
+	QString coltext = item->text(col);
+    RsPgpId colstr ( coltext.toStdString());
+	if (names.end() != names.find(colstr))
+	{
+		set_item_background(item, type);
+		std::cerr << "CirclesDialog check_mark_item: found match: " << colstr;
+		std::cerr << std::endl;
+	}
+}
+void IdDialog::circle_selected()
+{
+	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+
+	std::cerr << "CirclesDialog::circle_selected() valid circle chosen";
+	std::cerr << std::endl;
+
+	set_tree_background(ui->treeWidget_membership, CLEAR_BACKGROUND);
+	//set_tree_background(ui->treeWidget_friends, CLEAR_BACKGROUND);
+	//set_tree_background(ui->treeWidget_category, CLEAR_BACKGROUND);
+
+	if ((!item) || (!item->parent()))
+	{
+		mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, false);
+		return;
+	}
+
+	set_item_background(item, BLUE_BACKGROUND);
+
+	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+    RsGxsCircleId id ( coltext.toStdString()) ;
+
+	/* update friend lists */
+	RsGxsCircleDetails details;
+	if (rsGxsCircles->getCircleDetails(id, details))
+	{
+		/* now mark all the members */
+        std::set<RsPgpId> members;
+		std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
+		for(it = details.mAllowedPeers.begin(); it != details.mAllowedPeers.end(); ++it)
+		{
+			members.insert(it->first);
+			std::cerr << "Circle member: " << it->first;
+			std::cerr << std::endl;
+		}
+
+//		mark_matching_tree(ui->treeWidget_friends, members, CIRCLEGROUP_FRIEND_COL_ID, GREEN_BACKGROUND);
+	}
+	else
+	{
+//		set_tree_background(ui->treeWidget_friends, GRAY_BACKGROUND);
+	}
+	mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, true);
+}
+
 
 IdDialog::~IdDialog()
 {
@@ -911,36 +1158,58 @@ void IdDialog::insertRepList(uint32_t token)
 	mStateHelper->setActive(IDDIALOG_REPLIST, true);
 }
 
-void IdDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req)
+void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 {
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
 #endif
 
-	switch(req.mUserType)
-	{
-		case IDDIALOG_IDLIST:
-			insertIdList(req.mToken);
-			break;
+    if(queue == mIdQueue)
+    {
+	    switch(req.mUserType)
+	    {
+	    case IDDIALOG_IDLIST:
+		    insertIdList(req.mToken);
+		    break;
 
-		case IDDIALOG_IDDETAILS:
-			insertIdDetails(req.mToken);
-			break;
+	    case IDDIALOG_IDDETAILS:
+		    insertIdDetails(req.mToken);
+		    break;
 
-		case IDDIALOG_REPLIST:
-			insertRepList(req.mToken);
-			break;
+	    case IDDIALOG_REPLIST:
+		    insertRepList(req.mToken);
+		    break;
 
-		case IDDIALOG_REFRESH:
-// replaced by RsGxsUpdateBroadcastPage
-//			updateDisplay(true);
-			break;
-		default:
-			std::cerr << "IdDialog::loadRequest() ERROR";
-			std::cerr << std::endl;
-			break;
-	}
+	    case IDDIALOG_REFRESH:
+		    // replaced by RsGxsUpdateBroadcastPage
+		    //			updateDisplay(true);
+		    break;
+	    default:
+		    std::cerr << "IdDialog::loadRequest() ERROR";
+		    std::cerr << std::endl;
+		    break;
+	    }
+    }
+    
+    if(queue == mCircleQueue)
+    {
+	    std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
+	    std::cerr << std::endl;
+
+	    /* now switch on req */
+	    switch(req.mUserType)
+	    {
+	    case CIRCLESDIALOG_GROUPMETA:
+		    loadCircleGroupMeta(req.mToken);
+		    break;
+
+	    default:
+		    std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
+		    std::cerr << std::endl;
+		    break;
+	    }
+    }
 }
 
 void IdDialog::IdListCustomPopupMenu( QPoint )
