@@ -11,13 +11,22 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>6</number>
+   </property>
+   <property name="bottomMargin">
     <number>6</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -515,7 +524,7 @@ behind a firewall or a VPN.</string>
          <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="QWidget" name="tabWidgetPage1" native="true">
+         <widget class="QWidget" name="tabWidgetPage1">
           <attribute name="title">
            <string>IP blacklist</string>
           </attribute>
@@ -756,15 +765,15 @@ behind a firewall or a VPN.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TorTAB">
+     <widget class="QWidget" name="HiddenTAB">
       <attribute name="title">
-       <string>Tor Configuration</string>
+       <string>Hidden Service Configuration</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <widget class="QGroupBox" name="torpage_outgoing">
          <property name="title">
-          <string>Outgoing Tor Connections</string>
+          <string>Outgoing Connections</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
@@ -779,10 +788,10 @@ behind a firewall or a VPN.</string>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="torpage_proxyAddress"/>
+               <widget class="QLineEdit" name="hiddenpage_proxyAddress_tor"/>
               </item>
               <item>
-               <widget class="QSpinBox" name="torpage_proxyPort">
+               <widget class="QSpinBox" name="hiddenpage_proxyPort_tor">
                 <property name="minimum">
                  <number>10</number>
                 </property>
@@ -823,11 +832,66 @@ behind a firewall or a VPN.</string>
            </layout>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_17">
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>I2P Socks Proxy</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="hiddenpage_proxyAddress_i2p"/>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="hiddenpage_proxyPort_i2p">
+                <property name="minimum">
+                 <number>10</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_18">
+              <item>
+               <widget class="QLabel" name="iconlabel_i2p_outgoing">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>I2P outgoing Okay</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QPlainTextEdit" name="plainTextEdit">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>100</height>
+              <height>145</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
@@ -839,8 +903,10 @@ behind a firewall or a VPN.</string>
             <property name="plainText">
              <string>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
 
+I2P Socks Proxy: see http://127.0.0.1:7657/i2ptunnelmgr for setting up a client tunnel.
+
 You can connect to Hidden Nodes, even if you 
-are running a standard Node, so why not setup Tor? </string>
+are running a standard Node, so why not setup Tor and/or I2P? </string>
             </property>
            </widget>
           </item>

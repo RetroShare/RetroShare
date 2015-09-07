@@ -52,6 +52,7 @@ public slots:
     void updateStatus();
 
 private slots:
+    // ban list
     void updateSelectedBlackListIP(int row, int, int, int);
     void updateSelectedWhiteListIP(int row,int,int,int);
     void addIpRangeToBlackList();
@@ -69,6 +70,8 @@ private slots:
     void ipFilterContextMenu(const QPoint &);
     void ipWhiteListContextMenu(const QPoint &point);
     void removeBannedIp();
+
+    // server
     void saveAddresses();
     void toggleUPnP();
     void toggleIpDetermination(bool) ;
@@ -78,11 +81,12 @@ private slots:
     void updateTorInProxyIndicator();
 
 private:
-
-    // Alternative Versions for HiddenNode Mode.
+    // ban list
     void addPeerToIPTable(QTableWidget *table, int row, const BanListPeer &blp);
     bool removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,int& masked_bytes);
     bool removeCurrentRowFromWhiteList(sockaddr_storage &collected_addr, int &masked_bytes);
+
+    // Alternative Versions for HiddenNode Mode.
     void loadHiddenNode();
     void updateStatusHiddenNode();
     void saveAddressesHiddenNode();

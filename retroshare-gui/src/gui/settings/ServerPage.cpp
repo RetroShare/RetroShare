@@ -306,9 +306,14 @@ void ServerPage::load()
 	std::string proxyaddr;
     uint16_t proxyport;
     uint32_t status ;
-    rsPeers->getProxyServer(proxyaddr, proxyport, status);
-	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
-    ui.torpage_proxyPort -> setValue(proxyport);
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
 
     updateTorOutProxyIndicator();
 }
@@ -807,17 +812,29 @@ void ServerPage::saveAddresses()
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 
 	// HANDLE PROXY SERVER.
-	std::string orig_proxyaddr;
-    uint16_t orig_proxyport;
-    uint32_t status ;
-    rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport,status);
+	std::string orig_proxyaddr,new_proxyaddr;
+	uint16_t orig_proxyport, new_proxyport;
+	uint32_t status ;
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,status);
 
-	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
-	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
+	new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
 
 	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
 	{
-		rsPeers->setProxyServer(new_proxyaddr, new_proxyport);
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
+	}
+
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, orig_proxyaddr, orig_proxyport,status);
+
+	new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
+	{
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
 	}
 
 	load();
@@ -935,9 +952,9 @@ void ServerPage::loadHiddenNode()
 	std::string proxyaddr;
     uint16_t proxyport;
     uint32_t proxy_state_flags;
-    rsPeers->getProxyServer(proxyaddr, proxyport, proxy_state_flags);
-	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
-	ui.torpage_proxyPort -> setValue(proxyport);
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, proxy_state_flags);
+	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
 
     updateTorOutProxyIndicator();
 
@@ -1053,14 +1070,14 @@ void ServerPage::saveAddressesHiddenNode()
 	std::string orig_proxyaddr;
     uint16_t orig_proxyport;
     uint32_t state_flags ;
-    rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport,state_flags);
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,state_flags);
 
-	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
-	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
+	std::string new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
+	uint16_t new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
 
 	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
 	{
-		rsPeers->setProxyServer(new_proxyaddr, new_proxyport);
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
 	}
 
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
@@ -1069,7 +1086,7 @@ void ServerPage::saveAddressesHiddenNode()
 void ServerPage::updateTorOutProxyIndicator()
 {
     QTcpSocket socket ;
-    socket.connectToHost(ui.torpage_proxyAddress->text(),ui.torpage_proxyPort->text().toInt());
+	socket.connectToHost(ui.hiddenpage_proxyAddress_tor->text(),ui.hiddenpage_proxyPort_tor->text().toInt());
 
     if(socket.waitForConnected(500))
     {
@@ -1113,8 +1130,8 @@ void ServerPage::updateTorInProxyIndicator()
     QNetworkProxy proxy ;
 
     proxy.setType(QNetworkProxy::Socks5Proxy);
-    proxy.setHostName(ui.torpage_proxyAddress->text());
-    proxy.setPort(ui.torpage_proxyPort->text().toInt());
+	proxy.setHostName(ui.hiddenpage_proxyAddress_tor->text());
+	proxy.setPort(ui.hiddenpage_proxyPort_tor->text().toInt());
     proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
         //ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
@@ -1127,7 +1144,7 @@ void ServerPage::updateTorInProxyIndicator()
 
                  QUrl url("https://"+ui.torpage_onionAddress->text() + ":" + ui.torpage_onionPort->text()) ;
 
-    std::cerr << "Setting proxy hostname+port to " << std::dec << ui.torpage_proxyAddress->text().toStdString() << ":" << ui.torpage_proxyPort->text().toInt() << std::endl;
+	std::cerr << "Setting proxy hostname+port to " << std::dec << ui.hiddenpage_proxyAddress_tor->text().toStdString() << ":" << ui.hiddenpage_proxyPort_tor->text().toInt() << std::endl;
     std::cerr << "Connecting to " << url.toString().toStdString() << std::endl;
 
     connect(manager, SIGNAL(finished(QNetworkReply*)),this,SLOT(handleNetworkReply(QNetworkReply*))) ;

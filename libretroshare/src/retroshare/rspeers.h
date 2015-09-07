@@ -101,7 +101,8 @@ const uint32_t RS_PEER_CONNECTSTATE_TRYING_UDP        = 3;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TCP     = 4;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UDP     = 5;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TOR     = 6;
-const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_I2P     = 7;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 8;
 
 /* Error codes for certificate cleaning and cert parsing. Numbers should not overlap. */
 

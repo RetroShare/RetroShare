@@ -182,6 +182,10 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 		stateString = qApp->translate("StatusDefs", "Connected: Tor");
 		isConnected = true;
 		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_I2P:
+		stateString = qApp->translate("StatusDefs", "Connected: I2P");
+		isConnected = true;
+		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
 		stateString = qApp->translate("StatusDefs", "Connected: Unknown");
 		isConnected = true;
@@ -231,6 +235,7 @@ QString StatusDefs::connectStateWithoutTransportTypeString(RsPeerDetails &detail
 	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
 	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
 	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+	case RS_PEER_CONNECTSTATE_CONNECTED_I2P:
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
 		stateString = qApp->translate("StatusDefs", "Connected");
 		break;
@@ -257,6 +262,9 @@ QString StatusDefs::connectStateIpString(RsPeerDetails &details)
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
 		stateString += QString(details.actAsServer ? qApp->translate("StatusDefs", "Tor-in") : qApp->translate("StatusDefs", "Tor-out"));
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_I2P:
+		stateString += QString(details.actAsServer ? qApp->translate("StatusDefs", "I2P-in") : qApp->translate("StatusDefs", "I2P-out"));
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
 		stateString += qApp->translate("StatusDefs", "unkown");
