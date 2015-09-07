@@ -930,10 +930,10 @@ bool p3Peers::getProxyServer(std::string &addr, uint16_t &port, uint32_t &status
     #endif
 
 	struct sockaddr_storage proxy_addr;
-	mPeerMgr->getProxyServerAddress(proxy_addr);
+	mPeerMgr->getProxyServerAddressTor(proxy_addr);
 	addr = sockaddr_storage_iptostring(proxy_addr);
 	port = sockaddr_storage_port(proxy_addr);
-    mPeerMgr->getProxyServerStatus(status);
+    mPeerMgr->getProxyServerStatusTor(status);
     return true;
 }
 
@@ -958,7 +958,7 @@ bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 	{
-		return mPeerMgr->setProxyServerAddress(addr);
+		return mPeerMgr->setProxyServerAddressTor(addr);
 	}
 	else
 	{

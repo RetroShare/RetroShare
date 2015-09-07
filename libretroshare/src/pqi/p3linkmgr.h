@@ -46,7 +46,8 @@ const uint32_t RS_NET_CONN_UDP_ALL             = 0x00f0;
 const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
 const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY = 0x0004;
-const uint32_t RS_NET_CONN_TCP_HIDDEN 	       = 0x0008;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_TOR 	   = 0x0008;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_I2P 	   = 0x0010;
 
 const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0010;
 const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0020; /* coming soon */

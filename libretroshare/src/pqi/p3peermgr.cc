@@ -130,13 +130,18 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 		lastGroupId = 1;
 
 		// setup default ProxyServerAddress.
-		sockaddr_storage_clear(mProxyServerAddress);
-		sockaddr_storage_ipv4_aton(mProxyServerAddress,
+		sockaddr_storage_clear(mProxyServerAddressTor);
+		sockaddr_storage_ipv4_aton(mProxyServerAddressTor,
 				kConfigDefaultProxyServerIpAddr.c_str());
-		sockaddr_storage_ipv4_setport(mProxyServerAddress, 
+		sockaddr_storage_ipv4_setport(mProxyServerAddressTor,
                 kConfigDefaultProxyServerPort);
+		sockaddr_storage_clear(mProxyServerAddressI2P);
+		sockaddr_storage_ipv4_aton(mProxyServerAddressI2P,
+				kConfigDefaultProxyServerIpAddr.c_str());
+		sockaddr_storage_ipv4_setport(mProxyServerAddressI2P,
+				kConfigDefaultProxyServerPort);
 
-        mProxyServerStatus = RS_NET_PROXY_STATUS_UNKNOWN ;
+        mProxyServerStatusTor = RS_NET_PROXY_STATUS_UNKNOWN ;
 	}
 	
 #ifdef PEER_DEBUG
@@ -397,6 +402,100 @@ bool    p3PeerMgrIMPL::isHiddenPeer(const RsPeerId &ssl_id)
 	return (it->second).hiddenNode;
 }
 
+bool p3PeerMgrIMPL::isHiddenTor()
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	return mOwnState.hiddenType == RS_HIDDEN_TYPE_TOR;
+}
+
+bool p3PeerMgrIMPL::isHiddenTorPeer(const RsPeerId &ssl_id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<RsPeerId, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::isHiddenTorPeer(" << ssl_id << ") Missing Peer => false";
+		std::cerr << std::endl;
+#endif
+
+		return false;
+	}
+
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::isHiddenTorPeer(" << ssl_id << ") = " << (it->second).hiddenType;
+	std::cerr << std::endl;
+#endif
+	return (it->second).hiddenType == RS_HIDDEN_TYPE_TOR;
+}
+
+bool p3PeerMgrIMPL::isHiddenI2P()
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	return mOwnState.hiddenType == RS_HIDDEN_TYPE_I2P;
+}
+
+bool p3PeerMgrIMPL::isHiddenI2PPeer(const RsPeerId &ssl_id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<RsPeerId, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::isHiddenI2PPeer(" << ssl_id << ") Missing Peer => false";
+		std::cerr << std::endl;
+#endif
+
+		return false;
+	}
+
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::isHiddenI2PPeer(" << ssl_id << ") = " << (it->second).hiddenType;
+	std::cerr << std::endl;
+#endif
+	return (it->second).hiddenType == RS_HIDDEN_TYPE_I2P;
+}
+
+bool hasEnding (std::string const &fullString, std::string const &ending) {
+	if (fullString.length() < ending.length())
+		return false;
+
+	return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+}
+
+/**
+ * @brief resolves the hidden type (tor or i2p) from a domain
+ * @param domain to check
+ * @return RS_HIDDEN_TYPE_TOR, RS_HIDDEN_TYPE_I2P or RS_HIDDEN_TYPE_NONE
+ *
+ * Tor: ^[a-z2-7]{16}\.onion$
+ *
+ * I2P: There is more than one address:
+ *       - pub. key in base64
+ *       - hash in base32 ( ^[a-z2-7]{52}\.b32\.i2p$ )
+ *       - "normal" .i2p domains
+ */
+uint32_t p3PeerMgrIMPL::hiddenDomainToHiddenType(const std::string &domain)
+{
+	if(hasEnding(domain, ".onion"))
+		return RS_HIDDEN_TYPE_TOR;
+	if(hasEnding(domain, ".i2p"))
+		return RS_HIDDEN_TYPE_I2P;
+
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::hiddenDomainToHiddenType() unknown hidden type: " << domain;
+		std::cerr << std::endl;
+#endif
+	return RS_HIDDEN_TYPE_NONE;
+
+}
+
 bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -426,6 +525,7 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::strin
 		mOwnState.hiddenNode = true;
 		mOwnState.hiddenDomain = domain;
 		mOwnState.hiddenPort = domain_port;
+		mOwnState.hiddenType = hiddenDomainToHiddenType(domain);
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set own State";
 		std::cerr << std::endl;
@@ -448,6 +548,7 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::strin
 	it->second.hiddenDomain = domain;
 	it->second.hiddenPort = domain_port;
 	it->second.hiddenNode = true;
+	it->second.hiddenType = hiddenDomainToHiddenType(domain);
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set Peers State";
 	std::cerr << std::endl;
@@ -456,15 +557,28 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::strin
 	return true;
 }
 
-bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_storage &proxy_addr)
+bool p3PeerMgrIMPL::setProxyServerAddress(const uint32_t type, const struct sockaddr_storage &proxy_addr)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	if (!sockaddr_storage_same(mProxyServerAddress,proxy_addr))
-	{
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		mProxyServerAddress = proxy_addr;
+	switch (type) {
+	case RS_HIDDEN_TYPE_I2P:
+		if (!sockaddr_storage_same(mProxyServerAddressI2P,proxy_addr))
+		{
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			mProxyServerAddressI2P = proxy_addr;
+		}
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+	default:
+		if (!sockaddr_storage_same(mProxyServerAddressTor,proxy_addr))
+		{
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			mProxyServerAddressTor = proxy_addr;
+		}
+		break;
 	}
+
 	return true;
 }
 
@@ -480,18 +594,36 @@ bool p3PeerMgrIMPL::resetOwnExternalAddressList()
     return true ;
 }
 
-bool p3PeerMgrIMPL::getProxyServerStatus(uint32_t& proxy_status)
-{
-    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-
-    proxy_status = mProxyServerStatus;
-    return true;
-}
-bool p3PeerMgrIMPL::getProxyServerAddress(struct sockaddr_storage &proxy_addr)
+bool p3PeerMgrIMPL::getProxyServerStatus(const uint32_t type, uint32_t& proxy_status)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	proxy_addr = mProxyServerAddress;
+	switch (type) {
+	case RS_HIDDEN_TYPE_I2P:
+		proxy_status = mProxyServerStatusI2P;
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+	default:
+		proxy_status = mProxyServerStatusTor;
+		break;
+	}
+
+	return true;
+}
+
+bool p3PeerMgrIMPL::getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	switch (type) {
+	case RS_HIDDEN_TYPE_I2P:
+		proxy_addr = mProxyServerAddressI2P;
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+	default:
+		proxy_addr = mProxyServerAddressTor;
+		break;
+	}
 	return true;
 }
 	
@@ -515,7 +647,11 @@ bool p3PeerMgrIMPL::getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_stor
 	domain_addr = it->second.hiddenDomain;
 	domain_port = it->second.hiddenPort;
 
-	proxy_addr = mProxyServerAddress;
+	if(it->second.hiddenType == RS_HIDDEN_TYPE_I2P)
+		proxy_addr = mProxyServerAddressI2P;
+	else
+		/* default tor */
+		proxy_addr = mProxyServerAddressTor;
 	return true;
 }
 

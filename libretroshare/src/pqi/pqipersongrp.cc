@@ -617,10 +617,15 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 	uint32_t ptype;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
-		if (type == RS_NET_CONN_TCP_HIDDEN)
+		if (type == RS_NET_CONN_TCP_HIDDEN_TOR)
 		{
-			ptype = PQI_CONNECT_HIDDEN_TCP;
-			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD; 
+			ptype = PQI_CONNECT_HIDDEN_TOR_TCP;
+			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD;
+		}
+		else if (type == RS_NET_CONN_TCP_HIDDEN_I2P)
+		{
+			ptype = PQI_CONNECT_HIDDEN_I2P_TCP;
+			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD;
 		}
 		else
 		{

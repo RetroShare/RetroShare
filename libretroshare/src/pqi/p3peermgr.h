@@ -90,6 +90,7 @@ class peerState
 	bool hiddenNode; /* all IP addresses / dyndns must be blank */
 	std::string hiddenDomain;
 	uint16_t    hiddenPort;
+	uint32_t	hiddenType;
 
 	std::string location;
 	std::string name;
@@ -185,11 +186,15 @@ virtual bool    getPeerName(const RsPeerId &ssl_id, std::string &name) = 0;
 virtual bool	getGpgId(const RsPeerId &sslId, RsPgpId &gpgId) = 0;
 virtual uint32_t getConnectionType(const RsPeerId &sslId) = 0;
 
-virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr) = 0;
-virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr) = 0;
-virtual bool    getProxyServerStatus(uint32_t& status) = 0;
+virtual bool    setProxyServerAddress(const uint32_t type, const struct sockaddr_storage &proxy_addr) = 0;
+virtual bool    getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr) = 0;
+virtual bool    getProxyServerStatus(const uint32_t type, uint32_t& status) = 0;
 virtual bool    isHidden() = 0;
 virtual bool    isHiddenPeer(const RsPeerId &ssl_id) = 0;
+virtual bool    isHiddenTor() = 0;
+virtual bool    isHiddenTorPeer(const RsPeerId &ssl_id) = 0;
+virtual bool    isHiddenI2P() = 0;
+virtual bool    isHiddenI2PPeer(const RsPeerId &ssl_id) = 0;
 virtual bool    getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
 
 
@@ -288,12 +293,17 @@ virtual bool    getPeerName(const RsPeerId& ssl_id, std::string& name);
 virtual bool	getGpgId(const RsPeerId& sslId, RsPgpId& gpgId);
 virtual uint32_t getConnectionType(const RsPeerId& sslId);
 
-virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr);
-virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr);
-virtual bool    getProxyServerStatus(uint32_t &proxy_status);
+virtual bool    setProxyServerAddress(const uint32_t type, const struct sockaddr_storage &proxy_addr);
+virtual bool    getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr);
+virtual bool    getProxyServerStatus(const uint32_t type, uint32_t &proxy_status);
 virtual bool    isHidden();
 virtual bool    isHiddenPeer(const RsPeerId& ssl_id);
+virtual bool    isHiddenTor();
+virtual bool    isHiddenTorPeer(const RsPeerId &ssl_id);
+virtual bool    isHiddenI2P();
+virtual bool    isHiddenI2PPeer(const RsPeerId &ssl_id);
 virtual bool    getProxyAddress(const RsPeerId& ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
+virtual uint32_t hiddenDomainToHiddenType(const std::string &domain);
 
 virtual int 	getFriendCount(bool ssl, bool online);
 
@@ -369,8 +379,10 @@ private:
 
 	std::map<RsPgpId, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
 
-	struct sockaddr_storage mProxyServerAddress;
-    uint32_t mProxyServerStatus ;
+	struct sockaddr_storage mProxyServerAddressTor;
+	struct sockaddr_storage mProxyServerAddressI2P;
+	uint32_t mProxyServerStatusTor ;
+	uint32_t mProxyServerStatusI2P ;
 
 };
 
