@@ -1032,31 +1032,25 @@ bool RsGxsDataAccess::getGroupList(const std::list<RsGxsGroupId>& grpIdsIn, cons
 
 bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 {
-	GxsMsgResult result;
-
 	GxsMsgReq msgIdOut;
 
 	// filter based on options
 	getMsgList(req->mMsgIds, req->Options, msgIdOut);
 
-	mDataStore->retrieveNxsMsgs(msgIdOut, result, true, true);
+	mDataStore->retrieveNxsMsgs(msgIdOut, req->mMsgData, true, true);
 
-	req->mMsgData = result;
 	return true;
 }
 
 
 bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 {
-        GxsMsgMetaResult result;
-
         GxsMsgReq msgIdOut;
 
         // filter based on options
         getMsgList(req->mMsgIds, req->Options, msgIdOut);
 
-        mDataStore->retrieveGxsMsgMetaData(msgIdOut, result);
-	req->mMsgMetaData = result;
+        mDataStore->retrieveGxsMsgMetaData(msgIdOut, req->mMsgMetaData);
 
 	return true;
 }
