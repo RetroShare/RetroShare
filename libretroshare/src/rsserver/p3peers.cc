@@ -313,6 +313,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.isHiddenNode = true;
 		d.hiddenNodeAddress = ps.hiddenDomain;
 		d.hiddenNodePort = ps.hiddenPort;
+		d.hiddenType = ps.hiddenType;
 		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 		d.localPort	= sockaddr_storage_port(ps.localaddr);
 		d.extAddr = "hidden";
@@ -324,6 +325,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.isHiddenNode = false;
 		d.hiddenNodeAddress = "";
 		d.hiddenNodePort = 0;
+		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
 		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 		d.localPort	= sockaddr_storage_port(ps.localaddr);
@@ -1113,6 +1115,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 			{
 				pd.hiddenNodeAddress = domain;
 				pd.hiddenNodePort = port;
+				pd.hiddenType = mPeerMgr->hiddenDomainToHiddenType(domain);
 			}
 		}
 		else
@@ -1317,7 +1320,7 @@ RsPeerDetails::RsPeerDetails()
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
 	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
-	wasDeniedConnection(false), deniedTS(0)
+	wasDeniedConnection(false), deniedTS(0), hiddenType(RS_HIDDEN_TYPE_NONE)
 {
 }
 

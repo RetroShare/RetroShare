@@ -40,17 +40,17 @@ class DNSResolver ;
 
 
 /* order of attempts ... */
-const uint32_t RS_NET_CONN_TCP_ALL             = 0x001f;
-const uint32_t RS_NET_CONN_UDP_ALL             = 0x00e0;
+const uint32_t RS_NET_CONN_TCP_ALL             = 0x00ff;
+const uint32_t RS_NET_CONN_UDP_ALL             = 0x0f00;
  
 const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
 const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY = 0x0004;
-const uint32_t RS_NET_CONN_TCP_HIDDEN_TOR 	   = 0x0008;
-const uint32_t RS_NET_CONN_TCP_HIDDEN_I2P 	   = 0x0010;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_TOR      = 0x0008;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_I2P      = 0x0010;
 
-const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0020;
-const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0040; /* coming soon */
+const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0100;
+const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0200; /* coming soon */
 
 // These are set in pqipersongroup.
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */

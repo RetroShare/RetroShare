@@ -78,7 +78,7 @@ private slots:
     void toggleTunnelConnection(bool) ;
     void clearKnownAddressList() ;
     void handleNetworkReply(QNetworkReply *reply);
-    void updateTorInProxyIndicator();
+    void updateInProxyIndicator();
 
 private:
     // ban list
@@ -98,6 +98,7 @@ private:
     QNetworkAccessManager *manager ;
 
     bool mIsHiddenNode;
+	u_int32_t mHiddenType;
 };
 
 #endif // !SERVERPAGE_H

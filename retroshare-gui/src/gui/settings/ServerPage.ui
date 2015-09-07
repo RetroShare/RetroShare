@@ -914,7 +914,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="torpage_incoming">
+        <widget class="QGroupBox" name="hiddenpage_incoming">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -922,13 +922,13 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Incoming Tor Connections</string>
+          <string>Incoming Service Connections</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="2">
-             <widget class="QSpinBox" name="torpage_localPort">
+             <widget class="QSpinBox" name="hiddenpage_localPort">
               <property name="minimum">
                <number>10</number>
               </property>
@@ -940,7 +940,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
             <item row="0" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
-               <widget class="QPushButton" name="testIncomingTor_PB">
+               <widget class="QPushButton" name="testIncoming_PB">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your Tor address using the Tor proxy. If your Tor node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -952,7 +952,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
              </layout>
             </item>
             <item row="1" column="2">
-             <widget class="QSpinBox" name="torpage_onionPort">
+             <widget class="QSpinBox" name="hiddenpage_servicePort">
               <property name="minimum">
                <number>10</number>
               </property>
@@ -962,7 +962,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_11">
+             <widget class="QLabel" name="l_serviceAddress">
               <property name="text">
                <string>Onion Address</string>
               </property>
@@ -976,14 +976,14 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="torpage_onionAddress">
+             <widget class="QLineEdit" name="hiddenpage_serviceAddress">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="torpage_localAddress">
+             <widget class="QLineEdit" name="hiddenpage_localAddress">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the Tor hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -992,7 +992,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
             <item row="1" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QLabel" name="iconlabel_tor_incoming">
+               <widget class="QLabel" name="iconlabel_service_incoming">
                 <property name="maximumSize">
                  <size>
                   <width>16</width>
@@ -1008,7 +1008,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_16">
+               <widget class="QLabel" name="l_incomingTestResult">
                 <property name="text">
                  <string>Tor incoming  ok</string>
                 </property>
@@ -1028,7 +1028,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
              </widget>
             </item>
             <item>
-             <widget class="QPlainTextEdit" name="torpage_configuration">
+             <widget class="QPlainTextEdit" name="hiddenpage_configuration">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                 <horstretch>0</horstretch>

@@ -238,6 +238,7 @@ class RsPeerDetails
 	bool 			isHiddenNode;
 	std::string		hiddenNodeAddress;
 	uint16_t		hiddenNodePort;
+	uint32_t        hiddenType;
 
 	// Filled in for Standard Node.
 	std::string             localAddr;
