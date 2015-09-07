@@ -77,6 +77,7 @@ protected slots:
 	void changePartipationState();
     void distantChatParticipant();
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
+    void sendMessage();
 
 private:
 	void updateParticipantsList();
@@ -101,9 +102,10 @@ private:
 	/** Ignored Users in Chatlobby by nickname until we had implemented Peer Ids in ver 0.6 */
     std::set<RsGxsId> mutedParticipants;
 
-	QAction *muteAct;
+    QAction *muteAct;
     QAction *distantChatAct;
     QWidgetAction *checkableAction;
+    QAction *sendMessageAct;
 
     GxsIdChooser *ownIdChooser ;
 };

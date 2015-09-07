@@ -34,6 +34,7 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
+#include "gui/msgs/MessageComposer.h"
 #include <gui/common/html.h>
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/FriendSelectionDialog.h"
@@ -73,11 +74,13 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
-	muteAct = new QAction(QIcon(), tr("Mute participant"), this);
-    distantChatAct = new QAction(QIcon(), tr("Start private chat"), this);
+    muteAct = new QAction(QIcon(), tr("Mute participant"), this);
+    distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
+    sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
 
     connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
+    connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
 
 	// Add a button to invite friends.
 	//
@@ -170,12 +173,15 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 
 	QMenu contextMnu(this);
 
-    contextMnu.addAction(muteAct);
     contextMnu.addAction(distantChatAct);
+    contextMnu.addAction(sendMessageAct);
+    contextMnu.addSeparator();
+    contextMnu.addAction(muteAct);
+
 
 	muteAct->setCheckable(true);
 	muteAct->setEnabled(false);
-    muteAct->setChecked(false);
+	muteAct->setChecked(false);
 
     if (selectedItems.size())
     {
@@ -569,6 +575,36 @@ void ChatLobbyDialog::distantChatParticipant()
         QMessageBox::warning(NULL,tr("Cannot start distant chat"),tr("Distant chat cannot be initiated:")+" "+error_str
                              +QString::number(error_code)) ;
     }
+}
+
+void ChatLobbyDialog::sendMessage()
+{
+
+    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+
+    if (selectedItems.isEmpty())
+        return;
+
+    QList<QTreeWidgetItem*>::iterator item;
+    for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+
+        RsGxsId gxs_id ;
+        dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(gxs_id) ;
+
+
+        MessageComposer *nMsgDialog = MessageComposer::newMsg();
+        if (nMsgDialog == NULL) {
+          return;
+        }
+
+        nMsgDialog->addRecipient(MessageComposer::TO,  RsGxsId(gxs_id));
+        nMsgDialog->show();
+        nMsgDialog->activateWindow();
+
+        /* window will destroy itself! */
+    
+    }
+
 }
 
 
