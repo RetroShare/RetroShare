@@ -435,7 +435,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
     {
-        if(isProxyAddress(pcs.connectaddr) || mPeerMgr->isHidden())
+		if(isProxyAddress(RS_HIDDEN_TYPE_TOR, pcs.connectaddr) || isProxyAddress(RS_HIDDEN_TYPE_I2P, pcs.connectaddr) || mPeerMgr->isHidden())
             d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
         else if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
         {
@@ -457,13 +457,13 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	return true;
 }
 
-bool p3Peers::isProxyAddress(const sockaddr_storage& addr)
+bool p3Peers::isProxyAddress(const uint32_t type, const sockaddr_storage& addr)
 {
     uint16_t port ;
     std::string string_addr;
-   uint32_t status ;
+	uint32_t status ;
 
-    if(!getProxyServer(string_addr, port, status))
+	if(!getProxyServer(type, string_addr, port, status))
         return false ;
 
     return sockaddr_storage_iptostring(addr)==string_addr && sockaddr_storage_port(addr)==port ;
@@ -923,21 +923,21 @@ bool p3Peers::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 	return mPeerMgr->setVisState(id, vs_disc, vs_dht);
 }
 
-bool p3Peers::getProxyServer(std::string &addr, uint16_t &port, uint32_t &status)
+bool p3Peers::getProxyServer(const uint32_t type, std::string &addr, uint16_t &port, uint32_t &status)
 {
 	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getProxyServer()" << std::endl;
     #endif
 
 	struct sockaddr_storage proxy_addr;
-	mPeerMgr->getProxyServerAddressTor(proxy_addr);
+	mPeerMgr->getProxyServerAddress(type, proxy_addr);
 	addr = sockaddr_storage_iptostring(proxy_addr);
 	port = sockaddr_storage_port(proxy_addr);
-    mPeerMgr->getProxyServerStatusTor(status);
+	mPeerMgr->getProxyServerStatus(type, status);
     return true;
 }
 
-bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
+bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, const uint16_t port)
 {
 	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setProxyServer() " << std::endl;
@@ -958,7 +958,7 @@ bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 	{
-		return mPeerMgr->setProxyServerAddressTor(addr);
+		return mPeerMgr->setProxyServerAddress(type, addr);
 	}
 	else
 	{

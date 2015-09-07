@@ -91,7 +91,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 	
 		pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
 	
-		if (mPeerMgr->isHiddenI2P() | mPeerMgr->isHiddenI2PPeer(id))
+		if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_I2P) | mPeerMgr->isHiddenPeer(id, RS_HIDDEN_TYPE_I2P))
 			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqisc);
 		else
 			/* default tor */

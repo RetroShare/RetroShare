@@ -190,11 +190,9 @@ virtual bool    setProxyServerAddress(const uint32_t type, const struct sockaddr
 virtual bool    getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr) = 0;
 virtual bool    getProxyServerStatus(const uint32_t type, uint32_t& status) = 0;
 virtual bool    isHidden() = 0;
+virtual bool    isHidden(const uint32_t type) = 0;
 virtual bool    isHiddenPeer(const RsPeerId &ssl_id) = 0;
-virtual bool    isHiddenTor() = 0;
-virtual bool    isHiddenTorPeer(const RsPeerId &ssl_id) = 0;
-virtual bool    isHiddenI2P() = 0;
-virtual bool    isHiddenI2PPeer(const RsPeerId &ssl_id) = 0;
+virtual bool    isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type) = 0;
 virtual bool    getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
 
 
@@ -297,11 +295,9 @@ virtual bool    setProxyServerAddress(const uint32_t type, const struct sockaddr
 virtual bool    getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr);
 virtual bool    getProxyServerStatus(const uint32_t type, uint32_t &proxy_status);
 virtual bool    isHidden();
-virtual bool    isHiddenPeer(const RsPeerId& ssl_id);
-virtual bool    isHiddenTor();
-virtual bool    isHiddenTorPeer(const RsPeerId &ssl_id);
-virtual bool    isHiddenI2P();
-virtual bool    isHiddenI2PPeer(const RsPeerId &ssl_id);
+virtual bool    isHidden(const uint32_t type);
+virtual bool    isHiddenPeer(const RsPeerId &ssl_id);
+virtual bool    isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type);
 virtual bool    getProxyAddress(const RsPeerId& ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
 virtual uint32_t hiddenDomainToHiddenType(const std::string &domain);
 
