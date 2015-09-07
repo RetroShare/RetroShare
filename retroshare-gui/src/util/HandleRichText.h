@@ -59,11 +59,11 @@ public:
 
 	static void    initEmoticons(const QHash< QString, QString >& hash);
 
-	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0);
+	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0, int desiredMinimumFontSize = 10);
 	static bool    findAnchors(const QString &text, QStringList& urls);
 
 	static void    optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag = 0);
-	static void    optimizeHtml(QString &text, unsigned int flag = 0, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0);
+	static void    optimizeHtml(QString &text, unsigned int flag = 0, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0, int desiredMinimumFontSize = 10);
 	static QString toHtml(QString text, bool realHtml = true);
 
 	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels);

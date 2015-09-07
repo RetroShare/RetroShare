@@ -115,6 +115,7 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
     Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
     Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
+		Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
     Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
@@ -219,6 +220,7 @@ ChatPage::load()
     ui.checkBox_emotegroupchat->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
     ui.checkBox_enableCustomFonts->setChecked(Settings->value("EnableCustomFonts", true).toBool());
     ui.checkBox_enableCustomFontSize->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+		ui.minimumFontSize->setValue(Settings->value("MinimumFontSize", 10).toInt());
     ui.checkBox_enableBold->setChecked(Settings->value("EnableBold", true).toBool());
     ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
     ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());

@@ -870,6 +870,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	if (!Settings->valueFromGroup("Chat", "EnableCustomFontSize", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_SIZE;
 	}
+	int desiredMinimumFontSize = Settings->valueFromGroup("Chat", "MinimumFontSize", 10).toInt();
 	if (!Settings->valueFromGroup("Chat", "EnableBold", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT;
 	}
@@ -893,7 +894,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		formatFlag |= CHAT_FORMATMSG_SYSTEM;
 	}
 
-	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast);
+	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
