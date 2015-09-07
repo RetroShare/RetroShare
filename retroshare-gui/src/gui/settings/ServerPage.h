@@ -90,8 +90,7 @@ private:
     void loadHiddenNode();
     void updateStatusHiddenNode();
     void saveAddressesHiddenNode();
-    void updateTorOutProxyIndicator();
-    void updateLocInProxyIndicator();
+    void updateOutProxyIndicator();
     void loadFilteredIps() ;
 
     Ui::ServerPage ui;

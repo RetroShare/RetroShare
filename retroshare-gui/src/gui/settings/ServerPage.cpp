@@ -302,7 +302,7 @@ void ServerPage::load()
 		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
 			ui.ipAddressList->addItem(QString::fromStdString(*it));
 
-	/* TOR PAGE SETTINGS - only Proxy (outgoing) */
+	/* HIDDEN PAGE SETTINGS - only Proxy (outgoing) */
 	std::string proxyaddr;
     uint16_t proxyport;
     uint32_t status ;
@@ -315,7 +315,7 @@ void ServerPage::load()
 	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
 	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
 
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 }
 
 void ServerPage::toggleAutoIncludeFriends(bool b)
@@ -702,7 +702,7 @@ void ServerPage::updateStatus()
         ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
     // check for Tor
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 }
 
 void ServerPage::toggleUPnP()
@@ -949,14 +949,20 @@ void ServerPage::loadHiddenNode()
 	ui.torpage_onionAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
 	ui.torpage_onionPort -> setValue(detail.hiddenNodePort);
 
+	/* out proxy settings */
 	std::string proxyaddr;
-    uint16_t proxyport;
-    uint32_t proxy_state_flags;
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, proxy_state_flags);
+	uint16_t proxyport;
+	uint32_t status ;
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
 	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
 	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
 
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 
 	QString expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
 	expected += "HiddenServicePort ";
@@ -1022,7 +1028,7 @@ void ServerPage::updateStatusHiddenNode()
 
 #endif
 
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 }
 
 void ServerPage::saveAddressesHiddenNode()
@@ -1067,27 +1073,40 @@ void ServerPage::saveAddressesHiddenNode()
 	}
 
 	// HANDLE PROXY SERVER.
-	std::string orig_proxyaddr;
-    uint16_t orig_proxyport;
-    uint32_t state_flags ;
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,state_flags);
+	std::string orig_proxyaddr,new_proxyaddr;
+	uint16_t orig_proxyport, new_proxyport;
+	uint32_t status ;
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,status);
 
-	std::string new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
-	uint16_t new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
+	new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
 
 	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
 	{
 		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
 	}
 
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, orig_proxyaddr, orig_proxyport,status);
+
+	new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
+	{
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
+	}
+
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 	load();
 }
-void ServerPage::updateTorOutProxyIndicator()
+void ServerPage::updateOutProxyIndicator()
 {
     QTcpSocket socket ;
-	socket.connectToHost(ui.hiddenpage_proxyAddress_tor->text(),ui.hiddenpage_proxyPort_tor->text().toInt());
 
+	// Tor
+	socket.connectToHost(ui.hiddenpage_proxyAddress_tor->text(),ui.hiddenpage_proxyPort_tor->text().toInt());
     if(socket.waitForConnected(500))
     {
         socket.disconnectFromHost();
@@ -1099,24 +1118,22 @@ void ServerPage::updateTorOutProxyIndicator()
         ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_tor_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
     }
-}
-void ServerPage::updateLocInProxyIndicator()
-{
-    QTcpSocket socket ;
-    socket.connectToHost(ui.torpage_localAddress->text(),ui.torpage_localPort->text().toInt());
 
-    if(socket.waitForConnected(1000))
-    {
-        socket.disconnectFromHost();
-        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through Tor.")) ;
-    }
-    else
-    {
-        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("Tor proxy is not enabled or broken.\nAre you running a Tor hidden service?\nCheck your ports!")) ;
-    }
+	// I2P
+	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p->text(),ui.hiddenpage_proxyPort_i2p->text().toInt());
+	if(socket.waitForConnected(500))
+	{
+		socket.disconnectFromHost();
+		ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+		ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+	}
+	else
+	{
+		ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+		ui.iconlabel_i2p_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
+	}
 }
+
 void ServerPage::updateTorInProxyIndicator()
 {
     // need to find a proper way to do this

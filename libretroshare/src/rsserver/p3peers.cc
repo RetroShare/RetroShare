@@ -435,11 +435,11 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
     {
-        if(isProxyAddress(RS_HIDDEN_TYPE_TOR, pcs.connectaddr) || mPeerMgr->isHidden(RS_HIDDEN_TYPE_TOR))
+        if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_TOR) || isProxyAddress(RS_HIDDEN_TYPE_TOR, pcs.connectaddr))
         {
             d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
         }
-        else if (isProxyAddress(RS_HIDDEN_TYPE_I2P, pcs.connectaddr) || mPeerMgr->isHidden(RS_HIDDEN_TYPE_I2P))
+        else if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_I2P) || isProxyAddress(RS_HIDDEN_TYPE_I2P, pcs.connectaddr))
         {
             d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
         }
