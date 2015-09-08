@@ -1135,7 +1135,6 @@ bool RsGenExchange::getGroupMeta(const uint32_t &token, std::list<RsGroupMetaDat
 	return ok;
 }
 
-
 bool RsGenExchange::getMsgMeta(const uint32_t &token,
                                GxsMsgMetaMap &msgInfo)
 {
@@ -1152,7 +1151,6 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 	{
 		std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
 
-		msgInfo[mit->first] = std::vector<RsMsgMetaData>();
 		std::vector<RsMsgMetaData>& msgInfoV = msgInfo[mit->first];
 
 		std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
@@ -1181,7 +1179,6 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
         {
                 std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
 
-                msgMeta[mit->first] = std::vector<RsMsgMetaData>();
                 std::vector<RsMsgMetaData>& msgInfoV = msgMeta[mit->first];
 
                 std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
@@ -1265,14 +1262,14 @@ bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 	RS_STACK_MUTEX(mGenMtx) ;
 	NxsMsgDataResult msgResult;
 	bool ok = mDataAccess->getMsgData(token, msgResult);
-	NxsMsgDataResult::iterator mit = msgResult.begin();
 
 	if(ok)
 	{
+		NxsMsgDataResult::iterator mit = msgResult.begin();
 		for(; mit != msgResult.end(); ++mit)
 		{
-			std::vector<RsGxsMsgItem*> gxsMsgItems;
 			const RsGxsGroupId& grpId = mit->first;
+			std::vector<RsGxsMsgItem*>& gxsMsgItems = msgItems[grpId];
 			std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
 			std::vector<RsNxsMsg*>::iterator vit = nxsMsgsV.begin();
 			for(; vit != nxsMsgsV.end(); ++vit)
@@ -1305,7 +1302,6 @@ bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 				}
 				delete msg;
 			}
-			msgItems[grpId] = gxsMsgItems;
 		}
 	}
 	return ok;
@@ -1317,17 +1313,15 @@ bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMa
     NxsMsgRelatedDataResult msgResult;
     bool ok = mDataAccess->getMsgRelatedData(token, msgResult);
 
-
     if(ok)
     {
     	NxsMsgRelatedDataResult::iterator mit = msgResult.begin();
         for(; mit != msgResult.end(); ++mit)
         {
-            std::vector<RsGxsMsgItem*> gxsMsgItems;
             const RsGxsGrpMsgIdPair& msgId = mit->first;
+            std::vector<RsGxsMsgItem*> &gxsMsgItems = msgItems[msgId];
             std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
-            std::vector<RsNxsMsg*>::iterator vit
-            = nxsMsgsV.begin();
+            std::vector<RsNxsMsg*>::iterator vit = nxsMsgsV.begin();
             for(; vit != nxsMsgsV.end(); ++vit)
             {
                 RsNxsMsg*& msg = *vit;
@@ -1360,14 +1354,10 @@ bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMa
 
                 delete msg;
             }
-            msgItems[msgId] = gxsMsgItems;
         }
     }
     return ok;
 }
-
-
-
 
 RsTokenService* RsGenExchange::getTokenService()
 {
