@@ -2030,9 +2030,13 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	case RS_HIDDEN_TYPE_I2P:
 		pca.type = RS_NET_CONN_TCP_HIDDEN_I2P;
 		break;
-	case RS_HIDDEN_TYPE_TOR:
+	case RS_HIDDEN_TYPE_UNKNOWN:
 	default:
-		/* default tor */
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() hidden type of addr: " << domain_addr << " is unkown -> fallback to tor" << std::endl;
+#endif
+		/* the type should be set! since this connection involves a proxy -> fallback to tor */
+	case RS_HIDDEN_TYPE_TOR:
 		pca.type = RS_NET_CONN_TCP_HIDDEN_TOR;
 		break;
 	}

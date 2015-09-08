@@ -483,7 +483,7 @@ uint32_t p3PeerMgrIMPL::hiddenDomainToHiddenType(const std::string &domain)
 		std::cerr << "p3PeerMgrIMPL::hiddenDomainToHiddenType() unknown hidden type: " << domain;
 		std::cerr << std::endl;
 #endif
-	return RS_HIDDEN_TYPE_NONE;
+	return RS_HIDDEN_TYPE_UNKNOWN;
 }
 
 bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
@@ -560,13 +560,19 @@ bool p3PeerMgrIMPL::setProxyServerAddress(const uint32_t type, const struct sock
 		}
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-	default:
 		if (!sockaddr_storage_same(mProxyServerAddressTor,proxy_addr))
 		{
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 			mProxyServerAddressTor = proxy_addr;
 		}
 		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::setProxyServerAddress() unknown hidden type " << type << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
 	}
 
 	return true;
@@ -593,9 +599,15 @@ bool p3PeerMgrIMPL::getProxyServerStatus(const uint32_t type, uint32_t& proxy_st
 		proxy_status = mProxyServerStatusI2P;
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-	default:
 		proxy_status = mProxyServerStatusTor;
 		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getProxyServerStatus() unknown hidden type " << type << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
 	}
 
 	return true;
@@ -610,9 +622,15 @@ bool p3PeerMgrIMPL::getProxyServerAddress(const uint32_t type, struct sockaddr_s
 		proxy_addr = mProxyServerAddressI2P;
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-	default:
 		proxy_addr = mProxyServerAddressTor;
 		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getProxyServerAddress() unknown hidden type " << type << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
 	}
 	return true;
 }
@@ -642,10 +660,15 @@ bool p3PeerMgrIMPL::getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_stor
 		proxy_addr = mProxyServerAddressI2P;
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-	default:
-		/* default tor */
 		proxy_addr = mProxyServerAddressTor;
 		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getProxyAddress() no valid hidden type (" << it->second.hiddenType << ") for peer id " << ssl_id << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
 	}
 	return true;
 }
