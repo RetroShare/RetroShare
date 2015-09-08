@@ -1,8 +1,10 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
+TEMPLATE = app
 QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
+TARGET = RetroShare06
 
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.
@@ -34,9 +36,6 @@ CONFIG += gxsgui
 #CONFIG += framecatcher
 #CONFIG += blogs
 
-TEMPLATE = app
-TARGET = RetroShare06
-
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
@@ -61,15 +60,13 @@ INCLUDEPATH *= retroshare-gui
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
+	CONFIG += link_pkgconfig
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= -lX11 -lXss
-
-	LIBS *= -rdynamic -ldl
+	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
 }
@@ -130,7 +127,6 @@ version_detail_bash_script {
 win32-x-g++ {
 		OBJECTS_DIR = temp/win32-x-g++/obj
 
-		LIBS += ../../libretroshare/src/lib.win32xgcc/libretroshare.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a
@@ -178,11 +174,8 @@ win32 {
 	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
 	#QTPLUGIN += qjpeg
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
 	LIBS_DIR = $$PWD/../../../libs
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -L"$$LIBS_DIR/lib"
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
@@ -221,15 +214,11 @@ macx {
 	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 
 	CONFIG += version_detail_bash_script
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
-
-	LIBS += ../../../lib/libsqlcipher.a
-	#LIBS += -lsqlite3
 
 	INCLUDEPATH += .
 	#DEFINES* = MAC_IDLE # for idle feature
@@ -240,12 +229,10 @@ macx {
 
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += -lsqlite3
 }
@@ -255,17 +242,11 @@ freebsd-* {
 openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
 	LIBS += -lsqlite3
-
 	LIBS *= -rdynamic
 }
 
@@ -281,15 +262,19 @@ openbsd-* {
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
 
+PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+LIBS *= ../../libretroshare/src/lib/libretroshare.a
+
 wikipoos {
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	PRE_TARGETDEPS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
 
 # webinterface
 DEPENDPATH += ../../libresapi/src
 INCLUDEPATH += ../../libresapi/src
 PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+LIBS += ../../libresapi/src/lib/libresapi.a
 
 # Input
 HEADERS +=  rshare.h \

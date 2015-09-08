@@ -7,7 +7,7 @@ DEPENDPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 
 unix {
-	target.path = "$${LIB_DIR}/retroshare/extensions6"
+	target.path = "$${PLUGIN_DIR}"
 	INSTALLS += target
 }
 

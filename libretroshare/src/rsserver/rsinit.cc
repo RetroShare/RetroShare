@@ -1251,7 +1251,7 @@ int RsServer::StartupRetroShare()
 	std::vector<std::string> plugins_directories ;
 
 #ifndef WINDOWS_SYS
-	plugins_directories.push_back(std::string(LIB_DIR) + "/retroshare/extensions6/") ;
+	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
 #endif
 	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
