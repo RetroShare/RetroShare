@@ -81,19 +81,15 @@ TRANSLATIONS +=  \
 			lang/FeedReader_zh_CN.ts
 
 linux-* {
-	LIBXML2_DIR = /usr/include/libxml2
+	CONFIG += link_pkgconfig
 
-	DEPENDPATH += $${LIBXML2_DIR}
-	INCLUDEPATH += $${LIBXML2_DIR}
-
-	LIBS += -lcurl -lxml2 -lxslt
+	PKGCONFIG *= libcurl libxml-2.0 libxslt
 }
 
 win32 {
 	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
 
-	# Change order of the libraries
-	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 -lwsock32 $${LIBS}
+	LIBS += -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto
 }
 
 openbsd-* {
@@ -103,4 +99,3 @@ openbsd-* {
 
 	LIBS += -lcurl -lxml2 -lxslt
 }
-

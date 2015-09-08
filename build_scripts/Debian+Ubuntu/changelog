@@ -1,5 +1,20 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
-
+      
+   6bc6e22 (              ) Merge pull request #92 from AsamK/fix_travis_voip
+   f2994b7 (VOIP          ) Old libav versions used constant without AV_ prefix
+   efc057e (VOIP          ) Fix build with libavcodec < 55
+   7385dd1 (              ) Merge pull request #91 from AsamK/fix_opensuse_compile
+   fd19349 (              ) Merge pull request #90 from PhenomRetroShare/Fix_Travis_CI_Compilation
+   976f53b (VOIP          ) Remove -lavformat from VOIP, it's unused
+   484edc3 (VOIP          ) Fix build for openSUSE
+   22816f0 (VOIP          ) Remove unnecessary includes from VideoProcessor
+   6b94248 (VOIP          ) Fix Travis CI compilation by adding libavutil-dev package.
+   c892f8a (VOIP          ) Merge pull request #85 from PhenomRetroShare/Fix_VOIP_CompilWithRecentLibavutil
+   0a84398 (VOIP          ) Fix VOIP compilation with recent libavutil-dev package. /usr/include/libavutil/common.h error 'UINT64C' was n
+   6614536 (VOIP          ) Added register of codecs to VOIP.
+   738dada (VOIP          ) Fixed Windows compile of VOIP.
+   9bbdefa (Packaging     ) Added "QMAKE_LFLAGS += -Wl,--start-group" to pluigns for Windows compile.
+   b1b2de6 (Packaging     ) Fixed Windows compile. - Set name for prl file in libretroshare.pro - Use "QMAKE_LFLAGS += -Wl,--start-group"
    a276986 (              ) Merge pull request #60 from PhenomRetroShare/Fix_AllowChatTextFormatOption
    88a6931 (GUI           ) Allow Chat Text Format Option working.
    0b5b20d (              ) Merge pull request #59 from AsamK/qmake_improvements

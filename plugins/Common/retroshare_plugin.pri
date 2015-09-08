@@ -7,7 +7,7 @@ DEPENDPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 
 unix {
-	target.path = "$${LIB_DIR}/retroshare/extensions6"
+	target.path = "$${PLUGIN_DIR}"
 	INSTALLS += target
 }
 
@@ -27,6 +27,9 @@ win32 {
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
+
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
 
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc

@@ -2,8 +2,10 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = resapi
+TARGET_PRL = libresapi
 DESTDIR = lib
 
 CONFIG += libmicrohttpd
@@ -26,6 +28,12 @@ win32{
 }
 
 libmicrohttpd{
+	linux {
+		CONFIG += link_pkgconfig
+		PKGCONFIG *= libmicrohttpd
+	} else {
+		LIBS *= -lmicrohttpd
+	}
 	SOURCES += \
 		api/ApiServerMHD.cpp
 

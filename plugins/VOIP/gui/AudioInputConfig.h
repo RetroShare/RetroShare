@@ -69,6 +69,7 @@ class AudioInputConfig : public ConfigPage
 		//VideoDecoder *videoDecoder ;
 		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
+        	VideoProcessor *videoProcessor ;
 		bool loaded;
 
         voipGraphSource *graph_source ;
@@ -92,10 +93,12 @@ class AudioInputConfig : public ConfigPage
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/talking_on.svg") ; }
 		virtual QString pageName() const { return tr("VOIP") ; }
 		virtual QString helpText() const { return ""; }
-
-	private slots:
+        
+private slots:
+	void updateAvailableBW(double r);
 		void loadSettings();
 		void emptyBuffer();
+		void togglePreview(bool) ;
 
 		void on_qsTransmitHold_valueChanged(int v);
 		void on_qsAmp_valueChanged(int v);

@@ -19,17 +19,26 @@ INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 #################################### Windows #####################################
 
 linux-* {
-	INCLUDEPATH += /usr/include
-	LIBS += $$system(pkg-config --libs opencv)
+	CONFIG += link_pkgconfig
+
+	PKGCONFIG += libavcodec libavutil
+	PKGCONFIG += speex speexdsp
+	PKGCONFIG += opencv
+} else {
+	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
 }
 
 win32 {
+
 	LIBS_DIR = $$PWD/../../../libs
 	LIBS += -L"$$LIBS_DIR/lib/opencv"
 
 	OPENCV_VERSION = 249
 	LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32 -lz
 }
+
+# ffmpeg (and libavutil: https://github.com/ffms/ffms2/issues/11)
+QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 QMAKE_CXXFLAGS *= -Wall
 
@@ -95,5 +104,3 @@ TRANSLATIONS +=  \
             lang/VOIP_sv.ts \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
-
-LIBS += -lspeex -lspeexdsp
