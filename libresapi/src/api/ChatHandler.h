@@ -102,6 +102,8 @@ private:
     void handleSendStatus(Request& req, Response& resp);
     void handleUnreadMsgs(Request& req, Response& resp);
 
+    void getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links);
+
     StateTokenServer* mStateTokenServer;
     RsNotify* mNotify;
     RsMsgs* mRsMsgs;
