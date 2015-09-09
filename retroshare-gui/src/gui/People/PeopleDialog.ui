@@ -20,16 +20,7 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="titleBarLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -94,8 +85,11 @@
    </item>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabExternal">
       <property name="sizePolicy">
@@ -105,7 +99,7 @@
        </sizepolicy>
       </property>
       <attribute name="title">
-       <string>External</string>
+       <string>People</string>
       </attribute>
       <layout class="QVBoxLayout">
        <item>
@@ -128,7 +122,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>685</width>
+             <width>701</width>
              <height>248</height>
             </rect>
            </property>
@@ -197,7 +191,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>685</width>
+             <width>701</width>
              <height>248</height>
             </rect>
            </property>
