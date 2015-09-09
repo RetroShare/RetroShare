@@ -337,10 +337,20 @@ void ChatHandler::tick()
 
 void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links)
 {
+    if (in.size() == 0)
+        return;
+
+    if (in[0] != '<' || in[in.size() - 1] != '>')
+    {
+        // It's a plain text message without HTML
+        out = in;
+        return;
+    }
     bool ignore = false;
 
     bool keep_link = false;
     std::string last_six_chars;
+    unsigned int tag_start_index = 0;
     Triple current_link;
     for(unsigned int i = 0; i < in.size(); ++i)
     {
@@ -358,13 +368,17 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
         // "rising edge" sets mode to ignore
         if(in[i] == '<')
         {
+            tag_start_index = i;
             ignore = true;
         }
         if(!ignore || keep_link)
             out += in[i];
         // "falling edge" resets mode to keep
-        if(in[i] == '>')
-            ignore = false;
+        if(in[i] == '>') {
+            // leave ignore mode on, if it's a style tag
+            if (tag_start_index == 0 || tag_start_index + 6 > i || in.substr(tag_start_index, 6) != "<style")
+                ignore = false;
+        }
 
         last_six_chars += in[i];
         if(last_six_chars.size() > 6)
