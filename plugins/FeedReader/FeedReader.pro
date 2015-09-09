@@ -89,7 +89,8 @@ linux-* {
 win32 {
 	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
 
-	LIBS += -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto
+	#Have to reorder libs, else got /libs/lib/libcrypto.a(bio_lib.o):bio_lib.c:(.text+0x0): multiple definition of `BIO_new'
+	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 $${LIBS}
 }
 
 openbsd-* {
