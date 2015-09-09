@@ -294,62 +294,7 @@ void ChatHandler::tick()
 
         // remove html tags from chat message
         // extract links form href
-        const std::string& in = msg.msg;
-        std::string out;
-        bool ignore = false;
-        bool keep_link = false;
-        std::string last_six_chars;
-        Triple current_link;
-        std::vector<Triple> links;
-        for(unsigned int i = 0; i < in.size(); ++i)
-        {
-            if(keep_link && in[i] == '"')
-            {
-                keep_link = false;
-                current_link.second = out.size();
-            }
-            if(last_six_chars == "href=\"")
-            {
-                keep_link = true;
-                current_link.first = out.size();
-            }
-
-            // "rising edge" sets mode to ignore
-            if(in[i] == '<')
-            {
-                ignore = true;
-            }
-            if(!ignore || keep_link)
-                out += in[i];
-            // "falling edge" resets mode to keep
-            if(in[i] == '>')
-                ignore = false;
-
-            last_six_chars += in[i];
-            if(last_six_chars.size() > 6)
-                last_six_chars = last_six_chars.substr(1);
-            std::string a = "</a>";
-            if(   current_link.first != -1
-               && last_six_chars.size() >= a.size()
-               && last_six_chars.substr(last_six_chars.size()-a.size()) == a)
-            {
-                // only allow these protocols
-                // we don't want for example javascript:alert(0)
-                std::string http = "http://";
-                std::string https = "https://";
-                std::string retroshare = "retroshare://";
-                if(    out.substr(current_link.first, http.size()) == http
-                    || out.substr(current_link.first, https.size()) == https
-                    || out.substr(current_link.first, retroshare.size()) == retroshare)
-                {
-                    current_link.third = out.size();
-                    links.push_back(current_link);
-                }
-                current_link = Triple();
-            }
-        }
-        m.msg = out;
-        m.links = links;
+        getPlainText(msg.msg, m.msg, m.links);
         m.recv_time = msg.recvTime;
         m.send_time = msg.sendTime;
 
@@ -387,6 +332,76 @@ void ChatHandler::tick()
     {
         mStateTokenServer->replaceToken(mLobbiesStateToken);
         mLobbies = lobbies;
+    }
+}
+
+void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links)
+{
+    if (in.size() == 0)
+        return;
+
+    if (in[0] != '<' || in[in.size() - 1] != '>')
+    {
+        // It's a plain text message without HTML
+        out = in;
+        return;
+    }
+    bool ignore = false;
+
+    bool keep_link = false;
+    std::string last_six_chars;
+    unsigned int tag_start_index = 0;
+    Triple current_link;
+    for(unsigned int i = 0; i < in.size(); ++i)
+    {
+        if(keep_link && in[i] == '"')
+        {
+            keep_link = false;
+            current_link.second = out.size();
+        }
+        if(last_six_chars == "href=\"")
+        {
+            keep_link = true;
+            current_link.first = out.size();
+        }
+
+        // "rising edge" sets mode to ignore
+        if(in[i] == '<')
+        {
+            tag_start_index = i;
+            ignore = true;
+        }
+        if(!ignore || keep_link)
+            out += in[i];
+        // "falling edge" resets mode to keep
+        if(in[i] == '>') {
+            // leave ignore mode on, if it's a style tag
+            if (tag_start_index == 0 || tag_start_index + 6 > i || in.substr(tag_start_index, 6) != "<style")
+                ignore = false;
+        }
+
+        last_six_chars += in[i];
+        if(last_six_chars.size() > 6)
+            last_six_chars = last_six_chars.substr(1);
+        std::string a = "</a>";
+        if(   current_link.first != -1
+              && last_six_chars.size() >= a.size()
+              && last_six_chars.substr(last_six_chars.size()-a.size()) == a)
+        {
+            // only allow these protocols
+            // we don't want for example javascript:alert(0)
+            std::string http = "http://";
+            std::string https = "https://";
+            std::string retroshare = "retroshare://";
+            if(    out.substr(current_link.first, http.size()) == http
+                   || out.substr(current_link.first, https.size()) == https
+                   || out.substr(current_link.first, retroshare.size()) == retroshare)
+            {
+                current_link.third = out.size();
+                links.push_back(current_link);
+            }
+            current_link = Triple();
+        }
     }
 }
 
