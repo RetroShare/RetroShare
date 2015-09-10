@@ -25,6 +25,7 @@
 
 #include <algorithm>
 #include "gui/Circles/CreateCircleDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
@@ -50,10 +51,6 @@ CreateCircleDialog::CreateCircleDialog()
 	/* Setup Queue */
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-
-	//QString text = pId.empty() ? tr("Start New Thread") : tr("Post Forum Message");
-	//setWindowTitle(text);
-	//Settings->loadWidgetInformation(this);
 			
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/circles/circles_64.png"));
 
@@ -122,12 +119,12 @@ void CreateCircleDialog::editNewId(bool isExternal)
 	if (isExternal)
 	{
 		setupForExternalCircle();
-		ui.headerFrame->setHeaderText(tr("Create New External Circle"));	
+		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
 	}
 	else
 	{
 		setupForPersonalCircle();
-		ui.headerFrame->setHeaderText(tr("Create New Personal Circle"));	
+		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
 	}
 
 	/* enable stuff that might be locked */
@@ -139,14 +136,14 @@ void CreateCircleDialog::setupForPersonalCircle()
 
 	/* hide distribution line */
 
-	ui.groupBox_title->setTitle(tr("Personal Circle Details"));
+	ui.groupBox_title->setTitle(tr("Circle Details"));
 	ui.frame_PgpTypes->hide();
 	ui.frame_Distribution->hide();
 	ui.idChooserLabel->hide();
 	ui.idChooser->hide();
 	//ui.toolButton_NewId->hide();
 
-	getPgpIdentities();
+	//getPgpIdentities();
 }
 
 void CreateCircleDialog::setupForExternalCircle()
@@ -154,7 +151,7 @@ void CreateCircleDialog::setupForExternalCircle()
 	mIsExternalCircle = true;
 
 	/* show distribution line */
-	ui.groupBox_title->setTitle(tr("External Circle Details"));
+	ui.groupBox_title->setTitle(tr("Circle Details"));
 	ui.frame_PgpTypes->show();
 	ui.frame_Distribution->show();
 	ui.idChooserLabel->show();
@@ -220,6 +217,7 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	member->setText(RSCIRCLEID_COL_NICKNAME, nickname);
 	member->setText(RSCIRCLEID_COL_KEYID, keyId);
 	member->setText(RSCIRCLEID_COL_IDTYPE, idtype);
+	//member->setIcon(RSCIRCLEID_COL_NICKNAME, pixmap);
 
 	tree->addTopLevelItem(member);
 }
@@ -522,7 +520,7 @@ void CreateCircleDialog::loadCircle(uint32_t token)
 	updateCircleGUI();
 }
 
-void CreateCircleDialog::getPgpIdentities()
+/*void CreateCircleDialog::getPgpIdentities()
 {
 	std::cerr << "CreateCircleDialog::getPgpIdentities()";
 	std::cerr << std::endl;
@@ -556,7 +554,7 @@ void CreateCircleDialog::getPgpIdentities()
 	}
 	
 	filterIds();
-}
+}*/
 
 
 void CreateCircleDialog::requestGxsIdentities()
@@ -616,6 +614,11 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 	    QString  keyId = QString::fromStdString(data.mMeta.mGroupId.toStdString());
 	    QString  nickname = QString::fromUtf8(data.mMeta.mGroupName.c_str());
 	    QString  idtype = tr("Anon Id");
+	    
+	    QPixmap pixmap ;
+
+    if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
+        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
 
 	    if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) {
 		    if (data.mPgpKnown) {
@@ -629,6 +632,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 
 	    QTreeWidgetItem *item = new QTreeWidgetItem();
 	    item->setText(RSCIRCLEID_COL_NICKNAME, nickname);
+        item->setIcon(RSCIRCLEID_COL_NICKNAME, QIcon(pixmap));
 	    item->setText(RSCIRCLEID_COL_KEYID, keyId);
 	    item->setText(RSCIRCLEID_COL_IDTYPE, idtype);
 	    tree->addTopLevelItem(item);

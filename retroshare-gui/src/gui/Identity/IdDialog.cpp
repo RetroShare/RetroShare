@@ -298,20 +298,20 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
 	/* add the top level item */
-	QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
-	personalCirclesItem->setText(0, tr("Personal Circles"));
-	ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
+	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
+	//personalCirclesItem->setText(0, tr("Personal Circles"));
+	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
 
 	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
-	externalAdminCirclesItem->setText(0, tr("External Circles (Admin)"));
+	externalAdminCirclesItem->setText(0, tr("Circles (Admin)"));
 	ui->treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
 
 	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
-	externalSubCirclesItem->setText(0, tr("External Circles (Subscribed)"));
+	externalSubCirclesItem->setText(0, tr("Circles (Subscribed)"));
 	ui->treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
 
 	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
-	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
+	externalOtherCirclesItem->setText(0, tr("Circles (Other)"));
 	ui->treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
 	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
@@ -327,7 +327,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 		if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
 		{
-			personalCirclesItem->addChild(groupItem);
+			//personalCirclesItem->addChild(groupItem);
 		}
 		else
 		{
