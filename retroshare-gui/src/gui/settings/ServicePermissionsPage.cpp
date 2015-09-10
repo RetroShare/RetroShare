@@ -46,12 +46,12 @@ ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags
 QString ServicePermissionsPage::helpText() const
 {
    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Permissions</h1>  \
-    <p>Permissions allow you to control which services are available to which friends</p>\
+    <p>Permissions allow you to control which services are available to which friends.</p>\
     <p>Each interruptor shows two lights, indicating whether you or your friend has enabled\
-             that service. Both needs to be ON (showing <img height=20 src=\":/images/switch11.png\"/>) to\
+             that service. Both need to be ON (showing <img height=20 src=\":/images/switch11.png\"/>) to\
                    let information transfer for a specific service/friend combination.</p>\
                    <p>For each service, the global switch <img height=20 src=\":/images/global_switch_on.png\"> / <img height=20 src=\":/images/global_switch_off.png\">\
-                   allow to turn a service ON/OFF for all friends at once.</p>\
+                   allows you to turn a service ON/OFF for all friends at once.</p>\
                    <p>Be very careful: Some services depend on each other. For instance turning turtle OFF will also\
                    stop all anonymous transfer, distant chat and distant messaging.</p>");
 }
