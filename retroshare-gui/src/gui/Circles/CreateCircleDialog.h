@@ -57,6 +57,10 @@ private slots:
 	void createCircle();
 	void filterChanged(const QString &text);
 	void createNewGxsId();
+	
+	/** Create the context popup menu and it's submenus */
+	void IdListCustomPopupMenu( QPoint point );
+	void MembershipListCustomPopupMenu( QPoint point);
 
 private:
 

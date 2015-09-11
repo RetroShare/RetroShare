@@ -49,6 +49,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QTreeWidget" name="treeWidget_membership">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
@@ -186,6 +189,9 @@
            </item>
            <item>
             <widget class="RSTreeWidget" name="treeWidget_IdList">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>

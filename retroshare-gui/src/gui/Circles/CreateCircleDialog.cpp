@@ -22,6 +22,7 @@
  */
 
 #include <QMessageBox>
+#include <QMenu>
 
 #include <algorithm>
 #include "gui/Circles/CreateCircleDialog.h"
@@ -63,6 +64,9 @@ CreateCircleDialog::CreateCircleDialog()
 
 	connect(ui.treeWidget_membership, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedMember(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect(ui.treeWidget_IdList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedId(QTreeWidgetItem*, QTreeWidgetItem*)));
+	
+	connect(ui.treeWidget_IdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
+	connect(ui.treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(MembershipListCustomPopupMenu(QPoint)));
 	
 	connect(ui.IdFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
@@ -120,6 +124,7 @@ void CreateCircleDialog::editNewId(bool isExternal)
 	{
 		setupForExternalCircle();
 		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create"));
 	}
 	else
 	{
@@ -152,6 +157,7 @@ void CreateCircleDialog::setupForExternalCircle()
 
 	/* show distribution line */
 	ui.groupBox_title->setTitle(tr("Circle Details"));
+	ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Update"));
 	ui.frame_PgpTypes->show();
 	ui.frame_Distribution->show();
 	ui.idChooserLabel->show();
@@ -697,10 +703,39 @@ void CreateCircleDialog::filterIds()
 	ui.treeWidget_IdList->filterItems(filterColumn, text);
 }
 
-void  CreateCircleDialog::createNewGxsId()
+void CreateCircleDialog::createNewGxsId()
 {
 	IdEditDialog dlg(this);
 	dlg.setupNewId(false);
 	dlg.exec();
 	//ui.idChooser->setDefaultId(dlg.getLastIdName());
 }
+
+void CreateCircleDialog::IdListCustomPopupMenu( QPoint )
+{
+	QMenu contextMnu( this );
+
+	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
+	if (item) {
+
+			contextMnu.addAction(QIcon(":/images/edit_add24.png"), tr("Add Member"), this, SLOT(addMember()));
+	
+	}
+
+	contextMnu.exec(QCursor::pos());
+}
+
+void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
+{
+	QMenu contextMnu( this );
+
+	QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+	if (item) {
+
+			contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
+	
+	}
+
+	contextMnu.exec(QCursor::pos());
+}
+

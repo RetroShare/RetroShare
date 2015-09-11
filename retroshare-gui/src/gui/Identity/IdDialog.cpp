@@ -248,6 +248,8 @@ IdDialog::IdDialog(QWidget *parent) :
     connect(ui->pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
     connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(editExistingCircle()));
     connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
+    connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
+
     
     /* Setup TokenQueue */
     mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
@@ -368,6 +370,20 @@ void IdDialog::editExistingCircle()
 	CreateCircleDialog dlg;
 	dlg.editExistingId(id);
 	dlg.exec();
+}
+
+void IdDialog::CircleListCustomPopupMenu( QPoint )
+{
+	QMenu contextMnu( this );
+
+	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+	if (item) {
+
+			contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(editExistingCircle()));
+	
+	}
+
+	contextMnu.exec(QCursor::pos());
 }
 
 static void set_item_background(QTreeWidgetItem *item, uint32_t type)
