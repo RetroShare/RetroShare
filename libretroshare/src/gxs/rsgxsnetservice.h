@@ -212,7 +212,7 @@ private:
      * @param item the transaction item to process
      * @return false ownership of item left with callee
      */
-    bool locked_processTransac(RsNxsTransac* item);
+    bool locked_processTransac(RsNxsTransacItem* item);
 
     /*!
      * This adds a transaction
@@ -315,13 +315,13 @@ private:
      * of groups held by user
      * @param item contains grp sync info
      */
-    void handleRecvSyncGroup(RsNxsSyncGrp* item);
+    void handleRecvSyncGroup(RsNxsSyncGrpReqItem* item);
 
     /*!
      * Handles an nxs item for msgs synchronisation
      * @param item contaims msg sync info
      */
-    void handleRecvSyncMessage(RsNxsSyncMsg* item);
+    void handleRecvSyncMessage(RsNxsSyncMsgReqItem* item);
 
     /*!
      * Handles an nxs item for group publish key
@@ -365,12 +365,12 @@ private:
 
     void processExplicitGroupRequests();
 
-    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const RsGxsGroupId& grpId);
+    void locked_doMsgUpdateWork(const RsNxsTransacItem* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
 
-    bool locked_CanReceiveUpdate(const RsNxsSyncGrp* item);
-    bool locked_CanReceiveUpdate(const RsNxsSyncMsg* item);
+    bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
+    bool locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem* item);
 
 private:
 
@@ -454,8 +454,8 @@ private:
     /*** transactions ***/
 
     /*** synchronisation ***/
-    std::list<RsNxsSyncGrp*> mSyncGrp;
-    std::list<RsNxsSyncMsg*> mSyncMsg;
+    std::list<RsNxsSyncGrpItem*> mSyncGrp;
+    std::list<RsNxsSyncMsgItem*> mSyncMsg;
     /*** synchronisation ***/
 
     RsNxsObserver* mObserver;

@@ -255,7 +255,7 @@ void RsGxsNetService::syncWithPeers()
             const RsGxsGrpUpdateItem *gui = cit->second;
             updateTS = gui->grpUpdateTS;
         }
-        RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
+        RsNxsSyncGrpReqItem *grp = new RsNxsSyncGrpReqItem(mServType);
         grp->clear();
         grp->PeerId(*sit);
         grp->updateTS = updateTS;
@@ -345,7 +345,7 @@ void RsGxsNetService::syncWithPeers()
                     updateTS = cit2->second.time_stamp;
             }
 
-            RsNxsSyncMsg* msg = new RsNxsSyncMsg(mServType);
+            RsNxsSyncMsgReqItem* msg = new RsNxsSyncMsgReqItem(mServType);
             msg->clear();
             msg->PeerId(peerId);
             msg->grpId = grpId;
@@ -945,9 +945,9 @@ void RsGxsNetService::recvNxsItemQueue()
 
             switch(ni->PacketSubType())
             {
-            case RS_PKT_SUBTYPE_NXS_SYNC_GRP: handleRecvSyncGroup (dynamic_cast<RsNxsSyncGrp*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_SYNC_MSG: handleRecvSyncMessage (dynamic_cast<RsNxsSyncMsg*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY: handleRecvPublishKeys (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM: handleRecvSyncGroup (dynamic_cast<RsNxsSyncGrpReqItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM: handleRecvSyncMessage (dynamic_cast<RsNxsSyncMsgReqItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM: handleRecvPublishKeys (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
             default:
                 std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
             }
@@ -978,7 +978,7 @@ bool RsGxsNetService::handleTransaction(RsNxsItem* item)
 
     const RsPeerId& peer = item->PeerId();
 
-    RsNxsTransac* transItem = dynamic_cast<RsNxsTransac*>(item);
+    RsNxsTransacItem* transItem = dynamic_cast<RsNxsTransacItem*>(item);
 
     // if this is a RsNxsTransac item process
     if(transItem)
@@ -1020,7 +1020,7 @@ bool RsGxsNetService::handleTransaction(RsNxsItem* item)
     return false;
 }
 
-bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
+bool RsGxsNetService::locked_processTransac(RsNxsTransacItem *item)
 {
 
 	/*!
@@ -1042,7 +1042,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 	RsPeerId peer;
 
 	// for outgoing transaction use own id
-	if(item->transactFlag & (RsNxsTransac::FLAG_BEGIN_P2 | RsNxsTransac::FLAG_END_SUCCESS))
+	if(item->transactFlag & (RsNxsTransacItem::FLAG_BEGIN_P2 | RsNxsTransacItem::FLAG_END_SUCCESS))
 		peer = mOwnId;
 	else
 		peer = item->PeerId();
@@ -1069,7 +1069,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 	}
 
 	// initiating an incoming transaction
-    if(item->transactFlag & RsNxsTransac::FLAG_BEGIN_P1)
+    if(item->transactFlag & RsNxsTransacItem::FLAG_BEGIN_P1)
     {
 #ifdef NXS_NET_DEBUG
         std::cerr << "  initiating Incoming transaction." << std::endl;
@@ -1105,7 +1105,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
         return true;
         // commencement item for outgoing transaction
     }
-    else if(item->transactFlag & RsNxsTransac::FLAG_BEGIN_P2)
+    else if(item->transactFlag & RsNxsTransacItem::FLAG_BEGIN_P2)
     {
 #ifdef NXS_NET_DEBUG
     std::cerr << "  initiating outgoign transaction." << std::endl;
@@ -1130,7 +1130,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
         return true;
 		// end transac item for outgoing transaction
     }
-    else if(item->transactFlag & RsNxsTransac::FLAG_END_SUCCESS)
+    else if(item->transactFlag & RsNxsTransacItem::FLAG_END_SUCCESS)
     {
 
 #ifdef NXS_NET_DEBUG
@@ -1423,9 +1423,9 @@ void RsGxsNetService::processTransactions()
 #endif
 
                     // send completion msg
-                    RsNxsTransac* trans = new RsNxsTransac(mServType);
+                    RsNxsTransacItem* trans = new RsNxsTransacItem(mServType);
                     trans->clear();
-                    trans->transactFlag = RsNxsTransac::FLAG_END_SUCCESS;
+                    trans->transactFlag = RsNxsTransacItem::FLAG_END_SUCCESS;
                     trans->transactionNumber = transN;
                     trans->PeerId(tr->mTransaction->PeerId());
                     sendItem(trans);
@@ -1448,10 +1448,10 @@ void RsGxsNetService::processTransactions()
                     std::cerr << "    setting state to Receiving" << std::endl;
 #endif
                     // send item to tell peer your are ready to start
-                    RsNxsTransac* trans = new RsNxsTransac(mServType);
+                    RsNxsTransacItem* trans = new RsNxsTransacItem(mServType);
                     trans->clear();
-                    trans->transactFlag = RsNxsTransac::FLAG_BEGIN_P2 |
-                                    (tr->mTransaction->transactFlag & RsNxsTransac::FLAG_TYPE_MASK);
+                    trans->transactFlag = RsNxsTransacItem::FLAG_BEGIN_P2 |
+                                    (tr->mTransaction->transactFlag & RsNxsTransacItem::FLAG_TYPE_MASK);
                     trans->transactionNumber = transN;
                     trans->PeerId(tr->mTransaction->PeerId());
                     sendItem(trans);
@@ -1539,7 +1539,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #endif
         // for a completed list response transaction
         // one needs generate requests from this
-        if(flag & RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP)
+        if(flag & RsNxsTransacItem::FLAG_TYPE_MSG_LIST_RESP)
         {
 #ifdef NXS_NET_DEBUG
             std::cerr << "  type = msg list response." << std::endl;
@@ -1548,7 +1548,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             // generate request based on a peers response
             locked_genReqMsgTransaction(tr);
 
-        }else if(flag & RsNxsTransac::FLAG_TYPE_GRP_LIST_RESP)
+        }else if(flag & RsNxsTransacItem::FLAG_TYPE_GRP_LIST_RESP)
         {
 #ifdef NXS_NET_DEBUG
             std::cerr << "  type = grp list response." << std::endl;
@@ -1557,7 +1557,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             locked_genReqGrpTransaction(tr);
         }
         // you've finished receiving request information now gen
-        else if(flag & RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ)
+        else if(flag & RsNxsTransacItem::FLAG_TYPE_MSG_LIST_REQ)
         {
 #ifdef NXS_NET_DEBUG
             std::cerr << "  type = msg list request." << std::endl;
@@ -1565,7 +1565,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #endif
             locked_genSendMsgsTransaction(tr);
         }
-        else if(flag & RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ)
+        else if(flag & RsNxsTransacItem::FLAG_TYPE_GRP_LIST_REQ)
         {
 #ifdef NXS_NET_DEBUG
             std::cerr << "  type = grp list request." << std::endl;
@@ -1573,7 +1573,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #endif
             locked_genSendGrpsTransaction(tr);
         }
-        else if(flag & RsNxsTransac::FLAG_TYPE_GRPS)
+        else if(flag & RsNxsTransacItem::FLAG_TYPE_GRPS)
         {
 #ifdef NXS_NET_DEBUG
             std::cerr << "  type = groups." << std::endl;
@@ -1630,7 +1630,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 
 
         }
-        else if(flag & RsNxsTransac::FLAG_TYPE_MSGS)
+        else if(flag & RsNxsTransacItem::FLAG_TYPE_MSGS)
         {
 
             std::vector<RsNxsMsg*> msgs;
@@ -1699,7 +1699,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 	return;
 }
 
-void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransac *nxsTrans, const RsGxsGroupId &grpId)
+void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransacItem *nxsTrans, const RsGxsGroupId &grpId)
 {
 #ifdef NXS_NET_DEBUG
     std::cerr << "updating MsgUpdate time stamps for peerId=" << nxsTrans->PeerId() << ", grpId=" << grpId << std::endl;
@@ -1755,33 +1755,33 @@ void RsGxsNetService::locked_processCompletedOutgoingTrans(NxsTransaction* tr)
     {
 				// for a completed list response transaction
 				// one needs generate requests from this
-				if(flag & RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP)
+				if(flag & RsNxsTransacItem::FLAG_TYPE_MSG_LIST_RESP)
 				{
 #ifdef NXS_NET_DEBUG
                     std::cerr << "  complete Sending Msg List Response, transN: " << tr->mTransaction->transactionNumber << std::endl;
 #endif
-				}else if(flag & RsNxsTransac::FLAG_TYPE_GRP_LIST_RESP)
+				}else if(flag & RsNxsTransacItem::FLAG_TYPE_GRP_LIST_RESP)
 				{
 #ifdef NXS_NET_DEBUG
                     std::cerr << "  complete Sending Grp Response, transN: " << tr->mTransaction->transactionNumber << std::endl;
 #endif
 				}
 				// you've finished sending a request so don't do anything
-				else if( (flag & RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ) ||
-						(flag & RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ) )
+				else if( (flag & RsNxsTransacItem::FLAG_TYPE_MSG_LIST_REQ) ||
+						(flag & RsNxsTransacItem::FLAG_TYPE_GRP_LIST_REQ) )
 				{
 #ifdef NXS_NET_DEBUG
                     std::cerr << "  complete Sending Msg/Grp Request, transN: " << tr->mTransaction->transactionNumber << std::endl;
 #endif
 
-				}else if(flag & RsNxsTransac::FLAG_TYPE_GRPS)
+				}else if(flag & RsNxsTransacItem::FLAG_TYPE_GRPS)
 				{
 
 #ifdef NXS_NET_DEBUG
                     std::cerr << "  complete Sending Grp Data, transN: " << tr->mTransaction->transactionNumber << std::endl;
 #endif
 
-				}else if(flag & RsNxsTransac::FLAG_TYPE_MSGS)
+				}else if(flag & RsNxsTransacItem::FLAG_TYPE_MSGS)
 				{
 #ifdef NXS_NET_DEBUG
                     std::cerr << "  complete Sending Msg Data, transN: " << tr->mTransaction->transactionNumber << std::endl;
@@ -1808,9 +1808,9 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& r
     std::cerr << "   peerId = " << peerId << std::endl;
     std::cerr << "   transN = " << transN << std::endl;
 #endif
-    RsNxsTransac* transac = new RsNxsTransac(mServType);
-    transac->transactFlag = RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ
-                    | RsNxsTransac::FLAG_BEGIN_P1;
+    RsNxsTransacItem* transac = new RsNxsTransacItem(mServType);
+    transac->transactFlag = RsNxsTransacItem::FLAG_TYPE_MSG_LIST_REQ
+                    | RsNxsTransacItem::FLAG_BEGIN_P1;
     transac->timestamp = 0;
     transac->nItems = reqList.size();
     transac->PeerId(peerId);
@@ -1821,7 +1821,7 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& r
     newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
     // create transaction copy with your id to indicate
     // its an outgoing transaction
-    newTrans->mTransaction = new RsNxsTransac(*transac);
+    newTrans->mTransaction = new RsNxsTransacItem(*transac);
     newTrans->mTransaction->PeerId(mOwnId);
     sendItem(transac);
 
@@ -2116,9 +2116,9 @@ void RsGxsNetService::locked_pushGrpTransactionFromList(
     std::cerr << "   peerId = " << peerId << std::endl;
     std::cerr << "   transN = " << transN << std::endl;
 #endif
-    RsNxsTransac* transac = new RsNxsTransac(mServType);
-	transac->transactFlag = RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ
-			| RsNxsTransac::FLAG_BEGIN_P1;
+    RsNxsTransacItem* transac = new RsNxsTransacItem(mServType);
+	transac->transactFlag = RsNxsTransacItem::FLAG_TYPE_GRP_LIST_REQ
+			| RsNxsTransacItem::FLAG_BEGIN_P1;
 	transac->timestamp = 0;
 	transac->nItems = reqList.size();
 	transac->PeerId(peerId);
@@ -2127,7 +2127,7 @@ void RsGxsNetService::locked_pushGrpTransactionFromList(
 	newTrans->mItems = reqList;
 	newTrans->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
     newTrans->mTimeOut = time(NULL) + mTransactionTimeOut;
-	newTrans->mTransaction = new RsNxsTransac(*transac);
+	newTrans->mTransaction = new RsNxsTransacItem(*transac);
 	newTrans->mTransaction->PeerId(mOwnId);
 	sendItem(transac);
 	if (!locked_addTransaction(newTrans))
@@ -2334,15 +2334,15 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	if(mGrpServerUpdateItem)
 		updateTS = mGrpServerUpdateItem->grpUpdateTS;
 
-	RsNxsTransac* ntr = new RsNxsTransac(mServType);
+	RsNxsTransacItem* ntr = new RsNxsTransacItem(mServType);
 	ntr->transactionNumber = transN;
-	ntr->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 |
-			RsNxsTransac::FLAG_TYPE_GRPS;
+	ntr->transactFlag = RsNxsTransacItem::FLAG_BEGIN_P1 |
+			RsNxsTransacItem::FLAG_TYPE_GRPS;
         ntr->updateTS = updateTS;
 	ntr->nItems = grps.size();
 	ntr->PeerId(tr->mTransaction->PeerId());
 
-	newTr->mTransaction = new RsNxsTransac(*ntr);
+	newTr->mTransaction = new RsNxsTransacItem(*ntr);
 	newTr->mTransaction->PeerId(mOwnId);
 	newTr->mTimeOut = time(NULL) + mTransactionTimeOut;
 
@@ -2530,15 +2530,15 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 	if(cit != mServerMsgUpdateMap.end())
 		updateTS = cit->second->msgUpdateTS;
 
-	RsNxsTransac* ntr = new RsNxsTransac(mServType);
+	RsNxsTransacItem* ntr = new RsNxsTransacItem(mServType);
 	ntr->transactionNumber = transN;
-	ntr->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 |
-			RsNxsTransac::FLAG_TYPE_MSGS;
+	ntr->transactFlag = RsNxsTransacItem::FLAG_BEGIN_P1 |
+			RsNxsTransacItem::FLAG_TYPE_MSGS;
         ntr->updateTS = updateTS;
 	ntr->nItems = msgSize;
 	ntr->PeerId(peerId);
 
-	newTr->mTransaction = new RsNxsTransac(*ntr);
+	newTr->mTransaction = new RsNxsTransacItem(*ntr);
 	newTr->mTransaction->PeerId(mOwnId);
     newTr->mTimeOut = time(NULL) + mTransactionTimeOut;
 
@@ -2603,15 +2603,15 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
 	tr->mItems = respList;
 
 	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
-	RsNxsTransac* trItem = new RsNxsTransac(mServType);
-	trItem->transactFlag = RsNxsTransac::FLAG_BEGIN_P1
-			| RsNxsTransac::FLAG_TYPE_GRP_LIST_RESP;
+	RsNxsTransacItem* trItem = new RsNxsTransacItem(mServType);
+	trItem->transactFlag = RsNxsTransacItem::FLAG_BEGIN_P1
+			| RsNxsTransacItem::FLAG_TYPE_GRP_LIST_RESP;
 	trItem->nItems = respList.size();
 	trItem->timestamp = 0;
 	trItem->PeerId(peer);
 	trItem->transactionNumber = transN;
 	// also make a copy for the resident transaction
-	tr->mTransaction = new RsNxsTransac(*trItem);
+	tr->mTransaction = new RsNxsTransacItem(*trItem);
 	tr->mTransaction->PeerId(mOwnId);
     tr->mTimeOut = time(NULL) + mTransactionTimeOut;
 	// signal peer to prepare for transaction
@@ -2619,7 +2619,7 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
 	locked_addTransaction(tr);
 }
 
-bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrp *item)
+bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item)
 {
     // don't sync if you have no new updates for this peer
 
@@ -2638,7 +2638,7 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrp *item)
     return true;
 }
 
-void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
+void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 {
 	if (!item)
 		return;
@@ -2971,7 +2971,7 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
 		return true;
 }
 
-bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
+bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem *item)
 {
     ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(item->grpId);
 
@@ -2990,7 +2990,7 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
 #endif
     return true;
 }
-void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
+void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item)
 {
 	if (!item)
 		return;
@@ -3106,15 +3106,15 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
     NxsTransaction* tr = new NxsTransaction();
 	tr->mItems = itemL;
 	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
-	RsNxsTransac* trItem = new RsNxsTransac(mServType);
-    trItem->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 | RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP;
+	RsNxsTransacItem* trItem = new RsNxsTransacItem(mServType);
+    trItem->transactFlag = RsNxsTransacItem::FLAG_BEGIN_P1 | RsNxsTransacItem::FLAG_TYPE_MSG_LIST_RESP;
     trItem->nItems = itemL.size();
 	trItem->timestamp = 0;
 	trItem->PeerId(sslId);
 	trItem->transactionNumber = transN;
 
 	// also make a copy for the resident transaction
-	tr->mTransaction = new RsNxsTransac(*trItem);
+	tr->mTransaction = new RsNxsTransacItem(*trItem);
 	tr->mTransaction->PeerId(mOwnId);
     tr->mTimeOut = time(NULL) + mTransactionTimeOut;
 

@@ -66,7 +66,7 @@ public:
      * c timeout set for this transaction
      * c and itemCount
      */
-    RsNxsTransac* mTransaction;
+    RsNxsTransacItem* mTransaction;
     std::list<RsNxsItem*> mItems; // items received or sent
 };
 
