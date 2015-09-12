@@ -237,7 +237,7 @@ public:
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    /// grpId of grp held by sending peer
+    /// Session key encrypted for the whole group
     /// 
     RsTlvBinaryData encrypted_key_data ;
 };
@@ -528,17 +528,19 @@ public:
     virtual RsItem* deserialise(void *data, uint32_t *size);
 
 private:
-    virtual RsNxsSyncGrpReqItem      *deserialNxsSyncGrpReqItem(void *data, uint32_t *size);      /* RS_PKT_SUBTYPE_SYNC_GRP */
-    virtual RsNxsSyncGrpItem         *deserialNxsSyncGrpItem(void *data, uint32_t *size);         /* RS_PKT_SUBTYPE_SYNC_GRP_ITEM */
-    virtual RsNxsSyncMsgReqItem      *deserialNxsSyncMsgReqItem(void *data, uint32_t *size);      /* RS_PKT_SUBTYPE_SYNC_MSG */
-    virtual RsNxsSyncMsgItem         *deserialNxsSyncMsgItem(void *data, uint32_t *size);         /* RS_PKT_SUBTYPE_SYNC_MSG_ITEM */
-    virtual RsNxsGrp                 *deserialNxsGrpItem(void *data, uint32_t *size);             /* RS_PKT_SUBTYPE_NXS_GRP */
-    virtual RsNxsMsg                 *deserialNxsMsgItem(void *data, uint32_t *size);             /* RS_PKT_SUBTYPE_NXS_MSG */
-    virtual RsNxsTransacItem         *deserialNxsTransacItem(void* data, uint32_t *size);         /* RS_PKT_SUBTYPE_NXS_TRANS */
-    virtual RsNxsGroupPublishKeyItem *deserialNxsGroupPublishKeyItem(void* data, uint32_t *size); /* RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY */
-    virtual RsNxsSessionKeyItem      *deserialNxsSessionKeyItem(void* data, uint32_t *size);      /* RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM */
-    virtual RsNxsEncryptedDataItem   *deserialNxsEncryptedDataItem(void* data, uint32_t *size);   /* RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM */
+    RsNxsSyncGrpReqItem      *deserialNxsSyncGrpReqItem(void *data, uint32_t *size);      /* RS_PKT_SUBTYPE_SYNC_GRP */
+    RsNxsSyncGrpItem         *deserialNxsSyncGrpItem(void *data, uint32_t *size);         /* RS_PKT_SUBTYPE_SYNC_GRP_ITEM */
+    RsNxsSyncMsgReqItem      *deserialNxsSyncMsgReqItem(void *data, uint32_t *size);      /* RS_PKT_SUBTYPE_SYNC_MSG */
+    RsNxsSyncMsgItem         *deserialNxsSyncMsgItem(void *data, uint32_t *size);         /* RS_PKT_SUBTYPE_SYNC_MSG_ITEM */
+    RsNxsGrp                 *deserialNxsGrpItem(void *data, uint32_t *size);             /* RS_PKT_SUBTYPE_NXS_GRP */
+    RsNxsMsg                 *deserialNxsMsgItem(void *data, uint32_t *size);             /* RS_PKT_SUBTYPE_NXS_MSG */
+    RsNxsTransacItem         *deserialNxsTransacItem(void* data, uint32_t *size);         /* RS_PKT_SUBTYPE_NXS_TRANS */
+    RsNxsGroupPublishKeyItem *deserialNxsGroupPublishKeyItem(void* data, uint32_t *size); /* RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY */
+    RsNxsSessionKeyItem      *deserialNxsSessionKeyItem(void* data, uint32_t *size);      /* RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM */
+    RsNxsEncryptedDataItem   *deserialNxsEncryptedDataItem(void* data, uint32_t *size);   /* RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM */
 
+    bool checkItemHeader(void *data, uint32_t *size, uint8_t subservice_type);
+    
     const uint16_t SERVICE_TYPE;
 };
 
