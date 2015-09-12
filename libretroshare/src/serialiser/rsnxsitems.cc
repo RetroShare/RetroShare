@@ -11,8 +11,10 @@ const uint8_t RsNxsSyncGrpItem::FLAG_RESPONSE  = 0x002;
 const uint8_t RsNxsSyncMsgItem::FLAG_REQUEST   = 0x001;
 const uint8_t RsNxsSyncMsgItem::FLAG_RESPONSE  = 0x002;
 
+#ifdef UNUSED_CODE
 const uint8_t RsNxsSyncGrpItem::FLAG_USE_SYNC_HASH = 0x001;
 const uint8_t RsNxsSyncMsgItem::FLAG_USE_SYNC_HASH = 0x001;
+#endif
 
 /** transaction state **/
 const uint16_t RsNxsTransacItem::FLAG_BEGIN_P1         = 0x0001;
@@ -68,7 +70,7 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size)
 
         case RS_PKT_SUBTYPE_NXS_SYNC_GRP_REQ_ITEM:   return deserialNxsSyncGrpReqItem(data, size);
         case RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM:       return deserialNxsSyncGrpItem(data, size);
-        case RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM:   return deserialNxsSyncMsgItem(data, size);
+        case RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM:   return deserialNxsSyncMsgReqItem(data, size);
         case RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM:       return deserialNxsSyncMsgItem(data, size);
         case RS_PKT_SUBTYPE_NXS_GRP_ITEM:            return deserialNxsGrpItem(data, size);
         case RS_PKT_SUBTYPE_NXS_MSG_ITEM:            return deserialNxsMsgItem(data, size);

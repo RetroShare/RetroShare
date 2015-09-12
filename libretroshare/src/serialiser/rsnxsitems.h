@@ -195,7 +195,9 @@ public:
 
     static const uint8_t FLAG_REQUEST;
     static const uint8_t FLAG_RESPONSE;
+#ifdef UNUSED_CODE
     static const uint8_t FLAG_USE_SYNC_HASH;
+#endif
 
     RsNxsSyncGrpItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM) { clear(); return ; }
     virtual ~RsNxsSyncGrpItem() { return; }
@@ -313,8 +315,10 @@ class RsNxsSyncMsgReqItem : public RsNxsItem
 {
 
 public:
-
+ 
+#ifdef UNUSED_CODE
     static const uint8_t FLAG_USE_SYNC_HASH;
+#endif
 
     RsNxsSyncMsgReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM) { clear(); return; }
 
