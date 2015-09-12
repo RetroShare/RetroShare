@@ -49,6 +49,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QTreeWidget" name="treeWidget_membership">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
@@ -128,7 +131,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox_4">
           <property name="title">
-           <string>Known Identities</string>
+           <string>Known People</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
@@ -186,6 +189,9 @@
            </item>
            <item>
             <widget class="RSTreeWidget" name="treeWidget_IdList">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
@@ -240,7 +246,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="circleName"/>
+            <widget class="QLineEdit" name="circleName">
+             <property name="placeholderText">
+              <string>Circle name</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="idChooserLabel">

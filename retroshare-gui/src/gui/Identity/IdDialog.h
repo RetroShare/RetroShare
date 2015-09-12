@@ -78,6 +78,7 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+	void CircleListCustomPopupMenu( QPoint point);
     
     void circle_selected();
 private:

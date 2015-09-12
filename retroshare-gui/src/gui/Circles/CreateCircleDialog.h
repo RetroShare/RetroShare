@@ -41,7 +41,7 @@ public:
 
 	void editNewId(bool isExternal);
 	void editExistingId(const RsGxsGroupId &circleId, const bool &clearList = true);
-	void addMember(const QString &keyId, const QString &idtype, const QString &nickname );
+	void addMember(const QString &keyId, const QString &idtype, const QString &nickname);
 	void addMember(const RsGxsIdGroup &idGroup);
 	void addCircle(const RsGxsCircleDetails &cirDetails);
 
@@ -57,6 +57,10 @@ private slots:
 	void createCircle();
 	void filterChanged(const QString &text);
 	void createNewGxsId();
+	
+	/** Create the context popup menu and it's submenus */
+	void IdListCustomPopupMenu( QPoint point );
+	void MembershipListCustomPopupMenu( QPoint point);
 
 private:
 
@@ -73,7 +77,7 @@ private:
 
 	void requestCircle(const RsGxsGroupId &groupId);
 	void requestGxsIdentities();
-	void getPgpIdentities();
+	//void getPgpIdentities();
 	
 	void filterIds();
 

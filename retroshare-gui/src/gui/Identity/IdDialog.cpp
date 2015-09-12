@@ -68,7 +68,8 @@
 
 #define RSID_COL_NICKNAME   0
 #define RSID_COL_KEYID      1
-#define RSID_COL_IDTYPE     2
+#define RSID_COL_LASTUSED   2
+#define RSID_COL_IDTYPE     3
 
 #define RSIDREP_COL_NAME       0
 #define RSIDREP_COL_OPINION    1
@@ -164,9 +165,9 @@ IdDialog::IdDialog(QWidget *parent) :
 	
 	connect(ui->messageButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 
-#ifdef UNFINISHED_CODE
+
 	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
-#endif
+
 	ui->headerTextLabel->setText(tr("People"));
 
 	/* Initialize splitter */
@@ -192,12 +193,20 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
 	headerText = headerItem->text(RSID_COL_KEYID);
 	ui->filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
+	
+	/* Set initial section sizes */
+  QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
+  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 280);
 
 	/* Setup tree */
 	ui->idTreeWidget->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
 
 	ui->idTreeWidget->enableColumnCustomize(true);
 	ui->idTreeWidget->setColumnCustomizable(RSID_COL_NICKNAME, false);
+	
+	ui->idTreeWidget->setColumnHidden(RSID_COL_IDTYPE, true);
+	ui->idTreeWidget->setColumnHidden(RSID_COL_LASTUSED, true);
+	
 
 	/* Set initial column width */
 	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
@@ -213,9 +222,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	// Hiding RepList until that part is finished.
 	//ui->treeWidget_RepList->setVisible(false);
 	ui->toolButton_Reputation->setVisible(false);
-#ifdef UNFINISHED_CODE
-	ui->todoPushButton->hide() ;
-#endif
 
 	QString hlp_str = tr(
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
@@ -242,6 +248,8 @@ IdDialog::IdDialog(QWidget *parent) :
     connect(ui->pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
     connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(editExistingCircle()));
     connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
+    connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
+
     
     /* Setup TokenQueue */
     mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
@@ -292,20 +300,20 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
 	/* add the top level item */
-	QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
-	personalCirclesItem->setText(0, tr("Personal Circles"));
-	ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
+	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
+	//personalCirclesItem->setText(0, tr("Personal Circles"));
+	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
 
 	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
-	externalAdminCirclesItem->setText(0, tr("External Circles (Admin)"));
+	externalAdminCirclesItem->setText(0, tr("Circles (Admin)"));
 	ui->treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
 
 	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
-	externalSubCirclesItem->setText(0, tr("External Circles (Subscribed)"));
+	externalSubCirclesItem->setText(0, tr("Circles (Subscribed)"));
 	ui->treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
 
 	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
-	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
+	externalOtherCirclesItem->setText(0, tr("Circles (Other)"));
 	ui->treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
 	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
@@ -321,7 +329,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 		if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
 		{
-			personalCirclesItem->addChild(groupItem);
+			//personalCirclesItem->addChild(groupItem);
 		}
 		else
 		{
@@ -362,6 +370,20 @@ void IdDialog::editExistingCircle()
 	CreateCircleDialog dlg;
 	dlg.editExistingId(id);
 	dlg.exec();
+}
+
+void IdDialog::CircleListCustomPopupMenu( QPoint )
+{
+	QMenu contextMnu( this );
+
+	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+	if (item) {
+
+			contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(editExistingCircle()));
+	
+	}
+
+	contextMnu.exec(QCursor::pos());
 }
 
 static void set_item_background(QTreeWidgetItem *item, uint32_t type)
@@ -494,6 +516,24 @@ void IdDialog::todo()
 	                         "</ul>");
 }
 
+static QString getHumanReadableDuration(uint32_t seconds)
+{
+    if(seconds < 60)
+        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
+    else if(seconds < 120)
+        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
+    else if(seconds < 3600)
+        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
+    else if(seconds < 7200)
+        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
+    else if(seconds < 24*3600)
+        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
+    else if(seconds < 2*24*3600)
+        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
+    else 
+        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
+}
+
 void IdDialog::processSettings(bool load)
 {
 	Settings->beginGroup("IdDialog");
@@ -617,8 +657,13 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+    
+    time_t now = time(NULL) ;
+    item->setText(RSID_COL_LASTUSED, getHumanReadableDuration(now - data.mLastUsageTS)) ;
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
+ 
+    item->setData(RSID_COL_LASTUSED, Qt::UserRole, QString::number(now - data.mLastUsageTS));
 
 	 if(isOwnId)
 	 {
@@ -770,24 +815,6 @@ void IdDialog::requestIdDetails()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
 }
 
-static QString getHumanReadableDuration(uint32_t seconds)
-{
-    if(seconds < 60)
-        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
-    else if(seconds < 120)
-        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
-    else if(seconds < 3600)
-        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
-    else if(seconds < 7200)
-        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
-    else if(seconds < 24*3600)
-        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
-    else if(seconds < 2*24*3600)
-        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
-    else 
-        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
-}
-
 void IdDialog::insertIdDetails(uint32_t token)
 {
 	mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
@@ -843,9 +870,9 @@ void IdDialog::insertIdDetails(uint32_t token)
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
 #endif
-#ifdef UNFINISHED_CODE
+
     ui->avlabel->setPixmap(pixmap);
-#endif
+
     ui->avatarLabel->setPixmap(pixmap);
 
 	if (data.mPgpKnown)
