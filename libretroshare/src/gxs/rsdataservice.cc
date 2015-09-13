@@ -1146,10 +1146,6 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             if(c)
             {
                 locked_retrieveMessages(c, msgSet, withMeta ? mColMsg_WithMetaOffset : 0);
-
-#ifdef RS_DATA_SERVICE_DEBUG_TIME
-                resultCount += msgSet.size();
-#endif
             }
 
             delete c;
@@ -1169,15 +1165,15 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
                 if(c)
                 {
                     locked_retrieveMessages(c, msgSet, withMeta ? mColMsg_WithMetaOffset : 0);
-
-#ifdef RS_DATA_SERVICE_DEBUG_TIME
-                    resultCount += c->getResultCount();
-#endif
                 }
 
                 delete c;
             }
         }
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+        resultCount += msgSet.size();
+#endif
 
         msg[grpId] = msgSet;
 
@@ -1235,10 +1231,6 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
             if (c)
             {
                 locked_retrieveMsgMeta(c, metaSet);
-
-#ifdef RS_DATA_SERVICE_DEBUG_TIME
-                resultCount += metaSet.size();
-#endif
             }
         }else{
 
@@ -1253,13 +1245,13 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
                 if (c)
                 {
                     locked_retrieveMsgMeta(c, metaSet);
-
-#ifdef RS_DATA_SERVICE_DEBUG_TIME
-                    resultCount += c->getResultCount();
-#endif
                 }
             }
         }
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+        resultCount += metaSet.size();
+#endif
 
         msgMeta[grpId] = metaSet;
     }

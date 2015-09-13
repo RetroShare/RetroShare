@@ -221,5 +221,7 @@ void ElidedLabel::mousePressEvent(QMouseEvent *ev)
 {
 	if (mElided && (ev->buttons()==Qt::LeftButton) && (mRectElision.contains(ev->pos()))){
 		QToolTip::showText(mapToGlobal(QPoint(0, 0)),QString("<FONT>") + mContent + QString("</FONT>"));
+		return; // eat event
 	}
+	QLabel::mousePressEvent(ev);
 }
