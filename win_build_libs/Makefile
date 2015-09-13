@@ -14,7 +14,7 @@ SQLCIPHER_VERSION=2.2.1
 LIBMICROHTTPD_VERSION=0.9.42
 FFMPEG_VERSION=2.7.2
 
-all: dirs zlib bzip2 miniupnpc openssl speex opencv libxml2 libxslt curl libssh protobuf sqlcipher libmicrohttpd ffmpeg copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex opencv libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg copylibs
 
 dirs:
 	mkdir -p libs/include
@@ -148,35 +148,6 @@ curl: curl-$(CURL_VERSION).tar.gz
 	cp curl-$(CURL_VERSION)/lib/.libs/libcurl.a libs/lib/
 	rm -r -f curl-$(CURL_VERSION)
 	touch curl
-
-libssh-$(LIBSSH_VERSION).tar.gz:
-	curl.exe -k https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz -o libssh-0.5.4.tar.gz
-
-libssh: libssh-$(LIBSSH_VERSION).tar.gz
-	tar xvf libssh-$(LIBSSH_VERSION).tar.gz
-	tar xvf libssh-$(LIBSSH_VERSION)-fix.tar.gz
-	mkdir -p libssh-$(LIBSSH_VERSION)/build
-	cd libssh-$(LIBSSH_VERSION)/build && cmake .. -G"MSYS Makefiles" -DWITH_STATIC_LIB:BOOL=ON -DZLIB_LIBRARY:FILEPATH="`pwd`/../../libs/lib/libz.a" -DZLIB_INCLUDE_DIR:PATH="`pwd`/../../libs/include" -DOPENSSL_LIBRARIES:FILEPATH="`pwd`/../../libs/lib/libcrypto.a" -DOPENSSL_INCLUDE_DIRS:PATH="`pwd`/../../libs/include"
-	cd libssh-$(LIBSSH_VERSION)/build && make
-	cp libssh-$(LIBSSH_VERSION)/build/src/libssh.a libs/lib/
-	cp libssh-$(LIBSSH_VERSION)/build/src/threads/libssh_threads.a libs/lib/
-	mkdir -p libs/include/libssh && cp libssh-$(LIBSSH_VERSION)/include/libssh/*.h libs/include/libssh/
-	rm -r -f libssh-$(LIBSSH_VERSION)
-	touch libssh
-
-protobuf-$(PROTOBUF_VERSION).tar.gz:
-	curl.exe -k https://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz -o protobuf-2.4.1.tar.gz
-
-protobuf: protobuf-$(PROTOBUF_VERSION).tar.gz
-	tar xvf protobuf-$(PROTOBUF_VERSION).tar.gz
-	cd protobuf-$(PROTOBUF_VERSION) && ./configure --disable-shared
-	#cd protobuf-$(PROTOBUF_VERSION) && make install exec_prefix="`pwd`/../libs"
-	cd protobuf-$(PROTOBUF_VERSION) && make
-	mkdir -p libs/include/protobuf && cp -r protobuf-$(PROTOBUF_VERSION)/src/google/ libs/include/protobuf/
-	cp protobuf-$(PROTOBUF_VERSION)/src/.libs/libprotobuf.a libs/lib/
-	cp protobuf-$(PROTOBUF_VERSION)/src/protoc.exe libs/bin/
-	rm -r -f protobuf-$(PROTOBUF_VERSION)
-	touch protobuf
 
 tcl$(TCL_VERSION)-src.tar.gz:
 	curl.exe -L http://prdownloads.sourceforge.net/tcl/tcl$(TCL_VERSION)-src.tar.gz -o tcl$(TCL_VERSION)-src.tar.gz

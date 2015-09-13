@@ -130,38 +130,6 @@ if [ -s curl-7.34.0.tar.gz ]; then
   rm -r -f curl-7.34.0
 fi
 
-[ -s libssh-0.5.4.tar.gz ] || curl -k https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz -o libssh-0.5.4.tar.gz
-if [ -s libssh-0.5.4.tar.gz ]; then
-  tar xvf libssh-0.5.4.tar.gz
-  tar xvf libssh-0.5.4-fix.tar.gz
-  cd libssh-0.5.4
-  mkdir -p build
-  cd build
-  cmake .. -G"MSYS Makefiles" -DWITH_STATIC_LIB:BOOL=ON -DZLIB_LIBRARY:FILEPATH="`pwd`/../../libs/lib/libz.a" -DZLIB_INCLUDE_DIR:PATH="`pwd`/../../libs/include" -DOPENSSL_LIBRARIES:FILEPATH="`pwd`/../../libs/lib/libcrypto.a" -DOPENSSL_INCLUDE_DIRS:PATH="`pwd`/../../libs/include"
-  make
-  cp src/libssh.a ../../libs/lib/
-  cp src/threads/libssh_threads.a ../../libs/lib/
-  cd ..
-  rm -r -f build
-  mkdir -p ../libs/include/libssh && cp include/libssh/*.h ../libs/include/libssh/
-  cd ..
-  rm -r -f libssh-0.5.4
-fi
-
-[ -s protobuf-2.4.1.tar.gz ] || curl -k https://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz -o protobuf-2.4.1.tar.gz
-if [ -s protobuf-2.4.1.tar.gz ]; then
-  tar xvf protobuf-2.4.1.tar.gz
-  cd protobuf-2.4.1
-  ./configure --disable-shared
-  #make install exec_prefix="`pwd`/../libs"
-  make
-  mkdir -p ../libs/include/protobuf && cp -r src/google/ ../libs/include/protobuf/
-  cp src/.libs/libprotobuf.a ../libs/lib/
-  cp src/protoc.exe ../libs/bin/
-  cd ..
-  rm -r -f protobuf-2.4.1
-fi
-
 [ -s tcl8.6.2-src.tar.gz ] || curl -L http://prdownloads.sourceforge.net/tcl/tcl8.6.2-src.tar.gz -o tcl8.6.2-src.tar.gz
 [ -s sqlcipher-2.2.1.tar.gz ] || curl -L -k https://github.com/sqlcipher/sqlcipher/archive/v2.2.1.tar.gz -o sqlcipher-2.2.1.tar.gz
 if [ -s tcl8.6.2-src.tar.gz -a -s sqlcipher-2.2.1.tar.gz ]; then
