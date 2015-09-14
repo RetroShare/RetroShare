@@ -486,6 +486,13 @@ uint32_t p3PeerMgrIMPL::hiddenDomainToHiddenType(const std::string &domain)
 	return RS_HIDDEN_TYPE_UNKNOWN;
 }
 
+/**
+ * @brief sets hidden domain and port for a given ssl ID
+ * @param ssl_id peer to set domain and port for
+ * @param domain_addr
+ * @param domain_port
+ * @return true on success
+ */
 bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -547,6 +554,12 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::strin
 	return true;
 }
 
+/**
+ * @brief sets the proxy server address for a hidden service
+ * @param type hidden service type
+ * @param proxy_addr proxy address
+ * @return true on success
+ */
 bool p3PeerMgrIMPL::setProxyServerAddress(const uint32_t type, const struct sockaddr_storage &proxy_addr)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -590,6 +603,12 @@ bool p3PeerMgrIMPL::resetOwnExternalAddressList()
     return true ;
 }
 
+/**
+ * @brief returs proxy server status for a hidden service proxy
+ * @param type hidden service type
+ * @param proxy_status
+ * @return true on success
+ */
 bool p3PeerMgrIMPL::getProxyServerStatus(const uint32_t type, uint32_t& proxy_status)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -613,6 +632,12 @@ bool p3PeerMgrIMPL::getProxyServerStatus(const uint32_t type, uint32_t& proxy_st
 	return true;
 }
 
+/**
+ * @brief returs proxy server address for a hidden service proxy
+ * @param type hidden service type
+ * @param proxy_addr
+ * @return true on success
+ */
 bool p3PeerMgrIMPL::getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -634,7 +659,15 @@ bool p3PeerMgrIMPL::getProxyServerAddress(const uint32_t type, struct sockaddr_s
 	}
 	return true;
 }
-	
+
+/**
+ * @brief looks up the proxy address and domain/port that have to be used when connecting to a peer
+ * @param ssl_id peer to connect to
+ * @param proxy_addr proxy address to be used
+ * @param domain_addr domain to connect to
+ * @param domain_port port to connect to
+ * @return true on success
+ */
 bool p3PeerMgrIMPL::getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
