@@ -566,14 +566,14 @@ bool p3PeerMgrIMPL::setProxyServerAddress(const uint32_t type, const struct sock
 
 	switch (type) {
 	case RS_HIDDEN_TYPE_I2P:
-		if (!sockaddr_storage_same(mProxyServerAddressI2P,proxy_addr))
+		if (!sockaddr_storage_same(mProxyServerAddressI2P, proxy_addr))
 		{
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 			mProxyServerAddressI2P = proxy_addr;
 		}
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-		if (!sockaddr_storage_same(mProxyServerAddressTor,proxy_addr))
+		if (!sockaddr_storage_same(mProxyServerAddressTor, proxy_addr))
 		{
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 			mProxyServerAddressTor = proxy_addr;
@@ -1938,7 +1938,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 	// I2P
 #ifdef PEER_DEBUG
-	std::cerr << "Saving proxyServerAddress for I2P: " << sockaddr_storage_tostring(proxy_addr_tor);
+	std::cerr << "Saving proxyServerAddress for I2P: " << sockaddr_storage_tostring(proxy_addr_i2p);
 	std::cerr << std::endl;
 #endif
 
@@ -1986,7 +1986,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	std::string proxyIpAddressTor = kConfigDefaultProxyServerIpAddr;
 	uint16_t    proxyPortTor = kConfigDefaultProxyServerPort;
 	std::string proxyIpAddressI2P = kConfigDefaultProxyServerIpAddr;
-	uint16_t    proxyPortI2P = kConfigDefaultProxyServerPort;
+	uint16_t    proxyPortI2P = kConfigDefaultProxyServerPort + 1;
 
         if (load.empty()) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
@@ -2108,7 +2108,6 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 					std::cerr << "Loaded proxyIpAddress for I2P: " << proxyIpAddressI2P;
 					std::cerr << std::endl ;
 #endif
-
 				}
 				else if (kit->key == kConfigKeyProxyServerPortI2P)
 				{

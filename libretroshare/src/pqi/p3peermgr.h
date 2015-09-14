@@ -90,7 +90,7 @@ class peerState
 	bool hiddenNode; /* all IP addresses / dyndns must be blank */
 	std::string hiddenDomain;
 	uint16_t    hiddenPort;
-	uint32_t	hiddenType;
+	uint32_t    hiddenType;
 
 	std::string location;
 	std::string name;

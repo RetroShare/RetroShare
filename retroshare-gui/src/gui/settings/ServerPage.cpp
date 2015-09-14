@@ -813,7 +813,7 @@ void ServerPage::saveAddresses()
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 
 	// HANDLE PROXY SERVER.
-	std::string orig_proxyaddr,new_proxyaddr;
+	std::string orig_proxyaddr, new_proxyaddr;
 	uint16_t orig_proxyport, new_proxyport;
 	uint32_t status ;
 	// Tor
@@ -1151,7 +1151,7 @@ void ServerPage::updateOutProxyIndicator()
 	else
 	{
 		ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-		ui.iconlabel_i2p_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
+		ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
 	}
 }
 
@@ -1181,11 +1181,11 @@ void ServerPage::updateInProxyIndicator()
 	}
     proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
-        //ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        //ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
-        QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
-		ui.iconlabel_service_incoming->setMovie(movie);
-    movie->start() ;
+	//ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+	//ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
+	QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
+	ui.iconlabel_service_incoming->setMovie(movie);
+	movie->start() ;
 
     QNetworkProxy::setApplicationProxy(proxy) ;
 
@@ -1217,7 +1217,7 @@ void ServerPage::handleNetworkReply(QNetworkReply *reply)
 
         //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
 		ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-		ui.iconlabel_service_incoming->setToolTip(tr("The proxy is not enabled or broken.\Are all services up and running fine??\nAlso check your ports!")) ;
+		ui.iconlabel_service_incoming->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
     }
 
     reply->close();

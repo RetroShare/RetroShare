@@ -1087,7 +1087,7 @@ Once this is done, paste the Onion/I2P (Base32) Address in the box above.
 This is your external address on the Tor/I2P network.
 Finally make sure that the Ports match the configuration.
 
-If you have issues connecting over Tor check the Tor logs, too.</string>
+If you have issues connecting over Tor check the Tor logs too.</string>
             </property>
            </widget>
           </item>
