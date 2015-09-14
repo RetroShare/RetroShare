@@ -967,20 +967,24 @@ void ServerPage::loadHiddenNode()
 
 	updateOutProxyIndicator();
 
-	QString expected;
+	QString expected = "";
 	switch (mHiddenType) {
 	case RS_HIDDEN_TYPE_I2P:
 		ui.l_serviceAddress->setText(tr("I2P Address"));
 		ui.l_incomingTestResult->setText(tr("I2P incoming ok"));
 
-		expected = "--TODO-- see http://127.0.0.1:7657/i2ptunnelmgr";
+		expected += "http://127.0.0.1:7657/i2ptunnelmgr - I2P Hidden Services\n";
+		expected += tr("Points at: ");
+		expected += QString::fromStdString(detail.localAddr);
+		expected += ":";
+		expected += QString::number(detail.localPort);
 		break;
 	case RS_HIDDEN_TYPE_TOR:
 	default:
 		ui.l_serviceAddress->setText(tr("Onion Address"));
 		ui.l_incomingTestResult->setText(tr("Tor incoming ok"));
 
-		expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
+		expected += "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
 		expected += "HiddenServicePort ";
 		expected += QString::number(detail.hiddenNodePort);
 		expected += " ";

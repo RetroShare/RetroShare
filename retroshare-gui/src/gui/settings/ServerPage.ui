@@ -1023,7 +1023,7 @@ are running a standard Node, so why not setup Tor and/or I2P? </string>
             <item>
              <widget class="QLabel" name="label_12">
               <property name="text">
-               <string>Expected torrc Port Configuration:</string>
+               <string>Expected Configuration:</string>
               </property>
              </widget>
             </item>
@@ -1079,14 +1079,15 @@ HiddenServicePort 9191 127.0.0.1:9191</string>
              <bool>true</bool>
             </property>
             <property name="plainText">
-             <string>To Receive Connections, you must first setup a Tor Hidden Service. 
-See Tor documentation for HOWTO details.
+             <string>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
+For Tor: See torrc and documentation for HOWTO details.
+For I2P: See http://127.0.0.1:7657/i2ptunnelmgr and documentation for HOWTO details.
 
-Once this is done, paste the Onion Address in the box above.
-This is your external address on the Tor network.
-Finally make sure that the Ports match the Tor configuration.
+Once this is done, paste the Onion/I2P (Base32) Address in the box above.
+This is your external address on the Tor/I2P network.
+Finally make sure that the Ports match the configuration.
 
-If you have issues connecting over Tor check the Tor logs too.</string>
+If you have issues connecting over Tor check the Tor logs, too.</string>
             </property>
            </widget>
           </item>
