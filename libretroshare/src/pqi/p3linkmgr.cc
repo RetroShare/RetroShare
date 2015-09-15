@@ -964,24 +964,25 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 	if (flags == RS_NET_CONN_UDP_ALL)
 	{
 #ifdef LINKMGR_DEBUG
-#endif
 		std::cerr << "p3LinkMgrIMPL::connectResult() Sending Feedback for UDP connection";
 		std::cerr << std::endl;
+#endif
 		if (success)
 		{
 #ifdef LINKMGR_DEBUG
-#endif
 			std::cerr << "p3LinkMgrIMPL::connectResult() UDP Update CONNECTED to: " << id;
 			std::cerr << std::endl;
+#endif
 
 			mNetMgr->netAssistStatusUpdate(id, NETMGR_DHT_FEEDBACK_CONNECTED);
 		}
 		else
 		{
 #ifdef LINKMGR_DEBUG
-#endif
+
 			std::cerr << "p3LinkMgrIMPL::connectResult() UDP Update FAILED to: " << id;
 			std::cerr << std::endl;
+#endif
 
 			/* have no differentiation between failure and closed? */
 			mNetMgr->netAssistStatusUpdate(id, NETMGR_DHT_FEEDBACK_CONN_FAILED);
