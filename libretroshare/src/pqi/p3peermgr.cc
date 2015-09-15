@@ -74,7 +74,8 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 #define MIN_RETRY_PERIOD 140
 
 static const std::string kConfigDefaultProxyServerIpAddr = "127.0.0.1";
-static const uint16_t    kConfigDefaultProxyServerPort = 9050; // standard port.
+static const uint16_t    kConfigDefaultProxyServerPortTor = 9050; // standard port.
+static const uint16_t    kConfigDefaultProxyServerPortI2P = 9051; // there is no standard port though
 
 static const std::string kConfigKeyExtIpFinder = "USE_EXTR_IP_FINDER";
 static const std::string kConfigKeyProxyServerIpAddrTor = "PROXY_SERVER_IPADDR";
@@ -137,13 +138,13 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 		sockaddr_storage_ipv4_aton(mProxyServerAddressTor,
 				kConfigDefaultProxyServerIpAddr.c_str());
 		sockaddr_storage_ipv4_setport(mProxyServerAddressTor,
-                kConfigDefaultProxyServerPort);
+				kConfigDefaultProxyServerPortTor);
 		// I2P
 		sockaddr_storage_clear(mProxyServerAddressI2P);
 		sockaddr_storage_ipv4_aton(mProxyServerAddressI2P,
 				kConfigDefaultProxyServerIpAddr.c_str());
 		sockaddr_storage_ipv4_setport(mProxyServerAddressI2P,
-				kConfigDefaultProxyServerPort);
+				kConfigDefaultProxyServerPortI2P);
 
         mProxyServerStatusTor = RS_NET_PROXY_STATUS_UNKNOWN ;
 		mProxyServerStatusI2P = RS_NET_PROXY_STATUS_UNKNOWN;
@@ -199,6 +200,7 @@ bool p3PeerMgrIMPL::forceHiddenNode()
 #endif
 		}
 		mOwnState.hiddenNode = true;
+		mOwnState.hiddenType = hiddenDomainToHiddenType(mOwnState.hiddenDomain);
 
 		// force external address - otherwise its invalid.
 		sockaddr_storage_clear(mOwnState.serveraddr);
@@ -1984,9 +1986,9 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	// DEFAULTS.
 	bool useExtAddrFinder = true;
 	std::string proxyIpAddressTor = kConfigDefaultProxyServerIpAddr;
-	uint16_t    proxyPortTor = kConfigDefaultProxyServerPort;
+	uint16_t    proxyPortTor = kConfigDefaultProxyServerPortTor;
 	std::string proxyIpAddressI2P = kConfigDefaultProxyServerIpAddr;
-	uint16_t    proxyPortI2P = kConfigDefaultProxyServerPort + 1;
+	uint16_t    proxyPortI2P = kConfigDefaultProxyServerPortI2P;
 
         if (load.empty()) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;

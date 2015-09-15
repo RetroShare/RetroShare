@@ -303,7 +303,7 @@ void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, const struc
 void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer, const pqiIpAddrSet &ipAddrs);
 void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t dynPort);
 void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
-void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port);
+void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t type, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port);
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 

@@ -437,26 +437,80 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
     {
-        if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_TOR) || isProxyAddress(RS_HIDDEN_TYPE_TOR, pcs.connectaddr))
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
-        }
-        else if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_I2P) || isProxyAddress(RS_HIDDEN_TYPE_I2P, pcs.connectaddr))
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
-        }
-        else if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
-        }
-        else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
-        }
-        else
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
-        }
+		/* peer is connected - determine how and set proper connectState */
+		if(mPeerMgr->isHidden())
+		{
+			/* hidden location */
+			/* use connection direction to determine connection type */
+			if(pcs.actAsServer)
+			{
+				/* incoming connection */
+				/* use own type to set connectState */
+				if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_TOR))
+				{
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+				}
+				else if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_I2P))
+				{
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+				}
+				else
+				{
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+				}
+			}
+			else
+			{
+				/* outgoing connection */
+				/* use peer hidden type to set connectState */
+				if (ps.hiddenType == RS_HIDDEN_TYPE_TOR)
+				{
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+				}
+				else if (ps.hiddenType == RS_HIDDEN_TYPE_I2P)
+				{
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+				}
+				else
+				{
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+				}
+			}
+		}
+		else if (ps.hiddenType & RS_HIDDEN_TYPE_MASK)
+		{
+			/* hidden peer */
+			/* use hidden type to set connectState */
+			if (ps.hiddenType == RS_HIDDEN_TYPE_TOR)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+			}
+			else if (ps.hiddenType == RS_HIDDEN_TYPE_I2P)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+			}
+			else
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+			}
+		}
+		else
+		{
+			/* peer and we are normal nodes */
+			/* use normal detection to set connectState */
+			if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
+			}
+			else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
+			}
+			else
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+			}
+		}
     }
 
 	d.wasDeniedConnection = pcs.wasDeniedConnection;

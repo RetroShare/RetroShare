@@ -1631,12 +1631,23 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 		/* then we just have one connect attempt via the Proxy */
 		if (mPeerMgr->getProxyAddress(id, proxy_addr, domain_addr, domain_port))
 		{
+			/* check if it's a valid proxy address */
+			uint32_t type = mPeerMgr->hiddenDomainToHiddenType(domain_addr);
+			if (type & (~RS_HIDDEN_TYPE_MASK))
+			{
+#ifdef LINKMGR_DEBUG
+				std::cerr << "p3LinkMgrIMPL::retryConnectTCP() domain (" << domain_addr << ") is invalid hidden type (" << type << ") -> return false";
+				std::cerr << std::endl;
+#endif
+				return false;
+			}
+
 			RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
 	        	std::map<RsPeerId, peerConnectState>::iterator it;
 			if (mFriendList.end() != (it = mFriendList.find(id)))
 			{
-				locked_ConnectAttempt_ProxyAddress(&(it->second), proxy_addr, domain_addr, domain_port);
+				locked_ConnectAttempt_ProxyAddress(&(it->second), type, proxy_addr, domain_addr, domain_port);
 				return locked_ConnectAttempt_Complete(&(it->second));
 			}
 		}
@@ -2018,7 +2029,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 }
 
 
-void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port)
+void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t type, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() trying address: " << domain_addr << ":" << domain_port << std::endl;
@@ -2026,19 +2037,21 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	peerConnectAddress pca;
 	pca.addr = proxy_addr;
 
-	switch (mPeerMgr->hiddenDomainToHiddenType(domain_addr)) {
+	switch (type) {
 	case RS_HIDDEN_TYPE_I2P:
 		pca.type = RS_NET_CONN_TCP_HIDDEN_I2P;
 		break;
-	case RS_HIDDEN_TYPE_UNKNOWN:
-	default:
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() hidden type of addr: " << domain_addr << " is unkown -> fallback to tor" << std::endl;
-#endif
-		/* the type should be set! since this connection involves a proxy -> fallback to tor */
 	case RS_HIDDEN_TYPE_TOR:
 		pca.type = RS_NET_CONN_TCP_HIDDEN_TOR;
 		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+		/**** THIS CASE SHOULD NOT BE TRIGGERED - since this function is called only with a valid hidden type****/
+		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() hidden type of addr: " << domain_addr << " is unkown -> THIS SHOULD NEVER HAPPEN!" << std::endl;
+		std::cerr << " - peer : " << peer->id << "(" << peer->name << ")" << std::endl;
+		std::cerr << " - proxy: " << sockaddr_storage_tostring(proxy_addr) << std::endl;
+		std::cerr << " - addr : " << domain_addr << ":" << domain_port << std::endl;
+		pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
 	}
 
 	//for the delay, we add a random time and some more time when the friend list is big
