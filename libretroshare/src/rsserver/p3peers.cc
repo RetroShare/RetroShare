@@ -440,40 +440,40 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		/* peer is connected - determine how and set proper connectState */
 		if(mPeerMgr->isHidden())
 		{
+			uint32_t type;
 			/* hidden location */
 			/* use connection direction to determine connection type */
 			if(pcs.actAsServer)
 			{
 				/* incoming connection */
 				/* use own type to set connectState */
-				if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_TOR))
-				{
+				type = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
+				switch (type) {
+				case RS_HIDDEN_TYPE_TOR:
 					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
-				}
-				else if (mPeerMgr->isHidden(RS_HIDDEN_TYPE_I2P))
-				{
+					break;
+				case RS_HIDDEN_TYPE_I2P:
 					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
-				}
-				else
-				{
+					break;
+				default:
 					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+					break;
 				}
 			}
 			else
 			{
 				/* outgoing connection */
 				/* use peer hidden type to set connectState */
-				if (ps.hiddenType == RS_HIDDEN_TYPE_TOR)
-				{
+				switch (ps.hiddenType) {
+				case RS_HIDDEN_TYPE_TOR:
 					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
-				}
-				else if (ps.hiddenType == RS_HIDDEN_TYPE_I2P)
-				{
+					break;
+				case RS_HIDDEN_TYPE_I2P:
 					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
-				}
-				else
-				{
+					break;
+				default:
 					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+					break;
 				}
 			}
 		}
@@ -481,17 +481,16 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		{
 			/* hidden peer */
 			/* use hidden type to set connectState */
-			if (ps.hiddenType == RS_HIDDEN_TYPE_TOR)
-			{
+			switch (ps.hiddenType) {
+			case RS_HIDDEN_TYPE_TOR:
 				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
-			}
-			else if (ps.hiddenType == RS_HIDDEN_TYPE_I2P)
-			{
+				break;
+			case RS_HIDDEN_TYPE_I2P:
 				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
-			}
-			else
-			{
+				break;
+			default:
 				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+				break;
 			}
 		}
 		else

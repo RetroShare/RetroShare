@@ -146,7 +146,7 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 		sockaddr_storage_ipv4_setport(mProxyServerAddressI2P,
 				kConfigDefaultProxyServerPortI2P);
 
-        mProxyServerStatusTor = RS_NET_PROXY_STATUS_UNKNOWN ;
+		mProxyServerStatusTor = RS_NET_PROXY_STATUS_UNKNOWN ;
 		mProxyServerStatusI2P = RS_NET_PROXY_STATUS_UNKNOWN;
 	}
 	
@@ -486,6 +486,38 @@ uint32_t p3PeerMgrIMPL::hiddenDomainToHiddenType(const std::string &domain)
 		std::cerr << std::endl;
 #endif
 	return RS_HIDDEN_TYPE_UNKNOWN;
+}
+
+/**
+ * @brief returns the hidden type of a peer
+ * @param ssl_id peer id
+ * @return hidden type
+ */
+uint32_t p3PeerMgrIMPL::getHiddenType(const RsPeerId &ssl_id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	if (ssl_id == AuthSSL::getAuthSSL()->OwnId())
+		return mOwnState.hiddenType;
+
+	/* check for existing */
+	std::map<RsPeerId, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::getHiddenType(" << ssl_id << ") Missing Peer => false";
+		std::cerr << std::endl;
+#endif
+
+		return false;
+	}
+
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getHiddenType(" << ssl_id << ") = " << (it->second).hiddenType;
+	std::cerr << std::endl;
+#endif
+	return (it->second).hiddenType;
 }
 
 /**

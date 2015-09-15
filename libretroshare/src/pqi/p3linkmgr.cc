@@ -1624,6 +1624,17 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 	/* first possibility - is it a hidden peer */
 	if (mPeerMgr->isHiddenPeer(id))
 	{
+		/* check for valid hidden type */
+		uint32_t type = mPeerMgr->getHiddenType(id);
+		if (type & (~RS_HIDDEN_TYPE_MASK))
+		{
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgrIMPL::retryConnectTCP() invalid hidden type (" << type << ") -> return false";
+			std::cerr << std::endl;
+#endif
+			return false;
+		}
+
 		struct sockaddr_storage proxy_addr;
 		std::string domain_addr;
 		uint16_t domain_port;
@@ -1631,17 +1642,6 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 		/* then we just have one connect attempt via the Proxy */
 		if (mPeerMgr->getProxyAddress(id, proxy_addr, domain_addr, domain_port))
 		{
-			/* check if it's a valid proxy address */
-			uint32_t type = mPeerMgr->hiddenDomainToHiddenType(domain_addr);
-			if (type & (~RS_HIDDEN_TYPE_MASK))
-			{
-#ifdef LINKMGR_DEBUG
-				std::cerr << "p3LinkMgrIMPL::retryConnectTCP() domain (" << domain_addr << ") is invalid hidden type (" << type << ") -> return false";
-				std::cerr << std::endl;
-#endif
-				return false;
-			}
-
 			RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
 	        	std::map<RsPeerId, peerConnectState>::iterator it;
@@ -2038,15 +2038,15 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	pca.addr = proxy_addr;
 
 	switch (type) {
-	case RS_HIDDEN_TYPE_I2P:
-		pca.type = RS_NET_CONN_TCP_HIDDEN_I2P;
-		break;
 	case RS_HIDDEN_TYPE_TOR:
 		pca.type = RS_NET_CONN_TCP_HIDDEN_TOR;
 		break;
+	case RS_HIDDEN_TYPE_I2P:
+		pca.type = RS_NET_CONN_TCP_HIDDEN_I2P;
+		break;
 	case RS_HIDDEN_TYPE_UNKNOWN:
 	default:
-		/**** THIS CASE SHOULD NOT BE TRIGGERED - since this function is called only with a valid hidden type****/
+		/**** THIS CASE SHOULD NOT BE TRIGGERED - since this function is called with a valid hidden type only ****/
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() hidden type of addr: " << domain_addr << " is unkown -> THIS SHOULD NEVER HAPPEN!" << std::endl;
 		std::cerr << " - peer : " << peer->id << "(" << peer->name << ")" << std::endl;
 		std::cerr << " - proxy: " << sockaddr_storage_tostring(proxy_addr) << std::endl;

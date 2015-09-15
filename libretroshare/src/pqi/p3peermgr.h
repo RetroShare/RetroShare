@@ -195,6 +195,7 @@ virtual bool    isHiddenPeer(const RsPeerId &ssl_id) = 0;
 virtual bool    isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type) = 0;
 virtual bool    getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
 virtual uint32_t hiddenDomainToHiddenType(const std::string &domain) = 0;
+virtual uint32_t getHiddenType(const RsPeerId &ssl_id) = 0;
 
 
 virtual int 	getFriendCount(bool ssl, bool online) = 0;
@@ -301,6 +302,7 @@ virtual bool    isHiddenPeer(const RsPeerId &ssl_id);
 virtual bool    isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type);
 virtual bool    getProxyAddress(const RsPeerId& ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
 virtual uint32_t hiddenDomainToHiddenType(const std::string &domain);
+virtual uint32_t getHiddenType(const RsPeerId &ssl_id);
 
 virtual int 	getFriendCount(bool ssl, bool online);
 
