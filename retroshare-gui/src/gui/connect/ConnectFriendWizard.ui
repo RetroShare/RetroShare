@@ -31,7 +31,7 @@
     <item>
      <widget class="QRadioButton" name="textRadioButton">
       <property name="text">
-       <string>&amp;Enter the certificate manually</string>
+       <string>Enter the &amp;certificate manually</string>
       </property>
      </widget>
     </item>
@@ -52,7 +52,7 @@
     <item>
      <widget class="QRadioButton" name="rsidRadioButton">
       <property name="text">
-       <string>&amp;Enter RetroShare ID manually</string>
+       <string>E&amp;nter RetroShare ID manually</string>
       </property>
      </widget>
     </item>
@@ -67,7 +67,7 @@
     <item>
      <widget class="QRadioButton" name="friendRecommendationsRadioButton">
       <property name="text">
-       <string>Recommend many friends to each others</string>
+       <string>&amp;Recommend many friends to each others</string>
       </property>
      </widget>
     </item>
@@ -1038,27 +1038,41 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="signersLabel">
          <property name="text">
           <string>Signers</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="1">
         <widget class="QPlainTextEdit" name="signersEdit">
          <property name="readOnly">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2">
+       <item row="7" column="0" colspan="2">
         <widget class="QLabel" name="alreadyRegisteredLabel">
          <property name="text">
           <string>This peer is already on your friend list. Adding it might just set it's ip address.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="ipLabel">
+         <property name="text">
+          <string>IP-Addr:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="ipEdit">
+         <property name="text">
+          <string>IP-Address</string>
          </property>
         </widget>
        </item>

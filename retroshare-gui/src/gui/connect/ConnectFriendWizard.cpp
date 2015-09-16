@@ -488,6 +488,7 @@ void ConnectFriendWizard::initializePage(int id)
 			}
 
 			ui->nodeEdit->setText(loc);
+			ui->ipEdit->setText(QString::fromStdString(peerDetails.isHiddenNode ? peerDetails.hiddenNodeAddress : peerDetails.extAddr));
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
