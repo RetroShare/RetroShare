@@ -1011,7 +1011,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
               <item>
                <widget class="QLabel" name="l_incomingTestResult">
                 <property name="text">
-                 <string>Tor incoming  ok</string>
+                 <string>incoming  ok</string>
                 </property>
                </widget>
               </item>
@@ -1055,8 +1055,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
                <bool>true</bool>
               </property>
               <property name="plainText">
-               <string>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
-HiddenServicePort 9191 127.0.0.1:9191</string>
+               <string>Please fill in a service address</string>
               </property>
              </widget>
             </item>

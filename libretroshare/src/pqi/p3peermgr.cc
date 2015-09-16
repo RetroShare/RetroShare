@@ -75,7 +75,7 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 
 static const std::string kConfigDefaultProxyServerIpAddr = "127.0.0.1";
 static const uint16_t    kConfigDefaultProxyServerPortTor = 9050; // standard port.
-static const uint16_t    kConfigDefaultProxyServerPortI2P = 9051; // there is no standard port though
+static const uint16_t    kConfigDefaultProxyServerPortI2P = 10; // there is no standard port though
 
 static const std::string kConfigKeyExtIpFinder = "USE_EXTR_IP_FINDER";
 static const std::string kConfigKeyProxyServerIpAddrTor = "PROXY_SERVER_IPADDR";

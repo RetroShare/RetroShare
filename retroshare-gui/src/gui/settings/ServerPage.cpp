@@ -980,7 +980,6 @@ void ServerPage::loadHiddenNode()
 		expected += QString::number(detail.localPort);
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-	default:
 		ui.l_serviceAddress->setText(tr("Onion Address"));
 		ui.l_incomingTestResult->setText(tr("Tor incoming ok"));
 
@@ -991,6 +990,13 @@ void ServerPage::loadHiddenNode()
 		expected += QString::fromStdString(detail.localAddr);
 		expected += ":";
 		expected += QString::number(detail.localPort);
+		break;
+	default:
+		ui.l_serviceAddress->setText(tr("Service Address"));
+		ui.l_incomingTestResult->setText(tr("incoming ok"));
+
+		expected += "Please fill in a service address";
+
 		break;
 	}
 	ui.hiddenpage_configuration->setPlainText(expected);
@@ -1174,10 +1180,11 @@ void ServerPage::updateInProxyIndicator()
 		proxy.setPort(ui.hiddenpage_proxyPort_i2p->text().toInt());
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-	default:
 		proxy.setHostName(ui.hiddenpage_proxyAddress_tor->text());
 		proxy.setPort(ui.hiddenpage_proxyPort_tor->text().toInt());
 		break;
+	default:
+		return;
 	}
     proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
