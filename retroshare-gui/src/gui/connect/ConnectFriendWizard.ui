@@ -31,7 +31,7 @@
     <item>
      <widget class="QRadioButton" name="textRadioButton">
       <property name="text">
-       <string>Enter the &amp;certificate manually</string>
+       <string>Enter the certificate manually</string>
       </property>
      </widget>
     </item>
@@ -52,7 +52,7 @@
     <item>
      <widget class="QRadioButton" name="rsidRadioButton">
       <property name="text">
-       <string>E&amp;nter RetroShare ID manually</string>
+       <string>Enter RetroShare ID manually</string>
       </property>
      </widget>
     </item>
@@ -67,7 +67,7 @@
     <item>
      <widget class="QRadioButton" name="friendRecommendationsRadioButton">
       <property name="text">
-       <string>&amp;Recommend many friends to each others</string>
+       <string>Recommend many friends to each others</string>
       </property>
      </widget>
     </item>
