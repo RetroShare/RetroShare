@@ -965,7 +965,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             <item row="1" column="0">
              <widget class="QLabel" name="l_serviceAddress">
               <property name="text">
-               <string>Onion Address</string>
+               <string>Service Address</string>
               </property>
              </widget>
             </item>
@@ -1082,7 +1082,8 @@ HiddenServicePort 9191 127.0.0.1:9191</string>
             <property name="plainText">
              <string>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
 For Tor: See torrc and documentation for HOWTO details.
-For I2P: See http://127.0.0.1:7657/i2ptunnelmgr and documentation for HOWTO details.
+For I2P: See http://127.0.0.1:7657/i2ptunnelmgr for setting up a server tunnel:
+Tunnel Wizard -&gt; Server Tunnel -&gt; Standard -&gt; enter a name -&gt; enter the address and port your RS is using (see Local Address above) -&gt; check 'Auto Start' -&gt; finish!
 
 Once this is done, paste the Onion/I2P (Base32) Address in the box above.
 This is your external address on the Tor/I2P network.
