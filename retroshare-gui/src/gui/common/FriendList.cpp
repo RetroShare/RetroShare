@@ -500,10 +500,6 @@ static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, Elided
         nameLabel = new ElidedLabel(widget);
         textLabel = new ElidedLabel(widget);
 
-        widget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        nameLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        textLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
         widget->setProperty("nameLabel", qVariantFromValue(nameLabel));
         widget->setProperty("textLabel", qVariantFromValue(textLabel));
 
