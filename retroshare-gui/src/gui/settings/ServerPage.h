@@ -25,6 +25,7 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_ServerPage.h"
 #include "RsAutoUpdatePage.h"
+#include <inttypes.h>
 
 class QNetworkReply;
 class QNetworkAccessManager;
@@ -98,7 +99,7 @@ private:
     QNetworkAccessManager *manager ;
 
     bool mIsHiddenNode;
-	u_int32_t mHiddenType;
+	uint32_t mHiddenType;
 };
 
 #endif // !SERVERPAGE_H
