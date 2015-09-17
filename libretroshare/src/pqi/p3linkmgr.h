@@ -40,16 +40,17 @@ class DNSResolver ;
 
 
 /* order of attempts ... */
-const uint32_t RS_NET_CONN_TCP_ALL             = 0x000f;
-const uint32_t RS_NET_CONN_UDP_ALL             = 0x00f0;
+const uint32_t RS_NET_CONN_TCP_ALL             = 0x00ff;
+const uint32_t RS_NET_CONN_UDP_ALL             = 0x0f00;
  
 const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
 const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY = 0x0004;
-const uint32_t RS_NET_CONN_TCP_HIDDEN 	       = 0x0008;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_TOR      = 0x0008;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_I2P      = 0x0010;
 
-const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0010;
-const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0020; /* coming soon */
+const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0100;
+const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0200; /* coming soon */
 
 // These are set in pqipersongroup.
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
@@ -302,7 +303,7 @@ void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, const struc
 void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer, const pqiIpAddrSet &ipAddrs);
 void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t dynPort);
 void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
-void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port);
+void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t type, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port);
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 

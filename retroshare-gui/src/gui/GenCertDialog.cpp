@@ -165,7 +165,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
 	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
-	ui.hiddenaddr_input->setPlaceholderText(tr("[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
+	ui.hiddenaddr_input->setPlaceholderText(tr("[Required] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
 	ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
 	ui.password_input->setPlaceholderText(tr("[Required] This password protects your private PGP key."));
 	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
@@ -458,7 +458,7 @@ void GenCertDialog::genPerson()
 			/* Message Dialog */
 			QMessageBox::warning(this,
 				tr("Invalid hidden node"),
-			tr("Please enter a valid address of the form: 31769173498.onion:7800"),
+			tr("Please enter a valid address of the form: 31769173498.onion:7800 or [52 characters].b32.i2p"),
 			QMessageBox::Ok);
 			return;
 		}

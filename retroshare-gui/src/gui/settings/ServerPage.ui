@@ -11,7 +11,16 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>6</number>
+   </property>
+   <property name="bottomMargin">
     <number>6</number>
    </property>
    <item>
@@ -515,7 +524,7 @@ behind a firewall or a VPN.</string>
          <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="QWidget" name="tabWidgetPage1" native="true">
+         <widget class="QWidget" name="tabWidgetPage1">
           <attribute name="title">
            <string>IP blacklist</string>
           </attribute>
@@ -756,15 +765,15 @@ behind a firewall or a VPN.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TorTAB">
+     <widget class="QWidget" name="HiddenTAB">
       <attribute name="title">
-       <string>Tor Configuration</string>
+       <string>Hidden Service Configuration</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <widget class="QGroupBox" name="torpage_outgoing">
          <property name="title">
-          <string>Outgoing Tor Connections</string>
+          <string>Outgoing Connections</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
@@ -779,10 +788,10 @@ behind a firewall or a VPN.</string>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="torpage_proxyAddress"/>
+               <widget class="QLineEdit" name="hiddenpage_proxyAddress_tor"/>
               </item>
               <item>
-               <widget class="QSpinBox" name="torpage_proxyPort">
+               <widget class="QSpinBox" name="hiddenpage_proxyPort_tor">
                 <property name="minimum">
                  <number>10</number>
                 </property>
@@ -823,15 +832,70 @@ behind a firewall or a VPN.</string>
            </layout>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_17">
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>I2P Socks Proxy</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="hiddenpage_proxyAddress_i2p"/>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="hiddenpage_proxyPort_i2p">
+                <property name="minimum">
+                 <number>10</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_18">
+              <item>
+               <widget class="QLabel" name="iconlabel_i2p_outgoing">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>I2P outgoing Okay</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QPlainTextEdit" name="plainTextEdit">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>100</height>
+              <height>145</height>
              </size>
             </property>
             <property name="verticalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOff</enum>
+             <enum>Qt::ScrollBarAsNeeded</enum>
             </property>
             <property name="readOnly">
              <bool>true</bool>
@@ -839,8 +903,11 @@ behind a firewall or a VPN.</string>
             <property name="plainText">
              <string>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
 
-You can connect to Hidden Nodes, even if you 
-are running a standard Node, so why not setup Tor? </string>
+I2P Socks Proxy: see http://127.0.0.1:7657/i2ptunnelmgr for setting up a client tunnel:
+Tunnel Wizard -&gt; Client Tunnel -&gt; SOCKS 4/4a/5 -&gt; enter a name -&gt; leave 'Outproxies' empty -&gt; enter port (memorize!) [you may also want to set the reachability to 127.0.0.1] -&gt; check 'Auto Start' -&gt; finish!
+Now enter the address (e.g. 127.0.0.1) and the port you've picked before for the I2P Proxy.
+
+You can connect to Hidden Nodes, even if you are running a standard Node, so why not setup Tor and/or I2P?</string>
             </property>
            </widget>
           </item>
@@ -848,7 +915,7 @@ are running a standard Node, so why not setup Tor? </string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="torpage_incoming">
+        <widget class="QGroupBox" name="hiddenpage_incoming">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -856,13 +923,13 @@ are running a standard Node, so why not setup Tor? </string>
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Incoming Tor Connections</string>
+          <string>Incoming Service Connections</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="2">
-             <widget class="QSpinBox" name="torpage_localPort">
+             <widget class="QSpinBox" name="hiddenpage_localPort">
               <property name="minimum">
                <number>10</number>
               </property>
@@ -874,9 +941,9 @@ are running a standard Node, so why not setup Tor? </string>
             <item row="0" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
-               <widget class="QPushButton" name="testIncomingTor_PB">
+               <widget class="QPushButton" name="testIncoming_PB">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your Tor address using the Tor proxy. If your Tor node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your hidden address using the corresponding proxy. If your hidden node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &amp;quot;security warning&amp;quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>Test</string>
@@ -886,7 +953,7 @@ are running a standard Node, so why not setup Tor? </string>
              </layout>
             </item>
             <item row="1" column="2">
-             <widget class="QSpinBox" name="torpage_onionPort">
+             <widget class="QSpinBox" name="hiddenpage_servicePort">
               <property name="minimum">
                <number>10</number>
               </property>
@@ -896,9 +963,9 @@ are running a standard Node, so why not setup Tor? </string>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_11">
+             <widget class="QLabel" name="l_serviceAddress">
               <property name="text">
-               <string>Onion Address</string>
+               <string>Service Address</string>
               </property>
              </widget>
             </item>
@@ -910,23 +977,23 @@ are running a standard Node, so why not setup Tor? </string>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="torpage_onionAddress">
+             <widget class="QLineEdit" name="hiddenpage_serviceAddress">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your hidden address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;[something].b32.i2p. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor. You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;. For I2P: Setup a server tunnel ( http://127.0.0.1:7657/i2ptunnelmgr ) and copy it's base32 address when it is started (should end with .b32.i2p)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="torpage_localAddress">
+             <widget class="QLineEdit" name="hiddenpage_localAddress">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the Tor hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
             <item row="1" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QLabel" name="iconlabel_tor_incoming">
+               <widget class="QLabel" name="iconlabel_service_incoming">
                 <property name="maximumSize">
                  <size>
                   <width>16</width>
@@ -942,9 +1009,9 @@ are running a standard Node, so why not setup Tor? </string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_16">
+               <widget class="QLabel" name="l_incomingTestResult">
                 <property name="text">
-                 <string>Tor incoming  ok</string>
+                 <string>incoming  ok</string>
                 </property>
                </widget>
               </item>
@@ -957,12 +1024,12 @@ are running a standard Node, so why not setup Tor? </string>
             <item>
              <widget class="QLabel" name="label_12">
               <property name="text">
-               <string>Expected torrc Port Configuration:</string>
+               <string>Expected Configuration:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPlainTextEdit" name="torpage_configuration">
+             <widget class="QPlainTextEdit" name="hiddenpage_configuration">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                 <horstretch>0</horstretch>
@@ -988,8 +1055,7 @@ are running a standard Node, so why not setup Tor? </string>
                <bool>true</bool>
               </property>
               <property name="plainText">
-               <string>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
-HiddenServicePort 9191 127.0.0.1:9191</string>
+               <string>Please fill in a service address</string>
               </property>
              </widget>
             </item>
@@ -1013,12 +1079,14 @@ HiddenServicePort 9191 127.0.0.1:9191</string>
              <bool>true</bool>
             </property>
             <property name="plainText">
-             <string>To Receive Connections, you must first setup a Tor Hidden Service. 
-See Tor documentation for HOWTO details.
+             <string>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
+For Tor: See torrc and documentation for HOWTO details.
+For I2P: See http://127.0.0.1:7657/i2ptunnelmgr for setting up a server tunnel:
+Tunnel Wizard -&gt; Server Tunnel -&gt; Standard -&gt; enter a name -&gt; enter the address and port your RS is using (see Local Address above) -&gt; check 'Auto Start' -&gt; finish!
 
-Once this is done, paste the Onion Address in the box above.
-This is your external address on the Tor network.
-Finally make sure that the Ports match the Tor configuration.
+Once this is done, paste the Onion/I2P (Base32) Address in the box above.
+This is your external address on the Tor/I2P network.
+Finally make sure that the Ports match the configuration.
 
 If you have issues connecting over Tor check the Tor logs too.</string>
             </property>

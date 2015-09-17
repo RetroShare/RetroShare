@@ -91,7 +91,36 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 	
 		pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
 	
-		pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TCP, pqisc);
+		/* first select type based on peer */
+		uint32_t typePeer = mPeerMgr->getHiddenType(id);
+		switch (typePeer) {
+		case RS_HIDDEN_TYPE_TOR:
+			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqisc);
+			break;
+		case RS_HIDDEN_TYPE_I2P:
+			pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqisc);
+			break;
+		default:
+			/* peer is not a hidden one but we are */
+			/* select type based on ourselves */
+			uint32_t typeOwn = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
+			switch (typeOwn) {
+			case RS_HIDDEN_TYPE_I2P:
+				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_I2P_TCP, pqisc);
+				break;
+			default:
+				/* this case shouldn't happen! */
+				std::cerr << "pqisslpersongrp::locked_createPerson WARNING INVALID HIDDEN TYPES - THIS SHOULD NOT HAPPEN!" << std::endl;
+				std::cerr << " - ID: " << id << std::endl;
+				std::cerr << " - mPeerMgr->isHidden(): " << mPeerMgr->isHidden() << std::endl;
+				std::cerr << " - mPeerMgr->isHiddenPeer(id): " << mPeerMgr->isHiddenPeer(id) << std::endl;
+				std::cerr << " - hidden types: peer=" << typePeer << " own=" << typeOwn << std::endl;
+				std::cerr << " --> falling back to Tor" << std::endl;
+			case RS_HIDDEN_TYPE_TOR:
+				pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TOR_TCP, pqisc);
+				break;
+			}
+		}
 	}
 	else
 	{	
