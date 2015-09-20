@@ -63,6 +63,14 @@ const uint32_t RS_NETMODE_EXT		= 0x0003;
 const uint32_t RS_NETMODE_HIDDEN	= 0x0004;
 const uint32_t RS_NETMODE_UNREACHABLE	= 0x0005;
 
+/* Hidden Type */
+const uint32_t RS_HIDDEN_TYPE_NONE	= 0x0000;
+const uint32_t RS_HIDDEN_TYPE_UNKNOWN	= 0x0001;
+const uint32_t RS_HIDDEN_TYPE_TOR	= 0x0002;
+const uint32_t RS_HIDDEN_TYPE_I2P	= 0x0004;
+/* mask to match all valid hidden types */
+const uint32_t RS_HIDDEN_TYPE_MASK	= RS_HIDDEN_TYPE_I2P | RS_HIDDEN_TYPE_TOR;
+
 /* Visibility */
 const uint32_t RS_VS_DISC_OFF		= 0x0000;
 const uint32_t RS_VS_DISC_MINIMAL	= 0x0001;
@@ -96,7 +104,8 @@ const uint32_t RS_PEER_CONNECTSTATE_TRYING_UDP        = 3;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TCP     = 4;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UDP     = 5;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TOR     = 6;
-const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_I2P     = 7;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 8;
 
 /* Error codes for certificate cleaning and cert parsing. Numbers should not overlap. */
 
@@ -232,6 +241,7 @@ class RsPeerDetails
 	bool 			isHiddenNode;
 	std::string		hiddenNodeAddress;
 	uint16_t		hiddenNodePort;
+	uint32_t        hiddenType;
 
 	// Filled in for Standard Node.
 	std::string             localAddr;
@@ -350,8 +360,8 @@ class RsPeers
 		virtual	bool setNetworkMode(const RsPeerId &ssl_id, uint32_t netMode) 	= 0;
 		virtual bool setVisState(const RsPeerId &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
 
-        virtual bool getProxyServer(std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
-		virtual bool setProxyServer(const std::string &addr, const uint16_t port) = 0;
+		virtual bool getProxyServer(const uint32_t type, std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
+		virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port) = 0;
 
 		virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 		virtual void allowServerIPDetermination(bool) = 0;

@@ -53,7 +53,7 @@
 //#define SERVER_DEBUG 1
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags), mIsHiddenNode(false)
+	: ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -61,7 +61,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
   connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
-  connect( ui.testIncomingTor_PB, SIGNAL( clicked( ) ), this, SLOT( updateTorInProxyIndicator() ) );
+  connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( updateInProxyIndicator() ) );
 
   manager = NULL ;
 
@@ -105,7 +105,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
 		ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
-	ui.torpage_incoming->setVisible(false);
+	ui.hiddenpage_incoming->setVisible(false);
 
 #ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
@@ -218,6 +218,7 @@ void ServerPage::load()
 
     if (mIsHiddenNode)
     {
+		mHiddenType = detail.hiddenType;
         ui.tabWidget->setTabEnabled(1,false) ;
 		loadHiddenNode();
 		return;
@@ -302,15 +303,20 @@ void ServerPage::load()
 		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
 			ui.ipAddressList->addItem(QString::fromStdString(*it));
 
-	/* TOR PAGE SETTINGS - only Proxy (outgoing) */
+	/* HIDDEN PAGE SETTINGS - only Proxy (outgoing) */
 	std::string proxyaddr;
     uint16_t proxyport;
     uint32_t status ;
-    rsPeers->getProxyServer(proxyaddr, proxyport, status);
-	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
-    ui.torpage_proxyPort -> setValue(proxyport);
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
 
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 }
 
 void ServerPage::toggleAutoIncludeFriends(bool b)
@@ -697,7 +703,7 @@ void ServerPage::updateStatus()
         ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
     // check for Tor
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 }
 
 void ServerPage::toggleUPnP()
@@ -807,17 +813,29 @@ void ServerPage::saveAddresses()
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 
 	// HANDLE PROXY SERVER.
-	std::string orig_proxyaddr;
-    uint16_t orig_proxyport;
-    uint32_t status ;
-    rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport,status);
+	std::string orig_proxyaddr, new_proxyaddr;
+	uint16_t orig_proxyport, new_proxyport;
+	uint32_t status ;
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,status);
 
-	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
-	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
+	new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
 
 	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
 	{
-		rsPeers->setProxyServer(new_proxyaddr, new_proxyport);
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
+	}
+
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, orig_proxyaddr, orig_proxyport,status);
+
+	new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
+	{
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
 	}
 
 	load();
@@ -893,7 +911,7 @@ void ServerPage::loadHiddenNode()
 	ui.label_dynDNS->setVisible(false);
 	ui.dynDNS      ->setVisible(false);
 
-	ui.torpage_incoming->setVisible(true);
+	ui.hiddenpage_incoming->setVisible(true);
 
 	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
@@ -901,7 +919,7 @@ void ServerPage::loadHiddenNode()
 	ui.localPort -> setValue(detail.localPort);
 		/* set the server address */
 
-	ui.extAddress->setText(tr("Hidden - See Tor Config"));
+	ui.extAddress->setText(tr("Hidden - See Config"));
 
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
     ui.showDiscStatusBar->hide() ;	// hidden because not functional at the moment.
@@ -924,32 +942,64 @@ void ServerPage::loadHiddenNode()
 	/* TOR PAGE SETTINGS */
 
 	/* set local address */
-	ui.torpage_localAddress->setEnabled(false);
-	ui.torpage_localAddress->setText(QString::fromStdString(detail.localAddr));
-	ui.torpage_localPort -> setValue(detail.localPort);
+	ui.hiddenpage_localAddress->setEnabled(false);
+	ui.hiddenpage_localAddress->setText(QString::fromStdString(detail.localAddr));
+	ui.hiddenpage_localPort -> setValue(detail.localPort);
 
 	/* set the server address */
-	ui.torpage_onionAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
-	ui.torpage_onionPort -> setValue(detail.hiddenNodePort);
+	ui.hiddenpage_serviceAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
+	ui.hiddenpage_servicePort -> setValue(detail.hiddenNodePort);
+	/* in I2P there is no port - there is only the address */
+	ui.hiddenpage_servicePort->setEnabled(detail.hiddenType != RS_HIDDEN_TYPE_I2P);
 
+	/* out proxy settings */
 	std::string proxyaddr;
-    uint16_t proxyport;
-    uint32_t proxy_state_flags;
-    rsPeers->getProxyServer(proxyaddr, proxyport, proxy_state_flags);
-	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
-	ui.torpage_proxyPort -> setValue(proxyport);
+	uint16_t proxyport;
+	uint32_t status ;
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
 
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 
-	QString expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
-	expected += "HiddenServicePort ";
-	expected += QString::number(detail.hiddenNodePort);
-	expected += " ";
-	expected += QString::fromStdString(detail.localAddr);
-	expected += ":";
-	expected += QString::number(detail.localPort);
+	QString expected = "";
+	switch (mHiddenType) {
+	case RS_HIDDEN_TYPE_I2P:
+		ui.l_serviceAddress->setText(tr("I2P Address"));
+		ui.l_incomingTestResult->setText(tr("I2P incoming ok"));
 
-	ui.torpage_configuration->setPlainText(expected);
+		expected += "http://127.0.0.1:7657/i2ptunnelmgr - I2P Hidden Services\n";
+		expected += tr("Points at: ");
+		expected += QString::fromStdString(detail.localAddr);
+		expected += ":";
+		expected += QString::number(detail.localPort);
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+		ui.l_serviceAddress->setText(tr("Onion Address"));
+		ui.l_incomingTestResult->setText(tr("Tor incoming ok"));
+
+		expected += "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
+		expected += "HiddenServicePort ";
+		expected += QString::number(detail.hiddenNodePort);
+		expected += " ";
+		expected += QString::fromStdString(detail.localAddr);
+		expected += ":";
+		expected += QString::number(detail.localPort);
+		break;
+	default:
+		ui.l_serviceAddress->setText(tr("Service Address"));
+		ui.l_incomingTestResult->setText(tr("incoming ok"));
+
+		expected += "Please fill in a service address";
+
+		break;
+	}
+	ui.hiddenpage_configuration->setPlainText(expected);
 }
 
 /** Loads the settings for this page */
@@ -1005,7 +1055,7 @@ void ServerPage::updateStatusHiddenNode()
 
 #endif
 
-    updateTorOutProxyIndicator();
+	updateOutProxyIndicator();
 }
 
 void ServerPage::saveAddressesHiddenNode()
@@ -1036,41 +1086,54 @@ void ServerPage::saveAddressesHiddenNode()
 	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
 		rsPeers->setVisState(ownId, vs_disc, vs_dht);
 
-	if (detail.localPort != ui.torpage_localPort->value())
+	if (detail.localPort != ui.hiddenpage_localPort->value())
 	{
 		// Set Local Address - force to 127.0.0.1
-		rsPeers->setLocalAddress(ownId, "127.0.0.1", ui.torpage_localPort->value());
+		rsPeers->setLocalAddress(ownId, "127.0.0.1", ui.hiddenpage_localPort->value());
 	}
 
-	std::string hiddenAddr = ui.torpage_onionAddress->text().toStdString();
-	uint16_t    hiddenPort = ui.torpage_onionPort->value();
+	std::string hiddenAddr = ui.hiddenpage_serviceAddress->text().toStdString();
+	uint16_t    hiddenPort = ui.hiddenpage_servicePort->value();
 	if ((hiddenAddr != detail.hiddenNodeAddress) || (hiddenPort != detail.hiddenNodePort))
 	{
 		rsPeers->setHiddenNode(ownId, hiddenAddr, hiddenPort);
 	}
 
 	// HANDLE PROXY SERVER.
-	std::string orig_proxyaddr;
-    uint16_t orig_proxyport;
-    uint32_t state_flags ;
-    rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport,state_flags);
+	std::string orig_proxyaddr,new_proxyaddr;
+	uint16_t orig_proxyport, new_proxyport;
+	uint32_t status ;
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,status);
 
-	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
-	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
+	new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
 
 	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
 	{
-		rsPeers->setProxyServer(new_proxyaddr, new_proxyport);
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
+	}
+
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, orig_proxyaddr, orig_proxyport,status);
+
+	new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
+	{
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
 	}
 
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 	load();
 }
-void ServerPage::updateTorOutProxyIndicator()
+void ServerPage::updateOutProxyIndicator()
 {
     QTcpSocket socket ;
-    socket.connectToHost(ui.torpage_proxyAddress->text(),ui.torpage_proxyPort->text().toInt());
 
+	// Tor
+	socket.connectToHost(ui.hiddenpage_proxyAddress_tor->text(),ui.hiddenpage_proxyPort_tor->text().toInt());
     if(socket.waitForConnected(500))
     {
         socket.disconnectFromHost();
@@ -1082,25 +1145,23 @@ void ServerPage::updateTorOutProxyIndicator()
         ui.iconlabel_tor_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
         ui.iconlabel_tor_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
     }
-}
-void ServerPage::updateLocInProxyIndicator()
-{
-    QTcpSocket socket ;
-    socket.connectToHost(ui.torpage_localAddress->text(),ui.torpage_localPort->text().toInt());
 
-    if(socket.waitForConnected(1000))
-    {
-        socket.disconnectFromHost();
-        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through Tor.")) ;
-    }
-    else
-    {
-        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("Tor proxy is not enabled or broken.\nAre you running a Tor hidden service?\nCheck your ports!")) ;
-    }
+	// I2P
+	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p->text(),ui.hiddenpage_proxyPort_i2p->text().toInt());
+	if(socket.waitForConnected(500))
+	{
+		socket.disconnectFromHost();
+		ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+		ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+	}
+	else
+	{
+		ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+		ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+	}
 }
-void ServerPage::updateTorInProxyIndicator()
+
+void ServerPage::updateInProxyIndicator()
 {
     // need to find a proper way to do this
 
@@ -1113,21 +1174,31 @@ void ServerPage::updateTorInProxyIndicator()
     QNetworkProxy proxy ;
 
     proxy.setType(QNetworkProxy::Socks5Proxy);
-    proxy.setHostName(ui.torpage_proxyAddress->text());
-    proxy.setPort(ui.torpage_proxyPort->text().toInt());
+	switch (mHiddenType) {
+	case RS_HIDDEN_TYPE_I2P:
+		proxy.setHostName(ui.hiddenpage_proxyAddress_i2p->text());
+		proxy.setPort(ui.hiddenpage_proxyPort_i2p->text().toInt());
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+		proxy.setHostName(ui.hiddenpage_proxyAddress_tor->text());
+		proxy.setPort(ui.hiddenpage_proxyPort_tor->text().toInt());
+		break;
+	default:
+		return;
+	}
     proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
-        //ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        //ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
-        QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
-        ui.iconlabel_tor_incoming->setMovie(movie);
-    movie->start() ;
+	//ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+	//ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
+	QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
+	ui.iconlabel_service_incoming->setMovie(movie);
+	movie->start() ;
 
     QNetworkProxy::setApplicationProxy(proxy) ;
 
-                 QUrl url("https://"+ui.torpage_onionAddress->text() + ":" + ui.torpage_onionPort->text()) ;
+	QUrl url("https://"+ui.hiddenpage_serviceAddress->text() + ":" + ui.hiddenpage_servicePort->text()) ;
 
-    std::cerr << "Setting proxy hostname+port to " << std::dec << ui.torpage_proxyAddress->text().toStdString() << ":" << ui.torpage_proxyPort->text().toInt() << std::endl;
+	std::cerr << "Setting proxy hostname+port to " << std::dec << ui.hiddenpage_proxyAddress_tor->text().toStdString() << ":" << ui.hiddenpage_proxyPort_tor->text().toInt() << std::endl;
     std::cerr << "Connecting to " << url.toString().toStdString() << std::endl;
 
     connect(manager, SIGNAL(finished(QNetworkReply*)),this,SLOT(handleNetworkReply(QNetworkReply*))) ;
@@ -1143,8 +1214,8 @@ void ServerPage::handleNetworkReply(QNetworkReply *reply)
     if(reply->isOpen() &&  error == QNetworkReply::SslHandshakeFailedError)
     {
         std::cerr <<"Connected!" << std::endl;
-        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("You are reachable through Tor.")) ;
+		ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+		ui.iconlabel_service_incoming->setToolTip(tr("You are reachable through the hidden service.")) ;
         //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_OK)) ;
     }
     else
@@ -1152,8 +1223,8 @@ void ServerPage::handleNetworkReply(QNetworkReply *reply)
         std::cerr <<"Failed!" << std::endl;
 
         //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-        ui.iconlabel_tor_incoming->setToolTip(tr("Tor proxy is not enabled or broken.\nAre you running a Tor hidden service?\nCheck your ports!")) ;
+		ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+		ui.iconlabel_service_incoming->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
     }
 
     reply->close();

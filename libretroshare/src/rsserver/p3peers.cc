@@ -313,6 +313,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.isHiddenNode = true;
 		d.hiddenNodeAddress = ps.hiddenDomain;
 		d.hiddenNodePort = ps.hiddenPort;
+		d.hiddenType = ps.hiddenType;
 		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 		d.localPort	= sockaddr_storage_port(ps.localaddr);
 		d.extAddr = "hidden";
@@ -324,6 +325,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.isHiddenNode = false;
 		d.hiddenNodeAddress = "";
 		d.hiddenNodePort = 0;
+		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
 		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 		d.localPort	= sockaddr_storage_port(ps.localaddr);
@@ -435,20 +437,79 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
     {
-        if(isProxyAddress(pcs.connectaddr) || mPeerMgr->isHidden())
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
-        else if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
-        }
-        else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
-        }
-        else
-        {
-            d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
-        }
+		/* peer is connected - determine how and set proper connectState */
+		if(mPeerMgr->isHidden())
+		{
+			uint32_t type;
+			/* hidden location */
+			/* use connection direction to determine connection type */
+			if(pcs.actAsServer)
+			{
+				/* incoming connection */
+				/* use own type to set connectState */
+				type = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
+				switch (type) {
+				case RS_HIDDEN_TYPE_TOR:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+					break;
+				case RS_HIDDEN_TYPE_I2P:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+					break;
+				default:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+					break;
+				}
+			}
+			else
+			{
+				/* outgoing connection */
+				/* use peer hidden type to set connectState */
+				switch (ps.hiddenType) {
+				case RS_HIDDEN_TYPE_TOR:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+					break;
+				case RS_HIDDEN_TYPE_I2P:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+					break;
+				default:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+					break;
+				}
+			}
+		}
+		else if (ps.hiddenType & RS_HIDDEN_TYPE_MASK)
+		{
+			/* hidden peer */
+			/* use hidden type to set connectState */
+			switch (ps.hiddenType) {
+			case RS_HIDDEN_TYPE_TOR:
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+				break;
+			case RS_HIDDEN_TYPE_I2P:
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+				break;
+			default:
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+				break;
+			}
+		}
+		else
+		{
+			/* peer and we are normal nodes */
+			/* use normal detection to set connectState */
+			if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
+			}
+			else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
+			}
+			else
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+			}
+		}
     }
 
 	d.wasDeniedConnection = pcs.wasDeniedConnection;
@@ -457,13 +518,13 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	return true;
 }
 
-bool p3Peers::isProxyAddress(const sockaddr_storage& addr)
+bool p3Peers::isProxyAddress(const uint32_t type, const sockaddr_storage& addr)
 {
     uint16_t port ;
     std::string string_addr;
-   uint32_t status ;
+	uint32_t status ;
 
-    if(!getProxyServer(string_addr, port, status))
+	if(!getProxyServer(type, string_addr, port, status))
         return false ;
 
     return sockaddr_storage_iptostring(addr)==string_addr && sockaddr_storage_port(addr)==port ;
@@ -923,21 +984,21 @@ bool p3Peers::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 	return mPeerMgr->setVisState(id, vs_disc, vs_dht);
 }
 
-bool p3Peers::getProxyServer(std::string &addr, uint16_t &port, uint32_t &status)
+bool p3Peers::getProxyServer(const uint32_t type, std::string &addr, uint16_t &port, uint32_t &status)
 {
 	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getProxyServer()" << std::endl;
     #endif
 
 	struct sockaddr_storage proxy_addr;
-	mPeerMgr->getProxyServerAddress(proxy_addr);
+	mPeerMgr->getProxyServerAddress(type, proxy_addr);
 	addr = sockaddr_storage_iptostring(proxy_addr);
 	port = sockaddr_storage_port(proxy_addr);
-    mPeerMgr->getProxyServerStatus(status);
+	mPeerMgr->getProxyServerStatus(type, status);
     return true;
 }
 
-bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
+bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, const uint16_t port)
 {
 	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setProxyServer() " << std::endl;
@@ -958,7 +1019,7 @@ bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 	{
-		return mPeerMgr->setProxyServerAddress(addr);
+		return mPeerMgr->setProxyServerAddress(type, addr);
 	}
 	else
 	{
@@ -1107,6 +1168,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 			{
 				pd.hiddenNodeAddress = domain;
 				pd.hiddenNodePort = port;
+				pd.hiddenType = mPeerMgr->hiddenDomainToHiddenType(domain);
 			}
 		}
 		else
@@ -1311,7 +1373,7 @@ RsPeerDetails::RsPeerDetails()
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
 	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
-	wasDeniedConnection(false), deniedTS(0)
+	wasDeniedConnection(false), deniedTS(0), hiddenType(RS_HIDDEN_TYPE_NONE)
 {
 }
 
