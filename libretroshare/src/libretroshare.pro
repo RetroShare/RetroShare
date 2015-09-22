@@ -139,7 +139,10 @@ linux-* {
 				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
 			}
 		} else {
-			PKGCONFIG *= sqlcipher
+			# Workaround for broken sqlcipher packages, e.g. Ubuntu 14.04
+			# https://bugs.launchpad.net/ubuntu/+source/sqlcipher/+bug/1493928
+			# PKGCONFIG *= sqlcipher
+			LIBS *= -lsqlcipher
 		}
 	}
 
