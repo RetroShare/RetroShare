@@ -4,7 +4,6 @@
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
 #include "rsaccounts.h"
-
 #if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <gnome-keyring-1/gnome-keyring.h>
 
@@ -145,8 +144,9 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 
 	void *passwordData = NULL;
 	UInt32 passwordLength = 0;
-	const char *userId = ssl_id.c_str();
-	UInt32 uidLength = strlen(ssl_id.c_str());
+        std::string idtemp = ssl_id.toStdString();
+        const char *userId = idtemp.c_str();
+        UInt32 uidLength = strlen(userId);
 	SecKeychainItemRef itemRef = NULL;
 
 	OSStatus status = SecKeychainFindGenericPassword (
@@ -381,8 +381,9 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 
 	const void *password = ssl_passwd.c_str();
 	UInt32 passwordLength = strlen(ssl_passwd.c_str());
-	const char *userid = ssl_id.c_str();
-	UInt32 uidLength = strlen(ssl_id.c_str());
+	std::string idtemp = ssl_id.toStdString();
+	const char *userid = idtemp.c_str();
+	UInt32 uidLength = strlen(userid);
 
 	OSStatus status = SecKeychainAddGenericPassword (
 			NULL,            // default keychain
@@ -540,8 +541,9 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 
 	void *passwordData = NULL;
 	UInt32 passwordLength = 0;
-	const char *userId = ssl_id.c_str();
-	UInt32 uidLength = strlen(ssl_id.c_str());
+        std::string idtemp = ssl_id.toStdString();
+        const char *userId = idtemp.c_str();
+        UInt32 uidLength = strlen(userId);
 	SecKeychainItemRef itemRef = NULL;
 
 	OSStatus status = SecKeychainFindGenericPassword (

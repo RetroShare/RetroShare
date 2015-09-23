@@ -266,18 +266,18 @@ mac {
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-                #DEFINES *= MINIUPNPC_VERSION=13
+                DEFINES *= MINIUPNPC_VERSION=13
 
 		CONFIG += upnp_miniupnpc
 
 		# zeroconf disabled at the end of libretroshare.pro (but need the code)
-		CONFIG += zeroconf
-		CONFIG += zcnatassist
+		#CONFIG += zeroconf
+		#CONFIG += zcnatassist
 
 		# Beautiful Hack to fix 64bit file access.
                 QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
 
-                UPNPC_DIR = ../../../miniupnpc-1.0
+                UPNPC_DIR = ../../../miniupnpc-1.3
 		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
