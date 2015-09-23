@@ -22,6 +22,20 @@
 #include <miniupnpc/upnpcommands.h>
 #include <miniupnpc/upnperrors.h>
 
+//Define this variable follow the date of used MiniUPnP Library
+//#define MINIUPNPC_API_VERSION	-3
+#ifndef MINIUPNPC_API_VERSION
+#error MINIUPNPC_API_VERSION is not defined. You may define one follow miniupnpc library version
+	//2006/09/04 to 2007/10/01 => -7//Start return struct UPNPDev * for upnpDiscover
+	//2007/10/16 => -6 upnpDiscover
+	//2007/12/19 => -5 upnpDiscover
+	//2008/09/25 => -4 upnpDiscover
+	//2009/04/17 => -3 UPNP_AddPortMapping
+	//2010/12/09 => -2 //struct IGDdatas_service CIF;
+	//2011/02/15 => -1 UPNP_AddPortMapping
+	//2011/03/14 => 6 //Start of MINIUPNPC_API_VERSION
+#endif//>=-7
+
 /* Ensure linking names are okay on OSX platform. (C interface) */
 
 #ifdef  __cplusplus
