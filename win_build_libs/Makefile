@@ -201,6 +201,9 @@ ffmpeg: ffmpeg-$(FFMPEG_VERSION).tar.gz
 	mkdir -p libs/include/libavutil && cp -r ffmpeg-$(FFMPEG_VERSION)/libavutil/*.h libs/include/libavutil/
 	cp -r ffmpeg-$(FFMPEG_VERSION)/libavutil/*.a libs/lib/
 	cp -r ffmpeg-$(FFMPEG_VERSION)/libavutil/*.dll libs/bin/
+	mkdir -p libs/include/libswresample && cp -r ffmpeg-$(FFMPEG_VERSION)/libswresample/*.h libs/include/libswresample/
+	cp -r ffmpeg-$(FFMPEG_VERSION)/libswresample/*.a libs/lib/
+	cp -r ffmpeg-$(FFMPEG_VERSION)/libswresample/*.dll libs/bin/
 	rm -r -f ffmpeg-$(FFMPEG_VERSION)
 	touch ffmpeg
 
