@@ -17,9 +17,9 @@
 #include <winsock2.h>
 #define snprintf _snprintf
 #endif
-#include <miniwget.h>
-#include <miniupnpc.h>
-#include <upnpcommands.h>
+#include <miniupnpc/miniwget.h>
+#include <miniupnpc/miniupnpc.h>
+#include <miniupnpc/upnpcommands.h>
 
 /* Ensure linking names are okay on OSX platform. (C interface) */
 

@@ -253,10 +253,8 @@ win32 {
 
 	LIBS += -lsqlcipher
 
-	LIBS_DIR = $$PWD/../../../libs
-
-	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
-	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 ################################# MacOSX ##########################################

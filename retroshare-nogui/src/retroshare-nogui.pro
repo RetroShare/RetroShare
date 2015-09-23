@@ -72,22 +72,20 @@ win32 {
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
 
-	LIBS_DIR = $$PWD/../../../libs
-
-	LIBS += -L"$$LIBS_DIR/lib"
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 	LIBS += -lcrypto -lws2_32 -lgdi32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32
 	LIBS += -lole32 -lwinmm
 
-	PROTOCPATH=$$LIBS_DIR/bin/
+	PROTOCPATH=$$BIN_DIR
 
 	RC_FILE = resources/retroshare_win.rc
 
 	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
 
-	DEPENDPATH += $$LIBS_DIR/include
-	INCLUDEPATH += $$LIBS_DIR/include
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 ##################################### MacOS ######################################
