@@ -20,6 +20,7 @@
 #include <miniupnpc/miniwget.h>
 #include <miniupnpc/miniupnpc.h>
 #include <miniupnpc/upnpcommands.h>
+#include <miniupnpc/upnperrors.h>
 
 /* Ensure linking names are okay on OSX platform. (C interface) */
 
@@ -41,11 +42,14 @@ void ListRedirections(struct UPNPUrls * urls,
                       struct IGDdatas * data);
 
 int SetRedirectAndTest(struct UPNPUrls * urls,
-                               struct IGDdatas * data,
-				const char * iaddr,
-				const char * iport,
-				const char * eport,
-                       		const char * proto);
+                       struct IGDdatas * data,
+                       const char * iaddr,
+                       const char * iport,
+                       const char * eport,
+                       const char * proto,
+                       const char *leaseDuration,
+                       const char *description,
+                       int addAny);
 
 int TestRedirect(struct UPNPUrls * urls,
                                struct IGDdatas * data,
