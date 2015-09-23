@@ -160,7 +160,7 @@ void RsGenExchange::tick()
 	// Meta Changes should happen first.
 	// This is important, as services want to change Meta, then get results.
 	// Services shouldn't rely on this ordering - but some do.
-    processGrpMetaChanges();
+	processGrpMetaChanges();
 	processMsgMetaChanges();
 
 	mDataAccess->processRequests();
@@ -173,9 +173,9 @@ void RsGenExchange::tick()
 
 	processGroupDelete();
 
-    processRecvdData();
+	processRecvdData();
 
-    processRoutingClues() ;
+	processRoutingClues() ;
 
 	if(!mNotifications.empty())
 	{

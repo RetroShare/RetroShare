@@ -406,6 +406,147 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
 
 bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
 {
+    // encrypting for a single security key. This is a proxy function.
+    
+    return encrypt(out,outlen,in,inlen,std::vector<RsTlvSecurityKey>(1,key)) ;
+}
+
+#ifdef TODO
+bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "GxsSecurity::encrypt() " << std::endl;
+#endif
+
+    if(keys.empty())
+        return false ;
+    
+    // prepare an array of encrypted keys ek and public keys puk
+    
+    unsigned char **  ek = new unsigned char *[keys.size()] ;
+    EVP_PKEY      **pubk = new EVP_PKEY      *[keys.size()] ;
+    int            * ekl = new int            [keys.size()] ;
+            
+    memset(ek  ,0,keys.size()*sizeof(unsigned char *)) ;
+    memset(pubk,0,keys.size()*sizeof(EVP_PKEY      *)) ;
+    memset(ekl ,0,keys.size()*sizeof(int            )) ;
+    
+    try
+    {
+	    for(uint32_t i=0;i<keys.size();++i)
+	    {
+		    RSA *tmpkey = ::extractPublicKey(keys[i]) ;
+		    RSA *rsa_publish_pub = RSAPublicKey_dup(tmpkey) ;
+		    RSA_free(tmpkey) ;
+
+		    if(rsa_publish_pub  == NULL)
+			    throw std::runtime_error("Wrong key in input key table. Cannot extract public key.") ;
+
+		    pubk[i] = EVP_PKEY_new();
+		    EVP_PKEY_assign_RSA(pubk[i], rsa_publish_pub);
+
+		    int max_evp_key_size = EVP_PKEY_size(pubk[i]);
+
+		    ek [i] = (unsigned char*)malloc(max_evp_key_size);
+		    ekl[i] = max_evp_key_size ;
+            
+            	    total_ekl += max_evp_key_size ;
+	    }
+
+	    EVP_CIPHER_CTX ctx;
+	    EVP_CIPHER_CTX_init(&ctx);
+
+	    unsigned char iv[EVP_MAX_IV_LENGTH];
+
+	    const EVP_CIPHER *cipher = EVP_aes_128_cbc();
+
+	    // intialize context and send store encrypted cipher key in ek
+        
+	    if(!EVP_SealInit(&ctx, cipher, ek, ekl, iv, pubk, keys.size())) 
+		    throw std::runtime_error("Error in EVP_SealInit. Cannot init encryption. Something's wrong.") ;
+
+            // now paste all encrypted keys into the output buffer
+        
+	    for(uint32_t i=0;i<keys.size();++i)
+	    {
+	    }
+        
+	    int eklen, net_ekl;
+	    int out_currOffset = 0;
+	    int out_offset = 0;
+
+	    int size_net_ekl = sizeof(net_ekl);
+
+	    int cipher_block_size = EVP_CIPHER_block_size(cipher);
+	    int max_outlen = inlen + cipher_block_size + EVP_MAX_IV_LENGTH + max_evp_key_size + size_net_ekl;
+
+
+	    // now assign memory to out accounting for data, and cipher block size, key length, and key length val
+        
+	    out = (uint8_t*)malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
+
+	    if(out == NULL)
+	{
+		std::cerr << "Malloc error for size " << inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH << std::endl;
+		throw std::runtime_error("GxsSecurity::encrypt(): cannot allocate memory") ;
+	}
+
+	    net_ekl = htonl(eklen);
+	    memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
+	    out_offset += size_net_ekl;
+
+	    memcpy((unsigned char*)out + out_offset, ek, eklen);
+	    out_offset += eklen;
+
+	    memcpy((unsigned char*)out + out_offset, iv, EVP_MAX_IV_LENGTH);
+	    out_offset += EVP_MAX_IV_LENGTH;
+
+	    // now encrypt actual data
+	    if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) 
+	    {
+		    free(out) ;
+		    out = NULL ;
+		    return false;
+	    }
+
+	    // move along to partial block space
+	    out_offset += out_currOffset;
+
+	    // add padding
+	    if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) 
+	    {
+		    free(out) ;
+		    out = NULL ;
+		    return false;
+	    }
+
+	    // move to end
+	    out_offset += out_currOffset;
+
+	    // make sure offset has not gone passed valid memory bounds
+	    if(out_offset > max_outlen) 
+	    {
+		    free(out) ;
+		    out = NULL ;
+		    return false;
+	    }
+
+	    // free encrypted key data
+	    free(ek);
+
+	    outlen = out_offset;
+	    return true;
+    }
+    catch(std::exception& e)
+    {
+            std::cerr << "(EE) GxsSecurity::encrypt(): ERROR: " << e.what() << std::endl;
+            return false ;
+    }
+}
+#endif
+
+bool GxsSecurity::encrypt_single(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
+{
 #ifdef DISTRIB_DEBUG
 	std::cerr << "GxsSecurity::encrypt() " << std::endl;
 #endif
