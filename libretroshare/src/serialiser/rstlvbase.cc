@@ -523,9 +523,9 @@ static bool readHex(char s1,char s2,uint8_t& v)
 
 static bool find_decoded_string(const std::string& in,const std::string& suspicious_string)
 {
-    int ss_pointer = 0 ;
+    uint32_t ss_pointer = 0 ;
             
-    for(int i=0;i<in.length();++i)
+    for(uint32_t i=0;i<in.length();++i)
     {
         uint8_t hexv ;
         char next_char ;

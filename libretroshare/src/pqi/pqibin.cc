@@ -544,7 +544,7 @@ int NetBinDummy::connect(const struct sockaddr_storage &raddr)
 		std::cerr << std::endl; 
 		if (parent())
 		{
-			struct sockaddr_storage addr = raddr;
+			//struct sockaddr_storage addr = raddr;
 			parent()->notifyEvent(this, CONNECT_FAILED, raddr);
 		}
 	}
