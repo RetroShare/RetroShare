@@ -696,9 +696,9 @@ void p3NetMgrIMPL::netExtCheck()
 		bool isStable = false;
 		struct sockaddr_storage tmpip ;
 
-        std::map<sockaddr_storage,ZeroInt> address_votes ;
+		std::map<sockaddr_storage,ZeroInt> address_votes ;
 
-        /* check for External Address */
+		/* check for External Address */
 		/* in order of importance */
 		/* (1) UPnP -> which handles itself */
 		{
@@ -708,35 +708,41 @@ void p3NetMgrIMPL::netExtCheck()
 
 			/* net Assist */
 			if (netAssistExtAddress(tmpip))
-            {
+			{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-                std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied from netAssistExternalAddress()" << std::endl;
+				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied from netAssistExternalAddress()" << std::endl;
 #endif
-                if(sockaddr_storage_isValidNet(tmpip))
-                {
-                    if(rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
-                    {
-                        // must be stable???
-                        isStable = true;
-                        mNetFlags.mExtAddr = tmpip;
-                        mNetFlags.mExtAddrOk = true;
-                        mNetFlags.mExtAddrStableOk = isStable;
+				if(sockaddr_storage_isValidNet(tmpip))
+				{
+					if(rsBanList->isAddressAccepted(tmpip,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					{
+						// must be stable???
+						isStable = true;
+						//mNetFlags.mExtAddr = tmpip;
+						mNetFlags.mExtAddrOk = true;
+						mNetFlags.mExtAddrStableOk = isStable;
 
-                        address_votes[tmpip].n++ ;
-                    }
-                    else
-                        std::cerr << "(SS) netAssisExternalAddress returned wrong own IP " << sockaddr_storage_iptostring(tmpip) << " (banned). Rejecting." << std::endl;
-                }
+						address_votes[tmpip].n++ ;
+                        
+						std::cerr << "NetAssistAddress reported external address " << sockaddr_storage_iptostring(tmpip) << std::endl;
+					}
+					else
+						std::cerr << "(SS) netAssisExternalAddress returned banned own IP " << sockaddr_storage_iptostring(tmpip) << " (banned). Rejecting." << std::endl;
+				}
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-                else
-                {
-                    std::cerr << "p3NetMgrIMPL::netExtCheck() Bad Address supplied from netAssistExternalAddress()" << std::endl;
-                }
+				else
+				{
+					std::cerr << "p3NetMgrIMPL::netExtCheck() Bad Address supplied from netAssistExternalAddress()" << std::endl;
+				}
 #endif
-            }
+			}
 
 		}
 
+#ifdef ALLOW_DHT_STUNNER
+        // (cyril) I disabled this because it's pretty dangerous. The DHT can report a wrong address quite easily
+        // if the other DHT peers are not collaborating.
+        
 		/* Next ask the DhtStunner */
 		{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
@@ -748,30 +754,31 @@ void p3NetMgrIMPL::netExtCheck()
 
 			if (mDhtStunner)
 			{
-        			/* input network bits */
-                    if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
-                {
-                    if(rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
-                    {
-                        // must be stable???
-                        isStable = (isstable == 1);
-                        mNetFlags.mExtAddr = tmpaddr;
-                        mNetFlags.mExtAddrOk = true;
-                        mNetFlags.mExtAddrStableOk = isStable;
+				/* input network bits */
+				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
+				{
+					if(rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					{
+						// must be stable???
+						isStable = (isstable == 1);
+						//mNetFlags.mExtAddr = tmpaddr;
+						mNetFlags.mExtAddrOk = true;
+						mNetFlags.mExtAddrStableOk = isStable;
 
-                        address_votes[tmpaddr].n++ ;
+						address_votes[tmpaddr].n++ ;
 #ifdef	NETMGR_DEBUG_STATEBOX
-                        std::cerr << "p3NetMgrIMPL::netExtCheck() From DhtStunner: ";
-                        std::cerr << sockaddr_storage_tostring(tmpaddr);
-                        std::cerr << " Stable: " << (uint32_t) isstable;
-                        std::cerr << std::endl;
+						std::cerr << "p3NetMgrIMPL::netExtCheck() From DhtStunner: ";
+						std::cerr << sockaddr_storage_tostring(tmpaddr);
+						std::cerr << " Stable: " << (uint32_t) isstable;
+						std::cerr << std::endl;
 #endif
-                    }
-                    else
-                        std::cerr << "(SS) DHTStunner returned wrong own IP " << sockaddr_storage_iptostring(tmpaddr) << " (banned). Rejecting." << std::endl;
-                }
+					}
+					else
+						std::cerr << "(SS) DHTStunner returned wrong own IP " << sockaddr_storage_iptostring(tmpaddr) << " (banned). Rejecting." << std::endl;
+				}
 			}
 		}
+#endif
 
 		/* otherwise ask ExtAddrFinder */
 		{
@@ -782,119 +789,159 @@ void p3NetMgrIMPL::netExtCheck()
 				std::cerr << "p3NetMgrIMPL::netExtCheck() checking ExtAddrFinder" << std::endl;
 #endif
 				bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
-                if (extFinderOk)
+				if (extFinderOk)
 				{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 					std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
 #endif
 					/* best guess at port */
 					sockaddr_storage_setport(tmpip, sockaddr_storage_port(mLocalAddr));
-					
+
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 					std::cerr << "p3NetMgrIMPL::netExtCheck() ";
 					std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
 					std::cerr << std::endl;
 #endif
 
-					mNetFlags.mExtAddr = tmpip;
+					//mNetFlags.mExtAddr = tmpip;
 					mNetFlags.mExtAddrOk = true;
 
-                    address_votes[tmpip].n++ ;
+					address_votes[tmpip].n++ ;
 
 					/* XXX HACK TO FIX */
 #warning "ALLOWING ExtAddrFinder -> ExtAddrStableOk = true (which it is not normally)"
 					mNetFlags.mExtAddrStableOk = true;
+                    
+		    std::cerr << "ExtAddrFinder reported external address " << sockaddr_storage_iptostring(tmpip) << std::endl;
 
 				}
 			}
 		}
-				
-		/* any other sources ??? */
+        
+        	/* also ask peer mgr. */
 		
+		if (mPeerMgr)
+		{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+			std::cerr << "p3NetMgrIMPL::netExtCheck() checking mPeerMgr" << std::endl;
+#endif
+            		uint8_t isstable ;	// unused
+                    	sockaddr_storage tmpaddr ;
+
+			if (mPeerMgr->getExtAddressReportedByFriends(tmpaddr, isstable))
+			{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+#endif
+				/* best guess at port */
+				sockaddr_storage_setport(tmpaddr, sockaddr_storage_port(mLocalAddr));
+
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+				std::cerr << "p3NetMgrIMPL::netExtCheck() ";
+				std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
+				std::cerr << std::endl;
+#endif
+
+				//mNetFlags.mExtAddr = tmpaddr;
+				mNetFlags.mExtAddrOk = true;
+				mNetFlags.mExtAddrStableOk = isstable;
+
+				address_votes[tmpaddr].n++ ;
+                
+		    std::cerr << "PeerMgr reported external address " << sockaddr_storage_iptostring(tmpaddr) << std::endl;
+			}
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+	    else
+                std::cerr << "  No reliable address returned." << std::endl;
+#endif
+		}
+        
+		/* any other sources ??? */
+
 		/* finalise address */
 		if (mNetFlags.mExtAddrOk)
-        {
-            // look at votes.
+		{
+			// look at votes.
 
-            std::cerr << "Figuring out ext addr from voting:" << std::endl;
-            uint32_t admax = 0 ;
+			std::cerr << "Figuring out ext addr from voting:" << std::endl;
+			uint32_t admax = 0 ;
 
-            for(std::map<sockaddr_storage,ZeroInt>::const_iterator it(address_votes.begin());it!=address_votes.end();++it)
-            {
-                std::cerr << "  Vote: " << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << " votes." ;
+			for(std::map<sockaddr_storage,ZeroInt>::const_iterator it(address_votes.begin());it!=address_votes.end();++it)
+			{
+				std::cerr << "  Vote: " << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << " votes." ;
 
-                if(it->second.n > admax)
-                {
-                    mNetFlags.mExtAddr = it->first ;
-                    admax = it->second.n ;
+				if(it->second.n > admax)
+				{
+					mNetFlags.mExtAddr = it->first ;
+					admax = it->second.n ;
 
-                    std::cerr << " Kept!" << std::endl;
-                }
-                else
-                    std::cerr << " Discarded." << std::endl;
-            }
-
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-            std::cerr << "p3NetMgrIMPL::netExtCheck() ";
-            std::cerr << "ExtAddr: " << sockaddr_storage_tostring(mNetFlags.mExtAddr);
-            std::cerr << std::endl;
-#endif
-            //update ip address list
-            mExtAddr = mNetFlags.mExtAddr;
-
-            mNetStatus = RS_NET_DONE;
-            netSetupDone = true;
+					std::cerr << " Kept!" << std::endl;
+				}
+				else
+					std::cerr << " Discarded." << std::endl;
+			}
 
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-            std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Ok: RS_NET_DONE" << std::endl;
+			std::cerr << "p3NetMgrIMPL::netExtCheck() ";
+			std::cerr << "ExtAddr: " << sockaddr_storage_tostring(mNetFlags.mExtAddr);
+			std::cerr << std::endl;
 #endif
+			//update ip address list
+			mExtAddr = mNetFlags.mExtAddr;
 
+			mNetStatus = RS_NET_DONE;
+			netSetupDone = true;
 
-
-            if (!mNetFlags.mExtAddrStableOk)
-            {
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-                std::cerr << "p3NetMgrIMPL::netUdpCheck() UDP Unstable :( ";
-                std::cerr <<  std::endl;
-                std::cerr << "p3NetMgrIMPL::netUdpCheck() We are unreachable";
-                std::cerr <<  std::endl;
-                std::cerr << "netMode =>  RS_NET_MODE_UNREACHABLE";
-                std::cerr <<  std::endl;
+			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Ok: RS_NET_DONE" << std::endl;
 #endif
 
-                // Due to the new UDP connections - we can still connect some of the time!
-                // So limit warning!
 
-                //mNetMode &= ~(RS_NET_MODE_ACTUAL);
-                //mNetMode |= RS_NET_MODE_UNREACHABLE;
 
-                /* send a system warning message */
-                //pqiNotify *notify = getPqiNotify();
-                //if (notify)
-                {
-                    std::string title =
-                                    "Warning: Bad Firewall Configuration";
+			if (!mNetFlags.mExtAddrStableOk)
+			{
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+				std::cerr << "p3NetMgrIMPL::netUdpCheck() UDP Unstable :( ";
+				std::cerr <<  std::endl;
+				std::cerr << "p3NetMgrIMPL::netUdpCheck() We are unreachable";
+				std::cerr <<  std::endl;
+				std::cerr << "netMode =>  RS_NET_MODE_UNREACHABLE";
+				std::cerr <<  std::endl;
+#endif
 
-                    std::string msg;
-                    msg +=  "               **** WARNING ****     \n";
-                    msg +=  "Retroshare has detected that you are behind";
-                    msg +=  " a restrictive Firewall\n";
-                    msg +=  "\n";
-                    msg +=  "You will have limited connectivity to other firewalled peers\n";
-                    msg +=  "\n";
-                    msg +=  "You can fix this by:\n";
-                    msg +=  "   (1) opening an External Port\n";
-                    msg +=  "   (2) enabling UPnP, or\n";
-                    msg +=  "   (3) get a new (approved) Firewall/Router\n";
+				// Due to the new UDP connections - we can still connect some of the time!
+				// So limit warning!
 
-                    //notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+				//mNetMode &= ~(RS_NET_MODE_ACTUAL);
+				//mNetMode |= RS_NET_MODE_UNREACHABLE;
 
-                    std::cerr << msg << std::endl;
-                }
+				/* send a system warning message */
+				//pqiNotify *notify = getPqiNotify();
+				//if (notify)
+				{
+					std::string title =
+					                "Warning: Bad Firewall Configuration";
 
-            }
+					std::string msg;
+					msg +=  "               **** WARNING ****     \n";
+					msg +=  "Retroshare has detected that you are behind";
+					msg +=  " a restrictive Firewall\n";
+					msg +=  "\n";
+					msg +=  "You will have limited connectivity to other firewalled peers\n";
+					msg +=  "\n";
+					msg +=  "You can fix this by:\n";
+					msg +=  "   (1) opening an External Port\n";
+					msg +=  "   (2) enabling UPnP, or\n";
+					msg +=  "   (3) get a new (approved) Firewall/Router\n";
 
-        }
+					//notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+
+					std::cerr << msg << std::endl;
+				}
+
+			}
+
+		}
 
 		if (mNetFlags.mExtAddrOk)
 		{
