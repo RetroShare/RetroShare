@@ -91,6 +91,10 @@ win32 {
 
 	#Have to reorder libs, else got /libs/lib/libcrypto.a(bio_lib.o):bio_lib.c:(.text+0x0): multiple definition of `BIO_new'
 	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 $${LIBS}
+	exists(C:/msys32/mingw32/include) {
+		message(msys2 xml2 is installed.)
+		INC_DIR  += "C:/msys32/mingw32/include/libxml2"
+	}
 	exists(C:/msys64/mingw32/include) {
 		message(msys2 xml2 is installed.)
 		INC_DIR  += "C:/msys64/mingw32/include/libxml2"
