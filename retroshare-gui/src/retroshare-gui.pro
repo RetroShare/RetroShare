@@ -210,18 +210,18 @@ win32 {
 
 macx {
     # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    	CONFIG += ppc x86
-	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+    	#CONFIG += ppc x86
+	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += ../../../miniupnpc-1.3/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
-
-	INCLUDEPATH += .
-	#DEFINES* = MAC_IDLE # for idle feature
+	LIBS += -framework Carbon
+	INCLUDEPATH += . /usr/local/include
+	DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
 }
 

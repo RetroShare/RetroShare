@@ -154,6 +154,7 @@ virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage 
 virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns) = 0;
 virtual bool 	addCandidateForOwnExternalAddress(const RsPeerId& from, const struct sockaddr_storage &addr) = 0;
+virtual bool 	getExtAddressReportedByFriends(struct sockaddr_storage& addr,uint8_t& isstable) = 0;
 
 virtual bool 	setNetworkMode(const RsPeerId &id, uint32_t netMode) = 0;
 virtual bool 	setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht) = 0;
@@ -205,6 +206,7 @@ virtual int 	getFriendCount(bool ssl, bool online) = 0;
 		// Single Use Function... shouldn't be here. used by p3serverconfig.cc
 virtual bool 	haveOnceConnected() = 0;
 
+virtual bool   locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage &addr, uint32_t &count)=0;
 
 /*************************************************************************************************/
 /*************************************************************************************************/
@@ -261,6 +263,7 @@ virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage 
 virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
 virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns);
 virtual bool 	addCandidateForOwnExternalAddress(const RsPeerId& from, const struct sockaddr_storage &addr) ;
+virtual bool 	getExtAddressReportedByFriends(struct sockaddr_storage& addr, uint8_t &isstable) ;
 
 virtual bool 	setNetworkMode(const RsPeerId &id, uint32_t netMode);
 virtual bool 	setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht);
@@ -336,6 +339,7 @@ int 	getConnectAddresses(const RsPeerId &id,
 				struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
 				pqiIpAddrSet &histAddrs, std::string &dyndns);
 
+
 protected:
 	/* Internal Functions */
 
@@ -343,6 +347,8 @@ bool 	removeUnusedLocations();
 bool 	removeBannedIps();
 
 void    printPeerLists(std::ostream &out);
+
+virtual bool   locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage &addr, uint32_t &count);
 
 	protected:
 /*****************************************************************/
@@ -358,7 +364,7 @@ void    printPeerLists(std::ostream &out);
 
 	p3LinkMgrIMPL *mLinkMgr;
 	p3NetMgrIMPL  *mNetMgr;
-
+    
 private:
 	RsMutex mPeerMtx; /* protects below */
 
@@ -371,6 +377,8 @@ private:
 	std::map<RsPeerId, peerState> mFriendList;	// <SSLid , peerState>
 	std::map<RsPeerId, peerState> mOthersList;
 
+    	std::map<RsPeerId,sockaddr_storage> mReportedOwnAddresses ;
+        
 	std::list<RsPeerGroupItem *> groupList;
 	uint32_t lastGroupId;
 

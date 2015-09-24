@@ -1467,20 +1467,51 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
     //		* emit a warnign when the address is unknown
     // 		* if multiple peers report the same address => notify the LinkMgr that the external address had changed.
 
-    sockaddr_storage addr_filtered ;
-    sockaddr_storage_copyip(addr_filtered,addr) ;
+	sockaddr_storage addr_filtered ;
+	sockaddr_storage_clear(addr_filtered) ;
+	sockaddr_storage_copyip(addr_filtered,addr) ;
 
 #ifdef PEER_DEBUG
-    std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr_filtered) << ", as reported by friend " << from << std::endl;
+	std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr_filtered) << ", as reported by friend " << from << std::endl;
 #endif
 
-    if(!sockaddr_storage_isExternalNet(addr_filtered))
+	if(!sockaddr_storage_isExternalNet(addr_filtered))
+	{
+#ifdef PEER_DEBUG
+		std::cerr << "  address is not an external address. Returning false" << std::endl ;
+#endif
+		return false ;
+	}
+
+    // Update a list of own IPs:
+    //	- remove old values for that same peer
+    //	- remove values for non connected peers
+    
     {
-#ifdef PEER_DEBUG
-        std::cerr << "  address is not an external address. Returning false" << std::endl ;
-#endif
-        return false ;
+	    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+            
+	    mReportedOwnAddresses[from] = addr_filtered ;
+
+	    for(std::map<RsPeerId,sockaddr_storage>::iterator it(mReportedOwnAddresses.begin());it!=mReportedOwnAddresses.end();)
+		    if(!mLinkMgr->isOnline(it->first))
+		    {
+			    std::map<RsPeerId,sockaddr_storage>::iterator tmp(it) ;
+			    ++tmp ;
+			    mReportedOwnAddresses.erase(it) ;
+			    it=tmp ;
+		    }
+	    else
+		    ++it ;
+
+	    sockaddr_storage current_best_ext_address_guess ;
+	    uint32_t count ;
+
+	    locked_computeCurrentBestOwnExtAddressCandidate(current_best_ext_address_guess,count) ;
+
+	    std::cerr << "p3PeerMgr::  Current external address is calculated to be: " << sockaddr_storage_iptostring(current_best_ext_address_guess) << " (simultaneously reported by " << count << " peers)." << std::endl;
     }
+       
+    // now current 
 
     sockaddr_storage own_addr ;
 
@@ -1503,8 +1534,54 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
 
         RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, from.toStdString(), sockaddr_storage_iptostring(own_addr), sockaddr_storage_iptostring(addr));
     }
+    
+    // we could also sweep over all connected friends and see if some report a different address.
 
     return true ;
+}
+
+bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage& addr, uint32_t& count)
+{
+    std::map<sockaddr_storage,ZeroedInt> addr_counts ;
+    
+    for(std::map<RsPeerId,sockaddr_storage>::iterator it(mReportedOwnAddresses.begin());it!=mReportedOwnAddresses.end();++it)
+	    ++addr_counts[it->second].n ;
+
+#ifdef PEER_DEBUG
+    std::cerr << "Current ext addr statistics:" << std::endl;
+#endif
+    
+    count = 0 ;
+    
+    for(std::map<sockaddr_storage,ZeroedInt>::const_iterator it(addr_counts.begin());it!=addr_counts.end();++it)
+    {
+        if(it->second.n > count)
+        {
+            addr = it->first ;
+            count = it->second.n ;
+        }
+        
+#ifdef PEER_DEBUG
+        std::cerr << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << std::endl;
+#endif
+    }
+    
+    return true ;
+}
+ 
+bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8_t& isstable)
+{
+        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+        
+        uint32_t count ;
+        
+        locked_computeCurrentBestOwnExtAddressCandidate(addr,count) ;
+        
+#ifdef PEER_DEBUG
+        std::cerr << "Estimation count = " << count << ". Trusted? = " << (count>=2) << std::endl;
+#endif
+        
+        return count >= 2 ;// 2 is not conservative enough. 3 should be probably better.	
 }
 
 static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
