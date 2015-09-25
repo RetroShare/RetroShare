@@ -42,6 +42,12 @@ StreamBase& operator << (StreamBase& left, ChatHandler::Msg& m)
 
 bool compare_lobby_id(const ChatHandler::Lobby& l1, const ChatHandler::Lobby& l2)
 {
+    if(l1.auto_subscribe && !l2.auto_subscribe) return true;
+    if(!l1.auto_subscribe && l2.auto_subscribe) return false;
+    if(l1.is_private && !l2.is_private) return true;
+    if(!l1.is_private && l2.is_private) return false;
+    if(l1.subscribed && !l2.subscribed) return true;
+    if(!l1.subscribed && l2.subscribed) return false;
     return l1.id < l2.id;
 }
 
