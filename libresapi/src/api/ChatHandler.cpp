@@ -8,6 +8,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include <ctime>
 
 namespace resource_api
 {
@@ -19,15 +20,31 @@ std::string id(const ChatHandler::Msg& m)
     return ss.str();
 }
 
+std::string timeToString(uint32_t timeInt)
+{
+    time_t rawtime = (time_t)timeInt;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,80,"%Y-%m-%d %I:%M:%S",timeinfo);
+    std::string str(buffer);
+
+    return str;
+}
+
 StreamBase& operator << (StreamBase& left, ChatHandler::Msg& m)
 {
+    std::string recv_time = timeToString(m.recv_time);
+    std::string send_time = timeToString(m.send_time);
     left << makeKeyValueReference("incoming", m.incoming)
          << makeKeyValueReference("was_send", m.was_send)
          << makeKeyValueReference("author_id", m.author_id)
          << makeKeyValueReference("author_name", m.author_name)
          << makeKeyValueReference("msg", m.msg)
-         << makeKeyValueReference("recv_time", m.recv_time)
-         << makeKeyValueReference("send_time", m.send_time)
+         << makeKeyValueReference("recv_time", recv_time)
+         << makeKeyValueReference("send_time", send_time)
          << makeKeyValueReference("id", m.id);
     StreamBase& ls = left.getStreamToMember("links");
     ls.getStreamToMember();
