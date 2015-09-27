@@ -427,7 +427,7 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << "RsSerialiser::deserialise() pkt_size: " << pkt_size << " vs *size: " << *size;
         std::cerr << std::endl;
 
-        RsItem *item2 = (it->second)->deserialise(data, &pkt_size);
+        //RsItem *item2 = (it->second)->deserialise(data, &pkt_size);
 
 		uint32_t failedtype = getRsItemId(data);
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";

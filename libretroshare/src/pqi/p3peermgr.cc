@@ -1026,7 +1026,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		/* move to othersList */
-        bool success = false;
+        //bool success = false;
 		std::map<RsPeerId, peerState>::iterator it;
 		//remove ssl and gpg_ids
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
@@ -1043,7 +1043,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 				mOthersList[it->second.id] = peer;
 				mStatusChanged = true;
 
-				success = true;
+				//success = true;
 			}
 		}
 
@@ -1099,7 +1099,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		/* move to othersList */
-		bool success = false;
+		//bool success = false;
 		std::map<RsPeerId, peerState>::iterator it;
 		//remove ssl and gpg_ids
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
@@ -1118,7 +1118,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 				mOthersList[id] = peer;
 				mStatusChanged = true;
 
-				success = true;
+				//success = true;
 			}
 		}
 
@@ -1555,7 +1555,7 @@ bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_sto
     
     for(std::map<sockaddr_storage,ZeroedInt>::const_iterator it(addr_counts.begin());it!=addr_counts.end();++it)
     {
-        if(it->second.n > count)
+        if(uint32_t(it->second.n) > count)
         {
             addr = it->first ;
             count = it->second.n ;

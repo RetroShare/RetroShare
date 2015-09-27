@@ -27,7 +27,7 @@ void pqiQoS::clear()
 {
 	void *item ;
 
-	for(int i=0;i<_item_queues.size();++i)
+	for(uint32_t i=0;i<_item_queues.size();++i)
 		while( (item = _item_queues[i].pop()) != NULL)
 			free(item) ;
 
@@ -46,7 +46,7 @@ void pqiQoS::print() const
 
 void pqiQoS::in_rsItem(void *ptr,int priority)
 {
-	if(priority >= _item_queues.size())
+	if(uint32_t(priority) >= _item_queues.size())
 	{
 		std::cerr << "pqiQoS::in_rsRawItem() ****Warning****: priority " << priority << " out of scope [0," << _item_queues.size()-1 << "]. Priority will be clamped to maximum value." << std::endl;
 		priority = _item_queues.size()-1 ;

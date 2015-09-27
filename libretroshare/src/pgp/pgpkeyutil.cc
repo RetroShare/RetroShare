@@ -125,7 +125,7 @@ std::string PGPKeyManagement::makeArmouredKey(const unsigned char *keydata,size_
 
 	uint32_t crc = compute24bitsCRC((unsigned char *)keydata,key_size) ;
 
-	unsigned char tmp[3] = { (crc >> 16) & 0xff, (crc >> 8) & 0xff, crc & 0xff } ;
+	unsigned char tmp[3] = { uint8_t((crc >> 16) & 0xff), uint8_t((crc >> 8) & 0xff), uint8_t(crc & 0xff) } ;
 	std::string crc_string ;
 	Radix64::encode((const char *)tmp,3,crc_string) ;
 
