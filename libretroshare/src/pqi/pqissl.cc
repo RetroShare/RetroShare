@@ -286,18 +286,7 @@ int 	pqissl::reset_locked()
 	return 1;
 }
 
-bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
-{
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-	/* remove unused parameter warnings */
-	(void) type;
-	(void) value;
-	return false;
-}
-
-
-bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
+bool pqissl::connect_parameter(uint32_t type, uint32_t value)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
