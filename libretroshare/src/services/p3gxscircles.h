@@ -178,6 +178,7 @@ virtual RsServiceInfo getServiceInfo();
 	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
 	virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
 	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId> &gxs_ids);
 
 
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);

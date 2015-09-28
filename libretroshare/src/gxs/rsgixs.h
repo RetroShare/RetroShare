@@ -217,9 +217,10 @@ class RsGcxs
         virtual bool isLoaded(const RsGxsCircleId &circleId) = 0;
         virtual bool loadCircle(const RsGxsCircleId &circleId) = 0;
 
-        virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
-        virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
-        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) = 0;
+        virtual int  canSend(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
+        virtual int  canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
+        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist) = 0;
+        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) = 0;
 };
 
 

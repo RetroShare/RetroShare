@@ -371,7 +371,7 @@ int p3GxsCircles::canReceive(const RsGxsCircleId &circleId, const RsPgpId &id)
 	return -1;
 }
 
-bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist)
+bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist)
 {
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (mCircleCache.is_cached(circleId))
@@ -381,6 +381,19 @@ bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> 
 		return true;
 	}
 	return false;
+}
+
+bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>& gxs_ids)
+{
+    RsGxsCircleDetails details ;
+
+    if(!getCircleDetails(circleId, details))
+	    return false;
+    
+    for(std::set<RsGxsId>::const_iterator it(details.mUnknownPeers.begin());it!=details.mUnknownPeers.end();+it)
+	    gxs_ids.push_back(*it) ;
+            
+    return true;
 }
 
 /********************************************************************************/
