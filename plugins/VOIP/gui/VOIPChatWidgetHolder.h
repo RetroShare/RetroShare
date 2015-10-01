@@ -62,6 +62,7 @@ private slots:
 	void toggleAudioListen();
 	void toggleAudioCapture();
 	void toggleVideoCapture();
+	void toggleHideChatText();
 	void hangupCall() ;
 	void botMouseEnter();
 	void botMouseLeave();
@@ -87,6 +88,7 @@ protected:
 	QToolButton *audioListenToggleButton ;
 	QToolButton *audioCaptureToggleButton ;
 	QToolButton *videoCaptureToggleButton ;
+	QToolButton *hideChatTextToggleButton ;
 	QToolButton *hangupButton ;
 
 	typedef QMap<QString, RSButtonOnText*> button_map;

@@ -107,15 +107,35 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	videoCaptureToggleButton->setAutoRaise(true) ;
 	videoCaptureToggleButton->setCheckable(true) ;
 
-	connect(videoCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleVideoCapture()));
+	QIcon icon4 ;
+	icon4.addPixmap(QPixmap(":/images/channels32.png")) ;
+	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Normal,QIcon::On) ;
+	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Disabled,QIcon::On) ;
+	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Active,QIcon::On) ;
+	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Selected,QIcon::On) ;
+
+	hideChatTextToggleButton = new QToolButton ;
+	hideChatTextToggleButton->setMinimumSize(QSize(44,44)) ;
+	hideChatTextToggleButton->setMaximumSize(QSize(44,44)) ;
+	hideChatTextToggleButton->setText(QString()) ;
+	hideChatTextToggleButton->setToolTip(tr("Hide Chat Text"));
+	hideChatTextToggleButton->setIcon(icon4) ;
+	hideChatTextToggleButton->setIconSize(QSize(42,42)) ;
+	hideChatTextToggleButton->setAutoRaise(true) ;
+	hideChatTextToggleButton->setCheckable(true) ;
+	hideChatTextToggleButton->setEnabled(false) ;
+
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
 	connect(audioCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioCapture()));
 	connect(hangupButton, SIGNAL(clicked()), this , SLOT(hangupCall()));
+	connect(videoCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleVideoCapture()));
+	connect(hideChatTextToggleButton, SIGNAL(clicked()), this , SLOT(toggleHideChatText()));
 
-	mChatWidget->addVOIPBarWidget(audioListenToggleButton) ;
-	mChatWidget->addVOIPBarWidget(audioCaptureToggleButton) ;
-	mChatWidget->addVOIPBarWidget(hangupButton) ;
-	mChatWidget->addVOIPBarWidget(videoCaptureToggleButton) ;
+	mChatWidget->addTitleBarWidget(audioListenToggleButton) ;
+	mChatWidget->addTitleBarWidget(audioCaptureToggleButton) ;
+	mChatWidget->addTitleBarWidget(hangupButton) ;
+	mChatWidget->addTitleBarWidget(videoCaptureToggleButton) ;
+	mChatWidget->addTitleBarWidget(hideChatTextToggleButton) ;
 
 	outputAudioProcessor = NULL ;
 	outputAudioDevice = NULL ;
@@ -252,6 +272,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 {
 	if (videoCaptureToggleButton->isChecked()) 
 	{
+		hideChatTextToggleButton->setEnabled(true);
 		//activate video input
 		//
 		videoWidget->show();
@@ -272,6 +293,9 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	} 
 	else 
 	{
+		hideChatTextToggleButton->setEnabled(false);
+		hideChatTextToggleButton->setChecked(false);
+		toggleHideChatText();
 		inputVideoDevice->stop() ;
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
 		outputVideoDevice->showFrameOff();
@@ -329,6 +353,17 @@ void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* arr
 
 	    videoProcessor->receiveEncodedData(chunk) ;
     }
+}
+
+void VOIPChatWidgetHolder::toggleHideChatText()
+{
+	if (hideChatTextToggleButton->isChecked()) {
+		mChatWidget->hideChatText(true);
+		hideChatTextToggleButton->setToolTip(tr("Show Chat Text"));
+	} else {
+		mChatWidget->hideChatText(false);
+		hideChatTextToggleButton->setToolTip(tr("Hide Chat Text"));
+	}
 }
 
 void VOIPChatWidgetHolder::botMouseEnter()
