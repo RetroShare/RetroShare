@@ -431,9 +431,8 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
     }
 }
 
-void ChatHandler::handleWildcard(Request &req, Response &resp)
+void ChatHandler::handleWildcard(Request &/*req*/, Response &resp)
 {
-    (void) req;
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
     resp.mDataStream.getStreamToMember();
     for(std::map<ChatId, std::list<Msg> >::iterator mit = mMsgs.begin(); mit != mMsgs.end(); ++mit)
@@ -489,9 +488,8 @@ void ChatHandler::handleSubscribeLobby(Request &req, Response &resp)
         resp.setFail("lobby join failed. (See console for more info)");
 }
 
-void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
+void ChatHandler::handleUnsubscribeLobby(Request &req, Response &/*resp*/)
 {
-    (void) resp;
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
     mRsMsgs->unsubscribeChatLobby(id);
@@ -669,21 +667,18 @@ void ChatHandler::handleInfo(Request &req, Response &resp)
     resp.setOk();
 }
 
-void ChatHandler::handleTypingLabel(Request &req, Response &resp)
+void ChatHandler::handleTypingLabel(Request &/*req*/, Response &/*resp*/)
 {
-    (void) req;
-    (void) resp;
+
 }
 
-void ChatHandler::handleSendStatus(Request &req, Response &resp)
+void ChatHandler::handleSendStatus(Request &/*req*/, Response &/*resp*/)
 {
-    (void) req;
-    (void) resp;
+
 }
 
-void ChatHandler::handleUnreadMsgs(Request &req, Response &resp)
+void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
 {
-    (void) req;
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
 
     resp.mDataStream.getStreamToMember();
