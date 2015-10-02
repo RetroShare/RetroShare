@@ -239,7 +239,8 @@ public:
 
     /// Session key encrypted for the whole group
     /// 
-    RsTlvBinaryData encrypted_key_data ;
+    RsTlvBinaryData initialisation_vector ;
+    std::map<RsGxsId, RsTlvBinaryData> encrypted_session_keys;
 };
 /*!
  * Use to send to peer list of grps

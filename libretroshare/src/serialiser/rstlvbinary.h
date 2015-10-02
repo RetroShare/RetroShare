@@ -53,6 +53,7 @@ virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const; /*! Error/Debug util function */
 
+         // mallocs the necessary size, and copies data into the allocated buffer in bin_data
 bool    setBinData(const void *data, uint32_t size);
 
 	uint16_t tlvtype;	/// set/checked against TLV input 

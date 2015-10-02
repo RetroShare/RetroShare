@@ -2663,21 +2663,94 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
         delete *it ;
     
     tr->mItems = encrypted_items ;
+    
+    // 5 - make session key item and push it front.
+    
+    RsNxsSessionKeyItem *session_key_item = new RsNxsSessionKeyItem() ;
+    
+    memcpy(session_key_item->initialization_vector,muctx.IV,EVP_MAX_IV_LENGTH) ;
+    
+    for(int i=0;i<muctx->n_encrypted_keys();++i)
+    {
+        std::cerr << "  addign session key for ID " << muctx.encrypted_key_id(i) << std::endl;
+        RsTlvBinaryData data ;
+        
+        data.setBinData(muctx.encrypted_key_data(i), muctx.encrypted_key_size(i)) ;
+        
+        session_key_item->encrypted_session_keys[muctx.encrypted_key_id(i)] = data ;
+    }
+    
     tr->mItems.push_front(session_key_item) ;
 }
 
 bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 {
+    std::cerr << "RsGxsNetService::decryptTransaction()" << std::endl;
+    std::cerr << "  Circle Id: " << tr->destination_circle << std::endl;
+         
     // 1 - Checks that the transaction is encrypted. It should contain
     // 	   one packet with an encrypted session key for the group,
     //     and as many encrypted data items as necessary.
     
+    RsNxsSessionKeyItem *esk = NULL;
+    
+    for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
+        if(NULL != (esk = dynamic_cast<RsNxsSessionKeyItem*>(*it)))
+            break ;
+        
+    if(esk == NULL)
+    {
+        std::cerr << "  (II) nothing to decrypt. No session key packet in this transaction." << std::endl;
+        return false ;
+    }
     // 2 - Try to decrypt the session key. If not, return false. That probably means
     //     we don't own that identity.
     
+    GxsSecurity::MultiEncryptionContext muctx ;
+    
+    if(!GxsSecurity::initDecryption(muctx,key,esk.initialization_vector.bin_data,esk.initialization_vector.bin_len,ek.bin_data,ek.bin_len))
+    {
+        std::cerr << "  (EE) cannot decrypt transaction. initDecryption() failed." << std::endl;
+        return false ;
+    }
+    
     // 3 - Using session key, decrypt all packets, by calling GXSSecurity.
     
-    // 4 - Deserialise packets from the decrypted data and restore the clear transaction.
+    std::list<RsNxsItem*> decrypted_items ;
+    RsNxsEncryptedDataItem encrypted_item ;
+    RsNxsSerialiser serial ;
+    
+    for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
+        if(NULL != (encrypted_item = dynamic_cast<RsNxsEncryptedDataItem*>(*it)))
+	{
+		unsigned char *tempmem;
+		uint32_t tempmemsize ;
+
+		if(!GxsSecurity::decrypt(muctx,tempmem,tempmemsize,encrypted_item->aes_encrypted_data.bin_data, encrypted_item.aes_encrypted_data.bin_len))
+		{
+			std::cerr << "  (EE) Cannot decrypt item. Something went wrong. Skipping this item." << std::endl;
+			continue ;
+		}
+
+		RsNxsItem *item = serial.deserialise(tempmem,tempmemsize) ;
+
+		std::cerr << "  Decrypted an item of type " << std::hex << item->getType() << std::dec << std::endl;
+
+		decrypted_items.push_back(item) ;
+
+		free(tempmem) ;
+	}
+        
+    // 4 - put back in transaction.
+    
+    std::cerr << "  replacing items with clear items" << std::endl;
+    
+    for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
+        delete *it ;
+    
+    tr->mItems = encrypted_items ;
+    
+    return true ;
 }
 
 void RsGxsNetService::cleanTransactionItems(NxsTransaction* tr) const
