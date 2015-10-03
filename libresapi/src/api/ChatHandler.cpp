@@ -71,13 +71,17 @@ StreamBase& operator <<(StreamBase& left, KeyValueReference<ChatLobbyId> kv)
 
 StreamBase& operator << (StreamBase& left, ChatHandler::Lobby& l)
 {
+    ChatId chatId(l.id);
+    if (l.is_broadcast)
+        chatId = ChatId::makeBroadcastId();
     left << makeKeyValueReference("id", l.id)
-         << makeKeyValue("chat_id", ChatId(l.id).toStdString())
+         << makeKeyValue("chat_id", chatId.toStdString())
          << makeKeyValueReference("name",l.name)
          << makeKeyValueReference("topic", l.topic)
          << makeKeyValueReference("subscribed", l.subscribed)
          << makeKeyValueReference("auto_subscribe", l.auto_subscribe)
          << makeKeyValueReference("is_private", l.is_private)
+         << makeKeyValueReference("is_broadcast", l.is_broadcast)
          << makeKeyValueReference("gxs_id", l.gxs_id);
     return left;
 }
@@ -163,9 +167,24 @@ void ChatHandler::tick()
             l.subscribed = true;
             l.auto_subscribe = info.lobby_flags & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
             l.is_private = !(info.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC);
+            l.is_broadcast = false;
             l.gxs_id = info.gxs_id;
             lobbies.push_back(l);
         }
+    }
+
+    ChatId id = ChatId::makeBroadcastId();
+    {
+        Lobby l;
+        l.id = id.toLobbyId();
+        l.name = "BroadCast";
+        l.topic = "Retroshare broadcast chat: messages are sent to all connected friends.";
+        l.subscribed = true;
+        l.auto_subscribe = false;
+        l.is_private = false;
+        l.is_broadcast = true;
+        l.gxs_id = id.toGxsId();
+        lobbies.push_back(l);
     }
 
     std::vector<VisibleChatLobbyRecord> unsubscribed_lobbies;
@@ -182,6 +201,7 @@ void ChatHandler::tick()
             l.subscribed = false;
             l.auto_subscribe = info.lobby_flags & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
             l.is_private = !(info.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC);
+            l.is_broadcast = false;
             l.gxs_id = RsGxsId();
             lobbies.push_back(l);
         }
@@ -411,7 +431,7 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
     }
 }
 
-void ChatHandler::handleWildcard(Request &req, Response &resp)
+void ChatHandler::handleWildcard(Request &/*req*/, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
     resp.mDataStream.getStreamToMember();
@@ -468,7 +488,7 @@ void ChatHandler::handleSubscribeLobby(Request &req, Response &resp)
         resp.setFail("lobby join failed. (See console for more info)");
 }
 
-void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
+void ChatHandler::handleUnsubscribeLobby(Request &req, Response &/*resp*/)
 {
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
@@ -647,17 +667,17 @@ void ChatHandler::handleInfo(Request &req, Response &resp)
     resp.setOk();
 }
 
-void ChatHandler::handleTypingLabel(Request &req, Response &resp)
+void ChatHandler::handleTypingLabel(Request &/*req*/, Response &/*resp*/)
 {
 
 }
 
-void ChatHandler::handleSendStatus(Request &req, Response &resp)
+void ChatHandler::handleSendStatus(Request &/*req*/, Response &/*resp*/)
 {
 
 }
 
-void ChatHandler::handleUnreadMsgs(Request &req, Response &resp)
+void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
 

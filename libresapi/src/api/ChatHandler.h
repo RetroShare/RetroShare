@@ -57,13 +57,14 @@ public:
 
     class Lobby{
     public:
-        Lobby(): id(0), subscribed(false), auto_subscribe(false), is_private(false){}
+        Lobby(): id(0), subscribed(false), auto_subscribe(false), is_private(false), is_broadcast(false){}
         ChatLobbyId id;
         std::string name;
         std::string topic;
         bool subscribed;
         bool auto_subscribe;
         bool is_private;
+        bool is_broadcast;
 
         RsGxsId gxs_id;// for subscribed lobbies: the id we use to write messages
 
@@ -75,6 +76,7 @@ public:
                     && subscribed == l.subscribed
                     && auto_subscribe == l.auto_subscribe
                     && is_private == l.is_private
+                    && is_broadcast == l.is_broadcast
                     && gxs_id == l.gxs_id;
         }
     };
