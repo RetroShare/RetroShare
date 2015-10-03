@@ -104,12 +104,18 @@ static void getPage(const std::string& server_name,std::string& page)
 #endif
 
 	// envoi 
-	sprintf( request, 
+	if(snprintf( request, 
+			1024,
 			"GET / HTTP/1.0\r\n"
 			"Host: %s:%d\r\n"
 			"Connection: Close\r\n"
 			"\r\n", 
-			server_name.c_str(), 80);
+			server_name.c_str(), 80) > 1020)
+	{
+		std::cerr << "ExtAddrFinder: buffer overrun. The server name \"" << server_name << "\" is too long. This is quite unexpected." << std::endl;
+		unix_close(sockfd);
+		return ;
+	}
 
 	if(send(sockfd,request,strlen(request),0)== -1)
 	{
