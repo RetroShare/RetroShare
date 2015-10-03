@@ -488,10 +488,10 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent) {
-                if (notify && keyEvent->key() == Qt::Key_Delete) {
+                if (keyEvent->key() == Qt::Key_Delete) {
 					// Delete key pressed
 					if (ui->textBrowser->textCursor().selectedText().length() > 0) {
-						if (chatType() == CHATTYPE_LOBBY) {
+						if (notify && chatType() == CHATTYPE_LOBBY) {
 							QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
 							rx.setMinimal(true);
 							QString sel=ui->textBrowser->textCursor().selection().toHtml();
