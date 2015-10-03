@@ -63,11 +63,15 @@ private slots:
 	void toggleAudioCapture();
 	void toggleVideoCapture();
 	void toggleHideChatText();
+	void toggleHideChatTextFS();
+	void showChatText();
 	void hangupCall() ;
 	void botMouseEnter();
 	void botMouseLeave();
 
 protected:
+	bool eventFilter(QObject *obj, QEvent *event);
+
 	// Audio input/output
 	QAudioInput* inputAudioDevice;
 	QAudioOutput* outputAudioDevice;
@@ -80,6 +84,12 @@ protected:
 	QVideoOutputDevice *echoVideoDevice;
 	QVideoInputDevice *inputVideoDevice;
 
+	//For FullScreen Mode
+	QFrame *fullScreenFrame;
+	QVideoOutputDevice *outputVideoDeviceFS;
+	QVideoOutputDevice *echoVideoDeviceFS;
+	Qt::WindowFlags outputVideoDeviceFlags;
+
 	QWidget *videoWidget ;	// pointer to call show/hide
 
 	VideoProcessor *videoProcessor;
@@ -89,6 +99,7 @@ protected:
 	QToolButton *audioCaptureToggleButton ;
 	QToolButton *videoCaptureToggleButton ;
 	QToolButton *hideChatTextToggleButton ;
+	QToolButton *hideChatTextToggleButtonFS ;
 	QToolButton *hangupButton ;
 
 	typedef QMap<QString, RSButtonOnText*> button_map;

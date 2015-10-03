@@ -18,10 +18,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QToolButton>
-#include <QPropertyAnimation>
 #include <QIcon>
 #include <QLayout>
+#include <QPropertyAnimation>
+#include <QToolButton>
 
 #include <gui/audiodevicehelper.h>
 #include "interface/rsVOIP.h"
@@ -154,11 +154,44 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 
 	connect(inputVideoDevice, SIGNAL(networkPacketReady()), this, SLOT(sendVideoData()));
 
-	echoVideoDevice->setMinimumSize(320,256) ;
-	outputVideoDevice->setMinimumSize(320,256) ;
+	echoVideoDevice->setMinimumSize(320,240) ;//4/3
+	outputVideoDevice->setMinimumSize(320,240) ;//4/3
+
+	echoVideoDevice->showFrameOff();
+	outputVideoDevice->showFrameOff();
 	
 	echoVideoDevice->setStyleSheet("border: 4px solid #CCCCCC; border-radius: 4px;");
 	outputVideoDevice->setStyleSheet("border: 4px solid #CCCCCC; border-radius: 4px;");
+
+	/// FULLSCREEN ///
+	fullScreenFrame = new QFrame();
+
+	outputVideoDeviceFS = new QVideoOutputDevice(fullScreenFrame);
+	outputVideoDeviceFS->setGeometry(QRect(QPoint(0,0),fullScreenFrame->geometry().size()));
+	outputVideoDeviceFS->showFrameOff();
+
+	hideChatTextToggleButtonFS = new QToolButton(fullScreenFrame);
+	hideChatTextToggleButtonFS->setMinimumSize(QSize(44,44));
+	hideChatTextToggleButtonFS->setMaximumSize(QSize(44,44));
+	hideChatTextToggleButtonFS->setText(QString());
+	hideChatTextToggleButtonFS->setToolTip(tr("Hide Chat Text"));
+	hideChatTextToggleButtonFS->setIcon(icon4);
+	hideChatTextToggleButtonFS->setIconSize(QSize(42,42));
+	hideChatTextToggleButtonFS->setAutoRaise(true);
+	hideChatTextToggleButtonFS->setCheckable(true);
+	hideChatTextToggleButtonFS->setEnabled(false);
+	connect(hideChatTextToggleButtonFS, SIGNAL(clicked()), this , SLOT(toggleHideChatTextFS()));
+
+	echoVideoDeviceFS = new QVideoOutputDevice(fullScreenFrame);
+	echoVideoDeviceFS->setGeometry(QRect(QPoint(fullScreenFrame->width(), fullScreenFrame->height()) - QPoint(320,240), QSize(320,240)));
+	echoVideoDeviceFS->showFrameOff();
+
+	fullScreenFrame->setParent(0);
+	fullScreenFrame->setWindowFlags( Qt::WindowStaysOnTopHint );
+	fullScreenFrame->setFocusPolicy( Qt::StrongFocus );
+	fullScreenFrame->setWindowState(Qt::WindowFullScreen);
+	fullScreenFrame->hide();
+	fullScreenFrame->installEventFilter(this);
 
 	mChatWidget->addChatHorizontalWidget(videoWidget) ;
 
@@ -179,6 +212,23 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 	while (it != buttonMapTakeVideo.end()) {
 		it = buttonMapTakeVideo.erase(it);
   }
+}
+bool VOIPChatWidgetHolder::eventFilter(QObject *obj, QEvent *event)
+{
+	if (obj == fullScreenFrame) {
+		if (event->type() == QEvent::Close || event->type() == QEvent::MouseButtonDblClick) {
+			showChatText();
+		}
+		if (event->type() == QEvent::Resize) {
+			outputVideoDeviceFS->setGeometry(QRect(QPoint(0,0),fullScreenFrame->geometry().size()));
+			outputVideoDeviceFS->showFrameOff();
+			echoVideoDeviceFS->setGeometry(QRect(QPoint(fullScreenFrame->width(), fullScreenFrame->height()) - QPoint(320,240), QSize(320,240)));
+			echoVideoDeviceFS->showFrameOff();
+		}
+
+	}
+	// pass the event on to the parent class
+	return QObject::eventFilter(obj, event);
 }
 
 void VOIPChatWidgetHolder::toggleAudioListen()
@@ -273,6 +323,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	if (videoCaptureToggleButton->isChecked()) 
 	{
 		hideChatTextToggleButton->setEnabled(true);
+		hideChatTextToggleButtonFS->setEnabled(true);
 		//activate video input
 		//
 		videoWidget->show();
@@ -295,6 +346,8 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	{
 		hideChatTextToggleButton->setEnabled(false);
 		hideChatTextToggleButton->setChecked(false);
+		hideChatTextToggleButtonFS->setEnabled(false);
+		hideChatTextToggleButtonFS->setChecked(false);
 		toggleHideChatText();
 		inputVideoDevice->stop() ;
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
@@ -355,15 +408,35 @@ void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* arr
     }
 }
 
+void VOIPChatWidgetHolder::toggleHideChatTextFS()
+{
+	hideChatTextToggleButton->setChecked(hideChatTextToggleButtonFS->isChecked());
+	toggleHideChatText();
+}
+
 void VOIPChatWidgetHolder::toggleHideChatText()
 {
 	if (hideChatTextToggleButton->isChecked()) {
-		mChatWidget->hideChatText(true);
 		hideChatTextToggleButton->setToolTip(tr("Show Chat Text"));
+		inputVideoDevice->setEchoVideoTarget(echoVideoDeviceFS) ;
+		videoProcessor->setDisplayTarget(outputVideoDeviceFS) ;
+		fullScreenFrame->show();
 	} else {
 		mChatWidget->hideChatText(false);
 		hideChatTextToggleButton->setToolTip(tr("Hide Chat Text"));
+		inputVideoDevice->setEchoVideoTarget(echoVideoDevice) ;
+		videoProcessor->setDisplayTarget(outputVideoDevice) ;
+		fullScreenFrame->hide();
 	}
+	hideChatTextToggleButtonFS->setChecked(hideChatTextToggleButton->isChecked());
+	hideChatTextToggleButtonFS->setToolTip(fullScreenFrame->toolTip());
+}
+
+void VOIPChatWidgetHolder::showChatText()
+{
+	hideChatTextToggleButton->setChecked(false);
+	hideChatTextToggleButtonFS->setChecked(false);
+	toggleHideChatText();
 }
 
 void VOIPChatWidgetHolder::botMouseEnter()
