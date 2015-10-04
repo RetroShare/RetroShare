@@ -91,19 +91,10 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-    mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
-    mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->toolButton_Reputation);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repModButton);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Accept);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Ban);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Negative);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Positive);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Custom);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_spinBox);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->ownOpinion_CB);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->neighborNodesOpinion_TF);
 
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
@@ -112,23 +103,16 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-    mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
-    mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+	//mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
 
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 //	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
-    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 
 	//mStateHelper->addWidget(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 	//mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui->treeWidget_RepList);
@@ -147,7 +131,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	connect(ui->filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-	connect(ui->repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
+	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
 	connect(ui->messageButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 
@@ -197,7 +181,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	// Hiding RepList until that part is finished.
 	//ui->treeWidget_RepList->setVisible(false);
-	ui->toolButton_Reputation->setVisible(false);
+    
 #ifndef UNFINISHED
 	ui->todoPushButton->hide() ;
 #endif
@@ -225,8 +209,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	processSettings(true);
 
     // hide reputation sice it's currently unused
-    ui->reputationGroupBox->hide();
-    ui->tweakGroupBox->hide();
+    //ui->reputationGroupBox->hide();
+    //ui->tweakGroupBox->hide();
 }
 
 IdDialog::~IdDialog()
@@ -652,36 +636,9 @@ void IdDialog::insertIdDetails(uint32_t token)
     else
         ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
 
-    //	if (isOwnId)
-//	{
-//		ui->radioButton_IdYourself->setChecked(true);
-//	}
-//	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-//	{
-//		if (data.mPgpKnown)
-//		{
-//			if (rsPeers->isGPGAccepted(data.mPgpId))
-//			{
-//				ui->radioButton_IdFriend->setChecked(true);
-//			}
-//			else
-//			{
-//				ui->radioButton_IdFOF->setChecked(true);
-//			}
-//		}
-//		else
-//		{
-//			ui->radioButton_IdOther->setChecked(true);
-//		}
-//	}
-//	else
-//	{
-//		ui->radioButton_IdPseudo->setChecked(true);
-//	}
-
 	if (isOwnId)
 	{
-		mStateHelper->setWidgetEnabled(ui->toolButton_Reputation, false);
+		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, false);
 		ui->editIdentity->setEnabled(true);
 		ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
@@ -690,7 +647,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	else
 	{
 		// No Reputation yet!
-		mStateHelper->setWidgetEnabled(ui->toolButton_Reputation, /*true*/ false);
+		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
 		ui->editIdentity->setEnabled(false);
 		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
@@ -698,9 +655,8 @@ void IdDialog::insertIdDetails(uint32_t token)
 	}
 
 	/* now fill in the reputation information */
-	ui->line_RatingOverall->setText("Overall Rating TODO");
-	ui->line_RatingOwn->setText("Own Rating TODO");
 
+#ifdef SUSPENDED
 	if (data.mPgpKnown)
 	{
 		ui->line_RatingImplicit->setText(tr("+50 Known PGP"));
@@ -713,26 +669,25 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		ui->line_RatingImplicit->setText(tr("+5 Anon Id"));
 	}
-
-	{
-		QString rating = QString::number(data.mReputation.mOverallScore);
-		ui->line_RatingOverall->setText(rating);
-	}
-
 	{
 		QString rating = QString::number(data.mReputation.mIdScore);
 		ui->line_RatingImplicit->setText(rating);
 	}
 
+#endif
+
+	ui->overallOpinion_TF->setText(QString::number(data.mReputation.mOverallScore));
+
+    switch(data.mReputation.mOwnOpinion)
 	{
-		QString rating = QString::number(data.mReputation.mOwnOpinion);
-		ui->line_RatingOwn->setText(rating);
+        case RsIdentity::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
+        case RsIdentity::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
+        case RsIdentity::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
+        default:
+            std::cerr << "Unexpected value in own opinion: " << data.mReputation.mOwnOpinion << std::endl;
 	}
 
-	{
-		QString rating = QString::number(data.mReputation.mPeerOpinion);
-		ui->line_RatingPeers->setText(rating);
-	}
+    ui->neighborNodesOpinion_TF->setText(QString::number(data.mReputation.mPeerOpinion));
 }
 
 void IdDialog::modifyReputation()
@@ -743,33 +698,18 @@ void IdDialog::modifyReputation()
 #endif
 
 	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
+    
+    	RsIdentity::Opinion op ;
 
-	int mod = 0;
-	if (ui->repMod_Accept->isChecked())
-	{
-		mod += 100;
-	}
-	else if (ui->repMod_Positive->isChecked())
-	{
-		mod += 10;
-	}
-	else if (ui->repMod_Negative->isChecked())
-	{
-		mod += -10;
-	}
-	else if (ui->repMod_Ban->isChecked())
-	{
-		mod += -100;
-	}
-	else if (ui->repMod_Custom->isChecked())
-	{
-		mod += ui->repMod_spinBox->value();
-	}
-	else
-	{
-		// invalid
-		return;
-	}
+    	switch(ui->ownOpinion_CB->currentIndex())
+        {
+        	case 0: op = RsIdentity::OPINION_NEGATIVE ; break ;
+        	case 1: op = RsIdentity::OPINION_NEUTRAL  ; break ;
+        	case 2: op = RsIdentity::OPINION_POSITIVE ; break ;
+        default:
+            std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+            
+        }
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
@@ -777,7 +717,7 @@ void IdDialog::modifyReputation()
 #endif
 
 	uint32_t token;
-	if (!rsIdentity->submitOpinion(token, id, false, mod))
+	if (!rsIdentity->submitOpinion(token, id, false, op))
 	{
 #ifdef ID_DEBUG
 		std::cerr << "IdDialog::modifyReputation() Error submitting Opinion";
