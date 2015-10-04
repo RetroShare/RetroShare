@@ -51,15 +51,15 @@ class RsVOIPPongResult
 
 struct RsVOIPDataChunk
 {
-	typedef enum { 	RS_VOIP_DATA_TYPE_UNKNOWN = 0x00, 
-                   	RS_VOIP_DATA_TYPE_AUDIO   = 0x01, 
-                    	RS_VOIP_DATA_TYPE_VIDEO   = 0x02 } RsVOIPDataType ;
+	typedef enum { RS_VOIP_DATA_TYPE_UNKNOWN = 0x00,
+	               RS_VOIP_DATA_TYPE_AUDIO   = 0x01,
+	               RS_VOIP_DATA_TYPE_VIDEO   = 0x02 } RsVOIPDataType ;
 
 	void *data ; // create/delete using malloc/free.
 	uint32_t size ;
 	RsVOIPDataType type ;	// video or audio
-    
-    	void clear() ;
+
+	void clear() ;
 };
 
 class RsVOIP
