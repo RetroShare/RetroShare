@@ -231,6 +231,7 @@ void ChatWidget::addTitleBarWidget(QWidget *w)
 void ChatWidget::hideChatText(bool hidden)
 {
 	ui->frame_ChatText->setHidden(hidden); ;
+	ui->searchframe->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
 }
 
 RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()

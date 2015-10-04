@@ -45,97 +45,117 @@
 VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *notify)
   : QObject(), ChatWidgetHolder(chatWidget), mVOIPNotify(notify)
 {
-	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-muted.png")) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Normal,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Disabled,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Active,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Selected,QIcon::On) ;
+	QIcon iconaudioListenToggleButton ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-muted.png")) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Normal,QIcon::On) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Disabled,QIcon::On) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Active,QIcon::On) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Selected,QIcon::On) ;
 
 	audioListenToggleButton = new QToolButton ;
-	audioListenToggleButton->setIcon(icon) ;
+	audioListenToggleButton->setIcon(iconaudioListenToggleButton) ;
 	audioListenToggleButton->setIconSize(QSize(42,42)) ;
-	audioListenToggleButton->setAutoRaise(true) ;
-	audioListenToggleButton->setCheckable(true);
 	audioListenToggleButton->setMinimumSize(QSize(44,44)) ;
 	audioListenToggleButton->setMaximumSize(QSize(44,44)) ;
+	audioListenToggleButton->setCheckable(true);
+	audioListenToggleButton->setAutoRaise(true) ;
 	audioListenToggleButton->setText(QString()) ;
 	audioListenToggleButton->setToolTip(tr("Mute"));
 
-	QIcon icon2 ;
-	icon2.addPixmap(QPixmap(":/images/call-start.png")) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Normal,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Disabled,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Active,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Selected,QIcon::On) ;
+	QIcon iconaudioCaptureToggleButton ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-start.png")) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Normal,QIcon::On) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Disabled,QIcon::On) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Active,QIcon::On) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Selected,QIcon::On) ;
 
 	audioCaptureToggleButton = new QToolButton ;
+	audioCaptureToggleButton->setIcon(iconaudioCaptureToggleButton) ;
+	audioCaptureToggleButton->setIconSize(QSize(42,42)) ;
 	audioCaptureToggleButton->setMinimumSize(QSize(44,44)) ;
 	audioCaptureToggleButton->setMaximumSize(QSize(44,44)) ;
+	audioCaptureToggleButton->setCheckable(true) ;
+	audioCaptureToggleButton->setAutoRaise(true) ;
 	audioCaptureToggleButton->setText(QString()) ;
 	audioCaptureToggleButton->setToolTip(tr("Start Call"));
-	audioCaptureToggleButton->setIcon(icon2) ;
-	audioCaptureToggleButton->setIconSize(QSize(42,42)) ;
-	audioCaptureToggleButton->setAutoRaise(true) ;
-	audioCaptureToggleButton->setCheckable(true) ;
-	
+
+	QIcon iconvideoCaptureToggleButton ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-on.png")) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Normal,QIcon::On) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Disabled,QIcon::On) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Active,QIcon::On) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Selected,QIcon::On) ;
+
+	videoCaptureToggleButton = new QToolButton ;
+	videoCaptureToggleButton->setIcon(iconvideoCaptureToggleButton) ;
+	videoCaptureToggleButton->setIconSize(QSize(42,42)) ;
+	videoCaptureToggleButton->setMinimumSize(QSize(44,44)) ;
+	videoCaptureToggleButton->setMaximumSize(QSize(44,44)) ;
+	videoCaptureToggleButton->setCheckable(true) ;
+	videoCaptureToggleButton->setAutoRaise(true) ;
+	videoCaptureToggleButton->setText(QString()) ;
+	videoCaptureToggleButton->setToolTip(tr("Start Video Call"));
+
 	hangupButton = new QToolButton ;
 	hangupButton->setIcon(QIcon(":/images/call-stop.png")) ;
 	hangupButton->setIconSize(QSize(42,42)) ;
 	hangupButton->setMinimumSize(QSize(44,44)) ;
 	hangupButton->setMaximumSize(QSize(44,44)) ;
 	hangupButton->setCheckable(false) ;
-	hangupButton->setAutoRaise(true) ;		
+	hangupButton->setAutoRaise(true) ;
 	hangupButton->setText(QString()) ;
 	hangupButton->setToolTip(tr("Hangup Call"));
-	hangupButton->hide();	
+	hangupButton->hide();
 
-	QIcon icon3 ;
-	icon3.addPixmap(QPixmap(":/images/video-icon-on.png")) ;
-	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Normal,QIcon::On) ;
-	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Disabled,QIcon::On) ;
-	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Active,QIcon::On) ;
-	icon3.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Selected,QIcon::On) ;
-
-	videoCaptureToggleButton = new QToolButton ;
-	videoCaptureToggleButton->setMinimumSize(QSize(44,44)) ;
-	videoCaptureToggleButton->setMaximumSize(QSize(44,44)) ;
-	videoCaptureToggleButton->setText(QString()) ;
-	videoCaptureToggleButton->setToolTip(tr("Start Video Call"));
-	videoCaptureToggleButton->setIcon(icon3) ;
-	videoCaptureToggleButton->setIconSize(QSize(42,42)) ;
-	videoCaptureToggleButton->setAutoRaise(true) ;
-	videoCaptureToggleButton->setCheckable(true) ;
-
-	QIcon icon4 ;
-	icon4.addPixmap(QPixmap(":/images/channels32.png")) ;
-	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Normal,QIcon::On) ;
-	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Disabled,QIcon::On) ;
-	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Active,QIcon::On) ;
-	icon4.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Selected,QIcon::On) ;
+	QIcon iconhideChatTextToggleButton ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/orange-bubble-64.png")) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Normal,QIcon::On) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Disabled,QIcon::On) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Active,QIcon::On) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Selected,QIcon::On) ;
 
 	hideChatTextToggleButton = new QToolButton ;
+	hideChatTextToggleButton->setIcon(iconhideChatTextToggleButton) ;
+	hideChatTextToggleButton->setIconSize(QSize(42,42)) ;
 	hideChatTextToggleButton->setMinimumSize(QSize(44,44)) ;
 	hideChatTextToggleButton->setMaximumSize(QSize(44,44)) ;
+	hideChatTextToggleButton->setCheckable(true) ;
+	hideChatTextToggleButton->setAutoRaise(true) ;
 	hideChatTextToggleButton->setText(QString()) ;
 	hideChatTextToggleButton->setToolTip(tr("Hide Chat Text"));
-	hideChatTextToggleButton->setIcon(icon4) ;
-	hideChatTextToggleButton->setIconSize(QSize(42,42)) ;
-	hideChatTextToggleButton->setAutoRaise(true) ;
-	hideChatTextToggleButton->setCheckable(true) ;
 	hideChatTextToggleButton->setEnabled(false) ;
+
+	QIcon iconfullscreenToggleButton ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/channels32.png")) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Normal,QIcon::On) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Disabled,QIcon::On) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Active,QIcon::On) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Selected,QIcon::On) ;
+
+	fullscreenToggleButton = new QToolButton ;
+	fullscreenToggleButton->setIcon(iconfullscreenToggleButton) ;
+	fullscreenToggleButton->setIconSize(QSize(42,42)) ;
+	fullscreenToggleButton->setMinimumSize(QSize(44,44)) ;
+	fullscreenToggleButton->setMaximumSize(QSize(44,44)) ;
+	fullscreenToggleButton->setCheckable(true) ;
+	fullscreenToggleButton->setAutoRaise(true) ;
+	fullscreenToggleButton->setText(QString()) ;
+	fullscreenToggleButton->setToolTip(tr("Fullscreen mode"));
+	fullscreenToggleButton->setEnabled(false) ;
 
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
 	connect(audioCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioCapture()));
-	connect(hangupButton, SIGNAL(clicked()), this , SLOT(hangupCall()));
 	connect(videoCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleVideoCapture()));
+	connect(hangupButton, SIGNAL(clicked()), this , SLOT(hangupCall()));
 	connect(hideChatTextToggleButton, SIGNAL(clicked()), this , SLOT(toggleHideChatText()));
+	connect(fullscreenToggleButton, SIGNAL(clicked()), this , SLOT(toggleFullScreen()));
 
 	mChatWidget->addTitleBarWidget(audioListenToggleButton) ;
 	mChatWidget->addTitleBarWidget(audioCaptureToggleButton) ;
-	mChatWidget->addTitleBarWidget(hangupButton) ;
 	mChatWidget->addTitleBarWidget(videoCaptureToggleButton) ;
+	mChatWidget->addTitleBarWidget(hangupButton) ;
 	mChatWidget->addTitleBarWidget(hideChatTextToggleButton) ;
+	mChatWidget->addTitleBarWidget(fullscreenToggleButton) ;
 
 	outputAudioProcessor = NULL ;
 	outputAudioDevice = NULL ;
@@ -170,17 +190,76 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	outputVideoDeviceFS->setGeometry(QRect(QPoint(0,0),fullScreenFrame->geometry().size()));
 	outputVideoDeviceFS->showFrameOff();
 
-	hideChatTextToggleButtonFS = new QToolButton(fullScreenFrame);
-	hideChatTextToggleButtonFS->setMinimumSize(QSize(44,44));
-	hideChatTextToggleButtonFS->setMaximumSize(QSize(44,44));
-	hideChatTextToggleButtonFS->setText(QString());
-	hideChatTextToggleButtonFS->setToolTip(tr("Hide Chat Text"));
-	hideChatTextToggleButtonFS->setIcon(icon4);
-	hideChatTextToggleButtonFS->setIconSize(QSize(42,42));
-	hideChatTextToggleButtonFS->setAutoRaise(true);
-	hideChatTextToggleButtonFS->setCheckable(true);
-	hideChatTextToggleButtonFS->setEnabled(false);
-	connect(hideChatTextToggleButtonFS, SIGNAL(clicked()), this , SLOT(toggleHideChatTextFS()));
+	toolBarFS = new QFrame(fullScreenFrame);
+	QHBoxLayout *toolBarFSLayout = new QHBoxLayout(toolBarFS);
+
+	audioListenToggleButtonFS = new QToolButton(fullScreenFrame) ;
+	audioListenToggleButtonFS->setIcon(iconaudioListenToggleButton) ;
+	audioListenToggleButtonFS->setIconSize(QSize(42,42)) ;
+	audioListenToggleButtonFS->setMinimumSize(QSize(44,44)) ;
+	audioListenToggleButtonFS->setMaximumSize(QSize(44,44)) ;
+	audioListenToggleButtonFS->setCheckable(true);
+	audioListenToggleButtonFS->setAutoRaise(true) ;
+	audioListenToggleButtonFS->setText(QString()) ;
+	audioListenToggleButtonFS->setToolTip(tr("Mute"));
+
+	audioCaptureToggleButtonFS = new QToolButton(fullScreenFrame) ;
+	audioCaptureToggleButtonFS->setIcon(iconaudioCaptureToggleButton) ;
+	audioCaptureToggleButtonFS->setIconSize(QSize(42,42)) ;
+	audioCaptureToggleButtonFS->setMinimumSize(QSize(44,44)) ;
+	audioCaptureToggleButtonFS->setMaximumSize(QSize(44,44)) ;
+	audioCaptureToggleButtonFS->setCheckable(true) ;
+	audioCaptureToggleButtonFS->setAutoRaise(true) ;
+	audioCaptureToggleButtonFS->setText(QString()) ;
+	audioCaptureToggleButtonFS->setToolTip(tr("Start Call"));
+
+	videoCaptureToggleButtonFS = new QToolButton(fullScreenFrame) ;
+	videoCaptureToggleButtonFS->setIcon(iconvideoCaptureToggleButton) ;
+	videoCaptureToggleButtonFS->setIconSize(QSize(42,42)) ;
+	videoCaptureToggleButtonFS->setMinimumSize(QSize(44,44)) ;
+	videoCaptureToggleButtonFS->setMaximumSize(QSize(44,44)) ;
+	videoCaptureToggleButtonFS->setCheckable(true) ;
+	videoCaptureToggleButtonFS->setAutoRaise(true) ;
+	videoCaptureToggleButtonFS->setText(QString()) ;
+	videoCaptureToggleButtonFS->setToolTip(tr("Start Video Call"));
+
+	hangupButtonFS = new QToolButton(fullScreenFrame) ;
+	hangupButtonFS->setIcon(QIcon(":/images/call-stop.png")) ;
+	hangupButtonFS->setIconSize(QSize(42,42)) ;
+	hangupButtonFS->setMinimumSize(QSize(44,44)) ;
+	hangupButtonFS->setMaximumSize(QSize(44,44)) ;
+	hangupButtonFS->setCheckable(false) ;
+	hangupButtonFS->setAutoRaise(true) ;
+	hangupButtonFS->setText(QString()) ;
+	hangupButtonFS->setToolTip(tr("Hangup Call"));
+	hangupButtonFS->hide();
+
+	fullscreenToggleButtonFS = new QToolButton(fullScreenFrame);
+	fullscreenToggleButtonFS->setIcon(iconfullscreenToggleButton);
+	fullscreenToggleButtonFS->setIconSize(QSize(42,42));
+	fullscreenToggleButtonFS->setMinimumSize(QSize(44,44));
+	fullscreenToggleButtonFS->setMaximumSize(QSize(44,44));
+	fullscreenToggleButtonFS->setCheckable(true);
+	fullscreenToggleButtonFS->setAutoRaise(true);
+	fullscreenToggleButtonFS->setText(QString());
+	fullscreenToggleButtonFS->setToolTip(tr("Fullscreen mode"));
+	fullscreenToggleButtonFS->setEnabled(false);
+
+	connect(audioListenToggleButtonFS, SIGNAL(clicked()), this , SLOT(toggleAudioListenFS()));
+	connect(audioCaptureToggleButtonFS, SIGNAL(clicked()), this , SLOT(toggleAudioCaptureFS()));
+	connect(videoCaptureToggleButtonFS, SIGNAL(clicked()), this , SLOT(toggleVideoCaptureFS()));
+	connect(hangupButtonFS, SIGNAL(clicked()), this , SLOT(hangupCall()));
+	connect(fullscreenToggleButtonFS, SIGNAL(clicked()), this , SLOT(toggleFullScreenFS()));
+
+	toolBarFSLayout->setDirection(QBoxLayout::LeftToRight);
+	toolBarFSLayout->setSpacing(2);
+	toolBarFSLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+	toolBarFSLayout->addWidget(audioListenToggleButtonFS);
+	toolBarFSLayout->addWidget(audioCaptureToggleButtonFS);
+	toolBarFSLayout->addWidget(videoCaptureToggleButtonFS);
+	toolBarFSLayout->addWidget(hangupButtonFS);
+	toolBarFSLayout->addWidget(fullscreenToggleButtonFS);
+	toolBarFS->setLayout(toolBarFSLayout);
 
 	echoVideoDeviceFS = new QVideoOutputDevice(fullScreenFrame);
 	echoVideoDeviceFS->setGeometry(QRect(QPoint(fullScreenFrame->width(), fullScreenFrame->height()) - QPoint(320,240), QSize(320,240)));
@@ -213,22 +292,48 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 		it = buttonMapTakeVideo.erase(it);
   }
 }
+
 bool VOIPChatWidgetHolder::eventFilter(QObject *obj, QEvent *event)
 {
 	if (obj == fullScreenFrame) {
 		if (event->type() == QEvent::Close || event->type() == QEvent::MouseButtonDblClick) {
-			showChatText();
+			showNormalView();
 		}
 		if (event->type() == QEvent::Resize) {
-			outputVideoDeviceFS->setGeometry(QRect(QPoint(0,0),fullScreenFrame->geometry().size()));
-			outputVideoDeviceFS->showFrameOff();
-			echoVideoDeviceFS->setGeometry(QRect(QPoint(fullScreenFrame->width(), fullScreenFrame->height()) - QPoint(320,240), QSize(320,240)));
-			echoVideoDeviceFS->showFrameOff();
+			replaceFullscreenWidget();
 		}
 
 	}
 	// pass the event on to the parent class
 	return QObject::eventFilter(obj, event);
+}
+
+void VOIPChatWidgetHolder::hangupCall()
+{
+	if (audioCaptureToggleButton->isChecked()) {
+		audioCaptureToggleButton->setChecked(false);
+		toggleAudioCapture();
+	}
+	if (videoCaptureToggleButton->isChecked()) {
+		videoCaptureToggleButton->setChecked(false);
+		toggleVideoCapture();
+	}
+	if (fullscreenToggleButton->isChecked()) {
+		fullscreenToggleButton->setChecked(false);
+		toggleFullScreen();
+	}
+	if (hideChatTextToggleButton->isChecked()) {
+		hideChatTextToggleButton->setChecked(false);
+		toggleHideChatText();
+	}
+	hangupButton->hide();
+	hangupButtonFS->hide();
+}
+
+void VOIPChatWidgetHolder::toggleAudioListenFS()
+{
+	audioListenToggleButton->setChecked(audioListenToggleButtonFS->isChecked());
+	toggleAudioListen();
 }
 
 void VOIPChatWidgetHolder::toggleAudioListen()
@@ -242,25 +347,8 @@ void VOIPChatWidgetHolder::toggleAudioListen()
             outputAudioDevice->stop();
         }*/
     }
-}
-
-void VOIPChatWidgetHolder::hangupCall()
-{
-	disconnect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
-	if (inputAudioDevice) {
-		inputAudioDevice->stop();
-	}        
-	if (outputAudioDevice) {
-		outputAudioDevice->stop();
-	}
-
-	if (mChatWidget) {
-		mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
-	}
-	
-	audioListenToggleButton->setChecked(false);
-	audioCaptureToggleButton->setChecked(false);
-	hangupButton->hide();
+    audioListenToggleButtonFS->setChecked(audioListenToggleButton->isChecked());
+    audioListenToggleButtonFS->setToolTip(audioListenToggleButton->toolTip());
 }
 
 void VOIPChatWidgetHolder::startAudioCapture()
@@ -269,13 +357,21 @@ void VOIPChatWidgetHolder::startAudioCapture()
 	toggleAudioCapture();
 }
 
+void VOIPChatWidgetHolder::toggleAudioCaptureFS()
+{
+	audioCaptureToggleButton->setChecked(audioCaptureToggleButtonFS->isChecked());
+	toggleAudioCapture();
+}
+
 void VOIPChatWidgetHolder::toggleAudioCapture()
 {
     if (audioCaptureToggleButton->isChecked()) {
         //activate audio output
         audioListenToggleButton->setChecked(true);
+        audioListenToggleButtonFS->setChecked(true);
         audioCaptureToggleButton->setToolTip(tr("Hold Call"));
         hangupButton->show();
+        hangupButtonFS->show();
 
         //activate audio input
         if (!inputAudioProcessor) {
@@ -307,9 +403,15 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
         if (inputAudioDevice) {
             inputAudioDevice->stop();
         }
+        if (mChatWidget) {
+            mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Audio Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
+        }
         audioCaptureToggleButton->setToolTip(tr("Resume Call"));
         hangupButton->hide();
+        hangupButtonFS->hide();
     }
+    audioCaptureToggleButtonFS->setChecked(audioCaptureToggleButton->isChecked());
+    audioCaptureToggleButtonFS->setToolTip(audioCaptureToggleButton->toolTip());
 }
 
 void VOIPChatWidgetHolder::startVideoCapture()
@@ -318,12 +420,21 @@ void VOIPChatWidgetHolder::startVideoCapture()
 	toggleVideoCapture();
 }
 
+void VOIPChatWidgetHolder::toggleVideoCaptureFS()
+{
+	videoCaptureToggleButton->setChecked(videoCaptureToggleButtonFS->isChecked());
+	toggleVideoCapture();
+}
+
 void VOIPChatWidgetHolder::toggleVideoCapture()
 {
 	if (videoCaptureToggleButton->isChecked()) 
 	{
 		hideChatTextToggleButton->setEnabled(true);
-		hideChatTextToggleButtonFS->setEnabled(true);
+		fullscreenToggleButton->setEnabled(true);
+		fullscreenToggleButtonFS->setEnabled(true);
+		hangupButton->show();
+    hangupButtonFS->show();
 		//activate video input
 		//
 		videoWidget->show();
@@ -346,9 +457,15 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	{
 		hideChatTextToggleButton->setEnabled(false);
 		hideChatTextToggleButton->setChecked(false);
-		hideChatTextToggleButtonFS->setEnabled(false);
-		hideChatTextToggleButtonFS->setChecked(false);
 		toggleHideChatText();
+		fullscreenToggleButton->setEnabled(false);
+		fullscreenToggleButton->setChecked(false);
+		fullscreenToggleButtonFS->setEnabled(false);
+		fullscreenToggleButtonFS->setChecked(false);
+		toggleFullScreen();
+		hangupButton->hide();
+    hangupButtonFS->hide();
+
 		inputVideoDevice->stop() ;
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
 		outputVideoDevice->showFrameOff();
@@ -358,6 +475,8 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 			                        , tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
 	}
+	videoCaptureToggleButtonFS->setChecked(videoCaptureToggleButton->isChecked());
+	videoCaptureToggleButtonFS->setToolTip(videoCaptureToggleButton->toolTip());
 }
 
 void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* array)
@@ -408,35 +527,69 @@ void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* arr
     }
 }
 
-void VOIPChatWidgetHolder::toggleHideChatTextFS()
-{
-	hideChatTextToggleButton->setChecked(hideChatTextToggleButtonFS->isChecked());
-	toggleHideChatText();
-}
-
 void VOIPChatWidgetHolder::toggleHideChatText()
 {
+	QBoxLayout *layout = static_cast<QBoxLayout*>(videoWidget->layout());
+
 	if (hideChatTextToggleButton->isChecked()) {
+		mChatWidget->hideChatText(true);
+		if (layout) layout->setDirection(QBoxLayout::LeftToRight);
 		hideChatTextToggleButton->setToolTip(tr("Show Chat Text"));
+	} else {
+		mChatWidget->hideChatText(false);
+		if (layout) layout->setDirection(QBoxLayout::TopToBottom);
+		hideChatTextToggleButton->setToolTip(tr("Hide Chat Text"));
+		fullscreenToggleButton->setChecked(false);
+		toggleFullScreen();
+	}
+}
+
+void VOIPChatWidgetHolder::toggleFullScreenFS()
+{
+	fullscreenToggleButton->setChecked(fullscreenToggleButtonFS->isChecked());
+	toggleFullScreen();
+}
+
+void VOIPChatWidgetHolder::toggleFullScreen()
+{
+	if (fullscreenToggleButton->isChecked()) {
+		fullscreenToggleButton->setToolTip(tr("Return to normal view."));
 		inputVideoDevice->setEchoVideoTarget(echoVideoDeviceFS) ;
 		videoProcessor->setDisplayTarget(outputVideoDeviceFS) ;
 		fullScreenFrame->show();
 	} else {
 		mChatWidget->hideChatText(false);
-		hideChatTextToggleButton->setToolTip(tr("Hide Chat Text"));
+		fullscreenToggleButton->setToolTip(tr("Fullscreen mode"));
 		inputVideoDevice->setEchoVideoTarget(echoVideoDevice) ;
 		videoProcessor->setDisplayTarget(outputVideoDevice) ;
 		fullScreenFrame->hide();
 	}
-	hideChatTextToggleButtonFS->setChecked(hideChatTextToggleButton->isChecked());
-	hideChatTextToggleButtonFS->setToolTip(fullScreenFrame->toolTip());
+	fullscreenToggleButtonFS->setChecked(fullscreenToggleButton->isChecked());
+	fullscreenToggleButtonFS->setToolTip(fullscreenToggleButton->toolTip());
 }
 
-void VOIPChatWidgetHolder::showChatText()
+void VOIPChatWidgetHolder::replaceFullscreenWidget()
+{
+	outputVideoDeviceFS->setGeometry(QRect(QPoint(0,0),fullScreenFrame->geometry().size()));
+	echoVideoDeviceFS->setGeometry(QRect(QPoint(fullScreenFrame->width(), fullScreenFrame->height()) - QPoint(320,240), QSize(320,240)));
+	QRect toolBarFSGeo = QRect( (fullScreenFrame->width() - toolBarFS->geometry().width()) / 2
+	                            , fullScreenFrame->height() - toolBarFS->geometry().height()
+	                            , toolBarFS->geometry().width(), toolBarFS->geometry().height());
+	toolBarFS->setGeometry(toolBarFSGeo);
+
+	if (!videoCaptureToggleButton->isChecked()) {
+		outputVideoDeviceFS->showFrameOff();
+		echoVideoDeviceFS->showFrameOff();
+	}
+}
+
+void VOIPChatWidgetHolder::showNormalView()
 {
 	hideChatTextToggleButton->setChecked(false);
-	hideChatTextToggleButtonFS->setChecked(false);
 	toggleHideChatText();
+	fullscreenToggleButton->setChecked(false);
+	fullscreenToggleButtonFS->setChecked(false);
+	toggleFullScreen();
 }
 
 void VOIPChatWidgetHolder::botMouseEnter()
@@ -587,15 +740,17 @@ void VOIPChatWidgetHolder::sendAudioData()
 
 void VOIPChatWidgetHolder::updateStatus(int status)
 {
-	audioListenToggleButton->setEnabled(true);
-	audioCaptureToggleButton->setEnabled(true);
-	hangupButton->setEnabled(true);
-	
-	switch (status) {
-	case RS_STATUS_OFFLINE:
-		audioListenToggleButton->setEnabled(false);
-		audioCaptureToggleButton->setEnabled(false);
-		hangupButton->setEnabled(false);
-		break;
-	}
+	bool enabled = (status != RS_STATUS_OFFLINE);
+
+	audioListenToggleButton->setEnabled(enabled);
+	audioListenToggleButtonFS->setEnabled(enabled);
+	audioCaptureToggleButton->setEnabled(enabled);
+	audioCaptureToggleButtonFS->setEnabled(enabled);
+	videoCaptureToggleButton->setEnabled(enabled);
+	videoCaptureToggleButtonFS->setEnabled(enabled);
+	hideChatTextToggleButton->setEnabled(videoCaptureToggleButton->isChecked() && enabled);
+	fullscreenToggleButton->setEnabled(videoCaptureToggleButton->isChecked() && enabled);
+	fullscreenToggleButtonFS->setEnabled(videoCaptureToggleButton->isChecked() && enabled);
+	hangupButton->setEnabled(enabled);
+	hangupButtonFS->setEnabled(enabled);
 }

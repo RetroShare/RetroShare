@@ -60,14 +60,21 @@ public slots:
 
 private slots:
 	void toggleAudioListen();
+	void toggleAudioListenFS();
 	void toggleAudioCapture();
+	void toggleAudioCaptureFS();
 	void toggleVideoCapture();
+	void toggleVideoCaptureFS();
 	void toggleHideChatText();
-	void toggleHideChatTextFS();
-	void showChatText();
+	void toggleFullScreen();
+	void toggleFullScreenFS();
 	void hangupCall() ;
 	void botMouseEnter();
 	void botMouseLeave();
+
+private:
+	void replaceFullscreenWidget();
+	void showNormalView();
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
@@ -96,11 +103,17 @@ protected:
 
 	// Additional buttons to the chat bar
 	QToolButton *audioListenToggleButton ;
+	QToolButton *audioListenToggleButtonFS ;
 	QToolButton *audioCaptureToggleButton ;
+	QToolButton *audioCaptureToggleButtonFS ;
 	QToolButton *videoCaptureToggleButton ;
+	QToolButton *videoCaptureToggleButtonFS ;
 	QToolButton *hideChatTextToggleButton ;
-	QToolButton *hideChatTextToggleButtonFS ;
+	QToolButton *fullscreenToggleButton ;
+	QToolButton *fullscreenToggleButtonFS ;
 	QToolButton *hangupButton ;
+	QToolButton *hangupButtonFS ;
+	QFrame *toolBarFS;
 
 	typedef QMap<QString, RSButtonOnText*> button_map;
 	button_map buttonMapTakeVideo;
