@@ -35,6 +35,7 @@
 #include "serialiser/rsgxsreputationitems.h"
 
 #include "retroshare/rsidentity.h"
+#include "retroshare/rsreputations.h"
 #include "services/p3service.h"
 
 
@@ -80,14 +81,16 @@ int32_t CalculateReputation();
   * 
   */
 
-class p3GxsReputation: public p3Service, public p3Config /* , public pqiMonitor */
+class p3GxsReputation: public p3Service, public p3Config, public RsReputations /* , public pqiMonitor */
 {
 	public:
 		p3GxsReputation(p3LinkMgr *lm);
 		virtual RsServiceInfo getServiceInfo();
 
-		/***** Interface for p3idservice *****/
-
+		/***** Interface for RsReputations *****/
+		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
+		virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) ;
+                
 		virtual bool updateOpinion(const RsGxsId& gxsid, int opinion);
 
 		/***** overloaded from p3Service *****/

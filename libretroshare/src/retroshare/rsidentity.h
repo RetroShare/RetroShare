@@ -215,12 +215,6 @@ public:
 /********************************************************************************************/
 /********************************************************************************************/
     
-    	enum Opinion { 
-            	OPINION_NEGATIVE = -1,
-            	OPINION_NEUTRAL  =  0,
-            	OPINION_POSITIVE =  1
-        };
-
 	// For Other Services....
 	// It should be impossible for them to get a message which we don't have the identity.
 	// Its a major error if we don't have the identity.

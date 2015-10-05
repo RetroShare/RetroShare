@@ -708,6 +708,7 @@ gxs {
 		gxs/rsgxsnetservice.h \
 		retroshare/rsgxsflags.h \
 		retroshare/rsgxsifacetypes.h \
+		retroshare/rsreputations.h \
 		gxs/rsgenexchange.h \
 		gxs/rsnxsobserver.h \
 		gxs/rsgxsdata.h \

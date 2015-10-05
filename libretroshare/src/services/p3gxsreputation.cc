@@ -380,7 +380,13 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
  * Opinion
  ****/
 
-bool p3GxsReputation::updateOpinion(const RsGxsId& gxsid, int opinion)
+bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::ReputationInfo& info)
+{
+    std::cerr << __PRETTY_FUNCTION__ << ": not implemented yet!" << std::endl;
+    return true ;
+}
+
+bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 

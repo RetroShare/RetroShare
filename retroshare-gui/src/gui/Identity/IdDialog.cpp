@@ -34,6 +34,7 @@
 #include "gui/msgs/MessageComposer.h"
 
 #include <retroshare/rspeers.h>
+#include <retroshare/rsreputations.h>
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
 #include <iostream>
@@ -676,13 +677,16 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 #endif
 
-	ui->overallOpinion_TF->setText(QString::number(data.mReputation.mOverallScore));
+    RsReputations::ReputationInfo info ;
+    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
+    
+	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore));
 
     switch(data.mReputation.mOwnOpinion)
 	{
-        case RsIdentity::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
-        case RsIdentity::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
-        case RsIdentity::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
+        case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
+        case RsReputations::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
+        case RsReputations::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
         default:
             std::cerr << "Unexpected value in own opinion: " << data.mReputation.mOwnOpinion << std::endl;
 	}
@@ -699,23 +703,28 @@ void IdDialog::modifyReputation()
 
 	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
     
-    	RsIdentity::Opinion op ;
+    	RsReputations::Opinion op ;
 
     	switch(ui->ownOpinion_CB->currentIndex())
         {
-        	case 0: op = RsIdentity::OPINION_NEGATIVE ; break ;
-        	case 1: op = RsIdentity::OPINION_NEUTRAL  ; break ;
-        	case 2: op = RsIdentity::OPINION_POSITIVE ; break ;
+        	case 0: op = RsReputations::OPINION_NEGATIVE ; break ;
+        	case 1: op = RsReputations::OPINION_NEUTRAL  ; break ;
+        	case 2: op = RsReputations::OPINION_POSITIVE ; break ;
         default:
             std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
             
         }
+    	rsReputations->setOwnOpinion(id,op) ;
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
 	std::cerr << std::endl;
 #endif
 
+#ifdef SUSPENDED
+    	// Cyril: apparently the old reputation system was in used here. It's based on GXS data exchange, and probably not
+    	// very efficient because of this.
+    
 	uint32_t token;
 	if (!rsIdentity->submitOpinion(token, id, false, op))
 	{
@@ -724,15 +733,18 @@ void IdDialog::modifyReputation()
 		std::cerr << std::endl;
 #endif
 	}
+#endif
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
 	std::cerr << std::endl;
 #endif
 
+#ifdef SUSPENDED
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
 	mIdQueue->queueRequest(token, 0, 0, IDDIALOG_REFRESH);
+#endif
 
 	return;
 }
