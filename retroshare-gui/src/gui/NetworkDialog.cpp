@@ -393,6 +393,8 @@ void NetworkDialog::insertConnect()
 
 	/* get a link to the table */
 	QTreeWidget *connectWidget = ui.connectTreeWidget;
+	/* disable sorting while editing the table */
+	connectWidget->setSortingEnabled(false);
 
 	//remove items
 	int index = 0;
@@ -560,7 +562,10 @@ void NetworkDialog::insertConnect()
 	}
 	connectWidget->addTopLevelItem(self_item);
 
-	connectWidget->update(); /* update display */
+	/* enable sorting */
+	connectWidget->setSortingEnabled(true);
+	/* update display */
+	connectWidget->update();
 
 	if (ui.filterLineEdit->text().isEmpty() == false) {
 		filterItems(ui.filterLineEdit->text());
