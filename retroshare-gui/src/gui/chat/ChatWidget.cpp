@@ -214,7 +214,7 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 
 void ChatWidget::addChatHorizontalWidget(QWidget *w)
 {
-	ui->verticalLayout_2->addWidget(w) ;
+	ui->vl_Plugins->addWidget(w) ;
 	update() ;
 }
 
@@ -223,9 +223,15 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
 
-void ChatWidget::addVOIPBarWidget(QWidget *w)
+void ChatWidget::addTitleBarWidget(QWidget *w)
 {
-	ui->titleBarFrame->layout()->addWidget(w) ;
+	ui->pluginTitleFrame->layout()->addWidget(w) ;
+}
+
+void ChatWidget::hideChatText(bool hidden)
+{
+	ui->frame_ChatText->setHidden(hidden); ;
+	ui->searchframe->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
 }
 
 RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()

@@ -60,13 +60,25 @@ public slots:
 
 private slots:
 	void toggleAudioListen();
+	void toggleAudioListenFS();
 	void toggleAudioCapture();
+	void toggleAudioCaptureFS();
 	void toggleVideoCapture();
+	void toggleVideoCaptureFS();
+	void toggleHideChatText();
+	void toggleFullScreen();
+	void toggleFullScreenFS();
 	void hangupCall() ;
 	void botMouseEnter();
 	void botMouseLeave();
 
+private:
+	void replaceFullscreenWidget();
+	void showNormalView();
+
 protected:
+	bool eventFilter(QObject *obj, QEvent *event);
+
 	// Audio input/output
 	QAudioInput* inputAudioDevice;
 	QAudioOutput* outputAudioDevice;
@@ -79,15 +91,29 @@ protected:
 	QVideoOutputDevice *echoVideoDevice;
 	QVideoInputDevice *inputVideoDevice;
 
+	//For FullScreen Mode
+	QFrame *fullScreenFrame;
+	QVideoOutputDevice *outputVideoDeviceFS;
+	QVideoOutputDevice *echoVideoDeviceFS;
+	Qt::WindowFlags outputVideoDeviceFlags;
+
 	QWidget *videoWidget ;	// pointer to call show/hide
 
 	VideoProcessor *videoProcessor;
 
 	// Additional buttons to the chat bar
 	QToolButton *audioListenToggleButton ;
+	QToolButton *audioListenToggleButtonFS ;
 	QToolButton *audioCaptureToggleButton ;
+	QToolButton *audioCaptureToggleButtonFS ;
 	QToolButton *videoCaptureToggleButton ;
+	QToolButton *videoCaptureToggleButtonFS ;
+	QToolButton *hideChatTextToggleButton ;
+	QToolButton *fullscreenToggleButton ;
+	QToolButton *fullscreenToggleButtonFS ;
 	QToolButton *hangupButton ;
+	QToolButton *hangupButtonFS ;
+	QFrame *toolBarFS;
 
 	typedef QMap<QString, RSButtonOnText*> button_map;
 	button_map buttonMapTakeVideo;

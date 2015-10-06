@@ -108,9 +108,8 @@ public:
 	// Adds one widget in the chat bar. Used to add e.g. new buttons. The widget should be
 	// small enough in size.
 	void addChatBarWidget(QWidget *w) ;
-	
-	
-	void addVOIPBarWidget(QWidget *w);
+	void addTitleBarWidget(QWidget *w);
+	void hideChatText(bool hidden);
 	RSButtonOnText* getNewButtonOnTextBrowser();
 	RSButtonOnText* getNewButtonOnTextBrowser(QString text);
 
