@@ -184,14 +184,14 @@ bool p3GxsReputation::processIncoming()
 		switch(item->PacketSubType())
 		{
 			default:
-			case RS_PKT_SUBTYPE_GXSREPUTATION_CONFIG_ITEM:
-			case RS_PKT_SUBTYPE_GXSREPUTATION_SET_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM:
 				std::cerr << "p3GxsReputation::processingIncoming() Unknown Item";
 				std::cerr << std::endl;
 				itemOk = false;
 				break;
 
-			case RS_PKT_SUBTYPE_GXSREPUTATION_REQUEST_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM:
 			{
 				RsGxsReputationRequestItem *requestItem = 
 					dynamic_cast<RsGxsReputationRequestItem *>(item);
@@ -206,7 +206,7 @@ bool p3GxsReputation::processIncoming()
 			}
 				break;
 
-			case RS_PKT_SUBTYPE_GXSREPUTATION_UPDATE_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM:
 			{
 				RsGxsReputationUpdateItem *updateItem = 
 					dynamic_cast<RsGxsReputationUpdateItem *>(item);
@@ -465,7 +465,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		}
 
 		RsGxsReputationConfigItem *item = new RsGxsReputationConfigItem();
-		item->mPeerId = it->first.toStdString();
+		item->mPeerId = it->first;
 		item->mLatestUpdate = it->second.mLatestUpdate;
 		item->mLastQuery = it->second.mLastQuery;
 		savelist.push_back(item);
@@ -476,16 +476,16 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	for(rit = mReputations.begin(); rit != mReputations.end(); ++rit, count++)
 	{
 		RsGxsReputationSetItem *item = new RsGxsReputationSetItem();
-		item->mGxsId = rit->first.toStdString();
+		item->mGxsId = rit->first;
 		item->mOwnOpinion = ConvertToSerialised(rit->second.mOwnOpinion, false);
-		item->mOwnOpinionTs = rit->second.mOwnOpinionTs;
+		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
 		item->mReputation = ConvertToSerialised(rit->second.mReputation, false);
 
 		std::map<RsPeerId, int32_t>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
 		{
 			// should be already limited.
-			item->mOpinions[oit->first.toStdString()] = ConvertToSerialised(oit->second, false);
+			item->mOpinions[oit->first] = ConvertToSerialised(oit->second, false);
 		}
 
 		savelist.push_back(item);
@@ -548,19 +548,17 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 	Reputation &reputation = mReputations[gxsId];
 
 	// install opinions.
-	std::map<std::string, uint32_t>::const_iterator oit;
+	std::map<RsPeerId, uint32_t>::const_iterator oit;
 	for(oit = item->mOpinions.begin(); oit != item->mOpinions.end(); ++oit)
 	{
 		// expensive ... but necessary.
 		RsPeerId peerId(oit->first);
 		if (peerSet.end() != peerSet.find(peerId))
-		{
 			reputation.mOpinions[peerId] = ConvertFromSerialised(oit->second, true);
-		}
 	}
 
 	reputation.mOwnOpinion = ConvertFromSerialised(item->mOwnOpinion, false);
-	reputation.mOwnOpinionTs = item->mOwnOpinionTs;
+	reputation.mOwnOpinionTs = item->mOwnOpinionTS;
 
 	// if dropping entries has changed the score -> must update.
 	int previous = ConvertFromSerialised(item->mReputation, false);
