@@ -203,9 +203,9 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 
 	audioListenToggleButtonFS = new QToolButton(fullScreenFrame) ;
 	audioListenToggleButtonFS->setIcon(iconaudioListenToggleButton) ;
-	audioListenToggleButtonFS->setIconSize(iconSize*2) ;
-	audioListenToggleButtonFS->setMinimumSize(buttonSize*2) ;
-	audioListenToggleButtonFS->setMaximumSize(buttonSize*2) ;
+	audioListenToggleButtonFS->setIconSize(iconSize) ;
+	audioListenToggleButtonFS->setMinimumSize(buttonSize) ;
+	audioListenToggleButtonFS->setMaximumSize(buttonSize) ;
 	audioListenToggleButtonFS->setCheckable(true);
 	audioListenToggleButtonFS->setAutoRaise(true) ;
 	audioListenToggleButtonFS->setText(QString()) ;
@@ -213,9 +213,9 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 
 	audioCaptureToggleButtonFS = new QToolButton(fullScreenFrame) ;
 	audioCaptureToggleButtonFS->setIcon(iconaudioCaptureToggleButton) ;
-	audioCaptureToggleButtonFS->setIconSize(iconSize*2) ;
-	audioCaptureToggleButtonFS->setMinimumSize(buttonSize*2) ;
-	audioCaptureToggleButtonFS->setMaximumSize(buttonSize*2) ;
+	audioCaptureToggleButtonFS->setIconSize(iconSize) ;
+	audioCaptureToggleButtonFS->setMinimumSize(buttonSize) ;
+	audioCaptureToggleButtonFS->setMaximumSize(buttonSize) ;
 	audioCaptureToggleButtonFS->setCheckable(true) ;
 	audioCaptureToggleButtonFS->setAutoRaise(true) ;
 	audioCaptureToggleButtonFS->setText(QString()) ;
@@ -223,9 +223,9 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 
 	videoCaptureToggleButtonFS = new QToolButton(fullScreenFrame) ;
 	videoCaptureToggleButtonFS->setIcon(iconvideoCaptureToggleButton) ;
-	videoCaptureToggleButtonFS->setIconSize(iconSize*2) ;
-	videoCaptureToggleButtonFS->setMinimumSize(buttonSize*2) ;
-	videoCaptureToggleButtonFS->setMaximumSize(buttonSize*2) ;
+	videoCaptureToggleButtonFS->setIconSize(iconSize) ;
+	videoCaptureToggleButtonFS->setMinimumSize(buttonSize) ;
+	videoCaptureToggleButtonFS->setMaximumSize(buttonSize) ;
 	videoCaptureToggleButtonFS->setCheckable(true) ;
 	videoCaptureToggleButtonFS->setAutoRaise(true) ;
 	videoCaptureToggleButtonFS->setText(QString()) ;
@@ -233,9 +233,9 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 
 	hangupButtonFS = new QToolButton(fullScreenFrame) ;
 	hangupButtonFS->setIcon(QIcon(":/images/call-stop.png")) ;
-	hangupButtonFS->setIconSize(iconSize*2) ;
-	hangupButtonFS->setMinimumSize(buttonSize*2) ;
-	hangupButtonFS->setMaximumSize(buttonSize*2) ;
+	hangupButtonFS->setIconSize(iconSize) ;
+	hangupButtonFS->setMinimumSize(buttonSize) ;
+	hangupButtonFS->setMaximumSize(buttonSize) ;
 	hangupButtonFS->setCheckable(false) ;
 	hangupButtonFS->setAutoRaise(true) ;
 	hangupButtonFS->setText(QString()) ;
@@ -244,9 +244,9 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 
 	fullscreenToggleButtonFS = new QToolButton(fullScreenFrame);
 	fullscreenToggleButtonFS->setIcon(iconfullscreenToggleButton);
-	fullscreenToggleButtonFS->setIconSize(iconSize*2);
-	fullscreenToggleButtonFS->setMinimumSize(buttonSize*2);
-	fullscreenToggleButtonFS->setMaximumSize(buttonSize*2);
+	fullscreenToggleButtonFS->setIconSize(iconSize);
+	fullscreenToggleButtonFS->setMinimumSize(buttonSize);
+	fullscreenToggleButtonFS->setMaximumSize(buttonSize);
 	fullscreenToggleButtonFS->setCheckable(true);
 	fullscreenToggleButtonFS->setAutoRaise(true);
 	fullscreenToggleButtonFS->setText(QString());
