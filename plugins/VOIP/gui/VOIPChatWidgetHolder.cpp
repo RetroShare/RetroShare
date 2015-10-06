@@ -46,8 +46,8 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
   : QObject(), ChatWidgetHolder(chatWidget), mVOIPNotify(notify)
 {
 	int S = QFontMetricsF(chatWidget->font()).height() ;
-	QSize iconSize = QSize(2*S,2*S);
-	QSize buttonSize = QSize(iconSize + QSize(2,2));
+	QSize iconSize = QSize(3*S,3*S);
+	QSize buttonSize = QSize(iconSize + QSize(3,3));
 
 	QIcon iconaudioListenToggleButton ;
 	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-muted.png")) ;
