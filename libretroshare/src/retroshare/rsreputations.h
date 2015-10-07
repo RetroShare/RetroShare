@@ -28,24 +28,28 @@
 #include "retroshare/rsids.h"
 #include "retroshare/rsgxsifacetypes.h"
 
-typedef uint32_t GRouterServiceId ;
-typedef uint64_t GRouterMsgPropagationId ;
-
 class RsReputations
 {
 public:
 	// This is the interface file for the reputation system
 	//
-	enum Opinion { OPINION_NEGATIVE = -1, OPINION_NEUTRAL = 0, OPINION_POSITIVE = 1 } ;
+	enum Opinion    { OPINION_NEGATIVE = 0, OPINION_NEUTRAL = 1, OPINION_POSITIVE = 2 } ;
+    	enum Assessment { ASSESSMENT_BAD = 0, ASSESSMENT_OK = 1 } ;
 
 	struct ReputationInfo
 	{
 		RsReputations::Opinion mOwnOpinion ;
 		float mOverallReputationScore ;
+     		RsReputations::Assessment mAssessment;	// this should help clients in taking decisions
 	};
 
 	virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) =0;
 	virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) =0 ;
+        
+        // This one is a proxy designed to allow fast checking of a GXS id.
+        // it basically returns true if assessment is ASSESSMENT_OK
+        
+	virtual bool isIdentityOk(const RsGxsId& id) =0;
 };
 
 // To access reputations from anywhere

@@ -70,57 +70,65 @@ const int kMaximumSetSize = 	100;
  * std::map<RsPeerId, ReputationConfig> mConfig;
  *
  * Updates from p3GxsReputation -> p3IdService.
- *
- *
  * Updates from p3IdService -> p3GxsReputation.
  *
+ * Each peer locally stores reputations for all GXS ids. If not stored, a default value
+ * is used, corresponding to a neutral opinion. Peers also share their reputation level
+ * with their neighbor nodes. 
+ * 
+ * The calculation method is the following:
+ * 
+ * 	Local values:
+ * 		Good:      2
+ * 		Neutral:   1
+ * 		Bad:       0
  *
+ * 	Overall reputation score:
+ * 		
+ * 		if(own_opinion == 0)	// means we dont' care
+ * 			r = average_of_friends_opinions
+ * 		else
+ * 			r = own_opinion
+ * 
+ * 	Decisions based on reputation score:
+ * 
+ *              0               x1                1                    x2                   2
+ *              | <-----------------------------------------------------------------------> |
+ *     ---------+
+ *     Lobbies  |  Msgs dropped
+ *     Forums   |  Msgs dropped
+ *     Messages |  Msgs dropped
+ *     ---------+----------------------------------------------------------------------------
+ * 
+ * 	We select x1=0.5
+ * 
+ * 	=> to kill an identity, either you, or at least 50% of your friends need to flag it
+ * 		as bad.
+ * 	Rules:
+ * 		* a single peer cannot drastically change the behavior of a given GXS id
+ * 		* it should be easy for many peers to globally kill a GXS id
+ * 
+ * 	Typical examples:
+ * 
+ *            Friends   |  Friend average     |  Own     |  alpha     | Score
+ *           -----------+---------------------+----------+------------+--------------
+ *            10        |  0.5                |  1       |  0.25      | 0.375          
+ *            10        |  1.0                |  1       |  0.25      | 1.0            
+ *            10        |  1.0                |  0       |  0.25      | 1.0            
+ * 
+ * 	To check:
+ *	[ ]  Opinions are saved/loaded accross restart
+ *	[ ]  Opinions are transmitted to friends
+ *	[ ]  Opinions are transmitted to friends when updated
+ * 
+ * 	To do:
+ * 	[ ]  Test the whole thing
+ * 	[ ]  Implement a system to allow not storing info when we don't have it
  */
 
-const int32_t REPUTATION_OFFSET		= 100000;
-const int32_t LOWER_LIMIT		= -100;
-const int32_t UPPER_LIMIT		= 100;
-
-int32_t ConvertFromSerialised(uint32_t value, bool limit)
-{
-	int32_t converted = ((int32_t) value) - REPUTATION_OFFSET ;
-	if (limit)
-	{
-		if (converted < LOWER_LIMIT)
-		{
-			converted = LOWER_LIMIT;
-		}
-		if (converted > UPPER_LIMIT)
-		{
-			converted = UPPER_LIMIT;
-		}
-	}
-	return converted;
-}
-
-uint32_t ConvertToSerialised(int32_t value, bool limit)
-{
-	if (limit)
-	{
-		if (value < LOWER_LIMIT)
-		{
-			value = LOWER_LIMIT;
-		}
-		if (value > UPPER_LIMIT)
-		{
-			value = UPPER_LIMIT;
-		}
-	}
-
-	value += REPUTATION_OFFSET;
-	if (value < 0)
-	{
-		value = 0;
-	}
-	return (uint32_t) value;
-}
-
-
+const uint32_t LOWER_LIMIT		           = 0;
+const uint32_t UPPER_LIMIT		           = 2;
+const float    REPUTATION_ASSESSMENT_THRESHOLD_X1 = 0.5f ;
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
@@ -132,7 +140,6 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	mStoreTime = 0;
 	mReputationsUpdated = false;
 }
-
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
 const uint16_t GXS_REPUTATION_APP_MAJOR_VERSION  =       1;
@@ -275,7 +282,7 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 		}
 
 		RsGxsId gxsId = rit->first;
-		pkt->mOpinions[gxsId] = ConvertToSerialised(rit->second.mOwnOpinion, true);
+		pkt->mOpinions[gxsId] = rit->second.mOwnOpinion;
 		pkt->mLatestUpdate = rit->second.mOwnOpinionTs;
 		if (pkt->mLatestUpdate == (uint32_t) now)
 		{
@@ -341,8 +348,8 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 			rit = mReputations.find(gxsId);
 		}
 
-		Reputation &reputation = rit->second;
-		reputation.mOpinions[peerid] = ConvertFromSerialised(it->second, true);
+		Reputation& reputation = rit->second;
+		reputation.mOpinions[peerid] = std::min(it->second,UPPER_LIMIT);	// filters potentially tweaked reputation score sent by friend
 
 		int previous = reputation.mReputation;
 		if (previous != reputation.CalculateReputation())
@@ -382,8 +389,37 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
 
 bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::ReputationInfo& info)
 {
-    std::cerr << __PRETTY_FUNCTION__ << ": not implemented yet!" << std::endl;
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    std::map<RsGxsId,Reputation>::const_iterator it = mReputations.find(gxsid);
+
+    if (it == mReputations.end())
+    {
+	    info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
+	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
+	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
+    }
+    else
+    {
+	    info.mOwnOpinion = RsReputations::Opinion(it->second.mOwnOpinion) ;
+	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
+
+	    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
+		    info.mAssessment = RsReputations::ASSESSMENT_OK ;
+	    else
+		    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+    }
+
     return true ;
+}
+
+bool p3GxsReputation::isIdentityOk(const RsGxsId &id)
+{
+    RsReputations::ReputationInfo info ;
+    
+    getReputationInfo(id,info) ;
+    
+    return info.mAssessment == RsReputations::ASSESSMENT_OK ;
 }
 
 bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
@@ -477,15 +513,15 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	{
 		RsGxsReputationSetItem *item = new RsGxsReputationSetItem();
 		item->mGxsId = rit->first;
-		item->mOwnOpinion = ConvertToSerialised(rit->second.mOwnOpinion, false);
+		item->mOwnOpinion = rit->second.mOwnOpinion;
 		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
-		item->mReputation = ConvertToSerialised(rit->second.mReputation, false);
+		item->mReputation = rit->second.mReputation;
 
-		std::map<RsPeerId, int32_t>::iterator oit;
+		std::map<RsPeerId, uint32_t>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
 		{
 			// should be already limited.
-			item->mOpinions[oit->first] = ConvertToSerialised(oit->second, false);
+			item->mOpinions[oit->first] = oit->second;
 		}
 
 		savelist.push_back(item);
@@ -554,14 +590,14 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 		// expensive ... but necessary.
 		RsPeerId peerId(oit->first);
 		if (peerSet.end() != peerSet.find(peerId))
-			reputation.mOpinions[peerId] = ConvertFromSerialised(oit->second, true);
+			reputation.mOpinions[peerId] = oit->second;
 	}
 
-	reputation.mOwnOpinion = ConvertFromSerialised(item->mOwnOpinion, false);
+	reputation.mOwnOpinion = item->mOwnOpinion;
 	reputation.mOwnOpinionTs = item->mOwnOpinionTS;
 
 	// if dropping entries has changed the score -> must update.
-	int previous = ConvertFromSerialised(item->mReputation, false);
+	int previous = item->mReputation;
 	if (previous != reputation.CalculateReputation())
 	{
 		mUpdatedReputations.insert(gxsId);
@@ -688,6 +724,18 @@ float Reputation::CalculateReputation()
 {
  	// the calculation of reputation makes the whole thing   
     
-    	std::cerr << __PRETTY_FUNCTION__ << ": not implemented yet!" << std::endl;
-    	return 0.0 ;
+    	if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+        {
+            uint32_t friend_total = 0;
+            
+            for(std::map<RsPeerId,uint32_t>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
+                friend_total += it->second ;
+            
+            if(friend_total == 0)	// includes the case of no friends!
+                return 0.0f ;
+            else
+                return friend_total / float(mOpinions.size()) ;
+        }
+        else
+		return float(mOwnOpinion) ;
 }

@@ -59,15 +59,14 @@ class Reputation
 {
 public:
 	Reputation()
-    :mOwnOpinion(0), mOwnOpinionTs(0), mReputation(0) { return; }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
 
 	Reputation(const RsGxsId& about)
-    :mGxsId(about), mOwnOpinion(0), mOwnOpinionTs(0), mReputation(0) { return; }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
 
 	float CalculateReputation();
 
-	RsGxsId mGxsId;
-	std::map<RsPeerId, int32_t> mOpinions;
+	std::map<RsPeerId, uint32_t> mOpinions;
 	int32_t mOwnOpinion;
 	time_t  mOwnOpinionTs;
 
@@ -90,27 +89,15 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		/***** Interface for RsReputations *****/
 		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
 		virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) ;
+		virtual bool isIdentityOk(const RsGxsId& id) ;
                 
 		/***** overloaded from p3Service *****/
-		/*!
-		 * This retrieves all chat msg items and also (important!)
-		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
-		 * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
-		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
-		 * @see NotifyBase
-
-		 */
 		virtual int   tick();
 		virtual int   status();
-
 
 		/*!
 		 * Interface stuff.
 		 */
-
-		/*************** pqiMonitor callback ***********************/
-		//virtual void statusChange(const std::list<pqipeer> &plist);
-
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -132,7 +119,6 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		int     sendPackets();
 		void sendReputationRequests();
 		int sendReputationRequest(RsPeerId peerid);
-
 
 	private:
 		RsMutex mReputationMtx;
