@@ -64,14 +64,14 @@ public:
 	Reputation(const RsGxsId& about)
     :mGxsId(about), mOwnOpinion(0), mOwnOpinionTs(0), mReputation(0) { return; }
 
-int32_t CalculateReputation();
+	float CalculateReputation();
 
 	RsGxsId mGxsId;
 	std::map<RsPeerId, int32_t> mOpinions;
 	int32_t mOwnOpinion;
 	time_t  mOwnOpinionTs;
 
-	int32_t mReputation;
+	float mReputation;
 };
 
 
@@ -91,8 +91,6 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
 		virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) ;
                 
-		virtual bool updateOpinion(const RsGxsId& gxsid, int opinion);
-
 		/***** overloaded from p3Service *****/
 		/*!
 		 * This retrieves all chat msg items and also (important!)

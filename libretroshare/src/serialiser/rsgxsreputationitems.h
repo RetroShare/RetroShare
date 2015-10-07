@@ -80,7 +80,7 @@ class RsGxsReputationSetItem: public RsReputationItem
 public:
 	RsGxsReputationSetItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM) {}
 
-	virtual ~RsGxsReputationSetItem();
+    virtual ~RsGxsReputationSetItem() {}
 	virtual void clear();  
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
@@ -99,7 +99,7 @@ class RsGxsReputationUpdateItem: public RsReputationItem
 public:
     RsGxsReputationUpdateItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM) {}
 
-    virtual ~RsGxsReputationUpdateItem();
+    virtual ~RsGxsReputationUpdateItem() {}
     virtual void clear();  
     std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
@@ -115,7 +115,7 @@ class RsGxsReputationRequestItem: public RsReputationItem
 public:
     RsGxsReputationRequestItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM) {}
 
-	virtual ~RsGxsReputationRequestItem();
+    virtual ~RsGxsReputationRequestItem() {}
     virtual void clear() {}
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 

@@ -684,4 +684,10 @@ int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 	return 1;
 }
 
-
+float Reputation::CalculateReputation()
+{
+ 	// the calculation of reputation makes the whole thing   
+    
+    	std::cerr << __PRETTY_FUNCTION__ << ": not implemented yet!" << std::endl;
+    	return 0.0 ;
+}
