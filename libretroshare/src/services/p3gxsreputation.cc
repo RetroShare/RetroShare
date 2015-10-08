@@ -37,6 +37,7 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
+#define DEBUG_REPUTATION		1
 
 
 /* DEFINE INTERFACE POINTER! */
@@ -131,7 +132,7 @@ static const int ACTIVE_FRIENDS_ONLINE_DELAY  = 86400*7 ; // 1 week.
  * 	To do:
  * 	[ ]  Add debug info
  * 	[ ]  Test the whole thing
- * 	[ ]  Implement a system to allow not storing info when we don't have it
+ * 	[X]  Implement a system to allow not storing info when we don't have it
  */
 
 const uint32_t LOWER_LIMIT		           = 0;
@@ -181,6 +182,15 @@ int	p3GxsReputation::tick()
         	mLastActiveFriendsUpdate = now ;
         }
 
+#ifdef DEBUG_REPUTATION
+        static time_t last_debug_print = time(NULL) ;
+        
+        if(now > 10+last_debug_print)
+        {
+            last_debug_print = now ;
+            debug_print() ;
+        }
+#endif
 	return 0;
 }
 
@@ -195,7 +205,7 @@ void p3GxsReputation::updateActiveFriends()
 
     // keep track of who is recently connected.  That will give a value to average friend
     // for this, we count all friends that have been online in the last week.
-
+ 
     time_t now = time(NULL) ;
     
     std::list<RsPeerId> idList ;
@@ -210,6 +220,9 @@ void p3GxsReputation::updateActiveFriends()
 	    if(mLinkMgr->getFriendNetStatus(*it, state) && now < state.lastavailable + ACTIVE_FRIENDS_ONLINE_DELAY)
 	                    ++mAverageActiveFriends ;
     }
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::updateActiveFriends(): new count: " << mAverageActiveFriends << std::endl;
+#endif
 
 }
 
@@ -279,8 +292,9 @@ bool p3GxsReputation::processIncoming()
 
 bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 {
-	std::cerr << "p3GxsReputation::SendReputations()";
-	std::cerr << std::endl;
+#ifdef DEBUG_REPUTATION
+	std::cerr << "p3GxsReputation::SendReputations()" << std::endl;
+#endif
 
 	RsPeerId peerId = request->PeerId();
 	time_t last_update = request->mLastUpdate;
@@ -366,9 +380,12 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 
     RsReputations::Opinion new_opinion = safe_convert_uint32t_to_opinion(op);
     RsReputations::Opinion old_opinion = RsReputations::OPINION_NEUTRAL ;	// default if not set
-    
+
     bool updated = false ;
 
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::update opinion of " << about << " from " << from << " to " << op << std::endl;
+#endif
     // now 4 cases;
     //    Opinion already stored          
     //        New opinion is same:         nothing to do
@@ -379,13 +396,22 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 
     if (rit == mReputations.end())	
     {
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  no preview record"<< std::endl;
+#endif
+
 	    if(new_opinion != RsReputations::OPINION_NEUTRAL)
 	    {
 		    mReputations[about] = Reputation(about);
 		    rit = mReputations.find(about);
 	    }
 	    else
+	    {
+#ifdef DEBUG_REPUTATION
+		    std::cerr << "  no changes!"<< std::endl;
+#endif
 		    return ;	// nothing to do
+	    }
     }
 
     Reputation& reputation = rit->second;
@@ -417,35 +443,46 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
     }
 
     if(reputation.mOpinions.empty() && reputation.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+    {
 	    mReputations.erase(rit) ;
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  own is neutral and no opinions from friends => remove entry" << std::endl;
+#endif
+        updated = true ;
+    }
     else if(updated)
     {
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  reputation changed. re-calculating." << std::endl;
+#endif
 	    reputation.CalculateReputation(mAverageActiveFriends) ;
-
-	    IndicateConfigChanged() ;
     }
+    
+    if(updated)
+	    IndicateConfigChanged() ;
 }
 
 bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 {
-    std::cerr << "p3GxsReputation::RecvReputations()";
-    std::cerr << std::endl;
+#ifdef DEBUG_REPUTATION
+	std::cerr << "p3GxsReputation::RecvReputations() from " << item->PeerId() << std::endl;
+#endif
 
-    RsPeerId peerid = item->PeerId();
+	RsPeerId peerid = item->PeerId();
 
-    for( std::map<RsGxsId, uint32_t>::iterator it = item->mOpinions.begin(); it != item->mOpinions.end(); ++it)
-    {
-	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+	for( std::map<RsGxsId, uint32_t>::iterator it = item->mOpinions.begin(); it != item->mOpinions.end(); ++it)
+	{
+		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
-            locked_updateOpinion(peerid,it->first,safe_convert_uint32t_to_opinion(it->second));
-    }
+		locked_updateOpinion(peerid,it->first,safe_convert_uint32t_to_opinion(it->second));
+	}
 
 
-    updateLatestUpdate(peerid, item->mLatestUpdate);
+	updateLatestUpdate(peerid, item->mLatestUpdate);
 
-    // now update all reputations of IDs for which some opinions have changed.
+	// now update all reputations of IDs for which some opinions have changed.
 
-    return true;
+	return true;
 }
 
 
@@ -477,6 +514,10 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
+#ifdef DEBUG_REPUTATION
+    std::cerr << "getReputationInfo() for " << gxsid << std::endl;
+#endif
+        
     std::map<RsGxsId,Reputation>::const_iterator it = mReputations.find(gxsid);
 
     if (it == mReputations.end())
@@ -484,16 +525,24 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
 	    info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
 	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
 	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  no information present. Returning default" << std::endl;
+	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
+#endif
     }
     else
     {
 	    info.mOwnOpinion = RsReputations::Opinion(it->second.mOwnOpinion) ;
-	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
+	    info.mOverallReputationScore = float(it->second.mReputation) ;
 
 	    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
 		    info.mAssessment = RsReputations::ASSESSMENT_OK ;
 	    else
 		    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+        
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
+#endif
     }
 
     return true ;
@@ -505,11 +554,17 @@ bool p3GxsReputation::isIdentityOk(const RsGxsId &id)
     
     getReputationInfo(id,info) ;
     
+#ifdef DEBUG_REPUTATION
+    std::cerr << "isIdentityOk(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_OK) << " for GXS id " << id << std::endl;
+#endif
     return info.mAssessment == RsReputations::ASSESSMENT_OK ;
 }
 
 bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
 {
+#ifdef DEBUG_REPUTATION
+    std::cerr << "setOwnOpinion(): for GXS id " << gxsid << " to " << opinion << std::endl;
+#endif
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 	std::map<RsGxsId, Reputation>::iterator rit;
@@ -576,6 +631,9 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	cleanup = true;
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::saveList()" << std::endl;
+#endif
 	/* save */
 	std::map<RsPeerId, ReputationConfig>::iterator it;
 	for(it = mConfig.begin(); it != mConfig.end(); ++it)
@@ -623,6 +681,9 @@ void p3GxsReputation::saveDone()
 
 bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 {
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::saveList()" << std::endl;
+#endif
 	std::list<RsItem *>::iterator it;
 	std::set<RsPeerId> peerSet;
 
@@ -643,9 +704,8 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 		}
 		RsGxsReputationSetItem *set = dynamic_cast<RsGxsReputationSetItem *>(*it);
 		if (set)
-		{
 			loadReputationSet(set, peerSet);
-		}
+        
 		delete (*it);
 	}
 
@@ -825,3 +885,18 @@ float Reputation::CalculateReputation(uint32_t average_active_friends)
         else
 		return float(mOwnOpinion) ;
 }
+
+void p3GxsReputation::debug_print()
+{
+    std::cerr << "Reputations database: " << std::endl;
+    std::cerr << "  Average number of peers: " << mAverageActiveFriends << std::endl;
+    
+    for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
+    {
+	std::cerr << "ID=it->first, own: " << it->second.mOwnOpinion << ", global_score: " << it->second.mReputation << std::endl;
+    
+    	for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)
+            std::cerr << "  " << it2->first << ": " << it2->second << std::endl;
+    }
+}
+

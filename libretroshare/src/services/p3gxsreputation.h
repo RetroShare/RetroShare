@@ -123,6 +123,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		int     sendPackets();
 		void sendReputationRequests();
 		int sendReputationRequest(RsPeerId peerid);
+        	void debug_print() ;
 
 	private:
 		RsMutex mReputationMtx;
