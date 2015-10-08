@@ -70,6 +70,9 @@ bool isLoopbackNet(const struct in_addr *addr);
 bool isPrivateNet(const struct in_addr *addr);
 bool isExternalNet(const struct in_addr *addr);
 
+// uses a re-entrant version of gethostbyname
+bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr) ;
+
 std::ostream& operator<<(std::ostream& o,const struct sockaddr_in&) ;
 
 /* thread-safe version of inet_ntoa */
