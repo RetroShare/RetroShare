@@ -75,7 +75,7 @@ void sockaddr_clear(struct sockaddr_in *addr)
 
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
 {
-#ifdef WINDOWS_SYS
+#if defined(WINDOWS_SYS) || defined(__APPLE__)
 	hostent *result = gethostbyname(hostname.c_str()) ;
 #else
     RsTemporaryMemory mem(8192) ;
