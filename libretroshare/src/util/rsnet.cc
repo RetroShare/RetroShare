@@ -75,6 +75,9 @@ void sockaddr_clear(struct sockaddr_in *addr)
 
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
 {
+#ifdef WINDOWS_SYS
+	hostent *result = gethostbyname(hostname.c_str()) ;
+#else
     RsTemporaryMemory mem(8192) ;
 
     if(!mem)
@@ -92,9 +95,10 @@ bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
 	    std::cerr << __PRETTY_FUNCTION__ << ": cannot call gethostname_r. Internal error reported. Check buffer size." << std::endl;
 	    return false ;
     }
+#endif
     if(!result)
     {
-	    std::cerr << __PRETTY_FUNCTION__ << ": gethostname_r returned null result." << std::endl;
+	    std::cerr << __PRETTY_FUNCTION__ << ": gethostname returned null result." << std::endl;
 	    return false ;
     }
     // Use contents of result.
