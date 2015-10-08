@@ -64,9 +64,9 @@ public:
 	Reputation(const RsGxsId& about)
         	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
 
-	float CalculateReputation();
+	float CalculateReputation(uint32_t average_active_friends);
 
-	std::map<RsPeerId, uint32_t> mOpinions;
+	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
 	int32_t mOwnOpinion;
 	time_t  mOwnOpinionTs;
 
@@ -112,6 +112,10 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		bool SendReputations(RsGxsReputationRequestItem *request);
 		bool RecvReputations(RsGxsReputationUpdateItem *item);
 		bool updateLatestUpdate(RsPeerId peerid, time_t ts);
+        	void updateActiveFriends() ;
+        
+        	// internal update of data. Takes care of cleaning empty boxes.
+        	void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
 
 		bool loadReputationSet(RsGxsReputationSetItem *item, 
 				const std::set<RsPeerId> &peerSet);
@@ -123,9 +127,11 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 	private:
 		RsMutex mReputationMtx;
 
+		time_t mLastActiveFriendsUpdate;
 		time_t mRequestTime;
 		time_t mStoreTime;
 		bool   mReputationsUpdated;
+        	uint32_t mAverageActiveFriends ;
 
 		p3LinkMgr *mLinkMgr;
 
@@ -135,7 +141,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		std::multimap<time_t, RsGxsId> mUpdated;
 
 		// set of Reputations to send to p3IdService.
-		std::set<RsGxsId> mUpdatedReputations;
+        std::set<RsGxsId> mUpdatedReputations;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER
