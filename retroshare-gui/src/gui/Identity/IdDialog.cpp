@@ -682,16 +682,16 @@ void IdDialog::insertIdDetails(uint32_t token)
     
 	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore));
 
-    switch(data.mReputation.mOwnOpinion)
+    switch(info.mOwnOpinion)
 	{
         case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
         case RsReputations::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
         case RsReputations::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
         default:
-            std::cerr << "Unexpected value in own opinion: " << data.mReputation.mOwnOpinion << std::endl;
+            std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
 	}
 
-    ui->neighborNodesOpinion_TF->setText(QString::number(data.mReputation.mPeerOpinion));
+    //ui->neighborNodesOpinion_TF->setText(QString::number(info.m));
 }
 
 void IdDialog::modifyReputation()

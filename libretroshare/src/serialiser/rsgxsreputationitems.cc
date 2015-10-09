@@ -95,7 +95,6 @@ std::ostream& RsGxsReputationSetItem::print(std::ostream &out, uint16_t indent)
     	out << "GxsId: " << mGxsId << std::endl;
     	out << "mOwnOpinion: " << mOwnOpinion << std::endl;
     	out << "mOwnOpinionTS : " << time(NULL) - mOwnOpinionTS << " secs ago." << std::endl;
-    	out << "mReputation: " << mReputation << std::endl;
         out << "Opinions from neighbors: " << std::endl;
         
         for(std::map<RsPeerId,uint32_t>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
@@ -148,7 +147,6 @@ uint32_t    RsGxsReputationSetItem::serial_size() const
     	s += mGxsId.serial_size() ;
         s += 4 ; 			// mOwnOpinion
         s += 4 ; 			// mOwnOpinionTS
-        s += 4 ; 			// mReputation
         
         s += 4 ; 			// mOpinions.size()
         
@@ -197,7 +195,7 @@ bool RsGxsReputationConfigItem::serialise(void *data, uint32_t& pktsize) const
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+		std::cerr << "RsGxsReputationConfigItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -215,12 +213,18 @@ bool RsGxsReputationSetItem::serialise(void *data, uint32_t& pktsize) const
 	ok &= mGxsId.serialise(data,tlvsize,offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, mOwnOpinion);
 	ok &= setRawUInt32(data, tlvsize, &offset, mOwnOpinionTS);
-	ok &= setRawUInt32(data, tlvsize, &offset, mReputation);
+	ok &= setRawUInt32(data, tlvsize, &offset, mOpinions.size());
+    
+    	for(std::map<RsPeerId,uint32_t>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
+        {
+		ok &= it->first.serialise(data,tlvsize,offset) ;
+		ok &= setRawUInt32(data, tlvsize, &offset, it->second) ;
+	} 
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+		std::cerr << "RsGxsReputationSetItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -247,7 +251,7 @@ bool RsGxsReputationUpdateItem::serialise(void *data, uint32_t& pktsize) const
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+		std::cerr << "RsGxsReputationUpdateItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -268,7 +272,7 @@ bool RsGxsReputationRequestItem::serialise(void *data, uint32_t& pktsize) const
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsGRouterGenericDataItem::serialisedata() size error! " << std::endl;
+		std::cerr << "RsGxsReputationRequestItem::serialisedata() size error! " << std::endl;
 	}
 
 	return ok;
@@ -310,7 +314,6 @@ RsGxsReputationSetItem *RsGxsReputationSerialiser::deserialiseReputationSetItem(
     ok &= item->mGxsId.deserialise(data, tlvsize, offset) ;
     ok &= getRawUInt32(data, tlvsize, &offset, &item->mOwnOpinion);
     ok &= getRawUInt32(data, tlvsize, &offset, &item->mOwnOpinionTS);
-    ok &= getRawUInt32(data, tlvsize, &offset, &item->mReputation);
     
     uint32_t S ;
     ok &= getRawUInt32(data, tlvsize, &offset, &S);

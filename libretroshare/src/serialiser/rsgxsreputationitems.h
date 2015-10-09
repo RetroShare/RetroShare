@@ -90,7 +90,6 @@ public:
 	RsGxsId mGxsId;
 	uint32_t mOwnOpinion;
 	uint32_t mOwnOpinionTS;
-	uint32_t mReputation;
 	std::map<RsPeerId, uint32_t> mOpinions; // RsPeerId -> Opinion.
 };
 

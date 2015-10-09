@@ -534,7 +534,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <item>
                  <property name="text">
-                  <string>Positive</string>
+                  <string>Negative</string>
                  </property>
                 </item>
                 <item>
@@ -544,7 +544,7 @@ p, li { white-space: pre-wrap; }
                 </item>
                 <item>
                  <property name="text">
-                  <string>Negative</string>
+                  <string>Positive</string>
                  </property>
                 </item>
                </widget>

@@ -526,8 +526,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
 	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
 	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
 #ifdef DEBUG_REPUTATION
-	    std::cerr << "  no information present. Returning default" << std::endl;
-	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
+	    std::cerr << "  no information present. Returning default. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
 #endif
     }
     else
@@ -571,6 +570,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 
 	/* find matching Reputation */
 	rit = mReputations.find(gxsid);
+    
 	if (rit == mReputations.end())
 	{
 		mReputations[gxsid] = Reputation(gxsid);
@@ -607,10 +607,11 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 
 	mUpdated.insert(std::make_pair(now, gxsid));
 	mUpdatedReputations.insert(gxsid);
-
 	mReputationsUpdated = true;	
+    
 	// Switched to periodic save due to scale of data.
-	//IndicateConfigChanged();		
+	IndicateConfigChanged();		
+    
 	return true;
 }
 
@@ -659,7 +660,6 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		item->mGxsId = rit->first;
 		item->mOwnOpinion = rit->second.mOwnOpinion;
 		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
-		item->mReputation = rit->second.mReputation;
 
 		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
@@ -743,11 +743,11 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 	reputation.mOwnOpinionTs = item->mOwnOpinionTS;
 
 	// if dropping entries has changed the score -> must update.
-	int previous = item->mReputation;
-	if (previous != reputation.CalculateReputation(mAverageActiveFriends))
-	{
-		mUpdatedReputations.insert(gxsId);
-	}
+    
+    	float old_reputation = reputation.mReputation ;
+    
+	if(old_reputation != reputation.CalculateReputation(mAverageActiveFriends)) 
+	    mUpdatedReputations.insert(gxsId) ;
 
 	mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
 	return true;
@@ -891,12 +891,15 @@ void p3GxsReputation::debug_print()
     std::cerr << "Reputations database: " << std::endl;
     std::cerr << "  Average number of peers: " << mAverageActiveFriends << std::endl;
     
+    time_t now = time(NULL) ;
+    
     for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
     {
-	std::cerr << "ID=it->first, own: " << it->second.mOwnOpinion << ", global_score: " << it->second.mReputation << std::endl;
+	std::cerr << "  ID=" << it->first << ", own: " << it->second.mOwnOpinion << ", global_score: " << it->second.mReputation 
+              << ", last update: " << now - it->second.mOwnOpinionTs << std::endl;
     
     	for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)
-            std::cerr << "  " << it2->first << ": " << it2->second << std::endl;
+            std::cerr << "    " << it2->first << ": " << it2->second << std::endl;
     }
 }
 
