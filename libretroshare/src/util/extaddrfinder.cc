@@ -2,6 +2,7 @@
 
 #include "pqi/pqinetwork.h"
 #include "util/rsstring.h"
+#include "util/rsmemory.h"
 
 #ifndef WIN32
 #include <netdb.h>
@@ -58,7 +59,6 @@ static void getPage(const std::string& server_name,std::string& page)
 	int sockfd,n=0;                   // socket descriptor
 	struct sockaddr_in serveur;       // server's parameters
 	memset(&serveur.sin_zero, 0, sizeof(serveur.sin_zero));
-	struct hostent *hostinfo=NULL;    // structure for storing the server's ip
 
 	char buf[1024];
 	char request[1024];
@@ -78,20 +78,21 @@ static void getPage(const std::string& server_name,std::string& page)
 
 	// get server's ipv4 adress
 
-	hostinfo = gethostbyname(server_name.c_str()); 
-
-	if (hostinfo == NULL) /* l'hôte n'existe pas */
+    	in_addr in ;
+        
+	if(!rsGetHostByName(server_name.c_str(),in))  /* l'hôte n'existe pas */
 	{
 		std::cerr << "ExtAddrFinder: Unknown host " << server_name << std::endl;
 		unix_close(sockfd);
 		return ;
 	}
-	serveur.sin_addr = *(struct in_addr*) hostinfo->h_addr; 
+	serveur.sin_addr = in ;
 	serveur.sin_port = htons(80);
 
 #ifdef EXTADDRSEARCH_DEBUG
 	printf("Connection attempt\n");
 #endif
+    	std::cerr << "ExtAddrFinder: resolved hostname " << server_name << " to " << rs_inet_ntoa(in) << std::endl;
 
 	if(unix_connect(sockfd,(struct sockaddr *)&serveur, sizeof(serveur)) == -1)
 	{
