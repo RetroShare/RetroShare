@@ -105,7 +105,7 @@ public:
     virtual bool serialise(void *data,uint32_t& size) const ;	
     virtual uint32_t serial_size() const ; 						
 
-    //uint32_t mLatestUpdate; 
+    uint32_t mLatestUpdate; 
     std::map<RsGxsId, uint32_t> mOpinions; // GxsId -> Opinion.
 };
 

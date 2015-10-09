@@ -64,7 +64,7 @@ public:
 	Reputation(const RsGxsId& about)
         	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
 
-	float CalculateReputation(uint32_t average_active_friends);
+	float updateReputation(uint32_t average_active_friends);
 
 	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
 	int32_t mOwnOpinion;
@@ -111,7 +111,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 
 		bool SendReputations(RsGxsReputationRequestItem *request);
 		bool RecvReputations(RsGxsReputationUpdateItem *item);
-		bool updateLatestUpdate(RsPeerId peerid);
+		bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
         	void updateActiveFriends() ;
         
         	// internal update of data. Takes care of cleaning empty boxes.
