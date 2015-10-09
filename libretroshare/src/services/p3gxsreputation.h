@@ -70,6 +70,7 @@ public:
 	int32_t mOwnOpinion;
 	time_t  mOwnOpinionTs;
 
+    	float mFriendAverage ;
 	float mReputation;
 };
 

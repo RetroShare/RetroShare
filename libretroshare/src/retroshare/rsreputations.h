@@ -40,6 +40,7 @@ public:
 	{
 		RsReputations::Opinion mOwnOpinion ;
 		float mOverallReputationScore ;
+		float mFriendAverage ;
      		RsReputations::Assessment mAssessment;	// this should help clients in taking decisions
 	};
 

@@ -524,6 +524,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
     if (it == mReputations.end())
     {
 	    info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
+	    info.mFriendAverage = RsReputations::OPINION_NEUTRAL ;
 	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
 	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
 #ifdef DEBUG_REPUTATION
@@ -533,7 +534,8 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
     else
     {
 	    info.mOwnOpinion = RsReputations::Opinion(it->second.mOwnOpinion) ;
-	    info.mOverallReputationScore = float(it->second.mReputation) ;
+	    info.mOverallReputationScore = it->second.mReputation ;
+	    info.mFriendAverage = it->second.mFriendAverage ;
 
 	    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
 		    info.mAssessment = RsReputations::ASSESSMENT_OK ;
@@ -874,9 +876,15 @@ float Reputation::updateReputation(uint32_t average_active_friends)
                 friend_total += it->second - 1;
             
             if(mOpinions.empty())	// includes the case of no friends!
+            {
                 mReputation = 1.0f;
+                mFriendAverage = 1.0f ;
+            }
             else
-                mReputation = 1.0f + friend_total / float(std::max(average_active_friends,(uint32_t)mOpinions.size())) ;
+            {
+                mFriendAverage = 1.0+friend_total / float(std::max(average_active_friends,(uint32_t)mOpinions.size()));
+                mReputation = mFriendAverage ;
+            }
         }
         else
             mReputation = (float)mOwnOpinion ;
@@ -893,7 +901,7 @@ void p3GxsReputation::debug_print()
     
     for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
     {
-	std::cerr << "  ID=" << it->first << ", own: " << it->second.mOwnOpinion << ", global_score: " << it->second.mReputation 
+	std::cerr << "  ID=" << it->first << ", own: " << it->second.mOwnOpinion << ", Friend average: " << it->second.mFriendAverage << ", global_score: " << it->second.mReputation 
               << ", last own update: " << now - it->second.mOwnOpinionTs << " secs ago." << std::endl;
     
     	for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)

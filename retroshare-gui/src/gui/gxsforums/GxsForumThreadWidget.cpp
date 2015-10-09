@@ -41,6 +41,7 @@
 #include "util/QtVersion.h"
 
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsreputations.h>
 #include <retroshare/rspeers.h>
 // These should be in retroshare/ folder.
 #include "retroshare/rsgxsflags.h"
@@ -57,6 +58,7 @@
 #define IMAGE_DOWNLOAD       ":/images/start.png"
 #define IMAGE_DOWNLOADALL    ":/images/startall.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
+#define IMAGE_BIOHAZARD      ":/icons/yellow_biohazard64.png"
 
 #define VIEW_LAST_POST	0
 #define VIEW_THREADED	1
@@ -406,6 +408,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
 
+    QAction *flagasbadAct = new QAction(QIcon(IMAGE_BIOHAZARD), tr("Flag this person as bad"), &contextMnu);
+    connect(flagasbadAct, SIGNAL(triggered()), this, SLOT(flagpersonasbad()));
+
     QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
 	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mSubscribeFlags));
 	connect(newthreadAct , SIGNAL(triggered()), this, SLOT(createthread()));
@@ -484,6 +489,8 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     contextMnu.addAction(expandAll);
 	contextMnu.addAction(collapseAll);
 
+    contextMnu.addSeparator();
+    contextMnu.addAction(flagasbadAct);
     contextMnu.addSeparator();
     contextMnu.addAction(replyauthorAct);
 
@@ -1683,6 +1690,17 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 	header += QApplication::translate("GxsForumThreadWidget", "On %1, %2 wrote:").arg(DateTime::formatDateTime(meta.mPublishTs), from);
 
 	return header;
+}
+
+void GxsForumThreadWidget::flagpersonasbad()
+{
+    	if (groupId().isNull() || mThreadId.isNull()) {
+		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
+		return;
+	}
+
+	// Get Message ... then complete replyMessageData().
+        rsReputations->setOwnOpinion(RsGxsId(groupId()),RsReputations::OPINION_NEGATIVE) ;
 }
 
 void GxsForumThreadWidget::replytomessage()

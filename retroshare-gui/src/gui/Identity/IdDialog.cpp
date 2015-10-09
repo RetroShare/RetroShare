@@ -680,8 +680,11 @@ void IdDialog::insertIdDetails(uint32_t token)
     RsReputations::ReputationInfo info ;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
     
-	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore));
+	ui->neighborNodesOpinion_TF->setText(QString::number(info.mOverallReputationScore-1.0f));
 
+	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore-1.0f) +" ("+
+	 ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
+    
     switch(info.mOwnOpinion)
 	{
         case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
@@ -690,8 +693,6 @@ void IdDialog::insertIdDetails(uint32_t token)
         default:
             std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
 	}
-
-    //ui->neighborNodesOpinion_TF->setText(QString::number(info.m));
 }
 
 void IdDialog::modifyReputation()
@@ -740,11 +741,9 @@ void IdDialog::modifyReputation()
 	std::cerr << std::endl;
 #endif
 
-#ifdef SUSPENDED
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
-	mIdQueue->queueRequest(token, 0, 0, IDDIALOG_REFRESH);
-#endif
+    requestIdDetails();
 
 	return;
 }

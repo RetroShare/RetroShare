@@ -101,6 +101,7 @@ private slots:
 	void downloadAllFiles();
 
 	void changedViewBox();
+    	void flagpersonasbad();
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
@@ -170,7 +171,7 @@ private:
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;
 
-	Ui::GxsForumThreadWidget *ui;
+    Ui::GxsForumThreadWidget *ui;
 };
 
 #endif // GXSFORUMTHREADWIDGET_H
