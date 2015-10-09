@@ -864,32 +864,26 @@ int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 
 float Reputation::updateReputation(uint32_t average_active_friends) 
 {
- 	// the calculation of reputation makes the whole thing   
-    
-    	if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-        {
-            int friend_total = 0;
-            
-            // accounts for all friends. Neutral opinions count for 1-1=0
-            
-            for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
-                friend_total += it->second - 1;
-            
-            if(mOpinions.empty())	// includes the case of no friends!
-            {
-                mReputation = 1.0f;
-                mFriendAverage = 1.0f ;
-            }
-            else
-            {
-                mFriendAverage = 1.0+friend_total / float(std::max(average_active_friends,(uint32_t)mOpinions.size()));
-                mReputation = mFriendAverage ;
-            }
-        }
-        else
-            mReputation = (float)mOwnOpinion ;
-            
-	return float(mOwnOpinion) ;
+    // the calculation of reputation makes the whole thing   
+
+    int friend_total = 0;
+
+    // accounts for all friends. Neutral opinions count for 1-1=0
+
+    for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
+	    friend_total += it->second - 1;
+
+    if(mOpinions.empty())	// includes the case of no friends!
+	    mFriendAverage = 1.0f ;
+    else
+	    mFriendAverage = 1.0+friend_total / float(std::max(average_active_friends,(uint32_t)mOpinions.size()));
+
+    if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+	    mReputation = mFriendAverage ;
+    else
+	    mReputation = (float)mOwnOpinion ;
+
+    return float(mOwnOpinion) ;
 }
 
 void p3GxsReputation::debug_print()
