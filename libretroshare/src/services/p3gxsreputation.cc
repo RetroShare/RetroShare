@@ -39,16 +39,6 @@
  ****/
 #define DEBUG_REPUTATION		1
 
-
-/* DEFINE INTERFACE POINTER! */
-//RsGxsReputation *rsGxsReputation = NULL;
-
-static const int kMaximumPeerAge =	180; // half a year.
-static const int kMaximumSetSize = 	100;
-
-static const int ACTIVE_FRIENDS_UPDATE_PERIOD = 600 ; // 10 minutes
-static const int ACTIVE_FRIENDS_ONLINE_DELAY  = 86400*7 ; // 1 week.
-
 /************ IMPLEMENTATION NOTES *********************************
  * 
  * p3GxsReputation shares opinions / reputations with peers.
@@ -135,20 +125,26 @@ static const int ACTIVE_FRIENDS_ONLINE_DELAY  = 86400*7 ; // 1 week.
  * 	[X]  Implement a system to allow not storing info when we don't have it
  */
 
-const uint32_t LOWER_LIMIT		           = 0;
-const uint32_t UPPER_LIMIT		           = 2;
-const float    REPUTATION_ASSESSMENT_THRESHOLD_X1 = 0.5f ;
+static const uint32_t LOWER_LIMIT                         = 0;        // used to filter valid Opinion values from serialized data
+static const uint32_t UPPER_LIMIT                         = 2;        // used to filter valid Opinion values from serialized data
+static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
+static const int      kMaximumPeerAge                     = 180;      // half a year.
+static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
+static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 60;//600 ;// 10 minutes
+static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
+
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
 	mReputationMtx("p3GxsReputation"), mLinkMgr(lm) 
 {
-	addSerialType(new RsGxsReputationSerialiser());
+    addSerialType(new RsGxsReputationSerialiser());
 
-	mRequestTime = 0;
-	mStoreTime = 0;
-	mReputationsUpdated = false;
+    mRequestTime = 0;
+    mStoreTime = 0;
+    mReputationsUpdated = false;
     mLastActiveFriendsUpdate = 0 ;
+    mAverageActiveFriends = 0 ;
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
@@ -166,8 +162,6 @@ RsServiceInfo p3GxsReputation::getServiceInfo()
                 GXS_REPUTATION_MIN_MAJOR_VERSION,
                 GXS_REPUTATION_MIN_MINOR_VERSION);
 }
-
-
 
 int	p3GxsReputation::tick()
 {
@@ -308,12 +302,13 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 	int count = 0;
 	int totalcount = 0;
 	RsGxsReputationUpdateItem *pkt = new RsGxsReputationUpdateItem();
+    
 	pkt->PeerId(peerId);
 	for(;tit != mUpdated.end(); ++tit)
 	{
 		/* find */
-		std::map<RsGxsId, Reputation>::iterator rit;
-		rit = mReputations.find(tit->second);
+		std::map<RsGxsId, Reputation>::iterator rit = mReputations.find(tit->second);
+        
 		if (rit == mReputations.end())
 		{
 			std::cerr << "p3GxsReputation::SendReputations() ERROR Missing Reputation";
@@ -332,13 +327,14 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 
 		RsGxsId gxsId = rit->first;
 		pkt->mOpinions[gxsId] = rit->second.mOwnOpinion;
-		pkt->mLatestUpdate = rit->second.mOwnOpinionTs;
-		if (pkt->mLatestUpdate == (uint32_t) now)
-		{
-			// if we could possibly get another Update at this point (same second).
-			// then set Update back one second to ensure there are none missed.
-			pkt->mLatestUpdate--;
-		}
+        
+		//pkt->mLatestUpdate = rit->second.mOwnOpinionTs;
+		//if (pkt->mLatestUpdate == (uint32_t) now)
+		//{
+		//	// if we could possibly get another Update at this point (same second).
+		//	// then set Update back one second to ensure there are none missed.
+		//	pkt->mLatestUpdate--;
+		//}
 		
 		count++;
 		totalcount++;
@@ -349,6 +345,7 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 			std::cerr << std::endl;
 
 			sendItem(pkt);
+            
 			pkt = new RsGxsReputationUpdateItem();
 			pkt->PeerId(peerId);
 			count = 0;
@@ -477,16 +474,13 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 		locked_updateOpinion(peerid,it->first,safe_convert_uint32t_to_opinion(it->second));
 	}
 
-
-	updateLatestUpdate(peerid, item->mLatestUpdate);
-
-	// now update all reputations of IDs for which some opinions have changed.
+	updateLatestUpdate(peerid);
 
 	return true;
 }
 
 
-bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
+bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -497,11 +491,12 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
         mConfig[peerid] = ReputationConfig(peerid);
         it = mConfig.find(peerid) ;
 	}
-	it->second.mLatestUpdate = ts;
+	it->second.mLatestUpdate = time(NULL);
 
 	mReputationsUpdated = true;	
 	// Switched to periodic save due to scale of data.
-	//IndicateConfigChanged();		
+    
+	IndicateConfigChanged();		
 
 	return true;
 }
@@ -758,7 +753,7 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
  * Send Requests.
  ****/
 
-const int kReputationRequestPeriod	= 	3600;
+const int kReputationRequestPeriod	= 	60;  // 3600;	// 1 hour
 const int kReputationStoreWait		= 	180; // 3 minutes.
 
 int	p3GxsReputation::sendPackets()
@@ -771,7 +766,7 @@ int	p3GxsReputation::sendPackets()
 		storeTime = mStoreTime;
 	}
 
-	if (now - requestTime > kReputationRequestPeriod)
+	if (now > requestTime + kReputationRequestPeriod)
 	{
 		sendReputationRequests();
 
@@ -815,46 +810,41 @@ void p3GxsReputation::sendReputationRequests()
 
 	mLinkMgr->getOnlineList(idList);
 
-#ifdef DEBUG_REPUTATION
-	std::cerr << "p3GxsReputation::sendReputationRequests()";
-	std::cerr << std::endl;
-#endif
-
 	/* prepare packets */
 	std::list<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); ++it)
-	{
-#ifdef DEBUG_REPUTATION
-		std::cerr << "p3GxsReputation::sendReputationRequest() To: " << *it;
-		std::cerr << std::endl;
-#endif
 		sendReputationRequest(*it);
-	}
 }
 
 int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 {
-	std::cerr << "p3GxsReputation::sendReputationRequest(" << peerid << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_REPUTATION
+	std::cerr << "  p3GxsReputation::sendReputationRequest(" << peerid << ") " ;
+#endif
+    time_t now = time(NULL) ;
 
 	/* */
-	RsGxsReputationRequestItem *requestItem = 
-		new RsGxsReputationRequestItem();
-
+	RsGxsReputationRequestItem *requestItem =  new RsGxsReputationRequestItem();
 	requestItem->PeerId(peerid);
 
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 		/* find the last timestamp we have */
-		std::map<RsPeerId, ReputationConfig>::iterator it;
-		it = mConfig.find(peerid);
+		std::map<RsPeerId, ReputationConfig>::iterator it = mConfig.find(peerid);
+        
 		if (it != mConfig.end())
 		{
+#ifdef DEBUG_REPUTATION
+            		std::cerr << "  lastUpdate = " << now - it->second.mLatestUpdate << " secs ago. Requesting only more recent." << std::endl;
+#endif
 			requestItem->mLastUpdate = it->second.mLatestUpdate;
 		}
 		else
 		{
+#ifdef DEBUG_REPUTATION
+            		std::cerr << "  lastUpdate = never. Requesting all!" << std::endl;
+#endif
 			// get whole list.
 			requestItem->mLastUpdate = 0;
 		}

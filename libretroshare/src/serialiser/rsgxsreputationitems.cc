@@ -109,7 +109,7 @@ std::ostream& RsGxsReputationUpdateItem::print(std::ostream &out, uint16_t inden
 	uint16_t int_Indent = indent + 2;
 
     	out << "from: " << PeerId() << std::endl;
-    	out << "last update: " << time(NULL) - mLatestUpdate << " secs ago." << std::endl;
+    	//out << "last update: " << time(NULL) - mLatestUpdate << " secs ago." << std::endl;
         
         for(std::map<RsGxsId,uint32_t>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
         	out << "  " << it->first << ": " << it->second << std::endl;
@@ -159,7 +159,7 @@ uint32_t    RsGxsReputationUpdateItem::serial_size() const
 {
 	uint32_t s = 8; /* header */
     
-    	s += 4 ; 	// mLatestUpdate
+    	//s += 4 ; 	// mLatestUpdate
         s += 4 ; 	// mOpinions.size();
         
         s += (RsGxsId::serial_size() + 4) * mOpinions.size() ;
@@ -239,7 +239,7 @@ bool RsGxsReputationUpdateItem::serialise(void *data, uint32_t& pktsize) const
 
 	bool ok = true;
 	
-	ok &= setRawUInt32(data, tlvsize, &offset, mLatestUpdate);
+	//ok &= setRawUInt32(data, tlvsize, &offset, mLatestUpdate);
 	ok &= setRawUInt32(data, tlvsize, &offset, mOpinions.size());
     
     	for(std::map<RsGxsId,uint32_t>::const_iterator it(mOpinions.begin());ok && it!=mOpinions.end();++it)
@@ -349,7 +349,7 @@ RsGxsReputationUpdateItem *RsGxsReputationSerialiser::deserialiseReputationUpdat
     RsGxsReputationUpdateItem *item = new RsGxsReputationUpdateItem() ;
 
     /* add mandatory parts first */
-    ok &= getRawUInt32(data, tlvsize, &offset, &item->mLatestUpdate);
+    //ok &= getRawUInt32(data, tlvsize, &offset, &item->mLatestUpdate);
     
     uint32_t S ;
     ok &= getRawUInt32(data, tlvsize, &offset, &S) ;

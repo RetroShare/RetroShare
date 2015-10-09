@@ -111,7 +111,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 
 		bool SendReputations(RsGxsReputationRequestItem *request);
 		bool RecvReputations(RsGxsReputationUpdateItem *item);
-		bool updateLatestUpdate(RsPeerId peerid, time_t ts);
+		bool updateLatestUpdate(RsPeerId peerid);
         	void updateActiveFriends() ;
         
         	// internal update of data. Takes care of cleaning empty boxes.
