@@ -96,7 +96,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
     header->resizeSection(COLUMN_NAME, 10*S);
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
-    header->resizeSection(COLUMN_POPULARITY, 1.5*S);
+    header->resizeSection(COLUMN_POPULARITY, 2*S);
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
@@ -106,7 +106,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
 
-        ui->treeWidget->setIconSize(QSize(S*1.2,S*1.2)) ;
+        ui->treeWidget->setIconSize(QSize(S*1.6,S*1.6)) ;
 }
 
 GroupTreeWidget::~GroupTreeWidget()
