@@ -90,10 +90,10 @@ VOIPPlugin::VOIPPlugin()
 	mVOIPGUIHandler = new VOIPGUIHandler ;
 	mVOIPNotify = new VOIPNotify ;
 
-	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const RsPeerId&,int)),Qt::QueuedConnection) ;
 	QObject::connect(mVOIPNotify,SIGNAL(voipDataReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipData(const RsPeerId&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const RsPeerId&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const RsPeerId&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const RsPeerId&,int)),Qt::QueuedConnection) ;
 	QObject::connect(mVOIPNotify,SIGNAL(voipBandwidthInfoReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const RsPeerId&,int)),Qt::QueuedConnection) ;
 
 	Q_INIT_RESOURCE(VOIP_images);

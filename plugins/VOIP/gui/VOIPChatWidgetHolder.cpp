@@ -25,6 +25,7 @@
 
 #include <gui/audiodevicehelper.h>
 #include "interface/rsVOIP.h"
+
 #include "gui/SoundManager.h"
 #include "util/HandleRichText.h"
 #include "gui/common/StatusDefs.h"
@@ -65,6 +66,7 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	audioListenToggleButton->setAutoRaise(true) ;
 	audioListenToggleButton->setText(QString()) ;
 	audioListenToggleButton->setToolTip(tr("Mute"));
+	audioListenToggleButton->setEnabled(false);
 
 	QIcon iconaudioCaptureToggleButton ;
 	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-start.png")) ;
@@ -281,6 +283,34 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	inputVideoDevice->setEchoVideoTarget(echoVideoDevice) ;
 	inputVideoDevice->setVideoProcessor(videoProcessor) ;
 	videoProcessor->setDisplayTarget(outputVideoDevice) ;
+
+	//Ring
+	pbAudioRing = new QProgressBar();
+	pbAudioRing->setOrientation(Qt::Horizontal);
+	pbAudioRing->setRange(0, 99);
+	pbAudioRing->setTextVisible(false);
+	pbAudioRing->setHidden(true);
+	pbVideoRing = new QProgressBar();
+	pbVideoRing->setOrientation(Qt::Horizontal);
+	pbVideoRing->setRange(0, 99);
+	pbVideoRing->setTextVisible(false);
+	pbVideoRing->setHidden(true);
+	mChatWidget->addChatBarWidget(pbAudioRing);
+	mChatWidget->addChatBarWidget(pbVideoRing);
+
+	sendAudioRingTime = -1;
+	sendVideoRingTime = -1;
+	recAudioRingTime = -1;
+	recVideoRingTime = -1;
+
+	timerAudioRing = new QTimer(this);
+	timerAudioRing->setInterval(300);
+	timerAudioRing->setSingleShot(true);
+	connect(timerAudioRing, SIGNAL(timeout()), this, SLOT(timerAudioRingTimeOut()));
+	timerVideoRing = new QTimer(this);
+	timerVideoRing->setInterval(300);
+	timerVideoRing->setSingleShot(true);
+	connect(timerVideoRing, SIGNAL(timeout()), this, SLOT(timerVideoRingTimeOut()));
 }
 
 VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
@@ -290,11 +320,143 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 
 	delete inputVideoDevice ;
 	delete videoProcessor ;
+	deleteButtonMap();
 
-	button_map::iterator it = buttonMapTakeVideo.begin();
-	while (it != buttonMapTakeVideo.end()) {
-		it = buttonMapTakeVideo.erase(it);
-  }
+	// stop and delete timers
+	timerAudioRing->stop();
+	delete(timerAudioRing);
+	timerVideoRing->stop();
+	delete(timerVideoRing);
+}
+
+void VOIPChatWidgetHolder::deleteButtonMap(int flags)
+{
+	button_map::iterator it = buttonMapTakeCall.begin();
+	while (it != buttonMapTakeCall.end()) {
+		if (((it.key().left(1) == "a") && (flags & RS_VOIP_FLAGS_AUDIO_DATA))
+		    || ((it.key().left(1) == "v") && (flags & RS_VOIP_FLAGS_VIDEO_DATA)) ) {
+			QPair<RSButtonOnText*,RSButtonOnText*> pair = it.value();
+			delete pair.second;
+			delete pair.first;
+			if (flags & RS_VOIP_FLAGS_AUDIO_DATA) recAudioRingTime = -1;
+			if (flags & RS_VOIP_FLAGS_VIDEO_DATA) recVideoRingTime = -1;
+			it = buttonMapTakeCall.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
+void VOIPChatWidgetHolder::addNewAudioButtonMap(const RsPeerId &peer_id)
+{
+	if (mChatWidget) {
+		recAudioRingTime = 0;
+		timerAudioRingTimeOut();
+
+		QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+		if (buttonName.isEmpty()) buttonName = QString::fromStdString(peer_id.toStdString().c_str());
+		if (buttonName.isEmpty()) buttonName = "VoIP";
+		button_map::iterator it = buttonMapTakeCall.find(QString("a").append(buttonName));
+		if (it == buttonMapTakeCall.end()){
+			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			                        , tr("%1 inviting you to start an audio conversation. Do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+
+			RSButtonOnText *buttonT = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Audio Call"));
+			buttonT->setToolTip(tr("Activate audio"));
+			buttonT->setStyleSheet(QString("border: 1px solid #199909;")
+			                       .append("font-size: 12pt;  color: white;")
+			                       .append("min-width: 128px; min-height: 24px;")
+			                       .append("border-radius: 6px;")
+			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+			                               "stop: 0 #22c70d, stop: 1 #116a06);")
+			                       );
+
+			buttonT->updateImage();
+
+			connect(buttonT,SIGNAL(clicked()),this,SLOT(startAudioCapture()));
+			connect(buttonT,SIGNAL(mouseEnter()),this,SLOT(botMouseEnterTake()));
+			connect(buttonT,SIGNAL(mouseLeave()),this,SLOT(botMouseLeaveTake()));
+
+			RSButtonOnText *buttonD = mChatWidget->getNewButtonOnTextBrowser(tr("Decline Audio Call"));
+			buttonD->setToolTip(tr("Refuse audio call"));
+			buttonD->setStyleSheet(QString("border: 1px solid #199909;")
+			                       .append("font-size: 12pt;  color: white;")
+			                       .append("min-width: 128px; min-height: 24px;")
+			                       .append("border-radius: 6px;")
+			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+			                               "stop: 0 #c7220d, stop: 1 #6a1106);")
+			                       );
+
+			buttonD->updateImage();
+
+			connect(buttonD,SIGNAL(clicked()),this,SLOT(hangupCallAudio()));
+			connect(buttonD,SIGNAL(mouseEnter()),this,SLOT(botMouseEnterDecline()));
+			connect(buttonD,SIGNAL(mouseLeave()),this,SLOT(botMouseLeaveDecline()));
+
+			buttonMapTakeCall.insert(QString("a").append(buttonName), QPair<RSButtonOnText*, RSButtonOnText*>(buttonT, buttonD));
+		}
+
+		//TODO make a sound for the incoming call
+		//soundManager->play(VOIP_SOUND_INCOMING_CALL);
+
+		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipAudioCall(peer_id);
+	}
+}
+
+void VOIPChatWidgetHolder::addNewVideoButtonMap(const RsPeerId &peer_id)
+{
+	if (mChatWidget) {
+		recVideoRingTime = 0;
+		timerVideoRingTimeOut();
+
+		QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+		if (buttonName.isEmpty()) buttonName = QString::fromStdString(peer_id.toStdString().c_str());
+		if (buttonName.isEmpty()) buttonName = "VoIP";
+		button_map::iterator it = buttonMapTakeCall.find(QString("v").append(buttonName));
+		if (it == buttonMapTakeCall.end()){
+			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			                        , tr("%1 inviting you to start a video conversation. Do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
+
+			RSButtonOnText *buttonT = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Video Call"));
+			buttonT->setToolTip(tr("Activate camera"));
+			buttonT->setStyleSheet(QString("border: 1px solid #199909;")
+			                       .append("font-size: 12pt;  color: white;")
+			                       .append("min-width: 128px; min-height: 24px;")
+			                       .append("border-radius: 6px;")
+			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+			                               "stop: 0 #22c70d, stop: 1 #116a06);")
+			                       );
+
+			buttonT->updateImage();
+
+			connect(buttonT,SIGNAL(clicked()),this,SLOT(startVideoCapture()));
+			connect(buttonT,SIGNAL(mouseEnter()),this,SLOT(botMouseEnterTake()));
+			connect(buttonT,SIGNAL(mouseLeave()),this,SLOT(botMouseLeaveTake()));
+
+			RSButtonOnText *buttonD = mChatWidget->getNewButtonOnTextBrowser(tr("Decline Video Call"));
+			buttonD->setToolTip(tr("Refuse video call"));
+			buttonD->setStyleSheet(QString("border: 1px solid #199909;")
+			                       .append("font-size: 12pt;  color: white;")
+			                       .append("min-width: 128px; min-height: 24px;")
+			                       .append("border-radius: 6px;")
+			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+			                               "stop: 0 #c7220d, stop: 1 #6a1106);")
+			                       );
+
+			buttonD->updateImage();
+
+			connect(buttonD,SIGNAL(clicked()),this,SLOT(hangupCallVideo()));
+			connect(buttonD,SIGNAL(mouseEnter()),this,SLOT(botMouseEnterDecline()));
+			connect(buttonD,SIGNAL(mouseLeave()),this,SLOT(botMouseLeaveDecline()));
+
+			buttonMapTakeCall.insert(QString("v").append(buttonName), QPair<RSButtonOnText*, RSButtonOnText*>(buttonT, buttonD));
+		}
+
+		//TODO make a sound for the incoming call
+		//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
+
+		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(peer_id);
+	}
 }
 
 bool VOIPChatWidgetHolder::eventFilter(QObject *obj, QEvent *event)
@@ -314,24 +476,59 @@ bool VOIPChatWidgetHolder::eventFilter(QObject *obj, QEvent *event)
 
 void VOIPChatWidgetHolder::hangupCall()
 {
+	hangupCallAudio();
+	hangupCallVideo();
+	hangupButton->hide();
+	hangupButtonFS->hide();
+	deleteButtonMap();
+}
+
+void VOIPChatWidgetHolder::hangupCallAudio()
+{
+	bool atLeastOneChecked = false;
 	if (audioCaptureToggleButton->isChecked()) {
 		audioCaptureToggleButton->setChecked(false);
 		toggleAudioCapture();
+		atLeastOneChecked = true;
 	}
+	if (!atLeastOneChecked) {
+		//Decline button or Friend hang up
+		if (recAudioRingTime != -1) {
+			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+			deleteButtonMap(RS_VOIP_FLAGS_AUDIO_DATA);
+		}
+		sendAudioRingTime = -1;
+		recAudioRingTime = -1;
+	}
+}
+
+void VOIPChatWidgetHolder::hangupCallVideo()
+{
+	bool atLeastOneChecked = false;
 	if (videoCaptureToggleButton->isChecked()) {
 		videoCaptureToggleButton->setChecked(false);
 		toggleVideoCapture();
+		atLeastOneChecked = true;
 	}
 	if (fullscreenToggleButton->isChecked()) {
 		fullscreenToggleButton->setChecked(false);
 		toggleFullScreen();
+		atLeastOneChecked = true;
 	}
 	if (hideChatTextToggleButton->isChecked()) {
 		hideChatTextToggleButton->setChecked(false);
 		toggleHideChatText();
+		atLeastOneChecked = true;
 	}
-	hangupButton->hide();
-	hangupButtonFS->hide();
+	if (!atLeastOneChecked) {
+		//Decline button or Friend hang up
+		if (recVideoRingTime != -1) {
+			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+			deleteButtonMap(RS_VOIP_FLAGS_VIDEO_DATA);
+		}
+		sendVideoRingTime = -1;
+		recVideoRingTime = -1;
+	}
 }
 
 void VOIPChatWidgetHolder::toggleAudioListenFS()
@@ -357,6 +554,7 @@ void VOIPChatWidgetHolder::toggleAudioListen()
 
 void VOIPChatWidgetHolder::startAudioCapture()
 {
+	recAudioRingTime = -2;
 	audioCaptureToggleButton->setChecked(true);
 	toggleAudioCapture();
 }
@@ -369,57 +567,85 @@ void VOIPChatWidgetHolder::toggleAudioCaptureFS()
 
 void VOIPChatWidgetHolder::toggleAudioCapture()
 {
-    if (audioCaptureToggleButton->isChecked()) {
-        //activate audio output
-        audioListenToggleButton->setChecked(true);
-        audioListenToggleButtonFS->setChecked(true);
-        audioCaptureToggleButton->setToolTip(tr("Hold Call"));
-        hangupButton->show();
-        hangupButtonFS->show();
+	if (audioCaptureToggleButton->isChecked()) {
+		if (recAudioRingTime == -1) {
+			if (sendAudioRingTime == -1) {
+				sendAudioRingTime = 0;
+				timerAudioRingTimeOut();
+				rsVOIP->sendVoipRinging(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+				return; //Start Audio when accept received
+			}
+		}
+		if (recAudioRingTime != -1)
+			rsVOIP->sendVoipAcceptCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+		recAudioRingTime = -1; //Stop ringing
 
-        //activate audio input
-        if (!inputAudioProcessor) {
-            inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
-            if (outputAudioProcessor) {
-                connect(outputAudioProcessor, SIGNAL(playingFrame(QByteArray*)), inputAudioProcessor, SLOT(addEchoFrame(QByteArray*)));
-            }
-            inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
-        }
-        if (!inputAudioDevice) {
-            inputAudioDevice = AudioDeviceHelper::getPreferedInputDevice();
-        }
-        connect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
-        inputAudioDevice->start(inputAudioProcessor);
-        
-        if (mChatWidget) {
-         mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Call is started..."), ChatWidget::MSGTYPE_SYSTEM);
-        }
-        
-        button_map::iterator it = buttonMapTakeVideo.begin();
-        while (it != buttonMapTakeVideo.end()) {
-        RSButtonOnText *button = it.value();
-        delete button;
-        it = buttonMapTakeVideo.erase(it);
-        }
-        
-    } else {
-        disconnect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
-        if (inputAudioDevice) {
-            inputAudioDevice->stop();
-        }
-        if (mChatWidget) {
-            mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Audio Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
-        }
-        audioCaptureToggleButton->setToolTip(tr("Resume Call"));
-        hangupButton->hide();
-        hangupButtonFS->hide();
-    }
-    audioCaptureToggleButtonFS->setChecked(audioCaptureToggleButton->isChecked());
-    audioCaptureToggleButtonFS->setToolTip(audioCaptureToggleButton->toolTip());
+		//activate buttons
+		audioListenToggleButton->setEnabled(true);
+		audioListenToggleButton->setChecked(true);
+		audioListenToggleButtonFS->setEnabled(true);
+		audioListenToggleButtonFS->setChecked(true);
+		audioCaptureToggleButton->setToolTip(tr("Hold Call"));
+		hangupButton->show();
+		hangupButtonFS->show();
+
+		//activate audio input
+		if (!inputAudioProcessor) {
+			inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
+			if (outputAudioProcessor) {
+				connect(outputAudioProcessor, SIGNAL(playingFrame(QByteArray*)), inputAudioProcessor, SLOT(addEchoFrame(QByteArray*)));
+			}
+			inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
+		}
+		if (!inputAudioDevice) {
+			inputAudioDevice = AudioDeviceHelper::getPreferedInputDevice();
+		}
+		connect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
+		inputAudioDevice->start(inputAudioProcessor);
+
+		//send system message
+		if (mChatWidget)
+			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Call is started..."), ChatWidget::MSGTYPE_SYSTEM);
+
+		deleteButtonMap(RS_VOIP_FLAGS_AUDIO_DATA);
+	} else {
+		//desactivate buttons
+		audioListenToggleButton->setEnabled(false);
+		audioListenToggleButton->setChecked(false);
+		audioListenToggleButtonFS->setEnabled(false);
+		audioListenToggleButtonFS->setChecked(false);
+		audioCaptureToggleButton->setToolTip(tr("Resume Call"));
+		if (!videoCaptureToggleButton->isChecked()) {
+			hangupButton->hide();
+			hangupButtonFS->hide();
+		}
+
+		if (recAudioRingTime <= -1){
+			//desactivate audio input
+			disconnect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
+			if (inputAudioDevice) {
+				inputAudioDevice->stop();
+			}
+
+			//send system message
+			if (mChatWidget)
+				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+				                        , tr("Outgoing Audio Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
+
+			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+		}
+
+		sendAudioRingTime = -1;
+		recAudioRingTime = -1;
+
+	}
+	audioCaptureToggleButtonFS->setChecked(audioCaptureToggleButton->isChecked());
+	audioCaptureToggleButtonFS->setToolTip(audioCaptureToggleButton->toolTip());
 }
 
 void VOIPChatWidgetHolder::startVideoCapture()
 {
+	recVideoRingTime = -2;
 	videoCaptureToggleButton->setChecked(true);
 	toggleVideoCapture();
 }
@@ -434,31 +660,38 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 {
 	if (videoCaptureToggleButton->isChecked()) 
 	{
+		if (recVideoRingTime == -1) {
+			if (sendVideoRingTime == -1) {
+				sendVideoRingTime = 0;
+				timerVideoRingTimeOut();
+				rsVOIP->sendVoipRinging(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+				return; //Start Video when accept received
+			}
+		}
+		if (recVideoRingTime != -1)
+			rsVOIP->sendVoipAcceptCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+		recVideoRingTime = -1; //Stop ringing
+
+		//activate buttons
 		hideChatTextToggleButton->setEnabled(true);
 		fullscreenToggleButton->setEnabled(true);
 		fullscreenToggleButtonFS->setEnabled(true);
+		videoCaptureToggleButton->setToolTip(tr("Shut camera off"));
 		hangupButton->show();
     hangupButtonFS->show();
+
 		//activate video input
-		//
 		videoWidget->show();
 		inputVideoDevice->start() ;
 
-		videoCaptureToggleButton->setToolTip(tr("Shut camera off"));
-
-		if (mChatWidget) 
+		//send system message
+		if (mChatWidget)
 			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 			                        , tr("You're now sending video..."), ChatWidget::MSGTYPE_SYSTEM);
 
-		button_map::iterator it = buttonMapTakeVideo.begin();
-		while (it != buttonMapTakeVideo.end()) {
-			RSButtonOnText *button = it.value();
-			delete button;
-			it = buttonMapTakeVideo.erase(it);
-	  }
-	} 
-	else 
-	{
+		deleteButtonMap(RS_VOIP_FLAGS_VIDEO_DATA);
+	} else {
+		//desactivate buttons
 		hideChatTextToggleButton->setEnabled(false);
 		hideChatTextToggleButton->setChecked(false);
 		toggleHideChatText();
@@ -467,17 +700,29 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 		fullscreenToggleButtonFS->setEnabled(false);
 		fullscreenToggleButtonFS->setChecked(false);
 		toggleFullScreen();
-		hangupButton->hide();
-    hangupButtonFS->hide();
-
-		inputVideoDevice->stop() ;
 		videoCaptureToggleButton->setToolTip(tr("Activate camera"));
-		outputVideoDevice->showFrameOff();
-		videoWidget->hide();
-		
-		if (mChatWidget) 
-			mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
-			                        , tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
+		if (!audioCaptureToggleButton->isChecked()) {
+			hangupButton->hide();
+			hangupButtonFS->hide();
+		}
+
+		if (recVideoRingTime<=-1){
+			//desactivate video input
+			inputVideoDevice->stop() ;
+			outputVideoDevice->showFrameOff();
+			videoWidget->hide();
+
+			//send system message
+			if (mChatWidget)
+				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+				                        , tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
+
+			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+		}
+
+		sendVideoRingTime = -1;
+		recVideoRingTime = -1;
+
 	}
 	videoCaptureToggleButtonFS->setChecked(videoCaptureToggleButton->isChecked());
 	videoCaptureToggleButtonFS->setToolTip(videoCaptureToggleButton->toolTip());
@@ -485,50 +730,19 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 void VOIPChatWidgetHolder::addVideoData(const RsPeerId &peer_id, QByteArray* array)
 {
-    if (!videoCaptureToggleButton->isChecked()) 
-    {
-	    if (mChatWidget) {
-		    QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
-		    if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
-		    button_map::iterator it = buttonMapTakeVideo.find(buttonName);
-		    if (it == buttonMapTakeVideo.end()){
-			    mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
-			                            , tr("%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
-			    RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Video Call"));
-			    button->setToolTip(tr("Activate camera"));
-			    button->setStyleSheet(QString("border: 1px solid #199909;")
-			                          .append("font-size: 12pt;  color: white;")
-			                          .append("min-width: 128px; min-height: 24px;")
-			                          .append("border-radius: 6px;")
-			                          .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-			                                  "stop: 0 #22c70d, stop: 1 #116a06);")
+	sendVideoRingTime = -2;//Receive Video so Accepted
+	if (!videoCaptureToggleButton->isChecked()) {
+		addNewVideoButtonMap(peer_id);
+		return;
+	}
 
-			                          );
+	RsVOIPDataChunk chunk ;
+	chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+	chunk.size = array->size() ;
+	chunk.data = array->data() ;
 
-			    button->updateImage();
+	videoProcessor->receiveEncodedData(chunk) ;
 
-			    connect(button,SIGNAL(clicked()),this,SLOT(startVideoCapture()));
-			    connect(button,SIGNAL(mouseEnter()),this,SLOT(botMouseEnter()));
-			    connect(button,SIGNAL(mouseLeave()),this,SLOT(botMouseLeave()));
-
-			    buttonMapTakeVideo.insert(buttonName, button);
-		    }
-	    }
-
-	    //TODO make a sound for the incoming call
-	    //        soundManager->play(VOIP_SOUND_INCOMING_CALL);
-	    if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(peer_id);
-
-    } 
-    else 
-    {
-	    RsVOIPDataChunk chunk ;
-	    chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
-	    chunk.size = array->size() ;
-	    chunk.data = array->data() ;
-
-	    videoProcessor->receiveEncodedData(chunk) ;
-    }
 }
 
 void VOIPChatWidgetHolder::toggleHideChatText()
@@ -602,34 +816,62 @@ void VOIPChatWidgetHolder::showNormalView()
 	toggleFullScreen();
 }
 
-void VOIPChatWidgetHolder::botMouseEnter()
+void VOIPChatWidgetHolder::botMouseEnterTake()
 {
 	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
 	if (source){
 		source->setStyleSheet(QString("border: 1px solid #333333;")
-                          .append("font-size: 12pt; color: white;")
-                          .append("min-width: 128px; min-height: 24px;")
-                          .append("border-radius: 6px;")
-                          .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-                                  "stop: 0 #444444, stop: 1 #222222);")
-
-                          );
+		                      .append("font-size: 12pt; color: white;")
+		                      .append("min-width: 128px; min-height: 24px;")
+		                      .append("border-radius: 6px;")
+		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+		                              "stop: 0 #444444, stop: 1 #222222);")
+		                      );
 		//source->setDown(true);
 	}
 }
 
-void VOIPChatWidgetHolder::botMouseLeave()
+void VOIPChatWidgetHolder::botMouseLeaveTake()
 {
 	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
 	if (source){
 		source->setStyleSheet(QString("border: 1px solid #199909;")
-                          .append("font-size: 12pt; color: white;")
-                          .append("min-width: 128px; min-height: 24px;")
-				                  .append("border-radius: 6px;")
-				                  .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-                                   "stop: 0 #22c70d, stop: 1 #116a06);")
+		                      .append("font-size: 12pt; color: white;")
+		                      .append("min-width: 128px; min-height: 24px;")
+		                      .append("border-radius: 6px;")
+		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+		                              "stop: 0 #22c70d, stop: 1 #116a06);")
+		                      );
+		//source->setDown(false);
+	}
+}
 
-				                   );
+void VOIPChatWidgetHolder::botMouseEnterDecline()
+{
+	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
+	if (source){
+		source->setStyleSheet(QString("border: 1px solid #333333;")
+		                      .append("font-size: 12pt; color: white;")
+		                      .append("min-width: 128px; min-height: 24px;")
+		                      .append("border-radius: 6px;")
+		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+		                              "stop: 0 #444444, stop: 1 #222222);")
+		                      );
+		//source->setDown(true);
+	}
+}
+
+void VOIPChatWidgetHolder::botMouseLeaveDecline()
+{
+	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
+	if (source){
+		source->setStyleSheet(QString("border: 1px solid #199909;")
+		                      .append("font-size: 12pt; color: white;")
+		                      .append("min-width: 128px; min-height: 24px;")
+		                      .append("border-radius: 6px;")
+		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+		                              "stop: 0 #c7220d, stop: 1 #6a1106);")
+		                      );
 		//source->setDown(false);
 	}
 }
@@ -641,57 +883,9 @@ void VOIPChatWidgetHolder::setAcceptedBandwidth(uint32_t bytes_per_sec)
 
 void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* array)
 {
+    sendAudioRingTime = -2;//Receive Audio so Accepted
     if (!audioCaptureToggleButton->isChecked()) {
-        //launch an animation. Don't launch it if already animating
-        if (!audioCaptureToggleButton->graphicsEffect() ||
-            (audioCaptureToggleButton->graphicsEffect()->inherits("QGraphicsOpacityEffect") &&
-                ((QGraphicsOpacityEffect*)audioCaptureToggleButton->graphicsEffect())->opacity() == 1)
-            ) {
-            QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(audioListenToggleButton);
-            audioCaptureToggleButton->setGraphicsEffect(effect);
-            QPropertyAnimation *anim = new QPropertyAnimation(effect, "opacity", effect);
-            anim->setStartValue(1);
-            anim->setKeyValueAt(0.5,0);
-            anim->setEndValue(1);
-            anim->setDuration(400);
-            anim->start();
-        }
-        
-        if (mChatWidget) {
-        QString buttonName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
-        if (buttonName.isEmpty()) buttonName = "VoIP";//TODO maybe change all with GxsId
-        button_map::iterator it = buttonMapTakeVideo.find(buttonName);
-        if (it == buttonMapTakeVideo.end()){
-				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
-				                        , tr("%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?").arg(buttonName), ChatWidget::MSGTYPE_SYSTEM);
-				RSButtonOnText *button = mChatWidget->getNewButtonOnTextBrowser(tr("Accept Call"));
-				button->setToolTip(tr("Activate audio"));
-				button->setStyleSheet(QString("border: 1px solid #199909;")
-				                      .append("font-size: 12pt;  color: white;")
-				                      .append("min-width: 128px; min-height: 24px;")
-				                      .append("border-radius: 6px;")
-				                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-                                        "stop: 0 #22c70d, stop: 1 #116a06);")
-
-				                      );
-                                       
-
-				button->updateImage();
-
-				connect(button,SIGNAL(clicked()),this,SLOT(startAudioCapture()));
-				connect(button,SIGNAL(mouseEnter()),this,SLOT(botMouseEnter()));
-				connect(button,SIGNAL(mouseLeave()),this,SLOT(botMouseLeave()));
-
-				buttonMapTakeVideo.insert(buttonName, button);
-        }
-        }
-
-        audioCaptureToggleButton->setToolTip(tr("Answer"));
-
-        //TODO make a sound for the incoming call
-//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
-        if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipAudioCall(peer_id);
-
+        addNewAudioButtonMap(peer_id);
         return;
     }
 
@@ -733,7 +927,7 @@ void VOIPChatWidgetHolder::sendVideoData()
 	RsVOIPDataChunk chunk ;
 
 	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
-        rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk) ;
+		rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk) ;
 }
 
 void VOIPChatWidgetHolder::sendAudioData()
@@ -743,7 +937,7 @@ void VOIPChatWidgetHolder::sendAudioData()
         RsVOIPDataChunk chunk;
         chunk.size = qbarray.size();
         chunk.data = (void*)qbarray.constData();
-		  chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
+        chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
         rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk);
     }
 }
@@ -752,8 +946,8 @@ void VOIPChatWidgetHolder::updateStatus(int status)
 {
 	bool enabled = (status != RS_STATUS_OFFLINE);
 
-	audioListenToggleButton->setEnabled(enabled);
-	audioListenToggleButtonFS->setEnabled(enabled);
+	audioListenToggleButton->setEnabled(audioCaptureToggleButton->isChecked() && enabled);
+	audioListenToggleButtonFS->setEnabled(audioCaptureToggleButton->isChecked() && enabled);
 	audioCaptureToggleButton->setEnabled(enabled);
 	audioCaptureToggleButtonFS->setEnabled(enabled);
 	videoCaptureToggleButton->setEnabled(enabled);
@@ -763,4 +957,197 @@ void VOIPChatWidgetHolder::updateStatus(int status)
 	fullscreenToggleButtonFS->setEnabled(videoCaptureToggleButton->isChecked() && enabled);
 	hangupButton->setEnabled(enabled);
 	hangupButtonFS->setEnabled(enabled);
+}
+
+void VOIPChatWidgetHolder::ReceivedInvitation(const RsPeerId &peer_id, int flags)
+{
+	switch(flags){
+		case RS_VOIP_FLAGS_AUDIO_DATA: {
+			if (audioCaptureToggleButton->isChecked()) {
+				if (recAudioRingTime != -1)
+					toggleAudioCapture();
+			} else {
+				addNewAudioButtonMap(peer_id);
+			}
+		}
+		break;
+		case RS_VOIP_FLAGS_VIDEO_DATA: {
+			if (videoCaptureToggleButton->isChecked()) {
+				if (recVideoRingTime != -1)
+					toggleVideoCapture();
+			} else {
+				addNewVideoButtonMap(peer_id);
+			}
+		}
+		break;
+		default:
+			std::cerr << "VOIPChatWidgetHolder::ReceivedInvitation(): Received unknown flags item # " << flags << ": not handled yet ! Sorry" << std::endl;
+		break ;
+	}
+}
+
+void VOIPChatWidgetHolder::ReceivedVoipHangUp(const RsPeerId &peer_id, int flags)
+{
+	switch(flags){
+		case RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA: {
+			if (mChatWidget) {
+				if (videoCaptureToggleButton->isChecked() || audioCaptureToggleButton->isChecked()) {
+					QString peerName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+					mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+					                        , tr("%1 hang up. Your call is closed.").arg(peerName), ChatWidget::MSGTYPE_SYSTEM);
+				}
+				hangupCall();
+			}
+		}
+		break;
+		case RS_VOIP_FLAGS_AUDIO_DATA: {
+			if (mChatWidget) {
+				if (audioCaptureToggleButton->isChecked()) {
+					QString peerName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+					mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+					                        , tr("%1 hang up. Your audio call is closed.").arg(peerName), ChatWidget::MSGTYPE_SYSTEM);
+				}
+				hangupCallAudio();
+			}
+		}
+		break;
+		case RS_VOIP_FLAGS_VIDEO_DATA: {
+			if (mChatWidget) {
+				if (videoCaptureToggleButton->isChecked()) {
+					QString peerName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+					mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+					                        , tr("%1 hang up. Your video call is closed.").arg(peerName), ChatWidget::MSGTYPE_SYSTEM);
+				}
+				hangupCallVideo();
+			}
+		}
+		break;
+		default:
+			std::cerr << "VOIPChatWidgetHolder::ReceivedVoipHangUp(): Received unknown flags item # " << flags << ": not handled yet ! Sorry" << std::endl;
+		break ;
+	}
+	//deleteButtonMap();
+}
+
+void VOIPChatWidgetHolder::ReceivedVoipAccept(const RsPeerId &peer_id, int flags)
+{
+	switch(flags){
+		case RS_VOIP_FLAGS_AUDIO_DATA: {
+			if (mChatWidget) {
+				sendAudioRingTime = -2;
+				QString peerName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+				                        , tr("%1 accepted your audio call.").arg(peerName), ChatWidget::MSGTYPE_SYSTEM);
+				if (audioCaptureToggleButton->isChecked())
+					toggleAudioCapture();
+			}
+		}
+		break;
+		case RS_VOIP_FLAGS_VIDEO_DATA: {
+			if (mChatWidget) {
+				sendVideoRingTime = -2;
+				QString peerName = QString::fromUtf8(rsPeers->getPeerName(peer_id).c_str());
+				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+				                        , tr("%1 accepted your video call.").arg(peerName), ChatWidget::MSGTYPE_SYSTEM);
+				if (videoCaptureToggleButton->isChecked())
+					toggleVideoCapture();
+			}
+		}
+		break;
+		default:
+			std::cerr << "VOIPChatWidgetHolder::ReceivedVoipHangUp(): Received unknown flags item # " << flags << ": not handled yet ! Sorry" << std::endl;
+		break ;
+	}
+}
+
+void VOIPChatWidgetHolder::timerAudioRingTimeOut()
+{
+	//Sending or receiving (-2 connected, -1 reseted, >=0 in progress)
+	if (sendAudioRingTime >= 0) {
+		//Sending
+		++sendAudioRingTime;
+		if (sendAudioRingTime == 100) sendAudioRingTime = 0;
+		pbAudioRing->setValue(sendAudioRingTime);
+		pbAudioRing->setToolTip(tr("Waiting your friend respond your audio call."));
+		pbAudioRing->setVisible(true);
+
+		timerAudioRing->start();
+	} else if(recAudioRingTime >= 0) {
+		//Receiving
+		++recAudioRingTime;
+		if (recAudioRingTime == 100) recAudioRingTime = 0;
+		pbAudioRing->setValue(recAudioRingTime);
+		pbAudioRing->setToolTip(tr("Your friend is calling you for audio. Respond."));
+		pbAudioRing->setVisible(true);
+
+		//launch an animation. Don't launch it if already animating
+		if (!audioCaptureToggleButton->graphicsEffect()
+		    || (audioCaptureToggleButton->graphicsEffect()->inherits("QGraphicsOpacityEffect")
+		        && ((QGraphicsOpacityEffect*)audioCaptureToggleButton->graphicsEffect())->opacity() == 1)
+		    ) {
+			QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(audioListenToggleButton);
+			audioCaptureToggleButton->setGraphicsEffect(effect);
+			QPropertyAnimation *anim = new QPropertyAnimation(effect, "opacity", effect);
+			anim->setStartValue(1);
+			anim->setKeyValueAt(0.5,0);
+			anim->setEndValue(1);
+			anim->setDuration(timerAudioRing->interval());
+			anim->start();
+		}
+		audioCaptureToggleButton->setToolTip(tr("Answer"));
+
+		timerAudioRing->start();
+	} else {
+		//Nothing to do, reset stat
+		pbAudioRing->setHidden(true);
+		pbAudioRing->setValue(0);
+		pbAudioRing->setToolTip("");
+		audioCaptureToggleButton->setGraphicsEffect(0);
+	}
+}
+
+void VOIPChatWidgetHolder::timerVideoRingTimeOut()
+{
+	//Sending or receiving (-2 connected, -1 reseted, >=0 in progress)
+	if (sendVideoRingTime >= 0) {
+		//Sending
+		++sendVideoRingTime;
+		if (sendVideoRingTime == 100) sendVideoRingTime = 0;
+		pbVideoRing->setValue(sendVideoRingTime);
+		pbVideoRing->setToolTip(tr("Waiting your friend respond your video call."));
+		pbVideoRing->setVisible(true);
+
+		timerVideoRing->start();
+	} else if(recVideoRingTime >= 0) {
+		//Receiving
+		++recVideoRingTime;
+		if (recVideoRingTime == 100) recVideoRingTime = 0;
+		pbVideoRing->setValue(recVideoRingTime);
+		pbVideoRing->setToolTip(tr("Your friend is calling you for video. Respond."));
+		pbVideoRing->setVisible(true);
+
+		//launch an animation. Don't launch it if already animating
+		if (!videoCaptureToggleButton->graphicsEffect()
+		    || (videoCaptureToggleButton->graphicsEffect()->inherits("QGraphicsOpacityEffect")
+		        && ((QGraphicsOpacityEffect*)videoCaptureToggleButton->graphicsEffect())->opacity() == 1)
+		    ) {
+			QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(audioListenToggleButton);
+			videoCaptureToggleButton->setGraphicsEffect(effect);
+			QPropertyAnimation *anim = new QPropertyAnimation(effect, "opacity", effect);
+			anim->setStartValue(1);
+			anim->setKeyValueAt(0.5,0);
+			anim->setEndValue(1);
+			anim->setDuration(timerVideoRing->interval());
+			anim->start();
+		}
+		videoCaptureToggleButton->setToolTip(tr("Answer"));
+
+		timerVideoRing->start();
+	} else {
+		//Nothing to do, reset stat
+		pbVideoRing->setHidden(true);
+		pbVideoRing->setValue(0);
+		pbVideoRing->setToolTip("");
+		videoCaptureToggleButton->setGraphicsEffect(0);
+	}
 }

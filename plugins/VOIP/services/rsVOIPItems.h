@@ -76,8 +76,8 @@ class RsVOIPItem: public RsItem
 			setPriorityLevel(QOS_PRIORITY_RS_VOIP) ;
 		}	
 
-		virtual ~RsVOIPItem() {};
-		virtual void clear() {};
+		virtual ~RsVOIPItem() {}
+		virtual void clear() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0 ;
 
 		virtual bool serialise(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialise themselves ?
@@ -138,14 +138,13 @@ class RsVOIPBandwidthItem: public RsVOIPItem
 		uint32_t bytes_per_sec ;		// bandwidth in bytes per sec.
 };
 
-
 class RsVOIPProtocolItem: public RsVOIPItem
 {
 	public:
 		RsVOIPProtocolItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL) {}
 		RsVOIPProtocolItem(void *data,uint32_t size) ;
 
-		enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3, VoipProtocol_Bandwidth = 4 } ;
+		typedef enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3, VoipProtocol_Bandwidth = 4 } en_Protocol;
 
 		virtual bool serialise(void *data,uint32_t& size) ;
 		virtual uint32_t serial_size() const ; 							
@@ -153,7 +152,7 @@ class RsVOIPProtocolItem: public RsVOIPItem
 		virtual ~RsVOIPProtocolItem() {}
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-		uint32_t protocol ;
+		en_Protocol protocol ;
 		uint32_t flags ;
 };
 

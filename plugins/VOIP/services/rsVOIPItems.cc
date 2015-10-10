@@ -71,7 +71,7 @@ std::ostream& RsVOIPProtocolItem::print(std::ostream &out, uint16_t indent)
 	out << "flags: " << flags << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "protocol: " << std::hex << protocol << std::dec << std::endl;
+	out << "protocol: " << std::hex << (uint32_t)protocol << std::dec << std::endl;
 
 	printRsItemEnd(out, "RsVOIPProtocolItem", indent);
 	return out;
@@ -160,7 +160,7 @@ bool RsVOIPProtocolItem::serialise(void *data, uint32_t& pktsize)
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, protocol);
+	ok &= setRawUInt32(data, tlvsize, &offset, (uint32_t)protocol);
 	ok &= setRawUInt32(data, tlvsize, &offset, flags);
 
 	if (offset != tlvsize)
@@ -300,7 +300,9 @@ RsVOIPProtocolItem::RsVOIPProtocolItem(void *data, uint32_t pktsize)
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= getRawUInt32(data, rssize, &offset, &protocol);
+	uint32_t uint_Protocol;
+	ok &= getRawUInt32(data, rssize, &offset, &uint_Protocol);
+	protocol = static_cast<en_Protocol>(uint_Protocol);
 	ok &= getRawUInt32(data, rssize, &offset, &flags);
 
 	if (offset != rssize)

@@ -60,11 +60,11 @@ public:
 
 private slots:
 #ifdef VOIPTOASTERNOTIFY_ALL
-	void voipAcceptReceived(const RsPeerId &peer_id) ; // emitted when the peer accepts the call
+	void voipAcceptReceived(const RsPeerId &peer_id, int flags) ; // emitted when the peer accepts the call
 	void voipBandwidthInfoReceived(const RsPeerId &peer_id, int bytes_per_sec) ; // emitted when measured bandwidth info is received by the peer.
 	void voipDataReceived(const RsPeerId &peer_id) ;			// signal emitted when some voip data has been received
-	void voipHangUpReceived(const RsPeerId &peer_id) ; // emitted when the peer closes the call (i.e. hangs up)
-	void voipInvitationReceived(const RsPeerId &peer_id) ;	// signal emitted when an invitation has been received
+	void voipHangUpReceived(const RsPeerId &peer_id, int flags) ; // emitted when the peer closes the call (i.e. hangs up)
+	void voipInvitationReceived(const RsPeerId &peer_id, int flags) ;	// signal emitted when an invitation has been received
 #endif
 	void voipAudioCallReceived(const RsPeerId &peer_id) ; // emitted when the peer is calling and own don't send audio
 	void voipVideoCallReceived(const RsPeerId &peer_id) ; // emitted when the peer is calling and own don't send video
