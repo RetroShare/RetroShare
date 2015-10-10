@@ -81,7 +81,7 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 
 	QPixmap combinedPixmap;
 	if (!icons.empty()) {
-        GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, QFontMetricsF(item->font(item->idColumn())).height()*1.1);
+        GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, QFontMetricsF(item->font(item->idColumn())).height()*1.6);
 	}
 	item->setData(column, Qt::DecorationRole, combinedPixmap);
 	item->setAvatar(details.mAvatar);
@@ -153,7 +153,7 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
                         int S = QFontMetricsF(font(column)).height();
 
 				QString embeddedImage;
-                if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
+                if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(5*S,5*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
 					t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
 				}
 
