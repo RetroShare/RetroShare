@@ -315,6 +315,8 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 
 VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 {
+	hangupCall();
+
 	if(inputAudioDevice != NULL)
 		inputAudioDevice->stop() ;
 
@@ -492,7 +494,7 @@ void VOIPChatWidgetHolder::hangupCallAudio()
 		atLeastOneChecked = true;
 	}
 	if (!atLeastOneChecked) {
-		//Decline button or Friend hang up
+		//Decline button ,Friend hang up or chat close
 		if (recAudioRingTime != -1) {
 			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
 			deleteButtonMap(RS_VOIP_FLAGS_AUDIO_DATA);
@@ -521,7 +523,7 @@ void VOIPChatWidgetHolder::hangupCallVideo()
 		atLeastOneChecked = true;
 	}
 	if (!atLeastOneChecked) {
-		//Decline button or Friend hang up
+		//Decline button ,Friend hang up or chat close
 		if (recVideoRingTime != -1) {
 			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
 			deleteButtonMap(RS_VOIP_FLAGS_VIDEO_DATA);
