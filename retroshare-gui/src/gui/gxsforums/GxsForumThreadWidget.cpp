@@ -83,6 +83,7 @@
 #define ROLE_THREAD_READCHILDREN    Qt::UserRole + 4
 #define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 5
 #define ROLE_THREAD_SORT            Qt::UserRole + 6
+#define ROLE_THREAD_REDACTED        Qt::UserRole + 7
 
 #define ROLE_THREAD_COUNT           4
 
@@ -408,7 +409,8 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
 
-    QAction *flagasbadAct = new QAction(QIcon(IMAGE_BIOHAZARD), tr("Flag this person as bad"), &contextMnu);
+    QAction *flagasbadAct = new QAction(QIcon(IMAGE_BIOHAZARD), tr("Flag the author as bad"), &contextMnu);
+    flagasbadAct->setToolTip(tr("This will block/hide messages from this person, and notify neighbor nodes.")) ;
     connect(flagasbadAct, SIGNAL(triggered()), this, SLOT(flagpersonasbad()));
 
     QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
@@ -893,12 +895,21 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
 {
-    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL);
+    // Early check for a message that should be hidden because its author 
+    // is flagged with a bad reputation
+    
+    
+    bool redacted =  !rsReputations->isIdentityOk(msg.mMeta.mAuthorId) ;
+                
+    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
 	item->moveToThread(ui->threadTreeWidget->thread());
 
 	QString text;
 
-	item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
+    	if(redacted)
+		item->setText(COLUMN_THREAD_TITLE, tr("[ ... Redacted message ... ]"));
+	else
+		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
 	QDateTime qtime;
 	QString sort;
@@ -968,9 +979,9 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	}
 #endif
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msg.mMeta.mMsgStatus);
-
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, false);
-
+    	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_REDACTED, redacted);
+        
 	return item;
 }
 
@@ -1308,6 +1319,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
+    bool redacted = !rsReputations->isIdentityOk(msg.mMeta.mAuthorId) ;
+    
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
@@ -1341,9 +1354,18 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     ui->by_text_label->show() ;
     ui->by_label->show() ;
 
-    QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-
+    if(redacted)
+    {
+	QString extraTxt = tr("<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
+    extraTxt += "<UL><li></b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>" ;
+    extraTxt += "<UL><li></b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li>" ;
+            ui->postText->setHtml(extraTxt);
+    }
+    else
+    {
+	QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 	ui->postText->setHtml(extraTxt);
+    }
     //ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 }
 
@@ -1694,13 +1716,18 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 
 void GxsForumThreadWidget::flagpersonasbad()
 {
-    	if (groupId().isNull() || mThreadId.isNull()) {
-		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
-		return;
-	}
+    // no need to use the token system for that, since we just need to find out the author's name, which is in the item.
 
-	// Get Message ... then complete replyMessageData().
-        rsReputations->setOwnOpinion(RsGxsId(groupId()),RsReputations::OPINION_NEGATIVE) ;
+    QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+
+    std::cerr << "Author string: \"" << item->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString().toStdString()<< std::endl;
+    RsGxsId gxsId(item->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString().toStdString());
+
+    // Get Message ... then complete replyMessageData().
+    std::cerr << "GxsForumThreadWidget::flagpersonasbad(): setting opinion for peer " << gxsId << " to " << RsReputations::OPINION_NEGATIVE << std::endl;
+    rsReputations->setOwnOpinion(gxsId,RsReputations::OPINION_NEGATIVE) ;
+
+    emit groupChanged(this);
 }
 
 void GxsForumThreadWidget::replytomessage()

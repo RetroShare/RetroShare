@@ -567,6 +567,12 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 #ifdef DEBUG_REPUTATION
     std::cerr << "setOwnOpinion(): for GXS id " << gxsid << " to " << opinion << std::endl;
 #endif
+    if(gxsid.isNull())
+    {
+        std::cerr << "  ID " << gxsid << " is rejected. Look for a bug in calling method." << std::endl;
+        return false ;
+    }
+                     
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 	std::map<RsGxsId, Reputation>::iterator rit;

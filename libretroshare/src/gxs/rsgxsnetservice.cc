@@ -30,6 +30,7 @@
 
 #include "rsgxsnetservice.h"
 #include "retroshare/rsconfig.h"
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "pgp/pgpauxutils.h"
@@ -2009,7 +2010,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
                 // if author is required for this message, it will simply get dropped
                 // at genexchange side of things
-                if(rep.score > (int)grpMeta->mReputationCutOff || noAuthor)
+                if(rsReputations->isIdentityOk(syncItem->authorId) && rep.score > (int)grpMeta->mReputationCutOff || noAuthor)
                 {
 #ifdef NXS_NET_DEBUG
                     std::cerr << ", passed! Adding message to req list." << std::endl;
@@ -2225,7 +2226,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
                     GixsReputation rep;
                     mReputations->getReputation(grpSyncItem->authorId, rep);
 
-                    if(rep.score >= GIXS_CUT_OFF)
+                    if(rep.score >= GIXS_CUT_OFF && rsReputations->isIdentityOk(grpSyncItem->authorId))
                     {
                         addGroupItemToList(tr, grpId, transN, reqList);
                         std::cerr << "  reputation cut off: limit=" << GIXS_CUT_OFF << " value=" << rep.score << ": allowed." << std::endl;
