@@ -397,11 +397,6 @@ void VOIPChatWidgetHolder::addNewAudioButtonMap(const RsPeerId &peer_id)
 
 			buttonMapTakeCall.insert(QString("a").append(buttonName), QPair<RSButtonOnText*, RSButtonOnText*>(buttonT, buttonD));
 		}
-
-		//TODO make a sound for the incoming call
-		//soundManager->play(VOIP_SOUND_INCOMING_CALL);
-
-		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipAudioCall(peer_id);
 	}
 }
 
@@ -453,11 +448,6 @@ void VOIPChatWidgetHolder::addNewVideoButtonMap(const RsPeerId &peer_id)
 
 			buttonMapTakeCall.insert(QString("v").append(buttonName), QPair<RSButtonOnText*, RSButtonOnText*>(buttonT, buttonD));
 		}
-
-		//TODO make a sound for the incoming call
-		//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
-
-		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(peer_id);
 	}
 }
 
@@ -1098,6 +1088,11 @@ void VOIPChatWidgetHolder::timerAudioRingTimeOut()
 		}
 		audioCaptureToggleButton->setToolTip(tr("Answer"));
 
+		//TODO make a sound for the incoming call
+		//soundManager->play(VOIP_SOUND_INCOMING_CALL);
+
+		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipAudioCall(mChatWidget->getChatId().toPeerId());
+
 		timerAudioRing->start();
 	} else {
 		//Nothing to do, reset stat
@@ -1143,6 +1138,11 @@ void VOIPChatWidgetHolder::timerVideoRingTimeOut()
 			anim->start();
 		}
 		videoCaptureToggleButton->setToolTip(tr("Answer"));
+
+		//TODO make a sound for the incoming call
+		//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
+
+		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(mChatWidget->getChatId().toPeerId());
 
 		timerVideoRing->start();
 	} else {
