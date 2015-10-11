@@ -42,6 +42,8 @@
 #define TYPE_UNKNOWN_ID  3
 #define TYPE_CREATE_ID   4
 
+#define BANNED_ICON ":/icons/yellow_biohazard64.png"
+
 #define IDCHOOSER_REFRESH  1
 
 //#define IDCHOOSER_DEBUG
@@ -147,6 +149,10 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 
 	case GXS_ID_DETAILS_TYPE_DONE:
 		GxsIdDetails::getIcons(details, icons);
+		break;
+        
+	case GXS_ID_DETAILS_TYPE_BANNED:
+		icons.push_back(QIcon(BANNED_ICON)) ;
 		break;
 	}
 

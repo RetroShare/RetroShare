@@ -29,6 +29,7 @@
 #include <math.h>
 #include "GxsIdDetails.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
+#include "retroshare/rsreputations.h"
 
 #include <retroshare/rspeers.h>
 
@@ -40,6 +41,7 @@
 #define IMAGE_PGPKNOWN    ":/images/contact.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
 #define IMAGE_ANON        ":/images/tags/anon.png"
+#define IMAGE_BANNED      ":/icons/yellow_biohazard64.png"
 
 #define IMAGE_DEV_AMBASSADOR     ":/images/tags/dev-ambassador.png"
 #define IMAGE_DEV_CONTRIBUTOR    ":/images/tags/vote_down.png"
@@ -821,6 +823,9 @@ QString GxsIdDetails::getNameForType(GxsIdDetailsType type, const RsIdentityDeta
 	case GXS_ID_DETAILS_TYPE_DONE:
 		return getName(details);
 
+	case GXS_ID_DETAILS_TYPE_BANNED:
+		return tr("[Banned]") ;
+
 	case GXS_ID_DETAILS_TYPE_FAILED:
 		return getFailedText(details.mId);
 	}
@@ -873,7 +878,10 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-    QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
+	if(!rsReputations->isIdentityOk(details.mId)) 
+	    return tr("[Banned]") ;
+    
+    	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
 	std::list<RsRecognTag>::const_iterator it;
 	for (it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
@@ -887,9 +895,18 @@ QString GxsIdDetails::getName(const RsIdentityDetails &details)
 QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 {
 	QString comment;
+QString nickname ;
 
-QString nickname = details.mNickname.empty()?tr("[Unknown]"):QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
+	bool banned = !rsReputations->isIdentityOk(details.mId) ;
+        
+    	if(details.mNickname.empty())
+            nickname = tr("[Unknown]") ;
+        else if(banned)
+            nickname = tr("[Banned]") ;
+        else
+            nickname = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
 
+                            
     comment = QString("%1:%2<br/>%3:%4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
                                              nickname,
                                             QApplication::translate("GxsIdDetails", "Identity&nbsp;Id"),
@@ -903,7 +920,8 @@ QString nickname = details.mNickname.empty()?tr("[Unknown]"):QString::fromUtf8(d
 		{
 			/* look up real name */
 			std::string authorName = rsPeers->getGPGName(details.mPgpId);
-            comment += QString("%1&nbsp;[%2]").arg(QString::fromUtf8(authorName.c_str()), QString::fromStdString(details.mPgpId.toStdString()));
+                        
+			comment += QString("%1&nbsp;[%2]").arg(QString::fromUtf8(authorName.c_str()), QString::fromStdString(details.mPgpId.toStdString()));
 		}
 		else
 			comment += QApplication::translate("GxsIdDetails", "unknown Key");
@@ -918,6 +936,13 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 {
     QPixmap pix ;
 
+    if(!rsReputations->isIdentityOk(details.mId))
+    {
+        icons.clear() ;
+        icons.push_back(QIcon(IMAGE_BANNED)) ;
+        return ;
+    }
+    
     if(icon_types & ICON_TYPE_AVATAR)
     {
         if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))

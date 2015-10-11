@@ -83,7 +83,6 @@
 #define ROLE_THREAD_READCHILDREN    Qt::UserRole + 4
 #define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 5
 #define ROLE_THREAD_SORT            Qt::UserRole + 6
-#define ROLE_THREAD_REDACTED        Qt::UserRole + 7
 
 #define ROLE_THREAD_COUNT           4
 
@@ -980,7 +979,6 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 #endif
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msg.mMeta.mMsgStatus);
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, false);
-    	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_REDACTED, redacted);
         
 	return item;
 }
@@ -1357,9 +1355,9 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     if(redacted)
     {
 	QString extraTxt = tr("<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
-    extraTxt += "<UL><li></b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>" ;
-    extraTxt += "<UL><li></b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li>" ;
-            ui->postText->setHtml(extraTxt);
+	extraTxt += "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>" ;
+	extraTxt += "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>" ;
+	ui->postText->setHtml(extraTxt);
     }
     else
     {
@@ -1721,6 +1719,8 @@ void GxsForumThreadWidget::flagpersonasbad()
     QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
     std::cerr << "Author string: \"" << item->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString().toStdString()<< std::endl;
+    std::cerr << "Messagestring: \"" << item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString()<< std::endl;
+    std::cerr << "Messagestring: \"" << item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toString().toStdString()<< std::endl;
     RsGxsId gxsId(item->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString().toStdString());
 
     // Get Message ... then complete replyMessageData().
