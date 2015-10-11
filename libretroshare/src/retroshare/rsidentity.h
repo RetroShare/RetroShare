@@ -177,6 +177,7 @@ public:
 
     // reputation details.
     GxsReputation mReputation;
+    bool mBanned ;
 
     // avatar
     RsGxsImage mAvatar ;

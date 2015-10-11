@@ -733,6 +733,9 @@ void GxsForumThreadWidget::insertGroupData()
     case GXS_ID_DETAILS_TYPE_LOADING:
         author = GxsIdDetails::getLoadingText(details.mId);
         break;
+    case GXS_ID_DETAILS_TYPE_BANNED:
+        author = tr("[Banned]") ;
+        break ;
     case GXS_ID_DETAILS_TYPE_DONE:
         author = GxsIdDetails::getName(details);
         break;
@@ -1715,19 +1718,30 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 void GxsForumThreadWidget::flagpersonasbad()
 {
     // no need to use the token system for that, since we just need to find out the author's name, which is in the item.
+    
+	if (groupId().isNull() || mThreadId.isNull()) {
+		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
+		return;
+	}
 
-    QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+	// Get Message ... then complete replyMessageData().
+	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
+    
+    	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-    std::cerr << "Author string: \"" << item->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString().toStdString()<< std::endl;
-    std::cerr << "Messagestring: \"" << item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString()<< std::endl;
-    std::cerr << "Messagestring: \"" << item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toString().toStdString()<< std::endl;
-    RsGxsId gxsId(item->data(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR).toString().toStdString());
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::requestMsgData_BanAuthor(" << postId.first << "," << postId.second << ")";
+    std::cerr << std::endl;
+#endif
 
-    // Get Message ... then complete replyMessageData().
-    std::cerr << "GxsForumThreadWidget::flagpersonasbad(): setting opinion for peer " << gxsId << " to " << RsReputations::OPINION_NEGATIVE << std::endl;
-    rsReputations->setOwnOpinion(gxsId,RsReputations::OPINION_NEGATIVE) ;
+	GxsMsgReq msgIds;
+	std::vector<RsGxsMessageId> &vect = msgIds[postId.first];
+	vect.push_back(postId.second);
 
-    emit groupChanged(this);
+	uint32_t token;
+	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeBanAuthor);
+
 }
 
 void GxsForumThreadWidget::replytomessage()
@@ -2011,6 +2025,34 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 	}
 }
 
+void GxsForumThreadWidget::loadMsgData_BanAuthor(const uint32_t &token)
+{
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::loadMsgData_BanAuthor()";
+    std::cerr << std::endl;
+#endif
+
+	std::vector<RsGxsForumMsg> msgs;
+	if (rsGxsForums->getMsgData(token, msgs))
+	{
+		if (msgs.size() != 1)
+		{
+			std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Wrong number of answers";
+			std::cerr << std::endl;
+			return;
+		}
+
+		std::cerr << "  banning author id " << msgs[0].mMeta.mAuthorId << std::endl;
+	rsReputations->setOwnOpinion(msgs[0].mMeta.mAuthorId,RsReputations::OPINION_NEGATIVE) ;
+	}
+	else
+	{
+		std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Missing Message Data...";
+		std::cerr << std::endl;
+	}
+    
+    emit groupChanged(this) ;
+}
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
@@ -2036,6 +2078,11 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 
 		if (req.mUserType == mTokenTypeReplyMessage) {
 			loadMsgData_ReplyMessage(req.mToken);
+			return;
+		}
+        
+		if (req.mUserType == mTokenTypeBanAuthor) {
+			loadMsgData_BanAuthor(req.mToken);
 			return;
 		}
 	}
