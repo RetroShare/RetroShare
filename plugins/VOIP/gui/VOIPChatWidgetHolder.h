@@ -20,12 +20,16 @@
  ****************************************************************/
 
 #pragma once
-
-#include "gui/VOIPNotify.h"
-
+//Qt
 #include <QObject>
 #include <QGraphicsEffect>
+#include <QProgressBar>
+#include <QTimer>
+//VOIP
+#include "gui/VOIPNotify.h"
 #include <gui/SpeexProcessor.h>
+#include "services/rsVOIPItems.h"
+//retroshare-gui
 #include <gui/chat/ChatWidget.h>
 #include <gui/common/RsButtonOnText.h>
 
@@ -52,6 +56,10 @@ public:
 	void addVideoData(const RsPeerId &peer_id, QByteArray* array) ;
 	void setAcceptedBandwidth(uint32_t bytes_per_sec) ;
 
+	void ReceivedInvitation(const RsPeerId &peer_id, int flags) ;
+	void ReceivedVoipHangUp(const RsPeerId &peer_id, int flags) ;
+	void ReceivedVoipAccept(const RsPeerId &peer_id, int flags) ;
+
 public slots:
 	void sendAudioData();
 	void sendVideoData();
@@ -69,10 +77,19 @@ private slots:
 	void toggleFullScreen();
 	void toggleFullScreenFS();
 	void hangupCall() ;
-	void botMouseEnter();
-	void botMouseLeave();
+	void hangupCallAudio() ;
+	void hangupCallVideo() ;
+	void botMouseEnterTake();
+	void botMouseLeaveTake();
+	void botMouseEnterDecline();
+	void botMouseLeaveDecline();
+	void timerAudioRingTimeOut();
+	void timerVideoRingTimeOut();
 
 private:
+	void deleteButtonMap(int flags = RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA);
+	void addNewVideoButtonMap(const RsPeerId &peer_id);
+	void addNewAudioButtonMap(const RsPeerId &peer_id);
 	void replaceFullscreenWidget();
 	void showNormalView();
 
@@ -115,8 +132,18 @@ protected:
 	QToolButton *hangupButtonFS ;
 	QFrame *toolBarFS;
 
-	typedef QMap<QString, RSButtonOnText*> button_map;
-	button_map buttonMapTakeVideo;
+	typedef QMap<QString, QPair<RSButtonOnText*, RSButtonOnText*> > button_map;
+	button_map buttonMapTakeCall;
+
+	//Waiting for peer accept
+	QProgressBar *pbAudioRing;
+	QProgressBar *pbVideoRing;
+	QTimer *timerAudioRing;
+	QTimer *timerVideoRing;
+	int sendAudioRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+	int sendVideoRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+	int recAudioRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+	int recVideoRingTime; //(-2 connected, -1 reseted, >=0 in progress)
 
 	VOIPNotify *mVOIPNotify;
 };

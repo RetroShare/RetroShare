@@ -65,9 +65,9 @@ struct RsVOIPDataChunk
 class RsVOIP
 {
 	public:
-		virtual int sendVoipHangUpCall(const RsPeerId& peer_id) = 0;
-		virtual int sendVoipRinging(const RsPeerId& peer_id) = 0;
-		virtual int sendVoipAcceptCall(const RsPeerId& peer_id) = 0;
+		virtual int sendVoipHangUpCall(const RsPeerId& peer_id, uint32_t flags) = 0;
+		virtual int sendVoipRinging(const RsPeerId& peer_id, uint32_t flags) = 0;
+		virtual int sendVoipAcceptCall(const RsPeerId& peer_id, uint32_t flags) = 0;
 
 		// Sending data. The client keeps the memory ownership and must delete it after calling this.
 		virtual int sendVoipData(const RsPeerId& peer_id,const RsVOIPDataChunk& chunk) = 0;
