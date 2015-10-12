@@ -1363,7 +1363,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	QString extraTxt = tr("<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
 	extraTxt += tr("<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
 	extraTxt += tr("<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
-    	extraTxt += tr("<p><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></p>") ;
+    	extraTxt += tr("<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
         
 	ui->postText->setHtml(extraTxt);
     }
@@ -1746,7 +1746,6 @@ void GxsForumThreadWidget::flagpersonasbad()
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeBanAuthor);
-
 }
 
 void GxsForumThreadWidget::replytomessage()
@@ -2055,8 +2054,7 @@ void GxsForumThreadWidget::loadMsgData_BanAuthor(const uint32_t &token)
 		std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Missing Message Data...";
 		std::cerr << std::endl;
 	}
-    
-    requestGroupData() ;
+    updateDisplay(true) ;
 }
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/

@@ -117,13 +117,12 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
         
         	// internal update of data. Takes care of cleaning empty boxes.
         	void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
+		bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
 
-		bool loadReputationSet(RsGxsReputationSetItem *item, 
-				const std::set<RsPeerId> &peerSet);
-
-		int     sendPackets();
+		int  sendPackets();
+        	void cleanup();
 		void sendReputationRequests();
-		int sendReputationRequest(RsPeerId peerid);
+		int  sendReputationRequest(RsPeerId peerid);
         	void debug_print() ;
 
 	private:

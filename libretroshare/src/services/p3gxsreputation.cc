@@ -37,7 +37,6 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
-#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -130,7 +129,7 @@ static const uint32_t UPPER_LIMIT                         = 2;        // used to
 static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 static const int      kMaximumPeerAge                     = 180;      // half a year.
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
-static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 60;//600 ;// 10 minutes
+static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 
 
@@ -167,23 +166,25 @@ int	p3GxsReputation::tick()
 {
 	processIncoming();
 	sendPackets();
-    
-    time_t now = time(NULL);
-    
-    	if(mLastActiveFriendsUpdate + ACTIVE_FRIENDS_UPDATE_PERIOD < now)
-        {
+
+	time_t now = time(NULL);
+
+	if(mLastActiveFriendsUpdate + ACTIVE_FRIENDS_UPDATE_PERIOD < now)
+	{
 		updateActiveFriends() ;
-        	mLastActiveFriendsUpdate = now ;
-        }
+                cleanup() ;
+                
+		mLastActiveFriendsUpdate = now ;
+	}
 
 #ifdef DEBUG_REPUTATION
-        static time_t last_debug_print = time(NULL) ;
-        
-        if(now > 10+last_debug_print)
-        {
-            last_debug_print = now ;
-            debug_print() ;
-        }
+	static time_t last_debug_print = time(NULL) ;
+
+	if(now > 10+last_debug_print)
+	{
+		last_debug_print = now ;
+		debug_print() ;
+	}
 #endif
 	return 0;
 }
@@ -191,6 +192,16 @@ int	p3GxsReputation::tick()
 int	p3GxsReputation::status()
 {
 	return 1;
+}
+
+void p3GxsReputation::cleanup()
+{
+    // remove opinions from friends that havn't been seen online for more than the specified delay
+    
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::cleanup() " << std::endl;
+#endif
+    std::cerr << __PRETTY_FUNCTION__ << ": not implemented. TODO!" << std::endl;
 }
 
 void p3GxsReputation::updateActiveFriends()
@@ -347,8 +358,10 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 
 		if (count > kMaximumSetSize)
 		{
+#ifdef DEBUG_REPUTATION
 			std::cerr << "p3GxsReputation::SendReputations() Sending Full Packet";
 			std::cerr << std::endl;
+#endif
 
 			sendItem(pkt);
             
@@ -360,8 +373,10 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 
 	if (!pkt->mOpinions.empty())
 	{
+#ifdef DEBUG_REPUTATION
 		std::cerr << "p3GxsReputation::SendReputations() Sending Final Packet";
 		std::cerr << std::endl;
+#endif
 
 		sendItem(pkt);
 	}
@@ -370,8 +385,10 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 		delete pkt;
 	}
 
+#ifdef DEBUG_REPUTATION
 	std::cerr << "p3GxsReputation::SendReputations() Total Count: " << totalcount;
 	std::cerr << std::endl;
+#endif
 
 	return true;
 }
