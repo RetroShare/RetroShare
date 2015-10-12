@@ -2016,7 +2016,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
                 // if author is required for this message, it will simply get dropped
                 // at genexchange side of things
-                if(rep.score > (int)grpMeta->mReputationCutOff || noAuthor)
+                if(rep.score >= (int)grpMeta->mReputationCutOff || noAuthor)
                 {
 #ifdef NXS_NET_DEBUG
                     std::cerr << ", passed! Adding message to req list." << std::endl;
@@ -2218,7 +2218,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
             latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
         }
         
-	if(rsReputations->isIdentityBanned(grpSyncItem->authorId))
+	if(!grpSyncItem->authorId.isNull() && rsReputations->isIdentityBanned(grpSyncItem->authorId))
 	{
                 std::cerr << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
     		continue ;            

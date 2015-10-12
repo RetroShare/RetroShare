@@ -727,6 +727,9 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 
 	std::map<RsGxsId, Reputation>::iterator rit;
 
+    	if(item->mGxsId.isNull())	// just a protection against potential errors having put 00000 into ids.
+            return false ;
+        
 	/* find matching Reputation */
 	RsGxsId gxsId(item->mGxsId);
 	rit = mReputations.find(gxsId);
