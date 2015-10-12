@@ -88,7 +88,7 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 
 	QPixmap combinedPixmap;
 	if (!icons.empty()) {
-        GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, QFontMetricsF(item->font(item->idColumn())).height()*1.1);
+        GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, QFontMetricsF(item->font(item->idColumn())).height()*1.4);
 	}
 	item->setData(column, Qt::DecorationRole, combinedPixmap);
 	item->setAvatar(details.mAvatar);

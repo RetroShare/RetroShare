@@ -10,10 +10,6 @@ CONFIG += webui
 CONFIG -= qt xml gui
 CONFIG += link_prl
 
-# if you are linking against the libretroshare with gxs.
-# this option links against the required sqlite library.
-CONFIG += gxs
-
 #CONFIG += debug
 debug {
         QMAKE_CFLAGS -= -O2
@@ -30,8 +26,7 @@ linux-* {
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= -rdynamic -ldl
+	LIBS *= -rdynamic
 }
 
 unix {
@@ -52,7 +47,6 @@ linux-g++-64 {
 win32-x-g++ {
 	OBJECTS_DIR = temp/win32-x-g++/obj
 
-	LIBS += ../../../../lib/win32-x-g++/libretroshare.a 
 	LIBS += ../../../../lib/win32-x-g++/libssl.a 
 	LIBS += ../../../../lib/win32-x-g++/libcrypto.a 
 	LIBS += ../../../../lib/win32-x-g++/libminiupnpc.a 
@@ -78,11 +72,8 @@ win32 {
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
 	LIBS_DIR = $$PWD/../../../libs
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -L"$$LIBS_DIR/lib"
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 	LIBS += -lcrypto -lws2_32 -lgdi32
@@ -97,10 +88,6 @@ win32 {
 
 	DEPENDPATH += $$LIBS_DIR/include
 	INCLUDEPATH += $$LIBS_DIR/include
-
-	gxs {
-		LIBS += -lsqlcipher
-	}
 }
 
 ##################################### MacOS ######################################
@@ -110,17 +97,10 @@ macx {
     # CONFIG += ppc x86 
 
 	LIBS += -Wl,-search_paths_first
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
         LIBS += -lssl -lcrypto -lz 
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
-
-	gxs {
-		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-	    # LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-	    LIBS += ../../../lib/libsqlcipher.a
-	}
 
 	sshserver {
 		LIBS += -L../../../lib
@@ -135,12 +115,10 @@ macx {
 
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 }
 
 ##################################### OpenBSD  ######################################
@@ -148,12 +126,10 @@ freebsd-* {
 openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -rdynamic
 }
 
@@ -162,6 +138,9 @@ openbsd-* {
 
 DEPENDPATH += . ../../libretroshare/src
 INCLUDEPATH += . ../../libretroshare/src
+
+PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+LIBS *= ../../libretroshare/src/lib/libretroshare.a
 
 # Input
 HEADERS +=  notifytxt.h
@@ -177,7 +156,7 @@ introserver {
 webui {
 	DEFINES *= ENABLE_WEBUI
         PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-	LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+	LIBS += ../../libresapi/src/lib/libresapi.a
         DEPENDPATH += ../../libresapi/src
 	INCLUDEPATH += ../../libresapi/src
         HEADERS += \

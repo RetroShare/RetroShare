@@ -6,11 +6,7 @@ CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
-
-
-#GXS Stuff.
-# This should be disabled for releases until further notice.
-CONFIG += gxs 
+DESTDIR = lib
 
 #CONFIG += dsdv
 
@@ -77,15 +73,13 @@ SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/udpstunner.cc \
 		tcponudp/udprelay.cc \
 
+	DEFINES *= RS_USE_BITDHT
 
-        BITDHT_DIR = ../../libbitdht/src
+	BITDHT_DIR = ../../libbitdht/src
 	DEPENDPATH += . $${BITDHT_DIR}
 	INCLUDEPATH += . $${BITDHT_DIR}
-	# The next line is for compliance with debian packages. Keep it!
-	INCLUDEPATH += ../libbitdht
-	DEFINES *= RS_USE_BITDHT
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
+	PRE_TARGETDEPS *= $${BITDHT_DIR}/lib/libbitdht.a
+	LIBS *= $${BITDHT_DIR}/lib/libbitdht.a
 }
 
 
@@ -125,28 +119,17 @@ HEADERS += $$PUBLIC_HEADERS
 
 ################################# Linux ##########################################
 linux-* {
-	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
-	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
+	CONFIG += link_pkgconfig
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	DEPENDPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
-	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
-
-	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = g++
 
-	SSL_DIR = /usr/include/openssl
-	UPNP_DIR = /usr/include/upnp
-	DEPENDPATH += . $${SSL_DIR} $${UPNP_DIR}
-	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
-
 	contains(CONFIG, NO_SQLCIPHER) {
 		DEFINES *= NO_SQLCIPHER
-		LIBS *= -lsqlite3
+		PKGCONFIG *= sqlite3
 	} else {
-	        SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-	        isEmpty(SQLCIPHER_OK) {
+		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+		isEmpty(SQLCIPHER_OK) {
 			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 			exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
 				LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
@@ -156,19 +139,21 @@ linux-* {
 				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
 			}
 		} else {
+			# Workaround for broken sqlcipher packages, e.g. Ubuntu 14.04
+			# https://bugs.launchpad.net/ubuntu/+source/sqlcipher/+bug/1493928
+			# PKGCONFIG *= sqlcipher
 			LIBS *= -lsqlcipher
 		}
 	}
 
 	#CONFIG += version_detail_bash_script
 
-
 	# linux/bsd can use either - libupnp is more complete and packaged.
 	#CONFIG += upnp_miniupnpc 
 	CONFIG += upnp_libupnp
 
 	# Check if the systems libupnp has been Debian-patched
-	system(grep -E 'char[[:space:]]+PublisherUrl' $${UPNP_DIR}/upnp.h >/dev/null 2>&1) {
+	system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
 		# Normal libupnp
 	} else {
 		# Patched libupnp or new unreleased version
@@ -176,14 +161,14 @@ linux-* {
 	}
 
 	DEFINES *= UBUNTU
-	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
-	LIBS *= -lgnome-keyring
-	LIBS *= -lssl -lupnp -lixml
-	LIBS *= -lcrypto -lz -lpthread
+	PKGCONFIG *= gnome-keyring-1
+	PKGCONFIG *= libssl libupnp
+	PKGCONFIG *= libcrypto zlib
+	LIBS *= -lpthread -ldl
 }
 
 unix {
-	DEFINES *= LIB_DIR=\"\\\"$${LIB_DIR}\\\"\"
+	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
 
 	## where to put the librarys interface
@@ -221,7 +206,6 @@ version_detail_bash_script {
 
 win32-x-g++ {	
 	OBJECTS_DIR = temp/win32xgcc/obj
-	DESTDIR = lib.win32xgcc
 	DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
 	QMAKE_CC = i586-mingw32msvc-g++
@@ -248,7 +232,6 @@ win32 {
 	DEFINES *= MINIUPNPC_VERSION=13
 	# This defines the platform to be WinXP or later and is needed for getaddrinfo (_WIN32_WINNT_WINXP)
 	DEFINES *= WINVER=0x0501
-	DESTDIR = lib
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -268,11 +251,12 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
-	LIBS_DIR = $$PWD/../../../libs
-	OPENPGPSDK_DIR = $$PWD/../../openpgpsdk/src
+	LIBS += -lsqlcipher
 
-	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
-	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc $$OPENPGPSDK_DIR
+	LIBS_DIR = $$PWD/../../../libs
+
+	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
+	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
 }
 
 ################################# MacOSX ##########################################
@@ -282,29 +266,28 @@ mac {
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-                #DEFINES *= MINIUPNPC_VERSION=13
-		DESTDIR = lib
+                DEFINES *= MINIUPNPC_VERSION=13
 
 		CONFIG += upnp_miniupnpc
 
 		# zeroconf disabled at the end of libretroshare.pro (but need the code)
-		CONFIG += zeroconf
-		CONFIG += zcnatassist
+		#CONFIG += zeroconf
+		#CONFIG += zcnatassist
 
 		# Beautiful Hack to fix 64bit file access.
                 QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
 
-                UPNPC_DIR = ../../../miniupnpc-1.0
+                UPNPC_DIR = ../../../miniupnpc-1.3
 		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
-		OPENPGPSDK_DIR = ../../openpgpsdk/src
-
 		INCLUDEPATH += . $${UPNPC_DIR} 
-		INCLUDEPATH += $${OPENPGPSDK_DIR} 
 
-		#../openpgpsdk
 		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+
+		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+		LIBS += ../../../lib/libsqlcipher.a
+		#LIBS += -lsqlite3
 }
 
 ################################# FreeBSD ##########################################
@@ -318,8 +301,6 @@ freebsd-* {
 	# linux/bsd can use either - libupnp is more complete and packaged.
 	#CONFIG += upnp_miniupnpc 
 	CONFIG += upnp_libupnp
-
-	DESTDIR = lib
 }
 
 ################################# OpenBSD ##########################################
@@ -328,21 +309,19 @@ openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
-
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
 
 	CONFIG += upnp_libupnp
-
-	DESTDIR = lib
 }
 
 ################################### COMMON stuff ##################################
 
 # openpgpsdk
-PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
-LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
+OPENPGPSDK_DIR = ../../openpgpsdk/src
+DEPENDPATH *= $${OPENPGPSDK_DIR}
+INCLUDEPATH *= $${OPENPGPSDK_DIR}
+PRE_TARGETDEPS *= $${OPENPGPSDK_DIR}/lib/libops.a
+LIBS *= $${OPENPGPSDK_DIR}/lib/libops.a -lbz2
 
 HEADERS +=	dbase/cachestrapper.h \
 			dbase/fimonitor.h \
@@ -464,8 +443,8 @@ HEADERS +=	serialiser/itempriorities.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
 			serialiser/rsgxsrecognitems.h \
-                        serialiser/rsgxsupdateitems.h \
-                        serialiser/rsserviceinfoitems.h \
+			serialiser/rsgxsupdateitems.h \
+			serialiser/rsserviceinfoitems.h \
 
 HEADERS +=	services/p3msgservice.h \
 			services/p3service.h \
@@ -614,8 +593,8 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \
 			serialiser/rsgxsrecognitems.cc \
-                        serialiser/rsgxsupdateitems.cc \
-                        serialiser/rsserviceinfoitems.cc \
+			serialiser/rsgxsupdateitems.cc \
+			serialiser/rsserviceinfoitems.cc \
 
 SOURCES +=	services/p3msgservice.cc \
 			services/p3service.cc \
@@ -696,96 +675,95 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 
 # new gxs cache system
 # this should be disabled for releases until further notice.
-gxs {
-	DEFINES *= RS_ENABLE_GXS
-	DEFINES *= SQLITE_HAS_CODEC
-	DEFINES *= GXS_ENABLE_SYNC_MSGS
 
-	HEADERS += serialiser/rsnxsitems.h \
-		gxs/rsgds.h \
-		gxs/rsgxs.h \
-		gxs/rsdataservice.h \
-		gxs/rsgxsnetservice.h \
-		retroshare/rsgxsflags.h \
-		retroshare/rsgxsifacetypes.h \
-		retroshare/rsreputations.h \
-		gxs/rsgenexchange.h \
-		gxs/rsnxsobserver.h \
-		gxs/rsgxsdata.h \
-		retroshare/rstokenservice.h \
-		gxs/rsgxsdataaccess.h \
-		retroshare/rsgxsservice.h \
-		serialiser/rsgxsitems.h \
-		util/retrodb.h \
-		util/rsdbbind.h \
-		gxs/rsgxsutil.h \
-		util/contentvalue.h \
-		gxs/gxssecurity.h \
-		gxs/rsgxsifacehelper.h \
-		gxs/gxstokenqueue.h \
-		gxs/rsgxsnetutils.h \
-		gxs/rsgxsiface.h \
-		gxs/rsgxsrequesttypes.h
+DEFINES *= SQLITE_HAS_CODEC
+DEFINES *= GXS_ENABLE_SYNC_MSGS
+
+HEADERS += serialiser/rsnxsitems.h \
+	gxs/rsgds.h \
+	gxs/rsgxs.h \
+	gxs/rsdataservice.h \
+	gxs/rsgxsnetservice.h \
+	retroshare/rsgxsflags.h \
+	retroshare/rsgxsifacetypes.h \
+	gxs/rsgenexchange.h \
+	gxs/rsnxsobserver.h \
+	gxs/rsgxsdata.h \
+	retroshare/rstokenservice.h \
+	gxs/rsgxsdataaccess.h \
+	retroshare/rsgxsservice.h \
+	serialiser/rsgxsitems.h \
+	util/retrodb.h \
+	util/rsdbbind.h \
+	gxs/rsgxsutil.h \
+	util/contentvalue.h \
+	gxs/gxssecurity.h \
+	gxs/rsgxsifacehelper.h \
+	gxs/gxstokenqueue.h \
+	gxs/rsgxsnetutils.h \
+	gxs/rsgxsiface.h \
+	gxs/rsgxsrequesttypes.h
 
 
-	SOURCES += serialiser/rsnxsitems.cc \
-		gxs/rsdataservice.cc \
-		gxs/rsgenexchange.cc \
-		gxs/rsgxsnetservice.cc \
-		gxs/rsgxsdata.cc \
-		serialiser/rsgxsitems.cc \
-		gxs/rsgxsdataaccess.cc \
-		util/retrodb.cc \
-		util/contentvalue.cc \
-		util/rsdbbind.cc \
-		gxs/gxssecurity.cc \
-		gxs/gxstokenqueue.cc \
-		gxs/rsgxsnetutils.cc \
-		gxs/rsgxsutil.cc \
-		gxs/rsgxsrequesttypes.cc
+SOURCES += serialiser/rsnxsitems.cc \
+	gxs/rsdataservice.cc \
+	gxs/rsgenexchange.cc \
+	gxs/rsgxsnetservice.cc \
+	gxs/rsgxsdata.cc \
+	serialiser/rsgxsitems.cc \
+	gxs/rsgxsdataaccess.cc \
+	util/retrodb.cc \
+	util/contentvalue.cc \
+	util/rsdbbind.cc \
+	gxs/gxssecurity.cc \
+	gxs/gxstokenqueue.cc \
+	gxs/rsgxsnetutils.cc \
+	gxs/rsgxsutil.cc \
+	gxs/rsgxsrequesttypes.cc
 
 
-	# Identity Service
-	HEADERS += retroshare/rsidentity.h \
-		gxs/rsgixs.h \
-		services/p3idservice.h \
-		serialiser/rsgxsiditems.h \
-		services/p3gxsreputation.h \
-		serialiser/rsgxsreputationitems.h \
+# Identity Service
+HEADERS += retroshare/rsidentity.h \
+	gxs/rsgixs.h \
+	services/p3idservice.h \
+	serialiser/rsgxsiditems.h \
+	services/p3gxsreputation.h \
+	serialiser/rsgxsreputationitems.h \
 
-	SOURCES += services/p3idservice.cc \
-		serialiser/rsgxsiditems.cc \
-		services/p3gxsreputation.cc \
-		serialiser/rsgxsreputationitems.cc \
+SOURCES += services/p3idservice.cc \
+	serialiser/rsgxsiditems.cc \
+	services/p3gxsreputation.cc \
+	serialiser/rsgxsreputationitems.cc \
 
-	# GxsCircles Service
-	HEADERS += services/p3gxscircles.h \
-		serialiser/rsgxscircleitems.h \
-		retroshare/rsgxscircles.h \
+# GxsCircles Service
+HEADERS += services/p3gxscircles.h \
+	serialiser/rsgxscircleitems.h \
+	retroshare/rsgxscircles.h \
 
-	SOURCES += services/p3gxscircles.cc \
-		serialiser/rsgxscircleitems.cc \
+SOURCES += services/p3gxscircles.cc \
+	serialiser/rsgxscircleitems.cc \
 
-	# GxsForums Service
-	HEADERS += retroshare/rsgxsforums.h \
-		services/p3gxsforums.h \
-		serialiser/rsgxsforumitems.h
+# GxsForums Service
+HEADERS += retroshare/rsgxsforums.h \
+	services/p3gxsforums.h \
+	serialiser/rsgxsforumitems.h
 
-	SOURCES += services/p3gxsforums.cc \
-		serialiser/rsgxsforumitems.cc \
+SOURCES += services/p3gxsforums.cc \
+	serialiser/rsgxsforumitems.cc \
 
-	# GxsChannels Service
-	HEADERS += retroshare/rsgxschannels.h \
-		services/p3gxschannels.h \
-		services/p3gxscommon.h \
-		serialiser/rsgxscommentitems.h \
-		serialiser/rsgxschannelitems.h \
+# GxsChannels Service
+HEADERS += retroshare/rsgxschannels.h \
+	services/p3gxschannels.h \
+	services/p3gxscommon.h \
+	serialiser/rsgxscommentitems.h \
+	serialiser/rsgxschannelitems.h \
 
-	SOURCES += services/p3gxschannels.cc \
-		services/p3gxscommon.cc \
-		serialiser/rsgxscommentitems.cc \
-		serialiser/rsgxschannelitems.cc \
+SOURCES += services/p3gxschannels.cc \
+	services/p3gxscommon.cc \
+	serialiser/rsgxscommentitems.cc \
+	serialiser/rsgxschannelitems.cc \
 
+wikipoos {
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
@@ -793,7 +771,9 @@ gxs {
 
 	SOURCES += services/p3wiki.cc \
 		serialiser/rswikiitems.cc \
+}
 
+gxsthewire {
 	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
@@ -801,17 +781,19 @@ gxs {
 
 	SOURCES += services/p3wire.cc \
 		serialiser/rswireitems.cc \
+}
 
-	# Posted Service
-	HEADERS += services/p3postbase.h \
-		services/p3posted.h \
-		retroshare/rsposted.h \
-		serialiser/rsposteditems.h
+# Posted Service
+HEADERS += services/p3postbase.h \
+	services/p3posted.h \
+	retroshare/rsposted.h \
+	serialiser/rsposteditems.h
 
-	SOURCES +=  services/p3postbase.cc \ 
-		services/p3posted.cc \
-		serialiser/rsposteditems.cc
+SOURCES +=  services/p3postbase.cc \
+	services/p3posted.cc \
+	serialiser/rsposteditems.cc
 
+gxsphotoshare {
 	#Photo Service
 	HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \
@@ -859,6 +841,3 @@ test_bitdht {
 
 	# ENABLED UDP NOW.
 }
-
-
-

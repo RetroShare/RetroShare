@@ -286,54 +286,40 @@ int 	pqissl::reset_locked()
 	return 1;
 }
 
-bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
+bool pqissl::connect_parameter(uint32_t type, uint32_t value)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-	/* remove unused parameter warnings */
-	(void) type;
-	(void) value;
-	return false;
-}
-
-
-bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
-{
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-#ifdef PQISSL_LOG_DEBUG 
-	{
-		std::string out = "pqissl::connect_parameter() Peer: " + PeerId();
-		rs_sprintf_append(out, " type: %u value: %u", type, value);
-		rslog(RSL_DEBUG_ALL, pqisslzone, out);
-	}
+#ifdef PQISSL_LOG_DEBUG
+	std::cerr << "pqissl::connect_parameter() Peer: " << PeerId();
 #endif
 
-        if (type == NET_PARAM_CONNECT_DELAY)
+	switch(type)
 	{
-#ifdef PQISSL_LOG_DEBUG 
-		std::string out = "pqissl::connect_parameter() Peer: " + PeerId();
-		rs_sprintf_append(out, " DELAY: %u", value);
-		rslog(RSL_DEBUG_BASIC, pqisslzone, out);
+	case NET_PARAM_CONNECT_DELAY:
+	{
+#ifdef PQISSL_LOG_DEBUG
+		std::cerr << " DELAY: " << value << std::endl;
 #endif
-
-
+		RS_STACK_MUTEX(mSslMtx);
 		mConnectDelay = value;
 		return true;
 	}
-        else if (type == NET_PARAM_CONNECT_TIMEOUT)
+	case NET_PARAM_CONNECT_TIMEOUT:
 	{
-#ifdef PQISSL_LOG_DEBUG 
-		std::string out = "pqissl::connect_parameter() Peer: " + PeerId();
-		rs_sprintf_append(out, " TIMEOUT: %u", value);
-		rslog(RSL_DEBUG_BASIC, pqisslzone, out);
+#ifdef PQISSL_LOG_DEBUG
+		std::cerr << " TIMEOUT: " << value << std::endl;
 #endif
-
+		RS_STACK_MUTEX(mSslMtx);
 		mConnectTimeout = value;
 		return true;
 	}
-	return false;
-        //return NetInterface::connect_parameter(type, value);
+	default:
+	{
+#ifdef PQISSL_LOG_DEBUG
+		std::cerr << " type: " << type << " value: " << value << std::endl;
+#endif
+		return false;
+	}
+	}
 }
 
 

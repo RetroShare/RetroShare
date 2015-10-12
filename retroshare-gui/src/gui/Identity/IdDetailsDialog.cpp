@@ -51,6 +51,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->toolButton_Reputation);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->line_RatingOverall);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->line_RatingImplicit);
@@ -69,6 +70,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->line_RatingOverall);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->line_RatingImplicit);
@@ -79,6 +81,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->line_RatingOverall);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->line_RatingImplicit);
@@ -109,6 +112,24 @@ IdDetailsDialog::~IdDetailsDialog()
 
 	delete(ui);
 	delete(mIdQueue);
+}
+
+static QString getHumanReadableDuration(uint32_t seconds)
+{
+    if(seconds < 60)
+        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
+    else if(seconds < 120)
+        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
+    else if(seconds < 3600)
+        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
+    else if(seconds < 7200)
+        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
+    else if(seconds < 24*3600)
+        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
+    else if(seconds < 2*24*3600)
+        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
+    else 
+        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
 }
 
 void IdDetailsDialog::insertIdDetails(uint32_t token)
@@ -152,6 +173,9 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
 	ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+	
+  time_t now = time(NULL) ;
+  ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
 	
 	QPixmap pixmap;
 	

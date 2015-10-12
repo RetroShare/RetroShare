@@ -249,7 +249,8 @@ class PQInterface: public RateInterface
 
 const uint32_t PQI_CONNECT_TCP = 0x0001;
 const uint32_t PQI_CONNECT_UDP = 0x0002;
-const uint32_t PQI_CONNECT_HIDDEN_TCP = 0x0004;
+const uint32_t PQI_CONNECT_HIDDEN_TOR_TCP = 0x0004;
+const uint32_t PQI_CONNECT_HIDDEN_I2P_TCP = 0x0008;
 
 
 #define BIN_FLAGS_NO_CLOSE  0x0001

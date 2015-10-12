@@ -1,5 +1,69 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   1d54630 thunder2    17 Sep 2015 10:05:31 +0200 Fixed Windows compile.
+   66691d4 Cyril Soler 16 Sep 2015 20:01:39 -0400 Merge pull request #108 from sehraf/i2p
+   04abfad sehraf      16 Sep 2015 17:01:20 +0200 manually reverted changes by Qt Creator
+   7c7e4f8 sehraf      16 Sep 2015 12:13:54 +0200 added ip addr. field to the add certificate dialog
+   6202e83 sehraf      16 Sep 2015 11:48:32 +0200 add default case to gui instead of falling back to tor labeling
+   d3d184f sehraf      16 Sep 2015 11:09:04 +0200 added simple step-by-step guide to add a I2P server tunnel
+   e54358a sehraf      16 Sep 2015 10:55:33 +0200 added simple step-by-step guide to add a I2P client tunnel
+   1dd3375 sehraf      15 Sep 2015 17:14:55 +0200 hide debug output
+   d24b281 sehraf      15 Sep 2015 17:10:48 +0200 optimizations * reduced calls to mPeermgr * use switch convenience * small fixes
+   bfcf43f sehraf      15 Sep 2015 16:18:46 +0200 fixed connection type detection and other small things
+   8725aab sehraf      14 Sep 2015 15:14:39 +0200 gui fixes
+   6b87c38 sehraf      14 Sep 2015 14:56:14 +0200 small fixes
+   6ec1919 sehraf      14 Sep 2015 12:39:46 +0200 gui changes
+   b0251e3 sehraf      14 Sep 2015 12:12:28 +0200 generalized tooltips
+   4b19e73 sehraf      14 Sep 2015 09:56:43 +0200 added comments to functions
+   900e51b Cyril Soler 13 Sep 2015 18:08:06 -0400 Merge pull request #107 from PhenomRetroShare/AddFriendListItemMouseEvents
+   48e6618 Phenom      13 Sep 2015 19:00:31 +0200 Send Mouse event to FriendList's item, since ElidedLabel was fixed.
+   7195d4c Cyril Soler 10 Sep 2015 09:41:28 -0400 Merge pull request #105 from ericthefish/master
+   4880fc4 Ivan Lucas  10 Sep 2015 11:21:01 +0100 Fixed grammar on add friend wizard by rewording slightly
+   840e930 Ivan Lucas  10 Sep 2015 10:29:15 +0100 Fix Spelling and Grammar
+   770e934 Ivan Lucas  10 Sep 2015 10:18:14 +0100 Merge remote-tracking branch 'upstream/master'
+   4a0539c Cyril Soler  9 Sep 2015 19:57:07 -0400 Merge pull request #103 from AsamK/html_parsing
+   1acd4a3 Cyril Soler  9 Sep 2015 16:44:59 -0400 Merge pull request #104 from PhenomRetroShare/Fix_ElidedLabel_mousePresEvent
+   ce9fc7b Phenom       9 Sep 2015 22:37:38 +0200 Fix ElidedLabel::mousePressEvent.
+   75a7a89 Ivan Lucas   9 Sep 2015 15:19:17 +0100 Fix typo
+   7aad9c1 AsamK        9 Sep 2015 13:36:00 +0200 Improve HTML parsing in libresapi
+   b8c3c89 AsamK        9 Sep 2015 11:53:01 +0200 Extract getPlainText method
+   ebd5da5 thunder2     8 Sep 2015 16:34:22 +0200 Optimizations in RsGenExchange, p3GxsForums and p3GxsChannels. - Removed not used variables 
+                                                  avoid copy constructors - Use swap instead of operator= to move elements of std containers
+   490b88c Cyril Soler  8 Sep 2015 14:17:29 -0400 Merge pull request #100 from ericthefish/master
+   a2e7e4d Ivan Lucas   8 Sep 2015 16:12:50 +0100 Fixed spelling/grammar
+   4f8b098 Ivan Lucas   8 Sep 2015 16:00:00 +0100 Fixing spelling
+   c4061fc thunder2     7 Sep 2015 22:27:04 +0200 Removed not used time consuming calculation of row count from RetroCursor.
+   29a1fa2 thunder2     7 Sep 2015 21:48:18 +0200 Removed unnecessary copy of results in RsGxsDataAccess.
+   0bc77d7 sehraf       8 Sep 2015 13:48:30 +0200 added some error handling
+   da417ee Cyril Soler  7 Sep 2015 20:38:47 -0400 Merge pull request #96 from AsamK/qmake_3
+   63e38af Cyril Soler  7 Sep 2015 20:36:03 -0400 Merge pull request #94 from AsamK/correct_libav_version
+   03d99ae sehraf       7 Sep 2015 23:55:57 +0200 made GenCertDislog more generic
+   4fc6c73 sehraf       7 Sep 2015 23:40:52 +0200 replaced some ifs with switch
+   e2768e0 defnax       7 Sep 2015 23:34:39 +0200 Added last used field to Person Details Window
+   fed4345 sehraf       7 Sep 2015 22:57:54 +0200 made server settings more generic and added i2p support
+   95d6b06 sehraf       7 Sep 2015 18:46:19 +0200 first working version
+   0107f4e sehraf       7 Sep 2015 12:59:21 +0200 first run on gui integration
+   ba74c04 sehraf       7 Sep 2015 11:51:24 +0200 removed duplicated code, fixed compile, few additions
+   c17d0e1 sehraf       7 Sep 2015 11:22:15 +0200 add i2p support to libretroshare
+   2c1743f defnax       7 Sep 2015 15:13:32 +0200 Added send message function for Participants list.
+   cc4be39 defnax       7 Sep 2015 15:08:56 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   0793a6a AsamK        6 Sep 2015 14:19:21 +0200 Use PLUGIN_DIR to define plugin directory only once
+   fe1ec9d AsamK        5 Sep 2015 22:49:57 +0200 Fixed mac compile. Moved sqlcipher.a to libretroshare.pro
+   571336e AsamK        5 Sep 2015 23:49:15 +0200 Move duplicate common stuff out of platform parts
+   66b9557 AsamK        5 Sep 2015 23:48:24 +0200 Use PKGCONFIG instead of manually specifying LIBS for Linux
+   b8e3a43 thunder2     6 Sep 2015 21:28:34 +0200 Auto download of recommended files adds the sender as source of the download.
+   5f36500 thunder2     6 Sep 2015 14:21:05 +0200 Fixed click in column "Friend nodes" in FriendList.
+   869077b thunder2     5 Sep 2015 12:46:18 +0200 Combined selects in RsDataService::retrieveNxsGrps/RsDataService::retrieveNxsMsgs.
+   d6f50c7 AsamK        5 Sep 2015 15:44:10 +0200 Fix libav version check
+   e9a5523 defnax       5 Sep 2015 00:16:07 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   7f8dae9 defnax       4 Sep 2015 16:33:43 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   07c5030 defnax       3 Sep 2015 17:41:30 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   3d6e978 defnax       2 Sep 2015 13:06:15 +0200 Fixed Status Label on Distant Chat
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 21 Sep 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20150905.8bb76c95~trusty) trusty; urgency=low
+
    a276986 (              ) Merge pull request #60 from PhenomRetroShare/Fix_AllowChatTextFormatOption
    88a6931 (GUI           ) Allow Chat Text Format Option working.
    0b5b20d (              ) Merge pull request #59 from AsamK/qmake_improvements
@@ -98,9 +162,9 @@ retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
    4d7f733 (Packaging     ) fixed bug in git parameter in packaging script
    9734f32 (Packaging     ) updated ubuntu changelog. improved ubuntu packaging script
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 16 Aug 2015 20:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 05 Sep 2015 20:00:00 +0100
 
-retroshare06 (0.6.0-1.20150816~9734f32a) trusty; urgency=low
+retroshare06 (0.6.0-1.20150816.9734f32a~trusty) trusty; urgency=low
 
    f6b830d (branch merging) Merge pull request #35 from hunbernd/chat-fix
    16859a1 (GUI           ) Fix: chatlobby toaster not working

@@ -62,25 +62,33 @@ void *solveDNSEntries(void *p)
 
 		if(!next_call.empty())
 		{
-			hostent *pHost = gethostbyname(next_call.c_str());
+                    in_addr in ;
+                    
+                    bool succeed = rsGetHostByName(next_call.c_str(),in);
+                    
+		    {
+			    RsStackMutex mut(dnsr->_rdnsMtx) ;
 
-			{
-				RsStackMutex mut(dnsr->_rdnsMtx) ;
+			    DNSResolver::AddrInfo &info = (*dnsr->_addr_map)[next_call];
 
-				DNSResolver::AddrInfo &info = (*dnsr->_addr_map)[next_call];
-
-				if(pHost) 
+			    if(succeed) 
+			    {
+				    info.state = DNSResolver::DNS_HAVE ;
+				    // IPv4 for the moment.
+				    struct sockaddr_in *addrv4p = (struct sockaddr_in *) &(info.addr);
+				    addrv4p->sin_family = AF_INET;
+				    addrv4p->sin_addr= in ;
+				    addrv4p->sin_port = htons(0);
+                    
+                    std::cerr << "LOOKUP succeeded: " << next_call.c_str() << " => " << rs_inet_ntoa(addrv4p->sin_addr) << std::endl;
+			    }
+			    else
 				{
-					info.state = DNSResolver::DNS_HAVE ;
-					// IPv4 for the moment.
-					struct sockaddr_in *addrv4p = (struct sockaddr_in *) &(info.addr);
-					addrv4p->sin_family = AF_INET;
-					addrv4p->sin_addr.s_addr  = *(unsigned long*) (pHost->h_addr);
-					addrv4p->sin_port = htons(0);
-				}
-				else
 					info.state = DNSResolver::DNS_LOOKUP_ERROR ;
-			}
+                    
+                    			std::cerr << "DNSResolver: lookup error for address \"" << next_call.c_str() << "\"" << std::endl;
+				}
+		    }
 		}
 	}
 

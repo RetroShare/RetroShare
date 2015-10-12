@@ -337,7 +337,6 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 		
 		for(; mit != msgData.end();  ++mit)
 		{
-			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 

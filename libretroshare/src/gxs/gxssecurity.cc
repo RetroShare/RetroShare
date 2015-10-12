@@ -551,7 +551,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
     in_offset += size_net_ekl;
 
 	// Conservative limits to detect weird errors due to corrupted encoding.
-	if(eklen < 0 || eklen > 512 || eklen+in_offset > inlen)
+	if(eklen < 0 || eklen > 512 || eklen+in_offset > (int)inlen)
 	{
 		std::cerr << "Error while deserialising encryption key length: eklen = " << std::dec << eklen << ". Giving up decryption." << std::endl;
 		free(ek);

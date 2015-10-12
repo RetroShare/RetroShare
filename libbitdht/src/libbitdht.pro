@@ -4,6 +4,8 @@ TEMPLATE = lib
 CONFIG += staticlib
 CONFIG -= qt
 TARGET = bitdht
+DESTDIR = lib
+
 QMAKE_CXXFLAGS *= -Wall -DBE_DEBUG
 
 profiling {
@@ -27,7 +29,6 @@ debug {
 
 ################################# Linux ##########################################
 linux-* {
-	DESTDIR = lib
 	QMAKE_CC = g++
 }
 
@@ -50,7 +51,6 @@ unix {
 
 win32-x-g++ {	
 	OBJECTS_DIR = temp/win32xgcc/obj
-	DESTDIR = lib.win32xgcc
 	# These have been replaced by _WIN32 && __MINGW32__
 	# DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
@@ -70,7 +70,6 @@ win32 {
 		DEFINES *= STATICLIB WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 		# These have been replaced by _WIN32 && __MINGW32__
 		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-		DESTDIR = lib
 
 		# Switch on extra warnings
 		QMAKE_CFLAGS += -Wextra
@@ -93,19 +92,16 @@ mac {
 		QMAKE_CC = g++
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		DESTDIR = lib
 }
 
 ################################# FreeBSD ##########################################
 
 freebsd-* {
-		DESTDIR = lib
 }
 
 ################################# OpenBSD ##########################################
 
 openbsd-* {
-		DESTDIR = lib
 }
 
 ################################### COMMON stuff ##################################
@@ -168,5 +164,3 @@ SOURCES += \
 	bitdht/bdquerymgr.cc	\
 	util/bdbloom.cc		\
 	bitdht/bdfriendlist.cc	\
-
-
