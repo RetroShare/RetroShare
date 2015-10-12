@@ -793,7 +793,7 @@ void VOIPChatWidgetHolder::replaceFullscreenWidget()
 	outputVideoDeviceFS->setGeometry(QRect(QPoint(0,0),fullScreenFrame->geometry().size()));
 	echoVideoDeviceFS->setGeometry(QRect(QPoint(fullScreenFrame->width(), fullScreenFrame->height()) - QPoint(320,240), QSize(320,240)));
 	QRect toolBarFSGeo = QRect( (fullScreenFrame->width() - toolBarFS->geometry().width()) / 2
-	                            , fullScreenFrame->height() - toolBarFS->geometry().height()
+	                            , fullScreenFrame->height() - (toolBarFS->geometry().height() * 2)
 	                            , toolBarFS->geometry().width(), toolBarFS->geometry().height());
 	toolBarFS->setGeometry(toolBarFSGeo);
 
