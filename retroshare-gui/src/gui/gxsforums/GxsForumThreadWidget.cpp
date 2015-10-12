@@ -2055,6 +2055,10 @@ void GxsForumThreadWidget::loadMsgData_BanAuthor(const uint32_t &token)
 		std::cerr << std::endl;
 	}
     updateDisplay(true) ;
+    
+    // we should also update the icons so that they changed to the icon for banned peers.
+    
+    std::cerr << __PRETTY_FUNCTION__ << ": need to implement the update of GxsTreeWidgetItems icons too." << std::endl;
 }
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
