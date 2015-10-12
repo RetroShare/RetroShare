@@ -131,6 +131,9 @@ static const int      kMaximumPeerAge                     = 180;      // half a 
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
 static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
+static const int      kReputationRequestPeriod            = 600;      // 10 mins
+static const int      kReputationStoreWait                = 180;      // 3 minutes.
+
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
@@ -786,9 +789,6 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 /********************************************************************
  * Send Requests.
  ****/
-
-const int kReputationRequestPeriod	= 	60;  // 3600;	// 1 hour
-const int kReputationStoreWait		= 	180; // 3 minutes.
 
 int	p3GxsReputation::sendPackets()
 {
