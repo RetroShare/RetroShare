@@ -25,6 +25,9 @@
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsIdDetails.h"
 #include "util/HandleRichText.h"
+#include "retroshare/rsreputations.h"
+
+#define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
 
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent)
@@ -71,6 +74,10 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
         GxsIdDetails::getIcons(details, icons, item->iconTypeMask());
 		item->processResult(true);
 		break;
+        
+    	case GXS_ID_DETAILS_TYPE_BANNED:
+        	icons.push_back(QIcon("BANNED_IMAGE")) ;
+            	break ;
 	}
 
 	int column = item->idColumn();
@@ -139,28 +146,30 @@ void GxsIdRSTreeWidgetItem::setAvatar(const RsGxsImage &avatar)
 
 QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 {
-	if (column == idColumn()) {
-		switch (role) {
-		case Qt::ToolTipRole:
-			{
-				QString t = RSTreeWidgetItem::data(column, role).toString();
+    if (column == idColumn()) 
+    {
+	    if (role == Qt::ToolTipRole)
+	    {
+		    QString t = RSTreeWidgetItem::data(column, role).toString();
+		    QImage pix;
 
-				QImage pix;
-				if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) {
-					pix = GxsIdDetails::makeDefaultIcon(mId);
-				}
+		    if(mId.isNull())
+			    return RSTreeWidgetItem::data(column, role);
+		    else if(rsReputations->isIdentityBanned(mId))
+			    pix = QImage(BANNED_IMAGE) ;
+		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
+			    pix = GxsIdDetails::makeDefaultIcon(mId);
 
-                        int S = QFontMetricsF(font(column)).height();
+		    int S = QFontMetricsF(font(column)).height();
 
-				QString embeddedImage;
-                if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
-					t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
-				}
+		    QString embeddedImage;
+		    if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
+			    t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
+		    }
 
-				return t;
-			}
-		}
-	}
+		    return t;
+	    }
+    }
 
-	return RSTreeWidgetItem::data(column, role);
+    return RSTreeWidgetItem::data(column, role);
 }
