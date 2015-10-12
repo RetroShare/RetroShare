@@ -408,7 +408,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
 
-    QAction *flagasbadAct = new QAction(QIcon(IMAGE_BIOHAZARD), tr("Flag the author as bad"), &contextMnu);
+    QAction *flagasbadAct = new QAction(QIcon(IMAGE_BIOHAZARD), tr("Ban this author"), &contextMnu);
     flagasbadAct->setToolTip(tr("This will block/hide messages from this person, and notify neighbor nodes.")) ;
     connect(flagasbadAct, SIGNAL(triggered()), this, SLOT(flagpersonasbad()));
 
@@ -1363,7 +1363,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	QString extraTxt = tr("<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
 	extraTxt += tr("<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
 	extraTxt += tr("<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
-    	extraTxt += tr("<p>You can still force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</p>") ;
+    	extraTxt += tr("<p><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></p>") ;
         
 	ui->postText->setHtml(extraTxt);
     }
@@ -2056,7 +2056,7 @@ void GxsForumThreadWidget::loadMsgData_BanAuthor(const uint32_t &token)
 		std::cerr << std::endl;
 	}
     
-    emit groupChanged(this) ;
+    requestGroupData() ;
 }
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
