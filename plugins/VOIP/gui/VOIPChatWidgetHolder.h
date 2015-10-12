@@ -40,7 +40,10 @@ class QVideoInputDevice ;
 class QVideoOutputDevice ;
 class VideoProcessor ;
 
-#define VOIP_SOUND_INCOMING_CALL "VOIP_incoming_call"
+#define VOIP_SOUND_INCOMING_AUDIO_CALL "VOIP_incoming_audio_call"
+#define VOIP_SOUND_INCOMING_VIDEO_CALL "VOIP_incoming_video_call"
+#define VOIP_SOUND_OUTGOING_AUDIO_CALL "VOIP_outgoing_audio_call"
+#define VOIP_SOUND_OUTGOING_VIDEO_CALL "VOIP_outgoing_video_call"
 
 class VOIPChatWidgetHolder : public QObject, public ChatWidgetHolder
 {
@@ -144,6 +147,9 @@ protected:
 	int sendVideoRingTime; //(-2 connected, -1 reseted, >=0 in progress)
 	int recAudioRingTime; //(-2 connected, -1 reseted, >=0 in progress)
 	int recVideoRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+
+	//TODO, remove this when soundManager can manage multi events.
+	int lastTimePlayOccurs;
 
 	VOIPNotify *mVOIPNotify;
 };

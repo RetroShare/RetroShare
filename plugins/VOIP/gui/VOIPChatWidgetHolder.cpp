@@ -18,23 +18,25 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+//C++
+#include <time.h>
+//Qt
 #include <QIcon>
 #include <QLayout>
 #include <QPropertyAnimation>
 #include <QToolButton>
-
+//VOIP
 #include <gui/audiodevicehelper.h>
 #include "interface/rsVOIP.h"
-
+#include "VOIPChatWidgetHolder.h"
+#include "VideoProcessor.h"
+#include "QVideoDevice.h"
+//retroshare GUI
 #include "gui/SoundManager.h"
 #include "util/HandleRichText.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/chat/ChatWidget.h"
-
-#include "VOIPChatWidgetHolder.h"
-#include "VideoProcessor.h"
-#include "QVideoDevice.h"
-
+//libretroshare
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 
@@ -311,6 +313,8 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	timerVideoRing->setInterval(300);
 	timerVideoRing->setSingleShot(true);
 	connect(timerVideoRing, SIGNAL(timeout()), this, SLOT(timerVideoRingTimeOut()));
+
+	lastTimePlayOccurs = time(NULL);
 }
 
 VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
@@ -1063,6 +1067,11 @@ void VOIPChatWidgetHolder::timerAudioRingTimeOut()
 		pbAudioRing->setToolTip(tr("Waiting your friend respond your audio call."));
 		pbAudioRing->setVisible(true);
 
+		if (time(NULL) > lastTimePlayOccurs) {
+			soundManager->play(VOIP_SOUND_OUTGOING_AUDIO_CALL);
+			lastTimePlayOccurs = time(NULL) + 1;
+		}
+
 		timerAudioRing->start();
 	} else if(recAudioRingTime >= 0) {
 		//Receiving
@@ -1088,8 +1097,10 @@ void VOIPChatWidgetHolder::timerAudioRingTimeOut()
 		}
 		audioCaptureToggleButton->setToolTip(tr("Answer"));
 
-		//TODO make a sound for the incoming call
-		//soundManager->play(VOIP_SOUND_INCOMING_CALL);
+		if (time(NULL) > lastTimePlayOccurs) {
+			soundManager->play(VOIP_SOUND_INCOMING_AUDIO_CALL);
+			lastTimePlayOccurs = time(NULL) + 1;
+		}
 
 		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipAudioCall(mChatWidget->getChatId().toPeerId());
 
@@ -1113,6 +1124,11 @@ void VOIPChatWidgetHolder::timerVideoRingTimeOut()
 		pbVideoRing->setValue(sendVideoRingTime);
 		pbVideoRing->setToolTip(tr("Waiting your friend respond your video call."));
 		pbVideoRing->setVisible(true);
+
+		if (time(NULL) > lastTimePlayOccurs) {
+			soundManager->play(VOIP_SOUND_OUTGOING_VIDEO_CALL);
+			lastTimePlayOccurs = time(NULL) + 1;
+		}
 
 		timerVideoRing->start();
 	} else if(recVideoRingTime >= 0) {
@@ -1139,8 +1155,10 @@ void VOIPChatWidgetHolder::timerVideoRingTimeOut()
 		}
 		videoCaptureToggleButton->setToolTip(tr("Answer"));
 
-		//TODO make a sound for the incoming call
-		//        soundManager->play(VOIP_SOUND_INCOMING_CALL);
+		if (time(NULL) > lastTimePlayOccurs) {
+			soundManager->play(VOIP_SOUND_INCOMING_VIDEO_CALL);
+			lastTimePlayOccurs = time(NULL) + 1;
+		}
 
 		if (mVOIPNotify) mVOIPNotify->notifyReceivedVoipVideoCall(mChatWidget->getChatId().toPeerId());
 
