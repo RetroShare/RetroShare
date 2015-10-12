@@ -48,9 +48,9 @@ public:
 	virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) =0 ;
         
         // This one is a proxy designed to allow fast checking of a GXS id.
-        // it basically returns true if assessment is ASSESSMENT_OK
+        // it basically returns true if assessment is not ASSESSMENT_OK
         
-	virtual bool isIdentityOk(const RsGxsId& id) =0;
+	virtual bool isIdentityBanned(const RsGxsId& id) =0;
 };
 
 // To access reputations from anywhere

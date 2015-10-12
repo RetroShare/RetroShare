@@ -878,7 +878,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if(!rsReputations->isIdentityOk(details.mId)) 
+	if(rsReputations->isIdentityBanned(details.mId)) 
 	    return tr("[Banned]") ;
     
     	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
@@ -897,7 +897,7 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 	QString comment;
 QString nickname ;
 
-	bool banned = !rsReputations->isIdentityOk(details.mId) ;
+	bool banned = rsReputations->isIdentityBanned(details.mId) ;
         
     	if(details.mNickname.empty())
             nickname = tr("[Unknown]") ;
@@ -936,7 +936,7 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 {
     QPixmap pix ;
 
-    if(!rsReputations->isIdentityOk(details.mId))
+    if(rsReputations->isIdentityBanned(details.mId))
     {
         icons.clear() ;
         icons.push_back(QIcon(IMAGE_BANNED)) ;

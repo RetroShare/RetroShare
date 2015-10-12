@@ -153,7 +153,7 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 		    QString t = RSTreeWidgetItem::data(column, role).toString();
 		    QImage pix;
 
-		    if(!rsReputations->isIdentityOk(mId))
+		    if(rsReputations->isIdentityBanned(mId))
 			    pix = QImage(BANNED_IMAGE) ;
 		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
 			    pix = GxsIdDetails::makeDefaultIcon(mId);

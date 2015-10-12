@@ -90,7 +90,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		/***** Interface for RsReputations *****/
 		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
 		virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) ;
-		virtual bool isIdentityOk(const RsGxsId& id) ;
+		virtual bool isIdentityBanned(const RsGxsId& id) ;
                 
 		/***** overloaded from p3Service *****/
 		virtual int   tick();

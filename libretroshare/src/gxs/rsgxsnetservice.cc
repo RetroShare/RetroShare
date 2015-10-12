@@ -1997,7 +1997,13 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 std::cerr << ", no group meta found. Givign up." << std::endl;
                 continue;
             }
-
+            
+            if(rsReputations->isIdentityBanned(syncItem->authorId))
+            {
+                std::cerr << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
+                continue ;
+            }
+            
             if(mReputations->haveReputation(syncItem->authorId) || noAuthor)
             {
                 GixsReputation rep;
@@ -2010,7 +2016,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
                 // if author is required for this message, it will simply get dropped
                 // at genexchange side of things
-                if(rsReputations->isIdentityOk(syncItem->authorId) && rep.score > (int)grpMeta->mReputationCutOff || noAuthor)
+                if(rep.score > (int)grpMeta->mReputationCutOff || noAuthor)
                 {
 #ifdef NXS_NET_DEBUG
                     std::cerr << ", passed! Adding message to req list." << std::endl;
@@ -2211,7 +2217,13 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
             haveItem = true;
             latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
         }
-
+        
+	if(rsReputations->isIdentityBanned(grpSyncItem->authorId))
+	{
+                std::cerr << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
+    		continue ;            
+	}
+        
         if( (mGrpAutoSync && !haveItem) || latestVersion)
         {
             // determine if you need to check reputation
@@ -2226,7 +2238,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
                     GixsReputation rep;
                     mReputations->getReputation(grpSyncItem->authorId, rep);
 
-                    if(rep.score >= GIXS_CUT_OFF && rsReputations->isIdentityOk(grpSyncItem->authorId))
+                    if(rep.score >= GIXS_CUT_OFF)
                     {
                         addGroupItemToList(tr, grpId, transN, reqList);
                         std::cerr << "  reputation cut off: limit=" << GIXS_CUT_OFF << " value=" << rep.score << ": allowed." << std::endl;

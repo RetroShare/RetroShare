@@ -550,16 +550,16 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
     return true ;
 }
 
-bool p3GxsReputation::isIdentityOk(const RsGxsId &id)
+bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
 {
     RsReputations::ReputationInfo info ;
     
     getReputationInfo(id,info) ;
     
 #ifdef DEBUG_REPUTATION
-    std::cerr << "isIdentityOk(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_OK) << " for GXS id " << id << std::endl;
+    std::cerr << "isIdentityBanned(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
 #endif
-    return info.mAssessment == RsReputations::ASSESSMENT_OK ;
+    return info.mAssessment == RsReputations::ASSESSMENT_BAD ;
 }
 
 bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
