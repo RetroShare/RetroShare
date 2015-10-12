@@ -22,22 +22,26 @@ std::string id(const ChatHandler::Msg& m)
 
 std::string timeToString(uint32_t timeInt)
 {
-    time_t rawtime = (time_t)timeInt;
+    /*time_t rawtime = (time_t)timeInt;
     struct tm * timeinfo;
     char buffer[80];
 
-    timeinfo = localtime(&rawtime);
+    //timeinfo = localtime(&rawtime);
+    timeinfo = gmtime(&rawtime);
 
     strftime(buffer,80,"%Y-%m-%d %I:%M:%S",timeinfo);
     std::string str(buffer);
 
-    return str;
+    return str;*/
+    std::stringstream ss;
+    ss << timeInt;
+    return ss.str();
 }
 
 StreamBase& operator << (StreamBase& left, ChatHandler::Msg& m)
 {
-    std::string recv_time = timeToString(m.recv_time);
-    std::string send_time = timeToString(m.send_time);
+    std::string recv_time = timeToString(m.recv_time);//Else get char order inverted
+    std::string send_time = timeToString(m.send_time);//Else get char order inverted
     left << makeKeyValueReference("incoming", m.incoming)
          << makeKeyValueReference("was_send", m.was_send)
          << makeKeyValueReference("author_id", m.author_id)
