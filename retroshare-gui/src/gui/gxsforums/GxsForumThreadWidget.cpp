@@ -989,9 +989,12 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId &msgId)
 {
     GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL);
+    
 	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId.toStdString()));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, true);
+        
+	item->setId(RsGxsId(), COLUMN_THREAD_AUTHOR, false); // fixed up columnId()
 
 	return item;
 }
@@ -1358,8 +1361,10 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     if(redacted)
     {
 	QString extraTxt = tr("<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
-	extraTxt += "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>" ;
-	extraTxt += "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>" ;
+	extraTxt += tr("<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
+	extraTxt += tr("<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
+    	extraTxt += tr("<p>You can still force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</p>") ;
+        
 	ui->postText->setHtml(extraTxt);
     }
     else

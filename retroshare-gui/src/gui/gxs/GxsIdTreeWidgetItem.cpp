@@ -76,7 +76,7 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 		break;
         
     	case GXS_ID_DETAILS_TYPE_BANNED:
-        	icons.push_back(QIcon(":/icons/yellow_biohazard64.png")) ;
+        	icons.push_back(QIcon("BANNED_IMAGE")) ;
             	break ;
 	}
 
@@ -153,7 +153,9 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 		    QString t = RSTreeWidgetItem::data(column, role).toString();
 		    QImage pix;
 
-		    if(rsReputations->isIdentityBanned(mId))
+		    if(mId.isNull())
+			    return RSTreeWidgetItem::data(column, role);
+		    else if(rsReputations->isIdentityBanned(mId))
 			    pix = QImage(BANNED_IMAGE) ;
 		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
 			    pix = GxsIdDetails::makeDefaultIcon(mId);
