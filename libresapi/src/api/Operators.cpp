@@ -14,9 +14,9 @@ StreamBase& operator <<(StreamBase& left, KeyValueReference<uint32_t> ref)
         {
             digit = num % 10;
             num   = num / 10;
-            str += (char)(digit + '0');
+            str = (char)(digit + '0') + str;
         }
-        str += (char)(num + '0');
+        str = (char)(num + '0') + str;
         left << makeKeyValueReference(ref.key, str);
     }
     else
