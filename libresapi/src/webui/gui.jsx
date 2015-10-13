@@ -1439,6 +1439,33 @@ function markup(text, links)
 	return out;
 }
 
+//http://formatjs.io/react/
+var IntlMixin         = ReactIntl.IntlMixin;
+var FormattedDate     = ReactIntl.FormattedDate;
+//var FormattedRelative = ReactIntl.FormattedRelative;
+
+var ChatFormattedDate = React.createClass({
+	mixins: [IntlMixin],
+	render: function(){
+		//console.log(ChatFormattedDate);
+		//console.log(this.props.date);
+		if(this.props.date === null)
+			return <div></div>
+		var date = new Date(this.props.date*1000);
+		return(
+			//<FormattedRelative value={this.state.data} />
+			<FormattedDate
+				value={date}
+				year="numeric"
+				month="numeric"
+				day="numeric"
+				hour="numeric"
+				minute="numeric"
+			/>
+		);
+	},
+});
+
 var ChatWidget = React.createClass({
 	mixins: [ListAutoUpdateMixin],
 	getInitialState: function(){
@@ -1462,12 +1489,13 @@ var ChatWidget = React.createClass({
 	},
 	render: function(){
 		var c = this;
+		var l=navigator.language?navigator.language:navigator['userLanguage']
 		return(
 			<div>
 				<ChatInfoWidget id={this.props.id}/>
 				{
 					this.state.data.map(function(msg){
-						return <div key={msg.id}>{msg.send_time} {msg.author_name}: {markup(msg.msg, msg.links)}</div>;
+						return <div key={msg.id}><ChatFormattedDate date={msg.send_time} locales={l} /> {msg.author_name}: {markup(msg.msg, msg.links)}</div>;
 					})
 				}
 				<input type="text" ref="input" onKeyDown={
