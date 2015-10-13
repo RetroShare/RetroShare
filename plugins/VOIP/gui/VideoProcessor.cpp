@@ -32,7 +32,12 @@ extern "C" {
 #endif
 #endif
 
-#if (LIBAVUTIL_VERSION_MAJOR < 52) || ((LIBAVUTIL_VERSION_MAJOR == 52) && (LIBAVUTIL_VERSION_MINOR < 63))
+#if (LIBAVUTIL_VERSION_MAJOR == 54) && (LIBAVUTIL_VERSION_MINOR == 3) && (LIBAVUTIL_VERSION_MICRO == 0)
+//Ubuntu Vivid use other version of rational.h than GIT with LIBAVUTIL_VERSION_MICRO  == 0
+#define VIVID_RATIONAL_H_VERSION 1
+#endif
+
+#if (VIVID_RATIONAL_H_VERSION) || (LIBAVUTIL_VERSION_MAJOR < 52) || ((LIBAVUTIL_VERSION_MAJOR == 52) && (LIBAVUTIL_VERSION_MINOR < 63))
 //since https://github.com/FFmpeg/FFmpeg/commit/3532dd52c51f3d4b95f31d1b195e64a04a8aea5d
 static inline AVRational av_make_q(int num, int den)
 {
