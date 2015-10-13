@@ -373,6 +373,7 @@ void VOIPChatWidgetHolder::addNewAudioButtonMap(const RsPeerId &peer_id)
 			                       .append("font-size: 12pt;  color: white;")
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
+			                       .append("padding: 3px;")
 			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 			                               "stop: 0 #22c70d, stop: 1 #116a06);")
 			                       );
@@ -385,10 +386,11 @@ void VOIPChatWidgetHolder::addNewAudioButtonMap(const RsPeerId &peer_id)
 
 			RSButtonOnText *buttonD = mChatWidget->getNewButtonOnTextBrowser(tr("Decline Audio Call"));
 			buttonD->setToolTip(tr("Refuse audio call"));
-			buttonD->setStyleSheet(QString("border: 1px solid #199909;")
+			buttonD->setStyleSheet(QString("border: 1px solid #6a1106;")
 			                       .append("font-size: 12pt;  color: white;")
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
+			                       .append("padding: 3px;")
 			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 			                               "stop: 0 #c7220d, stop: 1 #6a1106);")
 			                       );
@@ -424,6 +426,7 @@ void VOIPChatWidgetHolder::addNewVideoButtonMap(const RsPeerId &peer_id)
 			                       .append("font-size: 12pt;  color: white;")
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
+			                       .append("padding: 3px;")
 			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 			                               "stop: 0 #22c70d, stop: 1 #116a06);")
 			                       );
@@ -436,10 +439,11 @@ void VOIPChatWidgetHolder::addNewVideoButtonMap(const RsPeerId &peer_id)
 
 			RSButtonOnText *buttonD = mChatWidget->getNewButtonOnTextBrowser(tr("Decline Video Call"));
 			buttonD->setToolTip(tr("Refuse video call"));
-			buttonD->setStyleSheet(QString("border: 1px solid #199909;")
+			buttonD->setStyleSheet(QString("border: 1px solid #6a1106;")
 			                       .append("font-size: 12pt;  color: white;")
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
+			                       .append("padding: 3px;")
 			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 			                               "stop: 0 #c7220d, stop: 1 #6a1106);")
 			                       );
@@ -793,7 +797,7 @@ void VOIPChatWidgetHolder::replaceFullscreenWidget()
 	outputVideoDeviceFS->setGeometry(QRect(QPoint(0,0),fullScreenFrame->geometry().size()));
 	echoVideoDeviceFS->setGeometry(QRect(QPoint(fullScreenFrame->width(), fullScreenFrame->height()) - QPoint(320,240), QSize(320,240)));
 	QRect toolBarFSGeo = QRect( (fullScreenFrame->width() - toolBarFS->geometry().width()) / 2
-	                            , fullScreenFrame->height() - toolBarFS->geometry().height()
+	                            , fullScreenFrame->height() - (toolBarFS->geometry().height() * 2)
 	                            , toolBarFS->geometry().width(), toolBarFS->geometry().height());
 	toolBarFS->setGeometry(toolBarFSGeo);
 
@@ -820,6 +824,7 @@ void VOIPChatWidgetHolder::botMouseEnterTake()
 		                      .append("font-size: 12pt; color: white;")
 		                      .append("min-width: 128px; min-height: 24px;")
 		                      .append("border-radius: 6px;")
+		                      .append("padding: 3px;")
 		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 		                              "stop: 0 #444444, stop: 1 #222222);")
 		                      );
@@ -831,10 +836,11 @@ void VOIPChatWidgetHolder::botMouseLeaveTake()
 {
 	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
 	if (source){
-		source->setStyleSheet(QString("border: 1px solid #199909;")
+		source->setStyleSheet(QString("border: 1px solid #116a06;")
 		                      .append("font-size: 12pt; color: white;")
 		                      .append("min-width: 128px; min-height: 24px;")
 		                      .append("border-radius: 6px;")
+		                      .append("padding: 3px;")		                      
 		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 		                              "stop: 0 #22c70d, stop: 1 #116a06);")
 		                      );
@@ -850,6 +856,7 @@ void VOIPChatWidgetHolder::botMouseEnterDecline()
 		                      .append("font-size: 12pt; color: white;")
 		                      .append("min-width: 128px; min-height: 24px;")
 		                      .append("border-radius: 6px;")
+		                      .append("padding: 3px;")
 		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 		                              "stop: 0 #444444, stop: 1 #222222);")
 		                      );
@@ -861,10 +868,11 @@ void VOIPChatWidgetHolder::botMouseLeaveDecline()
 {
 	RSButtonOnText *source = qobject_cast<RSButtonOnText *>(QObject::sender());
 	if (source){
-		source->setStyleSheet(QString("border: 1px solid #199909;")
+		source->setStyleSheet(QString("border: 1px solid #6a1106;")
 		                      .append("font-size: 12pt; color: white;")
 		                      .append("min-width: 128px; min-height: 24px;")
-		                      .append("border-radius: 6px;")
+		                      .append("border-radius: 6px;")			                       
+		                      .append("padding: 3px;")
 		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
 		                              "stop: 0 #c7220d, stop: 1 #6a1106);")
 		                      );
