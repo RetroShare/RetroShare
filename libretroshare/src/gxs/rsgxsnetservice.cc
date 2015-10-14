@@ -30,6 +30,7 @@
 
 #include "rsgxsnetservice.h"
 #include "retroshare/rsconfig.h"
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "pgp/pgpauxutils.h"
@@ -1996,7 +1997,13 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 std::cerr << ", no group meta found. Givign up." << std::endl;
                 continue;
             }
-
+            
+            if(rsReputations->isIdentityBanned(syncItem->authorId))
+            {
+                std::cerr << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
+                continue ;
+            }
+            
             if(mReputations->haveReputation(syncItem->authorId) || noAuthor)
             {
                 GixsReputation rep;
@@ -2009,7 +2016,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
                 // if author is required for this message, it will simply get dropped
                 // at genexchange side of things
-                if(rep.score > (int)grpMeta->mReputationCutOff || noAuthor)
+                if(rep.score >= (int)grpMeta->mReputationCutOff || noAuthor)
                 {
 #ifdef NXS_NET_DEBUG
                     std::cerr << ", passed! Adding message to req list." << std::endl;
@@ -2210,7 +2217,13 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
             haveItem = true;
             latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
         }
-
+        
+	if(!grpSyncItem->authorId.isNull() && rsReputations->isIdentityBanned(grpSyncItem->authorId))
+	{
+                std::cerr << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
+    		continue ;            
+	}
+        
         if( (mGrpAutoSync && !haveItem) || latestVersion)
         {
             // determine if you need to check reputation

@@ -675,6 +675,7 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 
 # new gxs cache system
 # this should be disabled for releases until further notice.
+
 DEFINES *= SQLITE_HAS_CODEC
 DEFINES *= GXS_ENABLE_SYNC_MSGS
 

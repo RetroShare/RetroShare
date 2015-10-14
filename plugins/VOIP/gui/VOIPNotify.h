@@ -38,21 +38,20 @@ class VOIPNotify: public QObject
 	Q_OBJECT
 
 	public:
-	void notifyReceivedVoipAccept(const RsPeerId &peer_id) ;
+	void notifyReceivedVoipAccept(const RsPeerId &peer_id, const uint32_t flags) ;
 	void notifyReceivedVoipBandwidth(const RsPeerId &peer_id, uint32_t bytes_per_sec) ;
 	void notifyReceivedVoipData(const RsPeerId &peer_id) ;
-	void notifyReceivedVoipHangUp(const RsPeerId &peer_id) ;
-	void notifyReceivedVoipInvite(const RsPeerId &peer_id) ;
+	void notifyReceivedVoipHangUp(const RsPeerId &peer_id, const uint32_t flags) ;
+	void notifyReceivedVoipInvite(const RsPeerId &peer_id, const uint32_t flags) ;
 	void notifyReceivedVoipAudioCall(const RsPeerId &peer_id) ;
 	void notifyReceivedVoipVideoCall(const RsPeerId &peer_id) ;
 
 	signals:
-	void voipAcceptReceived(const RsPeerId &peer_id) ; // emitted when the peer accepts the call
+	void voipAcceptReceived(const RsPeerId &peer_id, int flags) ; // emitted when the peer accepts the call
 	void voipBandwidthInfoReceived(const RsPeerId &peer_id, int bytes_per_sec) ; // emitted when measured bandwidth info is received by the peer.
 	void voipDataReceived(const RsPeerId &peer_id) ;			// signal emitted when some voip data has been received
-	void voipHangUpReceived(const RsPeerId &peer_id) ; // emitted when the peer closes the call (i.e. hangs up)
-	void voipInvitationReceived(const RsPeerId &peer_id) ;	// signal emitted when an invitation has been received
-
+	void voipHangUpReceived(const RsPeerId &peer_id, int flags) ; // emitted when the peer closes the call (i.e. hangs up)
+	void voipInvitationReceived(const RsPeerId &peer_id, int flags) ;	// signal emitted when an invitation has been received
 	void voipAudioCallReceived(const RsPeerId &peer_id) ; // emitted when the peer is calling and own don't send audio
 	void voipVideoCallReceived(const RsPeerId &peer_id) ; // emitted when the peer is calling and own don't send video
 };

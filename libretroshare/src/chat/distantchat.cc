@@ -31,6 +31,7 @@
 #include "openssl/err.h"
 
 #include "util/rsaes.h"
+#include "util/rsmemory.h"
 
 #include <serialiser/rsmsgitems.h>
 
@@ -435,10 +436,6 @@ bool DistantChatService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
     {
         RS_STACK_MUTEX(mDistantChatMtx); /********** STACK LOCKED MTX ******/
 
-        uint32_t decrypted_size = RsAES::get_buffer_size(data_size-8);
-        uint8_t *decrypted_data = new uint8_t[decrypted_size];
-        uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
-
         std::map<RsPeerId,DistantChatDHInfo>::iterator it = _distant_chat_virtual_peer_ids.find(virtual_peer_id) ;
 
         if(it == _distant_chat_virtual_peer_ids.end())
@@ -455,8 +452,11 @@ bool DistantChatService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
             std::cerr << "(EE) no GXS id data for ID=" << gxs_id << ". This is a bug." << std::endl;
             return true ;
         }
+        uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
         memcpy(aes_key,it2->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
 
+        uint32_t decrypted_size = RsAES::get_buffer_size(data_size-8);
+        uint8_t *decrypted_data = new uint8_t[decrypted_size];
 #ifdef DEBUG_DISTANT_CHAT
         std::cerr << "   Using IV: " << std::hex << *(uint64_t*)data_bytes << std::dec << std::endl;
         std::cerr << "   Decrypted buffer size: " << decrypted_size << std::endl;
@@ -540,7 +540,7 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 #endif
 
     uint32_t pubkey_size = BN_num_bytes(item->public_key) ;
-    unsigned char *data = (unsigned char *)malloc(pubkey_size) ;
+    RsTemporaryMemory data(pubkey_size) ;
     BN_bn2bin(item->public_key, data) ;
 
     RsTlvSecurityKey signature_key ;
@@ -585,7 +585,7 @@ void DistantChatService::handleRecvDHPublicKey(RsChatDHPublicKeyItem *item)
 	    signature_key = item->gxs_key ;
     }
 
-    if(!GxsSecurity::validateSignature((char*)data,pubkey_size,signature_key,item->signature))
+    if(!GxsSecurity::validateSignature((char*)(uint8_t*)data,pubkey_size,signature_key,item->signature))
     {
         std::cerr << "(SS) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         return ;
@@ -690,10 +690,10 @@ bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
         uint32_t error_status ;
 
     uint32_t size = BN_num_bytes(dhitem->public_key) ;
-    unsigned char *data = (unsigned char *)malloc(size) ;
+    RsTemporaryMemory data(size) ;
     BN_bn2bin(dhitem->public_key, data) ;
 
-        if(!mGixs->signData((unsigned char*)data,size,own_gxs_id,signature,error_status))
+        if(!mGixs->signData(data,size,own_gxs_id,signature,error_status))
     {
         switch(error_status)
         {
@@ -702,11 +702,9 @@ bool DistantChatService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
         default: std::cerr << "(EE) Unknown error when signing" << std::endl;
             break ;
         }
-        free(data) ;
         delete(dhitem);
         return false;
     }
-    free(data) ;
 
     if(!mGixs->getKey(own_gxs_id,signature_key_public))
     {
@@ -810,19 +808,16 @@ void DistantChatService::sendTurtleData(RsChatItem *item)
     else
     {
         uint32_t rssize = item->serial_size();
-        uint8_t *buff = (uint8_t*)malloc(rssize) ;
+        RsTemporaryMemory buff(rssize) ;
 
         if(!item->serialise(buff,rssize))
         {
             std::cerr << "(EE) DistantChatService::sendTurtleData(): Could not serialise item!" << std::endl;
-            free(buff) ;
             delete item ;
             return ;
         }
 
         sendEncryptedTurtleData(buff,rssize,RsGxsId(item->PeerId())) ;
-
-        free(buff) ;
     }
     delete item ;
 }

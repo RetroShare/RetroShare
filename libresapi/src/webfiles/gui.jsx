@@ -1467,7 +1467,7 @@ var ChatWidget = React.createClass({
 				<ChatInfoWidget id={this.props.id}/>
 				{
 					this.state.data.map(function(msg){
-						return <div key={msg.id}>{msg.send_time} {msg.author_name}: {markup(msg.msg, msg.links)}</div>;
+						return <div key={msg.id}>{new Date(msg.send_time*1000).toLocaleTimeString()} {msg.author_name}: {markup(msg.msg, msg.links)}</div>;
 					})
 				}
 				<input type="text" ref="input" onKeyDown={

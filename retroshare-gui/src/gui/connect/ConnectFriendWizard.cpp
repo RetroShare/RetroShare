@@ -352,12 +352,20 @@ void ConnectFriendWizard::initializePage(int id)
 		ui->RsidPage->registerField("friendRSID*", ui->friendRsidEdit);
 		break;
 	case Page_Email:
+		{
 		ui->EmailPage->registerField("addressEdit*", ui->addressEdit);
 		ui->EmailPage->registerField("subjectEdit*", ui->subjectEdit);
 
 		ui->subjectEdit->setText(tr("RetroShare Invitation"));
 		ui->inviteTextEdit->setPlainText(GetStartedDialog::GetInviteText());
+		
+		QString body = ui->inviteTextEdit->toPlainText();
 
+		body += "\n" + GetStartedDialog::GetCutBelowText();
+		body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+
+		ui->inviteTextEdit->setPlainText(body);
+		}
 		break;
 	case Page_ErrorMessage:
 		break;
