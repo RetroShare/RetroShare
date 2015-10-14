@@ -169,7 +169,13 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details))
+	    {
+		    std::cerr << "(WW) cannot get ID " << cli->signature.keyId << " for checking signature  of lobby item." << std::endl;
+		    return false;
+	    }
+
+	    if(!details.mPgpLinked)
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (id=" << cli->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
@@ -672,7 +678,13 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(item->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(item->signature.keyId,details))
+	    {
+		    std::cerr << "(WW) cannot get ID " << item->signature.keyId << " for checking signature  of lobby item." << std::endl;
+		    return ;
+	    }
+
+	    if(!details.mPgpLinked)
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
