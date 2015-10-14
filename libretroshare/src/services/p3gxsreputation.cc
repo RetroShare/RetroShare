@@ -776,10 +776,10 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 
 	// if dropping entries has changed the score -> must update.
     
-    	float old_reputation = reputation.mReputation ;
+    	//float old_reputation = reputation.mReputation ;
+	//mUpdatedReputations.insert(gxsId) ;
     
-	if(old_reputation != reputation.updateReputation(mAverageActiveFriends)) 
-	    mUpdatedReputations.insert(gxsId) ;
+	reputation.updateReputation(mAverageActiveFriends) ;
 
 	mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
 	return true;
@@ -888,13 +888,14 @@ int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 	return 1;
 }
 
-float Reputation::updateReputation(uint32_t average_active_friends) 
+void Reputation::updateReputation(uint32_t average_active_friends) 
 {
     // the calculation of reputation makes the whole thing   
 
     int friend_total = 0;
 
     // accounts for all friends. Neutral opinions count for 1-1=0
+    // because the average is performed over only accessible peers (not the total number) we need to shift to 1
 
     for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
 	    friend_total += it->second - 1;
@@ -908,8 +909,6 @@ float Reputation::updateReputation(uint32_t average_active_friends)
 	    mReputation = mFriendAverage ;
     else
 	    mReputation = (float)mOwnOpinion ;
-
-    return float(mOwnOpinion) ;
 }
 
 void p3GxsReputation::debug_print()

@@ -64,7 +64,7 @@ public:
 	Reputation(const RsGxsId& about)
         	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
 
-	float updateReputation(uint32_t average_active_friends);
+	void updateReputation(uint32_t average_active_friends);
 
 	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
 	int32_t mOwnOpinion;

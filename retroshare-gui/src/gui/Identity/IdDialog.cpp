@@ -680,9 +680,9 @@ void IdDialog::insertIdDetails(uint32_t token)
     RsReputations::ReputationInfo info ;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
     
-	ui->neighborNodesOpinion_TF->setText(QString::number(info.mOverallReputationScore-1.0f));
+	ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
 
-	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore-1.0f) +" ("+
+	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
 	 ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
     
     switch(info.mOwnOpinion)
