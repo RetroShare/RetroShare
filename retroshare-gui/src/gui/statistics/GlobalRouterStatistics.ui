@@ -14,7 +14,7 @@
    <string>Router Statistics</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -35,17 +35,71 @@
          <x>0</x>
          <y>0</y>
          <width>593</width>
-         <height>390</height>
+         <height>159</height>
         </rect>
        </property>
       </widget>
      </widget>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>GroupBox</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QTreeWidget" name="treeWidget">
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <column>
+         <property name="text">
+          <string>ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Destinaton</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Data status</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Tunnel status</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Data size</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Data hash</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Received</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Send</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

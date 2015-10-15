@@ -28,12 +28,17 @@
 #include <QPainter>
 #include <QStylePainter>
 #include <QLayout>
+#include <QHeaderView>
 
 #include <retroshare/rsgrouter.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsidentity.h>
+
 #include "GlobalRouterStatistics.h"
 
 #include "gui/settings/rsharesettings.h"
+#include "util/QtVersion.h"
+#include "util/misc.h"
 
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
@@ -53,6 +58,9 @@ GlobalRouterStatistics::GlobalRouterStatistics(QWidget *parent)
 	m_bProcessSettings = false;
 
 	_router_F->setWidget( _tst_CW = new GlobalRouterStatisticsWidget() ) ; 
+	
+	  /* Set header resize modes and initial section sizes Uploads TreeView*/
+		QHeaderView_setSectionResizeMode(treeWidget->header(), QHeaderView::ResizeToContents);
 
 	// load settings
     processSettings(true);
@@ -92,6 +100,8 @@ void GlobalRouterStatistics::processSettings(bool bLoad)
 void GlobalRouterStatistics::updateDisplay()
 {
 	_tst_CW->updateContent() ;
+	updateContent();
+	
 }
 
 QString GlobalRouterStatistics::getPeerName(const RsPeerId &peer_id)
@@ -112,6 +122,43 @@ QString GlobalRouterStatistics::getPeerName(const RsPeerId &peer_id)
 	}
 }
 
+void GlobalRouterStatistics::updateContent()
+{
+    std::vector<RsGRouter::GRouterRoutingCacheInfo> cache_infos ;
+    rsGRouter->getRoutingCacheInfo(cache_infos) ;
+
+    treeWidget->clear();
+
+    static const QString data_status_string[6] = { "Unkown","Pending","Sent","Receipt OK","Ongoing","Done" } ;
+    static const QString tunnel_status_string[4] = { "Unmanaged", "Pending", "Ready" } ;
+
+    time_t now = time(NULL) ;
+    
+    groupBox->setTitle(tr("Pending packets")+": " + QString::number(cache_infos.size()) );
+
+    for(int i=0;i<cache_infos.size();++i)
+    {
+        QTreeWidgetItem *item = new QTreeWidgetItem();
+        treeWidget->addTopLevelItem(item);
+        
+        RsIdentityDetails details ;
+        rsIdentity->getIdDetails(cache_infos[i].destination,details);
+        QString nicknames = QString::fromUtf8(details.mNickname.c_str());
+        
+        if(nicknames.isEmpty())
+          nicknames = tr("Unknown");
+
+        item -> setData(0, Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
+        item -> setData(1, Qt::DisplayRole, nicknames + "@" + QString::fromStdString(cache_infos[i].destination.toStdString()));
+        item -> setData(2, Qt::DisplayRole, data_status_string[cache_infos[i].data_status % 6]);
+        item -> setData(3, Qt::DisplayRole, tunnel_status_string[cache_infos[i].tunnel_status % 3]);
+        item -> setData(4, Qt::DisplayRole, misc::friendlyUnit(cache_infos[i].data_size));
+        item -> setData(5, Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
+        item -> setData(6, Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
+        item -> setData(7, Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
+    }
+}
+
 GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
 	: QWidget(parent)
 {
@@ -124,10 +171,8 @@ GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
 
 void GlobalRouterStatisticsWidget::updateContent()
 {
-    std::vector<RsGRouter::GRouterRoutingCacheInfo> cache_infos ;
     RsGRouter::GRouterRoutingMatrixInfo matrix_info ;
 
-    rsGRouter->getRoutingCacheInfo(cache_infos) ;
     rsGRouter->getRoutingMatrixInfo(matrix_info) ;
 
     float size = QFontMetricsF(font()).height() ;
@@ -188,91 +233,10 @@ void GlobalRouterStatisticsWidget::updateContent()
     }
     oy += celly ;
 
-    painter.setFont(times_f) ;
-    painter.drawText(ox,oy+celly,tr("Pending packets")+":" + QString::number(cache_infos.size())) ; oy += celly*2 ;
 
-    painter.setFont(monospace_f) ;
-
-    static const QString data_status_string[6] = { "Unkown","Pending","Sent","Receipt OK","Ongoing","Done" } ;
-    static const QString tunnel_status_string[4] = { "Unmanaged", "Pending", "Ready" } ;
-
-    time_t now = time(NULL) ;
     std::map<QString, std::vector<QString> > tos ;
-    static const int nb_fields = 8 ;
-
-    static const QString fname[nb_fields] = {
-            tr("Id"),
-            tr("Destination"),
-            tr("Data status"),
-            tr("Tunnel status"),
-            tr("Data size"),
-            tr("Data hash"),
-            tr("Received"),
-            tr("Send") } ;
-
-    std::vector<int> max_column_width(nb_fields,0) ;
-
-    for(int i=0;i<cache_infos.size();++i)
-    {
-        std::vector<QString> strings;
-        strings.push_back( QString::number(cache_infos[i].mid,16).rightJustified(16,'0') ) ;
-        strings.push_back( QString::fromStdString(cache_infos[i].destination.toStdString()) ) ;
-
-        //for(std::set<RsPeerId>::const_iterator it(cache_infos[i].local_origin.begin());it!=cache_infos[i].local_origin.end();++it)
-        //	packet_string += QString::fromStdString((*it).toStdString()) + " - ";
-
-        strings.push_back( data_status_string[cache_infos[i].data_status % 6]) ;
-        strings.push_back( tunnel_status_string[cache_infos[i].tunnel_status % 3]) ;
-        strings.push_back( QString::number(cache_infos[i].data_size) );
-        strings.push_back( QString::fromStdString(cache_infos[i].item_hash.toStdString())) ;
-        strings.push_back( QString::number(now - cache_infos[i].routing_time)) ;
-        strings.push_back( QString::number(now - cache_infos[i].last_sent_time)) ;
-
-        tos[ strings[0] ] = strings ;
-
-        // now compute max column sizes
-
-        for(int j=0;j<nb_fields;++j)
-            max_column_width[j] = std::max(max_column_width[j],(int)(fm_monospace.boundingRect(strings[j]).width()+cellx+2*fact)) ;
-    }
-
-    // compute cumulated sizes
-
-    std::vector<int> cumulated_sizes(nb_fields+1,0) ;
-
-    for(int i=1;i<=nb_fields;++i)
-    {
-        cumulated_sizes[i] = std::max(max_column_width[i-1],(int)(fm_monospace.boundingRect(fname[i-1]).width()+cellx+2*fact)) ;
-        cumulated_sizes[i] += cumulated_sizes[i-1] ;
-    }
-
+   
     // Now draw the matrix
-
-    for(int i=0;i<nb_fields;++i)
-        painter.drawText(ox+cumulated_sizes[i]+2,oy+celly,fname[i]) ;
-
-    painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
-
-    int top_matrix_oy = oy ;
-    oy += celly +2*fact;
-
-    painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
-
-    for(std::map<QString,std::vector<QString> >::const_iterator it(tos.begin());it!=tos.end();++it)
-    {
-        for(int i=0;i<it->second.size();++i)
-            painter.drawText(ox+cumulated_sizes[i]+2,oy+celly,it->second[i] ) ;
-
-        oy += celly ;
-    }
-
-    oy += 2*fact;
-
-    for(int i=0;i<=nb_fields;++i)
-        painter.drawLine(ox+cumulated_sizes[i],top_matrix_oy,ox+cumulated_sizes[i],oy) ;
-
-    painter.drawLine(ox,oy,ox+cumulated_sizes.back(),oy) ;
-    oy += celly ;
 
     QString prob_string ;
     painter.setFont(times_f) ;
