@@ -32,6 +32,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsreputations.h>
@@ -56,6 +57,7 @@
 #define RSID_COL_NICKNAME   0
 #define RSID_COL_KEYID      1
 #define RSID_COL_IDTYPE     2
+#define RSID_COL_VOTES      3
 
 #define RSIDREP_COL_NAME       0
 #define RSIDREP_COL_OPINION    1
@@ -168,12 +170,15 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	ui->idTreeWidget->enableColumnCustomize(true);
 	ui->idTreeWidget->setColumnCustomizable(RSID_COL_NICKNAME, false);
-
+	ui->idTreeWidget->setColumnHidden(RSID_COL_IDTYPE, true);
 	/* Set initial column width */
 	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
-	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 18 * fontWidth);
-	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 25 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 14 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 20 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 7 * fontWidth);
+	
+	//QHeaderView_setSectionResizeMode(ui->idTreeWidget->header(), QHeaderView::ResizeToContents);
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
@@ -285,6 +290,24 @@ void IdDialog::updateSelection()
 	}
 }
 
+static QString getHumanReadableDuration(uint32_t seconds)
+{
+    if(seconds < 60)
+        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
+    else if(seconds < 120)
+        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
+    else if(seconds < 3600)
+        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
+    else if(seconds < 7200)
+        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
+    else if(seconds < 24*3600)
+        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
+    else if(seconds < 2*24*3600)
+        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
+    else 
+        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
+}
+
 void IdDialog::requestIdList()
 {
 	//Disable by default, will be enable by insertIdDetails()
@@ -351,11 +374,16 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
 	if (!item)
         item = new QTreeWidgetItem();
+        
+        RsReputations::ReputationInfo info ;
+        rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
+    
+    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(info.mOverallReputationScore-1.0f));
 
 	 if(isOwnId)
 	 {
@@ -507,23 +535,6 @@ void IdDialog::requestIdDetails()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
 }
 
-static QString getHumanReadableDuration(uint32_t seconds)
-{
-    if(seconds < 60)
-        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
-    else if(seconds < 120)
-        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
-    else if(seconds < 3600)
-        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
-    else if(seconds < 7200)
-        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
-    else if(seconds < 24*3600)
-        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
-    else if(seconds < 2*24*3600)
-        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
-    else 
-        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
-}
 
 void IdDialog::insertIdDetails(uint32_t token)
 {
