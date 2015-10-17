@@ -53,9 +53,7 @@ const char * invalid_addrstr = "AAA.BBB.256.256";
 int test_isExternalNet();
 int test_isPrivateNet();
 int test_isLoopbackNet();
-int test_sameNet();
 int test_isValidNet();
-int test_isSameSubnet();
 int test_pqi_inet_netof();
 
 INITTEST();
@@ -67,9 +65,7 @@ int main(int argc, char **argv)
 	test_isExternalNet();
 	test_isPrivateNet();
 	test_isLoopbackNet();
-	test_sameNet();
 	test_isValidNet();
-	test_isSameSubnet();
 	test_pqi_inet_netof();
 
 	FINALREPORT("net_test1");
@@ -158,42 +154,6 @@ int test_isLoopbackNet()
 	return 1;
 }
 
-int test_sameNet()
-{
-	struct in_addr localnet1_addr;
-	struct in_addr localnet2_addr;
-	struct in_addr localnet3_addr;
-	struct in_addr localnet4_addr;
-	struct in_addr localnet5_addr;
-	struct in_addr localnet6_addr;
-	struct in_addr localnet7_addr;
-	struct in_addr localnet8_addr;
-	struct in_addr external_addr;
-
-	inet_aton(localnet1_addrstr, &localnet1_addr);
-	inet_aton(localnet2_addrstr, &localnet2_addr);
-	inet_aton(localnet3_addrstr, &localnet3_addr);
-	inet_aton(localnet4_addrstr, &localnet4_addr);
-	inet_aton(localnet5_addrstr, &localnet5_addr);
-	inet_aton(localnet6_addrstr, &localnet6_addr);
-	inet_aton(localnet7_addrstr, &localnet7_addr);
-	inet_aton(localnet8_addrstr, &localnet8_addr);
-	inet_aton(external_addrstr, &external_addr);
-
-	CHECK(sameNet(&localnet1_addr, &localnet5_addr)==true);
-	CHECK(sameNet(&localnet2_addr, &localnet6_addr)==true);
-	CHECK(sameNet(&localnet3_addr, &localnet7_addr)==true);
-	CHECK(sameNet(&localnet4_addr, &localnet8_addr)==true);
-	CHECK(sameNet(&localnet1_addr, &external_addr)==false);
-	CHECK(sameNet(&localnet2_addr, &external_addr)==false);
-	CHECK(sameNet(&localnet3_addr, &external_addr)==false);
-	CHECK(sameNet(&localnet4_addr, &external_addr)==false);
-
-	REPORT("sameNet()");
-
-	return 1;
-}
-
 int test_isValidNet()
 {
 	struct in_addr localnet1_addr;
@@ -207,25 +167,6 @@ int test_isValidNet()
 	//CHECK(isValidNet(&invalid_addr)==false);
 
 	REPORT("isValidNet()");
-
-	return 1;
-}
-
-int test_isSameSubnet()
-{
-	struct in_addr localnet1_addr;
-	struct in_addr classc1_addr;
-	struct in_addr classc2_addr;
-
-	inet_aton(localnet1_addrstr, &localnet1_addr);
-	//random class C addresses
-	inet_aton("197.67.28.93", &classc1_addr);
-	inet_aton("197.67.28.3", &classc2_addr);
-
-	CHECK(isSameSubnet(&localnet1_addr, &classc1_addr)==false);
-	CHECK(isSameSubnet(&classc1_addr, &classc2_addr)==true);
-
-	REPORT("isSameSubnet()");
 
 	return 1;
 }

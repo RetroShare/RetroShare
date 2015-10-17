@@ -107,8 +107,6 @@ bool operator<(const struct sockaddr_storage &a, const struct sockaddr_storage &
 bool sockaddr_storage_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_samefamily(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 
 // string,
 std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr);
