@@ -133,6 +133,26 @@ openbsd-* {
 	LIBS *= -rdynamic
 }
 
+##################################### Haiku ######################################
+
+haiku-* {
+	QMAKE_CXXFLAGS *= -D_BSD_SOURCE
+
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2 -lbsd
+	LIBS *= -lssl -lcrypto -lnetwork
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lz
+	LIBS *= -lixml
+
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += -lsqlite3
+	
+}
 
 ############################## Common stuff ######################################
 

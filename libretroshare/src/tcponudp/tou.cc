@@ -35,6 +35,7 @@ static  const int kInitStreamTable = 5;
 #include <time.h>
 
 #include "udp/udpstack.h"
+#include "pqi/pqinetwork.h"
 #include "tcpstream.h"
 #include <vector>
 #include <iostream>
@@ -42,6 +43,7 @@ static  const int kInitStreamTable = 5;
 #include <errno.h>
 
 #define DEBUG_TOU_INTERFACE 1
+#define EUSERS          87
 
 struct TcpOnUdp_t
 {

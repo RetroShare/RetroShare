@@ -55,6 +55,11 @@ int errno;
 
 #endif               
 
+#ifdef __HAIKU__
+ #include <sys/sockio.h>
+ #define IFF_RUNNING 0x0001
+#endif
+
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 

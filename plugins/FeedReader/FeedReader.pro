@@ -94,6 +94,10 @@ win32 {
 
 openbsd-* {
 	LIBXML2_DIR = /usr/local/include/libxml2
+}
+
+haiku-* {
+	LIBXML2_DIR = pkg-config --cflags libxml-2.0
 
 	INCLUDEPATH += $${LIBXML2_DIR}
 

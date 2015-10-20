@@ -38,6 +38,7 @@
 #include <arpa/inet.h>
 
 #include <sys/poll.h>
+#include <errno.h>
 
 //socket blocking/options.
 #include <fcntl.h>

@@ -117,6 +117,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	std::cerr << "RsTryAutoLogin()" << std::endl;
 
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef __HAIKU__
 #ifndef WINDOWS_SYS /* UNIX */
 #if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
 
@@ -349,6 +350,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 
 	return isDecrypt;
 #endif
+#endif
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	return false;
@@ -360,6 +362,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	std::cerr << "RsStoreAutoLogin()" << std::endl;
 
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef __HAIKU__
 #ifndef WINDOWS_SYS /* UNIX */
 #if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
 	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL)) 
@@ -518,6 +521,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	return false;
+#endif
 }
 
 bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
