@@ -209,8 +209,11 @@ void ExtAddrFinder::start_request()
 {
 	void *data = (void *)this;
 	pthread_t tid ;
-	pthread_create(&tid, 0, &doExtAddrSearch, data);
-	pthread_detach(tid); /* so memory is reclaimed in linux */
+    
+    	if(! pthread_create(&tid, 0, &doExtAddrSearch, data))
+		pthread_detach(tid); /* so memory is reclaimed in linux */
+        else
+            	std::cerr << "(EE) Could not start ExtAddrFinder thread." << std::endl;
 }
 
 bool ExtAddrFinder::hasValidIP(struct sockaddr_storage &addr)

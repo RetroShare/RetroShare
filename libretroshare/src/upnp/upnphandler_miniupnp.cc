@@ -236,10 +236,17 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 	data->start = start;
 	data->stop = stop;
 
-	pthread_create(&tid, 0, &doSetupUPnP, (void *) data);
-	pthread_detach(tid); /* so memory is reclaimed in linux */
-
-	return true;
+	if(!pthread_create(&tid, 0, &doSetupUPnP, (void *) data))
+	{
+		pthread_detach(tid); /* so memory is reclaimed in linux */
+		return true;
+	}
+        else
+        {
+            delete data ;
+            std::cerr << "(EE) Failed to start upnp thread." << std::endl;
+            return false ;
+        }
 }
 
 bool upnphandler::start_upnp()

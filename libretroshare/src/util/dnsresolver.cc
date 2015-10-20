@@ -101,15 +101,18 @@ void *solveDNSEntries(void *p)
 
 void DNSResolver::start_request()
 {
-	{
-		RsStackMutex mut(_rdnsMtx) ;
-		*_thread_running = true ;
-	}
+    {
+	    RsStackMutex mut(_rdnsMtx) ;
+	    *_thread_running = true ;
+    }
 
-	void *data = (void *)this;
-	pthread_t tid ;
-	pthread_create(&tid, 0, &solveDNSEntries, data);
-	pthread_detach(tid); /* so memory is reclaimed in linux */
+    void *data = (void *)this;
+    pthread_t tid ;
+
+    if(! pthread_create(&tid, 0, &solveDNSEntries, data))
+	    pthread_detach(tid); /* so memory is reclaimed in linux */
+    else
+	    std::cerr << "(EE) Could not start DNS resolver thread!" << std::endl;
 }
 
 void DNSResolver::reset()
