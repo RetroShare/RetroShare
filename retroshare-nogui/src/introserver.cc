@@ -220,6 +220,7 @@ int RsIntroServer::addCertificateFile(std::string filepath)
 	std::cerr << std::endl;
 	std::cerr << "==========================================================" << std::endl;
 
+    fclose(fd) ;
 	return addNewUser(certGPG);
 }
 
