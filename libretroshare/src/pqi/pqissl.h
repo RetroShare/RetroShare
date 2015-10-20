@@ -196,8 +196,6 @@ virtual int net_internal_fcntl_nonblock(int fd);
 
 	int attempt_ts;
 
-	bool sameLAN; /* flag use to allow high-speed transfers */
-
 	int n_read_zero; /* a counter to determine if the connection is really dead */
 	time_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
 

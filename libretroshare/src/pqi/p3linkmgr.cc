@@ -1710,7 +1710,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 
 #define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
 
-bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
+bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
@@ -1731,13 +1731,8 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 		return false;
 	}
 
-	bool isValid = sockaddr_storage_isValidNet(addr);
-	bool isLoopback = sockaddr_storage_isLoopbackNet(addr);
-	//	bool isPrivate = sockaddr_storage_isPrivateNet(addr);
-	bool isExternal = sockaddr_storage_isExternalNet(addr);
-
 	/* if invalid - quick rejection */
-	if (!isValid)
+	if ( ! sockaddr_storage_isValidNet(addr) )
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - INVALID";
@@ -1772,60 +1767,7 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
         return false ;
     }
 
-	/* if it is an external address, we'll accept it.
-	 * - even it is meant to be a local address.
-	 */
-	if (isExternal)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - EXTERNAL"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-
-	/* if loopback, then okay - probably proxy connection (or local testing).
-	 */
-	if (isLoopback)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - LOOPBACK"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-
-	/* get here, it is private or loopback 
-	 *  - can only connect to these addresses if we are on the same subnet.
-	    - check net against our local address.
-	 */
-
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() Checking sameNet against: "; 
-	std::cerr << sockaddr_storage_iptostring(mLocalAddress);
-	std::cerr << ")";
-	std::cerr << std::endl;
-#endif
-
-	if (sockaddr_storage_samenet(mLocalAddress, addr))
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - PRIVATE & sameNET"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - PRIVATE & !sameNET"; 
-	std::cerr << std::endl;
-#endif
-
-	/* else it fails */
-	return false;
-
+	return true;
 }
 
 
