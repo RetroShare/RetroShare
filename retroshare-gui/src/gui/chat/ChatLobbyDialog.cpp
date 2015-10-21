@@ -453,7 +453,7 @@ void ChatLobbyDialog::updateParticipantsList()
 
             if(isParticipantMuted(it2->first))
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_64.png"));
-            else if (tLastAct < now - timeToInactivity)
+            else if (tLastAct + timeToInactivity < now)
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_grey_64.png"));
             else
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_green_64.png"));
