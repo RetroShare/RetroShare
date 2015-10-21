@@ -53,6 +53,8 @@
 #define COLUMN_ID        3
 #define COLUMN_COUNT     4
 
+const static uint32_t timeToInactivity = 60 * 10;   // in seconds
+
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
 	: ChatDialog(parent, flags), lobbyId(lid)
@@ -431,7 +433,8 @@ void ChatLobbyDialog::updateParticipantsList()
                 widgetitem = new GxsIdRSTreeWidgetItem(mParticipantCompareRole,GxsIdDetails::ICON_TYPE_AVATAR);
                 widgetitem->setId(it2->first,COLUMN_NAME, true) ;
                 //widgetitem->setText(COLUMN_NAME, participant);
-                widgetitem->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
+                // set activity time to the oast so that the peer is marked as inactive
+                widgetitem->setText(COLUMN_ACTIVITY,QString::number(time(NULL) - timeToInactivity));
                 widgetitem->setText(COLUMN_ID,QString::fromStdString(it2->first.toStdString()));
 
                 ui.participantsList->addTopLevelItem(widgetitem);
@@ -450,9 +453,9 @@ void ChatLobbyDialog::updateParticipantsList()
 
             if(isParticipantMuted(it2->first))
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_64.png"));
-            else if (tLastAct<now-60*30)
+            else if (tLastAct + timeToInactivity < now)
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_grey_64.png"));
-        else
+            else
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_green_64.png"));
 
             RsGxsId gxs_id;
