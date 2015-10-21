@@ -56,14 +56,10 @@ bool sockaddr_storage_ipv6_setport(struct sockaddr_storage &addr, uint16_t port)
 bool sockaddr_storage_ipv4_lessthan(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_ipv4_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_ipv4_sameip(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_ipv4_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_ipv4_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 
 bool sockaddr_storage_ipv6_lessthan(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_ipv6_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_ipv6_sameip(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_ipv6_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_ipv6_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 
 
 /********************************* Output     ***********************************/
@@ -372,62 +368,6 @@ bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct s
 	}
 	return false;
 }
-
-
-bool sockaddr_storage_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
-{
-#ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_samenet()";
-	std::cerr << std::endl;
-#endif
-
-	if (!sockaddr_storage_samefamily(addr, addr2))
-		return false;
-
-	switch(addr.ss_family)
-	{
-		case AF_INET:
-			return sockaddr_storage_ipv4_samenet(addr, addr2);
-			break;
-		case AF_INET6:
-			return sockaddr_storage_ipv6_samenet(addr, addr2);
-			break;
-		default:
-			std::cerr << "sockaddr_storage_samenet() INVALID Family - error";
-			std::cerr << std::endl;
-			break;
-	}
-	return false;
-}
-
-bool sockaddr_storage_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
-{
-#ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_samesubnet()";
-	std::cerr << std::endl;
-#endif
-
-	if (!sockaddr_storage_samefamily(addr, addr2))
-		return false;
-
-	switch(addr.ss_family)
-	{
-		case AF_INET:
-			return sockaddr_storage_ipv4_samesubnet(addr, addr2);
-			break;
-		case AF_INET6:
-			return sockaddr_storage_ipv6_samesubnet(addr, addr2);
-			break;
-		default:
-#ifdef SS_DEBUG
-            std::cerr << "sockaddr_storage_samesubnet() INVALID Family - error";
-            std::cerr << std::endl;
-#endif
-			break;
-	}
-	return false;
-}
-
 
 /********************************* Output     ***********************************/
 
@@ -813,38 +753,6 @@ bool sockaddr_storage_ipv4_sameip(const struct sockaddr_storage &addr, const str
 	return (ptr1->sin_addr.s_addr == ptr2->sin_addr.s_addr);
 }
 
-
-bool sockaddr_storage_ipv4_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
-{
-	(void) addr;
-	(void) addr2;
-		
-#ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_ipv4_samenet()";
-	std::cerr << std::endl;
-#endif
-
-
-	const struct sockaddr_in *ptr1 = to_const_ipv4_ptr(addr);
-	const struct sockaddr_in *ptr2 = to_const_ipv4_ptr(addr2);
-	return sameNet(&(ptr1->sin_addr),&(ptr2->sin_addr));
-}
-
-bool sockaddr_storage_ipv4_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
-{
-	(void) addr;
-	(void) addr2;
-		
-#ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_ipv4_samesubnet() using pqinetwork::isSameSubnet()";
-	std::cerr << std::endl;
-#endif
-
-	const struct sockaddr_in *ptr1 = to_const_ipv4_ptr(addr);
-	const struct sockaddr_in *ptr2 = to_const_ipv4_ptr(addr2);
-	return isSameSubnet((struct in_addr *) &(ptr1->sin_addr),(struct in_addr *) &(ptr2->sin_addr));
-}
-
 // IPV6
 bool sockaddr_storage_ipv6_lessthan(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
 {
@@ -905,34 +813,6 @@ bool sockaddr_storage_ipv6_sameip(const struct sockaddr_storage &addr, const str
 	}
 	return true;
 }
-
-
-bool sockaddr_storage_ipv6_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
-{
-	(void) addr;
-	(void) addr2;
-		
-#ifdef SS_DEBUG
-    std::cerr << "sockaddr_storage_ipv6_samenet() TODO";
-    std::cerr << std::endl;
-#endif
-
-	return false;
-}
-
-bool sockaddr_storage_ipv6_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
-{
-	(void) addr;
-	(void) addr2;
-	
-#ifdef SS_DEBUG
-    std::cerr << "sockaddr_storage_ipv6_samesubnet() TODO";
-    std::cerr << std::endl;
-#endif
-
-	return false;
-}
-
 
 /********************************* Output     ***********************************/
 std::string sockaddr_storage_ipv4_iptostring(const struct sockaddr_storage &addr)

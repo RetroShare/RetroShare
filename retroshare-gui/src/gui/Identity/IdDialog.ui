@@ -210,7 +210,10 @@
          </column>
          <column>
           <property name="text">
-           <string>Votes</string>
+           <string>Reputation</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeft|AlignVCenter</set>
           </property>
          </column>
         </widget>

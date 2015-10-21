@@ -314,6 +314,19 @@ openbsd-* {
 	CONFIG += upnp_libupnp
 }
 
+################################# Haiku ##########################################
+
+haiku-* {
+
+	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
+	OPENPGPSDK_DIR = ../../openpgpsdk/src
+	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+	DEFINES *= NO_SQLCIPHER
+	CONFIG += release
+	CONFIG += upnp_libupnp
+	DESTDIR = lib
+}
+
 ################################### COMMON stuff ##################################
 
 # openpgpsdk

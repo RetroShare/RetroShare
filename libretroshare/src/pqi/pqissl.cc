@@ -103,7 +103,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
 	readpkt(NULL), pktlen(0), total_len(0),
 	attempt_ts(0),
-	sameLAN(false), n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
+	n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
 	mConnectDelay(0), mConnectTS(0),
 	mConnectTimeout(0), mTimeoutTS(0)
 {
@@ -255,7 +255,6 @@ int 	pqissl::reset_locked()
 	sockfd = -1;
 	waiting = WAITING_NOT;
 	ssl_connection = NULL;
-	sameLAN = false;
 	n_read_zero = 0;
 	mReadZeroTS = 0;
 	total_len = 0 ;
@@ -1458,21 +1457,11 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 
 	struct sockaddr_storage localaddr;
 	mLinkMgr->getLocalAddress(localaddr);
-	sameLAN = sockaddr_storage_samesubnet(remote_addr, localaddr);
 
 	{
 		std::string out = "pqissl::accept() SUCCESSFUL connection to: " + PeerId().toStdString();
 		out += " localaddr: " + sockaddr_storage_iptostring(localaddr);
 		out += " remoteaddr: " + sockaddr_storage_iptostring(remote_addr);
-
-		if (sameLAN)
-		{
-			out += " SAME LAN";
-		}
-		else
-		{
-			out += " DIFF LANs";
-		}
 
 		rslog(RSL_WARNING, pqisslzone, out);
 	}
