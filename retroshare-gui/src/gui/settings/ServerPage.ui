@@ -49,16 +49,16 @@
            <item>
             <layout class="QVBoxLayout">
              <item>
-              <widget class="QLabel" name="label_8">
+              <widget class="QLabel" name="label_netmode">
                <property name="text">
                 <string>Network Mode</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_11">
+              <widget class="QLabel" name="label_nat">
                <property name="text">
-                <string>Nat Type</string>
+                <string>Nat</string>
                </property>
               </widget>
              </item>
