@@ -228,6 +228,7 @@ void ServerPage::load()
 
     ui.netModeComboBox->show() ;
 	ui.hiddenMode_LB->hide() ;
+	ui.iconlabel_hiddenMode->hide() ;
 
 	/* set net mode */
 	int netIndex = 0;
@@ -880,6 +881,8 @@ void ServerPage::loadHiddenNode()
 	//ui.netModeComboBox->setCurrentIndex(3);
 	ui.netModeComboBox->hide();
 	ui.hiddenMode_LB->show();
+	ui.iconlabel_hiddenMode->show() ;
+	ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
 
 	// CHANGE OPTIONS ON 
 	ui.discComboBox->removeItem(3);
