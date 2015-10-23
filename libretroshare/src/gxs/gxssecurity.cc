@@ -414,6 +414,7 @@ bool GxsSecurity::initEncryption(GxsSecurity::MultiEncryptionContext& encryption
 
 	    encryption_context.ek  = new unsigned char *[keys.size()] ;
 	    encryption_context.ekl = new int            [keys.size()] ;
+	encryption_context.ids.resize(keys.size()) ;
 
 	    EVP_PKEY      **pubk = new EVP_PKEY      *[keys.size()] ;
 	    memset(pubk,0,keys.size()*sizeof(EVP_PKEY      *)) ;
@@ -437,6 +438,7 @@ bool GxsSecurity::initEncryption(GxsSecurity::MultiEncryptionContext& encryption
 
 		    encryption_context.ek [i] = (unsigned char*)malloc(max_evp_key_size);
 		    encryption_context.ekl[i] = max_evp_key_size ;
+		    encryption_context.ids[i] = keys[i] ;
 	    }
 
 	    EVP_CIPHER_CTX_init(&encryption_context.ctx);

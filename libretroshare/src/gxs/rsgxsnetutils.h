@@ -69,7 +69,7 @@ public:
     RsNxsTransacItem* mTransaction;
     std::list<RsNxsItem*> mItems; // items received or sent
     
-    mGxsCircleId destination_circle;
+    RsGxsCircleId destination_circle;
 };
 
 /*!

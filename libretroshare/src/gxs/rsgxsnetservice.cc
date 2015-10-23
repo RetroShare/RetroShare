@@ -34,6 +34,7 @@
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "pgp/pgpauxutils.h"
+#include "util/rsmemory.h"
 
 /***
  * #define NXS_NET_DEBUG	1
@@ -2475,14 +2476,18 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 
 		    if(grpId.isNull())
 			    grpId = item->grpId;
+                    else if(grpId != item->grpId)
+                    {
+                        std::cerr << "RsGxsNetService::locked_genSendMsgsTransaction(): transaction on two different groups! ERROR!" << std::endl;
+                        return ;
+                    }
 	    }
+#ifdef NXS_NET_DEBUG
 	    else
 	    {
-#ifdef NXS_NET_DEBUG
-		    std::cerr << "RsGxsNetService::locked_genSendMsgsTransaction(): item failed to caste to RsNxsSyncMsgItem* "
-		              << std::endl;
-#endif
+		    std::cerr << "RsGxsNetService::locked_genSendMsgsTransaction(): item failed to caste to RsNxsSyncMsgItem* " << std::endl;
 	    }
+#endif
     }
 
     mDataStore->retrieveNxsMsgs(msgIds, msgs, false, false);
@@ -2533,12 +2538,24 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 
     // now if transaction is limited to an external group, encrypt it for members of the group.
 
-    if()
-	    encryptTransaction(newTr,circl_EId
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grp;
+    grp[grpId] = NULL ;
+    
+    mDataStore->retrieveGxsGrpMetaData(grp);
+    
+    RsGxsGrpMetaData *grpMeta = grp[grpId] ;
+    
+    if(grpMeta != NULL)
+    {
+        newTr->destination_circle = grpMeta->mCircleId ;
+        delete grpMeta ;
+        grp.clear() ;
+    }
 
-	                       uint32_t updateTS = 0;
-
-	                    ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(grpId);
+    // now send a transaction item and store the transaction data
+    
+    uint32_t updateTS = 0;
+    ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(grpId);
 
     if(cit != mServerMsgUpdateMap.end())
 	    updateTS = cit->second->msgUpdateTS;
@@ -2558,6 +2575,8 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
     ntr->PeerId(tr->mTransaction->PeerId());
     sendItem(ntr);
 
+    // Encryption will happen here if needed.
+    
     locked_addTransaction(newTr);
 
     return;
@@ -2571,9 +2590,7 @@ bool RsGxsNetService::locked_addTransaction(NxsTransaction* tr)
 	const RsPeerId& peer = tr->mTransaction->PeerId();
 	uint32_t transN = tr->mTransaction->transactionNumber;
 	TransactionIdMap& transMap = mTransactions[peer];
-	bool transNumExist = transMap.find(transN)
-	                != transMap.end();
-
+	bool transNumExist = transMap.find(transN) != transMap.end();
 
 	if(transNumExist)
 	{
@@ -2589,11 +2606,11 @@ bool RsGxsNetService::locked_addTransaction(NxsTransaction* tr)
 	std::cerr << "Added transaction number " << transN << std::endl;
 #endif
 
-	transMap[transN] = tr;
-
 	if(!tr->destination_circle.isNull())
 		encryptTransaction(tr);
 
+	transMap[transN] = tr;
+    
 	return true;
 }
 
@@ -2615,14 +2632,26 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     }
     
     std::cerr << "  Dest  Ids: " << std::endl;
+    std::list<RsTlvSecurityKey> recipient_keys ;
     
     for(std::list<RsGxsId>::const_iterator it(recipients.begin());it!=recipients.end();++it)
-        std::cerr << "    " << *it << std::endl;
+    {
+        RsTlvSecurityKey pkey ;
+        
+       	if(!rsIdentity->getKey(*it,pkey))
+        {
+            std::cerr  << "(EE) Cannot retrieve public key " << *it << " for circle encryption." << std::endl;
+            // we should probably request the key.
+            continue ;
+        }
+        std::cerr << "    added key " << *it << std::endl;
+        recipient_keys.push_back(pkey) ;
+    }
     
     // 2 - call GXSSecurity to make a header item that encrypts for the given list of peers.
     
     GxsSecurity::MultiEncryptionContext muctx ; 
-    GxsSecurity::initMultiEncryption(muctx,recipients);
+    GxsSecurity::initEncryption(muctx,recipient_keys);
             
     // 3 - serialise and encrypt each message, converting it into a NxsEncryptedDataItem
     
@@ -2640,15 +2669,15 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
         }
         
         unsigned char *encrypted_data = NULL ;
-        unsigned char *encrypted_len  = 0 ;
+        uint32_t encrypted_len  = 0 ;
         
-        if(!GxsSecurity::encrypt(muctx,tempmem,tempmemsize,encryted_data, encryted_len))
+        if(!GxsSecurity::encrypt(muctx,tempmem,size,encrypted_data, encrypted_len))
         {
             std::cerr << "  (EE) Cannot multi-encrypt item. Something went wrong." << std::endl;
             continue ;
         }
         
-        RsNxsEncryptedDataItem *enc_item = new RsNxsEncryptedDataItem() ;
+        RsNxsEncryptedDataItem *enc_item = new RsNxsEncryptedDataItem(mServType) ;
         
         enc_item->aes_encrypted_data.bin_len  = encrypted_len ;
         enc_item->aes_encrypted_data.bin_data = encrypted_data ;
@@ -2666,11 +2695,11 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     
     // 5 - make session key item and push it front.
     
-    RsNxsSessionKeyItem *session_key_item = new RsNxsSessionKeyItem() ;
+    RsNxsSessionKeyItem *session_key_item = new RsNxsSessionKeyItem(mServType) ;
     
-    memcpy(session_key_item->initialization_vector,muctx.IV,EVP_MAX_IV_LENGTH) ;
+    memcpy(session_key_item->iv,muctx.initialisation_vector(),EVP_MAX_IV_LENGTH) ;
     
-    for(int i=0;i<muctx->n_encrypted_keys();++i)
+    for(int i=0;i<muctx.n_encrypted_keys();++i)
     {
         std::cerr << "  addign session key for ID " << muctx.encrypted_key_id(i) << std::endl;
         RsTlvBinaryData data ;
@@ -2681,6 +2710,8 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     }
     
     tr->mItems.push_front(session_key_item) ;
+    
+    return true ;
 }
 
 bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
@@ -2707,8 +2738,26 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     //     we don't own that identity.
     
     GxsSecurity::MultiEncryptionContext muctx ;
+    RsGxsId private_key_id ;
+    bool found = false ;
     
-    if(!GxsSecurity::initDecryption(muctx,key,esk.initialization_vector.bin_data,esk.initialization_vector.bin_len,ek.bin_data,ek.bin_len))
+    for(std::map<RsGxsId,RsTlvBinaryData>::const_iterator it(esk->encrypted_session_keys.begin());it!=esk->encrypted_session_keys.end();++it)
+	    if(mGixs->havePrivateKey(it->first))
+	    {
+		    found = true ;
+                    private_key_id = it->first ;
+                    
+                    std::cerr << "  found appropriate private key to decrypt session key: " << it->first << std::endl;
+		    break ;
+	    }
+    
+    if(!found)
+    {
+        std::cerr << "  (EE) no private key for this encrypted transaction. Cannot decrypt!" << std::endl;
+        return false ;
+    }
+    
+    if(!GxsSecurity::initDecryption(private_key_id,esk->iv,EVP_MAX_IV_LENGTH,ek.bin_data,ek.bin_len))
     {
         std::cerr << "  (EE) cannot decrypt transaction. initDecryption() failed." << std::endl;
         return false ;
@@ -2717,8 +2766,8 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     // 3 - Using session key, decrypt all packets, by calling GXSSecurity.
     
     std::list<RsNxsItem*> decrypted_items ;
-    RsNxsEncryptedDataItem encrypted_item ;
-    RsNxsSerialiser serial ;
+    RsNxsEncryptedDataItem *encrypted_item ;
+    RsNxsSerialiser serial(mServType) ;
     
     for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
         if(NULL != (encrypted_item = dynamic_cast<RsNxsEncryptedDataItem*>(*it)))
@@ -2726,17 +2775,24 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 		unsigned char *tempmem;
 		uint32_t tempmemsize ;
 
-		if(!GxsSecurity::decrypt(muctx,tempmem,tempmemsize,encrypted_item->aes_encrypted_data.bin_data, encrypted_item.aes_encrypted_data.bin_len))
+		if(!GxsSecurity::decrypt(muctx,tempmem,tempmemsize,encrypted_item->aes_encrypted_data.bin_data, encrypted_item->aes_encrypted_data.bin_len))
 		{
 			std::cerr << "  (EE) Cannot decrypt item. Something went wrong. Skipping this item." << std::endl;
 			continue ;
 		}
 
-		RsNxsItem *item = serial.deserialise(tempmem,tempmemsize) ;
+		RsItem *ditem = serial.deserialise(tempmem,&tempmemsize) ;
 
-		std::cerr << "  Decrypted an item of type " << std::hex << item->getType() << std::dec << std::endl;
+		std::cerr << "  Decrypted an item of type " << std::hex << ditem->PacketId() << std::dec << std::endl;
 
-		decrypted_items.push_back(item) ;
+		RsNxsItem *nxsi = dynamic_cast<RsNxsItem*>(ditem) ;
+
+		if(nxsi != NULL)
+			decrypted_items.push_back(nxsi) ;
+		else
+		{
+			std::cerr << "  (EE) decrypted an item of unknown type!" << std::endl;
+		}
 
 		free(tempmem) ;
 	}
@@ -2748,7 +2804,7 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
         delete *it ;
     
-    tr->mItems = encrypted_items ;
+    tr->mItems = decrypted_items ;
     
     return true ;
 }

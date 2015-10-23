@@ -437,6 +437,11 @@ private:
 
     void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages) ;
 
+    /*!
+    * encrypts/decrypts the transaction for the destination circle id.
+    */
+    bool encryptTransaction(NxsTransaction *tr);
+    bool decryptTransaction(NxsTransaction *tr);
 private:
 
 
@@ -500,7 +505,7 @@ public:
     typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
     typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
     typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
-
+    
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
@@ -511,7 +516,7 @@ private:
 
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;
-
+    
 };
 
 #endif // RSGXSNETSERVICE_H

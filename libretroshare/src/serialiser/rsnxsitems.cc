@@ -1,5 +1,6 @@
 #include "rsnxsitems.h"
 #include "rsbaseserial.h"
+#include "util/rsprint.h"
 #include <iomanip>
 
 /***
@@ -392,7 +393,21 @@ bool RsNxsSessionKeyItem::serialise(void *data, uint32_t& size) const
     if(!serialise_header(data,size,tlvsize,offset))
         return false ;
 
-    ok &= encrypted_key_data.SetTlv(data, size, &offset) ;
+    if(offset + EVP_MAX_IV_LENGTH >= size)
+    {
+        std::cerr << "RsNxsSessionKeyItem::serialize(): error. Not enough room for IV !" << std::endl;
+        return false ;
+    }
+    memcpy(&((uint8_t*)data)[offset],iv,EVP_MAX_IV_LENGTH) ;
+    offset += EVP_MAX_IV_LENGTH ;
+    
+    ok &= setRawUInt32(data, size, &offset, encrypted_session_keys.size());
+    
+    for(std::map<RsGxsId,RsTlvBinaryData>::const_iterator it(encrypted_session_keys.begin());it!=encrypted_session_keys.end();++it)
+    {
+	ok &= it->first.serialise(data, size, offset) ;
+	ok &= it->second.SetTlv(data, size, &offset) ;
+    }
 
     if(offset != tlvsize)
     {
@@ -757,7 +772,27 @@ RsNxsSessionKeyItem      *RsNxsSerialiser::deserialNxsSessionKeyItem(void* data,
 
     RsNxsSessionKeyItem* item = new RsNxsSessionKeyItem(SERVICE_TYPE);
 
-    ok &= item->encrypted_key_data.GetTlv(data,*size,&offset) ;
+    if(offset + EVP_MAX_IV_LENGTH >= *size)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": not enough room for IV." << std::endl;
+        return NULL ;
+    }
+    memcpy(item->iv,&((uint8_t*)data)[offset],EVP_MAX_IV_LENGTH) ;
+    offset += EVP_MAX_IV_LENGTH ;
+    
+    uint32_t n ;
+    ok &= getRawUInt32(data, *size, &offset, &n) ;
+    
+    for(uint32_t i=0;ok && i<n;++i)
+    {
+        RsGxsId gxs_id ;
+        RsTlvBinaryData bdata(0) ;
+        
+        ok &= gxs_id.deserialise(data,*size,offset) ;
+        ok &= bdata.GetTlv(data,*size,&offset) ;
+        
+        item->encrypted_session_keys[gxs_id] = bdata ;
+    }
     
     if (offset != *size)
     {
@@ -931,7 +966,11 @@ uint32_t RsNxsSessionKeyItem::serial_size() const
 {
     uint32_t s = 8; // header size
 
-    s += encrypted_key_data.TlvSize() ;
+    s += EVP_MAX_IV_LENGTH ;	// iv
+    s += 4 ; 			// encrypted_session_keys.size() ;
+    
+    for(std::map<RsGxsId,RsTlvBinaryData>::const_iterator it(encrypted_session_keys.begin());it!=encrypted_session_keys.end();++it)
+	    s += it->first.serial_size() + it->second.TlvSize() ;
 
     return s;
 }
@@ -1002,8 +1041,12 @@ void RsNxsTransacItem::clear(){
 void RsNxsEncryptedDataItem::clear(){
     aes_encrypted_data.TlvClear() ;
 }
-void RsNxsSessionKeyItem::clear(){
-    encrypted_key_data.TlvClear() ;
+void RsNxsSessionKeyItem::clear()
+{
+    for(std::map<RsGxsId,RsTlvBinaryData>::iterator it(encrypted_session_keys.begin());it!=encrypted_session_keys.end();++it)
+        it->second.TlvClear() ;
+        
+    encrypted_session_keys.clear() ;
 }
 
 std::ostream& RsNxsSyncGrpReqItem::print(std::ostream &out, uint16_t indent)
@@ -1176,13 +1219,13 @@ std::ostream& RsNxsSessionKeyItem::print(std::ostream &out, uint16_t indent)
 {
     printRsItemBase(out, "RsNxsSessionKeyItem", indent);
 
-    out << "encrypted key data: " << std::hex << std::setw(2) << std::setfill('0') ;
+    out << "  iv: " << RsUtil::BinToHex((char*)iv,EVP_MAX_IV_LENGTH) << std::endl;
     
-    for(uint32_t i=0;i<std::min(50u,encrypted_key_data.bin_len);++i)
-       out << (int)((unsigned char*)encrypted_key_data.bin_data)[i] ;
+    out << "  encrypted keys: " << std::endl;
     
-    out << std::dec << std::endl;
-
+    for(std::map<RsGxsId,RsTlvBinaryData>::const_iterator it(encrypted_session_keys.begin());it!=encrypted_session_keys.end();++it)
+       out << "     id=" << it->first << ": ekey=" << RsUtil::BinToHex((char*)it->second.bin_data,it->second.bin_len) << std::endl;
+    
     printRsItemEnd(out ,"RsNxsSessionKeyItem", indent);
     return out;
 }
@@ -1190,13 +1233,13 @@ std::ostream& RsNxsEncryptedDataItem::print(std::ostream &out, uint16_t indent)
 {
     printRsItemBase(out, "RsNxsEncryptedDataItem", indent);
 
-    out << "encrypted data: " << std::hex << std::setw(2) << std::setfill('0') ;
+    out << "  encrypted data: " << RsUtil::BinToHex((char*)aes_encrypted_data.bin_data,std::min(50u,aes_encrypted_data.bin_len)) ;
     
-    for(uint32_t i=0;i<std::min(50u,aes_encrypted_data.bin_len);++i)
-       out << (int)((unsigned char *)aes_encrypted_data.bin_data)[i] ;
+    if(aes_encrypted_data.bin_len > 50u)
+        out << "..." ;
     
-    out << std::dec << std::endl;
-
+    out << std::endl;
+    
     printRsItemEnd(out ,"RsNxsSessionKeyItem", indent);
     return out;
 }

@@ -28,6 +28,7 @@
 
 
 #include <map>
+#include <openssl/ssl.h>
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
@@ -228,7 +229,7 @@ class RsNxsSessionKeyItem : public RsNxsItem
 
 public:
 
-    RsNxsSessionKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM),encrypted_key_data(servtype) { clear(); }
+    RsNxsSessionKeyItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM) { clear(); }
     virtual ~RsNxsSessionKeyItem() {}
 
 	virtual bool serialise(void *data,uint32_t& size) const;	
@@ -239,8 +240,8 @@ public:
 
     /// Session key encrypted for the whole group
     /// 
-    RsTlvBinaryData initialisation_vector ;
-    std::map<RsGxsId, RsTlvBinaryData> encrypted_session_keys;
+    uint8_t iv[EVP_MAX_IV_LENGTH] ;					// initialisation vector
+    std::map<RsGxsId, RsTlvBinaryData> encrypted_session_keys;	// encrypted session keys
 };
 /*!
  * Use to send to peer list of grps

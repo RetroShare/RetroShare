@@ -176,16 +176,16 @@ const uint16_t TLV_TYPE_CERT_X509     = 0x0101;
 const uint16_t TLV_TYPE_CERT_OPENPGP  = 0x0102;
 
 const uint16_t TLV_TYPE_KEY_EVP_PKEY  = 0x0110; /* Used (Generic - Distrib) */
-const uint16_t TLV_TYPE_KEY_PRIV_RSA  = 0x0111; /* not used yet */
-const uint16_t TLV_TYPE_KEY_PUB_RSA   = 0x0112; /* not used yet */
+const uint16_t TLV_TYPE_KEY_PRIV_RSA  = 0x0111; /* not used yet             */
+const uint16_t TLV_TYPE_KEY_PUB_RSA   = 0x0112; /* not used yet             */
 
-const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x0120; /* Used (Distrib/Forums) */
+const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x0120; /* Used (Distrib/Forums)    */
 
-const uint16_t TLV_TYPE_BIN_IMAGE     = 0x0130; /* Used (Generic - Forums) */
-const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140; /* Used - ACTIVE! */
+const uint16_t TLV_TYPE_BIN_IMAGE     = 0x0130; /* Used (Generic - Forums)  */
+const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140; /* Used - ACTIVE!           */
 const uint16_t TLV_TYPE_BIN_SERIALISE = 0x0150; /* Used (Generic - Distrib) */
-const uint16_t TLV_TYPE_BIN_GENERIC   = 0x0160; /* Used (DSDV Data) */
-const uint16_t TLV_TYPE_BIN_ENCRYPTED = 0x0170; /* Encrypted data
+const uint16_t TLV_TYPE_BIN_GENERIC   = 0x0160; /* Used (DSDV Data)         */
+const uint16_t TLV_TYPE_BIN_ENCRYPTED = 0x0170; /* Encrypted data           */
 
 
 	/**** Compound Types ****/
