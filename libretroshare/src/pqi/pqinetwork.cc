@@ -858,16 +858,14 @@ int unix_close(int fd)
 	return ret;
 }
 
-int unix_socket(int /*domain*/, int /*type*/, int /*protocol*/)
+int unix_socket(int domain, int type, int protocol)
 {
-	int osock = socket(PF_INET, SOCK_STREAM, 0);
+	int osock = socket(domain, type, protocol);
 
-/******************* WINDOWS SPECIFIC PART ******************/
-#ifdef WINDOWS_SYS  // WINDOWS
-
+#ifdef WINDOWS_SYS
 #ifdef NET_DEBUG
 	std::cerr << "unix_socket()" << std::endl;
-#endif
+#endif // NET_DEBUG
 
 	if ((unsigned) osock == INVALID_SOCKET)
 	{
@@ -875,8 +873,8 @@ int unix_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 		osock = -1;
 		errno = WinToUnixError(WSAGetLastError());
 	}
-#endif
-/******************* WINDOWS SPECIFIC PART ******************/
+#endif // WINDOWS_SYS
+
 	return osock;
 }
 
