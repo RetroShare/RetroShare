@@ -59,7 +59,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-#define GEN_EXCH_DEBUG	1
+//#define GEN_EXCH_DEBUG	1
 
 #define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
 #define INTEGRITY_CHECK_PERIOD 60*30 //  30 minutes
@@ -470,8 +470,10 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
     if ((!grpMeta.mAuthorId.isNull()) || checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
+#ifdef GEN_EXCH_DEBUG
         std::cerr << "Needs Identity sign! (Service Flags)";
         std::cerr << std::endl;
+#endif
     }
 
     if (needIdentitySign)
@@ -508,19 +510,23 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
             {
             	mGixs->requestPrivateKey(grpMeta.mAuthorId);
 
+#ifdef GEN_EXCH_DEBUG
                 std::cerr << "RsGenExchange::createGroupSignatures(): ";
                 std::cerr << " ERROR AUTHOR KEY: " <<  grpMeta.mAuthorId
                 		  << " is not Cached / available for Message Signing\n";
                 std::cerr << "RsGenExchange::createGroupSignatures():  Requestiong AUTHOR KEY";
                 std::cerr << std::endl;
+#endif
 
                 id_ret = SIGN_FAIL_TRY_LATER;
             }
         }
         else
         {
+#ifdef GEN_EXCH_DEBUG
             std::cerr << "RsGenExchange::createGroupSignatures()";
             std::cerr << "Gixs not enabled while request identity signature validation!" << std::endl;
+#endif
             id_ret = SIGN_FAIL;
         }
     }
@@ -540,8 +546,10 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 
     bool publishSignSuccess = false;
 
+#ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::createMsgSignatures() for Msg.mMsgName: " << msgMeta.mMsgName;
     std::cerr << std::endl;
+#endif
 
 
     // publish signature is determined by whether group is public or not
@@ -576,23 +584,29 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     if (checkAuthenFlag(pos, publish_flag))
     {
         needPublishSign = true;
+#ifdef GEN_EXCH_DEBUG
         std::cerr << "Needs Publish sign! (Service Flags)";
         std::cerr << std::endl;
+#endif
     }
 
     // Check required permissions, and allow them to sign it - if they want too - as well!
     if (checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
+#ifdef GEN_EXCH_DEBUG
         std::cerr << "Needs Identity sign! (Service Flags)";
         std::cerr << std::endl;
+#endif
     }
 
     if (!msgMeta.mAuthorId.isNull())
     {
         needIdentitySign = true;
+#ifdef GEN_EXCH_DEBUG
         std::cerr << "Needs Identity sign! (AuthorId Exists)";
         std::cerr << std::endl;
+#endif
     }
 
     if(needPublishSign)
@@ -667,19 +681,23 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
             {
             	mGixs->requestPrivateKey(msgMeta.mAuthorId);
 
+#ifdef GEN_EXCH_DEBUG
                 std::cerr << "RsGenExchange::createMsgSignatures(): ";
                 std::cerr << " ERROR AUTHOR KEY: " <<  msgMeta.mAuthorId
                 		  << " is not Cached / available for Message Signing\n";
                 std::cerr << "RsGenExchange::createMsgSignatures():  Requestiong AUTHOR KEY";
                 std::cerr << std::endl;
+#endif
 
                 id_ret = SIGN_FAIL_TRY_LATER;
             }
         }
         else
         {
+#ifdef GEN_EXCH_DEBUG
             std::cerr << "RsGenExchange::createMsgSignatures()";
             std::cerr << "Gixs not enabled while request identity signature validation!" << std::endl;
+#endif
             id_ret = SIGN_FAIL;
         }
     }
@@ -953,8 +971,10 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
     if ((!metaData.mAuthorId.isNull()) || checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
+#ifdef GEN_EXCH_DEBUG
         std::cerr << "Needs Identity sign! (Service Flags)";
         std::cerr << std::endl;
+#endif
     }
 
 	if(needIdentitySign)
@@ -1805,8 +1825,10 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
         grpMeta = mit->second;
         if (!grpMeta)
         {
+#ifdef GEN_EXCH_DEBUG
             std::cerr << "RsGenExchange::processGrpMask() Ignore update for not existing grp id " << grpId.toStdString();
             std::cerr << std::endl;
+#endif
             return false;
         }
         ok = true;
@@ -2945,7 +2967,9 @@ void RsGenExchange::removeDeleteExistingMessages( RsGeneralDataService::MsgStore
 	{
 		const RsGxsMessageId::std_vector& msgIds = msgIdReq[cit2->second->mGroupId];
 
+#ifdef GEN_EXCH_DEBUG
 		std::cerr << "    grpid=" << cit2->second->mGroupId << ", msgid=" << cit2->second->mMsgId ;
+#endif
 
 		// Avoid storing messages that are already in the database, as well as messages that are too old (or generally do not pass the database storage test)
 		//
