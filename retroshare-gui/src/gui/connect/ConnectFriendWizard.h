@@ -30,7 +30,7 @@ class ConnectFriendWizard : public QWizard
 	Q_PROPERTY(QString titleColor READ titleColor WRITE setTitleColor)
 
 public:
-	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_Email, Page_FriendRequest, Page_FriendRecommendations };
+	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_WebMail, Page_Email, Page_FriendRequest, Page_FriendRecommendations };
 
 	ConnectFriendWizard(QWidget *parent = 0);
 	~ConnectFriendWizard();
@@ -81,6 +81,14 @@ private slots:
 
 	/* ConclusionPage */
 	void groupCurrentIndexChanged(int index);
+	
+	/* WebMailPage */
+    void inviteGmail();
+    void inviteYahoo();
+    void inviteOutlook();
+    void inviteAol();
+    void inviteYandex();
+
 
 private:
 	// returns the translated error string for the error code (to be found in rspeers.h)
@@ -109,6 +117,10 @@ private:
 
 	/* ConclusionPage */
 	QString groupId;
+	
+	/* WebMailPage */
+  QString subject;
+	QString body;
 
 	Ui::ConnectFriendWizard *ui;
 };

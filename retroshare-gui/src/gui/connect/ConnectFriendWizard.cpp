@@ -103,7 +103,19 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	ui->requestinfolabel->hide();
 
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
-	connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
+    connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
+	
+	connect(ui->gmailButton, SIGNAL(clicked()), this, SLOT(inviteGmail()));
+    connect(ui->yahooButton, SIGNAL(clicked()), this, SLOT(inviteYahoo()));
+    connect(ui->outlookButton, SIGNAL(clicked()), this, SLOT(inviteOutlook()));
+    connect(ui->aolButton, SIGNAL(clicked()), this, SLOT(inviteAol()));
+    connect(ui->yandexButton, SIGNAL(clicked()), this, SLOT(inviteYandex()));
+    
+    subject = tr("RetroShare Invitation");
+    body = GetStartedDialog::GetInviteText();
+	
+    body += "\n" + GetStartedDialog::GetCutBelowText();
+    body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
 
 	updateStylesheet();
 }
@@ -351,6 +363,8 @@ void ConnectFriendWizard::initializePage(int id)
 	case Page_Rsid:
 		ui->RsidPage->registerField("friendRSID*", ui->friendRsidEdit);
 		break;
+	case Page_WebMail:
+
 	case Page_Email:
 		{
 		ui->EmailPage->registerField("addressEdit*", ui->addressEdit);
@@ -739,6 +753,7 @@ int ConnectFriendWizard::nextId() const
 		if (ui->certRadioButton->isChecked()) return Page_Cert;
 		if (ui->foffRadioButton->isChecked()) return Page_Foff;
 		if (ui->rsidRadioButton->isChecked()) return Page_Rsid;
+		if (ui->webmailRadioButton->isChecked()) return Page_WebMail;
 		if (ui->emailRadioButton->isChecked()) return Page_Email;
 		if (ui->friendRecommendationsRadioButton->isChecked()) return Page_FriendRecommendations;
 		return ConnectFriendWizard::Page_Foff;
@@ -747,6 +762,7 @@ int ConnectFriendWizard::nextId() const
 	case Page_Rsid:
 		return error ? ConnectFriendWizard::Page_Conclusion : ConnectFriendWizard::Page_ErrorMessage;
 	case Page_Foff:
+	case Page_WebMail:
 	case Page_Email:
 	case Page_ErrorMessage:
 	case Page_Conclusion:
@@ -1214,4 +1230,29 @@ void ConnectFriendWizard::groupCurrentIndexChanged(int index)
 	}
 }
 
+//========================== WebMailPage ==================================
 
+void ConnectFriendWizard::inviteGmail()
+{
+    QDesktopServices::openUrl(QUrl("https://mail.google.com/mail/?view=cm&fs=1&su=" + subject + "&body=" + body , QUrl::TolerantMode));
+}
+
+void ConnectFriendWizard::inviteYahoo()
+{
+    QDesktopServices::openUrl(QUrl("http://compose.mail.yahoo.com/?&subject=" + subject + "&body=" + body, QUrl::TolerantMode));
+}
+
+void ConnectFriendWizard::inviteOutlook()
+{
+    QDesktopServices::openUrl(QUrl("http://mail.live.com/mail/EditMessageLight.aspx?n=&subject=" + subject + "&body=" + body, QUrl::TolerantMode));
+}
+
+void ConnectFriendWizard::inviteAol()
+{
+    QDesktopServices::openUrl(QUrl("http://webmail.aol.com/Mail/ComposeMessage.aspx?&subject=" + subject + "&body=" + body, QUrl::TolerantMode));
+}
+
+void ConnectFriendWizard::inviteYandex()
+{
+    QDesktopServices::openUrl(QUrl("https://mail.yandex.com/neo2/#compose/subject=" + subject + "&body=" + body, QUrl::TolerantMode));
+}
