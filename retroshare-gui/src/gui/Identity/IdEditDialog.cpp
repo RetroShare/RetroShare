@@ -113,10 +113,16 @@ void IdEditDialog::changeAvatar()
 	}
 }
 
-void IdEditDialog::setupNewId(bool pseudo)
+void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
 {
 	setWindowTitle(tr("New identity"));
 
+    	if(pseudo && !enable_anon)
+        {
+            std::cerr << "IdEditDialog::setupNewId: Error. Cannot init with pseudo-anonymous id when anon ids are disabled." << std::endl;
+            pseudo = false ;
+        }
+        
 	mIsNew = true;
 	mGroupId.clear();
 
@@ -139,7 +145,11 @@ void IdEditDialog::setupNewId(bool pseudo)
 
 	ui->frame_Tags->setHidden(true);
 	ui->radioButton_GpgId->setEnabled(true);
-	ui->radioButton_Pseudo->setEnabled(true);
+    
+    	if(enable_anon)
+		ui->radioButton_Pseudo->setEnabled(true);
+        else
+		ui->radioButton_Pseudo->setEnabled(false);
 
 	setAvatar(QPixmap());
 
