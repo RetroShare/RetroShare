@@ -880,7 +880,28 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			    idValidate = false;
 		    }
 
-//            	if(signFlag & GXS_SERV::
+            	if(idValidate && (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
+                {
+                    // get key data and check that the key is actually PGP-linked. If not, reject the post.
+                    
+                    RsIdentityDetails details ;
+                    
+                    if(!mGixs->getIdDetails(metaData.mAuthorId,details))
+		    {
+			    // the key cannot ke reached, although it's in cache. Weird situation.
+			    idValidate = false;
+			    std::cerr << "RsGenExchange::validateMsg(): cannot get key data for ID=" << metaData.mAuthorId << ", although it's supposed to be already in cache. Cannot validate." << std::endl;
+			    idValidate = false ;
+		    }
+                    
+                    if(!details.mPgpLinked)
+                    {
+#ifdef GEN_EXCH_DEBUG	
+			    std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because key is not PGP linked and the group requires it." << std::endl;
+#endif
+			    idValidate = false ;
+                    }
+                }
 	    }
             else
             {
