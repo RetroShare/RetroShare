@@ -129,6 +129,10 @@ void GxsGroupDialog::init()
 	
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
 
+    	ui.personal_ifnopub->hide() ;
+    	ui.personal_required->hide() ;
+    	ui.personal_required->setChecked(true) ;	// this is always true
+
 	initMode();
 }
 
@@ -592,15 +596,15 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 	}
 
 	// Author Signature.
-	if (ui.personal_pgp->isChecked()) {
+	if (ui.personal_pgp->isChecked()) 
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
-	} else if (ui.personal_required->isChecked()) {
+    
+	if (ui.personal_required->isChecked()) 
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
-	} else if (ui.personal_ifnopub->isChecked()) {
+    
+	if (ui.personal_ifnopub->isChecked()) 
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
-	} else { // shouldn't allow this one.
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_NONE;
-	}
+    
 	return signFlags;
 }
 
@@ -616,17 +620,15 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 		ui.publish_open->setChecked(true);
 	}
 
-	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) {
+	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) 
 		ui.personal_pgp->setChecked(true);
-	} else if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED) {
+    
+	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED) 
 		ui.personal_required->setChecked(true);
-	} else if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) {
+    
+	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
 		ui.personal_ifnopub->setChecked(true);
-	} else if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_NONE) {
-		// Its the same... but not quite.
-		//ui.personal_noifpub->setChecked();
-	}
-
+    
 	/* guess at comments */
 	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
 	    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN))

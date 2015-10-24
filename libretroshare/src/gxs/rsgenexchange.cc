@@ -49,7 +49,9 @@
 #define PRIV_GRP_OFFSET      16
 #define GRP_OPTIONS_OFFSET   24
 
-/** authentication key indices. Used to store them in a map **/
+// Authentication key indices. Used to store them in a map 
+// these where originally flags, but used as indexes. Still, we need
+// to keep their old values to ensure backward compatibility.
 
 static const uint32_t INDEX_AUTHEN_IDENTITY     = 0x00000010; // identity
 static const uint32_t INDEX_AUTHEN_PUBLISH      = 0x00000020; // publish key

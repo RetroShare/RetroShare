@@ -122,7 +122,7 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= setRawUInt32(data, tlvsize, &offset, mGroupFlags);
     ok &= setRawUInt32(data, tlvsize, &offset, mPublishTs);
     ok &= setRawUInt32(data, tlvsize, &offset, mCircleType);
-    ok &= setRawUInt32(data, tlvsize, &offset, mAuthenFlags);
+    ok &= setRawUInt32(data, tlvsize, &offset, mSignFlags);
     ok &= mAuthorId.serialise(data, tlvsize, offset);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mServiceString);
     ok &= mCircleId.serialise(data, tlvsize, offset);
@@ -153,7 +153,7 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= getRawUInt32(data, pktsize, &offset, &mGroupFlags);
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
     ok &= getRawUInt32(data, pktsize, &offset, &mCircleType);
-    ok &= getRawUInt32(data, pktsize, &offset, &mAuthenFlags);
+    ok &= getRawUInt32(data, pktsize, &offset, &mSignFlags);
     ok &= mAuthorId.deserialise(data, pktsize, offset);
     ok &= GetTlvString(data, pktsize, &offset, 0, mServiceString);
     ok &= mCircleId.deserialise(data, pktsize, offset);

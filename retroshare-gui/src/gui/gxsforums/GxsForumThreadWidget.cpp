@@ -733,12 +733,16 @@ void GxsForumThreadWidget::insertGroupData()
     const RsGxsForumGroup& group = tw->mForumGroup;
 
     tw->mSubscribeFlags = group.mMeta.mSubscribeFlags;
+    tw->mSignFlags = group.mMeta.mSignFlags;
     tw->ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
+    QString anon_allowed_str = (IS_GROUP_PGP_AUTHED(tw->mSignFlags))?tr("No"):tr("Yes") ;
+    
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anonymous post allowed")).arg(anon_allowed_str);
     tw->mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
 
     tw->ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags));
@@ -1800,6 +1804,7 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 void GxsForumThreadWidget::requestGroupData()
 {
 	mSubscribeFlags = 0;
+	mSignFlags = 0;
 	mForumDescription.clear();
 
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypeGroupData);
