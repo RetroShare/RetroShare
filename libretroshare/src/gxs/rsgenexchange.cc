@@ -49,9 +49,15 @@
 #define PRIV_GRP_OFFSET      16
 #define GRP_OPTIONS_OFFSET   24
 
+/** authentication key indices. Used to store them in a map **/
+
+static const uint32_t INDEX_AUTHEN_IDENTITY     = 0x00000010; // identity
+static const uint32_t INDEX_AUTHEN_PUBLISH      = 0x00000020; // publish key
+static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
+
 #define GXS_MASK "GXS_MASK_HACK"
 
-//#define GEN_EXCH_DEBUG	1
+#define GEN_EXCH_DEBUG	1
 
 #define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
 #define INTEGRITY_CHECK_PERIOD 60*30 //  30 minutes
@@ -416,7 +422,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
     bool ok = GxsSecurity::getSignature(allGrpData, allGrpDataLen, privAdminKey, adminSign);
 
     // add admin sign to grpMeta
-    meta->signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_ADMIN] = adminSign;
+    meta->signSet.keySignSet[INDEX_AUTHEN_ADMIN] = adminSign;
 
     RsTlvBinaryData grpData(mServType);
 	grpData.setBinData(allGrpData, allGrpDataLen);
@@ -494,7 +500,7 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
                 	id_ret = SIGN_FAIL;
                 }
 
-                signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY] = sign;
+                signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
             }
             else
             {
@@ -609,12 +615,12 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
             // private publish key
             publishKey = &(mit->second);
 
-            RsTlvKeySignature publishSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+            RsTlvKeySignature publishSign = signSet.keySignSet[INDEX_AUTHEN_PUBLISH];
 
             publishSignSuccess = GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, *publishKey, publishSign);
 
             //place signature in msg meta
-            signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH] = publishSign;
+            signSet.keySignSet[INDEX_AUTHEN_PUBLISH] = publishSign;
         }else
         {
         	std::cerr << "RsGenExchange::createMsgSignatures()";
@@ -653,7 +659,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
                 	id_ret = SIGN_FAIL;
                 }
 
-                signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY] = sign;
+                signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
             }
             else
             {
@@ -763,7 +769,7 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 	}
 }
 
-int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet)
+int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uint32_t& signFlag, RsTlvSecurityKeySet& grpKeySet)
 {
     bool needIdentitySign = false;
     bool needPublishSign = false;
@@ -796,12 +802,16 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
     if ((checkAuthenFlag(pos, author_flag)) || (!msg->metaData->mAuthorId.isNull()))
         needIdentitySign = true;
 
+#ifdef GEN_EXCH_DEBUG	
+    std::cerr << "Validate message: msgId=" << msg->msgId << ", grpId=" << msg->grpId << " grpFlags=" << std::hex << grpFlag << std::dec
+              << ". Need publish=" << needPublishSign << ", needIdentitySign=" << needIdentitySign ;
+#endif
 
     RsGxsMsgMetaData& metaData = *(msg->metaData);
 
     if(needPublishSign)
     {
-        RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
+        RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_PUBLISH];
 
         std::map<RsGxsId, RsTlvSecurityKey>& keys = grpKeySet.keys;
         std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keys.begin();
@@ -849,31 +859,36 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
             bool haveKey = mGixs->haveKey(metaData.mAuthorId);
 
             if(haveKey)
-            {
+	    {
 
-                RsTlvSecurityKey authorKey;
-                bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) ;
+		    RsTlvSecurityKey authorKey;
+		    bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) ;
 
-				if (auth_key_fetched)
-				{
+		    if (auth_key_fetched)
+		    {
+			    RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_IDENTITY];
+			    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
+			    mGixs->timeStampKey(metaData.mAuthorId) ;
+		    }
+		    else
+		    {
+			    std::cerr << "RsGenExchange::validateMsg()";
+			    std::cerr << " ERROR Cannot Retrieve AUTHOR KEY for Message Validation";
+			    std::cerr << std::endl;
+			    idValidate = false;
+		    }
 
-	                RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
-                    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
-            mGixs->timeStampKey(metaData.mAuthorId) ;
-				}
-				else
-				{
-                     std::cerr << "RsGenExchange::validateMsg()";
-                     std::cerr << " ERROR Cannot Retrieve AUTHOR KEY for Message Validation";
-                     std::cerr << std::endl;
-                     idValidate = false;
-                }
-
-            }else
+//            	if(signFlag & GXS_SERV::
+	    }
+            else
             {
                 std::list<RsPeerId> peers;
                 peers.push_back(msg->PeerId());
                 mGixs->requestKey(metaData.mAuthorId, peers);
+                
+#ifdef GEN_EXCH_DEBUG
+                std::cerr << ", Key missing. Retry later." << std::endl;
+#endif
                 return VALIDATE_FAIL_TRY_LATER;
             }
         }
@@ -890,6 +905,10 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
     	idValidate = true;
     }
 
+#ifdef GEN_EXCH_DEBUG
+    std::cerr << ", publish val=" << publishValidate << ", idValidate=" << idValidate << ". Result=" << (publishValidate && idValidate) << std::endl;
+#endif
+    
     if(publishValidate && idValidate)
     	return VALIDATE_SUCCESS;
     else
@@ -930,7 +949,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 				if (auth_key_fetched)
 				{
 
-					RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_IDENTITY];
+					RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_IDENTITY];
                     idValidate = GxsSecurity::validateNxsGrp(*grp, sign, authorKey);
 
                     mGixs->timeStampKey(metaData.mAuthorId) ;
@@ -2530,9 +2549,12 @@ void RsGenExchange::processRecvdMessages()
             if(mit != grpMetas.end())
             {
                 RsGxsGrpMetaData* grpMeta = mit->second;
-                validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->keys);
+                validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->mSignFlags, grpMeta->keys);
+                
 #ifdef GEN_EXCH_DEBUG
-					 std::cerr << "    message validation result: " << validateReturn << std::endl;
+		std::cerr << "    grpMeta.mSignFlags: " << std::hex << grpMeta->mSignFlags << std::dec << std::endl;
+		std::cerr << "    grpMeta.mAuthFlags: " << std::hex << grpMeta->mAuthenFlags << std::dec << std::endl;
+		std::cerr << "    message validation result: " << (int)validateReturn << std::endl;
 #endif
             }
 
@@ -2821,7 +2843,7 @@ void RsGenExchange::performUpdateValidation()
 bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) const
 {
 	std::map<SignType, RsTlvKeySignature>& signSet = newGrp.metaData->signSet.keySignSet;
-	std::map<SignType, RsTlvKeySignature>::iterator mit = signSet.find(GXS_SERV::FLAG_AUTHEN_ADMIN);
+	std::map<SignType, RsTlvKeySignature>::iterator mit = signSet.find(INDEX_AUTHEN_ADMIN);
 
 	if(mit == signSet.end())
 	{

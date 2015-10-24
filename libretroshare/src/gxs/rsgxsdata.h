@@ -52,7 +52,7 @@ public:
     RsGxsGroupId mGroupId;
     RsGxsGroupId mOrigGrpId;
     std::string mGroupName;
-    uint32_t    mGroupFlags;
+    uint32_t    mGroupFlags;	// GXS_SERV::FLAG_PRIVACY_RESTRICTED | GXS_SERV::FLAG_PRIVACY_PRIVATE | GXS_SERV::FLAG_PRIVACY_PUBLIC
     uint32_t    mPublishTs;
     uint32_t    mSignFlags;
     RsGxsId mAuthorId;
