@@ -62,6 +62,7 @@ private slots:
 	void toggleSignatureState(bool doUpdate = true);
 	void toggleFormatState(bool doUpdate = true);
 	void runEmailClient();
+	void runEmailClient2();
 	void showHelpUserCert();
 	void copyCert();
 	void pasteCert();

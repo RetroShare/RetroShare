@@ -105,11 +105,13 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
     connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
 	
-	connect(ui->gmailButton, SIGNAL(clicked()), this, SLOT(inviteGmail()));
+    connect(ui->gmailButton, SIGNAL(clicked()), this, SLOT(inviteGmail()));
     connect(ui->yahooButton, SIGNAL(clicked()), this, SLOT(inviteYahoo()));
     connect(ui->outlookButton, SIGNAL(clicked()), this, SLOT(inviteOutlook()));
     connect(ui->aolButton, SIGNAL(clicked()), this, SLOT(inviteAol()));
     connect(ui->yandexButton, SIGNAL(clicked()), this, SLOT(inviteYandex()));
+    connect(ui->emailButton, SIGNAL(clicked()), this, SLOT(runEmailClient2()));
+
     
     subject = tr("RetroShare Invitation");
     body = GetStartedDialog::GetInviteText();
@@ -1255,4 +1257,9 @@ void ConnectFriendWizard::inviteAol()
 void ConnectFriendWizard::inviteYandex()
 {
     QDesktopServices::openUrl(QUrl("https://mail.yandex.com/neo2/#compose/subject=" + subject + "&body=" + body, QUrl::TolerantMode));
+}
+
+void ConnectFriendWizard::runEmailClient2()
+{
+	sendMail("", subject, body );
 }
