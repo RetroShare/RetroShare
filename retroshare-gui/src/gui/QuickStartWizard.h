@@ -60,6 +60,9 @@ private Q_SLOTS:
         void on_pushButtonSharesExit_clicked();
         void on_pushButtonSharesNext_clicked();
         void on_pushButtonSharesBack_clicked();
+        void on_pushButtonStyleExit_clicked();
+        void on_pushButtonStyleNext_clicked();
+        void on_pushButtonStyleBack_clicked();
         void on_pushButtonWelcomeExit_clicked();
         void on_pushButtonWelcomeNext_clicked();
         void on_pushButtonConnectionExit_clicked();

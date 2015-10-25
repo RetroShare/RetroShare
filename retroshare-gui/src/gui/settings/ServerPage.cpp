@@ -227,6 +227,10 @@ void ServerPage::load()
         loadFilteredIps() ;
 
     ui.netModeComboBox->show() ;
+    ui.textlabel_upnp->show();
+    ui.iconlabel_upnp->show();
+    ui.label_nat->show();
+
 	ui.hiddenMode_LB->hide() ;
 	ui.iconlabel_hiddenMode->hide() ;
 
@@ -880,6 +884,10 @@ void ServerPage::loadHiddenNode()
 	// FIXED.
 	//ui.netModeComboBox->setCurrentIndex(3);
 	ui.netModeComboBox->hide();
+	ui.textlabel_upnp->hide();
+	ui.iconlabel_upnp->hide();
+	ui.label_nat->hide();
+	
 	ui.hiddenMode_LB->show();
 	ui.iconlabel_hiddenMode->show() ;
 	ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
