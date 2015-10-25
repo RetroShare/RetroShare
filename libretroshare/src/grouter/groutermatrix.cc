@@ -284,55 +284,78 @@ bool GRouterMatrix::saveList(std::list<RsItem*>& items)
     std::cerr << "  GRoutingMatrix::saveList()" << std::endl;
 #endif
 
-	RsGRouterMatrixFriendListItem *item = new RsGRouterMatrixFriendListItem ;
+    RsGRouterMatrixFriendListItem *item = new RsGRouterMatrixFriendListItem ;
 
-	item->reverse_friend_indices = _reverse_friend_indices ;
-	items.push_back(item) ;
+    item->reverse_friend_indices = _reverse_friend_indices ;
+    items.push_back(item) ;
 
-	for(std::map<GRouterKeyId,std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
-	{
-		RsGRouterMatrixCluesItem *item = new RsGRouterMatrixCluesItem ;
+    for(std::map<GRouterKeyId,std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
+    {
+	    RsGRouterMatrixCluesItem *item = new RsGRouterMatrixCluesItem ;
 
-		item->destination_key = it->first ;
-		item->clues = it->second ;
+	    item->destination_key = it->first ;
+	    item->clues = it->second ;
 
-		items.push_back(item) ;
-	}
+	    items.push_back(item) ;
+    }
 
-	return true ;
+    for(std::map<RsGxsMessageId,RoutingTrackEntry>::const_iterator it(_tracking_clues.begin());it!=_tracking_clues.end();++it)
+    {
+	    RsGRouterMatrixTrackItem *item = new RsGRouterMatrixTrackItem ;
+
+	    item->provider_id = it->second.friend_id ;
+	    item->time_stamp = it->second.time_stamp ;
+	    item->message_id = it->first ;
+
+	    items.push_back(item) ;
+    }
+
+    return true ;
 }
 bool GRouterMatrix::loadList(std::list<RsItem*>& items) 
 {
-	RsGRouterMatrixFriendListItem *itm1 = NULL ;
-	RsGRouterMatrixCluesItem      *itm2 = NULL ;
+    RsGRouterMatrixFriendListItem *itm1 = NULL ;
+    RsGRouterMatrixCluesItem      *itm2 = NULL ;
+    RsGRouterMatrixTrackItem      *itm3 = NULL ;
 
 #ifdef ROUTING_MATRIX_DEBUG
     std::cerr << "  GRoutingMatrix::loadList()" << std::endl;
 #endif
 
-	for(std::list<RsItem*>::const_iterator it(items.begin());it!=items.end();++it)
-	{
-		if(NULL != (itm2 = dynamic_cast<RsGRouterMatrixCluesItem*>(*it)))
-		{
+    for(std::list<RsItem*>::const_iterator it(items.begin());it!=items.end();++it)
+    {
+	    if(NULL != (itm3 = dynamic_cast<RsGRouterMatrixTrackItem*>(*it)))
+	    {
 #ifdef ROUTING_MATRIX_DEBUG
-            std::cerr << "    initing routing clues." << std::endl;
+		    std::cerr << "    initing tracking clues." << std::endl;
+#endif
+		    RoutingTrackEntry rte ;
+		    rte.friend_id = itm3->provider_id ;
+		    rte.time_stamp = itm3->time_stamp ;
+
+		    _tracking_clues[itm3->message_id] = rte;
+	    }
+	    if(NULL != (itm2 = dynamic_cast<RsGRouterMatrixCluesItem*>(*it)))
+	    {
+#ifdef ROUTING_MATRIX_DEBUG
+		    std::cerr << "    initing routing clues." << std::endl;
 #endif
 
-			_routing_clues[itm2->destination_key] = itm2->clues ;
-			_proba_need_updating = true ;	// notifies to re-compute all the info.
-		}
-		if(NULL != (itm1 = dynamic_cast<RsGRouterMatrixFriendListItem*>(*it)))
-		{
-			_reverse_friend_indices = itm1->reverse_friend_indices ;
-			_friend_indices.clear() ;
+		    _routing_clues[itm2->destination_key] = itm2->clues ;
+		    _proba_need_updating = true ;	// notifies to re-compute all the info.
+	    }
+	    if(NULL != (itm1 = dynamic_cast<RsGRouterMatrixFriendListItem*>(*it)))
+	    {
+		    _reverse_friend_indices = itm1->reverse_friend_indices ;
+		    _friend_indices.clear() ;
 
-			for(uint32_t i=0;i<_reverse_friend_indices.size();++i)
-				_friend_indices[_reverse_friend_indices[i]] = i ;
+		    for(uint32_t i=0;i<_reverse_friend_indices.size();++i)
+			    _friend_indices[_reverse_friend_indices[i]] = i ;
 
-			_proba_need_updating = true ;	// notifies to re-compute all the info.
-		}
-	}
+		    _proba_need_updating = true ;	// notifies to re-compute all the info.
+	    }
+    }
 
-	return true ;
+    return true ;
 }
 

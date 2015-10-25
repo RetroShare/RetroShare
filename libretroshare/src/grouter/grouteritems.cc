@@ -45,17 +45,18 @@ RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-        case RS_PKT_SUBTYPE_GROUTER_DATA:   		return deserialise_RsGRouterGenericDataItem     (data, *pktsize);
-        case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK:  return deserialise_RsGRouterTransactionChunkItem(data, *pktsize);
-            case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:   return deserialise_RsGRouterTransactionAcknItem (data, *pktsize);
-            case RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT:    	return deserialise_RsGRouterSignedReceiptItem   (data, *pktsize);
-            case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:	return deserialise_RsGRouterMatrixCluesItem     (data, *pktsize);
-		case RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST:	return deserialise_RsGRouterMatrixFriendListItem(data, *pktsize);
-        case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:	return deserialise_RsGRouterRoutingInfoItem     (data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_DATA:              return deserialise_RsGRouterGenericDataItem     (data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK: return deserialise_RsGRouterTransactionChunkItem(data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN:  return deserialise_RsGRouterTransactionAcknItem (data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT:    return deserialise_RsGRouterSignedReceiptItem   (data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:      return deserialise_RsGRouterMatrixCluesItem     (data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK:      return deserialise_RsGRouterMatrixTrackItem     (data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST:      return deserialise_RsGRouterMatrixFriendListItem(data, *pktsize);
+	case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:      return deserialise_RsGRouterRoutingInfoItem     (data, *pktsize);
 
-		default:
-				std::cerr << "RsGRouterSerialiser::deserialise(): Could not de-serialise item. SubPacket id = " << std::hex << getRsItemSubType(rstype) << " id = " << rstype << std::dec << std::endl;
-			return NULL;
+	default:
+		std::cerr << "RsGRouterSerialiser::deserialise(): Could not de-serialise item. SubPacket id = " << std::hex << getRsItemSubType(rstype) << " id = " << rstype << std::dec << std::endl;
+		return NULL;
 	}
 	return NULL;
 }
@@ -260,6 +261,28 @@ RsGRouterMatrixFriendListItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixF
 	for(uint32_t i=0;ok && i<nb_friends;++i)
         ok &= item->reverse_friend_indices[i].deserialise(data, pktsize, offset) ;
 
+	if (offset != rssize || !ok)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		delete item;
+		return NULL ;
+	}
+
+	return item;
+}
+
+RsGRouterMatrixTrackItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixTrackItem(void *data, uint32_t pktsize) const
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	RsGRouterMatrixTrackItem *item = new RsGRouterMatrixTrackItem() ;
+
+	ok &= getRawUInt32(data, pktsize, &offset, &item->provider_id) ;
+	ok &= item->message_id.deserialise(data,pktsize,offset) ;
+	ok &= getRawTimeT(data, pktsize, &offset, item->time_stamp) ;
+    
 	if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
@@ -559,6 +582,17 @@ uint32_t RsGRouterMatrixFriendListItem::serial_size() const
 
 	return s ;
 }
+
+uint32_t RsGRouterMatrixTrackItem::serial_size() const
+{
+	uint32_t s = 8 ; 			// header
+	s += 8  ; 				// time_stamp
+	s += RsPeerId::SIZE_IN_BYTES;          // provider_id
+	s += RsMessageId::SIZE_IN_BYTES;       // message_id
+
+	return s ;
+}
+
 uint32_t RsGRouterRoutingInfoItem::serial_size() const
 {
     uint32_t s = 8 ; 			// header
@@ -637,6 +671,26 @@ bool RsGRouterMatrixCluesItem::serialise(void *data,uint32_t& size) const
 	return ok;
 }
 
+bool RsGRouterMatrixTrackItem::serialise(void *data,uint32_t& size) const
+{
+	uint32_t tlvsize,offset=0;
+	bool ok = true;
+	
+	if(!serialise_header(data,size,tlvsize,offset))
+		return false ;
+
+	ok &= setRawUInt32(data, tlvsize, &offset, provider_id) ;
+	ok &= message_id.serialise(data,tlvsize,offset) ;
+	ok &= setRawTimeT(data, tlvsize, &offset, time_stamp) ;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsGRouterMatrixTrackItem::serialisedata() size error! " << std::endl;
+	}
+
+	return ok;
+}
 bool FriendTrialRecord::deserialise(void *data,uint32_t& offset,uint32_t size)
 {
 	bool ok = true ;
@@ -701,6 +755,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
 //
+
 std::ostream& RsGRouterSignedReceiptItem::print(std::ostream& o, uint16_t)
 {
     o << "RsGRouterReceiptItem:" << std::endl ;
@@ -746,6 +801,15 @@ std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
 	return o ;
 }
 
+std::ostream& RsGRouterMatrixTrackItem::print(std::ostream& o, uint16_t)
+{
+	o << "RsGRouterMatrixTrackItem:" << std::endl ;
+	o << "  provider_id:  " << provider_id << std::endl;
+	o << "  message_id:  " << message_id << std::endl;
+	o << "  time_stamp:  " << time_stamp << std::endl;
+
+	return o ;
+}
 std::ostream& RsGRouterMatrixCluesItem::print(std::ostream& o, uint16_t)
 {
 	o << "RsGRouterMatrixCluesItem:" << std::endl ;
