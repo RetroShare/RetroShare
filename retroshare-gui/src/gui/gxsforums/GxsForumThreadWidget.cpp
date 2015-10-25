@@ -922,7 +922,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
     
     	// Show info about who passed on this message.
-	item->setToolTip(COLUMN_THREAD_TITLE,tr("This message was obtained from %1").arg(QString::fromStdString(msg.mMeta.mProviderId.toStdString())));
+    	if( (mForumGroup.mMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) && !msg.mMeta.mProviderId.isNull() )
+		item->setToolTip(COLUMN_THREAD_TITLE,tr("This message was obtained from %1").arg(QString::fromStdString(msg.mMeta.mProviderId.toStdString())));
 //#TODO
 #if 0
 	text = QString::fromUtf8(authorName.c_str());

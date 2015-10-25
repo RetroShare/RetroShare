@@ -298,7 +298,10 @@ void GxsGroupDialog::setupDefaults()
 			ui.comments_no->setChecked(true);
 			ui.comments_no_3->setChecked(true);
 		}
-    }
+	}
+	    ui.antispam_keepTrackOfPosts->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
+	    ui.antispam_favorSignedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+        
 #ifndef RS_USE_CIRCLES
     ui.typeGroup->setEnabled(false);
     ui.typeLocal->setEnabled(false);
@@ -595,15 +598,18 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ;
 	}
 
-	// Author Signature.
-	if (ui.personal_pgp->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
-    
 	if (ui.personal_required->isChecked()) 
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
     
 	if (ui.personal_ifnopub->isChecked()) 
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
+    
+	// Author Signature.
+	if (ui.antispam_favorSignedIds->isChecked()) 
+		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
+    
+	if (ui.antispam_keepTrackOfPosts->isChecked()) 
+		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
     
 	return signFlags;
 }
@@ -620,14 +626,14 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 		ui.publish_open->setChecked(true);
 	}
 
-	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) 
-		ui.personal_pgp->setChecked(true);
-    
 	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED) 
 		ui.personal_required->setChecked(true);
     
 	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
 		ui.personal_ifnopub->setChecked(true);
+    
+    	ui.antispam_keepTrackOfPosts->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+	ui.antispam_favorSignedIds  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
     
 	/* guess at comments */
 	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
