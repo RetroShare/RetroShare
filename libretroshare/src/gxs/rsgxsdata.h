@@ -123,7 +123,6 @@ public:
     uint32_t recvTS;
     RsFileHash mHash;
     bool validated;
-
 };
 
 

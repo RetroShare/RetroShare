@@ -24,7 +24,6 @@
         this->mPublishTs = rGxsMeta.mPublishTs;
         this->mThreadId = rGxsMeta.mThreadId;
         this->mServiceString = rGxsMeta.mServiceString;
-
     }
 
 

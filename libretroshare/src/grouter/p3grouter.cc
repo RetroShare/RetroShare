@@ -252,6 +252,7 @@ int p3GRouter::tick()
 
         _last_matrix_update_time = now ;
         _routing_matrix.updateRoutingProbabilities() ;		// This should be locked.
+        _routing_matrix.cleanUp() ;				// This should be locked.
     }
 
 #ifdef GROUTER_DEBUG
@@ -1698,6 +1699,14 @@ bool p3GRouter::locked_getClientAndServiceId(const TurtleFileHash& hash, const R
     return true ;
 }
 
+void p3GRouter::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_id)
+{
+    RS_STACK_MUTEX(grMtx) ;
+#ifdef GROUTER_DEBUG
+    grouter_debug() << "Received new routing clue for key " << id << " from peer " << peer_id << std::endl;
+#endif
+    _routing_matrix.addTrackingInfo(mid,peer_id) ;
+}
 void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
 {
     RS_STACK_MUTEX(grMtx) ;

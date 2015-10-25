@@ -33,6 +33,7 @@
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgrouter.h"
+#include "retroshare/rspeers.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
 #include "rsserver/p3face.h"
@@ -2001,6 +2002,10 @@ void RsGenExchange::publishMsgs()
 				msgId = msg->msgId;
 				grpId = msg->grpId;
 				msg->metaData->recvTS = time(NULL);
+                
+				mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
+				mTrackingClues.push_back(std::make_pair(msg->msgId,rsPeers->getOwnId())) ;
+                
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
 				msgChangeMap[grpId].push_back(msgId);
@@ -2134,13 +2139,18 @@ void RsGenExchange::processGroupUpdatePublish()
 
 void RsGenExchange::processRoutingClues()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+    RS_STACK_MUTEX(mGenMtx) ;
 
     for(std::map<RsGxsId,std::set<RsPeerId> >::const_iterator it = mRoutingClues.begin();it!=mRoutingClues.end();++it)
         for(std::set<RsPeerId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
-            rsGRouter->addRoutingClue(GRouterKeyId(it->first),(*it2)) ;
+            rsGRouter->addRoutingClue(GRouterKeyId(it->first),(*it2) ) ;
 
     mRoutingClues.clear() ;
+    
+    for(std::list<std::pair<RsGxsMessageId,RsPeerId> >::const_iterator it = mTrackingClues.begin();it!=mTrackingClues.end();++it)
+	    rsGRouter->addTrackingInfo((*it).first,(*it).second) ;
+    
+    mTrackingClues.clear() ;
 }
 void RsGenExchange::processGroupDelete()
 {
@@ -2604,32 +2614,34 @@ void RsGenExchange::processRecvdMessages()
             }
 
             if(validateReturn == VALIDATE_SUCCESS)
-        {
-            meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-            msgs.insert(std::make_pair(msg, meta));
+	    {
+		    meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		    msgs.insert(std::make_pair(msg, meta));
 
-            std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
-            if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
-            {
-                msgv.push_back(msg->msgId);
-            }
+		    std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
+		    if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
+		    {
+			    msgv.push_back(msg->msgId);
+		    }
 
-            NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
-                                                                    getMsgIdPair(*msg));
+		    NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+		                                                            getMsgIdPair(*msg));
 
-            if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
+		    if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
 
-            computeHash(msg->msg, meta->mHash);
-            meta->recvTS = time(NULL);
+		    computeHash(msg->msg, meta->mHash);
+		    meta->recvTS = time(NULL);
 #ifdef GEN_EXCH_DEBUG
-            std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
-            std::cerr << "    computed hash: " << meta->mHash << std::endl;
-            std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
+		    std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
+		    std::cerr << "    computed hash: " << meta->mHash << std::endl;
+		    std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
 #endif
 
-            if(!msg->metaData->mAuthorId.isNull())
-                mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
-        }
+		    if(!msg->metaData->mAuthorId.isNull())
+			    mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
+
+		    mTrackingClues.push_back(std::make_pair(msg->msgId,msg->PeerId())) ;
+	    }
         }
         else
         {

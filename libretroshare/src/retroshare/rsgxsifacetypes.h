@@ -127,6 +127,7 @@ public:
 
     /// the first 16 bits for service, last 16 for GXS
     uint32_t    mMsgStatus;
+    RsPeerId    mProviderId ;
 
     time_t      mChildTs;
     std::string mServiceString; // Service Specific Free-Form extra storage.

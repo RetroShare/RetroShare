@@ -42,6 +42,12 @@ struct RoutingMatrixHitEntry
 	time_t time_stamp ;
 };
 
+struct RoutingTrackEntry
+{
+	uint32_t friend_id ;			// not the full key. Gets too big otherwise!
+	time_t time_stamp ;
+};
+
 class GRouterMatrix
 {
 	public:
@@ -61,10 +67,13 @@ class GRouterMatrix
 		// Record one routing clue. The events can possibly be merged in time buckets.
 		//
 		bool addRoutingClue(const GRouterKeyId& id,const RsPeerId& source_friend,float weight) ;
+		bool addTrackingInfo(const RsGxsMessageId& id,const RsPeerId& source_friend) ;
 
 		bool saveList(std::list<RsItem*>& items) ;
 		bool loadList(std::list<RsItem*>& items) ;
 
+        	bool cleanUp() ;
+            
 		// Dump info in terminal.
 		//
 		void debugDump() const ;
@@ -81,8 +90,9 @@ class GRouterMatrix
 
 		// List of events received and computed routing probabilities
 		//
-		std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> > _routing_clues ;			// received routing clues. Should be saved.
-		std::map<GRouterKeyId, std::vector<float> > 					 _time_combined_hits ; 	// hit matrix after time-convolution filter
+		std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> > _routing_clues ;       // received routing clues. Should be saved.
+		std::map<GRouterKeyId, std::vector<float> >               _time_combined_hits ;  // hit matrix after time-convolution filter
+		std::map<RsGxsMessageId,RoutingTrackEntry>                _tracking_clues ;      // who provided the most recent messages
 
 		// This is used to avoid re-computing probas when new events have been received.
 		//
@@ -93,6 +103,5 @@ class GRouterMatrix
 		//
 		std::map<RsPeerId,uint32_t> _friend_indices ;	// index for each friend to lookup in the routing matrix Not saved.
 		std::vector<RsPeerId> _reverse_friend_indices ;// SSLid corresponding to each friend index. Saved.
-
 };
 

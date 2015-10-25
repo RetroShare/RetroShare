@@ -27,11 +27,54 @@
 #include "groutermatrix.h"
 #include "grouteritems.h"
 
-//#define ROUTING_MATRIX_DEBUG
+#define ROUTING_MATRIX_DEBUG
 
 GRouterMatrix::GRouterMatrix()
 {
 	_proba_need_updating = true ;
+}
+
+bool GRouterMatrix::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& source_friend)
+{
+    time_t now = time(NULL) ;
+    uint32_t fid = getFriendId(source_friend) ;
+
+    RoutingTrackEntry rte ;
+
+    rte.friend_id = fid ;
+    rte.time_stamp = now ;
+
+    _tracking_clues[mid] = rte ;
+#ifdef ROUTING_MATRIX_DEBUG
+    std::cerr << "GRouterMatrix::addTrackingInfo(): Added clue mid=" << mid << ", from " << source_friend << " ID=" << fid << std::endl;
+#endif
+    return true ;
+}
+
+bool GRouterMatrix::cleanUp()
+{
+    // remove all tracking entries that have become too old.
+
+#ifdef ROUTING_MATRIX_DEBUG
+    std::cerr << "GRouterMatrix::cleanup()" << std::endl;
+#endif
+    time_t now = time(NULL) ;
+
+    for(std::map<RsGxsMessageId,RoutingTrackEntry>::iterator it(_tracking_clues.begin());it!=_tracking_clues.end();)
+	    if(it->second.time_stamp + RS_GROUTER_MAX_KEEP_TRACKING_CLUES < now)
+	    {
+#ifdef ROUTING_MATRIX_DEBUG
+		    std::cerr << "  removing old entry msgId=" << it->first << ", from id " << it->second.friend_id << ", obtained " << (now - it->second.time_stamp) << " secs ago." << std::endl;
+#endif
+		    std::map<RsGxsMessageId,RoutingTrackEntry>::iterator tmp(it) ;
+		    ++tmp ;
+		    _tracking_clues.erase(it) ;
+		    it=tmp ;
+	    }
+	    else
+		    ++it ;
+    
+    return true ;
 }
 
 bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& source_friend,float weight) 

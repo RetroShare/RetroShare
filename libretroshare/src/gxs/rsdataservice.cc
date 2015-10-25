@@ -49,19 +49,19 @@
 #define MSG_INDEX_GRPID std::string("INDEX_MESSAGES_GRPID")
 
 // generic
-#define KEY_NXS_DATA std::string("nxsData")
-#define KEY_NXS_DATA_LEN std::string("nxsDataLen")
-#define KEY_NXS_IDENTITY std::string("identity")
-#define KEY_GRP_ID std::string("grpId")
-#define KEY_ORIG_GRP_ID std::string("origGrpId")
-#define KEY_PARENT_GRP_ID std::string("parentGrpId")
-#define KEY_SIGN_SET std::string("signSet")
-#define KEY_TIME_STAMP std::string("timeStamp")
-#define KEY_NXS_FLAGS std::string("flags")
-#define KEY_NXS_META std::string("meta")
+#define KEY_NXS_DATA        std::string("nxsData")
+#define KEY_NXS_DATA_LEN    std::string("nxsDataLen")
+#define KEY_NXS_IDENTITY    std::string("identity")
+#define KEY_GRP_ID          std::string("grpId")
+#define KEY_ORIG_GRP_ID     std::string("origGrpId")
+#define KEY_PARENT_GRP_ID   std::string("parentGrpId")
+#define KEY_SIGN_SET        std::string("signSet")
+#define KEY_TIME_STAMP      std::string("timeStamp")
+#define KEY_NXS_FLAGS       std::string("flags")
+#define KEY_NXS_META        std::string("meta")
 #define KEY_NXS_SERV_STRING std::string("serv_str")
-#define KEY_NXS_HASH std::string("hash")
-#define KEY_RECV_TS std::string("recv_time_stamp")
+#define KEY_NXS_HASH        std::string("hash")
+#define KEY_RECV_TS         std::string("recv_time_stamp")
 
 // remove later
 #define KEY_NXS_FILE_OLD std::string("nxsFile")
@@ -94,8 +94,8 @@
 #define KEY_MSG_NAME std::string("msgName")
 
 // msg local
-#define KEY_MSG_STATUS std::string("msgStatus")
-#define KEY_CHILD_TS std::string("childTs")
+#define KEY_MSG_STATUS      std::string("msgStatus")
+#define KEY_CHILD_TS        std::string("childTs")
 
 // database release columns
 #define KEY_DATABASE_RELEASE_ID std::string("id")
@@ -129,22 +129,22 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     initialise(isNewDatabase);
 
     // for retrieving msg meta
-    mColMsgMeta_GrpId = addColumn(mMsgMetaColumns, KEY_GRP_ID);
-    mColMsgMeta_TimeStamp = addColumn(mMsgMetaColumns, KEY_TIME_STAMP);
-    mColMsgMeta_NxsFlags = addColumn(mMsgMetaColumns, KEY_NXS_FLAGS);
-    mColMsgMeta_SignSet = addColumn(mMsgMetaColumns, KEY_SIGN_SET);
-    mColMsgMeta_NxsIdentity = addColumn(mMsgMetaColumns, KEY_NXS_IDENTITY);
-    mColMsgMeta_NxsHash = addColumn(mMsgMetaColumns, KEY_NXS_HASH);
-    mColMsgMeta_MsgId = addColumn(mMsgMetaColumns, KEY_MSG_ID);
-    mColMsgMeta_OrigMsgId = addColumn(mMsgMetaColumns, KEY_ORIG_MSG_ID);
-    mColMsgMeta_MsgStatus = addColumn(mMsgMetaColumns, KEY_MSG_STATUS);
-    mColMsgMeta_ChildTs = addColumn(mMsgMetaColumns, KEY_CHILD_TS);
-    mColMsgMeta_MsgParentId = addColumn(mMsgMetaColumns, KEY_MSG_PARENT_ID);
-    mColMsgMeta_MsgThreadId = addColumn(mMsgMetaColumns, KEY_MSG_THREAD_ID);
-    mColMsgMeta_Name = addColumn(mMsgMetaColumns, KEY_MSG_NAME);
+    mColMsgMeta_GrpId         = addColumn(mMsgMetaColumns, KEY_GRP_ID);
+    mColMsgMeta_TimeStamp     = addColumn(mMsgMetaColumns, KEY_TIME_STAMP);
+    mColMsgMeta_NxsFlags      = addColumn(mMsgMetaColumns, KEY_NXS_FLAGS);
+    mColMsgMeta_SignSet       = addColumn(mMsgMetaColumns, KEY_SIGN_SET);
+    mColMsgMeta_NxsIdentity   = addColumn(mMsgMetaColumns, KEY_NXS_IDENTITY);
+    mColMsgMeta_NxsHash       = addColumn(mMsgMetaColumns, KEY_NXS_HASH);
+    mColMsgMeta_MsgId         = addColumn(mMsgMetaColumns, KEY_MSG_ID);
+    mColMsgMeta_OrigMsgId     = addColumn(mMsgMetaColumns, KEY_ORIG_MSG_ID);
+    mColMsgMeta_MsgStatus     = addColumn(mMsgMetaColumns, KEY_MSG_STATUS);
+    mColMsgMeta_ChildTs       = addColumn(mMsgMetaColumns, KEY_CHILD_TS);
+    mColMsgMeta_MsgParentId   = addColumn(mMsgMetaColumns, KEY_MSG_PARENT_ID);
+    mColMsgMeta_MsgThreadId   = addColumn(mMsgMetaColumns, KEY_MSG_THREAD_ID);
+    mColMsgMeta_Name          = addColumn(mMsgMetaColumns, KEY_MSG_NAME);
     mColMsgMeta_NxsServString = addColumn(mMsgMetaColumns, KEY_NXS_SERV_STRING);
-    mColMsgMeta_RecvTs = addColumn(mMsgMetaColumns, KEY_RECV_TS);
-    mColMsgMeta_NxsDataLen = addColumn(mMsgMetaColumns, KEY_NXS_DATA_LEN);
+    mColMsgMeta_RecvTs        = addColumn(mMsgMetaColumns, KEY_RECV_TS);
+    mColMsgMeta_NxsDataLen    = addColumn(mMsgMetaColumns, KEY_NXS_DATA_LEN);
 
     // for retrieving actual data
     mColMsg_GrpId = addColumn(mMsgColumns, KEY_GRP_ID);
@@ -153,31 +153,31 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     mColMsg_MsgId = addColumn(mMsgColumns, KEY_MSG_ID);
 
     // for retrieving grp meta data
-    mColGrpMeta_GrpId = addColumn(mGrpMetaColumns, KEY_GRP_ID);
-    mColGrpMeta_TimeStamp = addColumn(mGrpMetaColumns, KEY_TIME_STAMP);
-    mColGrpMeta_NxsFlags = addColumn(mGrpMetaColumns, KEY_NXS_FLAGS);
+    mColGrpMeta_GrpId       = addColumn(mGrpMetaColumns, KEY_GRP_ID);
+    mColGrpMeta_TimeStamp   = addColumn(mGrpMetaColumns, KEY_TIME_STAMP);
+    mColGrpMeta_NxsFlags    = addColumn(mGrpMetaColumns, KEY_NXS_FLAGS);
 //    mColGrpMeta_SignSet = addColumn(mGrpMetaColumns, KEY_SIGN_SET);
     mColGrpMeta_NxsIdentity = addColumn(mGrpMetaColumns, KEY_NXS_IDENTITY);
-    mColGrpMeta_NxsHash = addColumn(mGrpMetaColumns, KEY_NXS_HASH);
-    mColGrpMeta_KeySet = addColumn(mGrpMetaColumns, KEY_KEY_SET);
-    mColGrpMeta_SubscrFlag = addColumn(mGrpMetaColumns, KEY_GRP_SUBCR_FLAG);
-    mColGrpMeta_Pop = addColumn(mGrpMetaColumns, KEY_GRP_POP);
-    mColGrpMeta_MsgCount = addColumn(mGrpMetaColumns, KEY_MSG_COUNT);
-    mColGrpMeta_Status = addColumn(mGrpMetaColumns, KEY_GRP_STATUS);
-    mColGrpMeta_Name = addColumn(mGrpMetaColumns, KEY_GRP_NAME);
-    mColGrpMeta_LastPost = addColumn(mGrpMetaColumns, KEY_GRP_LAST_POST);
-    mColGrpMeta_OrigGrpId = addColumn(mGrpMetaColumns, KEY_ORIG_GRP_ID);
-    mColGrpMeta_ServString = addColumn(mGrpMetaColumns, KEY_NXS_SERV_STRING);
-    mColGrpMeta_SignFlags = addColumn(mGrpMetaColumns, KEY_GRP_SIGN_FLAGS);
-    mColGrpMeta_CircleId = addColumn(mGrpMetaColumns, KEY_GRP_CIRCLE_ID);
-    mColGrpMeta_CircleType = addColumn(mGrpMetaColumns, KEY_GRP_CIRCLE_TYPE);
+    mColGrpMeta_NxsHash     = addColumn(mGrpMetaColumns, KEY_NXS_HASH);
+    mColGrpMeta_KeySet      = addColumn(mGrpMetaColumns, KEY_KEY_SET);
+    mColGrpMeta_SubscrFlag  = addColumn(mGrpMetaColumns, KEY_GRP_SUBCR_FLAG);
+    mColGrpMeta_Pop         = addColumn(mGrpMetaColumns, KEY_GRP_POP);
+    mColGrpMeta_MsgCount    = addColumn(mGrpMetaColumns, KEY_MSG_COUNT);
+    mColGrpMeta_Status      = addColumn(mGrpMetaColumns, KEY_GRP_STATUS);
+    mColGrpMeta_Name        = addColumn(mGrpMetaColumns, KEY_GRP_NAME);
+    mColGrpMeta_LastPost    = addColumn(mGrpMetaColumns, KEY_GRP_LAST_POST);
+    mColGrpMeta_OrigGrpId   = addColumn(mGrpMetaColumns, KEY_ORIG_GRP_ID);
+    mColGrpMeta_ServString  = addColumn(mGrpMetaColumns, KEY_NXS_SERV_STRING);
+    mColGrpMeta_SignFlags   = addColumn(mGrpMetaColumns, KEY_GRP_SIGN_FLAGS);
+    mColGrpMeta_CircleId    = addColumn(mGrpMetaColumns, KEY_GRP_CIRCLE_ID);
+    mColGrpMeta_CircleType  = addColumn(mGrpMetaColumns, KEY_GRP_CIRCLE_TYPE);
     mColGrpMeta_InternCircle = addColumn(mGrpMetaColumns, KEY_GRP_INTERNAL_CIRCLE);
-    mColGrpMeta_Originator = addColumn(mGrpMetaColumns, KEY_GRP_ORIGINATOR);
+    mColGrpMeta_Originator  = addColumn(mGrpMetaColumns, KEY_GRP_ORIGINATOR);
     mColGrpMeta_AuthenFlags = addColumn(mGrpMetaColumns, KEY_GRP_AUTHEN_FLAGS);
     mColGrpMeta_ParentGrpId = addColumn(mGrpMetaColumns, KEY_PARENT_GRP_ID);
-    mColGrpMeta_RecvTs = addColumn(mGrpMetaColumns, KEY_RECV_TS);
-    mColGrpMeta_RepCutoff = addColumn(mGrpMetaColumns, KEY_GRP_REP_CUTOFF);
-    mColGrpMeta_NxsDataLen = addColumn(mGrpMetaColumns, KEY_NXS_DATA_LEN);
+    mColGrpMeta_RecvTs      = addColumn(mGrpMetaColumns, KEY_RECV_TS);
+    mColGrpMeta_RepCutoff   = addColumn(mGrpMetaColumns, KEY_GRP_REP_CUTOFF);
+    mColGrpMeta_NxsDataLen  = addColumn(mGrpMetaColumns, KEY_NXS_DATA_LEN);
 
     // for retrieving actual grp data
     mColGrp_GrpId = addColumn(mGrpColumns, KEY_GRP_ID);
@@ -620,7 +620,7 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
     c.getString(mColMsgMeta_NxsHash, temp);
     msgMeta->mHash = RsFileHash(temp);
     msgMeta->recvTS = c.getInt32(mColMsgMeta_RecvTs);
-
+    
     offset = 0;
     data = (char*)c.getData(mColMsgMeta_SignSet, data_len);
     msgMeta->signSet.GetTlv(data, data_len, &offset);
