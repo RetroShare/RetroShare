@@ -2517,206 +2517,208 @@ void RsGenExchange::computeHash(const RsTlvBinaryData& data, RsFileHash& hash)
 
 void RsGenExchange::processRecvdMessages()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
-	 if(!mMsgPendingValidate.empty())
-		 std::cerr << "processing received messages" << std::endl;
+	if(!mMsgPendingValidate.empty())
+		std::cerr << "processing received messages" << std::endl;
 #endif
-    NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
+	NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
 
 #ifdef GEN_EXCH_DEBUG
-	 if(!mMsgPendingValidate.empty())
-		 std::cerr << "  pending validation" << std::endl;
+	if(!mMsgPendingValidate.empty())
+		std::cerr << "  pending validation" << std::endl;
 #endif
-    for(; pend_it != mMsgPendingValidate.end();)
-    {
-    	GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
+	for(; pend_it != mMsgPendingValidate.end();)
+	{
+		GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
 
 #ifdef GEN_EXCH_DEBUG
-        std::cerr << "    grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", attempts=" << gpsi.mAttempts ;
+		std::cerr << "    grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", attempts=" << gpsi.mAttempts ;
 #endif
-    	if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
-    	{
+		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+		{
 #ifdef GEN_EXCH_DEBUG
 			std::cerr << " = max! deleting." << std::endl;
 #endif
-    		delete gpsi.mItem;
-    		pend_it = mMsgPendingValidate.erase(pend_it);
-    	}
-    	else
-    	{
+			delete gpsi.mItem;
+			pend_it = mMsgPendingValidate.erase(pend_it);
+		}
+		else
+		{
 #ifdef GEN_EXCH_DEBUG
 			std::cerr << " movign to recvd." << std::endl;
 #endif
-    		mReceivedMsgs.push_back(gpsi.mItem);
-    		++pend_it;
-    	}
-    }
+			mReceivedMsgs.push_back(gpsi.mItem);
+			++pend_it;
+		}
+	}
 
-    if(mReceivedMsgs.empty())
-        return;
+	if(mReceivedMsgs.empty())
+		return;
 
-    std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
-    GxsMsgReq msgIds;
-    std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
+	std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
+	GxsMsgReq msgIds;
+	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
 
-    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
 
-    // coalesce group meta retrieval for performance
-    for(; vit != mReceivedMsgs.end(); ++vit)
-    {
-        RsNxsMsg* msg = *vit;
-        grpMetas.insert(std::make_pair(msg->grpId, (RsGxsGrpMetaData*)NULL));
-    }
+	// coalesce group meta retrieval for performance
+	for(; vit != mReceivedMsgs.end(); ++vit)
+	{
+		RsNxsMsg* msg = *vit;
+		grpMetas.insert(std::make_pair(msg->grpId, (RsGxsGrpMetaData*)NULL));
+	}
 
-    mDataStore->retrieveGxsGrpMetaData(grpMetas);
-
-#ifdef GEN_EXCH_DEBUG
-	 std::cerr << "  updating received messages:" << std::endl;
-#endif
-    for(vit = mReceivedMsgs.begin(); vit != mReceivedMsgs.end(); ++vit)
-    {
-        RsNxsMsg* msg = *vit;
-        RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
-
-        bool ok = false;
-
-        if(msg->meta.bin_len != 0)
-        	ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
-
-        msg->metaData = meta;
+	mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
 #ifdef GEN_EXCH_DEBUG
-		  std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
+	std::cerr << "  updating received messages:" << std::endl;
 #endif
-        uint8_t validateReturn = VALIDATE_FAIL;
+	for(vit = mReceivedMsgs.begin(); vit != mReceivedMsgs.end(); ++vit)
+	{
+		RsNxsMsg* msg = *vit;
+		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
 
-        if(ok)
-        {
-            std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
+		bool ok = false;
+
+		if(msg->meta.bin_len != 0)
+			ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
+
+		msg->metaData = meta;
 
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
+		std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
 #endif
+		uint8_t validateReturn = VALIDATE_FAIL;
 
-            // validate msg
-            if(mit != grpMetas.end())
-            {
-                RsGxsGrpMetaData* grpMeta = mit->second;
-                validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->mSignFlags, grpMeta->keys);
-                
-#ifdef GEN_EXCH_DEBUG
-		std::cerr << "    grpMeta.mSignFlags: " << std::hex << grpMeta->mSignFlags << std::dec << std::endl;
-		std::cerr << "    grpMeta.mAuthFlags: " << std::hex << grpMeta->mAuthenFlags << std::dec << std::endl;
-		std::cerr << "    message validation result: " << (int)validateReturn << std::endl;
-#endif
-            }
-
-            if(validateReturn == VALIDATE_SUCCESS)
-	    {
-		    meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-		    msgs.insert(std::make_pair(msg, meta));
-
-		    std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
-		    if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
-		    {
-			    msgv.push_back(msg->msgId);
-		    }
-
-		    NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
-		                                                            getMsgIdPair(*msg));
-
-		    if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
-
-		    computeHash(msg->msg, meta->mHash);
-		    meta->recvTS = time(NULL);
-#ifdef GEN_EXCH_DEBUG
-		    std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
-		    std::cerr << "    computed hash: " << meta->mHash << std::endl;
-		    std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
-#endif
-
-		    if(!msg->metaData->mAuthorId.isNull())
-			    mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
-
-		    mTrackingClues.push_back(std::make_pair(msg->msgId,msg->PeerId())) ;
-	    }
-        }
-        else
-        {
-#ifdef GEN_EXCH_DEBUG
-			  std::cerr << " deserialisation failed!" <<std::endl;
-#endif
-        	validateReturn = VALIDATE_FAIL;
-        }
-
-        if(validateReturn == VALIDATE_FAIL)
-        {
+		if(ok)
+		{
+			std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
 #ifdef GEN_EXCH_DEBUG
-            std::cerr << "failed to deserialise incoming meta, msgId: "
-            		<< "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+			std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
+#endif
+			RsGxsGrpMetaData* grpMeta = NULL ;
+
+			// validate msg
+			if(mit != grpMetas.end())
+			{
+				grpMeta = mit->second;
+				validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->mSignFlags, grpMeta->keys);
+
+#ifdef GEN_EXCH_DEBUG
+				std::cerr << "    grpMeta.mSignFlags: " << std::hex << grpMeta->mSignFlags << std::dec << std::endl;
+				std::cerr << "    grpMeta.mAuthFlags: " << std::hex << grpMeta->mAuthenFlags << std::dec << std::endl;
+				std::cerr << "    message validation result: " << (int)validateReturn << std::endl;
+#endif
+			}
+
+			if(validateReturn == VALIDATE_SUCCESS)
+			{
+				meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+				msgs.insert(std::make_pair(msg, meta));
+
+				std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
+				if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
+				{
+					msgv.push_back(msg->msgId);
+				}
+
+				NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+				                                                        getMsgIdPair(*msg));
+
+				if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
+
+				computeHash(msg->msg, meta->mHash);
+				meta->recvTS = time(NULL);
+#ifdef GEN_EXCH_DEBUG
+				std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
+				std::cerr << "    computed hash: " << meta->mHash << std::endl;
+				std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
 #endif
 
-            NxsMsgPendingVect::iterator failed_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
-            		getMsgIdPair(*msg));
+				if(!msg->metaData->mAuthorId.isNull())
+					mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
 
-            if(failed_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(failed_entry);
+				if(grpMeta->mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES)
+					mTrackingClues.push_back(std::make_pair(msg->msgId,msg->PeerId())) ;
+			}
+		}
+		else
+		{
+#ifdef GEN_EXCH_DEBUG
+			std::cerr << " deserialisation failed!" <<std::endl;
+#endif
+			validateReturn = VALIDATE_FAIL;
+		}
+
+		if(validateReturn == VALIDATE_FAIL)
+		{
+
+#ifdef GEN_EXCH_DEBUG
+			std::cerr << "failed to deserialise incoming meta, msgId: "
+			          << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+#endif
+
+			NxsMsgPendingVect::iterator failed_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+			                                                     getMsgIdPair(*msg));
+
+			if(failed_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(failed_entry);
 			delete msg;
 
 
-        }
-        else if(validateReturn == VALIDATE_FAIL_TRY_LATER)
-        {
+		}
+		else if(validateReturn == VALIDATE_FAIL_TRY_LATER)
+		{
 
 #ifdef GEN_EXCH_DEBUG
-            std::cerr << "failed to validate msg, trying again: "
-                    << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+			std::cerr << "failed to validate msg, trying again: "
+			          << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
 #endif
 
-        	RsGxsGrpMsgIdPair id;
-        	id.first = msg->grpId;
-        	id.second = msg->msgId;
+			RsGxsGrpMsgIdPair id;
+			id.first = msg->grpId;
+			id.second = msg->msgId;
 
-        	// first check you haven't made too many attempts
+			// first check you haven't made too many attempts
 
-        	NxsMsgPendingVect::iterator vit = std::find(
-        			mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
+			NxsMsgPendingVect::iterator vit = std::find(
+			                        mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
 
-        	if(vit == mMsgPendingValidate.end())
-        	{
-        		GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
-        		mMsgPendingValidate.push_back(item);
-        	}else
-        	{
+			if(vit == mMsgPendingValidate.end())
+			{
+				GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
+				mMsgPendingValidate.push_back(item);
+			}else
+			{
 				vit->mAttempts++;
-        	}
-        }
-    }
+			}
+		}
+	}
 
-    // clean up resources from group meta retrieval
-    freeAndClearContainerResource<std::map<RsGxsGroupId, RsGxsGrpMetaData*>,
-    	RsGxsGrpMetaData*>(grpMetas);
+	// clean up resources from group meta retrieval
+	freeAndClearContainerResource<std::map<RsGxsGroupId, RsGxsGrpMetaData*>,
+	                RsGxsGrpMetaData*>(grpMetas);
 
-    if(!msgIds.empty())
-    {
+	if(!msgIds.empty())
+	{
 #ifdef GEN_EXCH_DEBUG
-        std::cerr << "  removing existing and old messages from incoming list." << std::endl;
+		std::cerr << "  removing existing and old messages from incoming list." << std::endl;
 #endif
-        removeDeleteExistingMessages(msgs, msgIds);
+		removeDeleteExistingMessages(msgs, msgIds);
 
 #ifdef GEN_EXCH_DEBUG
-        std::cerr << "  storing remaining messages" << std::endl;
+		std::cerr << "  storing remaining messages" << std::endl;
 #endif
-        mDataStore->storeMessage(msgs);
+		mDataStore->storeMessage(msgs);
 
-        RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
-        c->msgChangeMap = msgIds;
-        mNotifications.push_back(c);
-    }
+		RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
+		c->msgChangeMap = msgIds;
+		mNotifications.push_back(c);
+	}
 
-    mReceivedMsgs.clear();
+	mReceivedMsgs.clear();
 }
 
 void RsGenExchange::processRecvdGroups()
