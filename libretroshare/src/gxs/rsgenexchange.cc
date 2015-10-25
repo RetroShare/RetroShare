@@ -2281,6 +2281,12 @@ void RsGenExchange::publishGrps()
 			}
 			else if(ret == SERVICE_CREATE_FAIL_TRY_LATER)
 			{
+                // if the service is not ready yet, reset the start timestamp to give the service more time
+                // the service should have it's own timeout mechanism
+                // services should return SERVICE_CREATE_FAIL if the action timed out
+                // at the moment this is only important for the idservice:
+                //   the idservice may ask the user for a password, and the user needs time
+                ggps.mStartTS = now;
 				create = CREATE_FAIL_TRY_LATER;
 			}
             else if(ret == SERVICE_CREATE_FAIL)
