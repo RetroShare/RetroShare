@@ -24,7 +24,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Loaded plugins</string>
+      <string>Plugins</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <property name="margin">

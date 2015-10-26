@@ -7,7 +7,7 @@ before_install:
   - echo $LANG
   - echo $LC_ALL
   - sudo apt-get update
-  - sudo apt-get install build-essential checkinstall cmake g++ git libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libdc1394-22-dev libglib2.0-dev libcv-dev libopencv-highgui-dev libhighgui-dev
+  - sudo apt-get install build-essential checkinstall cmake g++ git libavutil-dev libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libdc1394-22-dev libglib2.0-dev libcv-dev libopencv-highgui-dev libhighgui-dev
   - sudo apt-get install libgnome-keyring-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev libjasper-dev libjpeg-dev libmicrohttpd-dev libopencv-dev libprotobuf-dev libqt4-dev
   - sudo apt-get install libspeex-dev libspeexdsp-dev libsqlite3-dev libssl-dev libswscale-dev
   - sudo apt-get install libtbb-dev libtiff4-dev libupnp-dev libv4l-dev libxine-dev libxslt1-dev libxss-dev make pkg-config protobuf-compiler python-dev python-numpy subversion git yasm qtmobility-dev

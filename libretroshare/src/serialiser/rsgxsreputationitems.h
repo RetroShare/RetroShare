@@ -32,88 +32,94 @@
 #include "serialiser/rsserial.h"
 #include "retroshare/rsgxsifacetypes.h"
 
-#define RS_PKT_SUBTYPE_GXSREPUTATION_CONFIG_ITEM 	0x01
-#define RS_PKT_SUBTYPE_GXSREPUTATION_SET_ITEM 		0x02
-#define RS_PKT_SUBTYPE_GXSREPUTATION_UPDATE_ITEM 	0x03
-#define RS_PKT_SUBTYPE_GXSREPUTATION_REQUEST_ITEM       0x04
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM       0x01
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM          0x02
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM       0x03
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM      0x04
 
 /**************************************************************************/
-
-class RsGxsReputationConfigItem: public RsItem
+class RsReputationItem: public RsItem
 {
 	public:
-	RsGxsReputationConfigItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION, 
-		RS_PKT_SUBTYPE_GXSREPUTATION_CONFIG_ITEM)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
-		return; 
-	}
+		RsReputationItem(uint8_t reputation_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_REPUTATION,reputation_subtype) 
+		{ 
+			setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
+		}
 
-virtual ~RsGxsReputationConfigItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+		virtual ~RsReputationItem() {}
 
-	std::string mPeerId;
+		virtual bool serialise(void *data,uint32_t& size) const = 0 ;	
+		virtual uint32_t serial_size() const = 0 ; 						
+
+		virtual void clear() = 0 ;
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) = 0;
+
+	protected:
+		bool serialise_header(void *data, uint32_t& pktsize, uint32_t& tlvsize, uint32_t& offset) const;
+};
+
+class RsGxsReputationConfigItem: public RsReputationItem
+{
+public:
+	RsGxsReputationConfigItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM) {}
+
+	virtual ~RsGxsReputationConfigItem() {}
+	virtual void clear() {}
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	virtual bool serialise(void *data,uint32_t& size) const ;	
+	virtual uint32_t serial_size() const ; 						
+    	
+	RsPeerId mPeerId;
 	uint32_t mLatestUpdate; // timestamp they returned.
 	uint32_t mLastQuery;	// when we sent out.
 };
 
-class RsGxsReputationSetItem: public RsItem
+class RsGxsReputationSetItem: public RsReputationItem
 {
-	public:
-	RsGxsReputationSetItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION, 
-		RS_PKT_SUBTYPE_GXSREPUTATION_SET_ITEM)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
-		return; 
-	}
+public:
+	RsGxsReputationSetItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM) {}
 
-virtual ~RsGxsReputationSetItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsGxsReputationSetItem() {}
+	virtual void clear();  
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	std::string mGxsId;
+	virtual bool serialise(void *data,uint32_t& size) const ;	
+	virtual uint32_t serial_size() const ; 						
+    	
+	RsGxsId mGxsId;
 	uint32_t mOwnOpinion;
-	uint32_t mOwnOpinionTs;
-	uint32_t mReputation;
-	std::map<std::string, uint32_t> mOpinions; // RsPeerId -> Opinion.
+	uint32_t mOwnOpinionTS;
+	std::map<RsPeerId, uint32_t> mOpinions; // RsPeerId -> Opinion.
 };
 
-class RsGxsReputationUpdateItem: public RsItem
+class RsGxsReputationUpdateItem: public RsReputationItem
 {
-	public:
-	RsGxsReputationUpdateItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION, 
-		RS_PKT_SUBTYPE_GXSREPUTATION_UPDATE_ITEM)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
-		return; 
-	}
+public:
+    RsGxsReputationUpdateItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM) {}
 
-virtual ~RsGxsReputationUpdateItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsGxsReputationUpdateItem() {}
+    virtual void clear();  
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	std::map<RsGxsId, uint32_t> mOpinions; // GxsId -> Opinion.
-	uint32_t mLatestUpdate; 
+    virtual bool serialise(void *data,uint32_t& size) const ;	
+    virtual uint32_t serial_size() const ; 						
+
+    uint32_t mLatestUpdate; 
+    std::map<RsGxsId, uint32_t> mOpinions; // GxsId -> Opinion.
 };
 
-class RsGxsReputationRequestItem: public RsItem
+class RsGxsReputationRequestItem: public RsReputationItem
 {
-	public:
-	RsGxsReputationRequestItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION,
-		RS_PKT_SUBTYPE_GXSREPUTATION_REQUEST_ITEM)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
-		return; 
-	}
+public:
+    RsGxsReputationRequestItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM) {}
 
-virtual ~RsGxsReputationRequestItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsGxsReputationRequestItem() {}
+    virtual void clear() {}
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+    virtual bool serialise(void *data,uint32_t& size) const ;	
+    virtual uint32_t serial_size() const ; 						
 
 	uint32_t mLastUpdate;
 };
@@ -121,39 +127,26 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 class RsGxsReputationSerialiser: public RsSerialType
 {
-	public:
-	RsGxsReputationSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION)
-	{ return; }
-virtual     ~RsGxsReputationSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsGxsReputationSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION){}
 
-	private:
+    virtual     ~RsGxsReputationSerialiser(){}
 
-virtual	uint32_t    sizeConfig(RsGxsReputationConfigItem *);
-virtual	bool        serialiseConfig(RsGxsReputationConfigItem *item, void *data, uint32_t *size);
-virtual	RsGxsReputationConfigItem *deserialiseConfig(void *data, uint32_t *size);
+    virtual	uint32_t    size(RsItem *item)
+    {
+	    return dynamic_cast<RsReputationItem*>(item)->serial_size() ;
+    }
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size)
+    {
+	    return dynamic_cast<RsReputationItem*>(item)->serialise(data,*size) ;
+    }
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
-
-virtual	uint32_t    sizeSet(RsGxsReputationSetItem *);
-virtual	bool        serialiseSet(RsGxsReputationSetItem *item, void *data, uint32_t *size);
-virtual	RsGxsReputationSetItem *deserialiseSet(void *data, uint32_t *size);
-
-
-virtual	uint32_t    sizeUpdate(RsGxsReputationUpdateItem *);
-virtual	bool        serialiseUpdate(RsGxsReputationUpdateItem *item, void *data, uint32_t *size);
-virtual	RsGxsReputationUpdateItem *deserialiseUpdate(void *data, uint32_t *size);
-
-
-virtual	uint32_t    sizeRequest(RsGxsReputationRequestItem *);
-virtual	bool        serialiseRequest(RsGxsReputationRequestItem *item, void *data, uint32_t *size);
-virtual	RsGxsReputationRequestItem *deserialiseRequest(void *data, uint32_t *size);
-
-
+private:
+    static	RsGxsReputationConfigItem  *deserialiseReputationConfigItem (void *data, uint32_t size);
+    static	RsGxsReputationSetItem     *deserialiseReputationSetItem    (void *data, uint32_t size);
+    static	RsGxsReputationUpdateItem  *deserialiseReputationUpdateItem (void *data, uint32_t size);
+    static	RsGxsReputationRequestItem *deserialiseReputationRequestItem(void *data, uint32_t size);
 };
 
 /**************************************************************************/

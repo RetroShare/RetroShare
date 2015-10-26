@@ -35,6 +35,7 @@
 #include "serialiser/rsgxsreputationitems.h"
 
 #include "retroshare/rsidentity.h"
+#include "retroshare/rsreputations.h"
 #include "services/p3service.h"
 
 
@@ -58,19 +59,19 @@ class Reputation
 {
 public:
 	Reputation()
-    :mOwnOpinion(0), mOwnOpinionTs(0), mReputation(0) { return; }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
 
 	Reputation(const RsGxsId& about)
-    :mGxsId(about), mOwnOpinion(0), mOwnOpinionTs(0), mReputation(0) { return; }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
 
-int32_t CalculateReputation();
+	void updateReputation(uint32_t average_active_friends);
 
-	RsGxsId mGxsId;
-	std::map<RsPeerId, int32_t> mOpinions;
+	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
 	int32_t mOwnOpinion;
 	time_t  mOwnOpinionTs;
 
-	int32_t mReputation;
+    	float mFriendAverage ;
+	float mReputation;
 };
 
 
@@ -80,36 +81,24 @@ int32_t CalculateReputation();
   * 
   */
 
-class p3GxsReputation: public p3Service, public p3Config /* , public pqiMonitor */
+class p3GxsReputation: public p3Service, public p3Config, public RsReputations /* , public pqiMonitor */
 {
 	public:
 		p3GxsReputation(p3LinkMgr *lm);
 		virtual RsServiceInfo getServiceInfo();
 
-		/***** Interface for p3idservice *****/
-
-		virtual bool updateOpinion(const RsGxsId& gxsid, int opinion);
-
+		/***** Interface for RsReputations *****/
+		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
+		virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) ;
+		virtual bool isIdentityBanned(const RsGxsId& id) ;
+                
 		/***** overloaded from p3Service *****/
-		/*!
-		 * This retrieves all chat msg items and also (important!)
-		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
-		 * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
-		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
-		 * @see NotifyBase
-
-		 */
 		virtual int   tick();
 		virtual int   status();
-
 
 		/*!
 		 * Interface stuff.
 		 */
-
-		/*************** pqiMonitor callback ***********************/
-		//virtual void statusChange(const std::list<pqipeer> &plist);
-
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -123,22 +112,27 @@ class p3GxsReputation: public p3Service, public p3Config /* , public pqiMonitor 
 
 		bool SendReputations(RsGxsReputationRequestItem *request);
 		bool RecvReputations(RsGxsReputationUpdateItem *item);
-		bool updateLatestUpdate(RsPeerId peerid, time_t ts);
+		bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
+        	void updateActiveFriends() ;
+        
+        	// internal update of data. Takes care of cleaning empty boxes.
+        	void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
+		bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
 
-		bool loadReputationSet(RsGxsReputationSetItem *item, 
-				const std::set<RsPeerId> &peerSet);
-
-		int     sendPackets();
+		int  sendPackets();
+        	void cleanup();
 		void sendReputationRequests();
-		int sendReputationRequest(RsPeerId peerid);
-
+		int  sendReputationRequest(RsPeerId peerid);
+        	void debug_print() ;
 
 	private:
 		RsMutex mReputationMtx;
 
+		time_t mLastActiveFriendsUpdate;
 		time_t mRequestTime;
 		time_t mStoreTime;
 		bool   mReputationsUpdated;
+        	uint32_t mAverageActiveFriends ;
 
 		p3LinkMgr *mLinkMgr;
 
@@ -148,7 +142,7 @@ class p3GxsReputation: public p3Service, public p3Config /* , public pqiMonitor 
 		std::multimap<time_t, RsGxsId> mUpdated;
 
 		// set of Reputations to send to p3IdService.
-		std::set<RsGxsId> mUpdatedReputations;
+        std::set<RsGxsId> mUpdatedReputations;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

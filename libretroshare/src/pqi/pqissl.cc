@@ -103,7 +103,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
 	readpkt(NULL), pktlen(0), total_len(0),
 	attempt_ts(0),
-	sameLAN(false), n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
+	n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
 	mConnectDelay(0), mConnectTS(0),
 	mConnectTimeout(0), mTimeoutTS(0)
 {
@@ -255,7 +255,6 @@ int 	pqissl::reset_locked()
 	sockfd = -1;
 	waiting = WAITING_NOT;
 	ssl_connection = NULL;
-	sameLAN = false;
 	n_read_zero = 0;
 	mReadZeroTS = 0;
 	total_len = 0 ;
@@ -286,54 +285,40 @@ int 	pqissl::reset_locked()
 	return 1;
 }
 
-bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
+bool pqissl::connect_parameter(uint32_t type, uint32_t value)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-	/* remove unused parameter warnings */
-	(void) type;
-	(void) value;
-	return false;
-}
-
-
-bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
-{
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
-
-#ifdef PQISSL_LOG_DEBUG 
-	{
-		std::string out = "pqissl::connect_parameter() Peer: " + PeerId();
-		rs_sprintf_append(out, " type: %u value: %u", type, value);
-		rslog(RSL_DEBUG_ALL, pqisslzone, out);
-	}
+#ifdef PQISSL_LOG_DEBUG
+	std::cerr << "pqissl::connect_parameter() Peer: " << PeerId();
 #endif
 
-        if (type == NET_PARAM_CONNECT_DELAY)
+	switch(type)
 	{
-#ifdef PQISSL_LOG_DEBUG 
-		std::string out = "pqissl::connect_parameter() Peer: " + PeerId();
-		rs_sprintf_append(out, " DELAY: %u", value);
-		rslog(RSL_DEBUG_BASIC, pqisslzone, out);
+	case NET_PARAM_CONNECT_DELAY:
+	{
+#ifdef PQISSL_LOG_DEBUG
+		std::cerr << " DELAY: " << value << std::endl;
 #endif
-
-
+		RS_STACK_MUTEX(mSslMtx);
 		mConnectDelay = value;
 		return true;
 	}
-        else if (type == NET_PARAM_CONNECT_TIMEOUT)
+	case NET_PARAM_CONNECT_TIMEOUT:
 	{
-#ifdef PQISSL_LOG_DEBUG 
-		std::string out = "pqissl::connect_parameter() Peer: " + PeerId();
-		rs_sprintf_append(out, " TIMEOUT: %u", value);
-		rslog(RSL_DEBUG_BASIC, pqisslzone, out);
+#ifdef PQISSL_LOG_DEBUG
+		std::cerr << " TIMEOUT: " << value << std::endl;
 #endif
-
+		RS_STACK_MUTEX(mSslMtx);
 		mConnectTimeout = value;
 		return true;
 	}
-	return false;
-        //return NetInterface::connect_parameter(type, value);
+	default:
+	{
+#ifdef PQISSL_LOG_DEBUG
+		std::cerr << " type: " << type << " value: " << value << std::endl;
+#endif
+		return false;
+	}
+	}
 }
 
 
@@ -1472,21 +1457,11 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 
 	struct sockaddr_storage localaddr;
 	mLinkMgr->getLocalAddress(localaddr);
-	sameLAN = sockaddr_storage_samesubnet(remote_addr, localaddr);
 
 	{
 		std::string out = "pqissl::accept() SUCCESSFUL connection to: " + PeerId().toStdString();
 		out += " localaddr: " + sockaddr_storage_iptostring(localaddr);
 		out += " remoteaddr: " + sockaddr_storage_iptostring(remote_addr);
-
-		if (sameLAN)
-		{
-			out += " SAME LAN";
-		}
-		else
-		{
-			out += " DIFF LANs";
-		}
 
 		rslog(RSL_WARNING, pqisslzone, out);
 	}

@@ -214,7 +214,7 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 
 void ChatWidget::addChatHorizontalWidget(QWidget *w)
 {
-	ui->verticalLayout_2->addWidget(w) ;
+	ui->vl_Plugins->addWidget(w) ;
 	update() ;
 }
 
@@ -223,9 +223,15 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
 
-void ChatWidget::addVOIPBarWidget(QWidget *w)
+void ChatWidget::addTitleBarWidget(QWidget *w)
 {
-	ui->titleBarFrame->layout()->addWidget(w) ;
+	ui->pluginTitleFrame->layout()->addWidget(w) ;
+}
+
+void ChatWidget::hideChatText(bool hidden)
+{
+	ui->frame_ChatText->setHidden(hidden); ;
+	ui->searchframe->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
 }
 
 RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()
@@ -488,10 +494,10 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent) {
-                if (notify && keyEvent->key() == Qt::Key_Delete) {
+                if (keyEvent->key() == Qt::Key_Delete) {
 					// Delete key pressed
 					if (ui->textBrowser->textCursor().selectedText().length() > 0) {
-						if (chatType() == CHATTYPE_LOBBY) {
+						if (notify && chatType() == CHATTYPE_LOBBY) {
 							QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
 							rx.setMinimal(true);
 							QString sel=ui->textBrowser->textCursor().selection().toHtml();
@@ -870,6 +876,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	if (!Settings->valueFromGroup("Chat", "EnableCustomFontSize", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_SIZE;
 	}
+	int desiredMinimumFontSize = Settings->valueFromGroup("Chat", "MinimumFontSize", 10).toInt();
 	if (!Settings->valueFromGroup("Chat", "EnableBold", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT;
 	}
@@ -893,7 +900,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		formatFlag |= CHAT_FORMATMSG_SYSTEM;
 	}
 
-	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast);
+	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);

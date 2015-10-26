@@ -23,9 +23,9 @@
 
 //Call 	qRegisterMetaType<RsPeerId>("RsPeerId"); to enable these SIGNALs
 
-void VOIPNotify::notifyReceivedVoipAccept(const RsPeerId& peer_id)
+void VOIPNotify::notifyReceivedVoipAccept(const RsPeerId& peer_id, const uint32_t flags)
 {
-	emit voipAcceptReceived(peer_id) ;
+	emit voipAcceptReceived(peer_id, flags) ;
 }
 void VOIPNotify::notifyReceivedVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec)
 {
@@ -35,13 +35,13 @@ void VOIPNotify::notifyReceivedVoipData(const RsPeerId &peer_id)
 {
 	emit voipDataReceived(peer_id) ;
 }
-void VOIPNotify::notifyReceivedVoipHangUp(const RsPeerId &peer_id)
+void VOIPNotify::notifyReceivedVoipHangUp(const RsPeerId &peer_id, const uint32_t flags)
 {
-	emit voipHangUpReceived(peer_id) ;
+	emit voipHangUpReceived(peer_id, flags) ;
 }
-void VOIPNotify::notifyReceivedVoipInvite(const RsPeerId& peer_id)
+void VOIPNotify::notifyReceivedVoipInvite(const RsPeerId& peer_id, const uint32_t flags)
 {
-	emit voipInvitationReceived(peer_id) ;
+	emit voipInvitationReceived(peer_id, flags) ;
 }
 void VOIPNotify::notifyReceivedVoipAudioCall(const RsPeerId &peer_id)
 {

@@ -66,7 +66,7 @@ protected:
 
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
-
+    
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
@@ -101,6 +101,7 @@ private slots:
 	void downloadAllFiles();
 
 	void changedViewBox();
+    	void flagpersonasbad();
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
@@ -140,6 +141,7 @@ private:
 	void loadMessageData(const uint32_t &token);
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
 	void loadMsgData_ReplyMessage(const uint32_t &token);
+    	void loadMsgData_BanAuthor(const uint32_t &token);
 
 private:
 	RsGxsGroupId mLastForumID;
@@ -160,6 +162,7 @@ private:
 	uint32_t mTokenTypeInsertThreads;
 	uint32_t mTokenTypeMessageData;
 	uint32_t mTokenTypeReplyMessage;
+	uint32_t mTokenTypeBanAuthor;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;
@@ -171,7 +174,7 @@ private:
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;
 
-	Ui::GxsForumThreadWidget *ui;
+    Ui::GxsForumThreadWidget *ui;
 };
 
 #endif // GXSFORUMTHREADWIDGET_H

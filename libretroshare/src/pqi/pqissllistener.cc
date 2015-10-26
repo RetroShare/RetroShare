@@ -123,6 +123,10 @@ int	pqissllistenbase::setuplisten()
         err = fcntl(lsock, F_SETFL, O_NONBLOCK);
 	if (err < 0)
 	{
+        		shutdown(lsock,SHUT_RDWR) ;
+                	close(lsock) ;
+                    	lsock = -1 ;
+                        
 		std::string out;
 		rs_sprintf(out, "Error: Cannot make socket NON-Blocking: %d", err);
 		pqioutput(PQL_ERROR, pqissllistenzone, out);
@@ -145,6 +149,9 @@ int	pqissllistenbase::setuplisten()
 	unsigned long int on = 1;
 	if (0 != (err = ioctlsocket(lsock, FIONBIO, &on)))
 	{
+        		closesocket(lsock) ;
+                	lsock = -1 ;
+                    
 		std::string out;
 		rs_sprintf(out, "pqissllistenbase::setuplisten() Error: Cannot make socket NON-Blocking: %d\n", err);
 		out += "Socket Error: " + socket_errorType(WSAGetLastError());

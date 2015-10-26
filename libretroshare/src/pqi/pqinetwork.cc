@@ -55,6 +55,11 @@ int errno;
 
 #endif               
 
+#ifdef __HAIKU__
+ #include <sys/sockio.h>
+ #define IFF_RUNNING 0x0001
+#endif
+
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 
@@ -758,52 +763,6 @@ bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct soc
 	return false;
 }
 
-
-
-
-bool    sameNet(const struct in_addr *addr, const struct in_addr *addr2)
-{
-#ifdef NET_DEBUG
-	std::cerr << "sameNet: " << rs_inet_ntoa(*addr);
-	std::cerr << " VS " << rs_inet_ntoa(*addr2);
-	std::cerr << std::endl;
-#endif
-	struct in_addr addrnet, addrnet2;
-
-	addrnet.s_addr = inet_netof(*addr);
-	addrnet2.s_addr = inet_netof(*addr2);
-
-#ifdef NET_DEBUG
-	std::cerr << " (" << rs_inet_ntoa(addrnet);
-	std::cerr << " =?= " << rs_inet_ntoa(addrnet2);
-	std::cerr << ")" << std::endl;
-#endif
-
-	in_addr_t address1 = htonl(addr->s_addr);
-	in_addr_t address2 = htonl(addr2->s_addr);
-
-	// handle case for private net: 172.16.0.0/12
-	if (address1>>20 == (172<<4 | 16>>4))
-	{
-		return (address1>>20 == address2>>20);
-	}
-
-	return (inet_netof(*addr) == inet_netof(*addr2));
-}
-
-
-bool 	isSameSubnet(struct in_addr *addr1, struct in_addr *addr2)
-{
-	/* 
-	 * check that the (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
-	 */
-
-	unsigned long a1 = ntohl(addr1->s_addr);
-	unsigned long a2 = ntohl(addr2->s_addr);
-
-	return ((a1 & 0xffffff00) == (a2 & 0xffffff00));
-}
-
 /* This just might be portable!!! will see!!!
  * Unfortunately this is usable on winXP+, determined by: (_WIN32_WINNT >= 0x0501)
  * but not older platforms.... which must use gethostbyname.
@@ -899,16 +858,14 @@ int unix_close(int fd)
 	return ret;
 }
 
-int unix_socket(int /*domain*/, int /*type*/, int /*protocol*/)
+int unix_socket(int domain, int type, int protocol)
 {
-	int osock = socket(PF_INET, SOCK_STREAM, 0);
+	int osock = socket(domain, type, protocol);
 
-/******************* WINDOWS SPECIFIC PART ******************/
-#ifdef WINDOWS_SYS  // WINDOWS
-
+#ifdef WINDOWS_SYS
 #ifdef NET_DEBUG
 	std::cerr << "unix_socket()" << std::endl;
-#endif
+#endif // NET_DEBUG
 
 	if ((unsigned) osock == INVALID_SOCKET)
 	{
@@ -916,8 +873,8 @@ int unix_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 		osock = -1;
 		errno = WinToUnixError(WSAGetLastError());
 	}
-#endif
-/******************* WINDOWS SPECIFIC PART ******************/
+#endif // WINDOWS_SYS
+
 	return osock;
 }
 

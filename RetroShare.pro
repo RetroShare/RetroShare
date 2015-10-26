@@ -7,7 +7,6 @@ SUBDIRS += \
         libbitdht \
         libretroshare \
         libresapi \
-        pegmarkdown \
         retroshare_gui \
         retroshare_nogui \
         plugins
@@ -22,10 +21,8 @@ libretroshare.depends = openpgpsdk libbitdht
 libresapi.file = libresapi/src/libresapi.pro
 libresapi.depends = libretroshare
 
-pegmarkdown.file = supportlibs/pegmarkdown/pegmarkdown.pro
-
 retroshare_gui.file = retroshare-gui/src/retroshare-gui.pro
-retroshare_gui.depends = libretroshare libresapi pegmarkdown
+retroshare_gui.depends = libretroshare libresapi
 retroshare_gui.target = retroshare-gui
 
 retroshare_nogui.file = retroshare-nogui/src/retroshare-nogui.pro
@@ -35,3 +32,9 @@ retroshare_nogui.target = retroshare-nogui
 plugins.file = plugins/plugins.pro
 plugins.depends = retroshare_gui
 plugins.target = plugins
+
+wikipoos {
+    SUBDIRS += pegmarkdown
+    pegmarkdown.file = supportlibs/pegmarkdown/pegmarkdown.pro
+    retroshare_gui.depends += pegmarkdown
+}

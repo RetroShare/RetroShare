@@ -83,9 +83,9 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		//
 		virtual bool getIncomingData(const RsPeerId& peer_id,std::vector<RsVOIPDataChunk>& chunks) ;
 
-		virtual int sendVoipHangUpCall(const RsPeerId& peer_id) ;
-		virtual int sendVoipRinging(const RsPeerId& peer_id) ;
-		virtual int sendVoipAcceptCall(const RsPeerId &peer_id) ;
+		virtual int sendVoipHangUpCall(const RsPeerId& peer_id, uint32_t flags) ;
+		virtual int sendVoipRinging(const RsPeerId& peer_id, uint32_t flags) ;
+		virtual int sendVoipAcceptCall(const RsPeerId &peer_id, uint32_t flags) ;
 
 		/***** overloaded from p3Service *****/
 		/*!

@@ -1,5 +1,243 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+   0120234 csoler   12 Oct 2015 15:06:12 -0400 Merge pull request #143 from csoler/v0.6-Reputations
+   71c8dfd csoler   12 Oct 2015 14:45:11 -0400 manual merge before creating a conflict-free PR
+   f18cc82 csoler   12 Oct 2015 14:22:51 -0400 fixed up constants for reputation system, now that is has been tested
+   e6bb307 csoler   12 Oct 2015 14:04:23 -0400 added update for forum messages list when an author gets banned
+   7dc5984 csoler   12 Oct 2015 14:03:53 -0400 added update for forum messages list when an author gets banned
+   022ac10 defnax   12 Oct 2015 18:58:12 +0200 Merge pull request #141 from PhenomRetroShare/AddVOIP_ReactivateSoundEvents
+   3d32fab Phenom   12 Oct 2015 18:25:03 +0200 Reactivate SoundEvents in VOIP.
+   86b47d8 csoler   12 Oct 2015 10:58:24 -0400 reduced icon size a little bit in GxsTreeWidgetItem
+   5a3756f csoler   12 Oct 2015 10:41:48 -0400 fixed bug on reputation cutoff. Updated tooltips
+   36101a9 csoler   12 Oct 2015 00:28:21 -0400 fixed small bug preventing msg exchange
+   82c16c6 csoler   11 Oct 2015 22:08:19 -0400 fixed GUI tooltips over banned items. Added dropping of messages from banned ide
+   1a76bea csoler   11 Oct 2015 21:41:35 -0400 enabled bannign button in forums, and disable message passing for banned users
+   ad4dabf csoler   11 Oct 2015 13:31:54 -0400 Merge pull request #140 from PhenomRetroShare/AddVOIP_Accept,RingAndHangUp
+   ebe48f4 csoler   11 Oct 2015 11:12:11 -0400 added proper memory release after mallocs in distant chat (SVN bug 383)
+   e309dd6 csoler   11 Oct 2015 10:00:11 -0400 fixed banning users from forum threads
+   6a3f4ce Phenom   11 Oct 2015 10:31:06 +0200 Update Toaster when ringing.
+   f750818 csoler   10 Oct 2015 21:25:06 -0400 added proper icons and names for banned users
+   68ca57c csoler   10 Oct 2015 18:27:15 -0400 added removal of messages frm banned users
+   3deee00 Phenom   10 Oct 2015 18:47:07 +0200 Hang Up when close chat window.
+   1989f36 Phenom   10 Oct 2015 15:21:59 +0200 Add Accept, Ring and HangUp event for Video and Audio. Now you don't send data b
+   1a229ef defnax   10 Oct 2015 14:16:12 +0200 Fixed to display GXS ID item with a better icon size
+   59d2ca9 csoler    9 Oct 2015 18:55:07 -0400 fixed bug causing uninitialised friend average reputation to be shown
+   338fcee csoler    9 Oct 2015 18:51:16 -0400 added button in forums to flag poster identity as bad
+   ce96e88 csoler    9 Oct 2015 17:51:10 -0400 debugging of reputation system
+   ffb8f73 defnax    9 Oct 2015 12:07:23 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   e97f23d defnax    9 Oct 2015 12:06:16 +0200 Improved icon size display on GroupTree.
+   bb7a8f2 csoler    8 Oct 2015 23:54:18 -0400 fixed some reputation sending bugs
+   8c6c934 csoler    8 Oct 2015 23:02:34 -0400 fixed a few bugs in reputation items serialisation code and GUI display
+   1cf9c34 csoler    8 Oct 2015 19:48:22 -0400 fixed compilation for MacOS
+   4a4625e csoler    8 Oct 2015 18:54:12 -0400 fixed compilation for windows (to be tested)
+   3d21d99 csoler    8 Oct 2015 18:39:50 -0400 added debug info for reputation system
+   80ed6d1 csoler    7 Oct 2015 23:44:24 -0400 added pruning of opinions to limit data in memory. Fixed up types and sending/rec
+   e776eff csoler    7 Oct 2015 21:24:31 -0400 added new method rsGetHostByName to use gethostbyname_r for re-entrant calls. Upd
+   f1f722a csoler    7 Oct 2015 19:08:35 -0400 added missing shutdown of non responsive socket that could leak FDs (suggested by
+   39672b2 csoler    7 Oct 2015 18:59:58 -0400 fixed typo causing non free of mutex_buf structure in pqissl.cc
+   3cbf0f6 defnax    7 Oct 2015 20:13:18 +0200 Fixed Cert Display on Email Invite Page
+   78e6f67 csoler    6 Oct 2015 23:56:39 -0400 added some documentation in p3gxsreputation.cc, and the method for computing fina
+   b094089 csoler    6 Oct 2015 22:39:14 -0400 fixed compilation
+   95bdd7f defnax    7 Oct 2015 01:35:31 +0200 Fixed ChatWidget Margin's Set Alignment for frame off's Video icon
+   993ca63 defnax    6 Oct 2015 19:58:42 +0200 Fixed icons display
+   3f116e2 defnax    6 Oct 2015 18:54:43 +0200 display voip icons in a bigger size
+   fedb8f7 csoler    6 Oct 2015 09:47:54 -0400 Merge pull request #129 from PhenomRetroShare/FixVOIP_AllowVOIPToSaveSetting
+   ff46d90 csoler    6 Oct 2015 08:58:30 -0400 Merge pull request #120 from PhenomRetroShare/AddVOIP_HideChatTextButton
+   9f6bc0c csoler    6 Oct 2015 00:11:18 -0400 added code for all reputation items
+   05d95d3 Phenom    5 Oct 2015 21:04:20 +0200 Use QFontMetricsF to define Icon size.
+   2b1d39c Phenom    4 Oct 2015 14:12:20 +0200 Add HideChat Button. Change layout of video when text is hidden. Add toolbar in f
+   5d8972e Phenom    3 Oct 2015 02:11:52 +0200 Add real FullScreen Mode
+   0120234 csoler   12 Oct 2015 15:06:12 -0400 Merge pull request #143 from csoler/v0.6-Reputations
+   71c8dfd csoler   12 Oct 2015 14:45:11 -0400 manual merge before creating a conflict-free PR
+   f18cc82 csoler   12 Oct 2015 14:22:51 -0400 fixed up constants for reputation system, now that is has been tested
+   e6bb307 csoler   12 Oct 2015 14:04:23 -0400 added update for forum messages list when an author gets banned
+   7dc5984 csoler   12 Oct 2015 14:03:53 -0400 added update for forum messages list when an author gets banned
+   022ac10 defnax   12 Oct 2015 18:58:12 +0200 Merge pull request #141 from PhenomRetroShare/AddVOIP_ReactivateSoundEvents
+   3d32fab Phenom   12 Oct 2015 18:25:03 +0200 Reactivate SoundEvents in VOIP.
+   86b47d8 csoler   12 Oct 2015 10:58:24 -0400 reduced icon size a little bit in GxsTreeWidgetItem
+   5a3756f csoler   12 Oct 2015 10:41:48 -0400 fixed bug on reputation cutoff. Updated tooltips
+   36101a9 csoler   12 Oct 2015 00:28:21 -0400 fixed small bug preventing msg exchange
+   82c16c6 csoler   11 Oct 2015 22:08:19 -0400 fixed GUI tooltips over banned items. Added dropping of messages from banned ide
+   1a76bea csoler   11 Oct 2015 21:41:35 -0400 enabled bannign button in forums, and disable message passing for banned users
+   ad4dabf csoler   11 Oct 2015 13:31:54 -0400 Merge pull request #140 from PhenomRetroShare/AddVOIP_Accept,RingAndHangUp
+   ebe48f4 csoler   11 Oct 2015 11:12:11 -0400 added proper memory release after mallocs in distant chat (SVN bug 383)
+   e309dd6 csoler   11 Oct 2015 10:00:11 -0400 fixed banning users from forum threads
+   6a3f4ce Phenom   11 Oct 2015 10:31:06 +0200 Update Toaster when ringing.
+   f750818 csoler   10 Oct 2015 21:25:06 -0400 added proper icons and names for banned users
+   68ca57c csoler   10 Oct 2015 18:27:15 -0400 added removal of messages frm banned users
+   3deee00 Phenom   10 Oct 2015 18:47:07 +0200 Hang Up when close chat window.
+   1989f36 Phenom   10 Oct 2015 15:21:59 +0200 Add Accept, Ring and HangUp event for Video and Audio. Now you don't send data b
+   1a229ef defnax   10 Oct 2015 14:16:12 +0200 Fixed to display GXS ID item with a better icon size
+   59d2ca9 csoler    9 Oct 2015 18:55:07 -0400 fixed bug causing uninitialised friend average reputation to be shown
+   338fcee csoler    9 Oct 2015 18:51:16 -0400 added button in forums to flag poster identity as bad
+   ce96e88 csoler    9 Oct 2015 17:51:10 -0400 debugging of reputation system
+   ffb8f73 defnax    9 Oct 2015 12:07:23 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   e97f23d defnax    9 Oct 2015 12:06:16 +0200 Improved icon size display on GroupTree.
+   bb7a8f2 csoler    8 Oct 2015 23:54:18 -0400 fixed some reputation sending bugs
+   8c6c934 csoler    8 Oct 2015 23:02:34 -0400 fixed a few bugs in reputation items serialisation code and GUI display
+   1cf9c34 csoler    8 Oct 2015 19:48:22 -0400 fixed compilation for MacOS
+   4a4625e csoler    8 Oct 2015 18:54:12 -0400 fixed compilation for windows (to be tested)
+   3d21d99 csoler    8 Oct 2015 18:39:50 -0400 added debug info for reputation system
+   80ed6d1 csoler    7 Oct 2015 23:44:24 -0400 added pruning of opinions to limit data in memory. Fixed up types and sending/rec
+   e776eff csoler    7 Oct 2015 21:24:31 -0400 added new method rsGetHostByName to use gethostbyname_r for re-entrant calls. Upd
+   f1f722a csoler    7 Oct 2015 19:08:35 -0400 added missing shutdown of non responsive socket that could leak FDs (suggested by
+   39672b2 csoler    7 Oct 2015 18:59:58 -0400 fixed typo causing non free of mutex_buf structure in pqissl.cc
+   3cbf0f6 defnax    7 Oct 2015 20:13:18 +0200 Fixed Cert Display on Email Invite Page
+   78e6f67 csoler    6 Oct 2015 23:56:39 -0400 added some documentation in p3gxsreputation.cc, and the method for computing fina
+   b094089 csoler    6 Oct 2015 22:39:14 -0400 fixed compilation
+   95bdd7f defnax    7 Oct 2015 01:35:31 +0200 Fixed ChatWidget Margin's Set Alignment for frame off's Video icon
+   993ca63 defnax    6 Oct 2015 19:58:42 +0200 Fixed icons display
+   3f116e2 defnax    6 Oct 2015 18:54:43 +0200 display voip icons in a bigger size
+   fedb8f7 csoler    6 Oct 2015 09:47:54 -0400 Merge pull request #129 from PhenomRetroShare/FixVOIP_AllowVOIPToSaveSetting
+   ff46d90 csoler    6 Oct 2015 08:58:30 -0400 Merge pull request #120 from PhenomRetroShare/AddVOIP_HideChatTextButton
+   9f6bc0c csoler    6 Oct 2015 00:11:18 -0400 added code for all reputation items
+   05d95d3 Phenom    5 Oct 2015 21:04:20 +0200 Use QFontMetricsF to define Icon size.
+   2b1d39c Phenom    4 Oct 2015 14:12:20 +0200 Add HideChat Button. Change layout of video when text is hidden. Add toolbar in f
+   5d8972e Phenom    3 Oct 2015 02:11:52 +0200 Add real FullScreen Mode
+   8a7e359 Phenom    1 Oct 2015 23:41:34 +0200 Add a button on VOIP to hide text when video is on.
+   3c8f232 Phenom    5 Oct 2015 19:15:53 +0200 Allow VOIP to save its settings.
+   d4c838b csoler    5 Oct 2015 08:51:33 -0400 Merge pull request #127 from sehraf/pr-disable-sorting
+   6a570af sehraf    5 Oct 2015 09:26:36 +0200 disable sorting while editing network view
+   7a7f4c9 csoler    4 Oct 2015 23:18:31 -0400 added missing file
+   317e7ea csoler    4 Oct 2015 23:14:49 -0400 added some backend for reputation system
+   c17dddb csoler    4 Oct 2015 17:47:30 -0400 updated GUI for reputation
+   b5bfddd csoler    3 Oct 2015 22:08:24 -0400 commit from PR#86 for VOIP, modified so as to restore real-time preview and video
+   9158ed6 csoler    3 Oct 2015 10:46:36 -0400 fixed potential buffer overrun (reported by GuessWho)
+   7fa687a csoler    3 Oct 2015 10:29:08 -0400 Merge pull request #119 from PhenomRetroShare/AddWebUI_BroadcastInLobbiesLis
+   b22069c csoler    3 Oct 2015 10:28:17 -0400 Merge pull request #123 from PhenomRetroShare/Fix_ChatWidgetDeleteKeyEvent
+   64389e3 Phenom    3 Oct 2015 11:00:16 +0200 Fiw Delete key event in ChatWidget.
+   904ea94 Phenom    2 Oct 2015 19:10:54 +0200 Remove (void)
+   986853d Phenom    1 Oct 2015 18:49:39 +0200 Add Broadcast in list of lobbies. Before you can only write text on it if unread 
+   b055500 csoler    2 Oct 2015 11:03:52 -0400 Merge pull request #117 from G10h4ck/master
+   bd94fcd csoler    2 Oct 2015 10:53:00 -0400 Merge pull request #98 from PhenomRetroShare/AddMinimumFontSizeInChat
+   f6abe2f csoler    2 Oct 2015 10:50:14 -0400 Merge pull request #115 from PhenomRetroShare/AddWebUI_LobbyOrderByType
+   e83ae76 Gio      27 Sep 2015 20:15:41 +0200 pqiconnect remove ni NULL pointer check as it would crash anyway for null pointer d
+   28b9a44 Gio      27 Sep 2015 15:29:32 +0200 Write in a sane way pqissl::connect_parameter
+   b16ecc8 Gio      27 Sep 2015 15:11:55 +0200 Remove some garbage from pqissl
+   d6ba9a2 Phenom   25 Sep 2015 17:00:50 +0200 Order in WebUI Lobbies by first: auto_subscribe, is_private and then subscribed
+   3025f4d csoler   24 Sep 2015 18:18:11 -0400 removed aliasign problem that breaks compilation on gentoo
+   22d4893 csoler   24 Sep 2015 18:03:19 -0400 removed a few compilation warning that might cause compilation errors on some sy
+   0614a24 csoler   23 Sep 2015 22:11:50 -0400 Merge pull request #111 from csoler/v0.6-ImprovedExtIPDetermination
+   24b3325 csoler   23 Sep 2015 21:45:15 -0400 Improved reliability of the determination of external address: removed DHT stunn
+   323d894 csoler   22 Sep 2015 23:21:14 -0400 Merge pull request #110 from jenster/newbranchformychanges
+   68fd1b2 jenster  22 Sep 2015 18:33:16 -0700 First Mac/OSX compile fixes
+   6071be9 csoler   22 Sep 2015 11:20:28 -0400 Merge pull request #109 from AsamK/workaround_broken_sqlcipher
+   c80ad59 AsamK    22 Sep 2015 16:31:21 +0200 Add workaround for broken sqlcipher packages
+   7293cd3 csoler   21 Sep 2015 22:58:58 -0400 updated ubuntu changelog
+   1d54630 thunder2 17 Sep 2015 10:05:31 +0200 Fixed Windows compile.
+   66691d4 csoler   16 Sep 2015 20:01:39 -0400 Merge pull request #108 from sehraf/i2p
+   04abfad sehraf   16 Sep 2015 17:01:20 +0200 manually reverted changes by Qt Creator
+   7c7e4f8 sehraf   16 Sep 2015 12:13:54 +0200 added ip addr. field to the add certificate dialog
+   6202e83 sehraf   16 Sep 2015 11:48:32 +0200 add default case to gui instead of falling back to tor labeling
+   d3d184f sehraf   16 Sep 2015 11:09:04 +0200 added simple step-by-step guide to add a I2P server tunnel
+   e54358a sehraf   16 Sep 2015 10:55:33 +0200 added simple step-by-step guide to add a I2P client tunnel
+   1dd3375 sehraf   15 Sep 2015 17:14:55 +0200 hide debug output
+   d24b281 sehraf   15 Sep 2015 17:10:48 +0200 optimizations * reduced calls to mPeermgr * use switch convenience * small fixes
+   bfcf43f sehraf   15 Sep 2015 16:18:46 +0200 fixed connection type detection and other small things
+   8725aab sehraf   14 Sep 2015 15:14:39 +0200 gui fixes
+   6b87c38 sehraf   14 Sep 2015 14:56:14 +0200 small fixes
+   6ec1919 sehraf   14 Sep 2015 12:39:46 +0200 gui changes
+   b0251e3 sehraf   14 Sep 2015 12:12:28 +0200 generalized tooltips
+   4b19e73 sehraf   14 Sep 2015 09:56:43 +0200 added comments to functions
+   8a7e359 Phenom    1 Oct 2015 23:41:34 +0200 Add a button on VOIP to hide text when video is on.
+   3c8f232 Phenom    5 Oct 2015 19:15:53 +0200 Allow VOIP to save its settings.
+   d4c838b csoler    5 Oct 2015 08:51:33 -0400 Merge pull request #127 from sehraf/pr-disable-sorting
+   6a570af sehraf    5 Oct 2015 09:26:36 +0200 disable sorting while editing network view
+   7a7f4c9 csoler    4 Oct 2015 23:18:31 -0400 added missing file
+   317e7ea csoler    4 Oct 2015 23:14:49 -0400 added some backend for reputation system
+   c17dddb csoler    4 Oct 2015 17:47:30 -0400 updated GUI for reputation
+   b5bfddd csoler    3 Oct 2015 22:08:24 -0400 commit from PR#86 for VOIP, modified so as to restore real-time preview and video
+   9158ed6 csoler    3 Oct 2015 10:46:36 -0400 fixed potential buffer overrun (reported by GuessWho)
+   7fa687a csoler    3 Oct 2015 10:29:08 -0400 Merge pull request #119 from PhenomRetroShare/AddWebUI_BroadcastInLobbiesLis
+   b22069c csoler    3 Oct 2015 10:28:17 -0400 Merge pull request #123 from PhenomRetroShare/Fix_ChatWidgetDeleteKeyEvent
+   64389e3 Phenom    3 Oct 2015 11:00:16 +0200 Fiw Delete key event in ChatWidget.
+   904ea94 Phenom    2 Oct 2015 19:10:54 +0200 Remove (void)
+   986853d Phenom    1 Oct 2015 18:49:39 +0200 Add Broadcast in list of lobbies. Before you can only write text on it if unread 
+   b055500 csoler    2 Oct 2015 11:03:52 -0400 Merge pull request #117 from G10h4ck/master
+   bd94fcd csoler    2 Oct 2015 10:53:00 -0400 Merge pull request #98 from PhenomRetroShare/AddMinimumFontSizeInChat
+   f6abe2f csoler    2 Oct 2015 10:50:14 -0400 Merge pull request #115 from PhenomRetroShare/AddWebUI_LobbyOrderByType
+   e83ae76 Gio      27 Sep 2015 20:15:41 +0200 pqiconnect remove ni NULL pointer check as it would crash anyway for null pointer d
+   28b9a44 Gio      27 Sep 2015 15:29:32 +0200 Write in a sane way pqissl::connect_parameter
+   b16ecc8 Gio      27 Sep 2015 15:11:55 +0200 Remove some garbage from pqissl
+   d6ba9a2 Phenom   25 Sep 2015 17:00:50 +0200 Order in WebUI Lobbies by first: auto_subscribe, is_private and then subscribed
+   3025f4d csoler   24 Sep 2015 18:18:11 -0400 removed aliasign problem that breaks compilation on gentoo
+   22d4893 csoler   24 Sep 2015 18:03:19 -0400 removed a few compilation warning that might cause compilation errors on some sy
+   0614a24 csoler   23 Sep 2015 22:11:50 -0400 Merge pull request #111 from csoler/v0.6-ImprovedExtIPDetermination
+   24b3325 csoler   23 Sep 2015 21:45:15 -0400 Improved reliability of the determination of external address: removed DHT stunn
+   323d894 csoler   22 Sep 2015 23:21:14 -0400 Merge pull request #110 from jenster/newbranchformychanges
+   68fd1b2 jenster  22 Sep 2015 18:33:16 -0700 First Mac/OSX compile fixes
+   6071be9 csoler   22 Sep 2015 11:20:28 -0400 Merge pull request #109 from AsamK/workaround_broken_sqlcipher
+   c80ad59 AsamK    22 Sep 2015 16:31:21 +0200 Add workaround for broken sqlcipher packages
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 12 Oct 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.7293cd3~trusty) trusty; urgency=low
+
+   7293cd3 csoler Mon, 21 Sep 2015 22:58:58 -0400 updated ubuntu changelog
+   1d54630 thunder2    17 Sep 2015 10:05:31 +0200 Fixed Windows compile.
+   66691d4 csoler      16 Sep 2015 20:01:39 -0400 Merge pull request #108 from sehraf/i2p
+   04abfad sehraf      16 Sep 2015 17:01:20 +0200 manually reverted changes by Qt Creator
+   7c7e4f8 sehraf      16 Sep 2015 12:13:54 +0200 added ip addr. field to the add certificate dialog
+   6202e83 sehraf      16 Sep 2015 11:48:32 +0200 add default case to gui instead of falling back to tor labeling
+   d3d184f sehraf      16 Sep 2015 11:09:04 +0200 added simple step-by-step guide to add a I2P server tunnel
+   e54358a sehraf      16 Sep 2015 10:55:33 +0200 added simple step-by-step guide to add a I2P client tunnel
+   1dd3375 sehraf      15 Sep 2015 17:14:55 +0200 hide debug output
+   d24b281 sehraf      15 Sep 2015 17:10:48 +0200 optimizations * reduced calls to mPeermgr * use switch convenience * small fixes
+   bfcf43f sehraf      15 Sep 2015 16:18:46 +0200 fixed connection type detection and other small things
+   8725aab sehraf      14 Sep 2015 15:14:39 +0200 gui fixes
+   6b87c38 sehraf      14 Sep 2015 14:56:14 +0200 small fixes
+   6ec1919 sehraf      14 Sep 2015 12:39:46 +0200 gui changes
+   b0251e3 sehraf      14 Sep 2015 12:12:28 +0200 generalized tooltips
+   4b19e73 sehraf      14 Sep 2015 09:56:43 +0200 added comments to functions
+   900e51b csoler      13 Sep 2015 18:08:06 -0400 Merge pull request #107 from PhenomRetroShare/AddFriendListItemMouseEvents
+   48e6618 Phenom      13 Sep 2015 19:00:31 +0200 Send Mouse event to FriendList's item, since ElidedLabel was fixed.
+   7195d4c csoler      10 Sep 2015 09:41:28 -0400 Merge pull request #105 from ericthefish/master
+   4880fc4 Ivan Lucas  10 Sep 2015 11:21:01 +0100 Fixed grammar on add friend wizard by rewording slightly
+   840e930 Ivan Lucas  10 Sep 2015 10:29:15 +0100 Fix Spelling and Grammar
+   770e934 Ivan Lucas  10 Sep 2015 10:18:14 +0100 Merge remote-tracking branch 'upstream/master'
+   4a0539c csoler       9 Sep 2015 19:57:07 -0400 Merge pull request #103 from AsamK/html_parsing
+   1acd4a3 csoler       9 Sep 2015 16:44:59 -0400 Merge pull request #104 from PhenomRetroShare/Fix_ElidedLabel_mousePresEvent
+   ce9fc7b Phenom       9 Sep 2015 22:37:38 +0200 Fix ElidedLabel::mousePressEvent.
+   75a7a89 Ivan Lucas   9 Sep 2015 15:19:17 +0100 Fix typo
+   7aad9c1 AsamK        9 Sep 2015 13:36:00 +0200 Improve HTML parsing in libresapi
+   b8c3c89 AsamK        9 Sep 2015 11:53:01 +0200 Extract getPlainText method
+   ebd5da5 thunder2     8 Sep 2015 16:34:22 +0200 Optimizations in RsGenExchange, p3GxsForums and p3GxsChannels. - Removed not used variables 
+                                                  avoid copy constructors - Use swap instead of operator= to move elements of std containers
+   490b88c csoler       8 Sep 2015 14:17:29 -0400 Merge pull request #100 from ericthefish/master
+   a2e7e4d Ivan Lucas   8 Sep 2015 16:12:50 +0100 Fixed spelling/grammar
+   4f8b098 Ivan Lucas   8 Sep 2015 16:00:00 +0100 Fixing spelling
+   c4061fc thunder2     7 Sep 2015 22:27:04 +0200 Removed not used time consuming calculation of row count from RetroCursor.
+   29a1fa2 thunder2     7 Sep 2015 21:48:18 +0200 Removed unnecessary copy of results in RsGxsDataAccess.
+   0bc77d7 sehraf       8 Sep 2015 13:48:30 +0200 added some error handling
+   da417ee csoler       7 Sep 2015 20:38:47 -0400 Merge pull request #96 from AsamK/qmake_3
+   63e38af csoler       7 Sep 2015 20:36:03 -0400 Merge pull request #94 from AsamK/correct_libav_version
+   03d99ae sehraf       7 Sep 2015 23:55:57 +0200 made GenCertDislog more generic
+   4fc6c73 sehraf       7 Sep 2015 23:40:52 +0200 replaced some ifs with switch
+   e2768e0 defnax       7 Sep 2015 23:34:39 +0200 Added last used field to Person Details Window
+   fed4345 sehraf       7 Sep 2015 22:57:54 +0200 made server settings more generic and added i2p support
+   95d6b06 sehraf       7 Sep 2015 18:46:19 +0200 first working version
+   0107f4e sehraf       7 Sep 2015 12:59:21 +0200 first run on gui integration
+   ba74c04 sehraf       7 Sep 2015 11:51:24 +0200 removed duplicated code, fixed compile, few additions
+   c17d0e1 sehraf       7 Sep 2015 11:22:15 +0200 add i2p support to libretroshare
+   2c1743f defnax       7 Sep 2015 15:13:32 +0200 Added send message function for Participants list.
+   cc4be39 defnax       7 Sep 2015 15:08:56 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   0793a6a AsamK        6 Sep 2015 14:19:21 +0200 Use PLUGIN_DIR to define plugin directory only once
+   fe1ec9d AsamK        5 Sep 2015 22:49:57 +0200 Fixed mac compile. Moved sqlcipher.a to libretroshare.pro
+   571336e AsamK        5 Sep 2015 23:49:15 +0200 Move duplicate common stuff out of platform parts
+   66b9557 AsamK        5 Sep 2015 23:48:24 +0200 Use PKGCONFIG instead of manually specifying LIBS for Linux
+   b8e3a43 thunder2     6 Sep 2015 21:28:34 +0200 Auto download of recommended files adds the sender as source of the download.
+   5f36500 thunder2     6 Sep 2015 14:21:05 +0200 Fixed click in column "Friend nodes" in FriendList.
+   869077b thunder2     5 Sep 2015 12:46:18 +0200 Combined selects in RsDataService::retrieveNxsGrps/RsDataService::retrieveNxsMsgs.
+   d6f50c7 AsamK        5 Sep 2015 15:44:10 +0200 Fix libav version check
+   e9a5523 defnax       5 Sep 2015 00:16:07 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   7f8dae9 defnax       4 Sep 2015 16:33:43 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   07c5030 defnax       3 Sep 2015 17:41:30 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+   3d6e978 defnax       2 Sep 2015 13:06:15 +0200 Fixed Status Label on Distant Chat
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 21 Sep 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20150905.8bb76c95~trusty) trusty; urgency=low
+
    a276986 (              ) Merge pull request #60 from PhenomRetroShare/Fix_AllowChatTextFormatOption
    88a6931 (GUI           ) Allow Chat Text Format Option working.
    0b5b20d (              ) Merge pull request #59 from AsamK/qmake_improvements
@@ -98,9 +336,9 @@ retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
    4d7f733 (Packaging     ) fixed bug in git parameter in packaging script
    9734f32 (Packaging     ) updated ubuntu changelog. improved ubuntu packaging script
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 16 Aug 2015 20:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 05 Sep 2015 20:00:00 +0100
 
-retroshare06 (0.6.0-1.20150816~9734f32a) trusty; urgency=low
+retroshare06 (0.6.0-1.20150816.9734f32a~trusty) trusty; urgency=low
 
    f6b830d (branch merging) Merge pull request #35 from hunbernd/chat-fix
    16859a1 (GUI           ) Fix: chatlobby toaster not working

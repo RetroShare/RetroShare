@@ -60,5 +60,13 @@
 		<file>icons/user-busy_64.png</file>
 		<file>icons/user-offline_64.png</file>
 		<file>icons/user-online_64.png</file>
+		<file>icons/yellow_biohazard64.png</file>
+		<file>icons/gmail.png</file>
+		<file>icons/yahoo.png</file>
+		<file>icons/outlook.png</file>
+		<file>icons/aol.png</file>
+		<file>icons/yandex.png</file>
+		<file>icons/tor-on.png</file>
+		<file>icons/tor-logo.png</file>
 	</qresource>
 </RCC>

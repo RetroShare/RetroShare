@@ -1,7 +1,9 @@
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = pegmarkdown
+DESTDIR = lib
 
 QMAKE_CFLAGS *= -Wall -ansi  -D_GNU_SOURCE
 QMAKE_CC = gcc
@@ -14,7 +16,9 @@ debug {
 
 ################################# Linux ##########################################
 linux-* {
-	DESTDIR = lib
+	CONFIG += link_pkgconfig
+
+	PKGCONFIG *= glib-2.0
 }
 
 linux-g++ {
@@ -30,7 +34,6 @@ linux-g++-64 {
 win32 {
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		DESTDIR = lib
 
 		# Switch on extra warnings
 		QMAKE_CFLAGS += -Wextra
@@ -53,7 +56,6 @@ win32 {
 mac {
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		DESTDIR = lib
 
 		CONFIG += dummy_glib 
 }
@@ -61,13 +63,11 @@ mac {
 ################################# FreeBSD ##########################################
 
 freebsd-* {
-		DESTDIR = lib
 }
 
 ################################# OpenBSD ##########################################
 
 openbsd-* {
-		DESTDIR = lib
 }
 
 ################################### COMMON stuff ##################################

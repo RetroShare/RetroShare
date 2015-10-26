@@ -98,7 +98,7 @@ virtual int reset();
 virtual int disconnect();
 virtual int getConnectAddress(struct sockaddr_storage &raddr);
 
-virtual bool connect_parameter(uint32_t type, const std::string &value);
+virtual bool connect_parameter(uint32_t /*type*/, const std::string & /*value*/) { return false; }
 virtual bool connect_parameter(uint32_t type, uint32_t value);
 
 	// BinInterface
@@ -195,8 +195,6 @@ virtual int net_internal_fcntl_nonblock(int fd);
 	int total_len ; // saves the reading state accross successive calls.
 
 	int attempt_ts;
-
-	bool sameLAN; /* flag use to allow high-speed transfers */
 
 	int n_read_zero; /* a counter to determine if the connection is really dead */
 	time_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */

@@ -595,11 +595,12 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
     n=RSA_public_encrypt(length,in,out,orsa,RSA_NO_PADDING);
 
     if (n==-1)
-        {
-        BIO *fd_out;
-        fd_out=BIO_new_fd(fileno(stderr), BIO_NOCLOSE);
-        ERR_print_errors(fd_out);
-        }
+    {
+	    BIO *fd_out;
+	    fd_out=BIO_new_fd(fileno(stderr), BIO_NOCLOSE);
+	    ERR_print_errors(fd_out);
+	    BIO_free(fd_out) ;
+    }
 
     orsa->n=orsa->e=NULL;
     RSA_free(orsa);

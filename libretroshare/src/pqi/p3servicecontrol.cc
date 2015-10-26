@@ -148,7 +148,7 @@ public:
         uint32_t tmp ;
         ok &= getRawUInt32(data, rssize, &offset, &tmp);
 
-        for(int i=0;i<tmp && offset < rssize;++i)
+        for(uint32_t i=0;i<tmp && offset < rssize;++i)
         {
             RsPeerId peer_id ;
             ok &= peer_id.deserialise(data,rssize,offset) ;
@@ -157,7 +157,7 @@ public:
 
         ok &= getRawUInt32(data, rssize, &offset, &tmp);
 
-        for(int i=0;i<tmp && offset < rssize;++i)
+        for(uint32_t i=0;i<tmp && offset < rssize;++i)
         {
             RsPeerId peer_id ;
             ok &= peer_id.deserialise(data,rssize,offset) ;

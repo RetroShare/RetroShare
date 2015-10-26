@@ -26,6 +26,7 @@
 #include "util/rsnet.h"
 #include "util/rsthreads.h"
 #include "util/rsstring.h"
+#include "util/rsmemory.h"
 
 #ifdef WINDOWS_SYS
 #else
@@ -72,6 +73,40 @@ void sockaddr_clear(struct sockaddr_in *addr)
         addr->sin_family = AF_INET;
 }
 
+bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
+{
+#if defined(WINDOWS_SYS) || defined(__APPLE__) || defined(__HAIKU__)
+	hostent *result = gethostbyname(hostname.c_str()) ;
+#else
+    RsTemporaryMemory mem(8192) ;
+
+    if(!mem)
+    {
+	    std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory!" << std::endl;
+	    return false; // Do something.
+    }
+
+    int error = 0;
+    struct hostent pHost;
+    struct hostent *result;
+
+    if(gethostbyname_r(hostname.c_str(), &pHost, (char*)(unsigned char*)mem, mem.size(), &result, &error) != 0)
+    {
+	    std::cerr << __PRETTY_FUNCTION__ << ": cannot call gethostname_r. Internal error reported. Check buffer size." << std::endl;
+	    return false ;
+    }
+#endif
+    if(!result)
+    {
+	    std::cerr << __PRETTY_FUNCTION__ << ": gethostname returned null result." << std::endl;
+	    return false ;
+    }
+    // Use contents of result.
+
+    returned_addr.s_addr = *(unsigned long*) (result->h_addr);
+    
+    return true ;
+}
 
 bool    isValidNet(const struct in_addr *addr)
 {

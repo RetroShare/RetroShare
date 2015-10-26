@@ -79,7 +79,8 @@ void VOIPToasterItem::chatButtonSlot()
 	hide();
 }
 
-void VOIPToasterItem::voipAcceptReceived(const RsPeerId &)
+#ifdef VOIPTOASTERNOTIFY_ALL
+void VOIPToasterItem::voipAcceptReceived(const RsPeerId &, int )
 {
 }
 
@@ -91,11 +92,11 @@ void VOIPToasterItem::voipDataReceived(const RsPeerId &)
 {
 }
 
-void VOIPToasterItem::voipHangUpReceived(const RsPeerId &)
+void VOIPToasterItem::voipHangUpReceived(const RsPeerId &, int )
 {
 }
 
-void VOIPToasterItem::voipInvitationReceived(const RsPeerId &)
+void VOIPToasterItem::voipInvitationReceived(const RsPeerId &, int )
 {
 }
 
@@ -106,4 +107,4 @@ void VOIPToasterItem::voipAudioCallReceived(const RsPeerId &)
 void VOIPToasterItem::voipVideoCallReceived(const RsPeerId &)
 {
 }
-
+#endif

@@ -412,6 +412,8 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
         if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
             details.mNickname = "[too long a name]" ;
+        
+        rsReputations->getReputationInfo(id,details.mReputation) ;
 
             return true;
         }
@@ -421,6 +423,9 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         {
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            
+        rsReputations->getReputationInfo(id,details.mReputation) ;
+        
             return true;
         }
     }
@@ -831,7 +836,7 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 	if (mPublicKeyCache.fetch(id, data))
 	{
 		rep.id = id;
-                rep.score = data.details.mReputation.mOverallScore;
+                rep.score = 0;//data.details.mReputation.mOverallScore;
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::getReputation() id: ";
                 std::cerr << id.toStdString() << " score: " <<
@@ -1669,14 +1674,14 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 		}
 
 		// copy over Reputation scores.
-		details.mReputation = ssdata.score.rep;
+		//details.mReputation = ssdata.score.rep;
 	}
 	else
 	{
 		details.mPgpKnown = false;
 		details.mPgpId.clear();
-		details.mReputation.updateIdScore(false, false);
-		details.mReputation.update();
+		//details.mReputation.updateIdScore(false, false);
+		//details.mReputation.update();
 	}
 }
 

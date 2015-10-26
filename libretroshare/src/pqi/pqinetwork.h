@@ -38,6 +38,7 @@
 #include <arpa/inet.h>
 
 #include <sys/poll.h>
+#include <errno.h>
 
 //socket blocking/options.
 #include <fcntl.h>
@@ -103,10 +104,6 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
 bool getPreferredInterface(struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr); // returns best addr.
 bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct sockaddr_storage> &addrs); // returns all possible addrs.
-
-	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
-bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);
-bool	sameNet(const struct in_addr *addr, const struct in_addr *addr2); 
 
 in_addr_t pqi_inet_netof(struct in_addr addr); // our implementation.
 

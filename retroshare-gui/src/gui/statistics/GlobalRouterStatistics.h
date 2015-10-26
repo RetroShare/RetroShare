@@ -40,6 +40,8 @@ class GlobalRouterStatistics: public RsAutoUpdatePage, public Ui::GlobalRouterSt
 		
 		// Cache for peer names.
         static QString getPeerName(const RsPeerId& peer_id) ;
+        
+		void updateContent() ;
 
 	private:
 											

@@ -617,15 +617,19 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 	uint32_t ptype;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
-		if (type == RS_NET_CONN_TCP_HIDDEN)
-		{
-			ptype = PQI_CONNECT_HIDDEN_TCP;
-			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD; 
-		}
-		else
-		{
+		switch (type) {
+		case RS_NET_CONN_TCP_HIDDEN_TOR:
+			ptype = PQI_CONNECT_HIDDEN_TOR_TCP;
+			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD;
+			break;
+		case RS_NET_CONN_TCP_HIDDEN_I2P:
+			ptype = PQI_CONNECT_HIDDEN_I2P_TCP;
+			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD;
+			break;
+		default:
 			ptype = PQI_CONNECT_TCP;
-			timeout = RS_TCP_STD_TIMEOUT_PERIOD; 
+			timeout = RS_TCP_STD_TIMEOUT_PERIOD;
+			break;
 		}
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() connecting with TCP: Timeout :" << timeout;
