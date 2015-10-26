@@ -60,7 +60,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-//#define GEN_EXCH_DEBUG	1
+#define GEN_EXCH_DEBUG	1
 
 #define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
 #define INTEGRITY_CHECK_PERIOD 60*30 //  30 minutes
@@ -899,7 +899,10 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			    idValidate = false;
 		    }
 
-            	if(idValidate && (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
+            	// now check reputation of the message author
+            	float reputation_threshold = (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)? RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM: RsReputations::REPUTATION_THRESHOLD_DEFAULT ;
+            
+            	if(idValidate)
                 {
                     // get key data and check that the key is actually PGP-linked. If not, reject the post.
                     
@@ -908,18 +911,18 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
                     if(!mGixs->getIdDetails(metaData.mAuthorId,details))
 		    {
 			    // the key cannot ke reached, although it's in cache. Weird situation.
-			    idValidate = false;
 			    std::cerr << "RsGenExchange::validateMsg(): cannot get key data for ID=" << metaData.mAuthorId << ", although it's supposed to be already in cache. Cannot validate." << std::endl;
 			    idValidate = false ;
 		    }
-                    
-                    if(!details.mPgpLinked)
+                    else if(details.mReputation.mOverallReputationScore < reputation_threshold)
                     {
 #ifdef GEN_EXCH_DEBUG	
-			    std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because key is not PGP linked and the group requires it." << std::endl;
+			    std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationScore <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
 #endif
 			    idValidate = false ;
                     }
+                    std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", accepted. Reputation score (" << details.mReputation.mOverallReputationScore <<") is above accepted threshold (" << reputation_threshold << ")" << std::endl;
+
                 }
 	    }
             else

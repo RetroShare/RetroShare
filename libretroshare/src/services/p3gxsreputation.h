@@ -63,12 +63,12 @@ class Reputation
 {
 public:
 	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE) { }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+                                                                                            
+	Reputation(const RsGxsId& about)                                                           
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
 
-	Reputation(const RsGxsId& about)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE) { }
-
-	void updateReputation(uint32_t average_active_friends);
+	void updateReputation();
 
 	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
 	int32_t mOwnOpinion;

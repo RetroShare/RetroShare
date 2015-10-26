@@ -189,7 +189,7 @@ int	p3GxsReputation::tick()
         
         // no more than once per 5 second chunk.
         
-        if(now > 5+last_identity_flags_update)
+        if(now > 100+last_identity_flags_update)
         {
             last_identity_flags_update = now ;
             
@@ -215,29 +215,48 @@ int	p3GxsReputation::status()
 
 void p3GxsReputation::updateIdentityFlags()
 {
-    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-    
-    std::cerr << "Updating reputation identity flags" << std::endl;
-    
-    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
-        if(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE)
-        {
-            RsIdentityDetails details;
-            
-            if(!rsIdentity->getIdDetails(rit->first,details))
-            {
-                std::cerr << "  cannot obtain info for " << rit->first << ". Will do it later." << std::endl;
-                continue ;
-            }
-            
-            rit->second.mIdentityFlags = 0 ;
-            
-            if(details.mPgpLinked) rit->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
-            if(details.mPgpKnown ) rit->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
-            
-            std::cerr << "  updated flags for " << rit->first << " to " << std::hex << rit->second.mIdentityFlags << std::dec << std::endl;
-            break ;
-        }
+    std::list<RsGxsId> to_update ;
+
+    // we need to gather the list to be used in a non locked frame
+    {
+	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+	    std::cerr << "Updating reputation identity flags" << std::endl;
+
+	    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
+		    if(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE)
+			    to_update.push_back(rit->first) ;
+    }
+
+    for(std::list<RsGxsId>::const_iterator rit(to_update.begin());rit!=to_update.end();++rit)
+    {
+	    RsIdentityDetails details;
+
+	    if(!rsIdentity->getIdDetails(*rit,details))
+	    {
+		    std::cerr << "  cannot obtain info for " << *rit << ". Will do it later." << std::endl;
+		    continue ;
+	    }
+
+	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+	    std::map<RsGxsId,Reputation>::iterator it = mReputations.find(*rit) ;
+
+	    if(it == mReputations.end())
+	    {
+		    std::cerr << "  Weird situation: item " << *rit << " has been deleted from the list??" << std::endl;
+		    continue ;
+	    }
+	    it->second.mIdentityFlags = 0 ;
+
+	    if(details.mPgpLinked) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+	    if(details.mPgpKnown ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
+
+	    std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;
+
+	    it->second.updateReputation() ;
+	    IndicateConfigChanged();		
+    }
 }
 
 void p3GxsReputation::cleanup()
@@ -521,7 +540,7 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 #ifdef DEBUG_REPUTATION
 	    std::cerr << "  reputation changed. re-calculating." << std::endl;
 #endif
-	    reputation.updateReputation(mAverageActiveFriends) ;
+	    reputation.updateReputation() ;
     }
     
     if(updated)
@@ -576,39 +595,28 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
 
 bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::ReputationInfo& info)
 {
+    if(gxsid.isNull())
+        return false ;
+        
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 #ifdef DEBUG_REPUTATION
     std::cerr << "getReputationInfo() for " << gxsid << std::endl;
 #endif
-        
-    std::map<RsGxsId,Reputation>::iterator it = mReputations.find(gxsid);
+    Reputation& rep(mReputations[gxsid]) ;
 
-    if (it == mReputations.end())
-    {
-	    info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
-	    info.mFriendAverage = RsReputations::OPINION_NEUTRAL ;
-	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
+    info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
+    info.mOverallReputationScore = rep.mReputation ;
+    info.mFriendAverage = rep.mFriendAverage ;
+
+    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
 	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
-#ifdef DEBUG_REPUTATION
-	    std::cerr << "  no information present. Returning default. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
-#endif
-    }
     else
-    {
-	    info.mOwnOpinion = RsReputations::Opinion(it->second.mOwnOpinion) ;
-	    info.mOverallReputationScore = it->second.mReputation ;
-	    info.mFriendAverage = it->second.mFriendAverage ;
+	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
 
-	    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
-		    info.mAssessment = RsReputations::ASSESSMENT_OK ;
-	    else
-		    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
-        
 #ifdef DEBUG_REPUTATION
 	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
 #endif
-    }
 
     return true ;
 }
@@ -675,7 +683,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 	time_t now = time(NULL);
 	reputation.mOwnOpinion = opinion;
 	reputation.mOwnOpinionTs = now;
-	reputation.updateReputation(mAverageActiveFriends);
+	reputation.updateReputation();
 
 	mUpdated.insert(std::make_pair(now, gxsid));
 	mUpdatedReputations.insert(gxsid);
@@ -825,7 +833,7 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
     	//float old_reputation = reputation.mReputation ;
 	//mUpdatedReputations.insert(gxsId) ;
     
-	reputation.updateReputation(mAverageActiveFriends) ;
+	reputation.updateReputation() ;
 
 	mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
 	return true;
@@ -934,7 +942,7 @@ int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 	return 1;
 }
 
-void Reputation::updateReputation(uint32_t average_active_friends) 
+void Reputation::updateReputation() 
 {
     // the calculation of reputation makes the whole thing   
 

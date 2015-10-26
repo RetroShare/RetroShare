@@ -151,6 +151,7 @@ uint32_t    RsGxsReputationSetItem::serial_size() const
     	s += mGxsId.serial_size() ;
         s += 4 ; 			// mOwnOpinion
         s += 4 ; 			// mOwnOpinionTS
+        s += 4 ; 			// mIdentityFlags
         
         s += 4 ; 			// mOpinions.size()
         

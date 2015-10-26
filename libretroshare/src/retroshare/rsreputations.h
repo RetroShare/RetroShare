@@ -31,6 +31,9 @@
 class RsReputations
 {
 public:
+    	static const float REPUTATION_THRESHOLD_ANTI_SPAM = 1.2f ;
+    	static const float REPUTATION_THRESHOLD_DEFAULT   = 1.0f ;
+        
 	// This is the interface file for the reputation system
 	//
 	enum Opinion    { OPINION_NEGATIVE = 0, OPINION_NEUTRAL = 1, OPINION_POSITIVE = 2 } ;
