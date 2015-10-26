@@ -23,6 +23,7 @@
  *
  */
 
+#include <math.h>
 #include "pqi/p3linkmgr.h"
 
 #include "retroshare/rspeers.h"
@@ -37,6 +38,7 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
+#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -126,7 +128,6 @@
 
 static const uint32_t LOWER_LIMIT                         = 0;        // used to filter valid Opinion values from serialized data
 static const uint32_t UPPER_LIMIT                         = 2;        // used to filter valid Opinion values from serialized data
-static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 static const int      kMaximumPeerAge                     = 180;      // half a year.
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
 static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
@@ -134,6 +135,10 @@ static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 static const int      kReputationRequestPeriod            = 600;      // 10 mins
 static const int      kReputationStoreWait                = 180;      // 3 minutes.
 
+static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
+static const float    REPUTATION_PGP_LINKED_ID_BIAS       = 0.2f ;
+static const float    REPUTATION_PGP_KNOWN_ID_BIAS        = 0.3f ;	// so known pgp-linked ids go up to +0.5f
+static const float    REPUTATION_FRIEND_VARIANCE          = 2.0f ;
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
@@ -180,6 +185,17 @@ int	p3GxsReputation::tick()
 		mLastActiveFriendsUpdate = now ;
 	}
 
+    	static time_t last_identity_flags_update = 0 ;
+        
+        // no more than once per 5 second chunk.
+        
+        if(now > 5+last_identity_flags_update)
+        {
+            last_identity_flags_update = now ;
+            
+            updateIdentityFlags() ;
+        }
+        
 #ifdef DEBUG_REPUTATION
 	static time_t last_debug_print = time(NULL) ;
 
@@ -195,6 +211,33 @@ int	p3GxsReputation::tick()
 int	p3GxsReputation::status()
 {
 	return 1;
+}
+
+void p3GxsReputation::updateIdentityFlags()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    
+    std::cerr << "Updating reputation identity flags" << std::endl;
+    
+    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
+        if(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE)
+        {
+            RsIdentityDetails details;
+            
+            if(!rsIdentity->getIdDetails(rit->first,details))
+            {
+                std::cerr << "  cannot obtain info for " << rit->first << ". Will do it later." << std::endl;
+                continue ;
+            }
+            
+            rit->second.mIdentityFlags = 0 ;
+            
+            if(details.mPgpLinked) rit->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+            if(details.mPgpKnown ) rit->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
+            
+            std::cerr << "  updated flags for " << rit->first << " to " << std::hex << rit->second.mIdentityFlags << std::dec << std::endl;
+            break ;
+        }
 }
 
 void p3GxsReputation::cleanup()
@@ -539,7 +582,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
     std::cerr << "getReputationInfo() for " << gxsid << std::endl;
 #endif
         
-    std::map<RsGxsId,Reputation>::const_iterator it = mReputations.find(gxsid);
+    std::map<RsGxsId,Reputation>::iterator it = mReputations.find(gxsid);
 
     if (it == mReputations.end())
     {
@@ -689,6 +732,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		item->mGxsId = rit->first;
 		item->mOwnOpinion = rit->second.mOwnOpinion;
 		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
+		item->mIdentityFlags = rit->second.mIdentityFlags;
 
 		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
@@ -719,6 +763,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	for(it = loadList.begin(); it != loadList.end(); ++it)
 	{
 		RsGxsReputationConfigItem *item = dynamic_cast<RsGxsReputationConfigItem *>(*it);
+
 		// Configurations are loaded first. (to establish peerSet).
 		if (item)
 		{
@@ -728,13 +773,14 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 			config.mPeerId = peerId;
 			config.mLatestUpdate = item->mLatestUpdate;
 			config.mLastQuery = 0;
-			
+
 			peerSet.insert(peerId);
 		}
+
 		RsGxsReputationSetItem *set = dynamic_cast<RsGxsReputationSetItem *>(*it);
 		if (set)
 			loadReputationSet(set, peerSet);
-        
+
 		delete (*it);
 	}
 
@@ -903,10 +949,25 @@ void Reputation::updateReputation(uint32_t average_active_friends)
     if(mOpinions.empty())	// includes the case of no friends!
 	    mFriendAverage = 1.0f ;
     else
-	    mFriendAverage = 1.0+friend_total / float(std::max(average_active_friends,(uint32_t)mOpinions.size()));
+    {
+        if(friend_total > 0)
+	    mFriendAverage = 1.0+exp(-friend_total / REPUTATION_FRIEND_VARIANCE) ;
+        else
+	    mFriendAverage = 1.0-exp( friend_total / REPUTATION_FRIEND_VARIANCE) ;
+    }
 
+    // now compute a bias for PGP-signed ids.
+    
+    float pgp_bias = 0.0f ;
+    
+    if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED)
+        pgp_bias += REPUTATION_PGP_KNOWN_ID_BIAS ;
+    
+    if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_KNOWN)
+        pgp_bias += REPUTATION_PGP_LINKED_ID_BIAS ;
+    
     if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-	    mReputation = mFriendAverage ;
+	    mReputation = std::max(0.0f,std::min(2.0f,mFriendAverage + pgp_bias)) ;
     else
 	    mReputation = (float)mOwnOpinion ;
 }

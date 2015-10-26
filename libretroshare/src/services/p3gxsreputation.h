@@ -32,6 +32,10 @@
 #include <map>
 #include <set>
 
+#define REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE  0x0100
+#define REPUTATION_IDENTITY_FLAG_PGP_LINKED    0x0001
+#define REPUTATION_IDENTITY_FLAG_PGP_KNOWN     0x0002
+
 #include "serialiser/rsgxsreputationitems.h"
 
 #include "retroshare/rsidentity.h"
@@ -59,10 +63,10 @@ class Reputation
 {
 public:
 	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE) { }
 
 	Reputation(const RsGxsId& about)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL) { }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE) { }
 
 	void updateReputation(uint32_t average_active_friends);
 
@@ -72,6 +76,8 @@ public:
 
     	float mFriendAverage ;
 	float mReputation;
+    
+    	uint32_t mIdentityFlags;
 };
 
 
@@ -124,6 +130,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		void sendReputationRequests();
 		int  sendReputationRequest(RsPeerId peerid);
         	void debug_print() ;
+        	void updateIdentityFlags();
 
 	private:
 		RsMutex mReputationMtx;
