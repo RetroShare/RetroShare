@@ -39,7 +39,6 @@
 
 bool test_byte_manipulation();
 bool test_local_address_manipulation();
-bool test_address_listen();
 
 
 INITTEST();
@@ -50,7 +49,6 @@ int main(int argc, char **argv)
 
 	test_byte_manipulation();
 	test_local_address_manipulation();
-	test_address_listen();
 
 	FINALREPORT("libretroshare Net Basics Tests");
 	return TESTRESULT();
@@ -212,36 +210,6 @@ bool test_local_address_manipulation()
 }
 
 bool test_bind_addr(struct sockaddr_in addr);
-
-bool test_address_listen()
-{
-	struct sockaddr_in addr1, addr2, addr3;
-
-	sockaddr_clear(&addr1);
-	addr1.sin_family = AF_INET;
-	inet_aton(loopback_addrstr, &(addr1.sin_addr));
-	addr1.sin_port = htons(12345);
-
-	sockaddr_clear(&addr2);
-	addr2.sin_family = AF_INET;
-	getPreferredInterface(addr2.sin_addr); // returns best addr.
-	addr2.sin_port = htons(13245);
-
-	sockaddr_clear(&addr3);
-	addr3.sin_family = AF_INET;
-	getPreferredInterface(addr3.sin_addr); // returns best addr.
-	addr3.sin_port = htons(23451);
-
-	/* test bind to loopback, and preferred interfaces */
-	test_bind_addr(addr1);
-	test_bind_addr(addr2);
-	test_bind_addr(addr3);
-
-
-
-        REPORT("Test Address Listen");
-	return true;
-}
 
 bool test_bind_addr(struct sockaddr_in addr)
 {

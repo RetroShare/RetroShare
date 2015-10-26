@@ -74,16 +74,6 @@ Description:
 (7) pqi_inet_netof()
 
 ------------------------------------------------------------
-netiface_test
-------------------------------------------------------------
-Tested Code: pqinetwork.cc
-Description :
-(1) getPreferredInterface()
-(2) getLocalInterfaces()
-
-This is currently a manual test - needs to be converted.
-
-------------------------------------------------------------
 pqiarchive_test
 ------------------------------------------------------------
 Tested Code: pqiarchive.cc pqibin.cc
