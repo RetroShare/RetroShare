@@ -23,6 +23,8 @@
  *
  */
 
+#include <sstream>
+
 #include "util/rsnet.h"
 #include "util/rsstring.h"
 #include "pqi/pqinetwork.h"
@@ -192,7 +194,7 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 			break;
 		default:
 			std::cerr << "sockaddr_storage_port() invalid addr.ss_family" << std::endl;
-			//sockaddr_storage_dump(addr); // This function is implemented in IPv6 branch but not here
+			sockaddr_storage_dump(addr);
 			break;
 	}
 	return 0;
@@ -382,8 +384,58 @@ std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr)
 	return output;
 }
 
+void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputString)
+{
+	// This function must not rely on others sockaddr_storage_*
 
+	std::stringstream output;
+	output << "sockaddr_storage_dump(addr) ";
 
+	switch (addr.ss_family){
+	case AF_INET:
+	{
+		const sockaddr_in * in = (const sockaddr_in *) & addr;
+		output << "addr.ss_family = AF_INET";
+		output << " in->sin_addr = ";
+		output << inet_ntoa(in->sin_addr);
+		output << " in->sin_port = ";
+		output << in->sin_port;
+		break;
+	}
+	case AF_INET6:
+	{
+		char addrStr[INET6_ADDRSTRLEN+1];
+		struct sockaddr_in6 * in6 = (struct sockaddr_in6 *) & addr;
+		inet_ntop(addr.ss_family, &(in6->sin6_addr), addrStr, INET6_ADDRSTRLEN);
+		output << "addr.ss_family = AF_INET6";
+		output << " in6->sin6_addr = ";
+		output << addrStr;
+		output << " in6->sin6_scope_id = ";
+		output << in6->sin6_scope_id;
+		output << " in6->sin6_port = ";
+		output << in6->sin6_port;
+		break;
+	}
+	default:
+	{
+		output << "unknown addr.ss_family = ";
+		output << addr.ss_family;
+		output << " addr.__ss_align = ";
+		output << addr.__ss_align;
+		output << " addr.__ss_padding = ";
+		output << addr.__ss_padding;
+	}}
+
+	if(outputString)
+	{
+		outputString->append(output.str() + "\n");
+#ifdef SS_DEBUG
+		std::cerr << output.str() << std::endl;
+#endif
+	}
+	else
+		std::cerr << output.str() << std::endl;
+}
 
 std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr)
 {
@@ -813,10 +865,12 @@ std::string sockaddr_storage_ipv4_iptostring(const struct sockaddr_storage &addr
 	return output;
 }
 
-std::string sockaddr_storage_ipv6_iptostring(const struct sockaddr_storage & /* addr */)
+std::string sockaddr_storage_ipv6_iptostring(const struct sockaddr_storage & addr)
 {
-	std::string output;
-	output += "IPv6-ADDRESS-TODO";
+	char addrStr[INET6_ADDRSTRLEN+1];
+	struct sockaddr_in6 * addrv6p = (struct sockaddr_in6 *) &addr;
+	inet_ntop(addr.ss_family, &(addrv6p->sin6_addr), addrStr, INET6_ADDRSTRLEN);
+	std::string output(addrStr);
 	return output;
 }
 

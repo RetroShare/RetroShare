@@ -113,6 +113,7 @@ std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr);
+void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputString = NULL);
 
 // output
 //void sockaddr_storage_output(const struct sockaddr_storage &addr, std::ostream &out);
