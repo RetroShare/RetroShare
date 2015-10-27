@@ -37,16 +37,15 @@ GRouterMatrix::GRouterMatrix()
 bool GRouterMatrix::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& source_friend)
 {
     time_t now = time(NULL) ;
-    uint32_t fid = getFriendId(source_friend) ;
 
     RoutingTrackEntry rte ;
 
-    rte.friend_id = fid ;
+    rte.friend_id = source_friend ;
     rte.time_stamp = now ;
 
     _tracking_clues[mid] = rte ;
 #ifdef ROUTING_MATRIX_DEBUG
-    std::cerr << "GRouterMatrix::addTrackingInfo(): Added clue mid=" << mid << ", from " << source_friend << " ID=" << fid << std::endl;
+    std::cerr << "GRouterMatrix::addTrackingInfo(): Added clue mid=" << mid << ", from " << source_friend << " ID=" << source_friend << std::endl;
 #endif
     return true ;
 }
@@ -158,7 +157,19 @@ void GRouterMatrix::getListOfKnownKeys(std::vector<GRouterKeyId>& key_ids) const
 	key_ids.clear() ;
 
 	for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(_time_combined_hits.begin());it!=_time_combined_hits.end();++it)
-		key_ids.push_back(it->first) ;
+        key_ids.push_back(it->first) ;
+}
+
+bool GRouterMatrix::getTrackingInfo(const RsGxsMessageId& mid, RsPeerId &source_friend)
+{
+    std::map<RsGxsMessageId,RoutingTrackEntry>::const_iterator it = _tracking_clues.find(mid) ;
+    
+    if(it == _tracking_clues.end())
+        return false ;
+    
+    source_friend = it->second.friend_id;
+    
+    return true ;
 }
 
 void GRouterMatrix::debugDump() const

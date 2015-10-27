@@ -132,13 +132,13 @@ static const int      kMaximumPeerAge                     = 180;      // half a 
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
 static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
-static const int      kReputationRequestPeriod            = 600;      // 10 mins
-static const int      kReputationStoreWait                = 180;      // 3 minutes.
+static const int      kReputationRequestPeriod            = 60;      // 10 mins
+static const int      kReputationStoreWait                = 18;      // 3 minutes.
 
 static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 static const float    REPUTATION_PGP_LINKED_ID_BIAS       = 0.2f ;
 static const float    REPUTATION_PGP_KNOWN_ID_BIAS        = 0.3f ;	// so known pgp-linked ids go up to +0.5f
-static const float    REPUTATION_FRIEND_VARIANCE          = 2.0f ;
+static const float    REPUTATION_FRIEND_VARIANCE          = 3.0f ;
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
@@ -958,24 +958,56 @@ void Reputation::updateReputation()
 	    mFriendAverage = 1.0f ;
     else
     {
-        if(friend_total > 0)
-	    mFriendAverage = 1.0+exp(-friend_total / REPUTATION_FRIEND_VARIANCE) ;
-        else
-	    mFriendAverage = 1.0-exp( friend_total / REPUTATION_FRIEND_VARIANCE) ;
+	    static const float REPUTATION_FRIEND_FACTOR_ANON       =  2.0f ;
+	    static const float REPUTATION_FRIEND_FACTOR_PGP_LINKED =  5.0f ;
+	    static const float REPUTATION_FRIEND_FACTOR_PGP_KNOWN  = 10.0f ;
+
+	    // For positive votes, start from 1 and slowly tend to 2
+	    // for negative votes, start from 1 and slowly tend to 0
+	    // depending on signature state, the ID is harder (signed ids) or easier (anon ids) to ban or to promote.
+	    //
+	    // when REPUTATION_FRIEND_VARIANCE = 3, that gives the following values:
+	    //
+	    // total votes  |  mFriendAverage anon |  mFriendAverage PgpLinked | mFriendAverage PgpKnown  |
+	    //              |        F=2.0         |        F=5.0              |      F=10.0              |
+	    // -------------+----------------------+---------------------------+--------------------------+
+	    // -10          |  0.00  Banned        |  0.13  Banned             | 0.36 Banned              |
+	    // -5           |  0.08  Banned        |  0.36  Banned             | 0.60                     |
+	    // -4           |  0.13  Banned        |  0.44  Banned             | 0.67                     |
+	    // -3           |  0.22  Banned        |  0.54                     | 0.74                     |
+	    // -2           |  0.36  Banned        |  0.67                     | 0.81                     |
+	    // -1           |  0.60                |  0.81                     | 0.90                     |
+	    //  0           |  1.0                 |  1.0                      | 1.00                     |
+	    //  1           |  1.39                |  1.18                     | 1.09                     |
+	    //  2           |  1.63                |  1.32                     | 1.18                     |
+	    //  3           |  1.77                |  1.45                     | 1.25                     |
+	    //  4           |  1.86                |  1.55                     | 1.32                     |
+	    //  5           |  1.91                |  1.63                     | 1.39                     |
+	    //
+	    // Banning info is provided by the reputation system, and does not depend on PGP-sign state.
+	    //
+	    // However, each service might have its own rules for the different cases. For instance
+	    // PGP-favoring forums might want a score > 1.4 for anon ids, and >= 1.0 for PGP-signed.
+
+	    float reputation_bias ;
+
+	    if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_KNOWN)
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_PGP_KNOWN ;
+	    else if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED)
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_PGP_LINKED ;
+	    else
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_ANON ;
+
+	    if(friend_total > 0)
+		    mFriendAverage = 2.0f-exp(-friend_total / reputation_bias) ;
+	    else
+		    mFriendAverage =      exp( friend_total / reputation_bias) ;
     }
 
     // now compute a bias for PGP-signed ids.
     
-    float pgp_bias = 0.0f ;
-    
-    if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED)
-        pgp_bias += REPUTATION_PGP_KNOWN_ID_BIAS ;
-    
-    if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_KNOWN)
-        pgp_bias += REPUTATION_PGP_LINKED_ID_BIAS ;
-    
     if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-	    mReputation = std::max(0.0f,std::min(2.0f,mFriendAverage + pgp_bias)) ;
+	    mReputation = mFriendAverage ;
     else
 	    mReputation = (float)mOwnOpinion ;
 }

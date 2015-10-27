@@ -41,6 +41,7 @@
 #include "util/QtVersion.h"
 
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsgrouter.h>
 #include <retroshare/rsreputations.h>
 #include <retroshare/rspeers.h>
 // These should be in retroshare/ folder.
@@ -747,13 +748,23 @@ void GxsForumThreadWidget::insertGroupData()
     tw->mSignFlags = group.mMeta.mSignFlags;
     tw->ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
-    QString anon_allowed_str = (IS_GROUP_PGP_AUTHED(tw->mSignFlags))?tr("No"):tr("Yes") ;
+    QString anti_spam_features1 ;
+    if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
+            
+    QString anti_spam_features2 ;
+    if(IS_GROUP_MESSAGE_TRACKING(tw->mSignFlags)) anti_spam_features2 = tr("Message routing info kept for 10 days");
     
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
-    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anonymous post allowed")).arg(anon_allowed_str);
+       
+       if(!anti_spam_features1.isNull())
+    		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
+       
+       if(!anti_spam_features2.isNull())
+    		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features2);
+       
     tw->mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
 
     tw->ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags));
@@ -942,8 +953,13 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
     
     	// Show info about who passed on this message.
-    	if( (mForumGroup.mMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) && !msg.mMeta.mProviderId.isNull() )
-		item->setToolTip(COLUMN_THREAD_TITLE,tr("This message was obtained from %1").arg(QString::fromStdString(msg.mMeta.mProviderId.toStdString())));
+    	if(mForumGroup.mMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) 
+        {
+            RsPeerId providerId ;
+            
+            if(rsGRouter->getTrackingInfo(msg.mMeta.mMsgId,providerId) && !providerId.isNull() )
+		item->setToolTip(COLUMN_THREAD_TITLE,tr("This message was obtained from %1").arg(QString::fromUtf8(rsPeers->getPeerName(providerId).c_str())));
+        }
 //#TODO
 #if 0
 	text = QString::fromUtf8(authorName.c_str());

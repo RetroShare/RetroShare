@@ -257,7 +257,7 @@ class RsGRouterMatrixTrackItem: public RsGRouterItem
 		// packet data
 		//
 		RsGxsMessageId message_id ;
-        	uint32_t provider_id ;
+        	RsPeerId provider_id ;
             	time_t time_stamp ;
 };
 class RsGRouterMatrixFriendListItem: public RsGRouterItem

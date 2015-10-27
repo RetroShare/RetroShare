@@ -104,6 +104,7 @@ namespace GXS_SERV {
 #define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
 
 #define IS_GROUP_PGP_AUTHED(signFlags)          (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
+#define IS_GROUP_MESSAGE_TRACKING(signFlags)    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES)
 
 #define IS_GROUP_ADMIN(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 #define IS_GROUP_PUBLISHER(subscribeFlags)      (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)

@@ -552,7 +552,7 @@
           <item>
            <widget class="QCheckBox" name="antispam_favorSignedIds">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This makes the media increase the reputaiton threshold to 0.2,&lt;/p&gt;&lt;p&gt;allowing PGP-linked ids to pass through. Anonymous ids however&lt;/p&gt;&lt;p&gt;can also post, if their local reputation score is above that threshold. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This makes the media increase the reputation threshold to 0.4 for anonymous ids,&lt;/p&gt;&lt;p&gt;while keeping it to 0.0 for PGP-linked ids. Therefore, anonymous ids can still post, if their local reputation &lt;/p&gt;&lt;p&gt;score is above that threshold.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Favor PGP-signed ids</string>
@@ -562,7 +562,7 @@
           <item>
            <widget class="QRadioButton" name="antispam_keepTrackOfPosts">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This feature allows Retroshare to locally keep a record of who&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;forwarded each message to you, for 10 days. Although useless (and already&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;available whatsoever) this information can be used by a group&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;of collaborative friends to locate the source of spams. To be used with care,&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;since it significantly decreases the anonymity of message posts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This feature allows Retroshare to locally keep a record of who&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;forwarded each message to you, for the last 10 days. Although useless if alone (and already&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;available whatsoever) this information can be used by a group&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;of collaborative friends to easily locate the source of spams. To be used with care,&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;since it significantly decreases the anonymity of message posts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Keep track of posts</string>

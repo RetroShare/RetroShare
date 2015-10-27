@@ -103,6 +103,8 @@ public:
 
     virtual void addRoutingClue(const GRouterKeyId& destination, const RsPeerId& source) =0;
     virtual void addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_id) =0;
+    
+    virtual bool getTrackingInfo(const RsGxsMessageId& mid, RsPeerId& provider_id) =0;
 };
 
 // To access the GRouter from anywhere

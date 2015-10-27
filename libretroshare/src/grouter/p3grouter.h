@@ -168,6 +168,7 @@ public:
     // 	- Cache state (memory size, etc)
     //
     virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& info) ;
+    virtual bool getTrackingInfo(const RsGxsMessageId& mid, RsPeerId& provider_id) ;
 
     //===================================================//
     //         Derived from p3Service                    //

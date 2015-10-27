@@ -279,7 +279,7 @@ RsGRouterMatrixTrackItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixTrackI
 
 	RsGRouterMatrixTrackItem *item = new RsGRouterMatrixTrackItem() ;
 
-	ok &= getRawUInt32(data, pktsize, &offset, &item->provider_id) ;
+	ok &= item->provider_id.deserialise(data, pktsize, offset) ;
 	ok &= item->message_id.deserialise(data,pktsize,offset) ;
 	ok &= getRawTimeT(data, pktsize, &offset, item->time_stamp) ;
     
@@ -679,7 +679,7 @@ bool RsGRouterMatrixTrackItem::serialise(void *data,uint32_t& size) const
 	if(!serialise_header(data,size,tlvsize,offset))
 		return false ;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, provider_id) ;
+	ok &= provider_id.serialise(data, tlvsize, offset) ;
 	ok &= message_id.serialise(data,tlvsize,offset) ;
 	ok &= setRawTimeT(data, tlvsize, &offset, time_stamp) ;
 

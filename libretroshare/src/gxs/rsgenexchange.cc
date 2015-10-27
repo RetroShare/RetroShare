@@ -899,31 +899,36 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			    idValidate = false;
 		    }
 
-            	// now check reputation of the message author
-            	float reputation_threshold = (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)? RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM: RsReputations::REPUTATION_THRESHOLD_DEFAULT ;
-            
             	if(idValidate)
-                {
-                    // get key data and check that the key is actually PGP-linked. If not, reject the post.
-                    
-                    RsIdentityDetails details ;
-                    
-                    if(!mGixs->getIdDetails(metaData.mAuthorId,details))
-		    {
-			    // the key cannot ke reached, although it's in cache. Weird situation.
-			    std::cerr << "RsGenExchange::validateMsg(): cannot get key data for ID=" << metaData.mAuthorId << ", although it's supposed to be already in cache. Cannot validate." << std::endl;
-			    idValidate = false ;
-		    }
-                    else if(details.mReputation.mOverallReputationScore < reputation_threshold)
-                    {
-#ifdef GEN_EXCH_DEBUG	
-			    std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationScore <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
-#endif
-			    idValidate = false ;
-                    }
-                    std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", accepted. Reputation score (" << details.mReputation.mOverallReputationScore <<") is above accepted threshold (" << reputation_threshold << ")" << std::endl;
+		{
+			// get key data and check that the key is actually PGP-linked. If not, reject the post.
 
-                }
+			RsIdentityDetails details ;
+
+			if(!mGixs->getIdDetails(metaData.mAuthorId,details))
+			{
+				// the key cannot ke reached, although it's in cache. Weird situation.
+				std::cerr << "RsGenExchange::validateMsg(): cannot get key data for ID=" << metaData.mAuthorId << ", although it's supposed to be already in cache. Cannot validate." << std::endl;
+				idValidate = false ;
+			}
+			else 
+			{
+
+				// now check reputation of the message author
+				float reputation_threshold =  ( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !details.mPgpLinked) ? (RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM): (RsReputations::REPUTATION_THRESHOLD_DEFAULT) ;
+
+				if(details.mReputation.mOverallReputationScore < reputation_threshold)
+				{
+#ifdef GEN_EXCH_DEBUG	
+					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationScore <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
+#endif
+					idValidate = false ;
+				}
+				else
+					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", accepted. Reputation score (" << details.mReputation.mOverallReputationScore <<") is above accepted threshold (" << reputation_threshold << ")" << std::endl;
+			}
+
+		}
 	    }
             else
             {

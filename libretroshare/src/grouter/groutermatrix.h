@@ -44,7 +44,7 @@ struct RoutingMatrixHitEntry
 
 struct RoutingTrackEntry
 {
-	uint32_t friend_id ;			// not the full key. Gets too big otherwise!
+	RsPeerId friend_id ;			// not the full key. Gets too big otherwise!
 	time_t time_stamp ;
 };
 
@@ -79,6 +79,7 @@ class GRouterMatrix
 		void debugDump() const ;
 		void getListOfKnownKeys(std::vector<GRouterKeyId>& key_ids) const ;
 
+        	bool getTrackingInfo(const RsGxsMessageId& id,RsPeerId& source_friend);
 	private:
 		// returns the friend id, possibly creating a new id.
 		//

@@ -2163,6 +2163,13 @@ bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)
     return true ;
 }
 
+bool p3GRouter::getTrackingInfo(const RsGxsMessageId &mid, RsPeerId &provider_id)
+{
+        RS_STACK_MUTEX(grMtx) ;
+        
+        return _routing_matrix.getTrackingInfo(mid,provider_id) ;
+}
+
 // Dump everything
 //
 void p3GRouter::debugDump()
