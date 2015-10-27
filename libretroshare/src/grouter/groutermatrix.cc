@@ -27,7 +27,7 @@
 #include "groutermatrix.h"
 #include "grouteritems.h"
 
-#define ROUTING_MATRIX_DEBUG
+//#define ROUTING_MATRIX_DEBUG
 
 GRouterMatrix::GRouterMatrix()
 {

@@ -38,7 +38,6 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
-#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -132,8 +131,8 @@ static const int      kMaximumPeerAge                     = 180;      // half a 
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
 static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
-static const int      kReputationRequestPeriod            = 60;      // 10 mins
-static const int      kReputationStoreWait                = 18;      // 3 minutes.
+static const int      kReputationRequestPeriod            = 600;      // 10 mins
+static const int      kReputationStoreWait                = 180;      // 3 minutes.
 
 static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 static const float    REPUTATION_PGP_LINKED_ID_BIAS       = 0.2f ;
