@@ -223,3 +223,45 @@ void VOIPGUIHandler::AnswerVideoCall(const RsPeerId &peer_id)
 		std::cerr << "VOIPGUIHandler::AnswerVideoCall() Error: answer video call for a chat dialog that does not stand VOIP (Peer id = " << peer_id.toStdString() << "!" << std::endl;
 	}
 }
+
+void VOIPGUIHandler::HangupAudioCall(const RsPeerId &peer_id)
+{
+	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	if (di) {
+		ChatWidget *cw = di->getChatWidget();
+		if(cw) {
+			const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
+
+			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList)
+			{
+				VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
+
+				if (acwh)
+					acwh->hangupCallAudio();
+			}
+		}
+	} else {
+		std::cerr << "VOIPGUIHandler::HangupAudioCall() Error: hangup audio call for a chat dialog that does not stand VOIP (Peer id = " << peer_id.toStdString() << "!" << std::endl;
+	}
+}
+
+void VOIPGUIHandler::HangupVideoCall(const RsPeerId &peer_id)
+{
+	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	if (di) {
+		ChatWidget *cw = di->getChatWidget();
+		if(cw) {
+			const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
+
+			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList)
+			{
+				VOIPChatWidgetHolder *acwh = dynamic_cast<VOIPChatWidgetHolder*>(chatWidgetHolder) ;
+
+				if (acwh)
+					acwh->hangupCallVideo();
+			}
+		}
+	} else {
+		std::cerr << "VOIPGUIHandler::HangupVideoCall() Error: hangup video call for a chat dialog that does not stand VOIP (Peer id = " << peer_id.toStdString() << "!" << std::endl;
+	}
+}

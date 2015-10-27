@@ -374,8 +374,8 @@ void VOIPChatWidgetHolder::addNewAudioButtonMap(const RsPeerId &peer_id)
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
 			                       .append("padding: 3px;")
-			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-			                               "stop: 0 #22c70d, stop: 1 #116a06);")
+			                       .append("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(122, 230, 110, 255)," 
+                                     "stop:0.494318 rgba(36, 191, 16, 255), stop:0.505682 rgba(26, 162, 9, 255), stop:1 rgba(17, 106, 6, 255));")
 			                       );
 
 			buttonT->updateImage();
@@ -391,8 +391,8 @@ void VOIPChatWidgetHolder::addNewAudioButtonMap(const RsPeerId &peer_id)
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
 			                       .append("padding: 3px;")
-			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-			                               "stop: 0 #c7220d, stop: 1 #6a1106);")
+			                       .append("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(230, 124, 110, 255), stop:0.494318 rgba(191, 35, 16, 255), "
+                                     "stop:0.505682 rgba(162, 26, 9, 255), stop:1 rgba(106, 17, 6, 255));")
 			                       );
 
 			buttonD->updateImage();
@@ -427,8 +427,8 @@ void VOIPChatWidgetHolder::addNewVideoButtonMap(const RsPeerId &peer_id)
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
 			                       .append("padding: 3px;")
-			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-			                               "stop: 0 #22c70d, stop: 1 #116a06);")
+			                       .append("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(122, 230, 110, 255)," 
+	                                     "stop:0.494318 rgba(36, 191, 16, 255), stop:0.505682 rgba(26, 162, 9, 255), stop:1 rgba(17, 106, 6, 255));")
 			                       );
 
 			buttonT->updateImage();
@@ -444,8 +444,8 @@ void VOIPChatWidgetHolder::addNewVideoButtonMap(const RsPeerId &peer_id)
 			                       .append("min-width: 128px; min-height: 24px;")
 			                       .append("border-radius: 6px;")
 			                       .append("padding: 3px;")
-			                       .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-			                               "stop: 0 #c7220d, stop: 1 #6a1106);")
+			                       .append("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(230, 124, 110, 255), stop:0.494318 rgba(191, 35, 16, 255), "
+	                                     "stop:0.505682 rgba(162, 26, 9, 255), stop:1 rgba(106, 17, 6, 255));")
 			                       );
 
 			buttonD->updateImage();
@@ -826,7 +826,8 @@ void VOIPChatWidgetHolder::botMouseEnterTake()
 		                      .append("border-radius: 6px;")
 		                      .append("padding: 3px;")
 		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-		                              "stop: 0 #444444, stop: 1 #222222);")
+	                                  "stop: 0 #444444, stop: 1 #222222);")
+
 		                      );
 		//source->setDown(true);
 	}
@@ -841,8 +842,8 @@ void VOIPChatWidgetHolder::botMouseLeaveTake()
 		                      .append("min-width: 128px; min-height: 24px;")
 		                      .append("border-radius: 6px;")
 		                      .append("padding: 3px;")		                      
-		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-		                              "stop: 0 #22c70d, stop: 1 #116a06);")
+		                      .append("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(153, 240, 143, 255)," 
+   	                               "stop:0.494318 rgba(59, 201, 40, 255), stop:0.505682 rgba(46, 172, 29, 255), stop:1 rgba(30, 116, 20, 255));")
 		                      );
 		//source->setDown(false);
 	}
@@ -857,8 +858,8 @@ void VOIPChatWidgetHolder::botMouseEnterDecline()
 		                      .append("min-width: 128px; min-height: 24px;")
 		                      .append("border-radius: 6px;")
 		                      .append("padding: 3px;")
-		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-		                              "stop: 0 #444444, stop: 1 #222222);")
+		                      .append("background-color:  qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
+	                                  "stop: 0 #444444, stop: 1 #222222);")
 		                      );
 		//source->setDown(true);
 	}
@@ -873,8 +874,8 @@ void VOIPChatWidgetHolder::botMouseLeaveDecline()
 		                      .append("min-width: 128px; min-height: 24px;")
 		                      .append("border-radius: 6px;")			                       
 		                      .append("padding: 3px;")
-		                      .append("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, "
-		                              "stop: 0 #c7220d, stop: 1 #6a1106);")
+	                          .append("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(240, 154, 143, 255), "
+	                                  "stop:0.494318 rgba(201, 57, 40, 255), stop:0.505682 rgba(172, 45, 29, 255), stop:1 rgba(116, 30, 20, 255));")
 		                      );
 		//source->setDown(false);
 	}
