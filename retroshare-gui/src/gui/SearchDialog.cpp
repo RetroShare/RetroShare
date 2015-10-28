@@ -244,6 +244,9 @@ void SearchDialog::processSettings(bool bLoad)
 
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+        
+        ui._max_results_SB->setValue(Settings->value("MaxResults").toInt());
+        
     } else {
         // save settings
 
@@ -252,6 +255,8 @@ void SearchDialog::processSettings(bool bLoad)
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
+        
+        Settings->setValue("MaxResults",  ui._max_results_SB->value());
     }
 
     Settings->endGroup();
