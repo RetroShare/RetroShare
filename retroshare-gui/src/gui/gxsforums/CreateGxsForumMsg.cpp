@@ -123,10 +123,7 @@ void  CreateGxsForumMsg::newMsg()
 	/* fill in the available OwnIds for signing */
     	std::cerr << "Initing ID chooser. Sign flags = " << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
         
-    	if(mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
-		ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NON_ANONYMOUS, RsGxsId());
-        else
-		ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
         if (mForumId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
