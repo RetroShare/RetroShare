@@ -180,7 +180,7 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo,
 	
 	if (IS_GROUP_ADMIN(groupInfo.mSubscribeFlags)) 
 		groupItemInfo.icon = QIcon(":images/konv_message2.png");
-	else if (IS_GROUP_PGP_AUTHED(groupInfo.mSignFlags)) 
+	else if ((IS_GROUP_PGP_AUTHED(groupInfo.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupInfo.mSignFlags)) )
 		groupItemInfo.icon = QIcon(":images/konv_message3.png");
 
 }
