@@ -23,6 +23,7 @@
  *
  */
 
+#include <math.h>
 #include "pqi/p3linkmgr.h"
 
 #include "retroshare/rspeers.h"
@@ -126,14 +127,13 @@
 
 static const uint32_t LOWER_LIMIT                         = 0;        // used to filter valid Opinion values from serialized data
 static const uint32_t UPPER_LIMIT                         = 2;        // used to filter valid Opinion values from serialized data
-static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 static const int      kMaximumPeerAge                     = 180;      // half a year.
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
 static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 static const int      kReputationRequestPeriod            = 600;      // 10 mins
 static const int      kReputationStoreWait                = 180;      // 3 minutes.
-
+static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
@@ -180,6 +180,17 @@ int	p3GxsReputation::tick()
 		mLastActiveFriendsUpdate = now ;
 	}
 
+    	static time_t last_identity_flags_update = 0 ;
+        
+        // no more than once per 5 second chunk.
+        
+        if(now > 100+last_identity_flags_update)
+        {
+            last_identity_flags_update = now ;
+            
+            updateIdentityFlags() ;
+        }
+        
 #ifdef DEBUG_REPUTATION
 	static time_t last_debug_print = time(NULL) ;
 
@@ -195,6 +206,58 @@ int	p3GxsReputation::tick()
 int	p3GxsReputation::status()
 {
 	return 1;
+}
+
+void p3GxsReputation::updateIdentityFlags()
+{
+    std::list<RsGxsId> to_update ;
+
+    // we need to gather the list to be used in a non locked frame
+    {
+	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "Updating reputation identity flags" << std::endl;
+#endif
+
+	    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
+		    if(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE)
+			    to_update.push_back(rit->first) ;
+    }
+
+    for(std::list<RsGxsId>::const_iterator rit(to_update.begin());rit!=to_update.end();++rit)
+    {
+	    RsIdentityDetails details;
+
+	    if(!rsIdentity->getIdDetails(*rit,details))
+	    {
+#ifdef DEBUG_REPUTATION
+		    std::cerr << "  cannot obtain info for " << *rit << ". Will do it later." << std::endl;
+#endif
+		    continue ;
+	    }
+
+	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+	    std::map<RsGxsId,Reputation>::iterator it = mReputations.find(*rit) ;
+
+	    if(it == mReputations.end())
+	    {
+		    std::cerr << "  Weird situation: item " << *rit << " has been deleted from the list??" << std::endl;
+		    continue ;
+	    }
+	    it->second.mIdentityFlags = 0 ;
+
+	    if(details.mPgpLinked) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+	    if(details.mPgpKnown ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
+
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;
+#endif
+
+	    it->second.updateReputation() ;
+	    IndicateConfigChanged();		
+    }
 }
 
 void p3GxsReputation::cleanup()
@@ -478,7 +541,7 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 #ifdef DEBUG_REPUTATION
 	    std::cerr << "  reputation changed. re-calculating." << std::endl;
 #endif
-	    reputation.updateReputation(mAverageActiveFriends) ;
+	    reputation.updateReputation() ;
     }
     
     if(updated)
@@ -533,39 +596,28 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
 
 bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::ReputationInfo& info)
 {
+    if(gxsid.isNull())
+        return false ;
+        
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 #ifdef DEBUG_REPUTATION
     std::cerr << "getReputationInfo() for " << gxsid << std::endl;
 #endif
-        
-    std::map<RsGxsId,Reputation>::const_iterator it = mReputations.find(gxsid);
+    Reputation& rep(mReputations[gxsid]) ;
 
-    if (it == mReputations.end())
-    {
-	    info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
-	    info.mFriendAverage = RsReputations::OPINION_NEUTRAL ;
-	    info.mOverallReputationScore = float(RsReputations::OPINION_NEUTRAL) ;
+    info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
+    info.mOverallReputationScore = rep.mReputation ;
+    info.mFriendAverage = rep.mFriendAverage ;
+
+    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
 	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
-#ifdef DEBUG_REPUTATION
-	    std::cerr << "  no information present. Returning default. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
-#endif
-    }
     else
-    {
-	    info.mOwnOpinion = RsReputations::Opinion(it->second.mOwnOpinion) ;
-	    info.mOverallReputationScore = it->second.mReputation ;
-	    info.mFriendAverage = it->second.mFriendAverage ;
+	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
 
-	    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
-		    info.mAssessment = RsReputations::ASSESSMENT_OK ;
-	    else
-		    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
-        
 #ifdef DEBUG_REPUTATION
 	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
 #endif
-    }
 
     return true ;
 }
@@ -632,7 +684,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 	time_t now = time(NULL);
 	reputation.mOwnOpinion = opinion;
 	reputation.mOwnOpinionTs = now;
-	reputation.updateReputation(mAverageActiveFriends);
+	reputation.updateReputation();
 
 	mUpdated.insert(std::make_pair(now, gxsid));
 	mUpdatedReputations.insert(gxsid);
@@ -689,6 +741,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		item->mGxsId = rit->first;
 		item->mOwnOpinion = rit->second.mOwnOpinion;
 		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
+		item->mIdentityFlags = rit->second.mIdentityFlags;
 
 		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
@@ -719,6 +772,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	for(it = loadList.begin(); it != loadList.end(); ++it)
 	{
 		RsGxsReputationConfigItem *item = dynamic_cast<RsGxsReputationConfigItem *>(*it);
+
 		// Configurations are loaded first. (to establish peerSet).
 		if (item)
 		{
@@ -728,13 +782,14 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 			config.mPeerId = peerId;
 			config.mLatestUpdate = item->mLatestUpdate;
 			config.mLastQuery = 0;
-			
+
 			peerSet.insert(peerId);
 		}
+
 		RsGxsReputationSetItem *set = dynamic_cast<RsGxsReputationSetItem *>(*it);
 		if (set)
 			loadReputationSet(set, peerSet);
-        
+
 		delete (*it);
 	}
 
@@ -779,7 +834,7 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
     	//float old_reputation = reputation.mReputation ;
 	//mUpdatedReputations.insert(gxsId) ;
     
-	reputation.updateReputation(mAverageActiveFriends) ;
+	reputation.updateReputation() ;
 
 	mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
 	return true;
@@ -888,7 +943,7 @@ int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 	return 1;
 }
 
-void Reputation::updateReputation(uint32_t average_active_friends) 
+void Reputation::updateReputation() 
 {
     // the calculation of reputation makes the whole thing   
 
@@ -903,8 +958,55 @@ void Reputation::updateReputation(uint32_t average_active_friends)
     if(mOpinions.empty())	// includes the case of no friends!
 	    mFriendAverage = 1.0f ;
     else
-	    mFriendAverage = 1.0+friend_total / float(std::max(average_active_friends,(uint32_t)mOpinions.size()));
+    {
+	    static const float REPUTATION_FRIEND_FACTOR_ANON       =  2.0f ;
+	    static const float REPUTATION_FRIEND_FACTOR_PGP_LINKED =  5.0f ;
+	    static const float REPUTATION_FRIEND_FACTOR_PGP_KNOWN  = 10.0f ;
 
+	    // For positive votes, start from 1 and slowly tend to 2
+	    // for negative votes, start from 1 and slowly tend to 0
+	    // depending on signature state, the ID is harder (signed ids) or easier (anon ids) to ban or to promote.
+	    //
+	    // when REPUTATION_FRIEND_VARIANCE = 3, that gives the following values:
+	    //
+	    // total votes  |  mFriendAverage anon |  mFriendAverage PgpLinked | mFriendAverage PgpKnown  |
+	    //              |        F=2.0         |        F=5.0              |      F=10.0              |
+	    // -------------+----------------------+---------------------------+--------------------------+
+	    // -10          |  0.00  Banned        |  0.13  Banned             | 0.36 Banned              |
+	    // -5           |  0.08  Banned        |  0.36  Banned             | 0.60                     |
+	    // -4           |  0.13  Banned        |  0.44  Banned             | 0.67                     |
+	    // -3           |  0.22  Banned        |  0.54                     | 0.74                     |
+	    // -2           |  0.36  Banned        |  0.67                     | 0.81                     |
+	    // -1           |  0.60                |  0.81                     | 0.90                     |
+	    //  0           |  1.0                 |  1.0                      | 1.00                     |
+	    //  1           |  1.39                |  1.18                     | 1.09                     |
+	    //  2           |  1.63                |  1.32                     | 1.18                     |
+	    //  3           |  1.77                |  1.45                     | 1.25                     |
+	    //  4           |  1.86                |  1.55                     | 1.32                     |
+	    //  5           |  1.91                |  1.63                     | 1.39                     |
+	    //
+	    // Banning info is provided by the reputation system, and does not depend on PGP-sign state.
+	    //
+	    // However, each service might have its own rules for the different cases. For instance
+	    // PGP-favoring forums might want a score > 1.4 for anon ids, and >= 1.0 for PGP-signed.
+
+	    float reputation_bias ;
+
+	    if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_KNOWN)
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_PGP_KNOWN ;
+	    else if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED)
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_PGP_LINKED ;
+	    else
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_ANON ;
+
+	    if(friend_total > 0)
+		    mFriendAverage = 2.0f-exp(-friend_total / reputation_bias) ;
+	    else
+		    mFriendAverage =      exp( friend_total / reputation_bias) ;
+    }
+
+    // now compute a bias for PGP-signed ids.
+    
     if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
 	    mReputation = mFriendAverage ;
     else

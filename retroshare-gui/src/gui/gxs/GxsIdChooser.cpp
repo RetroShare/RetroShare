@@ -27,6 +27,7 @@
 #include "gui/Identity/IdEditDialog.h"
 
 #include <QSortFilterProxyModel>
+#include <QStandardItemModel>
 #include <algorithm>
 
 #include <retroshare/rspeers.h>
@@ -140,7 +141,6 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	switch (type) {
 	case GXS_ID_DETAILS_TYPE_EMPTY:
 	case GXS_ID_DETAILS_TYPE_FAILED:
-//		icons = ;
 		break;
 
 	case GXS_ID_DETAILS_TYPE_LOADING:
@@ -160,9 +160,37 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	chooser->setItemData(index, (type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
 	chooser->setItemIcon(index, icons.empty() ? QIcon() : icons[0]);
 
+    	std::cerr << "ID=" << details.mId << ", chooser->flags()=" << chooser->flags() << ", pgpLinked=" << details.mPgpLinked ;
+        
+    	if((chooser->flags() & IDCHOOSER_NON_ANONYMOUS) && !(details.mPgpLinked))
+        {
+            std::cerr << " - disabling ID - entry = " << index << std::endl;
+            chooser->setEntryEnabled(index,false) ;
+        }
+        std::cerr << std::endl;
+                    
     chooser->model()->sort(0);
 
     chooser->blockSignals(false) ;
+}
+
+void GxsIdChooser::setEntryEnabled(int indx,bool enabled)
+{
+    bool disable = !enabled ;
+    
+    QSortFilterProxyModel* model = qobject_cast<QSortFilterProxyModel*>(QComboBox::model());
+    //QStandardItem* item = model->item(index);
+    
+    QModelIndex ii = model->index(indx,0);
+    
+    // visually disable by greying out - works only if combobox has been painted already and palette returns the wanted color
+    //model->setFlags(ii,disable ? (model->flags(ii) & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled)) : (Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+    
+    uint32_t v = enabled?(1|32):(0);
+    
+    // clear item data in order to use default color
+    //model->setData(ii,disable ? (QComboBox::palette().color(QPalette::Disabled, QPalette::Text)) : QVariant(),  Qt::TextColorRole);
+    model->setData(ii,QVariant(v),Qt::UserRole-1) ;
 }
 
 void GxsIdChooser::loadPrivateIds()
@@ -223,6 +251,8 @@ void GxsIdChooser::loadPrivateIds()
 			addItem(QIcon(":/images/identity/identity_create_32.png"), str, id);
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
+            
+                    
 		}
         setDefaultItem();
         emit idsLoaded();
@@ -305,7 +335,7 @@ void GxsIdChooser::indexActivated(int index)
 	int type = itemData(index, ROLE_TYPE).toInt();
 	if (type == TYPE_CREATE_ID) {
 		IdEditDialog dlg(this);
-		dlg.setupNewId(false);
+		dlg.setupNewId(false, !(mFlags & IDCHOOSER_NON_ANONYMOUS));
 		if (dlg.exec() == QDialog::Accepted) {
 			setDefaultId(RsGxsId(dlg.groupId()));
 		}

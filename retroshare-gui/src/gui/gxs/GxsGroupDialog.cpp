@@ -37,18 +37,24 @@
 #include <iostream>
 
 // Control of Publish Signatures.
-#define RSGXS_GROUP_SIGN_PUBLISH_MASK       0x000000ff
-#define RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED  0x00000001
-#define RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED  0x00000002
-#define RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD 0x00000004
-#define RSGXS_GROUP_SIGN_PUBLISH_NONEREQ    0x00000008
+// 
+// These are now defined in rsgxsflags.h
+// 
+// #define FLAG_GROUP_SIGN_PUBLISH_MASK       0x000000ff
+// #define FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED  0x00000001
+// #define FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED  0x00000002
+// #define FLAG_GROUP_SIGN_PUBLISH_THREADHEAD 0x00000004
+// #define FLAG_GROUP_SIGN_PUBLISH_NONEREQ    0x00000008
 
-// Author Signature.
-#define RSGXS_GROUP_SIGN_AUTHOR_MASK        0x0000ff00
-#define RSGXS_GROUP_SIGN_AUTHOR_GPG         0x00000100
-#define RSGXS_GROUP_SIGN_AUTHOR_REQUIRED    0x00000200
-#define RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN 0x00000400
-#define RSGXS_GROUP_SIGN_AUTHOR_NONE        0x00000800
+// // Author Signature.
+//
+// These are now defined in rsgxsflags.h
+//
+// #define FLAG_AUTHOR_AUTHENTICATION_MASK        0x0000ff00
+// #define FLAG_AUTHOR_AUTHENTICATION_NONE        0x00000000
+// #define FLAG_AUTHOR_AUTHENTICATION_GPG         0x00000100
+// #define FLAG_AUTHOR_AUTHENTICATION_REQUIRED    0x00000200
+// #define FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN 0x00000400
 
 #define GXSGROUP_NEWGROUPID         1
 #define GXSGROUP_LOADGROUP          2
@@ -122,6 +128,10 @@ void GxsGroupDialog::init()
 	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, RsGxsCircleId());
 	
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
+
+    	ui.personal_ifnopub->hide() ;
+    	ui.personal_required->hide() ;
+    	ui.personal_required->setChecked(true) ;	// this is always true
 
 	initMode();
 }
@@ -288,7 +298,10 @@ void GxsGroupDialog::setupDefaults()
 			ui.comments_no->setChecked(true);
 			ui.comments_no_3->setChecked(true);
 		}
-    }
+	}
+	    ui.antispam_keepTrackOfPosts->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
+	    ui.antispam_favorSignedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+        
 #ifndef RS_USE_CIRCLES
     ui.typeGroup->setEnabled(false);
     ui.typeLocal->setEnabled(false);
@@ -576,54 +589,55 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 	/* grab from the ui options -> */
 	uint32_t signFlags = 0;
 	if (ui.publish_encrypt->isChecked()) {
-		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED;
+		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED;
 	} else if (ui.publish_required->isChecked()) {
-		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED;
+		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED;
 	} else if (ui.publish_threads->isChecked()) {
-		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD;
+		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD;
 	} else {  // publish_open (default).
-		signFlags |= RSGXS_GROUP_SIGN_PUBLISH_NONEREQ;
+		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ;
 	}
 
+	if (ui.personal_required->isChecked()) 
+		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
+    
+	if (ui.personal_ifnopub->isChecked()) 
+		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
+    
 	// Author Signature.
-	if (ui.personal_pgp->isChecked()) {
-		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_GPG;
-	} else if (ui.personal_required->isChecked()) {
-		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_REQUIRED;
-	} else if (ui.personal_ifnopub->isChecked()) {
-		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN;
-	} else { // shouldn't allow this one.
-		signFlags |= RSGXS_GROUP_SIGN_AUTHOR_NONE;
-	}
+	if (ui.antispam_favorSignedIds->isChecked()) 
+		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
+    
+	if (ui.antispam_keepTrackOfPosts->isChecked()) 
+		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
+    
 	return signFlags;
 }
 
 void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 {
-	if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ENCRYPTED) {
+	if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED) {
 		ui.publish_encrypt->setChecked(true);
-	} else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_ALLSIGNED) {
+	} else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED) {
 		ui.publish_required->setChecked(true);
-	} else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD) {
+	} else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) {
 		ui.publish_threads->setChecked(true);
-	} else if (signFlags & RSGXS_GROUP_SIGN_PUBLISH_NONEREQ) {
+	} else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ) {
 		ui.publish_open->setChecked(true);
 	}
 
-	if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_GPG) {
-		ui.personal_pgp->setChecked(true);
-	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_REQUIRED) {
+	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED) 
 		ui.personal_required->setChecked(true);
-	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN) {
+    
+	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
 		ui.personal_ifnopub->setChecked(true);
-	} else if (signFlags & RSGXS_GROUP_SIGN_AUTHOR_NONE) {
-		// Its the same... but not quite.
-		//ui.personal_noifpub->setChecked();
-	}
-
+    
+    	ui.antispam_keepTrackOfPosts->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+	ui.antispam_favorSignedIds  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+    
 	/* guess at comments */
-	if ((signFlags & RSGXS_GROUP_SIGN_PUBLISH_THREADHEAD) &&
-	    (signFlags & RSGXS_GROUP_SIGN_AUTHOR_IFNOPUBSIGN))
+	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
+	    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN))
 	{
 		ui.comments_allowed->setChecked(true);
 		ui.comments_allowed_3->setChecked(true);
