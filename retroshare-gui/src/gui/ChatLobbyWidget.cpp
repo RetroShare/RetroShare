@@ -795,7 +795,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
         if(!rsIdentity->getIdDetails(gxs_id,idd))
             return ;
         
-        if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
+        if( (flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) && !idd.mPgpLinked)
         {
             QMessageBox::warning(NULL,tr("Default identity is anonymous"),tr("You cannot join this lobby with your default identity, since it is anonymous and the lobby forbids it.")) ;
             return ;
