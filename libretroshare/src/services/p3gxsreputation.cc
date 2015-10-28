@@ -133,11 +133,7 @@ static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minu
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 static const int      kReputationRequestPeriod            = 600;      // 10 mins
 static const int      kReputationStoreWait                = 180;      // 3 minutes.
-
 static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
-static const float    REPUTATION_PGP_LINKED_ID_BIAS       = 0.2f ;
-static const float    REPUTATION_PGP_KNOWN_ID_BIAS        = 0.3f ;	// so known pgp-linked ids go up to +0.5f
-static const float    REPUTATION_FRIEND_VARIANCE          = 3.0f ;
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
