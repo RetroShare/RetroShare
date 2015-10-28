@@ -216,7 +216,9 @@ void p3GxsReputation::updateIdentityFlags()
     {
 	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
+#ifdef DEBUG_REPUTATION
 	    std::cerr << "Updating reputation identity flags" << std::endl;
+#endif
 
 	    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
 		    if(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE)
@@ -229,7 +231,9 @@ void p3GxsReputation::updateIdentityFlags()
 
 	    if(!rsIdentity->getIdDetails(*rit,details))
 	    {
+#ifdef DEBUG_REPUTATION
 		    std::cerr << "  cannot obtain info for " << *rit << ". Will do it later." << std::endl;
+#endif
 		    continue ;
 	    }
 
@@ -247,7 +251,9 @@ void p3GxsReputation::updateIdentityFlags()
 	    if(details.mPgpLinked) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
 	    if(details.mPgpKnown ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
 
+#ifdef DEBUG_REPUTATION
 	    std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;
+#endif
 
 	    it->second.updateReputation() ;
 	    IndicateConfigChanged();		

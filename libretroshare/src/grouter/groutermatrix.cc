@@ -27,7 +27,7 @@
 #include "groutermatrix.h"
 #include "grouteritems.h"
 
-//#define ROUTING_MATRIX_DEBUG
+#define ROUTING_MATRIX_DEBUG
 
 GRouterMatrix::GRouterMatrix()
 {
@@ -197,6 +197,10 @@ void GRouterMatrix::debugDump() const
 			std::cerr << it->second[i] << "   " ;
 		std::cerr << std::endl;
 	}
+	std::cerr << "    Tracking clues: " << std::endl;
+    
+	for(std::map<RsGxsMessageId, RoutingTrackEntry>::const_iterator it(_tracking_clues.begin());it!=_tracking_clues.end();++it)
+        	std::cerr << "        " << it->first << ": from " << it->second.friend_id << " " << now - it->second.time_stamp << " secs ago." << std::endl;
 }
 
 bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::vector<RsPeerId>& friends, std::vector<float>& probas) const

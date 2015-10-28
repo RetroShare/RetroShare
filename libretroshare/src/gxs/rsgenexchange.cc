@@ -2661,7 +2661,7 @@ void RsGenExchange::processRecvdMessages()
 		{
 
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "failed to deserialise incoming meta, msgId: "
+			std::cerr << "Validation failed for message id "
 			          << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
 #endif
 
@@ -2795,8 +2795,7 @@ void RsGenExchange::processRecvdGroups()
         	else if(ret == VALIDATE_FAIL)
         	{
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "failed to deserialise incoming meta, grpId: "
-						<< grp->grpId << std::endl;
+				std::cerr << "failed to validate incoming meta, grpId: " << grp->grpId << ": wrong signature" << std::endl;
 #endif
 				delete grp;
 				erase = true;
@@ -2805,8 +2804,7 @@ void RsGenExchange::processRecvdGroups()
         	{
 
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "failed to validate incoming grp, trying again. grpId: "
-                        << grp->grpId << std::endl;
+				std::cerr << "failed to validate incoming grp, trying again. grpId: " << grp->grpId << std::endl;
 #endif
 
         		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
@@ -2822,6 +2820,7 @@ void RsGenExchange::processRecvdGroups()
         }
         else
         {
+            std::cerr << "(EE) deserialise error in group meta data" << std::endl;
         	delete grp;
 			delete meta;
 			erase = true;

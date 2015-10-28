@@ -51,10 +51,11 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += GetTlvStringSize(mServiceString);
     s += signSet.TlvSize();
     s += keys.TlvSize();
-    s += 4; // for mCircleType
+    s += 4;                                  // for mCircleType
     s += mCircleId.serial_size();
-    s += 4; // mAuthenFlag
-    s += mParentGrpId.serial_size();
+    s += 4;                                  // mAuthenFlag
+    s += mParentGrpId.serial_size();         // mParentGroupId
+    s += 4;                                  // mSignFlag
 
     return s;
 }
@@ -227,9 +228,8 @@ uint32_t RsGxsMsgMetaData::serial_size()
 
     s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
-    s += 4;					// mAuthenFlags
-    s += 4;					// mSignFlags
-    s += 4;
+    s += 4;					// mPublishTS
+    s += 4;					// mMsgFlags
 
     return s;
 }

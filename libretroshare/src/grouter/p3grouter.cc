@@ -1703,9 +1703,10 @@ void p3GRouter::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_i
 {
     RS_STACK_MUTEX(grMtx) ;
 #ifdef GROUTER_DEBUG
-    grouter_debug() << "Received new routing clue for key " << id << " from peer " << peer_id << std::endl;
+    grouter_debug() << "Received new routing clue for key " << mid << " from peer " << peer_id << std::endl;
 #endif
     _routing_matrix.addTrackingInfo(mid,peer_id) ;
+    _changed = true ;
 }
 void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
 {
@@ -1714,6 +1715,7 @@ void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
     grouter_debug() << "Received new routing clue for key " << id << " from peer " << peer_id << std::endl;
 #endif
     _routing_matrix.addRoutingClue(id,peer_id,RS_GROUTER_BASE_WEIGHT_GXS_PACKET) ;
+    _changed = true ;
 }
 
 bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientService *service)
@@ -2230,8 +2232,8 @@ void p3GRouter::debugDump()
 
     grouter_debug() << "  Routing matrix: " << std::endl;
 
-//   if(_debug_enabled)
- //      _routing_matrix.debugDump() ;
+   if(_debug_enabled)
+       _routing_matrix.debugDump() ;
 }
 
 
