@@ -846,6 +846,13 @@ void ChatWidget::setWelcomeMessage(QString &text)
 
 void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType)
 {
+	addChatMsg(incoming, name, RsGxsId(), sendTime, recvTime, message, chatType);
+}
+
+void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId
+                            , const QDateTime &sendTime, const QDateTime &recvTime
+                            , const QString &message, MsgType chatType)
+{
 #ifdef CHAT_DEBUG
 	std::cout << "ChatWidget::addChatMsg message : " << message.toStdString() << std::endl;
 #endif
@@ -905,8 +912,15 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
 
-	formatMsg.prepend(QString("<a name=\"%1\"/>").arg(timeStamp));
-	//To call this anchor do:    ui->textBrowser->scrollToAnchor(QString("%1_%2").arg(timeStamp).arg(name));
+	//replace Date and Time anchors
+	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
+	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
+	//replace Name anchors with GXS Id
+	QString strGxsId = "";
+	if (!gxsId.isNull())
+		strGxsId = QString::fromStdString(gxsId.toStdString());
+	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"%1\">").arg(strGxsId));
+
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
 	textCursor.setBlockFormat(QTextBlockFormat ());
