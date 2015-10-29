@@ -360,6 +360,7 @@ void GxsGroupDialog::setupReadonly()
 
 	ui.distribGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 	ui.commentGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
+	ui.antispamgroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
 
 	ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
 #ifndef UNFINISHED
@@ -632,8 +633,10 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
 		ui.personal_ifnopub->setChecked(true);
     
-    	ui.antispam_keepTrackOfPosts->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-	ui.antispam_favorSignedIds  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		ui.antispam_keepTrackOfPosts->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+		ui.antispam_favorSignedIds  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		ui.SignedIds->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		ui.trackmessagesradioButton->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
     
 	/* guess at comments */
 	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&

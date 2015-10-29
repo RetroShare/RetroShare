@@ -6,21 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>928</width>
-    <height>914</height>
+    <width>846</width>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Create New</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
    <property name="verticalSpacing">
-    <number>0</number>
-   </property>
-   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -38,95 +47,8 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="createmode">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QDockWidget" name="contactsdockWidget">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>300</width>
-           <height>524287</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>220</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>check peers you would like to share private publish key with</string>
-         </property>
-         <property name="floating">
-          <bool>false</bool>
-         </property>
-         <property name="features">
-          <set>QDockWidget::NoDockWidgetFeatures</set>
-         </property>
-         <property name="windowTitle">
-          <string>Share Key With</string>
-         </property>
-         <widget class="QWidget" name="dockWidgetContents">
-          <layout class="QGridLayout" name="_2">
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="FriendSelectionWidget" name="keyShareList" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>4</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>300</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="sizeIncrement">
-              <size>
-               <width>220</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="baseSize">
-              <size>
-               <width>200</width>
-               <height>0</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-       <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
         <widget class="QGroupBox" name="groupBoxLogo">
          <property name="title">
           <string/>
@@ -135,7 +57,16 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
            <number>4</number>
           </property>
           <item>
@@ -199,7 +130,16 @@
               <property name="spacing">
                <number>9</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
                <number>3</number>
               </property>
               <item>
@@ -256,7 +196,103 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="0" column="1" rowspan="7">
+        <widget class="QDockWidget" name="contactsdockWidget">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>300</width>
+           <height>524287</height>
+          </size>
+         </property>
+         <property name="sizeIncrement">
+          <size>
+           <width>220</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>check peers you would like to share private publish key with</string>
+         </property>
+         <property name="floating">
+          <bool>false</bool>
+         </property>
+         <property name="features">
+          <set>QDockWidget::NoDockWidgetFeatures</set>
+         </property>
+         <property name="windowTitle">
+          <string>Share Key With</string>
+         </property>
+         <widget class="QWidget" name="dockWidgetContents">
+          <layout class="QGridLayout" name="_2">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="FriendSelectionWidget" name="keyShareList" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>4</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>300</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="sizeIncrement">
+              <size>
+               <width>220</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="baseSize">
+              <size>
+               <width>200</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Description</string>
@@ -268,7 +304,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QGroupBox" name="distribGroupBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -369,7 +405,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="3" column="0">
         <widget class="QGroupBox" name="publishGroupBox">
          <property name="title">
           <string>Publish Signatures</string>
@@ -434,7 +470,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="4" column="0">
         <widget class="QGroupBox" name="personalGroupBox">
          <property name="title">
           <string>Personal Signatures</string>
@@ -477,7 +513,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="5" column="0">
         <widget class="QGroupBox" name="commentGroupBox">
          <property name="title">
           <string>Comments</string>
@@ -528,7 +564,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="6" column="0">
         <widget class="QGroupBox" name="spamProtection_GB">
          <property name="title">
           <string>Spam-protection</string>
@@ -585,7 +621,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="7" column="0" colspan="2">
         <widget class="QFrame" name="extraFrame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -599,13 +635,29 @@
      </widget>
      <widget class="QWidget" name="showmode">
       <layout class="QGridLayout" name="gridLayout_6">
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Description</string>
+         </property>
+         <layout class="QGridLayout" name="_4">
+          <item row="0" column="0">
+           <widget class="QTextEdit" name="descriptiontextEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
           <string>Info</string>
          </property>
          <layout class="QGridLayout" name="_3">
-          <item row="7" column="1">
+          <item row="7" column="2">
            <widget class="QGroupBox" name="distribGroupBox_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -617,7 +669,16 @@
              <string/>
             </property>
             <layout class="QGridLayout" name="gridLayout_2">
-             <property name="margin">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <property name="bottomMargin">
               <number>6</number>
              </property>
              <item row="0" column="1">
@@ -705,7 +766,7 @@
             </layout>
            </widget>
           </item>
-          <item row="8" column="1">
+          <item row="8" column="2">
            <widget class="QGroupBox" name="commentGroupBox_2">
             <property name="title">
              <string/>
@@ -714,7 +775,16 @@
              <property name="spacing">
               <number>6</number>
              </property>
-             <property name="margin">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <property name="bottomMargin">
               <number>6</number>
              </property>
              <item>
@@ -754,28 +824,28 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="0" column="2">
            <widget class="QLineEdit" name="nameline">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="1" column="2">
            <widget class="QLineEdit" name="popline">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="5" column="2">
            <widget class="QLineEdit" name="IDline">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="3" column="2">
            <widget class="QLineEdit" name="lastpostline">
             <property name="readOnly">
              <bool>true</bool>
@@ -803,7 +873,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="2" column="2">
            <widget class="QLineEdit" name="postsline">
             <property name="text">
              <string/>
@@ -844,27 +914,66 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="4" column="2">
            <widget class="GxsIdLabel" name="authorLabel">
             <property name="text">
              <string>GxsIdLabel</string>
             </property>
            </widget>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Description</string>
-         </property>
-         <layout class="QGridLayout" name="_4">
-          <item row="0" column="0">
-           <widget class="QTextEdit" name="descriptiontextEdit">
-            <property name="readOnly">
-             <bool>true</bool>
+          <item row="10" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Anti spam</string>
             </property>
+           </widget>
+          </item>
+          <item row="10" column="2">
+           <widget class="QGroupBox" name="antispamgroupBox">
+            <property name="title">
+             <string/>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <property name="leftMargin">
+              <number>6</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <property name="rightMargin">
+              <number>6</number>
+             </property>
+             <property name="bottomMargin">
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="SignedIds">
+               <property name="text">
+                <string>PGP-signed ids</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="trackmessagesradioButton">
+               <property name="text">
+                <string>Track of Posts</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_9">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>718</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
