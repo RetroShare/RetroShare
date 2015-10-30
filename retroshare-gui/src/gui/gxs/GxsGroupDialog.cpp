@@ -299,8 +299,10 @@ void GxsGroupDialog::setupDefaults()
 			ui.comments_no_3->setChecked(true);
 		}
 	}
-	    ui.antispam_keepTrackOfPosts->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
-	    ui.antispam_favorSignedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+	    ui.antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
+	    ui.antiSpam_signedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+	    ui.antiSpam_trackMessages_2->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
+	    ui.antiSpam_signedIds_2->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
         
 #ifndef RS_USE_CIRCLES
     ui.typeGroup->setEnabled(false);
@@ -321,6 +323,9 @@ void GxsGroupDialog::setupVisibility()
 
 	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
 	ui.distribGroupBox_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
+    
+	ui.spamProtection_GB->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
+	ui.spamProtection_GB_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
 
 	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
@@ -360,7 +365,8 @@ void GxsGroupDialog::setupReadonly()
 
 	ui.distribGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 	ui.commentGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
-	ui.antispamgroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
+	ui.spamProtection_GB->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
+	ui.spamProtection_GB_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
 
 	ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
 #ifndef UNFINISHED
@@ -390,6 +396,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 	setupVisibility();
 	setupReadonly();
 	clearForm();
+    	setGroupSignFlags(mGrpMeta.mSignFlags) ;
 
 	/* setup name */
 	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
@@ -606,10 +613,10 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
     
 	// Author Signature.
-	if (ui.antispam_favorSignedIds->isChecked()) 
+	if (ui.antiSpam_signedIds->isChecked()) 
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
     
-	if (ui.antispam_keepTrackOfPosts->isChecked()) 
+	if (ui.antiSpam_trackMessages->isChecked()) 
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
     
 	return signFlags;
@@ -633,10 +640,12 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
 		ui.personal_ifnopub->setChecked(true);
     
-		ui.antispam_keepTrackOfPosts->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-		ui.antispam_favorSignedIds  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
-		ui.SignedIds->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
-		ui.trackmessagesradioButton->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+		ui.antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+		ui.antiSpam_signedIds      ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+		ui.antiSpam_signedIds_2    ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		//ui.SignEdIds->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		//ui.trackmessagesradioButton->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
     
 	/* guess at comments */
 	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
