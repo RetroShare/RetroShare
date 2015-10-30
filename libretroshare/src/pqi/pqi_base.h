@@ -225,18 +225,14 @@ class PQInterface: public RateInterface
 		/**
 		 * also there are  tick + person id  functions.
 		 */
-		virtual int     tick() { return 0; }
-		virtual int     status() { return 0; }
+		virtual int tick() { return 0; }
+		virtual int status() { return 0; }
 		virtual const RsPeerId& PeerId() { return peerId; }
 
 		// the callback from NetInterface Connection Events.
-		virtual int	notifyEvent(NetInterface *ni, int event, const struct sockaddr_storage &remote_peer_address) 
-		{ 
-			(void) ni; /* remove unused parameter warnings */
-			(void) event; /* remove unused parameter warnings */
-			(void) remote_peer_address;
-			return 0; 
-		}
+		virtual int	notifyEvent(NetInterface * /*ni*/, int /*event*/,
+								const sockaddr_storage & /*remote_peer_address*/)
+		{ return 0; }
 
 	private:
 
