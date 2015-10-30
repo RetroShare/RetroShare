@@ -49,13 +49,12 @@ class p3PeerMgr;
 
 class AcceptedSSL
 {
-	public:
-	
+public:
 	int mFd;
 	SSL *mSSL;
 	RsPeerId mPeerId;
-	
-	struct sockaddr_storage mAddr;
+
+	sockaddr_storage mAddr;
 	time_t mAcceptTS;
 };
 
@@ -64,11 +63,9 @@ class AcceptedSSL
 
 class pqissllistenbase: public pqilistener
 {
-	public:
-
-
-        pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMgr *pm);
-virtual ~pqissllistenbase();
+public:
+	pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMgr *pm);
+	virtual ~pqissllistenbase();
 
 /*************************************/
 /*       LISTENER INTERFACE         **/

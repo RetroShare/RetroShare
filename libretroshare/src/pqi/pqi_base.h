@@ -267,57 +267,57 @@ const uint32_t PQI_CONNECT_HIDDEN_I2P_TCP = 0x0008;
 class BinInterface
 {
 public:
-	BinInterface() { return; }
-virtual ~BinInterface() { return; }
+	BinInterface() {}
+	virtual ~BinInterface() {}
 
-/**
- * To be called loop, for updating state
- */
-virtual int     tick() = 0;
+	/**
+	 * To be called loop, for updating state
+	 */
+	virtual int tick() = 0;
 
-/**
- * Sends data to a prescribed location (implementation dependent)
- *@param data what will be sent
- *@param len the size of data pointed to in memory
- */
-virtual int	senddata(void *data, int len) = 0;
+	/**
+	 * Sends data to a prescribed location (implementation dependent)
+	 *@param data what will be sent
+	 *@param len the size of data pointed to in memory
+	 */
+	virtual int senddata(void *data, int len) = 0;
 
-/**
- * reads data from a prescribed location (implementation dependent)
- *@param data what will be sent
- *@param len the size of data pointed to in memory
- */
-virtual int	readdata(void *data, int len) = 0;
+	/**
+	 * reads data from a prescribed location (implementation dependent)
+	 *@param data what will be sent
+	 *@param len the size of data pointed to in memory
+	 */
+	virtual int readdata(void *data, int len) = 0;
 
-/**
- * Is more particular the case of the sending data through a socket (internet)
- * moretoread and candsend, take a microsec timeout argument.
- *
- */
-virtual int	netstatus() = 0;
-virtual int	isactive() = 0;
-virtual bool	moretoread(uint32_t usec) = 0;
-virtual bool 	cansend(uint32_t usec) = 0;
+	/**
+	 * Is more particular the case of the sending data through a socket (internet)
+	 * moretoread and candsend, take a microsec timeout argument.
+	 *
+	 */
+	virtual int netstatus() = 0;
+	virtual int isactive() = 0;
+	virtual bool moretoread(uint32_t usec) = 0;
+	virtual bool cansend(uint32_t usec) = 0;
 
-/**
- *  method for streamer to shutdown bininterface
- **/
-virtual int	close() = 0;
+	/**
+	 *  method for streamer to shutdown bininterface
+	 **/
+	virtual int close() = 0;
 
-/**
- * If hashing data
- **/
-virtual RsFileHash gethash() = 0;
+	/**
+	 * If hashing data
+	 **/
+	virtual RsFileHash gethash() = 0;
 
-/**
- * Number of bytes read/sent
- */
-virtual uint64_t bytecount() { return 0; }
+	/**
+	 * Number of bytes read/sent
+	 */
+	virtual uint64_t bytecount() { return 0; }
 
-/**
- *  used by pqistreamer to limit transfers
- **/
-virtual bool 	bandwidthLimited() { return true; }
+	/**
+	 *  used by pqistreamer to limit transfers
+	 **/
+	virtual bool bandwidthLimited() { return true; }
 };
 
 
@@ -360,26 +360,30 @@ public:
 	/**
 	 * @param p_in used to notify system of connect/disconnect events
 	 */
-	NetInterface(PQInterface *p_in, const RsPeerId& id)
-	:p(p_in), peerId(id) { return; }
+	NetInterface(PQInterface *p_in, const RsPeerId& id) : p(p_in), peerId(id) {}
 
-virtual ~NetInterface() 
-	{ return; }
+	virtual ~NetInterface() {}
 
-virtual int connect(const struct sockaddr_storage &raddr) = 0; 
-virtual int listen() = 0; 
-virtual int stoplistening() = 0; 
-virtual int disconnect() = 0;
-virtual int reset() = 0;
-virtual const RsPeerId& PeerId() { return peerId; }
-virtual int getConnectAddress(struct sockaddr_storage &raddr) = 0;
+	/* TODO
+	 * The data entrypoint is connect(const struct sockaddr_storage &raddr)
+	 * To generalize NetInterface we should have a more general type for raddr
+	 * As an example a string containing an url or encoded like a domain name
+	 */
+	virtual int connect(const struct sockaddr_storage &raddr) = 0;
 
-virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
-virtual bool connect_parameter(uint32_t /* type */ , const std::string & /* value */ ) { return false; } // not generally used.
-virtual bool connect_additional_address(uint32_t /*type*/, const struct sockaddr_storage & /*addr*/) { return false; } // only needed by udp.
+	virtual int listen() = 0;
+	virtual int stoplistening() = 0;
+	virtual int disconnect() = 0;
+	virtual int reset() = 0;
+	virtual const RsPeerId& PeerId() { return peerId; }
+	virtual int getConnectAddress(struct sockaddr_storage &raddr) = 0;
+
+	virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
+	virtual bool connect_parameter(uint32_t /* type */ , const std::string & /* value */ ) { return false; } // not generally used.
+	virtual bool connect_additional_address(uint32_t /*type*/, const struct sockaddr_storage & /*addr*/) { return false; } // only needed by udp.
 
 protected:
-PQInterface *parent() { return p; }
+	PQInterface *parent() { return p; }
 
 private:
 	PQInterface *p;
@@ -397,10 +401,9 @@ private:
 class NetBinInterface: public NetInterface, public BinInterface
 {
 public:
-	NetBinInterface(PQInterface *parent, const RsPeerId& id)
-	:NetInterface(parent, id)
-	{ return; }
-virtual ~NetBinInterface() { return; }
+	NetBinInterface(PQInterface *parent, const RsPeerId& id) :
+		NetInterface(parent, id) {}
+	virtual ~NetBinInterface() {}
 };
 
 #define CHAN_SIGN_SIZE 16
