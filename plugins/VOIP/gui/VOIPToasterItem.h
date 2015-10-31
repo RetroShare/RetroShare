@@ -44,6 +44,7 @@ public:
 
 private slots:
 	void chatButtonSlot();
+	void declineButtonSlot();
 
 #ifdef VOIPTOASTERNOTIFY_ALL
 	void voipAcceptReceived(const RsPeerId &peer_id, int flags) ; // emitted when the peer accepts the call

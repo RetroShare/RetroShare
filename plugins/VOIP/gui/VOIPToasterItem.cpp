@@ -39,18 +39,19 @@ VOIPToasterItem::VOIPToasterItem(const RsPeerId &peer_id, const QString &msg, co
 
 	switch (mType){
 		case AudioCall:
-			toasterButton->setIcon(QIcon("://images/call-start.png"));
-			toasterButton->setText(tr("Answer"));
+			//acceptButton->setIcon(QIcon("://images/call-start.png"));
+			acceptButton->setText(tr("Answer"));
 		break;
 		case VideoCall:
-			toasterButton->setIcon(QIcon("://images/video-icon-on.png"));
-			toasterButton->setText(tr("Answer with video"));
+			acceptButton->setIcon(QIcon("://images/video-icon-on.png"));
+			acceptButton->setText(tr("Answer with video"));
 		break;
 		default:
 			ChatDialog::chatFriend(ChatId(mPeerId));
 	}
 
-	connect(toasterButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
+	connect(acceptButton, SIGNAL(clicked()), SLOT(chatButtonSlot()));
+	connect(declineButton, SIGNAL(clicked()), SLOT(declineButtonSlot()));
 	connect(closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
@@ -72,6 +73,21 @@ void VOIPToasterItem::chatButtonSlot()
 		break;
 		case VideoCall:
 			VOIPGUIHandler::AnswerVideoCall(mPeerId);
+		break;
+		default:
+			ChatDialog::chatFriend(ChatId(mPeerId));
+	}
+	hide();
+}
+
+void VOIPToasterItem::declineButtonSlot()
+{
+	switch (mType){
+		case AudioCall:
+			VOIPGUIHandler::HangupAudioCall(mPeerId);
+		break;
+		case VideoCall:
+			VOIPGUIHandler::HangupVideoCall(mPeerId);
 		break;
 		default:
 			ChatDialog::chatFriend(ChatId(mPeerId));

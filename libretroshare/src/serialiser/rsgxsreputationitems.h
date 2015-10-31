@@ -32,10 +32,11 @@
 #include "serialiser/rsserial.h"
 #include "retroshare/rsgxsifacetypes.h"
 
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM       0x01
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM          0x02
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM       0x03
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM      0x04
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM         0x01
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated 0x02
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM         0x03
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM        0x04
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM            0x05
 
 /**************************************************************************/
 class RsReputationItem: public RsItem
@@ -90,6 +91,7 @@ public:
 	RsGxsId mGxsId;
 	uint32_t mOwnOpinion;
 	uint32_t mOwnOpinionTS;
+    	uint32_t mIdentityFlags ;
 	std::map<RsPeerId, uint32_t> mOpinions; // RsPeerId -> Opinion.
 };
 
@@ -143,10 +145,11 @@ public:
     virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 private:
-    static	RsGxsReputationConfigItem  *deserialiseReputationConfigItem (void *data, uint32_t size);
-    static	RsGxsReputationSetItem     *deserialiseReputationSetItem    (void *data, uint32_t size);
-    static	RsGxsReputationUpdateItem  *deserialiseReputationUpdateItem (void *data, uint32_t size);
-    static	RsGxsReputationRequestItem *deserialiseReputationRequestItem(void *data, uint32_t size);
+    static	RsGxsReputationConfigItem  *deserialiseReputationConfigItem            (void *data, uint32_t size);
+    static	RsGxsReputationSetItem     *deserialiseReputationSetItem               (void *data, uint32_t size);
+    static	RsGxsReputationSetItem     *deserialiseReputationSetItem_deprecated    (void *data, uint32_t size);
+    static	RsGxsReputationUpdateItem  *deserialiseReputationUpdateItem            (void *data, uint32_t size);
+    static	RsGxsReputationRequestItem *deserialiseReputationRequestItem           (void *data, uint32_t size);
 };
 
 /**************************************************************************/

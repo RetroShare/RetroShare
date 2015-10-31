@@ -45,7 +45,7 @@ public:
 	IdEditDialog(QWidget *parent = 0);
 	~IdEditDialog();
 
-	void setupNewId(bool pseudo);
+	void setupNewId(bool pseudo, bool enable_anon = true);
 	void setupExistingId(const RsGxsGroupId &keyId);
     	void enforceNoAnonIds() ;
 

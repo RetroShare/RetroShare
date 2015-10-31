@@ -681,12 +681,25 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
         EVP_VerifyInit(mdctx, EVP_sha1());
         EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
         int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+        EVP_MD_CTX_destroy(mdctx);
 
-		  delete[] allGrpData ;
+        if(signOk != 1)	// try previous API. This is a hack to accept groups previously signed with old APIs.
+	{
+		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+		EVP_VerifyInit(mdctx, EVP_sha1());
+		EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen-4);	// that means ommit the last
+		signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+		EVP_MD_CTX_destroy(mdctx);
+        
+        	if(signOk)
+                	std::cerr << "(WW) GXS group with old API found. Signature still checks!" << std::endl;
+	}
+        
+	delete[] allGrpData ;
 
         /* clean up */
         EVP_PKEY_free(signKey);
-        EVP_MD_CTX_destroy(mdctx);
 
         grpMeta.signSet = signSet;
 

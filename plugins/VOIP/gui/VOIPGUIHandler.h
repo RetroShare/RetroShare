@@ -42,6 +42,8 @@ class VOIPGUIHandler: public QObject
 public:
 	static void AnswerAudioCall(const RsPeerId &peer_id) ;
 	static void AnswerVideoCall(const RsPeerId &peer_id) ;
+  static void HangupAudioCall(const RsPeerId &peer_id) ;
+  static void HangupVideoCall(const RsPeerId &peer_id) ;
 
 	public slots:
 		void ReceivedInvitation(const RsPeerId &peer_id, int flags) ;

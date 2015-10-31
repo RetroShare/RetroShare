@@ -384,7 +384,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
     
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
-    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(info.mFriendAverage-1.0f,'f',3));
+    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(info.mOverallReputationScore - 1.0f,'f',3));
 
 	 if(isOwnId)
 	 {
@@ -756,6 +756,7 @@ void IdDialog::modifyReputation()
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
     requestIdDetails();
+    requestIdList();
 
 	return;
 }

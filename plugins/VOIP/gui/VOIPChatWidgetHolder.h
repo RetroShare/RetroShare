@@ -68,6 +68,8 @@ public slots:
 	void sendVideoData();
 	void startAudioCapture();
 	void startVideoCapture();
+	void hangupCallAudio() ;
+	void hangupCallVideo() ;
 
 private slots:
 	void toggleAudioListen();
@@ -80,8 +82,6 @@ private slots:
 	void toggleFullScreen();
 	void toggleFullScreenFS();
 	void hangupCall() ;
-	void hangupCallAudio() ;
-	void hangupCallVideo() ;
 	void botMouseEnterTake();
 	void botMouseLeaveTake();
 	void botMouseEnterDecline();

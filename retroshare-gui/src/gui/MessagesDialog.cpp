@@ -1237,8 +1237,16 @@ void MessagesDialog::insertMessages()
             else if(it->msgflags & RS_MSG_DISTANT)
             {
                 item->setIcon(COLUMN_SIGNATURE, QIcon(":/images/blue_lock_open.png")) ;
-                item->setToolTip(COLUMN_SIGNATURE, tr("This message comes from a distant person.")) ;
                 item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-read.png")) ;
+                
+                if (msgbox == RS_MSG_INBOX )
+                {
+                    item->setToolTip(COLUMN_SIGNATURE, tr("This message comes from a distant person.")) ;
+                }
+                else if  (msgbox == RS_MSG_OUTBOX)
+                {
+                    item->setToolTip(COLUMN_SIGNATURE, tr("This message goes to a distant person.")) ;
+                }
 
                 if(it->msgflags & RS_MSG_SIGNED)
                 {

@@ -149,6 +149,7 @@ private:
     RsGxsForumGroup mForumGroup;
 	QString mForumDescription;
 	int mSubscribeFlags;
+	int mSignFlags;
 	bool mInProcessSettings;
 	bool mInMsgAsReadUnread;
 	int mLastViewType;
