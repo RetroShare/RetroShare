@@ -924,8 +924,10 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 #endif
 					idValidate = false ;
 				}
+#ifdef GEN_EXCH_DEBUG	
 				else
 					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", accepted. Reputation score (" << details.mReputation.mOverallReputationScore <<") is above accepted threshold (" << reputation_threshold << ")" << std::endl;
+#endif
 			}
 
 		}

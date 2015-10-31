@@ -2000,7 +2000,9 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
             
             if(rsReputations->isIdentityBanned(syncItem->authorId))
             {
+#ifdef NXS_NET_DEBUG
                 std::cerr << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
+#endif
                 continue ;
             }
             
@@ -2220,7 +2222,9 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         
 	if(!grpSyncItem->authorId.isNull() && rsReputations->isIdentityBanned(grpSyncItem->authorId))
 	{
+#ifdef NXS_NET_DEBUG
                 std::cerr << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
+#endif
     		continue ;            
 	}
         
@@ -2241,10 +2245,14 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
                     if(rep.score >= GIXS_CUT_OFF)
                     {
                         addGroupItemToList(tr, grpId, transN, reqList);
+#ifdef NXS_NET_DEBUG
                         std::cerr << "  reputation cut off: limit=" << GIXS_CUT_OFF << " value=" << rep.score << ": allowed." << std::endl;
+#endif
                     }
+#ifdef NXS_NET_DEBUG
                     else
                         std::cerr << "  reputation cut off: limit=" << GIXS_CUT_OFF << " value=" << rep.score << ": you shall not pass." << std::endl;
+#endif
                 }
                 else
                 {

@@ -171,7 +171,9 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
 
 	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details))
 	    {
+#ifdef DEBUG_CHAT_LOBBIES
 		    std::cerr << "(WW) cannot get ID " << cli->signature.keyId << " for checking signature  of lobby item." << std::endl;
+#endif
 		    return false;
 	    }
 
@@ -680,7 +682,9 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 
 	    if(!rsIdentity->getIdDetails(item->signature.keyId,details))
 	    {
+#ifdef DEBUG_CHAT_LOBBIES
 		    std::cerr << "(WW) cannot get ID " << item->signature.keyId << " for checking signature  of lobby item." << std::endl;
+#endif
 		    return ;
 	    }
 
