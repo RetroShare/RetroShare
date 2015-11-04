@@ -452,16 +452,16 @@ void ChatLobbyDialog::updateParticipantsList()
             time_t now = time(NULL);
 
             if(isParticipantMuted(it2->first))
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_64.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_128.png"));
             else if (tLastAct + timeToInactivity < now)
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_grey_64.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_grey_128.png"));
             else
-                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_green_64.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_green_128.png"));
 
             RsGxsId gxs_id;
             rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
 
-            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_yellow_64.png"));
+            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_yellow_128.png"));
 
             QTime qtLastAct=QTime(0,0,0).addSecs(now-tLastAct);
             widgetitem->setToolTip(COLUMN_ICON,tr("Right click to mute/unmute participants<br/>Double click to address this person<br/>")
