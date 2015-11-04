@@ -161,9 +161,11 @@ void FixedAllocator::deallocate(void *p)
 uint32_t FixedAllocator::currentSize() const
 {
     uint32_t res = 0 ;
-    
+
     for(uint32_t i=0;i<_chunks.size();++i)
-	    res += (_numBlocks - _chunks[i]->_blocksAvailable) * _blockSize ;
+        res += (_numBlocks - _chunks[i]->_blocksAvailable) * _blockSize ;
+
+    return res ;
 }
 void FixedAllocator::printStatistics() const
 {
