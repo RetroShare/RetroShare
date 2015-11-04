@@ -274,12 +274,21 @@ public:
         {
             sendMessage(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, "Error: rsFiles is null. Retroshare is probably not yet started.");
             return MHD_YES;
-        }
-        if(url[0] == 0 || (mHash=RsFileHash(url+strlen(FILESTREAMER_ENTRY_PATH))).isNull())
-        {
-            sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: URL is not a valid file hash");
-            return MHD_YES;
-        }
+        }		
+		std::string urls(url);
+		urls = urls.substr(strlen(FILESTREAMER_ENTRY_PATH));
+		size_t perpos = urls.find('/');
+		if(perpos == std::string::npos){
+			mHash = RsFileHash(urls);
+		}else{
+			mHash = RsFileHash(urls.substr(0, perpos));
+		}
+		if(urls.empty() || mHash.isNull())
+		{
+			sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: URL is not a valid file hash");
+			return MHD_YES;
+		}
+
         FileInfo info;
         std::list<RsFileHash> dls;
         rsFiles->FileDownloads(dls);
