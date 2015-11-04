@@ -69,10 +69,10 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
             int S = QFontMetricsF(font()).height() ;
-    ui.participantsList->setIconSize(QSize(S,S));
+    ui.participantsList->setIconSize(QSize(1.3*S,1.3*S));
 
     ui.participantsList->setColumnCount(COLUMN_COUNT);
-    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.25*S);
+    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.4*S);
     ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
