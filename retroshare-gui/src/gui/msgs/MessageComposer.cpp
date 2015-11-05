@@ -136,8 +136,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     m_completer = NULL;
     
     ui.distantFrame->hide();
-    ui.respond_to_CB->setEnabled(false) ;
-    ui.fromLabel->setEnabled(false) ;
+    ui.respond_to_CB->hide();
+    ui.fromLabel->hide();
 
     Settings->loadWidgetInformation(this);
 
@@ -389,15 +389,15 @@ void MessageComposer::updateCells(int,int)
     }
     if(has_gxs)
     {
-        ui.respond_to_CB->setEnabled(true) ;
+        ui.respond_to_CB->show();
         ui.distantFrame->show();
-        ui.fromLabel->setEnabled(true);
+        ui.fromLabel->show();
     }
     else
     {
-        ui.respond_to_CB->setEnabled(false) ;
+        ui.respond_to_CB->hide();
         ui.distantFrame->hide() ;
-        ui.fromLabel->setEnabled(false);
+        ui.fromLabel->hide();
     }
 }
 
