@@ -571,7 +571,7 @@ var DownloadsWidget = React.createClass({
 					ctrlBtn = <div className="btn" onClick={pauseFn}>pause</div>;
 				}
 				return(<tr>
-					<td>{this.props.data.name}</td>
+					<td><a className="filelink" target="_blank" href={filestreamer_url + this.props.data.hash + "/" + encodeURIComponent(this.props.data.name)}>{this.props.data.name}</a></td>
 					<td>{makeFriendlyUnit(this.props.data.size)}</td>
 					<td><ProgressBar progress={this.props.data.transfered / this.props.data.size}/></td>
 					<td>{makeFriendlyUnit(this.props.data.transfer_rate*1e3)}/s</td>
