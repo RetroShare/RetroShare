@@ -229,7 +229,6 @@ win32 {
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
 	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-	DEFINES *= MINIUPNPC_VERSION=13
 	# This defines the platform to be WinXP or later and is needed for getaddrinfo (_WIN32_WINNT_WINXP)
 	DEFINES *= WINVER=0x0501
 
@@ -253,10 +252,8 @@ win32 {
 
 	LIBS += -lsqlcipher
 
-	LIBS_DIR = $$PWD/../../../libs
-
-	DEPENDPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
-	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 ################################# MacOSX ##########################################

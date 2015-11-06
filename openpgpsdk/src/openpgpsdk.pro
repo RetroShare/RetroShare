@@ -35,10 +35,8 @@ win32 {
 	#QMAKE_CXXFLAGS_DEBUG += -O2
 	#QMAKE_CFLAGS_DEBUG += -O2
 
-	LIBS_DIR = $$PWD/../../../libs
-
-	DEPENDPATH += $$LIBS_DIR/include
-	INCLUDEPATH += $$LIBS_DIR/include
+	DEPENDPATH += $$INC_DIR
+	INCLUDEPATH += $$INC_DIR
 }
 
 # Input

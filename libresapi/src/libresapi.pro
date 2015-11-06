@@ -24,7 +24,7 @@ unix {
 
 win32{
 	DEFINES *= WINDOWS_SYS
-	INCLUDEPATH += $$PWD/../../../libs/include
+	INCLUDEPATH += . $$INC_DIR
 }
 
 libmicrohttpd{
