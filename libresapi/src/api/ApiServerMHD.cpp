@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include <util/rsdir.h>
+#include "util/ContentTypes.h"
 
 // for filestreamer
 #include <retroshare/rsfiles.h>
@@ -302,8 +303,13 @@ public:
         struct MHD_Response* resp = MHD_create_response_from_callback(
                     mSize, 1024*1024, &contentReadercallback, this, NULL);
 
-        // only mp3 at the moment
-        MHD_add_response_header(resp, "Content-Type", "audio/mpeg3");
+		// get content-type from extension
+		std::string ext = "";
+		unsigned int i = info.fname.rfind('.');
+		if(i != std::string::npos)
+			ext = info.fname.substr(i+1);
+		MHD_add_response_header(resp, "Content-Type", ContentTypes::ContentTypes::cTypeFromExt(ext).c_str());
+
         secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
         return MHD_YES;
