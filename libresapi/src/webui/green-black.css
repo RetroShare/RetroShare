@@ -66,6 +66,10 @@ td{
 	background-color: midnightblue;
 }
 
+.filelink{
+	color: inherit;
+}
+
 input, textarea{
 	color: lime;
 	font-family: monospace;
