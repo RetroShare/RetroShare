@@ -16,6 +16,8 @@ private:
 	static std::map<std::string, std::string> cache;
 	static RsMutex ctmtx;
 	static const char* filename;
+	static bool inited;
+	static void addBasic();
 };
 
 #endif // CONTENTTYPES_H
