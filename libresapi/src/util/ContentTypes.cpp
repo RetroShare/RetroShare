@@ -43,8 +43,8 @@ std::string ContentTypes::cTypeFromExt(const std::string &extension)
 	while(getline(file, line))
 	{
 		if(line.empty() || line[0] == '#') continue;
-		unsigned int i = line.find_first_of("\t ");
-		unsigned int j;
+        size_t i = line.find_first_of("\t ");
+        size_t j;
 		while(i != std::string::npos)	//tokenize
 		{
 			j = i;
