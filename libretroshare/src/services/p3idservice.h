@@ -188,8 +188,8 @@ virtual	std::string save() const;
 #define ID_LOCAL_STATUS_INC_CALC_FLAG	0x00020000
 
 
-#define MAX_CACHE_SIZE	100 // Small for testing..
-//#define MAX_CACHE_SIZE	10000 // More useful size
+//#define MAX_CACHE_SIZE	100 // Small for testing..
+#define MAX_CACHE_SIZE	5000 // More useful size
 
 class RsGxsIdGroupItem;
 
