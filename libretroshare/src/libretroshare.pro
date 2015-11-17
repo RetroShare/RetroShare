@@ -757,6 +757,14 @@ gxs {
 		services/p3gxsreputation.cc \
 		serialiser/rsgxsreputationitems.cc \
 
+	# GxsTunnel service
+	HEADERS += 	gxstunnel/p3gxstunnel.h \
+				gxstunnel/rsgxstunnelitems.h \
+					retroshare/rsgxstunnel.h 
+
+	SOURCES += gxstunnel/p3gxstunnel.cc \
+				gxstunnel/rsgxstunnelitems.cc
+
 	# GxsCircles Service
 	HEADERS += services/p3gxscircles.h \
 		serialiser/rsgxscircleitems.h \
