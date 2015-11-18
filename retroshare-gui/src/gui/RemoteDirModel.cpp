@@ -590,7 +590,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 
 QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (role == Qt::SizeHintRole)
+	/*if (role == Qt::SizeHintRole)
 	{
 		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
 		int defh = QFontMetricsF(QWidget().font()).height();
@@ -600,7 +600,7 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 			defw = 200/16.0*defh;
 		}
 		return QSize(defw, defh);
-	}
+	}*/
 
 	if (role != Qt::DisplayRole)
 		return QVariant();
@@ -636,7 +636,7 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 }
 QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (role == Qt::SizeHintRole)
+	/*if (role == Qt::SizeHintRole)
 	{
 		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
 		int defh = QFontMetricsF(QWidget().font()).height();
@@ -646,7 +646,7 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 			defw = defh*200/16.0;
 		}
 		return QSize(defw, defh);
-	}
+	}*/
 
 	if (role != Qt::DisplayRole)
 		return QVariant();
