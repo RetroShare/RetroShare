@@ -505,6 +505,9 @@ void IdDialog::insertIdList(uint32_t token)
 			ui->idTreeWidget->addTopLevelItem(item);
 		}
 	}
+	
+	/* count items */
+	ui->label_count->setText( "(" + QString::number(ui->idTreeWidget->topLevelItemCount()) + ")" );
 
 	filterIds();
 

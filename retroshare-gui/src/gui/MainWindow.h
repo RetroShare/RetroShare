@@ -184,6 +184,7 @@ public slots:
     void setNewPage(int page);
     void setCompactStatusMode(bool compact);
 
+    void toggleStatusToolTip(bool toggle);
 protected:
     /** Default Constructor */
     MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
