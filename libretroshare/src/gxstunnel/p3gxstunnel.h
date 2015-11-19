@@ -27,6 +27,7 @@
 
 #include <turtle/turtleclientservice.h>
 #include <retroshare/rsgxstunnel.h>
+#include <gxstunnel/rsgxstunnelitems.h>
 
 class RsGixs ;
 
@@ -120,7 +121,7 @@ private:
     bool locked_sendDHPublicKey(const DH *dh, const RsGxsId& own_gxs_id, const RsPeerId& virtual_peer_id) ;
     bool locked_initDHSessionKey(DH *&dh);
     
-    GxsTunnelPeerId virtualPeerIdFromHash(const TurtleFileHash& hash) ;	// ... and to a hash for p3turtle
+    TurtleVirtualPeerId virtualPeerIdFromHash(const TurtleFileHash& hash) ;	// ... and to a hash for p3turtle
 
     // Comunication with Turtle service
 
