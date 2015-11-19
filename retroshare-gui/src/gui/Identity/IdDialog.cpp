@@ -950,6 +950,29 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			}
 
 			contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+			
+			contextMnu.addSeparator();
+      
+			RsReputations::ReputationInfo info ;
+			std::string Id = item->text(RSID_COL_KEYID).toStdString();
+			rsReputations->getReputationInfo(RsGxsId(Id),info) ;
+    
+
+			QAction *banaction = contextMnu.addAction(QIcon(":/images/denied16.png"), tr("Ban this person"), this, SLOT(banPerson()));
+			QAction *unbanaction = contextMnu.addAction(QIcon(), tr("Unban this person"), this, SLOT(unbanPerson()));
+
+			
+			if(info.mAssessment == RsReputations::ASSESSMENT_BAD)
+			{
+				banaction->setVisible(false);
+				unbanaction->setVisible(true);
+			}
+			else
+			{
+				banaction->setVisible(true);
+				unbanaction->setVisible(false);
+			}
+
 		}
 	}
 
@@ -1007,4 +1030,36 @@ void IdDialog::sendMsg()
 
     /* window will destroy itself! */
 
+}
+
+void IdDialog::banPerson()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEGATIVE) ;
+
+	requestIdDetails();
+	requestIdList();
+}
+
+void IdDialog::unbanPerson()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_POSITIVE) ;
+
+	requestIdDetails();
+	requestIdList();
 }
