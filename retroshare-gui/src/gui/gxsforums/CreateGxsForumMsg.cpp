@@ -260,7 +260,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 		ui.signBox->setEnabled(true);
 	}
 
-	ui.forumMessage->setText("");
+	//ui.forumMessage->setText("");
 }
 
 void  CreateGxsForumMsg::createMsg()
@@ -505,4 +505,9 @@ void CreateGxsForumMsg::loadRequest(const TokenQueue *queue, const TokenRequest 
 				std::cerr << std::endl;
 		}
 	}
+}
+
+void CreateGxsForumMsg::insertPastedText(QString msg)
+{
+	ui.forumMessage->append(msg);
 }

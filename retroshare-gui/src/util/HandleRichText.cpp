@@ -24,6 +24,7 @@
 #include <QtXml>
 #include <QBuffer>
 #include <QMessageBox>
+#include <QTextDocumentFragment>
 #include <qmath.h>
 
 #include "HandleRichText.h"
@@ -996,4 +997,16 @@ QString RsHtml::plainText(const std::string &text)
 #else
 	return Qt::escape(QString::fromUtf8(text.c_str()));
 #endif
+}
+
+QString RsHtml::makeQuotedText(RSTextBrowser *browser)
+{
+	QString text = browser->textCursor().selection().toPlainText();
+	if(text.length() == 0)
+	{
+		text = browser->toPlainText();
+	}
+	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+	text = sl.join("\n>");
+	return QString(">") + text;
 }
