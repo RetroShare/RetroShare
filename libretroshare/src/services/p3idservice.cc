@@ -1593,8 +1593,10 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
     std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-    details.mIsOwnId   = (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-    details.mPgpLinked = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+    details.mFlags = 0 ;
+    
+    if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
+    if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
 
     /* rest must be retrived from ServiceString */
     updateServiceString(item->meta.mServiceString);
@@ -1603,21 +1605,19 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
 void RsGxsIdCache::updateServiceString(std::string serviceString)
 {
 	details.mRecognTags.clear();
+    	details.mFlags = 0 ;
 
 	SSGxsIdGroup ssdata;
 	if (ssdata.load(serviceString))
 	{
-		if (details.mPgpLinked)
+		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 		{
-			details.mPgpKnown = ssdata.pgp.idKnown;
-			if (details.mPgpKnown)
-			{
+	    		if(ssdata.pgp.idKnown) details.mFlags |= RS_IDENTITY_FLAGS_PGP_KNOWN ;
+                        
+			if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
 				details.mPgpId = ssdata.pgp.pgpId;
-			}
 			else
-			{
 				details.mPgpId.clear();
-			}
 		}
 
 
@@ -1673,7 +1673,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 	}
 	else
 	{
-		details.mPgpKnown = false;
+		details.mFlags &= ~RS_IDENTITY_FLAGS_PGP_KNOWN ;
 		details.mPgpId.clear();
 		details.mReputation.updateIdScore(false, false);
 		details.mReputation.update();

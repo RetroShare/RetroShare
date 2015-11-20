@@ -235,7 +235,7 @@ static bool trimAnonIds(std::list<RsGxsId>& lst)
     RsIdentityDetails idd ;
 
     for(std::list<RsGxsId>::iterator it = lst.begin();it!=lst.end();)
-	    if(!rsIdentity->getIdDetails(*it,idd) || !idd.mPgpLinked)
+	    if(!rsIdentity->getIdDetails(*it,idd) || !(idd.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
 	    {
 		    it = lst.erase(it) ;
 		    removed= true ;

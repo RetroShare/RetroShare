@@ -168,7 +168,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details) || !( details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (id=" << cli->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
@@ -665,7 +665,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(item->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(item->signature.keyId,details) || !(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
@@ -1699,7 +1699,7 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 
             // Only send a nickname change event if the two Identities are not anonymous
 
-            if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && det1.mPgpLinked && det2.mPgpLinked)
+            if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && (det1.mFlags & det2.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
                 sendLobbyStatusPeerChangedNickname(lobby_id, nick.toStdString()) ;
         }
 
