@@ -225,7 +225,9 @@ private:
     void handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem*) ;
 
     static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
-
+#ifdef __APPLE__
+public:
+#endif
     class nullstream: public std::ostream {};
 
     std::ostream& grouter_debug() const
@@ -234,7 +236,9 @@ private:
 
         return _debug_enabled?(std::cerr):null;
     }
-
+#ifdef __APPLE__
+private:
+#endif
     void routePendingObjects() ;
     void handleTunnels() ;
     void autoWash() ;
