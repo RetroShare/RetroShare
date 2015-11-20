@@ -433,6 +433,9 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         {
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            
+            if(mContacts.find(id) != mContacts.end())
+		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
 
         // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
         if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
@@ -446,6 +449,10 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         {
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            
+            if(mContacts.find(id) != mContacts.end())
+		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
+
             return true;
         }
     }
