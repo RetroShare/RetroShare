@@ -210,6 +210,25 @@ uint32_t p3IdService::idAuthenPolicy()
 
 	return policy;
 }
+bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
+{
+    std::set<RsGxsId>::iterator it = mContacts.find(id) ;
+    
+    if(b && (it == mContacts.end()))
+    {
+        mContacts.insert(id) ;
+        slowIndicateConfigChanged() ;
+    }
+    
+    if( (!b) &&(it != mContacts.end()))
+    {
+        mContacts.erase(it) ;
+        slowIndicateConfigChanged() ;
+    }
+    
+    return true ;
+}
+
 void p3IdService::slowIndicateConfigChanged()
 {
     time_t now = time(NULL) ;
@@ -248,8 +267,13 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
 
     for(std::list<RsItem*>::const_iterator it = items.begin();it!=items.end();++it)
         if( (lii = dynamic_cast<RsGxsIdLocalInfoItem*>(*it)) != NULL)
+        {
             for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
                 mKeysTS.insert(*it2) ;
+    
+	    mContacts = lii->mContacts ;
+        }
+    
     return true ;
 }
 
@@ -263,6 +287,7 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
     cleanup = true ;
     RsGxsIdLocalInfoItem *item = new RsGxsIdLocalInfoItem ;
     item->mTimeStamps = mKeysTS ;
+    item->mContacts = mContacts ;
 
     items.push_back(item) ;
     return true ;

@@ -242,6 +242,8 @@ virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
 virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
                         uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
 
+    virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
+    
 	// Specific RsIdentity Functions....
         /* Specific Service Data */
 	/* We expose these initially for testing / GUI purposes.
