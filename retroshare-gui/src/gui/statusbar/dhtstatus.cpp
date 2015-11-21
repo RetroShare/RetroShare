@@ -123,7 +123,7 @@ void DHTStatus::getDHTStatus()
 		else
 		{
 			// RED - some issue.
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_red_64.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation));
             dhtstatusLabel->setToolTip( text + tr("DHT Error"));
 
 			spaceLabel->setVisible(false);
