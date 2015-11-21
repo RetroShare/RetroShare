@@ -32,7 +32,12 @@ libmicrohttpd{
 		CONFIG += link_pkgconfig
 		PKGCONFIG *= libmicrohttpd
 	} else {
-		LIBS *= -lmicrohttpd
+		mac {
+		INCLUDEPATH += /usr/local/include
+		LIBS *= /usr/local/lib/libmicrohttpd.a
+		} else {
+			LIBS *= -lmicrohttpd
+		}
 	}
 	SOURCES += \
 		api/ApiServerMHD.cpp

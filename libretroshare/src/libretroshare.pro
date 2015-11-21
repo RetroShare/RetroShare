@@ -274,7 +274,7 @@ mac {
 		# Beautiful Hack to fix 64bit file access.
                 QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
 
-                UPNPC_DIR = ../../../miniupnpc-1.3
+                UPNPC_DIR = /usr/local/include
 		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
@@ -283,7 +283,7 @@ mac {
 		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 
 		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-		LIBS += ../../../lib/libsqlcipher.a
+		LIBS += /usr/local/lib/libsqlcipher.a
 		#LIBS += -lsqlite3
 }
 

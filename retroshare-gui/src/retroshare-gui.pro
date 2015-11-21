@@ -212,12 +212,12 @@ macx {
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += ../../../miniupnpc-1.3/libminiupnpc.a
+	LIBS += /usr/local/lib/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 	LIBS += -framework Carbon
 	INCLUDEPATH += . /usr/local/include
-	DEFINES *= MAC_IDLE # for idle feature
+	#DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
 }
 

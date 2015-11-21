@@ -96,9 +96,10 @@ macx {
 
 	LIBS += -Wl,-search_paths_first
         LIBS += -lssl -lcrypto -lz 
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += /usr/local/lib/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
+	INCLUDEPATH += /usr/local/include
 
 	sshserver {
 		LIBS += -L../../../lib
