@@ -57,7 +57,7 @@
    <item row="1" column="0">
     <widget class="QStackedWidget" name="pagesWizard">
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
       <layout class="QGridLayout" name="gridLayout_2">
@@ -327,7 +327,7 @@ p, li { white-space: pre-wrap; }
              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="netModeLabel">
               <property name="text">
                <string>Connection :</string>
               </property>
@@ -353,7 +353,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_6">
+             <widget class="QLabel" name="discoveryLabel">
               <property name="text">
                <string>Discovery :</string>
               </property>
