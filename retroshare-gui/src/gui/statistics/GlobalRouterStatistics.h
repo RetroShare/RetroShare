@@ -42,13 +42,19 @@ class GlobalRouterStatistics: public RsAutoUpdatePage, public Ui::GlobalRouterSt
         static QString getPeerName(const RsPeerId& peer_id) ;
         
 		void updateContent() ;
-
+		
+private slots:
+	/** Create the context popup menu and it's submenus */
+	void CustomPopupMenu( QPoint point );
+	void personDetails();
+	
 	private:
 											
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
 
 		virtual void updateDisplay() ;
+
 
 		GlobalRouterStatisticsWidget *_tst_CW ;
 } ;

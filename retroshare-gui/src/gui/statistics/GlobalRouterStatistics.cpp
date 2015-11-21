@@ -25,6 +25,7 @@
 #include <QFontMetrics>
 #include <time.h>
 
+#include <QMenu>
 #include <QPainter>
 #include <QStylePainter>
 #include <QLayout>
@@ -36,9 +37,21 @@
 
 #include "GlobalRouterStatistics.h"
 
+#include "gui/Identity/IdDetailsDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/misc.h"
+
+#define COL_ID            0
+#define COL_NICKNAME      1
+#define COL_DESTINATION   2
+#define COL_DATASTATUS    3
+#define COL_TUNNELSTATUS  4
+#define COL_DATASIZE      5
+#define COL_DATAHASH      6
+#define COL_RECEIVED      7
+#define COL_SEND          8
+
 
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
@@ -61,6 +74,9 @@ GlobalRouterStatistics::GlobalRouterStatistics(QWidget *parent)
 	
 	  /* Set header resize modes and initial section sizes Uploads TreeView*/
 		QHeaderView_setSectionResizeMode(treeWidget->header(), QHeaderView::ResizeToContents);
+		
+		connect(treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CustomPopupMenu(QPoint)));
+
 
 	// load settings
     processSettings(true);
@@ -95,6 +111,19 @@ void GlobalRouterStatistics::processSettings(bool bLoad)
     Settings->endGroup();
     
     m_bProcessSettings = false;
+}
+
+void GlobalRouterStatistics::CustomPopupMenu( QPoint )
+{
+	QMenu contextMnu( this );
+	
+	QTreeWidgetItem *item = treeWidget->currentItem();
+	if (item) {
+	contextMnu.addAction(QIcon(":/images/info16.png"), tr("Details"), this, SLOT(personDetails()));
+
+  }
+
+	contextMnu.exec(QCursor::pos());
 }
 
 void GlobalRouterStatistics::updateDisplay()
@@ -148,15 +177,30 @@ void GlobalRouterStatistics::updateContent()
         if(nicknames.isEmpty())
           nicknames = tr("Unknown");
 
-        item -> setData(0, Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
-        item -> setData(1, Qt::DisplayRole, nicknames + "@" + QString::fromStdString(cache_infos[i].destination.toStdString()));
-        item -> setData(2, Qt::DisplayRole, data_status_string[cache_infos[i].data_status % 6]);
-        item -> setData(3, Qt::DisplayRole, tunnel_status_string[cache_infos[i].tunnel_status % 3]);
-        item -> setData(4, Qt::DisplayRole, misc::friendlyUnit(cache_infos[i].data_size));
-        item -> setData(5, Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
-        item -> setData(6, Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
-        item -> setData(7, Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
+        item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
+        item -> setData(COL_NICKNAME,     Qt::DisplayRole, nicknames ) ;
+        item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(cache_infos[i].destination.toStdString()));
+        item -> setData(COL_DATASTATUS,   Qt::DisplayRole, data_status_string[cache_infos[i].data_status % 6]);
+        item -> setData(COL_TUNNELSTATUS, Qt::DisplayRole, tunnel_status_string[cache_infos[i].tunnel_status % 3]);
+        item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(cache_infos[i].data_size));
+        item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
+        item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
+        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
     }
+}
+
+void GlobalRouterStatistics::personDetails()
+{
+    QTreeWidgetItem *item = treeWidget->currentItem();
+    std::string id = item->text(COL_DESTINATION).toStdString();
+
+    if (id.empty()) {
+        return;
+    }
+    
+    IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(id));
+    dialog->show();
+  
 }
 
 GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
