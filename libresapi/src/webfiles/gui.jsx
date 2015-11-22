@@ -4,7 +4,15 @@ RS.start();
 
 var api_url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api/v2/";
 var filestreamer_url = window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "/fstream/";
-var upload_url = window.location.protocol + "//" +window.location.hostname + ":" + window.location.port + "/upload/";
+var upload_url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/upload/";
+
+var extensions = {
+	mp3: "audio",
+	ogg: "audio",
+	wav: "audio",
+	webm: "video",
+	mp4: "video"
+};
 
 // livereload
 function start_live_reload()
@@ -558,7 +566,8 @@ var DownloadsWidget = React.createClass({
 					widget.emit("play_file", {name: file.name, hash: file.hash})
 				};
 				var playBtn = <div></div>;
-				if(file.name.slice(-3) === "mp3")
+				var splits = file.name.split(".");
+				if(splits[splits.length-1].toLowerCase() in extensions)
 					playBtn = <div className="btn" onClick={playFn}>play</div>;
 
 				var ctrlBtn = <div></div>;
@@ -571,7 +580,7 @@ var DownloadsWidget = React.createClass({
 					ctrlBtn = <div className="btn" onClick={pauseFn}>pause</div>;
 				}
 				return(<tr>
-					<td>{this.props.data.name}</td>
+					<td><a className="filelink" target="_blank" href={filestreamer_url + this.props.data.hash + "/" + encodeURIComponent(this.props.data.name)}>{this.props.data.name}</a></td>
 					<td>{makeFriendlyUnit(this.props.data.size)}</td>
 					<td><ProgressBar progress={this.props.data.transfered / this.props.data.size}/></td>
 					<td>{makeFriendlyUnit(this.props.data.transfer_rate*1e3)}/s</td>
@@ -673,7 +682,7 @@ var SearchWidget = React.createClass({
 	},
 });
 
-var AudioPlayerWidget = React.createClass({
+var MediaPlayerWidget = React.createClass({
 	mixins: [SignalSlotMixin],
 	getInitialState: function(){
 		return {file: undefined};
@@ -691,13 +700,28 @@ var AudioPlayerWidget = React.createClass({
 		}
 		else
 		{
-			return(
-				<div>
-					<p>{this.state.file.name}</p>
-					<audio controls src={filestreamer_url+this.state.file.hash} type="audio/mpeg">
-					</audio>
-				</div>
-			);
+			var splits = this.state.file.name.split(".");
+			var mediatype = extensions[splits[splits.length - 1].toLowerCase()];
+			if (mediatype == "audio") {
+				return (
+					<div>
+						<p>{this.state.file.name}</p>
+						<audio controls autoPlay src={filestreamer_url+this.state.file.hash}>
+						</audio>
+					</div>
+				);
+			} else if (mediatype == "video") {
+				return(
+					<div>
+						<p>{this.state.file.name}</p>
+						<video height="300" controls autoPlay src={filestreamer_url+this.state.file.hash}>
+								Your browser does not support the video tag.
+						</video> 
+					</div>
+				);
+			} else {
+				return(<div></div>);
+			}
 		}
 	},
 });
@@ -1702,7 +1726,7 @@ var MainWidget = React.createClass({
 			}
 			mainpage = 	<div>
 							<UnreadChatMsgsCountWidget/>
-							<AudioPlayerWidget/>
+							<MediaPlayerWidget/>
 							<IdentitySelectorWidget/>
 							{mainpage}
 						</div>;

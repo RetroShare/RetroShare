@@ -19,6 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <gui/common/RSTextBrowser.h>
+
 /**
  * This file provides helper functions and functors for translating data from/to
  * rich text format and HTML. Its main goal is to facilitate decoding of chat
@@ -71,6 +73,8 @@ public:
 
 	static QString plainText(const QString &text);
 	static QString plainText(const std::string &text);
+
+	static QString makeQuotedText(RSTextBrowser* browser);
 
 protected:
 	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);

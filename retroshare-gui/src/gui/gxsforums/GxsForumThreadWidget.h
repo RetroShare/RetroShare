@@ -75,7 +75,13 @@ private slots:
 	void clickedThread (QTreeWidgetItem *item, int column);
 
 	void replytomessage();
+	void replytoforummessage();
+
 	void replyMessageData(const RsGxsForumMsg &msg);
+	void replyForumMessageData(const RsGxsForumMsg &msg);
+	
+	
+
 
 	//void print();
 	//void printpreview();
@@ -141,7 +147,10 @@ private:
 	void loadMessageData(const uint32_t &token);
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
 	void loadMsgData_ReplyMessage(const uint32_t &token);
-    	void loadMsgData_BanAuthor(const uint32_t &token);
+	
+	void requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId);
+	void loadMsgData_ReplyForumMessage(const uint32_t &token);
+  void loadMsgData_BanAuthor(const uint32_t &token);
 
 private:
 	RsGxsGroupId mLastForumID;
@@ -162,6 +171,7 @@ private:
 	uint32_t mTokenTypeInsertThreads;
 	uint32_t mTokenTypeMessageData;
 	uint32_t mTokenTypeReplyMessage;
+	uint32_t mTokenTypeReplyForumMessage;
 	uint32_t mTokenTypeBanAuthor;
 
 	/* Color definitions (for standard see qss.default) */

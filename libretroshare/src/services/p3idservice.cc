@@ -56,6 +56,8 @@
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	0x0004
 
+#define GXSID_MAX_CACHE_SIZE 5000
+
 static const uint32_t MAX_KEEP_UNUSED_KEYS      = 30*86400 ; // remove unused keys after 30 days
 static const uint32_t MAX_DELAY_BEFORE_CLEANING =      601 ; // clean old keys every 10 mins
 
@@ -144,8 +146,8 @@ RsIdentity *rsIdentity = NULL;
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
-	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
+	mPublicKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPublicKeyCache"), 
+	mPrivateKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
 	mIdMtx("p3IdService"), mNes(nes),
 	mPgpUtils(pgpUtils)
 {

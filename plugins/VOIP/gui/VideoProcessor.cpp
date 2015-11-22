@@ -105,6 +105,7 @@ void av_frame_free(AVFrame **frame)
 VideoProcessor::VideoProcessor()
     :_encoded_frame_size(640,480) , vpMtx("VideoProcessor")
 {
+    //_lastTimeToShowFrame = time(NULL);
     _decoded_output_device = NULL ;
 
   //_encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO;
@@ -272,7 +273,12 @@ void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
     }
 
     if(_decoded_output_device)
+//        if (time(NULL) > _lastTimeToShowFrame)
+//        {
             _decoded_output_device->showFrame(img) ;
+//            _lastTimeToShowFrame = time(NULL) ;//+ 1000/25;
+#warning "\plugins\VOIP\gui\VideoProcessor.cpp:210 TODO: Get CPU usage to pass image."
+//        }
 }
 
 void VideoProcessor::setMaximumBandwidth(uint32_t bytes_per_sec)

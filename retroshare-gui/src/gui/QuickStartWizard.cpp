@@ -437,6 +437,12 @@ void QuickStartWizard::loadNetwork()
 		case RS_NETMODE_UDP:
 			netIndex = 1;
 			break;
+        case RS_NETMODE_HIDDEN:
+            ui.netModeLabel->hide();
+            ui.netModeComboBox->hide();
+            ui.discoveryLabel->hide();
+            ui.discoveryComboBox->hide();
+            break;
 		default:
 		case RS_NETMODE_UPNP:
 			netIndex = 0;

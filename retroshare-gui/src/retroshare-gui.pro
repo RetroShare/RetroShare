@@ -174,13 +174,12 @@ win32 {
 	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
 	#QTPLUGIN += qjpeg
 
-	LIBS_DIR = $$PWD/../../../libs
-
-	LIBS += -L"$$LIBS_DIR/lib"
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-	LIBS += -lole32 -lwinmm
+	LIBS += -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
 	# export symbols for the plugins
@@ -191,11 +190,8 @@ win32 {
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
-	DEPENDPATH += .
-	INCLUDEPATH += .
-
-	DEPENDPATH += $$LIBS_DIR/include
-	INCLUDEPATH += $$LIBS_DIR/include
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
 	greaterThan(QT_MAJOR_VERSION, 4) {
 		# Qt 5
@@ -216,12 +212,12 @@ macx {
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += ../../../miniupnpc-1.3/libminiupnpc.a
+	LIBS += /usr/local/lib/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 	LIBS += -framework Carbon
 	INCLUDEPATH += . /usr/local/include
-	DEFINES *= MAC_IDLE # for idle feature
+	#DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
 }
 

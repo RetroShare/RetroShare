@@ -72,22 +72,20 @@ win32 {
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
 
-	LIBS_DIR = $$PWD/../../../libs
-
-	LIBS += -L"$$LIBS_DIR/lib"
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 	LIBS += -lcrypto -lws2_32 -lgdi32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32
 	LIBS += -lole32 -lwinmm
 
-	PROTOCPATH=$$LIBS_DIR/bin/
+	PROTOCPATH=$$BIN_DIR
 
 	RC_FILE = resources/retroshare_win.rc
 
 	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
 
-	DEPENDPATH += $$LIBS_DIR/include
-	INCLUDEPATH += $$LIBS_DIR/include
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 ##################################### MacOS ######################################
@@ -98,9 +96,10 @@ macx {
 
 	LIBS += -Wl,-search_paths_first
         LIBS += -lssl -lcrypto -lz 
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += /usr/local/lib/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
+	INCLUDEPATH += /usr/local/include
 
 	sshserver {
 		LIBS += -L../../../lib

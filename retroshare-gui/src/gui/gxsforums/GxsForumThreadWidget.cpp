@@ -97,6 +97,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mTokenTypeInsertThreads = nextTokenType();
 	mTokenTypeMessageData = nextTokenType();
 	mTokenTypeReplyMessage = nextTokenType();
+	mTokenTypeReplyForumMessage = nextTokenType();
 
 	setUpdateWhenInvisible(true);
 
@@ -137,7 +138,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     ui->subscribeToolButton->hide() ;
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
-	connect(ui->newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
+	connect(ui->newmessageButton, SIGNAL(clicked()), this, SLOT(replytoforummessage()));
 	connect(ui->newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
 	connect(ui->threadTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(changedThread()));
@@ -404,7 +405,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QMenu contextMnu(this);
 
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
-	connect(replyAct, SIGNAL(triggered()), this, SLOT(createmessage()));
+	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
@@ -1787,6 +1788,18 @@ void GxsForumThreadWidget::replytomessage()
 	requestMsgData_ReplyMessage(postId);
 }
 
+void GxsForumThreadWidget::replytoforummessage()
+{
+	if (groupId().isNull() || mThreadId.isNull()) {
+		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
+		return;
+	}
+
+	// Get Message ... then complete replyMessageData().
+	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
+	requestMsgData_ReplyForumMessage(postId);
+}
+
 void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 {
 	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
@@ -1806,6 +1819,34 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 		msgDialog->addRecipient(MessageComposer::TO, RsGxsId(msg.mMeta.mAuthorId));
 		msgDialog->show();
 		msgDialog->activateWindow();
+
+		/* window will destroy itself! */
+	}
+	else
+	{
+		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
+	}
+}
+
+void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
+{
+	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
+	{
+		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (!msg.mMeta.mAuthorId.isNull())
+	{
+	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), mThreadId);
+	QTextDocument doc ;
+//	doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()) );
+//	std::string cited_text(doc.toPlainText().toStdString()) ;
+	RsHtml::makeQuotedText(ui->postText);
+
+	cfm->insertPastedText(RsHtml::makeQuotedText(ui->postText)) ;
+	cfm->show();
 
 		/* window will destroy itself! */
 	}
@@ -2031,6 +2072,24 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeReplyMessage);
 }
 
+void GxsForumThreadWidget::requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId)
+{
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
+    std::cerr << std::endl;
+#endif
+
+	GxsMsgReq msgIds;
+	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.push_back(msgId.second);
+
+	uint32_t token;
+	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeReplyForumMessage);
+}
+
 void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 {
 #ifdef DEBUG_FORUMS
@@ -2047,8 +2106,33 @@ void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
 			std::cerr << std::endl;
 			return;
 		}
-
 		replyMessageData(msgs[0]);
+	}
+	else
+	{
+		std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Missing Message Data...";
+		std::cerr << std::endl;
+	}
+}
+
+void GxsForumThreadWidget::loadMsgData_ReplyForumMessage(const uint32_t &token)
+{
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage()";
+    std::cerr << std::endl;
+#endif
+
+	std::vector<RsGxsForumMsg> msgs;
+	if (rsGxsForums->getMsgData(token, msgs))
+	{
+		if (msgs.size() != 1)
+		{
+			std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage() ERROR Wrong number of answers";
+			std::cerr << std::endl;
+			return;
+		}
+
+		replyForumMessageData(msgs[0]);
 	}
 	else
 	{
@@ -2113,6 +2197,11 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 
 		if (req.mUserType == mTokenTypeReplyMessage) {
 			loadMsgData_ReplyMessage(req.mToken);
+			return;
+		}
+		
+		if (req.mUserType == mTokenTypeReplyForumMessage) {
+			loadMsgData_ReplyForumMessage(req.mToken);
 			return;
 		}
         

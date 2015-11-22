@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include <util/rsdir.h>
+#include "util/ContentTypes.h"
 
 // for filestreamer
 #include <retroshare/rsfiles.h>
@@ -274,12 +275,21 @@ public:
         {
             sendMessage(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, "Error: rsFiles is null. Retroshare is probably not yet started.");
             return MHD_YES;
-        }
-        if(url[0] == 0 || (mHash=RsFileHash(url+strlen(FILESTREAMER_ENTRY_PATH))).isNull())
-        {
-            sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: URL is not a valid file hash");
-            return MHD_YES;
-        }
+        }		
+		std::string urls(url);
+		urls = urls.substr(strlen(FILESTREAMER_ENTRY_PATH));
+		size_t perpos = urls.find('/');
+		if(perpos == std::string::npos){
+			mHash = RsFileHash(urls);
+		}else{
+			mHash = RsFileHash(urls.substr(0, perpos));
+		}
+		if(urls.empty() || mHash.isNull())
+		{
+			sendMessage(connection, MHD_HTTP_NOT_FOUND, "Error: URL is not a valid file hash");
+			return MHD_YES;
+		}
+
         FileInfo info;
         std::list<RsFileHash> dls;
         rsFiles->FileDownloads(dls);
@@ -293,8 +303,13 @@ public:
         struct MHD_Response* resp = MHD_create_response_from_callback(
                     mSize, 1024*1024, &contentReadercallback, this, NULL);
 
-        // only mp3 at the moment
-        MHD_add_response_header(resp, "Content-Type", "audio/mpeg3");
+		// get content-type from extension
+		std::string ext = "";
+		unsigned int i = info.fname.rfind('.');
+		if(i != std::string::npos)
+			ext = info.fname.substr(i+1);
+		MHD_add_response_header(resp, "Content-Type", ContentTypes::cTypeFromExt(ext).c_str());
+
         secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
         return MHD_YES;
@@ -635,27 +650,10 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         {
             extension = filename[i] + extension;
             i--;
-        }
-        const char* type = 0;
-        if(extension == "html")
-            type = "text/html";
-        else if(extension == "css")
-            type = "text/css";
-        else if(extension == "js")
-            type = "text/javascript";
-        else if(extension == "jsx") // react.js jsx files
-            type = "text/jsx";
-        else if(extension == "png")
-            type = "image/png";
-        else if(extension == "jpg" || extension == "jpeg")
-            type = "image/jpeg";
-        else if(extension == "gif")
-            type = "image/gif";
-        else
-            type = "application/octet-stream";
+        };
 
         struct MHD_Response* resp = MHD_create_response_from_fd(s.st_size, fd);
-        MHD_add_response_header(resp, "Content-Type", type);
+		MHD_add_response_header(resp, "Content-Type", ContentTypes::cTypeFromExt(extension).c_str());
         secure_queue_response(connection, MHD_HTTP_OK, resp);
         MHD_destroy_response(resp);
         return MHD_YES;

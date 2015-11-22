@@ -102,6 +102,7 @@ class VideoProcessor
 	private:
 		QVideoOutputDevice *_decoded_output_device ;
 		std::list<QImage> _decoded_image_queue ;
+		//time_t _lastTimeToShowFrame ;
 
 // =====================================================================================
 // =------------------------------------ ENCODING -------------------------------------=
