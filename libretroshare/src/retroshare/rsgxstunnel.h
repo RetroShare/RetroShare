@@ -27,11 +27,17 @@
 
 #include "util/rsdir.h"
 #include "retroshare/rsids.h"
+#include "retroshare/rsturtle.h"
 #include "retroshare/rsgxsifacetypes.h"
 
 class RsGxsTunnelService
 {
 public:
+    static const uint32_t RS_GXS_TUNNEL_ERROR_NO_ERROR       = 0x0000 ;
+    static const uint32_t RS_GXS_TUNNEL_ERROR_UNKNOWN_GXS_ID = 0x0001 ;
+    
+    typedef TurtleVirtualPeerId RsGxsTunnelId ;
+    
     class RsGxsTunnelClientService
     {
     public:
@@ -49,13 +55,19 @@ public:
     class GxsTunnelInfo
     {
     public:
-        RsGxsId  gxs_id ;		// GXS Id to which we're talking
-        uint32_t tunnel_status ;	// active, requested, DH pending, etc.
-        uint32_t pending_data_packets; // number of packets not acknowledged by other side, still on their way.
-        uint32_t total_size_sent ;	// total number bytes sent through that tunnel since openned.
-        uint32_t total_packets_sent ;	// total number of packets sent and acknowledged by other side
-        
-        std::vector<RsGxsTunnelClientService*> client_services ;
+            // Tunnel information
+            
+	    RsGxsId  destination_gxs_id ;        // GXS Id we're talking to
+	    RsGxsId  source_gxs_id ;	          // GXS Id we're using to talk
+	    uint32_t tunnel_status ;	          // active, requested, DH pending, etc.
+	    uint32_t total_size_sent ;	          // total bytes sent through that tunnel since openned (including management). 
+	    uint32_t total_size_received ;	  // total bytes received through that tunnel since openned (including management). 
+
+	    // Data packets
+
+	    uint32_t pending_data_packets;         // number of packets not acknowledged by other side, still on their way. Should be 0 unless something bad happens.
+	    uint32_t total_data_packets_sent ;     // total number of data packets sent (does not include tunnel management)
+	    uint32_t total_data_packets_received ; // total number of data packets received (does not include tunnel management)
     };
     
     // This is the interface file for the secured tunnel service
@@ -76,16 +88,17 @@ public:
     // When the tunnel is secured, the client---here supplied as argument---will be notified. He can
     // then send data into the tunnel. The same tunnel may be used by different clients.
     
-    virtual bool requestSecuredTunnel(const RsGxsId& to_id,RsGxsTunnelClientService *client) =0 ;
+    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,uint32_t& error_code) =0 ;
     
-    // Data is sent through the established tunnel, possibly multiple times, until reception is acknowledged
+    // Data is sent through the established tunnel, possibly multiple times, until reception is acknowledged. If the tunnel does not exist, the item is rejected and 
+    // an error is issued. In any case, the memory ownership of the data is transferred to the tunnel service, so the client should not use it afterwards.
     
-    virtual bool sendData(const RsGxsId& destination, const GRouterServiceId& client_id, const uint8_t *data, uint32_t data_size, const RsGxsId& signing_id, GRouterMsgPropagationId& id) =0;
+    virtual bool sendData(RsGxsTunnelId tunnel_id, uint32_t client_service_id, const uint8_t *data, uint32_t data_size) =0;
     
     // Removes any established tunnel to this GXS id. This makes the tunnel refuse further data, but the tunnel will be however kept alive
     // until all pending data is flushed. All clients attached to the tunnel will be notified that the tunnel gets closed.
     
-    virtual bool removeExistingTunnel(const RsGxsId& to_id) =0;
+    virtual bool closeExistingTunnel(const RsGxsId& to_id) =0;
 
     //===================================================//
     //         Routage feedback from other services      //

@@ -31,6 +31,7 @@
 #include "openssl/err.h"
 
 #include "util/rsaes.h"
+#include "util/rsprint.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsiface.h>
@@ -51,12 +52,13 @@ static const uint32_t RS_GXS_TUNNEL_DH_STATUS_UNINITIALIZED = 0x0000 ;
 static const uint32_t RS_GXS_TUNNEL_DH_STATUS_HALF_KEY_DONE = 0x0001 ;
 static const uint32_t RS_GXS_TUNNEL_DH_STATUS_KEY_AVAILABLE = 0x0002 ;
 
-static const uint32_t RS_GXS_TUNNEL_STATUS_UNKNOWN    = 0x00 ;
-static const uint32_t RS_GXS_TUNNEL_STATUS_CAN_TALK   = 0x01 ;
-static const uint32_t RS_GXS_TUNNEL_STATUS_TUNNEL_DN  = 0x02 ;
+static const uint32_t RS_GXS_TUNNEL_STATUS_UNKNOWN          = 0x00 ;
+static const uint32_t RS_GXS_TUNNEL_STATUS_CAN_TALK         = 0x01 ;
+static const uint32_t RS_GXS_TUNNEL_STATUS_TUNNEL_DN        = 0x02 ;
+static const uint32_t RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED  = 0x03 ;
 
-static const uint32_t GXS_TUNNEL_HMAC_SIZE    = SHA_DIGEST_LENGTH ;
-static const uint32_t GXS_TUNNEL_IV_SIZE      = 8 ;
+static const uint32_t GXS_TUNNEL_ENCRYPTION_HMAC_SIZE    = SHA_DIGEST_LENGTH ;
+static const uint32_t GXS_TUNNEL_ENCRYPTION_IV_SIZE      = 8 ;
 
 void p3GxsTunnelService::connectToTurtleRouter(p3turtle *tr)
 {
@@ -70,7 +72,7 @@ void p3GxsTunnelService::flush()
     //
     while(!pendingGxsTunnelItems.empty())
     {
-        sendTurtleData( pendingGxsTunnelItems.front() ) ;
+        sendTurtleData(pendingGxsTunnelItems.front() ) ;
         pendingGxsTunnelItems.pop_front() ;
     }
 
@@ -102,9 +104,7 @@ void p3GxsTunnelService::flush()
         {
             RsGxsTunnelStatusItem *cs = new RsGxsTunnelStatusItem ;
 
-#warning should we send that unencrypted??
-            cs->status_string.clear() ;
-            cs->flags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_KEEP_ALIVE;
+            cs->flags = RS_GXS_TUNNEL_FLAG_KEEP_ALIVE;
             cs->PeerId(RsPeerId(it->first)) ;
 
             // we send off-mutex to avoid deadlock.
@@ -119,7 +119,7 @@ void p3GxsTunnelService::flush()
     }
 }
 
-bool p3GxsTunnelService::handleRecvItem(RsGxsTunnelItem *item)
+bool p3GxsTunnelService::handleIncomingItem(RsGxsTunnelItem *item)
 {
 	if(item == NULL)
 		return false ;
@@ -139,7 +139,6 @@ bool p3GxsTunnelService::handleRecvItem(RsGxsTunnelItem *item)
             
 	case RS_PKT_SUBTYPE_GXS_TUNNEL_STATUS:		handleRecvStatusItem(dynamic_cast<RsGxsTunnelStatusItem*>(item)) ;
 	    						return true ;
-	}
 
 	default:
 		return false ;
@@ -148,24 +147,24 @@ bool p3GxsTunnelService::handleRecvItem(RsGxsTunnelItem *item)
 	return false ;
 }
 
-#warning is this function still used??
-bool p3GxsTunnelService::handleOutgoingItem(RsGxsTunnelItem *item)
-{
-    {
-        RS_STACK_MUTEX(mGxsTunnelMtx) ;
-
-        std::map<RsGxsId,GxsTunnelPeerInfo>::const_iterator it=_gxs_tunnel_contacts.find(RsGxsId(item->PeerId()));
-
-        if(it == _gxs_tunnel_contacts.end())
-            return false ;
-    }
-
-#ifdef CHAT_DEBUG
-    std::cerr << "p3GxsTunnelService::handleOutgoingItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
-#endif
-    sendTurtleData(item) ;
-    return true;
-}
+//#warning is this function still used??
+//bool p3GxsTunnelService::handleOutgoingItem(RsGxsTunnelItem *item)
+//{
+//    {
+//        RS_STACK_MUTEX(mGxsTunnelMtx) ;
+//
+//        std::map<RsGxsId,GxsTunnelPeerInfo>::const_iterator it=_gxs_tunnel_contacts.find(RsGxsId(item->PeerId()));
+//
+//        if(it == _gxs_tunnel_contacts.end())
+//            return false ;
+//    }
+//
+//#ifdef CHAT_DEBUG
+//    std::cerr << "p3GxsTunnelService::handleOutgoingItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
+//#endif
+//    sendTurtleData(item) ;
+//    return true;
+//}
 
 void p3GxsTunnelService::handleRecvStatusItem(RsGxsTunnelStatusItem *cs)
 {
@@ -383,7 +382,7 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
         // Now try deserialise the decrypted data to make an RsItem out of it.
         //
 #warning needs proper passing of item to client
-        //RsItem *citem = RsChatSerialiser().deserialise(&((uint8_t*)item->data_bytes)[8],&item->data_size) ;
+        RsItem *citem = RsGxsTunnelSerialiser().deserialise(&((uint8_t*)item->data_bytes)[8],&item->data_size-8) ;
 
         if(citem == NULL)
         {
@@ -397,7 +396,7 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
         if(dynamic_cast<RsGxsTunnelDHPublicKeyItem*>(citem) != NULL)
         {
             citem->PeerId(virtual_peer_id) ;
-            handleIncomingItem(citem) ;
+            handleIncomingItem(dynamic_cast<RsGxsTunnelItem*>(citem)) ;
         }
         else
             std::cerr << "(EE) Deserialiased item has unexpected type." << std::endl;
@@ -413,18 +412,18 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
     std::cerr << "   size = " << data_size << std::endl;
     std::cerr << "   data = " << (void*)data_bytes << std::endl;
     std::cerr << "     IV = " << std::hex << *(uint64_t*)data_bytes << std::dec << std::endl;
-    std::cerr << "   data = " << Bin2Hex((uint8_t*)data_bytes,data_size) ;
+    std::cerr << "   data = " << RsUtil::BinToHex((char*)data_bytes,data_size) ;
     std::cerr << std::endl;
 #endif
 
-    RsItem *citem = NULL;
+    RsGxsTunnelItem *citem = NULL;
 
     {
         RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-        uint32_t encrypted_size = data_size - GXS_TUNNEL_IV_SIZE - GXS_TUNNEL_HMAC_SIZE;
+        uint32_t encrypted_size = data_size - GXS_TUNNEL_ENCRYPTION_IV_SIZE - GXS_TUNNEL_ENCRYPTION_HMAC_SIZE;
         uint32_t decrypted_size = RsAES::get_buffer_size(encrypted_size);
-        uint8_t *encrypted_data = (uint8_t*)data_bytes+GXS_TUNNEL_IV_SIZE+GXS_TUNNEL_HMAC_SIZE;
+        uint8_t *encrypted_data = (uint8_t*)data_bytes+GXS_TUNNEL_ENCRYPTION_IV_SIZE+GXS_TUNNEL_ENCRYPTION_HMAC_SIZE;
         uint8_t *decrypted_data = new uint8_t[decrypted_size];
         uint8_t aes_key[GXS_TUNNEL_AES_KEY_SIZE] ;
 
@@ -449,17 +448,17 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
 #ifdef DEBUG_GXS_TUNNEL
         std::cerr << "   Using IV: " << std::hex << *(uint64_t*)data_bytes << std::dec << std::endl;
         std::cerr << "   Decrypted buffer size: " << decrypted_size << std::endl;
-        std::cerr << "   key  : " << Bin2Hex(aes_key,GXS_TUNNEL_AES_KEY_SIZE) << ; std::cerr << std::endl;
-        std::cerr << "   hmac : " << Bin2Hex((uint8_t*)data_bytes+GXS_TUNNEL_IV_SIZE,GXS_TUNNEL_HMAC_SIZE) << ; std::cerr << std::endl;
-        std::cerr << "   data : " << Bin2Hex((uint8_t*)data_bytes,data_size) << ; std::cerr << std::endl;
+        std::cerr << "   key  : " << RsUtil::BinToHex((char*)aes_key,GXS_TUNNEL_AES_KEY_SIZE) << std::endl;
+        std::cerr << "   hmac : " << RsUtil::BinToHex((char*)data_bytes+GXS_TUNNEL_ENCRYPTION_IV_SIZE,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
+        std::cerr << "   data : " << RsUtil::BinToHex((char*)data_bytes,data_size) << std::endl;
 #endif
         // first, check the HMAC
         
         unsigned char *hm = HMAC(EVP_sha1(),aes_key,GXS_TUNNEL_AES_KEY_SIZE,encrypted_data,encrypted_size,NULL,NULL) ;
         
-        if(memcmp(hm,&data_bytes[GXS_TUNNEL_IV_SIZE],GXS_TUNNEL_HMAC_SIZE))
+        if(memcmp(hm,&data_bytes[GXS_TUNNEL_ENCRYPTION_IV_SIZE],GXS_TUNNEL_ENCRYPTION_HMAC_SIZE))
         {
-            std::cerr << "(EE) packet HMAC does not match. Computed HMAC=" << Bin2Hex(md,GXS_TUNNEL_HMAC_SIZE) << std::endl;
+            std::cerr << "(EE) packet HMAC does not match. Computed HMAC=" << RsUtil::BinToHex((char*)hm,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
             std::cerr << "(EE) resetting new DH session." << std::endl;
 
             delete[] decrypted_data ;
@@ -489,8 +488,7 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
 
         // Now try deserialise the decrypted data to make an RsItem out of it.
         //
-#warning pass on the serialised data directly to client (see what GRouter does)
-        //citem = RsChatSerialiser().deserialise(decrypted_data,&decrypted_size) ;
+        citem = RsGxsTunnelSerialiser().deserialiseGxsTunnelItem(decrypted_data,&decrypted_size) ;
         
         delete[] decrypted_data ;
 
@@ -657,7 +655,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
 
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "  DH key computed. Tunnel is now secured!" << std::endl;
-    std::cerr << "  Key computed: " << Bin2Hex(pinfo.aes_key,16) << std::cerr << std::endl;
+    std::cerr << "  Key computed: " << RsUtil::BinToHex((char*)pinfo.aes_key,16) << std::cerr << std::endl;
     std::cerr << "  Sending a ACK packet." << std::endl;
 #endif
 
@@ -678,7 +676,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
     //RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 }
 
-bool GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_gxs_id,const RsPeerId& virtual_peer_id)
+bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_gxs_id,const RsPeerId& virtual_peer_id)
 {
 	if(dh == NULL)
 	{
@@ -739,7 +737,7 @@ bool GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_gx
 	return true ;
 }
 
-bool GxsTunnelService::locked_initDHSessionKey(DH *& dh)
+bool p3GxsTunnelService::locked_initDHSessionKey(DH *& dh)
 {
     // We use our own DH group prime. This has been generated with command-line openssl and checked.
     
@@ -795,7 +793,7 @@ void p3GxsTunnelService::sendTurtleData(RsGxsTunnelItem *item)
         //
         RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
-    uint32_t rssize = item->serial_size() ;
+	uint32_t rssize = item->serial_size() ;
 
         gitem->data_size  = rssize + 8 ;
         gitem->data_bytes = malloc(rssize+8) ;
@@ -814,7 +812,7 @@ void p3GxsTunnelService::sendTurtleData(RsGxsTunnelItem *item)
 #ifdef DEBUG_GXS_TUNNEL
         std::cerr << "   GxsTunnelService::sendTurtleData(): Sending clear data to virtual peer: " << item->PeerId() << std::endl;
         std::cerr << "     gitem->data_size = " << gitem->data_size << std::endl;
-        std::cerr << "     data = " << Bin2Hex(gitem->data_bytes,gitem->data_size) ;
+        std::cerr << "     data = " << RsUtil::BinToHex((char*)gitem->data_bytes,gitem->data_size) ;
         std::cerr << std::endl;
 #endif
         mTurtle->sendTurtleData(item->PeerId(),gitem) ;
@@ -887,34 +885,34 @@ void p3GxsTunnelService::sendEncryptedTurtleData(const uint8_t *buff,uint32_t rs
     //
     RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
-    gitem->data_size  = encrypted_size + GXS_TUNNEL_ENCRYPTION_IV_SIZE + GXS_TUNNEL_HMAC_SIZE ;
+    gitem->data_size  = encrypted_size + GXS_TUNNEL_ENCRYPTION_IV_SIZE + GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
     gitem->data_bytes = malloc(gitem->data_size) ;
 
-    memcpy(& (((uint8_t*)gitem->data_bytes)[0]                                       ,&IV,8) ;
+    memcpy(& ((uint8_t*)gitem->data_bytes)[0]                                       ,&IV,8) ;
 
-    unsigned int md_len = GXS_TUNNEL_HMAC_SIZE ;
-    HMAC(EVP_sha1(),aes_key,GXS_TUNNEL_AES_KEY_SIZE,encrypted_data,encrypted_size,&(((uint8_t*)gitem->data_bytes)[GXS_TUNNEL_IV_SIZE]),&md_len) ;
+    unsigned int md_len = GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
+    HMAC(EVP_sha1(),aes_key,GXS_TUNNEL_AES_KEY_SIZE,encrypted_data,encrypted_size,&(((uint8_t*)gitem->data_bytes)[GXS_TUNNEL_ENCRYPTION_IV_SIZE]),&md_len) ;
     
-    memcpy(& (((uint8_t*)gitem->data_bytes)[GXS_TUNNEL_HMAC_SIZE+GXS_TUNNEL_IV_SIZE]),encrypted_data,encrypted_size) ;
+    memcpy(& (((uint8_t*)gitem->data_bytes)[GXS_TUNNEL_ENCRYPTION_HMAC_SIZE+GXS_TUNNEL_ENCRYPTION_IV_SIZE]),encrypted_data,encrypted_size) ;
     
     delete[] encrypted_data ;
 
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "   Using  IV: " << std::hex << IV << std::dec << std::endl;
-    std::cerr << "   Using Key: " << Bin2Hex(aes_key,GXS_TUNNEL_AES_KEY_SIZE) ; std::cerr << std::endl;
-    std::cerr << "        hmac: " << Bin2Hex(gitem->data_bytes,GXS_TUNNEL_HMAC_SIZE) ;
+    std::cerr << "   Using Key: " << RsUtil::BinToHex((char*)aes_key,GXS_TUNNEL_AES_KEY_SIZE) ; std::cerr << std::endl;
+    std::cerr << "        hmac: " << RsUtil::BinToHex((char*)gitem->data_bytes,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) ;
 #endif
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "GxsTunnelService::sendTurtleData(): Sending encrypted data to virtual peer: " << virtual_peer_id << std::endl;
     std::cerr << "   gitem->data_size = " << gitem->data_size << std::endl;
-    std::cerr << "    serialised data = " << Bin2Hex(gitem->data_bytes,gitem->data_size) ;
+    std::cerr << "    serialised data = " << RsUtil::BinToHex((char*)gitem->data_bytes,gitem->data_size) ;
     std::cerr << std::endl;
 #endif
 
     mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
-bool p3GxsTunnelService::initiateGxsTunnelConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,uint32_t& error_code)
+bool p3GxsTunnelService::requestSecuredTunnel(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,RsGxsTunnelClientService *client,uint32_t& error_code)
 {
     // should be a parameter.
 	
@@ -932,6 +930,7 @@ bool p3GxsTunnelService::initiateGxsTunnelConnexion(const RsGxsId& to_gxs_id,con
     if(!found)
     {
         std::cerr << "  (EE) Cannot start distant chat, since GXS id " << from_gxs_id << " is not available." << std::endl;
+        error_code = RS_GXS_TUNNEL_ERROR_UNKNOWN_GXS_ID ;
         return false ;
     }
     RsGxsId own_gxs_id = from_gxs_id ;
@@ -1029,7 +1028,7 @@ RsGxsId p3GxsTunnelService::gxsIdFromHash(const TurtleFileHash& sum)
     return RsGxsId(sum.toByteArray());// takes the first 16 bytes
 }
 
-bool p3GxsTunnelService::getGxsTunnelStatus(const RsGxsId& gxs_id,uint32_t& status, RsGxsId *from_gxs_id)
+bool p3GxsTunnelService::getTunnelStatus(const RsGxsId& gxs_id,uint32_t& status, RsGxsId *from_gxs_id)
 {
     RsStackMutex stack(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
@@ -1050,7 +1049,7 @@ bool p3GxsTunnelService::getGxsTunnelStatus(const RsGxsId& gxs_id,uint32_t& stat
     return false ;
 }
 
-bool p3GxsTunnelService::closeGxsTunnelConnexion(const RsGxsId& gxs_id)
+bool p3GxsTunnelService::closeExistingTunnel(const RsGxsId& gxs_id)
 {
 	// two cases: 
 	// 	- client needs to stop asking for tunnels => remove the hash from the list of tunnelled files
@@ -1082,7 +1081,7 @@ bool p3GxsTunnelService::closeGxsTunnelConnexion(const RsGxsId& gxs_id)
 
     RsGxsTunnelStatusItem *cs = new RsGxsTunnelStatusItem ;
 
-    cs->flags = RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION;
+    cs->flags = RS_GXS_TUNNEL_FLAG_CLOSING_DISTANT_CONNECTION;
     cs->PeerId(RsPeerId(gxs_id));
 
     sendTurtleData(cs) ;	// that needs to be done off-mutex and before we close the tunnel.

@@ -166,6 +166,6 @@ class RsGxsTunnelSerialiser: public RsSerialType
 		{ 
 			return static_cast<RsGxsTunnelItem *>(item)->serialise(data,*size) ; 
 		}
-		virtual RsItem *deserialise (void *data, uint32_t *size) ;
+		virtual RsGxsTunnelItem *deserialiseGxsTunnelItem(void *data, uint32_t *size) ;
 };
 

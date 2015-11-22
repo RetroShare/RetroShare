@@ -3,7 +3,7 @@
  *
  * Services for RetroShare.
  *
- * Copyright 2014 by Cyril Soler
+ * Copyright 2015 by Cyril Soler
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,33 @@
 
 #pragma once
 
+// Generic tunnel service
+//
+// Preconditions:
+//	* multiple services can use the same tunnel
+//	* tunnels are automatically encrypted and ensure transport (items stored in a queue until ACKed by the other side)
+//	* each tunnel is associated to a specific GXS id on both sides. Consequently, services that request tunnels from different IDs to a 
+//		server for the same GXS id need to be handled correctly.
+//
+// GUI
+//	* the GUI should show for each tunnel:
+//		- starting and ending GXS ids
+//		- tunnel status (DH ok, closed from distant peer, locally closed, etc)
+//		- amount of data that is transferred in the tunnel
+//		- number of pending items (and total size)
+//		- number ACKed items both ways.
+//
+//	we can use an additional tab "Authenticated tunnels" in the statistics->turtle window
+//
+// Interaction with services:
+//
+//	Services request tunnels from a given GXS id and to a given GXS id. When ready, they get a handle (virtual peer id)
+//
+//	Services send data in the tunnel using the virtual peer id
+//
+//      Data is send to a service ID (could be any existing service ID). The endpoint of the tunnel must register each service, in order to
+//	allow the data to be transmitted/sent from/to that service. Otherwise an error is issued.
+
 #include <turtle/turtleclientservice.h>
 #include <retroshare/rsgxstunnel.h>
 #include <gxstunnel/rsgxstunnelitems.h>
@@ -42,20 +69,19 @@ public:
         mTurtle = NULL ;
     }
 
-    void flush() ;
-
     virtual void connectToTurtleRouter(p3turtle *) ;
 
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //
-    bool initiateTunnelConnexion(const RsGxsId& to_gxs_id,const RsGxsId &from_gxs_id, uint32_t &error_code) ;
-    bool closeTunnelConnexion(const RsGxsId& pid) ;
+    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelClientService *client,uint32_t& error_code) ;
+    virtual bool closeExistingTunnel(const RsGxsId& pid) ;
     virtual bool getTunnelStatus(const RsGxsId &gxs_id,uint32_t &status, RsGxsId *from_gxs_id=NULL) ;
 
-    virtual void handleIncomingItem(RsItem *) ;
-
 private:
+    void flush() ;
+    virtual bool handleIncomingItem(RsGxsTunnelItem *) ;
+    
     class GxsTunnelPeerInfo
     {
     public:
@@ -95,7 +121,7 @@ private:
     // List of items to be sent asap. Used to store items that we cannot pass directly to
     // sendTurtleData(), because of Mutex protection.
 
-    std::list<RsItem*> pendingDistantChatItems ;
+    std::list<RsGxsTunnelItem*> pendingGxsTunnelItems ;
 
     // Overloaded from RsTurtleClientService
 
@@ -107,7 +133,7 @@ private:
     // session handling handles
     
     void markGxsTunnelAsClosed(const RsGxsId &gxs_id) ;
-    void startClientGxsTunnelConnection(const RsGxsId &to_gxs_id,const RsGxsId& from_gxs_id) ;
+    void startClientGxsTunnelConnection(const RsGxsId &to_gxs_id, const RsGxsId& from_gxs_id) ;
     void locked_restartDHSession(const RsPeerId &virtual_peer_id, const RsGxsId &own_gxs_id) ;
 
     // utility functions
@@ -123,6 +149,10 @@ private:
     
     TurtleVirtualPeerId virtualPeerIdFromHash(const TurtleFileHash& hash) ;	// ... and to a hash for p3turtle
 
+    // item handling
+    
+    void handleRecvStatusItem(RsGxsTunnelStatusItem *item) ;
+    
     // Comunication with Turtle service
 
     void sendTurtleData(RsGxsTunnelItem *) ;
