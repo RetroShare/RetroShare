@@ -51,6 +51,42 @@
 //
 //      Data is send to a service ID (could be any existing service ID). The endpoint of the tunnel must register each service, in order to
 //	allow the data to be transmitted/sent from/to that service. Otherwise an error is issued.
+//
+// Algorithms
+//
+//    Tunnel establishment
+//	* we need to layers: the turtle layer, and the GXS id layer.
+//	* at the turtle layer:
+//		- accept virtual peers from turtle tunnel service. The hash for that VP only depends on the server GXS id at server side, which is our
+//			own ID at server side, and destination ID at client side. What happens if two different clients request to talk to the same GXS id? (same hash)
+//			They should use different virtual peers, so it should be ok. 
+//		- multiple tunnels may end up to the same hash, but will correspond to different GXS tunnels since the GXS id in the other side is different.
+//
+//	* at the GXS layer
+//		- we should be able to have as many tunnels as they are different couples of GXS ids to interact. That means the tunnel should be determined
+//		 by a mix between our own GXS id and the GXS id we're talking to. That is what the TunnelVirtualPeer is.
+//
+
+//      
+//	RequestTunnel(source_own_id,destination_id)
+//                            |
+//                            +---------------------------> p3Turtle::monitorTunnels(  hash(destination_id)   )
+//                                                                            |
+//                                                                   [Turtle async work] -------------------+
+//                                                                            |                             |
+//      handleTunnelRequest() <-----------------------------------------------+                             |
+//                |                                                                                         |
+//                +---------------- keep record in _gxs_tunnel_virtual_peer_id, initiate DH exchange        |
+//                                                                                                          |
+//      handleDHPublicKey()   <-----------------------------------------------------------------------------+
+//                |
+//                +---------------- update _gxs_tunnel_contacts[ tunnel_hash = hash(own_id, destination_id) ]
+//                |
+//                +---------------- notify client service that Peer(destination_id, tunnel_hash) is ready to talk to
+//
+//  Notes
+//     * one other option would be to make the turtle hash depend on both GXS ids in a way that it is possible to find which are the two ids on the server side.
+//       but that would prevent the use of unknown IDs, which we would like to offer as well.
 
 #include <turtle/turtleclientservice.h>
 #include <retroshare/rsgxstunnel.h>
@@ -74,9 +110,9 @@ public:
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //
-    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelClientService *client,uint32_t& error_code) ;
-    virtual bool closeExistingTunnel(const RsGxsId& pid) ;
-    virtual bool getTunnelStatus(const RsGxsId &gxs_id,uint32_t &status, RsGxsId *from_gxs_id=NULL) ;
+    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t& error_code) ;
+    virtual bool closeExistingTunnel(const RsGxsTunnelId &tunnel_id) ;
+    virtual bool getTunnelStatus(const RsGxsTunnelId& tunnel_id,uint32_t &status);
 
 private:
     void flush() ;
@@ -108,6 +144,7 @@ private:
 
         DH *dh ;
         RsGxsId gxs_id ;
+        RsGxsId own_gxs_id ;
         RsTurtleGenericTunnelItem::Direction direction ;
 	uint32_t status ;
 	TurtleFileHash hash ;
@@ -115,7 +152,7 @@ private:
 
     // This maps contains the current peers to talk to with distant chat.
     //
-    std::map<RsGxsId, GxsTunnelPeerInfo> 	_gxs_tunnel_contacts ;		// current peers we can talk to
+    std::map<RsGxsTunnelId,GxsTunnelPeerInfo> 	_gxs_tunnel_contacts ;		// current peers we can talk to
     std::map<RsPeerId,GxsTunnelDHInfo>    	_gxs_tunnel_virtual_peer_ids ;	// current virtual peers. Used to figure out tunnels, etc.
 
     // List of items to be sent asap. Used to store items that we cannot pass directly to
@@ -133,7 +170,7 @@ private:
     // session handling handles
     
     void markGxsTunnelAsClosed(const RsGxsId &gxs_id) ;
-    void startClientGxsTunnelConnection(const RsGxsId &to_gxs_id, const RsGxsId& from_gxs_id) ;
+    void startClientGxsTunnelConnection(const RsGxsId &to_gxs_id, const RsGxsId& from_gxs_id, RsGxsTunnelId &tunnel_id) ;
     void locked_restartDHSession(const RsPeerId &virtual_peer_id, const RsGxsId &own_gxs_id) ;
 
     // utility functions
@@ -148,6 +185,7 @@ private:
     bool locked_initDHSessionKey(DH *&dh);
     
     TurtleVirtualPeerId virtualPeerIdFromHash(const TurtleFileHash& hash) ;	// ... and to a hash for p3turtle
+    RsGxsTunnelId makeGxsTunnelId(const RsGxsId &own_id, const RsGxsId &distant_id) const;	// creates a unique ID from two GXS ids.
 
     // item handling
     

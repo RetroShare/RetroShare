@@ -36,7 +36,7 @@ public:
     static const uint32_t RS_GXS_TUNNEL_ERROR_NO_ERROR       = 0x0000 ;
     static const uint32_t RS_GXS_TUNNEL_ERROR_UNKNOWN_GXS_ID = 0x0001 ;
     
-    typedef TurtleVirtualPeerId RsGxsTunnelId ;
+    typedef GXSTunnelId RsGxsTunnelId ;
     
     class RsGxsTunnelClientService
     {
@@ -44,12 +44,12 @@ public:
         // The client should derive this in order to handle notifications from the tunnel service.
         // This cannot be ignored because the client needs to know when the tunnel is active.
         
-        virtual void notifyTunnelStatus(const RsGxsId& id,uint32_t tunnel_status) =0;
+        virtual void notifyTunnelStatus(const RsGxsTunnelId& tunnel_id,uint32_t tunnel_status) =0;
         
         // Data obtained from the corresponding GXS id. The memory ownership is transferred to the client, which
         // is responsible to free it using free() once used.
         
-        virtual void receiveData(const RsGxsId& id,unsigned char *data,uint32_t data_size) =0;
+        virtual void receiveData(const RsGxsTunnelId& id,const RsGxsId& from_id,unsigned char *data,uint32_t data_size) =0;
     };
     
     class GxsTunnelInfo
@@ -88,7 +88,7 @@ public:
     // When the tunnel is secured, the client---here supplied as argument---will be notified. He can
     // then send data into the tunnel. The same tunnel may be used by different clients.
     
-    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,uint32_t& error_code) =0 ;
+    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t& error_code) =0 ;
     
     // Data is sent through the established tunnel, possibly multiple times, until reception is acknowledged. If the tunnel does not exist, the item is rejected and 
     // an error is issued. In any case, the memory ownership of the data is transferred to the tunnel service, so the client should not use it afterwards.

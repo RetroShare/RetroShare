@@ -218,6 +218,7 @@ static const uint32_t RS_GENERIC_ID_GXS_ID_TYPE          = 0x0006 ;
 static const uint32_t RS_GENERIC_ID_GXS_MSG_ID_TYPE      = 0x0007 ;
 static const uint32_t RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE   = 0x0008 ;
 static const uint32_t RS_GENERIC_ID_GROUTER_ID_TYPE      = 0x0009 ;
+static const uint32_t RS_GENERIC_ID_GXS_TUNNEL_ID_TYPE   = 0x0010 ;
 
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
 typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType ;
@@ -227,4 +228,5 @@ typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_F
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_GROUP_ID_TYPE   > GXSGroupId ;
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_ID_TYPE         > GXSId ;
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE  > GXSCircleId ;
+typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_GXS_TUNNEL_ID_TYPE  > GXSTunnelId ;
 
