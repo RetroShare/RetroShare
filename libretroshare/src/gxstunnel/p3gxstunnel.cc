@@ -711,7 +711,9 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
     //RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 }
 
-RsGxsTunnelId p3GxsTunnelService::makeGxsTunnelId(const RsGxsId &own_id, const RsGxsId &distant_id) const	// creates a unique ID from two GXS ids.
+// Note: for some obscure reason, the typedef does not work here. Looks like a compiler error. So I use the primary type.
+
+GXSTunnelId p3GxsTunnelService::makeGxsTunnelId(const RsGxsId &own_id, const RsGxsId &distant_id) const	// creates a unique ID from two GXS ids.
 {
     unsigned char mem[RsGxsId::SIZE_IN_BYTES * 2] ;
     
@@ -720,18 +722,18 @@ RsGxsTunnelId p3GxsTunnelService::makeGxsTunnelId(const RsGxsId &own_id, const R
     
     if(own_id < distant_id)
     {
-	    memcpy(mem, own_id.toBytesArray(), RsGxsId::SIZE_IN_BYTES) ;
-	    memcpy(mem+RsGxsId::SIZE_IN_BYTES, distant_id.toBytesArray(), RsGxsId::SIZE_IN_BYTES) ;
+	    memcpy(mem, own_id.toByteArray(), RsGxsId::SIZE_IN_BYTES) ;
+	    memcpy(mem+RsGxsId::SIZE_IN_BYTES, distant_id.toByteArray(), RsGxsId::SIZE_IN_BYTES) ;
     }
     else
     {
-	    memcpy(mem, distant_id.toBytesArray(), RsGxsId::SIZE_IN_BYTES) ;
-	    memcpy(mem+RsGxsId::SIZE_IN_BYTES, own_id.toBytesArray(), RsGxsId::SIZE_IN_BYTES) ;
+	    memcpy(mem, distant_id.toByteArray(), RsGxsId::SIZE_IN_BYTES) ;
+	    memcpy(mem+RsGxsId::SIZE_IN_BYTES, own_id.toByteArray(), RsGxsId::SIZE_IN_BYTES) ;
     }
     
     assert( RsGxsTunnelId::SIZE_IN_BYTES <= Sha1CheckSum::SIZE_IN_BYTES ) ;
     
-    return RsGxsTunnelId( RsUtil::sha1sum(mem, 2*RsGxsId::SIZE_IN_BYTES).toByteArray() ) ;
+    return RsGxsTunnelId( RsDirUtil::sha1sum(mem, 2*RsGxsId::SIZE_IN_BYTES).toByteArray() ) ;
 }
 
 bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_gxs_id,const RsPeerId& virtual_peer_id)
